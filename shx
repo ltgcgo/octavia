@@ -1,0 +1,20 @@
+#!/bin/bash
+arg="$@"
+args=( "$@" )
+if [ "$arg" == "" ] ; then
+	echo "All available actions:"
+	ls -1 sh | while IFS= read -r file; do
+		echo "${file/.sh/}"
+	done
+	exit
+fi
+if [ -e "sh/$1.sh" ] ; then
+	export PATH=$PATH:./sh/
+	bash "sh/$1.sh" "${args[@]:1}"
+elif [ -e "sh/$1" ] ; then
+	export PATH=$PATH:./sh/
+	bash "sh/$1" "${args[@]:1}"
+else
+	echo "No action found as \"$1\". Command: \"${args[@]:1}\"".
+fi
+exit

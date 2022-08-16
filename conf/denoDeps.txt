@@ -1,0 +1,2 @@
+dir esbuild
+esbuild/mod.js https://deno.land/x/esbuild/mod.js
