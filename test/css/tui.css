@@ -1,8 +1,12 @@
 b[id] {
 	cursor: default;
 }
-
 b.active {
 	outline: 2px solid #fffa;
 	padding: 0 4px;
+}
+
+pre {
+	margin: 0;
+	font-size: 16px;
 }

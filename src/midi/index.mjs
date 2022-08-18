@@ -1,3 +1,8 @@
 "use strict";
 
-import {MidiParser} from "../../libs/midi-parser@colxi/main.min.js";
+let OctaviaDevice = class {
+};
+
+export {
+	OctaviaDevice
+};
