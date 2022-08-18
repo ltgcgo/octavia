@@ -1,5 +1,5 @@
 #!/bin/bash
-rm -rv dist/${1:default}*
+#rm -rv dist/${1:default}*
 inject=" "
 format="iife"
 ext="js"

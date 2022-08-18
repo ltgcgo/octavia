@@ -1,6 +1,6 @@
 #!/bin/bash
 mkdir -p dist
-mkdir -p proxy
+#mkdir -p proxy
 # Remove the dev files
 rm -rv dist/*
 # Using esbuild to build all JS files
@@ -11,18 +11,18 @@ ls -1 src | while IFS= read -r dir ; do
 		shx live $dir --minify > /dev/null
 	fi
 done
-rm -rv proxy/*.map
+#rm -rv proxy/*.map
 # Finalizing most builds
-ls -1 src | while IFS= read -r dir ; do
-	if [ -e "src/${dir}/prefixer.js" ] ; then
-		cat src/${dir}/prefixer.js > dist/${dir}.js
-	fi
-	if [ -e "proxy/${dir}.js" ] ; then
-		cat proxy/${dir}.js >> dist/${dir}.js
-	fi
-done
+#ls -1 src | while IFS= read -r dir ; do
+	#if [ -e "src/${dir}/prefixer.js" ] ; then
+		#cat src/${dir}/prefixer.js > dist/${dir}.js
+	#fi
+	#if [ -e "proxy/${dir}.js" ] ; then
+		#cat proxy/${dir}.js >> dist/${dir}.js
+	#fi
+#done
 # Node specific
-mkdir -p proxy/node
-mv dist/node.js proxy/node/index.js
-rm proxy/node.js
+#mkdir -p proxy/node
+#mv dist/node.js proxy/node/index.js
+#rm proxy/node.js
 exit

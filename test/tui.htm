@@ -1,9 +1,26 @@
 <!DOCTYPE html>
 <head>
 	<meta http-equiv="200" charset="utf-8" />
-	<title>Default Web Page</title>
+	<title>Text Interface Demo</title>
 	<meta content="true" name="HandheldFriendly" />
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<link rel="stylesheet" href="css/water.min.css" />
+	<link rel="stylesheet" href="css/fonts.css" />
+	<link rel="stylesheet" href="css/tui.css" />
 </head>
 <body>
+	<p>
+		Open <b id="openMidi">MIDI file</b> or <b id="openAudio">audio file</b>.
+	</p>
+	<p>
+		Set mode to <b id="modeGm" class="active">GM</b>, <b id="modeGs">GS</b>, <b id="modeXg">XG</b>, <b id="modeMt32">MT-32</b>, <b id="modeNs5r">NS5R</b>, <b id="modeAg10">AG-10</b>, <b id="mode05rw">05R/W</b>, <b id="modeX5d">X5D</b>.
+	</p>
+	<p>
+		<audio id="audioPlayer" controls/>
+	</p>
+	<pre id="display"></pre>
+	<p>
+		<canvas id="bmDisp" width="190" height="94" />
+	</p>
+	<script src="js/demoTui.js"></script>
 </body>
