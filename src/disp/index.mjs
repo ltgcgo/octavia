@@ -13,7 +13,8 @@ const noteNames = [
 	"Ab", "A~", "Bb", "B~"
 ], noteRegion = "!0123456789",
 hexMap = "0123456789ABCDEF",
-map = "0123456789_aAbBcCdDeEfFgGhHiIjJ-kKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
+map = "0123456789_aAbBcCdDeEfFgGhHiIjJ-kKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ",
+waveMap = ["-", "~", "+", "|"];
 
 const modeNames = {
 	"?": "UnkwnStd",
@@ -157,12 +158,12 @@ let TuiDisplay = class extends RootDisplay {
 		let upThis = this;
 		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512`;
 		fields[1] = `Mode:${modeNames[sum.mode]}`;
-		fields[2] = "Ch:VoiceNme#St VE RCDB PP Pi Pan: Note";
+		fields[2] = "Ch:VoiceNme#St VEM RCDB PP Pi Pan : Note";
 		let line = 3;
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
 				let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32]);
-				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[i][7] >> 1]}${map[sum.chContr[i][11] >> 1]} ${map[sum.chContr[i][91] >> 1]}${map[sum.chContr[i][93] >> 1]}${map[sum.chContr[i][94] >> 1]}${map[sum.chContr[i][74] >> 1]} ${sum.chContr[i][65] > 63 ? "O" : "X"}${map[sum.chContr[i][5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[i][10])}:`;
+				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[i][7] >> 1]}${map[sum.chContr[i][11] >> 1]}${waveMap[sum.chContr[i][1] >> 5]} ${map[sum.chContr[i][91] >> 1]}${map[sum.chContr[i][93] >> 1]}${map[sum.chContr[i][94] >> 1]}${map[sum.chContr[i][74] >> 1]} ${sum.chContr[i][65] > 63 ? "O" : "X"}${map[sum.chContr[i][5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[i][10])}:`;
 				sum.chKeyPr[i].forEach(function (e, i) {
 					if (e > 0) {
 						fields[line] += ` <span style="opacity:${Math.round(e / 1.27) / 100}">${noteNames[i % 12]}${noteRegion[Math.floor(i / 12)]}</span>`;

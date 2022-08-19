@@ -100,7 +100,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		14: function (det) {
 			// Pitch bending
-			this.#pitch[det.part] = det.data[1] * 128 + det.data[0];
+			this.#pitch[det.part] = det.data[1] * 128 + det.data[0] - 8192;
 		},
 		15: function (det) {
 			// SysEx
