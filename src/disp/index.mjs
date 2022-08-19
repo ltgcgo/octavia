@@ -46,7 +46,8 @@ MidiParser.customInterpreter = function (type, file, rawMtLen) {
 		u8Data.push(byte);
 		if (byte == 247) {
 			// End of SysEx
-			return u8Data;
+		} else if (byte == 240) {
+			// Start of a new SysEx
 		} else if (byte > 127) {
 			// Start of a new event
 			console.debug(`Early termination: ${u8Data}`);
@@ -137,6 +138,7 @@ let RootDisplay = class extends CustomEventSource {
 			chProgr,
 			chContr,
 			eventCount: events.length,
+			master: this.#midiState.getMaster(),
 			mode: this.#midiState.getMode()
 		};
 	};
@@ -156,9 +158,9 @@ let TuiDisplay = class extends RootDisplay {
 		let fields = new Array(24);
 		let sum = super.render(time);
 		let upThis = this;
-		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512`;
+		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512 Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
 		fields[1] = `Mode:${modeNames[sum.mode]}`;
-		fields[2] = "Ch:VoiceNme#St VEM RCDB PP Pi Pan : Note";
+		fields[2] = "Ch:VoiceNme#St VEM RCDB PP PiBd Pan : Note";
 		let line = 3;
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {

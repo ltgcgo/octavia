@@ -21,6 +21,19 @@ const substList = [
 let toZero = function (e, i, a) {
 	a[i] = 0;
 };
+let sysExSplitter = function (seq) {
+	let seqArr = [[]];
+	seq?.forEach(function (e) {
+		if (e == 247) {
+			// End of SysEx
+		} else if (e == 240) {
+			seqArr.push([]);
+		} else {
+			seqArr[seqArr.length - 1].push(e);
+		};
+	});
+	return seqArr;
+};
 
 let OctaviaDevice = class extends CustomEventSource {
 	// Values
@@ -33,6 +46,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#pitch = new Int16Array(64); // Pitch for channels, from -8192 to 8191
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
+	#masterVol = 100;
 	// Exec Pools
 	#runChEvent = {
 		8: function (det) {
@@ -104,7 +118,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		15: function (det) {
 			// SysEx
-			console.debug(det.data);
+			let upThis = this;
+			sysExSplitter(det.data).forEach(function (seq) {
+				upThis.#seMain.run(seq);
+			});
 		},
 		255: function (det) {
 			// Meta
@@ -115,6 +132,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}
 	};
+	#seMain;
+	#seXgPart;
 	getActive() {
 		return this.#chActive.slice();
 	};
@@ -148,6 +167,11 @@ let OctaviaDevice = class extends CustomEventSource {
 	getMode() {
 		return modeIdx[this.#mode];
 	};
+	getMaster() {
+		return {
+			volume: this.#masterVol
+		};
+	};
 	init() {
 		// Full reset
 		this.#mode = 0;
@@ -158,6 +182,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#prg.forEach(toZero);
 		this.#velo.forEach(toZero);
 		this.#poly.forEach(toZero);
+		this.#masterVol = 100;
 		// Channel 10 to drum set
 		this.#cc[1152] = 127;
 		for (let ch = 0; ch < 64; ch ++) {
@@ -191,6 +216,42 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	constructor() {
 		super();
+		let upThis = this;
+		this.#seMain = new BinaryMatch();
+		this.#seMain.default = console.warn;
+		// Standard resets
+		this.#seMain.add([126, 127, 9, 1], function () {
+			// General MIDI reset
+			upThis.switchMode("gm", true);
+			console.info("MIDI reset: GM");
+		}).add([126, 127, 9, 3], function () {
+			// General MIDI rev. 2 reset
+			upThis.switchMode("g2", true);
+			console.info("MIDI reset: GM2");
+		}).add([65, 16, 22, 18, 127, 1], function () {
+			// MT-32 reset
+			upThis.switchMode("mt32", true);
+			console.info("MIDI reset: MT-32");
+		}).add([65, 16, 66, 18, 64, 0, 127, 0, 65], function () {
+			// Roland GS reset
+			upThis.switchMode("gs", true);
+			console.info("MIDI reset: GS");
+		}).add([66, 48, 66, 52, 0], function (msg) {
+			// KORG NS5R/NX5R System Exclusive
+			// No available data for parsing yet...
+			upThis.switchMode("ns5r", true);
+			console.info("KORG reset:", msg);
+		}).add([67, 16, 76, 0, 0, 126, 0], function (msg) {
+			// Yamaha XG reset
+			upThis.switchMode("xg", true);
+			console.info("MIDI reset: XG");
+		});
+		// General MIDI SysEx
+		this.#seMain.add([127, 127, 4, 1], function (msg) {
+			// Master volume
+			upThis.switchMode("gm");
+			upThis.#masterVol = (msg[1] << 7 + msg[0]) / 163.83;
+		});
 	};
 };
 

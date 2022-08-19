@@ -77,7 +77,7 @@ let BinaryMatch = function () {
 			return insert ? 0 : -1;
 		};
 	};
-	this.add = function (prefix, func) {
+	this.add = function (prefix, data) {
 		prefix.data = data;
 		this.pool.splice(this.point(prefix, true), 0, prefix);
 		return this;
