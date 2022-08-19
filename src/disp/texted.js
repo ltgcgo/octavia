@@ -1,16 +1,19 @@
 "use strict";
 
 let textedPitchBend = function (number) {
-	let normalized = number;
-	let result = "--";
-	if (normalized > 0) {
-		let truncated = normalized >> 11;
-		result = ["=-", ">-", ">=", ">>"][truncated];
-	} else if (normalized < 0) {
-		let inverted = Math.abs(normalized) >> 11;
-		result = ["-=", "-<", "=<", "<<", "<<"][inverted];
+	let result = Array.from("----");
+	if (number > 0) {
+		for (let c = 0; number > 0; c ++) {
+			result[c] = (number < 1024) ? "=" : ">";
+			number -= 2048;
+		};
+	} else if (number < 0) {
+		for (let c = 3; number < 0; c --) {
+			result[c] = (number >= -1024) ? "=" : "<";
+			number += 2048;
+		};
 	};
-	return result;
+	return result.join("");
 };
 let textedPanning = function (number) {
 	let result = Array.from("----");
