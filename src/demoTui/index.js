@@ -116,4 +116,4 @@ let renderThread = setInterval(function () {
 	if (!audioPlayer.paused) {
 		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0));
 	};
-}, 20);
+}, 40);
