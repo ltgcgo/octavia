@@ -4,14 +4,22 @@ import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js
 import {OctaviaDevice} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
+import {VoiceBank} from	"./bankReader.js";
 
 const noteNames = [
 	"C~", "C#", "D~", "Eb",
 	"E~", "F~", "F#", "G~",
 	"Ab", "A~", "Bb", "B~"
-], noteRegion = "!0123456789";
+], noteRegion = "!0123456789",
+hexMap = "0123456789ABCDEF",
+map = "0123456789_aAbBcCdDeEfFgGhHiIjJ-kKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
 
-//
+// Velocity to brightness
+let velToLuma = function (velo) {
+	let newVel = velo * 2 + 1;
+	return `${hexMap[newVel >> 4]}${hexMap[newVel & 15]}`;
+};
+
 MidiParser.customInterpreter = function (type, file, rawMtLen) {
 	let u8Data = [];
 	let metaLength = rawMtLen == false ? file.readIntVLV() : rawMtLen;
@@ -38,6 +46,7 @@ MidiParser.customInterpreter = function (type, file, rawMtLen) {
 let RootDisplay = class extends CustomEventSource {
 	#midiState = new OctaviaDevice();
 	#midiPool;
+	voices = new VoiceBank("xg", "gs", "ns5r");
 	reset() {
 		// Dispatching the event
 		this.dispatchEvent("reset");
@@ -110,27 +119,29 @@ let TuiDisplay = class extends RootDisplay {
 	render(time) {
 		let fields = new Array(30);
 		let sum = super.render(time);
-		fields[0] = `Poly: ${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512`;
-		fields[2] = "Ch:Prg Note";
+		let upThis = this;
+		fields[0] = `Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512`;
+		fields[2] = "Ch:VoiceNme#St Note";
 		let line = 3;
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
-				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${sum.chProgr[i].toString().padStart(3, "0")}`;
+				let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32]);
+				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.padEnd(8, " ")}${voiceName.ending}${voiceName.standard}`;
 				sum.chKeyPr[i].forEach(function (e, i) {
 					if (e > 0) {
-						fields[line] += ` ${noteNames[i % 12]}${noteRegion[Math.floor(i / 12)]}`;
+						fields[line] += ` <span style="color:#FFFFFF${velToLuma(e)}">${noteNames[i % 12]}${noteRegion[Math.floor(i / 12)]}</span>`;
 					};
 				});
 				line ++;
 			};
 		});
 		// Limit to 100*30
-		fields.forEach(function (e, i, a) {
+		/*fields.forEach(function (e, i, a) {
 			if (e.length > 100) {
 				a[i] = e.slice(0, 100);
 			};
-		});
-		return fields.join("\n");
+		});*/
+		return fields.join("<br/>");
 	};
 };
 
