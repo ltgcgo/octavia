@@ -1,7 +1,7 @@
 "use strict";
 
 let textedPitchBend = function (number) {
-	let normalized = (number[1] % 128 * 128 + number[0]) - 8192;
+	let normalized = number;
 	let result = "--";
 	if (normalized > 0) {
 		let truncated = normalized >> 11;
