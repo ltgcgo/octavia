@@ -2,7 +2,7 @@ body {
 	min-width: 768px;
 }
 
-b[id] {
+b[class] {
 	cursor: default;
 }
 b.active {
