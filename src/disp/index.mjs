@@ -62,7 +62,9 @@ MidiParser.customInterpreter = function (type, file, rawMtLen) {
 let RootDisplay = class extends CustomEventSource {
 	#midiState = new OctaviaDevice();
 	#midiPool;
+	#titleName = "";
 	voices = new VoiceBank("xg", "gs", "ns5r");
+	#metaRun = [];
 	reset() {
 		// Dispatching the event
 		this.dispatchEvent("reset");
@@ -70,6 +72,8 @@ let RootDisplay = class extends CustomEventSource {
 		this.#midiPool?.resetIndex();
 		// And set all controllers to blank
 		this.#midiState.init();
+		// Clear titleName
+		this.#titleName = "";
 	};
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
@@ -84,8 +88,7 @@ let RootDisplay = class extends CustomEventSource {
 		let events = this.#midiPool.step(time);
 		let extraPoly = 0, notes = new Set();
 		let upThis = this;
-		let metaReplies = [],
-		sysExReplies = [];
+		let metaReplies = [];
 		events.forEach(function (e) {
 			let raw = e.data;
 			if (raw.type == 9) {
@@ -138,15 +141,27 @@ let RootDisplay = class extends CustomEventSource {
 			chProgr,
 			chContr,
 			eventCount: events.length,
+			title: this.#titleName,
 			master: this.#midiState.getMaster(),
 			mode: this.#midiState.getMode()
 		};
 	};
 	constructor() {
 		super();
+		let upThis = this;
 		this.addEventListener("meta", function (raw) {
-			console.debug(raw.data);
+			raw?.data?.forEach(function (e) {
+				(upThis.#metaRun[e.meta] || console.debug).call(upThis, e.data);
+			});
 		});
+		this.#midiState.addEventListener("mode", function (ev) {
+			upThis.dispatchEvent("mode", ev.data);
+		});
+		this.#metaRun[3] = function (data) {
+			if (upThis.#titleName?.length < 1) {
+				upThis.#titleName = data;
+			};
+		};
 	};
 };
 
@@ -159,7 +174,7 @@ let TuiDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512 Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
-		fields[1] = `Mode:${modeNames[sum.mode]}`;
+		fields[1] = `Mode:${modeNames[sum.mode]} Title:${sum.title || "N/A"}`;
 		fields[2] = "Ch:VoiceNme#St VEM RCDB PP PiBd Pan : Note";
 		let line = 3;
 		sum.chInUse.forEach(function (e, i) {

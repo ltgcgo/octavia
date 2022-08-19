@@ -16,7 +16,8 @@ modeIdx.forEach(function (e, i) {
 const substList = [
 	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
 	[0, 0, 3, 0, 0, 127, 0, 0, 0, 0]
-]
+];
+const passedMeta = [0, 1, 2, 3, 4, 5, 6, 7, 81, 84, 88, 89];
 
 let toZero = function (e, i, a) {
 	a[i] = 0;
@@ -125,10 +126,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		255: function (det) {
 			// Meta
-			let useReply = false;
+			let useReply = passedMeta.indexOf(det.meta) > -1;
 			if (useReply) {
 				det.reply = "meta";
 				return det;
+			} else if (self.debugMode) {
+				console.debug(det);
 			};
 		}
 	};
@@ -173,6 +176,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 	};
 	init() {
+		this.dispatchEvent("mode", "?");
 		// Full reset
 		this.#mode = 0;
 		this.#subMsb = 0;
@@ -206,6 +210,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
 		};
+		this.dispatchEvent("mode", mode);
 	};
 	runJson(json) {
 		// Execute transformed JSON event
@@ -218,7 +223,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		super();
 		let upThis = this;
 		this.#seMain = new BinaryMatch();
-		this.#seMain.default = console.warn;
+		this.#seMain.default = console.debug;
 		// Standard resets
 		this.#seMain.add([126, 127, 9, 1], function () {
 			// General MIDI reset
