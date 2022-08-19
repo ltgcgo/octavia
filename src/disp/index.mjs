@@ -5,6 +5,7 @@ import {OctaviaDevice} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {VoiceBank} from	"./bankReader.js";
+import {textedPanning, textedPitchBend} from "./texted.js";
 
 const noteNames = [
 	"C~", "C#", "D~", "Eb",
@@ -13,6 +14,19 @@ const noteNames = [
 ], noteRegion = "!0123456789",
 hexMap = "0123456789ABCDEF",
 map = "0123456789_aAbBcCdDeEfFgGhHiIjJ-kKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
+
+const modeNames = {
+	"?": "UnkwnStd",
+	"gm": "GnrlMIDI",
+	"g2": "GrlMIDI2",
+	"xg": "YamahaXG",
+	"gs": "RolandGS",
+	"mt32": "RlndMT32",
+	"ag10": "KorgAG10",
+	"x5d": "Korg X5D",
+	"05rw": "Korg05RW",
+	"ns5r": "KorgNS5R"
+};
 
 // Velocity to brightness
 let velToLuma = function (velo) {
@@ -68,6 +82,8 @@ let RootDisplay = class extends CustomEventSource {
 		let events = this.#midiPool.step(time);
 		let extraPoly = 0, notes = new Set();
 		let upThis = this;
+		let metaReplies = [],
+		sysExReplies = [];
 		events.forEach(function (e) {
 			let raw = e.data;
 			if (raw.type == 9) {
@@ -84,8 +100,20 @@ let RootDisplay = class extends CustomEventSource {
 					extraPoly ++;
 				};
 			};
-			upThis.#midiState.runJson(raw);
+			let reply = upThis.#midiState.runJson(raw);
+			switch (reply?.reply) {
+				case "meta": {
+					metaReplies.push(reply);
+					break;
+				};
+			};
+			if (reply?.reply) {
+				delete reply.reply;
+			};
 		});
+		if (metaReplies?.length > 0) {
+			this.dispatchEvent("meta", metaReplies);
+		};
 		let chInUse = this.#midiState.getActive(); // Active channels
 		let chKeyPr = []; // Pressed keys and their pressure
 		let chPitch = upThis.#midiState.getPitch(); // All pitch bends
@@ -107,8 +135,15 @@ let RootDisplay = class extends CustomEventSource {
 			chPitch,
 			chProgr,
 			chContr,
-			mode: this.getMode()
+			eventCount: events.length,
+			mode: this.#midiState.getMode()
 		};
+	};
+	constructor() {
+		super();
+		this.addEventListener("meta", function (raw) {
+			console.debug(raw.data);
+		});
 	};
 };
 
@@ -117,16 +152,17 @@ let TuiDisplay = class extends RootDisplay {
 		super();
 	};
 	render(time) {
-		let fields = new Array(30);
+		let fields = new Array(24);
 		let sum = super.render(time);
 		let upThis = this;
-		fields[0] = `Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512`;
-		fields[2] = "Ch:VoiceNme#St Note";
+		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512`;
+		fields[1] = `Mode:${modeNames[sum.mode]}`;
+		fields[2] = "Ch:VoiceNme#St VE RCDB PP Pi Pan: Note";
 		let line = 3;
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
 				let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32]);
-				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.padEnd(8, " ")}${voiceName.ending}${voiceName.standard}`;
+				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[i][7] >> 1]}${map[sum.chContr[i][11] >> 1]} ${map[sum.chContr[i][91] >> 1]}${map[sum.chContr[i][93] >> 1]}${map[sum.chContr[i][94] >> 1]}${map[sum.chContr[i][74] >> 1]} ${sum.chContr[i][65] > 63 ? "O" : "X"}${map[sum.chContr[i][5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[i][10])}:`;
 				sum.chKeyPr[i].forEach(function (e, i) {
 					if (e > 0) {
 						fields[line] += ` <span style="opacity:${Math.round(e / 1.27) / 100}">${noteNames[i % 12]}${noteRegion[Math.floor(i / 12)]}</span>`;
@@ -135,12 +171,6 @@ let TuiDisplay = class extends RootDisplay {
 				line ++;
 			};
 		});
-		// Limit to 100*30
-		/*fields.forEach(function (e, i, a) {
-			if (e.length > 100) {
-				a[i] = e.slice(0, 100);
-			};
-		});*/
 		return fields.join("<br/>");
 	};
 };

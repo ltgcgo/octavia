@@ -1,28 +1,28 @@
 "use strict";
 
 import {BinaryMatch} from "../../libs/lightfelt@ltgcgo/ext/binMatch.js";
+import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
 
 const modeIdx = [
 	"?",
-	"gm",
-	"gs",
-	"xg",
-	"mt32",
-	"ns5r",
-	"ag10",
-	"x5d",
-	"05rw"
+	"gm", "gs", "xg", "g2",
+	"mt32", "ns5r",
+	"ag10", "x5d", "05rw"
 ];
 let modeMap = {};
 modeIdx.forEach(function (e, i) {
 	modeMap[e] = i;
 });
+const substList = [
+	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
+	[0, 0, 3, 0, 0, 127, 0, 0, 0, 0]
+]
 
 let toZero = function (e, i, a) {
 	a[i] = 0;
 };
 
-let OctaviaDevice = class {
+let OctaviaDevice = class extends CustomEventSource {
 	// Values
 	#mode = 0;
 	#chActive = new Array(64); // Whether the channel is in use
@@ -104,11 +104,15 @@ let OctaviaDevice = class {
 		},
 		15: function (det) {
 			// SysEx
-			console.warn(det);
+			console.debug(det.data);
 		},
 		255: function (det) {
 			// Meta
-			console.warn(det);
+			let useReply = false;
+			if (useReply) {
+				det.reply = "meta";
+				return det;
+			};
 		}
 	};
 	getActive() {
@@ -117,7 +121,10 @@ let OctaviaDevice = class {
 	getCc(channel) {
 		// Return channel CC registers
 		let start = channel * 128;
-		return Array.from(this.#cc).slice(start, start + 128);
+		let arr = Array.from(this.#cc).slice(start, start + 128);
+		arr[0] = arr[0] || this.#subMsb;
+		arr[32] = arr[32] || this.#subLsb;
+		return arr;
 	};
 	getPitch() {
 		return Array.from(this.#pitch);
@@ -151,12 +158,25 @@ let OctaviaDevice = class {
 		this.#prg.forEach(toZero);
 		this.#velo.forEach(toZero);
 		this.#poly.forEach(toZero);
+		// Channel 10 to drum set
+		this.#cc[1152] = 127;
+		for (let ch = 0; ch < 64; ch ++) {
+			// Volume and expression to full
+			this.#cc[ch * 128 + 7] = 127;
+			this.#cc[ch * 128 + 11] = 127;
+			// Full brightness
+			this.#cc[ch * 128 + 74] = 127;
+			// Center panning
+			this.#cc[ch * 128 + 10] = 127;
+		};
 	};
 	switchMode(mode, forced = false) {
 		let idx = modeIdx.indexOf(mode);
 		if (idx > -1) {
 			if (this.#mode == 0 || forced) {
 				this.#mode = idx;
+				this.#subMsb = substList[0][idx];
+				this.#subLsb = substList[1][idx];
 			};
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
@@ -164,10 +184,13 @@ let OctaviaDevice = class {
 	};
 	runJson(json) {
 		// Execute transformed JSON event
-		this.#runChEvent[json.type].call(this, json);
+		return this.#runChEvent[json.type].call(this, json);
 	};
 	runRaw(midiArr) {
 		// Translate raw byte stream into JSON MIDI event
+	};
+	constructor() {
+		super();
 	};
 };
 

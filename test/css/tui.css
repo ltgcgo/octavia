@@ -1,8 +1,12 @@
+body {
+	min-width: 512px;
+}
+
 b[id] {
 	cursor: default;
 }
 b.active {
-	outline: 2px solid #fffa;
+	outline: 2px solid;
 	padding: 0 4px;
 }
 

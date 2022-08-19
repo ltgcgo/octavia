@@ -15,7 +15,7 @@ stSwitch.to = function (i) {
 };
 stSwitch.forEach(function (e, i, a) {
 	e.addEventListener("click", function () {
-		tuiVis.switchMode(e.title);
+		tuiVis.switchMode(e.title, true);
 		stSwitch.to(i);
 	});
 });
@@ -47,13 +47,17 @@ let textDisplay = $e("#display");
 audioPlayer.onended = function () {
 	tuiVis.reset();
 };
-audioPlayer.src = "./demo/KANDI8.opus";
 (async function () {
 	tuiVis.reset();
 	tuiVis.loadFile(await (await fetch("./demo/KANDI8.MID")).blob());
+	if (audioBlob) {
+		URL.revokeObjectURL(audioBlob);
+	};
+	audioBlob = await (await fetch("./demo/KANDI8.opus")).blob();
+	audioPlayer.src = URL.createObjectURL(audioBlob);
 })();
 let renderThread = setInterval(function () {
 	if (!audioPlayer.paused) {
 		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0));
 	};
-}, 40);
+}, 20);
