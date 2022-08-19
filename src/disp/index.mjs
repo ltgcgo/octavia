@@ -129,7 +129,7 @@ let TuiDisplay = class extends RootDisplay {
 				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.padEnd(8, " ")}${voiceName.ending}${voiceName.standard}`;
 				sum.chKeyPr[i].forEach(function (e, i) {
 					if (e > 0) {
-						fields[line] += ` <span style="color:#FFFFFF${velToLuma(e)}">${noteNames[i % 12]}${noteRegion[Math.floor(i / 12)]}</span>`;
+						fields[line] += ` <span style="opacity:${Math.round(e / 1.27) / 100}">${noteNames[i % 12]}${noteRegion[Math.floor(i / 12)]}</span>`;
 					};
 				});
 				line ++;

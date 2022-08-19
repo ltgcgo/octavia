@@ -47,6 +47,11 @@ let textDisplay = $e("#display");
 audioPlayer.onended = function () {
 	tuiVis.reset();
 };
+audioPlayer.src = "./demo/KANDI8.opus";
+(async function () {
+	tuiVis.reset();
+	tuiVis.loadFile(await (await fetch("./demo/KANDI8.MID")).blob());
+})();
 let renderThread = setInterval(function () {
 	if (!audioPlayer.paused) {
 		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0));
