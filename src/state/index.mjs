@@ -89,11 +89,18 @@ let OctaviaDevice = class {
 		},
 		13: function (det) {
 			// Channel aftertouch
-			console.warn(det);
+			let upThis = this;
+			this.#poly.forEach(function (e) {
+				let realCh = e >> 7;
+				if (det.part == realCh) {
+					this.#velo[e] = det.data;
+				};
+			});
+			console.info(det);
 		},
 		14: function (det) {
 			// Pitch bending
-			console.warn(det);
+			this.#pitch[det.part] = det.data[1] * 128 + det.data[0];
 		},
 		15: function (det) {
 			// SysEx
