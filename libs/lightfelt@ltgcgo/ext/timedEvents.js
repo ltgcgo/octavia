@@ -1,49 +1,44 @@
 "use strict";
 
-{
-	let TimedEvent = class {
-		#ranged = false;
-		constructor (ranged, start, end, data) {
-			this.#ranged = ranged;
-			this.start = start;
-			this.end = end;
-			this.data = data;
-		};
-		get duration () {
-			if (this.ranged) {
-				return (this.end - this.start);
-			} else {
-				return 0;
-			};
-		};
-		get ranged () {
-			return this.#ranged;
+let TimedEvent = class {
+	#ranged = false;
+	constructor (ranged, start, end, data) {
+		this.#ranged = ranged;
+		this.start = start;
+		this.end = end;
+		this.data = data;
+	};
+	get duration () {
+		if (this.ranged) {
+			return (this.end - this.start);
+		} else {
+			return 0;
 		};
 	};
-	self.RangeEvent = class extends TimedEvent {
-		constructor (start, end, data) {
-			super(true, start, end, data);
-		};
+	get ranged () {
+		return this.#ranged;
 	};
-	self.PointEvent = class extends TimedEvent {
-		constructor (start, data) {
-			super(false, start, start, data);
-		};
+};
+let RangeEvent = class extends TimedEvent {
+	constructor (start, end, data) {
+		super(true, start, end, data);
+	};
+};
+let PointEvent = class extends TimedEvent {
+	constructor (start, data) {
+		super(false, start, start, data);
 	};
 };
 
-self.TimedEvents = class extends self.Array {
-	#maxAllowedPointSpan = 1;
-	#lastTime = 0;
-	#lastShown = [];
-	constructor () {
+let TimedEvents = class extends Array {
+	#index = -1;
+	constructor() {
 		super(...arguments);
 	};
-	resetPointer (pointer) {
-		this.#lastTime = 0;
-		this.#lastShown = [];
+	resetIndex(pointer) {
+		this.#index = -1;
 	};
-	finalize () {
+	fresh() {
 		this.sort(function (a, b) {
 			if (a.start == b.start) {
 				return 0
@@ -52,60 +47,76 @@ self.TimedEvents = class extends self.Array {
 			};
 		});
 		this.forEach(function (e, i) {
-			if (!e.id) {
-				e.id = i;
-			};
-			if (!e.uid) {
-				e.uid = Math.floor(Math.random() * 4294967296);
-			};
-		})
+			e.index = i;
+		});
 	};
-	set pointSpan (value) {
-		value = Math.abs(value);
-		this.#maxAllowedPointSpan = value;
-		return value;
-	};
-	get pointSpan () {
-		return this.#maxAllowedPointSpan;
-	};
-	point (start) {
-		// Must optimize
-		let array = new TimedEvents();
-		for (let index = 0; index < this.length; index ++) {
-			if (this[index].start <= start && this[index].end > start) {
-				array.push(this[index]);
+	step(time, allowRepeat = false) {
+		// Optimizing required
+		let array = [];
+		if (allowRepeat) {
+			for (let index = 0; index < this.length; index ++) {
+				if (this[index].start > time) {
+					break;
+				} else if (this[index].end < time) {
+					continue;
+				} else {
+					array.push(this[index]);
+				};
 			};
+		} else {
+			let rawArray = this.getRange(time - 1, time);
+			let upThis = this;
+			rawArray.forEach(function (e) {
+				if (e.index > upThis.#index) {
+					array.push(e);
+					upThis.#index = e.index;
+				};
+			});
 		};
 		return array;
 	};
-	during (start, end) {
-		if (start == end) {
-			start = this.#lastTime;
-		};
+	getRange(start, end) {
 		if (start > end) {
 			[start, end] = [end, start];
 		};
 		// Must optimize
-		let array = new TimedEvents();
-		for (let index = 0; index < this.length; index ++) {
-			if (this[index].start > end) {
-				break;
-			} else if (this[index].end < start) {
-				continue;
-			} else {
-				if (this.#lastShown.indexOf(this[index]) == -1 || this[index].ranged) {
-					array.push(this[index]);
-					this.#lastShown.push(this[index]);
+		let array = [];
+		let index = -1, chunk = Math.ceil(Math.sqrt(this.length)), working = true;
+		for (let c = 0; c < this.length; c += chunk) {
+			// Chunk compare
+			if (this[c + chunk]) {
+				// Previous chunks
+				if (index < 0) {
+					if (this[c + chunk].start >= start) {
+						index = c;
+					} ;
 				};
+			} else {
+				// The last chunk
+				index = index < 0 ? c : index;
 			};
+		};
+		while (working) {
+			if (this[index].end < end) {
+				if (this[index].start >= start) {
+					array.push(this[index]);
+				};
+			} else {
+				working = false;
+			}
+			index ++;
 		};
 		return array;
 	};
-	at (time) {
-		return this.during((Math.abs(time - this.#lastTime > this.#maxAllowedPointSpan) ? time - this.#maxAllowedPointSpan : this.#lastTime), time);
-	};
 };
-self.TimedEventsCollection = class extends self.Array {
+
+export {
+	RangeEvent,
+	PointEvent,
+	TimedEvents
+};
+
+/*self.TimedEventsCollection = class extends self.Array {
 	#maxAllowedPointSpan = 1;
 	#lastTime = 0;
 	constructor () {
@@ -173,4 +184,4 @@ self.TimedEventsCollection = class extends self.Array {
 	at (time) {
 		return this.during((Math.abs(time - this.#lastTime > this.#maxAllowedPointSpan) ? time - this.#maxAllowedPointSpan : this.#lastTime), time);
 	};
-};
+};*/

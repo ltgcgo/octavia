@@ -1,8 +1,8 @@
 @font-face {
-	font-family: "Noto Sans Mono";
+	font-family: "Noto Sans Mono Web";
 	src: url("../font/NotoSansMono-VF.woff2") format("woff2");
 }
 
 body {
-	font-family: "Noto Sans Mono" !important;
+	font-family: "Noto Sans Mono", "Noto Sans Mono Web" !important;
 }
