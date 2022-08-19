@@ -97,7 +97,7 @@ let TimedEvents = class extends Array {
 			};
 		};
 		while (working) {
-			if (this[index].end < end) {
+			if (this[index]?.end < end) {
 				if (this[index].start >= start) {
 					array.push(this[index]);
 				};

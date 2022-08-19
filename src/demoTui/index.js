@@ -43,7 +43,7 @@ $e("#openAudio").addEventListener("click", async function () {
 
 // Render frames
 let audioPlayer = $e("#audioPlayer");
-let textDisplay = $e("pre");
+let textDisplay = $e("#display");
 audioPlayer.onended = function () {
 	tuiVis.reset();
 };

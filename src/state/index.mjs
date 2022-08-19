@@ -48,31 +48,44 @@ let OctaviaDevice = class {
 			// Note on, but should be off if velocity is 0.
 			// Set channel active
 			this.#chActive[det.part] = true;
-			let place = 0;
-			while (this.#poly[place] > 0) {
-				place ++;
-			};
-			if (place < 512) {
-				let rawNote = det.part * 128 + det.data[0];
-				this.#poly[place] = rawNote;
-				this.#velo[rawNote] = det.data[1];
+			let rawNote = det.part * 128 + det.data[0];
+			if (det.data[1] > 0) {
+				let place = 0;
+				while (this.#poly[place] > 0) {
+					place ++;
+				};
+				if (place < 512) {
+					this.#poly[place] = rawNote;
+					this.#velo[rawNote] = det.data[1];
+				} else {
+					console.error("Polyphony exceeded.");
+				};
 			} else {
-				console.error("Polyphony exceeded.");
+				let polyIdx = this.#poly.indexOf(rawNote);
+				if (polyIdx > -1) {
+					this.#poly[polyIdx] = 0;
+					this.#velo[rawNote] = 0;
+				};
 			};
 		},
 		10: function (det) {
 			// Note aftertouch.
 			// Currently it directly changes velocity to set value.
-			console.warn(det);
+			let rawNote = det.part * 128 + det.data[0];
+			let polyIdx = this.#poly.indexOf(rawNote);
+			if (polyIdx > -1) {
+				this.#velo[rawNote] = data[1];
+			};
 		},
 		11: function (det) {
 			// CC event, directly assign values to the register.
-			console.warn(det);
+			this.#chActive[det.part] = true;
+			this.#cc[det.part * 128 + det.data[0]] = det.data[1];
 		},
 		12: function (det) {
-			this.#chActive[det.part] = true;
 			// Program change
-			console.warn(det);
+			this.#chActive[det.part] = true;
+			this.#prg[det.part] = det.data;
 		},
 		13: function (det) {
 			// Channel aftertouch
