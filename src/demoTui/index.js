@@ -7,22 +7,21 @@ import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs
 
 // Standard switching
 let stSwitch = $a("[id^=mode]");
-stSwitch.selected = -1;
 stSwitch.to = function (i) {
 	stSwitch.forEach(function (e) {
 		e.classList.off("active");
 	});
-	stSwitch.selected = stSwitch;
 	stSwitch[i].classList.on("active");
 };
 stSwitch.forEach(function (e, i, a) {
 	e.addEventListener("click", function () {
+		tuiVis.switchMode(e.title);
 		stSwitch.to(i);
 	});
 });
 
 // Start the visualizers
-let tuiVis = new TuiDisplay();
+self.tuiVis = new TuiDisplay();
 tuiVis.addEventListener("reset", function (e) {
 });
 
@@ -32,7 +31,7 @@ const propsMid = JSON.parse('{"extensions":[".mid",".MID"],"startIn":"music","id
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	tuiVis.reset();
-	tuiVis.load(await fileOpen(propsMid));
+	tuiVis.loadFile(await fileOpen(propsMid));
 });
 $e("#openAudio").addEventListener("click", async function () {
 	if (audioBlob) {
@@ -41,3 +40,15 @@ $e("#openAudio").addEventListener("click", async function () {
 	audioBlob = await fileOpen(propsAud);
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 });
+
+// Render frames
+let audioPlayer = $e("#audioPlayer");
+let textDisplay = $e("pre");
+audioPlayer.onended = function () {
+	tuiVis.reset();
+};
+let renderThread = setInterval(function () {
+	if (!audioPlayer.paused) {
+		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0));
+	};
+}, 40);
