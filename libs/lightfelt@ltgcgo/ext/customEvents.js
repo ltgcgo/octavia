@@ -19,10 +19,11 @@ let CustomEventSource = class {
 			};
 		};
 	};
-	dispatchEvent(type) {
+	dispatchEvent(type, data) {
 		// Can add a proxy to allow stopping propagation
 		let eventObj = new Event(type),
 		upThis = this;
+		eventObj.data = data;
 		if (this.#eventListeners[type]?.length > 0) {
 			this.#eventListeners[type].forEach(function (e) {
 				e?.call(upThis, eventObj);
