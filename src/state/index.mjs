@@ -48,9 +48,10 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cc = new Uint8ClampedArray(8192); // 64 channels, 128 controllers
 	#prg = new Uint8ClampedArray(64);
 	#velo = new Uint8ClampedArray(8192); // 64 channels. 128 velocity registers
-	#poly = new Uint16Array(512); // 512 polyphony allowed
+	#poly = new Uint16Array(256); // 256 polyphony allowed
 	#pitch = new Int16Array(64); // Pitch for channels, from -8192 to 8191
 	#customName = new Array(64); // Allow custom naming
+	#rawStrength = new Uint8Array(64);
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
@@ -83,9 +84,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				while (this.#poly[place] > 0) {
 					place ++;
 				};
-				if (place < 512) {
+				if (place < 256) {
 					this.#poly[place] = rawNote;
 					this.#velo[rawNote] = det.data[1];
+					if (this.#rawStrength[det.part] < det.data[1]) {
+						this.#rawStrength[det.part] = det.data[1];
+					};
 				} else {
 					console.error("Polyphony exceeded.");
 				};
@@ -176,16 +180,16 @@ let OctaviaDevice = class extends CustomEventSource {
 	getCc(channel) {
 		// Return channel CC registers
 		let start = channel * 128;
-		let arr = Array.from(this.#cc).slice(start, start + 128);
+		let arr = this.#cc.slice(start, start + 128);
 		arr[0] = arr[0] || this.#subMsb;
 		arr[32] = arr[32] || this.#subLsb;
 		return arr;
 	};
 	getPitch() {
-		return Array.from(this.#pitch);
+		return this.#pitch.slice();
 	};
 	getProgram() {
-		return Array.from(this.#prg);
+		return this.#prg.slice();
 	};
 	getTexts() {
 		return this.#metaTexts.slice();
@@ -195,8 +199,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		let notes = new Map();
 		let upThis = this;
 		this.#poly.forEach(function (e) {
-			let realCh = e >> 7,
-			realNote = e & 127;
+			let realCh = Math.floor(e / 128),
+			realNote = e % 128;
 			if (channel == realCh && upThis.#velo[e] > 0) {
 				notes.set(realNote, upThis.#velo[e]);
 			};
@@ -226,6 +230,25 @@ let OctaviaDevice = class extends CustomEventSource {
 			volume: this.#masterVol
 		};
 	};
+	getRawStrength() {
+		// 0 to 127
+		let upThis = this;
+		this.#poly.forEach(function (e) {
+			let channel = Math.floor(e / 128);
+			if (upThis.#velo[e] > upThis.#rawStrength[channel]) {
+				upThis.#rawStrength[channel] = upThis.#velo[e];
+			};
+		});
+		return this.#rawStrength.slice();
+	};
+	getStrength() {
+		// 0 to 255
+		let str = [], upThis = this;
+		this.getRawStrength().forEach(function (e, i) {
+			str[i] = Math.floor(e * upThis.#cc[i * 128 + 7] * upThis.#cc[i * 128 + 11] * upThis.#masterVol / 803288);
+		});
+		return str;
+	};
 	init() {
 		this.dispatchEvent("mode", "?");
 		// Full reset
@@ -238,6 +261,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#prg.forEach(toZero);
 		this.#velo.forEach(toZero);
 		this.#poly.forEach(toZero);
+		this.#rawStrength.forEach(toZero);
 		this.#masterVol = 100;
 		this.#metaTexts = [];
 		this.#letterExpire = 0;
@@ -272,6 +296,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	runJson(json) {
 		// Execute transformed JSON event
+		this.#rawStrength.forEach(toZero);
 		return this.#runChEvent[json.type].call(this, json);
 	};
 	runRaw(midiArr) {
@@ -280,9 +305,6 @@ let OctaviaDevice = class extends CustomEventSource {
 	constructor() {
 		super();
 		let upThis = this;
-		self.seeReg = function (ch) {
-			return Array.from(upThis.#cc).slice(ch * 128, ch * 128 + 128);
-		};
 		this.#seMain = new BinaryMatch();
 		this.#seXgPart = new BinaryMatch();
 		this.#seMtSysEx = new BinaryMatch();

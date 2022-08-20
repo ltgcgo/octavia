@@ -34,6 +34,9 @@ let velToLuma = function (velo) {
 	let newVel = velo * 2 + 1;
 	return `${hexMap[newVel >> 4]}${hexMap[newVel & 15]}`;
 };
+let toZero = function (e, i, a) {
+	a[i] = 0;
+};
 
 MidiParser.customInterpreter = function (type, file, rawMtLen) {
 	let u8Data = [];
@@ -65,6 +68,7 @@ let RootDisplay = class extends CustomEventSource {
 	#titleName = "";
 	voices = new VoiceBank("xg", "gs", "ns5r");
 	#metaRun = [];
+	#mimicStrength = new Uint8ClampedArray(64);
 	reset() {
 		// Dispatching the event
 		this.dispatchEvent("reset");
@@ -119,6 +123,12 @@ let RootDisplay = class extends CustomEventSource {
 		if (metaReplies?.length > 0) {
 			this.dispatchEvent("meta", metaReplies);
 		};
+		// Mimic strength variation
+		this.#midiState.getStrength().forEach(function (e, i) {
+			let diff = e - upThis.#mimicStrength[i];
+			upThis.#mimicStrength[i] += Math.ceil(diff - (diff * 0.55));
+		});
+		// Pass params to actual displays
 		let chInUse = this.#midiState.getActive(); // Active channels
 		let chKeyPr = []; // Pressed keys and their pressure
 		let chPitch = upThis.#midiState.getPitch(); // All pitch bends
@@ -147,7 +157,8 @@ let RootDisplay = class extends CustomEventSource {
 			names: this.#midiState.getCustomNames(),
 			texts: this.#midiState.getTexts(),
 			master: this.#midiState.getMaster(),
-			mode: this.#midiState.getMode()
+			mode: this.#midiState.getMode(),
+			strength: upThis.#mimicStrength.slice()
 		};
 	};
 	constructor() {
@@ -170,27 +181,18 @@ let RootDisplay = class extends CustomEventSource {
 };
 
 let TuiDisplay = class extends RootDisplay {
-	#chMaxPress = new Array(64);
 	constructor() {
 		super();
-		for (let a = 0; a < this.#chMaxPress.length; a ++) {
-			this.#chMaxPress[a] = 0;
-			console.info("a");
-		};
 	};
 	render(time, ctx) {
 		let fields = new Array(24);
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
-		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512 Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
+		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/256 Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
 		fields[1] = `Mode:${modeNames[sum.mode]} Title:${sum.title || "N/A"}`;
 		fields[2] = "Ch:VoiceNme#St VEM RCDB PP PiBd Pan : Note";
 		let line = 3;
-		// Decrease strength of max press
-		this.#chMaxPress.forEach(function (e, i, a) {
-			a[i] = e >> 1;
-		});
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
 				let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32]);
@@ -201,8 +203,6 @@ let TuiDisplay = class extends RootDisplay {
 				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[i][7] >> 1]}${map[sum.chContr[i][11] >> 1]}${waveMap[sum.chContr[i][1] >> 5]} ${map[sum.chContr[i][91] >> 1]}${map[sum.chContr[i][93] >> 1]}${map[sum.chContr[i][94] >> 1]}${map[sum.chContr[i][74] >> 1]} ${sum.chContr[i][65] > 63 ? "O" : "X"}${map[sum.chContr[i][5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[i][10])}:`;
 				sum.chKeyPr[i].forEach(function (e1, i1) {
 					if (e1 > 0) {
-						let targetPressure = Math.max(upThis.#chMaxPress[i], e1);
-						upThis.#chMaxPress[i] = (targetPressure - upThis.#chMaxPress[i]) > 32 ? upThis.#chMaxPress[i] + 48 : targetPressure;
 						fields[line] += ` <span style="opacity:${Math.round(e1 / 1.27) / 100}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
 					};
 				});
@@ -231,9 +231,9 @@ let TuiDisplay = class extends RootDisplay {
 				renderer = sum.bitmap.bitmap;
 			} else {
 				renderer = new Array(256);
-				upThis.#chMaxPress.forEach(function (e, i) {
+				sum.strength.forEach(function (e, i) {
 					if (i < 16 && sum.chContr[i]?.length > 0) {
-						let strength = Math.floor(e * sum.chContr[i][7] * sum.chContr[i][11] / 129032);
+						let strength = e >> 4;
 						for (let dot = 0; dot <= strength; dot ++) {
 							renderer[i + (15 - dot) * 16] = 1;
 						};
@@ -245,6 +245,10 @@ let TuiDisplay = class extends RootDisplay {
 					ctx.fillRect((i % 16) * 12, Math.floor(i / 16) * 6, 11, 5);
 				};
 			});
+			// Create a dividing line
+			/* for (let c = 0; c < 15; c ++) {
+				ctx.clearRect(c * 12 + 5, 0, 1, ctx.canvas.height);
+			}; */
 		};
 		return fields.join("<br/>");
 	};
