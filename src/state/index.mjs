@@ -17,7 +17,7 @@ const substList = [
 	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
 	[0, 0, 0, 0, 0, 127, 0, 0, 0, 0]
 ];
-const passedMeta = [0, 3, 4, 5, 6, 7, 81, 84, 88, 89];
+const passedMeta = [0, 32, 81, 84, 88, 89];
 
 let toZero = function (e, i, a) {
 	a[i] = 0;
@@ -35,6 +35,9 @@ let sysExSplitter = function (seq) {
 	});
 	return seqArr;
 };
+let showTrue = function (data, prefix = "", suffix = "", length = 2) {
+	return data ? `${prefix}${data.toString().padStart(length, "0")}${suffix}` : "";
+};
 
 let OctaviaDevice = class extends CustomEventSource {
 	// Values
@@ -47,11 +50,15 @@ let OctaviaDevice = class extends CustomEventSource {
 	#velo = new Uint8ClampedArray(8192); // 64 channels. 128 velocity registers
 	#poly = new Uint16Array(512); // 512 polyphony allowed
 	#pitch = new Int16Array(64); // Pitch for channels, from -8192 to 8191
+	#customName = new Array(64); // Allow custom naming
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
+	#metaChannel = 0;
 	#letterDisp = "";
 	#letterExpire = 0;
+	// Metadata text events
+	#metaTexts = [];
 	// Exec Pools
 	// Meta event pool
 	#metaRun = [];
@@ -69,7 +76,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		9: function (det) {
 			// Note on, but should be off if velocity is 0.
 			// Set channel active
-			this.#chActive[det.part] = true;
+			this.#chActive[det.part] = 1;
 			let rawNote = det.part * 128 + det.data[0];
 			if (det.data[1] > 0) {
 				let place = 0;
@@ -101,7 +108,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		11: function (det) {
 			// CC event, directly assign values to the register.
-			this.#chActive[det.part] = true;
+			this.#chActive[det.part] = 1;
 			// Pre interpret
 			if (det.data[0] == 0) {
 				if (det.part % 16 == 9) {
@@ -115,8 +122,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		12: function (det) {
 			// Program change
-			this.#chActive[det.part] = true;
+			this.#chActive[det.part] = 1;
 			this.#prg[det.part] = det.data;
+			this.#customName[det.part] = 0;
 		},
 		13: function (det) {
 			// Channel aftertouch
@@ -124,7 +132,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#poly.forEach(function (e) {
 				let realCh = e >> 7;
 				if (det.part == realCh) {
-					this.#velo[e] = det.data;
+					upThis.#velo[e] = det.data;
 				};
 			});
 			console.info(det);
@@ -156,10 +164,14 @@ let OctaviaDevice = class extends CustomEventSource {
 	#seMain;
 	// XG Part SysEx pool
 	#seXgPart;
-	// Metadata text events
-	#metaTexts = [];
+	// MT-32 SysEx pool
+	#seMtSysEx;
 	getActive() {
-		return this.#chActive.slice();
+		let result = this.#chActive.slice();
+		if (this.#mode == modeMap.mt32) {
+			result[0] = 0;
+		};
+		return result;
 	};
 	getCc(channel) {
 		// Return channel CC registers
@@ -197,6 +209,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			expire: this.#bitmapExpire
 		};
 	};
+	getCustomNames() {
+		return this.#customName.slice();
+	};
 	getLetter() {
 		return {
 			text: this.#letterDisp,
@@ -217,6 +232,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#mode = 0;
 		this.#subMsb = 0;
 		this.#subLsb = 0;
+		this.#metaChannel = 0;
 		this.#chActive.forEach(toZero);
 		this.#cc.forEach(toZero);
 		this.#prg.forEach(toZero);
@@ -228,6 +244,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#letterDisp = "";
 		this.#bitmapExpire = 0;
 		this.#bitmap.forEach(toZero);
+		this.#customName.forEach(toZero);
 		// Channel 10 to drum set
 		this.#cc[1152] = 127;
 		for (let ch = 0; ch < 64; ch ++) {
@@ -267,6 +284,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			return Array.from(upThis.#cc).slice(ch * 128, ch * 128 + 128);
 		};
 		this.#seMain = new BinaryMatch();
+		this.#seXgPart = new BinaryMatch();
+		this.#seMtSysEx = new BinaryMatch();
 		this.#seMain.default = console.debug;
 		// Metadata events
 		this.#metaRun[1] = function (data) {
@@ -277,6 +296,21 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		this.#metaRun[3] = function (data) {
 			this.#metaTexts.unshift(`Trk.Info: ${data}`);
+		};
+		this.#metaRun[4] = function (data) {
+			this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}Instrmnt: ${data}`);
+		};
+		this.#metaRun[5] = function (data) {
+			this.#metaTexts.unshift(`C.Lyrics: ${data}`);
+		};
+		this.#metaRun[6] = function (data) {
+			this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}C.Marker: ${data}`);
+		};
+		this.#metaRun[7] = function (data) {
+			this.#metaTexts.unshift(`CuePoint: ${data}`);
+		};
+		this.#metaRun[32] = function (data) {
+			this.#metaChannel = data[0] + 1;
 		};
 		// Standard resets
 		this.#seMain.add([126, 127, 9, 1], function () {
@@ -338,6 +372,47 @@ let OctaviaDevice = class extends CustomEventSource {
 					bi ++;
 				};
 			});
+		});
+		// Roland MT-32 SysEx
+		this.#seMain.add([65, 1], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#seMtSysEx.run(msg, 1);
+		}).add([65, 2], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#seMtSysEx.run(msg, 2);
+		}).add([65, 3], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#seMtSysEx.run(msg, 3);
+		}).add([65, 4], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#seMtSysEx.run(msg, 4);
+		}).add([65, 5], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#seMtSysEx.run(msg, 5);
+		}).add([65, 6], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#seMtSysEx.run(msg, 6);
+		}).add([65, 7], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#seMtSysEx.run(msg, 7);
+		}).add([65, 8], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#seMtSysEx.run(msg, 8);
+		}).add([65, 9], function (msg) {
+			upThis.switchMode("mt32");
+			upThis.#chActive[9] = 1;
+			upThis.#seMtSysEx.run(msg, 9);
+		});
+		this.#seMtSysEx.add([22, 18, 2, 0, 0], function (msg, channel) {
+			// MT-32 tone properties
+			let setName = "";
+			msg.slice(0, 10).forEach(function (e) {
+				if (e > 31) {
+					setName += String.fromCharCode(e);
+				};
+			});
+			upThis.#customName[channel] = setName;
+			console.debug(`MT-32 tone properties on channel ${channel + 1} (${setName}): ${msg.slice(10)}`);
 		});
 		// Roland GS SysEx
 		this.#seMain.add([65, 16, 69, 18, 16, 1, 0], function (msg) {

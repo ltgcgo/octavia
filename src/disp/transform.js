@@ -25,9 +25,6 @@ let rawToPool = function (midiJson) {
 			pointer += e1.deltaTime;
 			if (e1.type == 255 && e1?.metaType == 81) {
 				tempo = 60000000 / e1.data;
-				/*let curTime = pointer / tempo / timeDiv * 60 + pointerOffset;
-				tempo = 60000000 / e1.data;
-				pointerOffset = curTime - pointer / tempo / timeDiv * 60;*/
 				let lastChange = tempoChanges[tempoChanges.length - 1];
 				if (lastChange) {
 					tempoChanges.push(new RangeEvent(pointer, 281474976710655, [tempo, 0]));
@@ -46,14 +43,16 @@ let rawToPool = function (midiJson) {
 	// Removes changes being too frequent
 	let tTempo = 120;
 	tempoChanges.forEach(function (e, i, a) {
-		if (e.end == e.start) {
-			// Unneeded change
-			a.splice(a.indexOf(e), 1);
-		} else if (tTempo == e.data[0]) {
-			a[i - 1].end = e.end;
-			a.splice(a.indexOf(e), 1);
+		if (i > 0) {
+			if (e.end == e.start) {
+				// Unneeded change
+				a.splice(a.indexOf(e), 1);
+			} else if (tTempo == e.data[0]) {
+				a[i - 1].end = e.end;
+				a.splice(a.indexOf(e), 1);
+			};
+			tTempo = e.data[0];
 		};
-		tTempo = e.data[0];
 	});
 	// Calculates offsets
 	let cOffset = 0, cTempo = 120;
