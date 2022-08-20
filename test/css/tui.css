@@ -32,4 +32,5 @@ span.letter {
 	background: #363636;
 	color: #fff;
 	white-space: pre-wrap;
+	display: inline-block;
 };
