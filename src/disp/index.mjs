@@ -189,7 +189,7 @@ let TuiDisplay = class extends RootDisplay {
 		let line = 3;
 		// Decrease strength of max press
 		this.#chMaxPress.forEach(function (e, i, a) {
-			a[i] = e > 16 ? e - 16 : 0;
+			a[i] = e >> 1;
 		});
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
