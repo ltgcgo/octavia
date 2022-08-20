@@ -142,6 +142,9 @@ let RootDisplay = class extends CustomEventSource {
 			chContr,
 			eventCount: events.length,
 			title: this.#titleName,
+			bitmap: this.#midiState.getBitmap(),
+			letter: this.#midiState.getLetter(),
+			texts: this.#midiState.getTexts(),
 			master: this.#midiState.getMaster(),
 			mode: this.#midiState.getMode()
 		};
@@ -151,13 +154,13 @@ let RootDisplay = class extends CustomEventSource {
 		let upThis = this;
 		this.addEventListener("meta", function (raw) {
 			raw?.data?.forEach(function (e) {
-				(upThis.#metaRun[e.meta] || console.debug).call(upThis, e.data);
+				(upThis.#metaRun[e.meta] || console.debug).call(upThis, e.meta, e.data);
 			});
 		});
 		this.#midiState.addEventListener("mode", function (ev) {
 			upThis.dispatchEvent("mode", ev.data);
 		});
-		this.#metaRun[3] = function (data) {
+		this.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;
 			};
@@ -169,10 +172,11 @@ let TuiDisplay = class extends RootDisplay {
 	constructor() {
 		super();
 	};
-	render(time) {
+	render(time, ctx) {
 		let fields = new Array(24);
 		let sum = super.render(time);
 		let upThis = this;
+		let timeNow = Date.now();
 		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} Poly:${(sum.curPoly+sum.extraPoly).toString().padStart(3, "0")}/512 Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
 		fields[1] = `Mode:${modeNames[sum.mode]} Title:${sum.title || "N/A"}`;
 		fields[2] = "Ch:VoiceNme#St VEM RCDB PP PiBd Pan : Note";
@@ -189,6 +193,29 @@ let TuiDisplay = class extends RootDisplay {
 				line ++;
 			};
 		});
+		if (sum.texts.length > 0) {
+			let metaLine = 0;
+			for (let st = fields.length - 1; st >= line; st --) {
+				fields[st] = (sum.texts[metaLine] || "").padEnd(100, " ");
+				metaLine ++;
+			};
+		};
+		if (timeNow <= sum.letter.expire) {
+			let letterDisp = sum.letter.text.padEnd(32, " ");
+			let startLn = fields.length - 2;
+			for (let st = 0; st < 2; st ++) {
+				fields[st + startLn] = `${(fields[st + startLn] || "").slice(0, 82).padEnd(81)} <span class="letter"> ${letterDisp.slice(st * 16, st * 16 + 16).padEnd(" ", 16)} </span>`;
+			};
+		};
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		if (ctx && timeNow <= sum.bitmap.expire) {
+			ctx.fillStyle = "#202b38";
+			sum.bitmap.bitmap.forEach(function (e, i) {
+				if (e) {
+					ctx.fillRect((i % 16) * 12, Math.floor(i / 16) * 6, 10, 4);
+				};
+			});
+		};
 		return fields.join("<br/>");
 	};
 };

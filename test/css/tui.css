@@ -2,6 +2,10 @@ body {
 	min-width: 768px;
 }
 
+p {
+	margin: 0.2em;
+}
+
 b[class] {
 	cursor: default;
 }
@@ -10,7 +14,22 @@ b.active {
 	padding: 0 4px;
 }
 
-pre {
-	margin: 0;
+div#display {
 	font-size: 16px;
+	cursor: default;
+	white-space: pre-wrap;
 }
+@media (prefers-color-scheme: dark){
+	span.letter {
+		background: #dbdbdb !important;
+		color: #202b38 !important;
+	}
+	canvas#bmDisp {
+		filter: invert(100%);
+	}
+}
+span.letter {
+	background: #363636;
+	color: #fff;
+	white-space: pre-wrap;
+};

@@ -15,9 +15,9 @@ modeIdx.forEach(function (e, i) {
 });
 const substList = [
 	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
-	[0, 0, 3, 0, 0, 127, 0, 0, 0, 0]
+	[0, 0, 0, 0, 0, 127, 0, 0, 0, 0]
 ];
-const passedMeta = [0, 1, 2, 3, 4, 5, 6, 7, 81, 84, 88, 89];
+const passedMeta = [0, 3, 4, 5, 6, 7, 81, 84, 88, 89];
 
 let toZero = function (e, i, a) {
 	a[i] = 0;
@@ -39,6 +39,8 @@ let sysExSplitter = function (seq) {
 let OctaviaDevice = class extends CustomEventSource {
 	// Values
 	#mode = 0;
+	#bitmap = new Array(256);
+	#bitmapExpire = 0;
 	#chActive = new Array(64); // Whether the channel is in use
 	#cc = new Uint8ClampedArray(8192); // 64 channels, 128 controllers
 	#prg = new Uint8ClampedArray(64);
@@ -48,7 +50,12 @@ let OctaviaDevice = class extends CustomEventSource {
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
+	#letterDisp = "";
+	#letterExpire = 0;
 	// Exec Pools
+	// Meta event pool
+	#metaRun = [];
+	// Channel event pool
 	#runChEvent = {
 		8: function (det) {
 			// Note off, velocity should be ignored.
@@ -95,6 +102,15 @@ let OctaviaDevice = class extends CustomEventSource {
 		11: function (det) {
 			// CC event, directly assign values to the register.
 			this.#chActive[det.part] = true;
+			// Pre interpret
+			if (det.data[0] == 0) {
+				if (det.part % 16 == 9) {
+					// Drum channels
+					if (this.#mode == modeMap.gs) {
+						det.data[1] = 120;
+					};
+				};
+			};
 			this.#cc[det.part * 128 + det.data[0]] = det.data[1];
 		},
 		12: function (det) {
@@ -126,6 +142,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		255: function (det) {
 			// Meta
+			(this.#metaRun[det.meta] || console.debug).call(this, det.data);
 			let useReply = passedMeta.indexOf(det.meta) > -1;
 			if (useReply) {
 				det.reply = "meta";
@@ -135,8 +152,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}
 	};
+	// Main SysEx pool
 	#seMain;
+	// XG Part SysEx pool
 	#seXgPart;
+	// Metadata text events
+	#metaTexts = [];
 	getActive() {
 		return this.#chActive.slice();
 	};
@@ -154,6 +175,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	getProgram() {
 		return Array.from(this.#prg);
 	};
+	getTexts() {
+		return this.#metaTexts.slice();
+	};
 	getVel(channel) {
 		// Return all pressed keys with velocity in a channel
 		let notes = new Map();
@@ -166,6 +190,18 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		});
 		return notes;
+	};
+	getBitmap() {
+		return {
+			bitmap: this.#bitmap.slice(),
+			expire: this.#bitmapExpire
+		};
+	};
+	getLetter() {
+		return {
+			text: this.#letterDisp,
+			expire: this.#letterExpire
+		};
 	};
 	getMode() {
 		return modeIdx[this.#mode];
@@ -187,6 +223,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#velo.forEach(toZero);
 		this.#poly.forEach(toZero);
 		this.#masterVol = 100;
+		this.#metaTexts = [];
+		this.#letterExpire = 0;
+		this.#letterDisp = "";
+		this.#bitmapExpire = 0;
+		this.#bitmap.forEach(toZero);
 		// Channel 10 to drum set
 		this.#cc[1152] = 127;
 		for (let ch = 0; ch < 64; ch ++) {
@@ -206,11 +247,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#mode = idx;
 				this.#subMsb = substList[0][idx];
 				this.#subLsb = substList[1][idx];
+				this.dispatchEvent("mode", mode);
 			};
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
 		};
-		this.dispatchEvent("mode", mode);
 	};
 	runJson(json) {
 		// Execute transformed JSON event
@@ -222,8 +263,21 @@ let OctaviaDevice = class extends CustomEventSource {
 	constructor() {
 		super();
 		let upThis = this;
+		self.seeReg = function (ch) {
+			return Array.from(upThis.#cc).slice(ch * 128, ch * 128 + 128);
+		};
 		this.#seMain = new BinaryMatch();
 		this.#seMain.default = console.debug;
+		// Metadata events
+		this.#metaRun[1] = function (data) {
+			this.#metaTexts.unshift(data);
+		};
+		this.#metaRun[2] = function (data) {
+			this.#metaTexts.unshift(`Copyrite: ${data}`);
+		};
+		this.#metaRun[3] = function (data) {
+			this.#metaTexts.unshift(`Trk.Info: ${data}`);
+		};
 		// Standard resets
 		this.#seMain.add([126, 127, 9, 1], function () {
 			// General MIDI reset
@@ -256,6 +310,33 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Master volume
 			upThis.switchMode("gm");
 			upThis.#masterVol = (msg[1] << 7 + msg[0]) / 163.83;
+		});
+		// Yamaha XG SysEx
+		this.#seMain.add([67, 16, 76, 6, 0], function (msg) {
+			let offset = msg[0];
+			upThis.#letterDisp = " ".repeat(offset);
+			upThis.#letterExpire = Date.now() + 3200;
+			msg.slice(1).forEach(function (e) {
+				upThis.#letterDisp += String.fromCharCode(e);
+			});
+		}).add([67, 16, 76, 7, 0, 0], function (msg) {
+			let iMsg = msg;
+			upThis.#bitmapExpire = Date.now() + 3200;
+			while (iMsg.length < 48) {
+				iMsg.unshift(0);
+			};
+			iMsg.forEach(function (e, i) {
+				let ln = Math.floor(i / 16), co = i % 16;
+				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
+				pt -= co * 5;
+				if (ln == 2) {
+					threshold = 2;
+				};
+				while (bi < threshold) {
+					upThis.#bitmap[pt + bi] = (e >> (6 - bi)) & 1;
+					bi ++;
+				};
+			});
 		});
 	};
 };

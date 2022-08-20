@@ -57,11 +57,6 @@ stDemo.forEach(function (e, i, a) {
 		if (demoModes[i]?.length > 0) {
 			tuiVis.switchMode(demoModes[i]);
 		};
-		if (i == 5) {
-			self.audioDelay = 0.975;
-		} else {
-			self.audioDelay = 0;
-		};
 		stDemo.to(i);
 	});
 });
@@ -93,6 +88,10 @@ $e("#openAudio").addEventListener("click", async function () {
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 });
 
+// Get the canvas
+let dispCanvas = $e("#bmDisp"),
+dispCtx = dispCanvas.getContext("2d");
+
 // Render frames
 let audioPlayer = $e("#audioPlayer");
 let textDisplay = $e("#display");
@@ -114,6 +113,6 @@ audioPlayer.onended = function () {
 })();
 let renderThread = setInterval(function () {
 	if (!audioPlayer.paused) {
-		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0));
+		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0), dispCtx);
 	};
-}, 40);
+}, 20);
