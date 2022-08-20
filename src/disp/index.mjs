@@ -93,7 +93,7 @@ let TuiDisplay = class extends RootDisplay {
 			};
 			renderer.forEach(function (e, i) {
 				if (e) {
-					ctx.fillRect((i % 16) * 12, Math.floor(i / 16) * 6, 11, 5);
+					ctx.fillRect((i & 15) * 12, (i >> 4) * 6, 11, 5);
 				};
 			});
 			// Create a dividing line

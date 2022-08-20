@@ -82,7 +82,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 127: {
-				standard = lsb == 127 ? "MT" : "XG";
+				standard = lsb == 127 ? "MT" : (prg == 0 ? "GM" : "XG");
 				break;
 			};
 			case 120: {
