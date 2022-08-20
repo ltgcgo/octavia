@@ -170,8 +170,13 @@ let RootDisplay = class extends CustomEventSource {
 };
 
 let TuiDisplay = class extends RootDisplay {
+	#chMaxPress = new Array(64);
 	constructor() {
 		super();
+		for (let a = 0; a < this.#chMaxPress.length; a ++) {
+			this.#chMaxPress[a] = 0;
+			console.info("a");
+		};
 	};
 	render(time, ctx) {
 		let fields = new Array(24);
@@ -182,6 +187,10 @@ let TuiDisplay = class extends RootDisplay {
 		fields[1] = `Mode:${modeNames[sum.mode]} Title:${sum.title || "N/A"}`;
 		fields[2] = "Ch:VoiceNme#St VEM RCDB PP PiBd Pan : Note";
 		let line = 3;
+		// Decrease strength of max press
+		this.#chMaxPress.forEach(function (e, i, a) {
+			a[i] = e > 16 ? e - 16 : 0;
+		});
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
 				let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32]);
@@ -190,9 +199,11 @@ let TuiDisplay = class extends RootDisplay {
 					voiceName.ending = "~";
 				};
 				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[i][7] >> 1]}${map[sum.chContr[i][11] >> 1]}${waveMap[sum.chContr[i][1] >> 5]} ${map[sum.chContr[i][91] >> 1]}${map[sum.chContr[i][93] >> 1]}${map[sum.chContr[i][94] >> 1]}${map[sum.chContr[i][74] >> 1]} ${sum.chContr[i][65] > 63 ? "O" : "X"}${map[sum.chContr[i][5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[i][10])}:`;
-				sum.chKeyPr[i].forEach(function (e, i) {
-					if (e > 0) {
-						fields[line] += ` <span style="opacity:${Math.round(e / 1.27) / 100}">${noteNames[i % 12]}${noteRegion[Math.floor(i / 12)]}</span>`;
+				sum.chKeyPr[i].forEach(function (e1, i1) {
+					if (e1 > 0) {
+						let targetPressure = Math.max(upThis.#chMaxPress[i], e1);
+						upThis.#chMaxPress[i] = (targetPressure - upThis.#chMaxPress[i]) > 32 ? upThis.#chMaxPress[i] + 48 : targetPressure;
+						fields[line] += ` <span style="opacity:${Math.round(e1 / 1.27) / 100}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
 					};
 				});
 				line ++;
@@ -213,11 +224,25 @@ let TuiDisplay = class extends RootDisplay {
 			};
 		};
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-		if (ctx && timeNow <= sum.bitmap.expire) {
+		if (ctx) {
 			ctx.fillStyle = "#202020";
-			sum.bitmap.bitmap.forEach(function (e, i) {
+			let renderer;
+			if (timeNow <= sum.bitmap.expire) {
+				renderer = sum.bitmap.bitmap;
+			} else {
+				renderer = new Array(256);
+				upThis.#chMaxPress.forEach(function (e, i) {
+					if (i < 16 && sum.chContr[i]?.length > 0) {
+						let strength = Math.floor(e * sum.chContr[i][7] * sum.chContr[i][11] / 129032);
+						for (let dot = 0; dot <= strength; dot ++) {
+							renderer[i + (15 - dot) * 16] = 1;
+						};
+					};
+				});
+			};
+			renderer.forEach(function (e, i) {
 				if (e) {
-					ctx.fillRect((i % 16) * 12, Math.floor(i / 16) * 6, 10, 4);
+					ctx.fillRect((i % 16) * 12, Math.floor(i / 16) * 6, 11, 5);
 				};
 			});
 		};

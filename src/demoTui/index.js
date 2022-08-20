@@ -97,6 +97,8 @@ dispCtx = dispCanvas.getContext("2d");
 // Render frames
 let audioPlayer = $e("#audioPlayer");
 let textDisplay = $e("#display");
+dispCanvas.style.left = `${textDisplay.offsetLeft + textDisplay.offsetWidth - dispCanvas.offsetWidth}px`;
+dispCanvas.style.top = `${textDisplay.offsetTop}px`;
 audioPlayer.onended = function () {
 	tuiVis.reset();
 };
@@ -119,3 +121,8 @@ let renderThread = setInterval(function () {
 		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0), dispCtx);
 	};
 }, 20);
+
+addEventListener("resize", function () {
+	dispCanvas.style.left = `${textDisplay.offsetLeft + textDisplay.offsetWidth - dispCanvas.offsetWidth}px`;
+	dispCanvas.style.top = `${textDisplay.offsetTop}px`;
+});
