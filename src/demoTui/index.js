@@ -114,7 +114,7 @@ audioPlayer.onended = function () {
 	audioBlob = await (await fetch("./demo/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
-	textDisplay.innerHTML = `Demo A ready.${"<br/>".repeat(23)}`;
+	textDisplay.innerHTML = `${"<br/>".repeat(23)}`;
 })();
 let renderThread = setInterval(function () {
 	if (!audioPlayer.paused) {
