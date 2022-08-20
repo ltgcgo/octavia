@@ -17,7 +17,7 @@ const substList = [
 	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
 	[0, 0, 0, 0, 0, 127, 0, 0, 0, 0]
 ];
-const passedMeta = [0, 32, 81, 84, 88, 89];
+const passedMeta = [0, 3, 32, 81, 84, 88, 89];
 
 let toZero = function (e, i, a) {
 	a[i] = 0;
