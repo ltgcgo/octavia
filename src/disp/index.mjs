@@ -144,6 +144,7 @@ let RootDisplay = class extends CustomEventSource {
 			title: this.#titleName,
 			bitmap: this.#midiState.getBitmap(),
 			letter: this.#midiState.getLetter(),
+			names: this.#midiState.getCustomNames(),
 			texts: this.#midiState.getTexts(),
 			master: this.#midiState.getMaster(),
 			mode: this.#midiState.getMode()
@@ -184,7 +185,11 @@ let TuiDisplay = class extends RootDisplay {
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
 				let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32]);
-				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[i][7] >> 1]}${map[sum.chContr[i][11] >> 1]}${waveMap[sum.chContr[i][1] >> 5]} ${map[sum.chContr[i][91] >> 1]}${map[sum.chContr[i][93] >> 1]}${map[sum.chContr[i][94] >> 1]}${map[sum.chContr[i][74] >> 1]} ${sum.chContr[i][65] > 63 ? "O" : "X"}${map[sum.chContr[i][5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[i][10])}:`;
+				if (sum.names[i]) {
+					voiceName.name = sum.names[i];
+					voiceName.ending = "~";
+				};
+				fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[i][7] >> 1]}${map[sum.chContr[i][11] >> 1]}${waveMap[sum.chContr[i][1] >> 5]} ${map[sum.chContr[i][91] >> 1]}${map[sum.chContr[i][93] >> 1]}${map[sum.chContr[i][94] >> 1]}${map[sum.chContr[i][74] >> 1]} ${sum.chContr[i][65] > 63 ? "O" : "X"}${map[sum.chContr[i][5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[i][10])}:`;
 				sum.chKeyPr[i].forEach(function (e, i) {
 					if (e > 0) {
 						fields[line] += ` <span style="opacity:${Math.round(e / 1.27) / 100}">${noteNames[i % 12]}${noteRegion[Math.floor(i / 12)]}</span>`;
