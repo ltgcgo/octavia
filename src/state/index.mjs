@@ -313,6 +313,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		// Yamaha XG SysEx
 		this.#seMain.add([67, 16, 76, 6, 0], function (msg) {
+			// XG Letter Display
 			let offset = msg[0];
 			upThis.#letterDisp = " ".repeat(offset);
 			upThis.#letterExpire = Date.now() + 3200;
@@ -320,12 +321,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#letterDisp += String.fromCharCode(e);
 			});
 		}).add([67, 16, 76, 7, 0, 0], function (msg) {
-			let iMsg = msg;
+			// XG Bitmap Display
 			upThis.#bitmapExpire = Date.now() + 3200;
 			while (iMsg.length < 48) {
-				iMsg.unshift(0);
+				msg.unshift(0);
 			};
-			iMsg.forEach(function (e, i) {
+			msg.forEach(function (e, i) {
 				let ln = Math.floor(i / 16), co = i % 16;
 				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
 				pt -= co * 5;
@@ -335,6 +336,25 @@ let OctaviaDevice = class extends CustomEventSource {
 				while (bi < threshold) {
 					upThis.#bitmap[pt + bi] = (e >> (6 - bi)) & 1;
 					bi ++;
+				};
+			});
+		});
+		// Roland GS SysEx
+		this.#seMain.add([65, 16, 69, 18, 16, 1, 0], function (msg) {
+			// GS Frame Draw
+			upThis.#bitmapExpire = Date.now() + 3200;
+			msg.forEach(function (e, i) {
+				if (i < 64) {
+					let ln = Math.floor(i / 16), co = i % 16;
+					let pt = (co * 4 + ln) * 5, threshold = 5, bi = 0;
+					pt -= co * 4;
+					if (ln == 3) {
+						threshold = 1;
+					};
+					while (bi < threshold) {
+						upThis.#bitmap[pt + bi] = (e >> (4 - bi)) & 1;
+						bi ++;
+					};
 				};
 			});
 		});
