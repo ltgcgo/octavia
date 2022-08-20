@@ -357,7 +357,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([67, 16, 76, 7, 0, 0], function (msg) {
 			// XG Bitmap Display
 			upThis.#bitmapExpire = Date.now() + 3200;
-			while (iMsg.length < 48) {
+			while (msg.length < 48) {
 				msg.unshift(0);
 			};
 			msg.forEach(function (e, i) {
