@@ -40,12 +40,14 @@ stDemo.to = function (i) {
 };
 stDemo.forEach(function (e, i, a) {
 	e.addEventListener("click", async function () {
+		audioPlayer.pause();
 		if (!demoBlobs[e.title]?.midi) {
 			demoBlobs[e.title] = {};
+			textDisplay.innerHTML = `Loading demo ${e.innerText.toUpperCase()}.${"<br/>".repeat(23)}`;
 			demoBlobs[e.title].midi = await (await fetch(`./demo/${e.title}.mid`)).blob();
 			demoBlobs[e.title].wave = await (await fetch(`./demo/${e.title}.opus`)).blob();
 		};
-		audioPlayer.pause();
+		textDisplay.innerHTML = `Demo ${e.innerText.toUpperCase()} ready.${"<br/>".repeat(23)}`;
 		audioPlayer.currentTime = 0;
 		tuiVis.reset();
 		tuiVis.loadFile(demoBlobs[e.title].midi);
@@ -110,6 +112,7 @@ audioPlayer.onended = function () {
 	audioBlob = await (await fetch("./demo/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
+	textDisplay.innerHTML = `Demo A ready.${"<br/>".repeat(23)}`;
 })();
 let renderThread = setInterval(function () {
 	if (!audioPlayer.paused) {

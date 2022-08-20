@@ -209,7 +209,7 @@ let TuiDisplay = class extends RootDisplay {
 		};
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		if (ctx && timeNow <= sum.bitmap.expire) {
-			ctx.fillStyle = "#202b38";
+			ctx.fillStyle = "#202020";
 			sum.bitmap.bitmap.forEach(function (e, i) {
 				if (e) {
 					ctx.fillRect((i % 16) * 12, Math.floor(i / 16) * 6, 10, 4);
