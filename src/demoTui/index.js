@@ -8,6 +8,7 @@ import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs
 let demoBlobs = {};
 let demoModes = [];
 demoModes[2] = "x5d";
+demoModes[9] = "gm";
 
 // Standard switching
 let stSwitch = $a("b.mode");

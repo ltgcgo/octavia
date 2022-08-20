@@ -154,7 +154,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		255: function (det) {
 			// Meta
-			(this.#metaRun[det.meta] || console.debug).call(this, det.data);
+			(this.#metaRun[det.meta] || console.debug).call(this, det.data, det.track);
 			let useReply = passedMeta.indexOf(det.meta) > -1;
 			if (useReply) {
 				det.reply = "meta";
@@ -316,11 +316,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#metaRun[2] = function (data) {
 			this.#metaTexts.unshift(`Copyrite: ${data}`);
 		};
-		this.#metaRun[3] = function (data) {
-			this.#metaTexts.unshift(`Trk.Info: ${data}`);
+		this.#metaRun[3] = function (data, track) {
+			// Filter overly annoying meta events
+			if (track < 1 && this.#metaChannel < 1) {
+				this.#metaTexts.unshift(`TrkTitle: ${data}`);
+			};
 		};
-		this.#metaRun[4] = function (data) {
-			this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}Instrmnt: ${data}`);
+		this.#metaRun[4] = function (data, track) {
+			if (track < 1 && this.#metaChannel < 1) {
+				this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}Instrmnt: ${data}`);
+			};
 		};
 		this.#metaRun[5] = function (data) {
 			this.#metaTexts.unshift(`C.Lyrics: ${data}`);
