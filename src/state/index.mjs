@@ -154,7 +154,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		255: function (det) {
 			// Meta
-			(this.#metaRun[det.meta] || console.debug).call(this, det.data, det.track);
+			(this.#metaRun[det.meta] || function () {}).call(this, det.data, det.track);
 			let useReply = passedMeta.indexOf(det.meta) > -1;
 			if (useReply) {
 				det.reply = "meta";

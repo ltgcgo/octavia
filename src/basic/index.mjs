@@ -41,6 +41,13 @@ let RootDisplay = class extends CustomEventSource {
 	voices = new VoiceBank("xg", "gs", "ns5r");
 	#metaRun = [];
 	#mimicStrength = new Uint8ClampedArray(64);
+	// Used to provide tempo, tSig and bar information
+	#noteBInt = 0.5;
+	#noteTempo = 120;
+	#noteNomin = 4;
+	#noteDenom = 4;
+	#noteBarOffset = 0;
+	#noteTime = 0;
 	reset() {
 		// Dispatching the event
 		this.dispatchEvent("reset");
@@ -50,6 +57,13 @@ let RootDisplay = class extends CustomEventSource {
 		this.#midiState.init();
 		// Clear titleName
 		this.#titleName = "";
+		// Timing info reset;
+		this.#noteBInt = 0.5;
+		this.#noteTempo = 120;
+		this.#noteNomin = 4;
+		this.#noteDenom = 4;
+		this.#noteBarOffset = 0;
+		this.#noteTime = 0;
 	};
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
@@ -60,7 +74,28 @@ let RootDisplay = class extends CustomEventSource {
 	getMode() {
 		return this.#midiState.mode;
 	};
+	get noteProgress() {
+		return this.#noteTime / this.#noteBInt;
+	};
+	get noteOverall() {
+		return this.noteProgress - this.#noteBarOffset;
+	};
+	get noteBar() {
+		return Math.floor(this.noteOverall / this.#noteNomin);
+	};
+	get noteBeat() {
+		return this.noteOverall % this.#noteNomin;
+	};
+	getTimeSig() {
+		return [this.#noteNomin, this.#noteDenom];
+	};
+	getTempo() {
+		return this.#noteTempo;
+	};
 	render(time) {
+		if (time > this.#noteTime) {
+			this.#noteTime = time;
+		};
 		let events = this.#midiPool.step(time);
 		let extraPoly = 0, notes = new Set();
 		let upThis = this;
@@ -130,7 +165,11 @@ let RootDisplay = class extends CustomEventSource {
 			texts: this.#midiState.getTexts(),
 			master: this.#midiState.getMaster(),
 			mode: this.#midiState.getMode(),
-			strength: upThis.#mimicStrength.slice()
+			strength: this.#mimicStrength.slice(),
+			tSig: this.getTimeSig(),
+			tempo: this.getTempo(),
+			noteBar: this.noteBar,
+			noteBeat: Math.floor(this.noteBeat)
 		};
 	};
 	constructor() {
@@ -147,6 +186,36 @@ let RootDisplay = class extends CustomEventSource {
 		this.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;
+			};
+		};
+		this.#metaRun[81] = function (type, data) {
+			let noteProgress = upThis.noteProgress;
+			// Change tempo
+			let lastBInt = upThis.#noteBInt || 0.5;
+			upThis.#noteTempo = 60000000 / data;
+			upThis.#noteBInt = data / 1000000;
+			upThis.#noteBarOffset += noteProgress * (lastBInt / upThis.#noteBInt) - noteProgress;
+		};
+		this.#metaRun[88] = function (type, data) {
+			let noteProgress = upThis.noteProgress;
+			let curBar = upThis.noteBar;
+			let curBeat = upThis.noteBeat;
+			// Change time signature
+			let oldNomin = upThis.#noteNomin;
+			let oldDemon = upThis.#noteDenom;
+			upThis.#noteNomin = data[0];
+			upThis.#noteDenom = 1 << data[1];
+			let metroClick = 24 * (32 / data[3]) / data[2];
+			if (oldNomin != upThis.#noteNomin) {
+				if (curBeat < 1 && upThis.#noteNomin < oldNomin) {
+					//upThis.#noteBarOffset += noteProgress - curBeat - curBar * upThis.#noteNomin;
+					upThis.#noteBarOffset += noteProgress - upThis.#noteNomin * (curBar);
+					console.info(`Not new bar.`);
+				} else {
+					upThis.#noteBarOffset += noteProgress - upThis.#noteNomin * (curBar + 1);
+					console.info(`New bar.`);
+				};
+				console.info(`${upThis.#noteNomin}/${upThis.#noteDenom}`);
 			};
 		};
 	};
