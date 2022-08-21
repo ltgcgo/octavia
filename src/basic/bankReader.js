@@ -15,11 +15,16 @@ const modeIdx = [
 
 let VoiceBank = class {
 	#bankInfo = [];
-	get(msb = 0, prg = 0, lsb = 0) {
+	get(msb = 0, prg = 0, lsb = 0, mode) {
 		let bankName;
 		let args = Array.from(arguments);
+		if (mode == "gs") {
+			if ((msb == 0) && lsb != 0) {
+				args[2] = 0;
+			};
+		};
 		if (args[0] == 127 && args[2] == 0) {
-			if (args[1] > 111) {
+			if (args[1] > 111 && args[1] < 127) {
 				args[1] = 0;
 			};
 		};
@@ -39,6 +44,9 @@ let VoiceBank = class {
 					ending = "*";
 				};
 			};
+		};
+		if (mode == "gs" && ending == "^") {
+			ending = " ";
 		};
 		if (ending != " ") {
 			if (self.debugMode) {

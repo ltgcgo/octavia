@@ -47,7 +47,7 @@ let TuiDisplay = class extends RootDisplay {
 		let line = 3;
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
-				let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32]);
+				let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32], sum.mode);
 				if (sum.names[i]) {
 					voiceName.name = sum.names[i];
 					voiceName.ending = "~";

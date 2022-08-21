@@ -15,7 +15,7 @@ modeIdx.forEach(function (e, i) {
 });
 const substList = [
 	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
-	[0, 0, 0, 0, 0, 127, 0, 0, 0, 0]
+	[0, 0, 3, 0, 0, 127, 0, 0, 0, 0]
 ];
 const passedMeta = [0, 3, 32, 81, 84, 88, 89];
 
@@ -58,6 +58,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#metaChannel = 0;
 	#letterDisp = "";
 	#letterExpire = 0;
+	#modeKaraoke = false;
 	// Metadata text events
 	#metaTexts = [];
 	// Exec Pools
@@ -269,6 +270,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#bitmapExpire = 0;
 		this.#bitmap.forEach(toZero);
 		this.#customName.forEach(toZero);
+		this.#modeKaraoke = false;
 		// Channel 10 to drum set
 		this.#cc[1152] = 127;
 		for (let ch = 0; ch < 64; ch ++) {
@@ -278,7 +280,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Full brightness
 			this.#cc[ch * 128 + 74] = 127;
 			// Center panning
-			this.#cc[ch * 128 + 10] = 127;
+			this.#cc[ch * 128 + 10] = 64;
 		};
 	};
 	switchMode(mode, forced = false) {
@@ -311,7 +313,42 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seMain.default = console.debug;
 		// Metadata events
 		this.#metaRun[1] = function (data) {
-			this.#metaTexts.unshift(data);
+			// Normal text
+			switch (data.slice(0, 2)) {
+				case "@K": {
+					this.#modeKaraoke = true;
+					this.#metaTexts.unshift(`Karaoke mode active.`);
+					console.debug(`Karaoke mode active: ${data.slice(2)}`);
+					break;
+				};
+				case "@L": {
+					this.#modeKaraoke = true;
+					this.#metaTexts.unshift(`Language: ${data.slice(2)}`);
+					break;
+				};
+				case "@T": {
+					this.#modeKaraoke = true;
+					this.#metaTexts.unshift(`Ka.Title: ${data.slice(2)}`);
+					break;
+				};
+				default: {
+					if (this.#modeKaraoke) {
+						if (data[0] == "\\") {
+							// New section
+							this.#metaTexts.unshift(`----`);
+							this.#metaTexts.unshift(data.slice(1));
+						} else if (data[0] == "/") {
+							// New line
+							this.#metaTexts.unshift(data.slice(1));
+						} else {
+							// Normal append
+							this.#metaTexts[0] += data;
+						};
+					} else {
+						this.#metaTexts.unshift(data);
+					};
+				};
+			};
 		};
 		this.#metaRun[2] = function (data) {
 			this.#metaTexts.unshift(`Copyrite: ${data}`);
@@ -343,27 +380,38 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seMain.add([126, 127, 9, 1], function () {
 			// General MIDI reset
 			upThis.switchMode("gm", true);
+			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: GM");
 		}).add([126, 127, 9, 3], function () {
 			// General MIDI rev. 2 reset
 			upThis.switchMode("g2", true);
+			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: GM2");
 		}).add([65, 16, 22, 18, 127, 1], function () {
 			// MT-32 reset
 			upThis.switchMode("mt32", true);
+			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: MT-32");
 		}).add([65, 16, 66, 18, 64, 0, 127, 0, 65], function () {
 			// Roland GS reset
 			upThis.switchMode("gs", true);
+			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: GS");
+		}).add([65, 16, 66, 18, 0, 0, 127, 0, 1], function () {
+			// Roland GS reset on SC-88 Pro
+			upThis.switchMode("gs", true);
+			upThis.#modeKaraoke = false;
+			console.info("MIDI reset: GS (SC-88 Pro)");
 		}).add([66, 48, 66, 52, 0], function (msg) {
 			// KORG NS5R/NX5R System Exclusive
 			// No available data for parsing yet...
 			upThis.switchMode("ns5r", true);
+			upThis.#modeKaraoke = false;
 			console.info("KORG reset:", msg);
 		}).add([67, 16, 76, 0, 0, 126, 0], function (msg) {
 			// Yamaha XG reset
 			upThis.switchMode("xg", true);
+			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: XG");
 		});
 		// General MIDI SysEx
