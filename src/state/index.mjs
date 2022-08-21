@@ -328,7 +328,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case "@T": {
 					this.#modeKaraoke = true;
-					this.#metaTexts.unshift(`Ka.Title: ${data.slice(2)}`);
+					this.#metaTexts.unshift(`Ka.Title: ${data.slice(3)}`);
 					break;
 				};
 				default: {
@@ -395,11 +395,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([65, 16, 66, 18, 64, 0, 127, 0, 65], function () {
 			// Roland GS reset
 			upThis.switchMode("gs", true);
+			this.#cc[1152] = 120;
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: GS");
 		}).add([65, 16, 66, 18, 0, 0, 127, 0, 1], function () {
 			// Roland GS reset on SC-88 Pro
 			upThis.switchMode("gs", true);
+			this.#cc[1152] = 120;
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: GS (SC-88 Pro)");
 		}).add([66, 48, 66, 52, 0], function (msg) {
