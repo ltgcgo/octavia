@@ -2,6 +2,16 @@
 
 import {BinaryMatch} from "../../libs/lightfelt@ltgcgo/ext/binMatch.js";
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
+import {
+	xgEffType,
+	xgPartMode,
+	xgDelOffset,
+	xgNormFreq,
+	xgLfoFreq,
+	getXgRevTime,
+	getXgDelayOffset
+} from "./xgValues.js";
+import {toDecibel} from "./utils.js";
 
 const modeIdx = [
 	"?",
@@ -17,7 +27,7 @@ const substList = [
 	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
 	[0, 0, 3, 0, 0, 127, 0, 0, 0, 0]
 ];
-const passedMeta = [0, 3, 32, 81, 84, 88, 89];
+const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 
 let toZero = function (e, i, a) {
 	a[i] = 0;
@@ -116,10 +126,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#chActive[det.part] = 1;
 			// Pre interpret
 			if (det.data[0] == 0) {
-				if (det.part % 16 == 9) {
-					// Drum channels
-					if (this.#mode == modeMap.gs) {
+				//console.debug(`Channel ${det.part + 1} MSB set from ${this.#cc[128 * det.part]} to ${det.data[1]}`);
+				if (this.#mode == modeMap.gs) {
+					if (this.#cc[128 * det.part] == 120 && det.data[1] == 0) {
+						// Do not change drum channel to a melodic
 						det.data[1] = 120;
+						//console.debug(`Forced channel ${det.part + 1} to stay drums.`);
 					};
 				};
 			};
@@ -140,7 +152,6 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#velo[e] = det.data;
 				};
 			});
-			console.info(det);
 		},
 		14: function (det) {
 			// Pitch bending
@@ -167,8 +178,11 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	// Main SysEx pool
 	#seMain;
+	// GS Part SysEx pool
+	#seGsPart;
 	// XG Part SysEx pool
 	#seXgPart;
+	#seXgDrumInst;
 	// MT-32 SysEx pool
 	#seMtSysEx;
 	getActive() {
@@ -308,9 +322,22 @@ let OctaviaDevice = class extends CustomEventSource {
 		super();
 		let upThis = this;
 		this.#seMain = new BinaryMatch();
+		this.#seGsPart = new BinaryMatch();
 		this.#seXgPart = new BinaryMatch();
+		this.#seXgDrumInst = new BinaryMatch();
 		this.#seMtSysEx = new BinaryMatch();
-		this.#seMain.default = console.debug;
+		this.#seMain.default = function (sysEx) {
+			console.debug("Unparsed SysEx: ", sysEx);
+		};
+		this.#seGsPart.default = function (sysEx) {
+			console.debug("Unparsed GS Part: ", sysEx);
+		};
+		this.#seXgPart.default = function (sysEx) {
+			console.debug("Unparsed XG Part: ", sysEx);
+		};
+		this.#seXgDrumInst.default = function (sysEx) {
+			console.debug("Unparsed XG Drum Part: ", sysEx);
+		};
 		// Metadata events
 		this.#metaRun[1] = function (data) {
 			// Normal text
@@ -335,8 +362,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (this.#modeKaraoke) {
 						if (data[0] == "\\") {
 							// New section
-							this.#metaTexts.unshift(`----`);
-							this.#metaTexts.unshift(data.slice(1));
+							this.#metaTexts.unshift(`@@ ${data.slice(1)}`);
 						} else if (data[0] == "/") {
 							// New line
 							this.#metaTexts.unshift(data.slice(1));
@@ -395,13 +421,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([65, 16, 66, 18, 64, 0, 127, 0, 65], function () {
 			// Roland GS reset
 			upThis.switchMode("gs", true);
-			this.#cc[1152] = 120;
+			upThis.#cc[1152] = 120;
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: GS");
 		}).add([65, 16, 66, 18, 0, 0, 127, 0, 1], function () {
 			// Roland GS reset on SC-88 Pro
 			upThis.switchMode("gs", true);
-			this.#cc[1152] = 120;
+			upThis.#cc[1152] = 120;
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: GS (SC-88 Pro)");
 		}).add([66, 48, 66, 52, 0], function (msg) {
@@ -449,6 +475,125 @@ let OctaviaDevice = class extends CustomEventSource {
 					bi ++;
 				};
 			});
+		}).add([67, 16, 76, 2, 1, 0], function (msg) {
+			console.info(`XG reverb type: ${xgEffType[msg[0]]}${msg[1] > 0 ? " " + (msg[1] + 1) : ""}`);
+		}).add([67, 16, 76, 2, 1, 2], function (msg) {
+			console.info(`XG reverb time: ${getXgRevTime(msg)}s`);
+		}).add([67, 16, 76, 2, 1, 3], function (msg) {
+			console.info(`XG reverb diffusion: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 4], function (msg) {
+			console.info(`XG reverb initial delay: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 5], function (msg) {
+			console.info(`XG reverb high pass cutoff: ${xgNormFreq[msg[0]]}Hz`);
+		}).add([67, 16, 76, 2, 1, 6], function (msg) {
+			console.info(`XG reverb low pass cutoff: ${xgNormFreq[msg[0]]}Hz`);
+		}).add([67, 16, 76, 2, 1, 7], function (msg) {
+			console.info(`XG reverb width: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 8], function (msg) {
+			console.info(`XG reverb height: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 9], function (msg) {
+			console.info(`XG reverb depth: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 10], function (msg) {
+			console.info(`XG reverb wall type: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 11], function (msg) {
+			console.info(`XG reverb dry/wet: ${msg[0]}`);
+		}).add([67, 16, 76, 2, 1, 12], function (msg) {
+			console.info(`XG reverb return: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 13], function (msg) {
+			console.info(`XG reverb pan: ${msg[0] - 64}`);
+		}).add([67, 16, 76, 2, 1, 16], function (msg) {
+			console.info(`XG reverb delay: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 17], function (msg) {
+			console.info(`XG density: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 18], function (msg) {
+			console.info(`XG reverb balance: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 20], function (msg) {
+			console.info(`XG reverb feedback: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 32], function (msg) {
+			console.info(`XG chorus type: ${xgEffType[msg[0]]}${msg[1] > 0 ? " " + (msg[1] + 1) : ""}`);
+		}).add([67, 16, 76, 2, 1, 34], function (msg) {
+			console.info(`XG chorus LFO: ${xgLfoFreq[msg[0]]}Hz`);
+		}).add([67, 16, 76, 2, 1, 35], function (msg) {
+			//console.info(`XG chorus LFO phase: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 36], function (msg) {
+			console.info(`XG chorus feedback: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 37], function (msg) {
+			console.info(`XG chorus delay offset: ${getXgDelayOffset(msg[0])}ms`);
+		}).add([67, 16, 76, 2, 1, 39], function (msg) {
+			console.info(`XG chorus low: ${xgNormFreq[msg[0]]}Hz`);
+		}).add([67, 16, 76, 2, 1, 40], function (msg) {
+			console.info(`XG chorus low: ${msg[0] - 64}dB`);
+		}).add([67, 16, 76, 2, 1, 41], function (msg) {
+			console.info(`XG chorus high: ${xgNormFreq[msg[0]]}Hz`);
+		}).add([67, 16, 76, 2, 1, 42], function (msg) {
+			console.info(`XG chorus high: ${msg[0] - 64}dB`);
+		}).add([67, 16, 76, 2, 1, 43], function (msg) {
+			console.info(`XG chorus dry/wet: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 44], function (msg) {
+			console.info(`XG chorus return: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 45], function (msg) {
+			console.info(`XG chorus pan: ${msg[0] - 64}`);
+		}).add([67, 16, 76, 2, 1, 46], function (msg) {
+			console.info(`XG chorus to reverb: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 64], function (msg) {
+			console.info(`XG variation type: ${xgEffType[msg[0]]}${msg[1] > 0 ? " " + (msg[1] + 1) : ""}`);
+		}).add([67, 16, 76, 2, 1, 66], function (msg) {
+			console.info(`XG variation 1: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 68], function (msg) {
+			console.info(`XG variation 2: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 70], function (msg) {
+			console.info(`XG variation 3: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 72], function (msg) {
+			console.info(`XG variation 4: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 74], function (msg) {
+			console.info(`XG variation 5: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 76], function (msg) {
+			console.info(`XG variation 6: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 78], function (msg) {
+			console.info(`XG variation 7: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 80], function (msg) {
+			console.info(`XG variation 8: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 82], function (msg) {
+			console.info(`XG variation 9: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 84], function (msg) {
+			console.info(`XG variation 10: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 86], function (msg) {
+			console.info(`XG variation return: ${toDecibel(msg[0])}dB`);
+		}).add([67, 16, 76, 2, 1, 87], function (msg) {
+			console.info(`XG variation pan: ${msg[0] - 64}`);
+		}).add([67, 16, 76, 2, 1, 88], function (msg) {
+			console.info(`XG variation to reverb: ${toDecibel(msg[0])}dB`);
+		}).add([67, 16, 76, 2, 1, 89], function (msg) {
+			console.info(`XG variation to chorus: ${toDecibel(msg[0])}dB`);
+		}).add([67, 16, 76, 2, 1, 90], function (msg) {
+			console.info(`XG variation connection: ${msg[0] ? "system" : "insertion"}`);
+		}).add([67, 16, 76, 2, 1, 91], function (msg) {
+			console.info(`XG variation part: ${msg}`);
+		}).add([67, 16, 76, 2, 1, 92], function (msg) {
+			console.info(`XG variation mod wheel: ${msg[0] - 64}`);
+		}).add([67, 16, 76, 2, 1, 93], function (msg) {
+			console.info(`XG variation bend wheel: ${msg[0] - 64}`);
+		}).add([67, 16, 76, 2, 1, 94], function (msg) {
+			console.info(`XG variation channel after touch: ${msg[0] - 64}`);
+		}).add([67, 16, 76, 2, 1, 95], function (msg) {
+			console.info(`XG variation AC1: ${msg[0] - 64}`);
+		}).add([67, 16, 76, 2, 1, 96], function (msg) {
+			console.info(`XG variation AC2: ${msg[0] - 64}`);
+		}).add([67, 16, 76, 8], function (msg, channel, time) {
+			// XG part setup
+			upThis.#seXgPart.run(msg.slice(1), msg[0], time);
+		}).add([67, 16, 76, 48], function (msg) {
+			// XG drum 1 setup
+			upThis.#seXgDrumInst.run(msg.slice(1), 0, msg[0]);
+		}).add([67, 16, 76, 49], function (msg) {
+			// XG drum 2 setup
+			upThis.#seXgDrumInst.run(msg.slice(1), 1, msg[0]);
+		}).add([67, 16, 76, 50], function (msg) {
+			// XG drum 3 setup
+			upThis.#seXgDrumInst.run(msg.slice(1), 2, msg[0]);
+		}).add([67, 16, 76, 51], function (msg) {
+			// XG drum 4 setup
+			upThis.#seXgDrumInst.run(msg.slice(1), 3, msg[0]);
 		});
 		// Roland MT-32 SysEx
 		this.#seMain.add([65, 1], function (msg) {
@@ -509,6 +654,157 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			});
+		}).add([65, 16, 66, 18, 64, 16], function (msg) {
+			// GS Part channel 10
+			upThis.#seGsPart.run(msg, 9);
+		}).add([65, 16, 66, 18, 64, 17], function (msg) {
+			// GS Part channel 01
+			upThis.#seGsPart.run(msg, 0);
+		}).add([65, 16, 66, 18, 64, 18], function (msg) {
+			// GS Part channel 02
+			upThis.#seGsPart.run(msg, 1);
+		}).add([65, 16, 66, 18, 64, 19], function (msg) {
+			// GS Part channel 03
+			upThis.#seGsPart.run(msg, 2);
+		}).add([65, 16, 66, 18, 64, 20], function (msg) {
+			// GS Part channel 04
+			upThis.#seGsPart.run(msg, 3);
+		}).add([65, 16, 66, 18, 64, 21], function (msg) {
+			// GS Part channel 05
+			upThis.#seGsPart.run(msg, 4);
+		}).add([65, 16, 66, 18, 64, 22], function (msg) {
+			// GS Part channel 06
+			upThis.#seGsPart.run(msg, 5);
+		}).add([65, 16, 66, 18, 64, 23], function (msg) {
+			// GS Part channel 07
+			upThis.#seGsPart.run(msg, 6);
+		}).add([65, 16, 66, 18, 64, 24], function (msg) {
+			// GS Part channel 08
+			upThis.#seGsPart.run(msg, 7);
+		}).add([65, 16, 66, 18, 64, 25], function (msg) {
+			// GS Part channel 09
+			upThis.#seGsPart.run(msg, 8);
+		}).add([65, 16, 66, 18, 64, 26], function (msg) {
+			// GS Part channel 11
+			upThis.#seGsPart.run(msg, 10);
+		}).add([65, 16, 66, 18, 64, 27], function (msg) {
+			// GS Part channel 12
+			upThis.#seGsPart.run(msg, 11);
+		}).add([65, 16, 66, 18, 64, 28], function (msg) {
+			// GS Part channel 13
+			upThis.#seGsPart.run(msg, 12);
+		}).add([65, 16, 66, 18, 64, 29], function (msg) {
+			// GS Part channel 14
+			upThis.#seGsPart.run(msg, 13);
+		}).add([65, 16, 66, 18, 64, 30], function (msg) {
+			// GS Part channel 15
+			upThis.#seGsPart.run(msg, 14);
+		}).add([65, 16, 66, 18, 64, 31], function (msg) {
+			// GS Part channel 16
+			upThis.#seGsPart.run(msg, 15);
+		});
+		// Yamaha XG Drum Setup SysEx
+		upThis.#seXgDrumInst.add([0], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} coarse pitch bend ${msg[0] - 64}.`);
+		}).add([1], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} fine pitch bend ${msg[0] - 64}.`);
+		}).add([2], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} level ${msg[0]}.`);
+		}).add([3], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} alt group ${msg[0]}.`);
+		}).add([4], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} pan ${msg[0] - 64}.`);
+		}).add([5], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} reverb send ${toDecibel(msg[0])}dB.`);
+		}).add([6], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} chorus send ${toDecibel(msg[0])}dB.`);
+		}).add([7], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} variation send ${toDecibel(msg[0])}dB.`);
+		}).add([8], function (msg, setupNum, noteNum) {
+			console.info(`XG Drum ${setupNum} note ${noteNum} key assign as ${msg[0] > 0 ? "multi" : "single"}.`);
+		}).add([9], function (msg, setupNum, noteNum) {
+			// Note off send
+		}).add([10], function (msg, setupNum, noteNum) {
+			// Note on send
+		}).add([11], function (msg, setupNum, noteNum) {
+			// Filter cutoff (brightness)
+		}).add([12], function (msg, setupNum, noteNum) {
+			// Filter resonance
+		}).add([13], function (msg, setupNum, noteNum) {
+			// EG attack rate
+		}).add([14], function (msg, setupNum, noteNum) {
+			// EG decay 1 rate
+		}).add([15], function (msg, setupNum, noteNum) {
+			// EG decay 2 rate
+		});
+		// Yamaha XG Part Setup SysEx
+		upThis.#seXgPart.add([0], function (msg, channel) {
+			console.info(`XG Part reserve ${msg[0]} elements for channel ${channel}.`);
+		}).add([1], function (msg, channel) {
+			// Same as cc0
+			upThis.#cc[channel * 128] = msg[0];
+		}).add([2], function (msg, channel) {
+			// Same as cc32
+			upThis.#cc[channel * 128 + 32] = msg[0];
+		}).add([3], function (msg, channel) {
+			// Same as program change
+			upThis.#prg[channel] = msg[0];
+		}).add([4], function (msg, channel) {
+			// Change receive channel. May require channel redirect feature to be implemented!
+			console.info(`XG Part send CH${channel} to CH${msg[0]}. Channel redirect feature required!`);
+		}).add([5], function (msg, channel) {
+			// Mono/poly switching
+			console.info(`XG Part mono/poly set to ${msg[0] ? "mono" : "poly"} for channel ${channel}.`);
+		}).add([6], function (msg, channel) {
+			// Same note number key on assign (what does this mean???)
+			console.info(`XG Part repeat pressing set to ${["single", "multi", "inst"][msg[0]]} mode for channel ${channel}.`);
+		}).add([7], function (msg, channel) {
+			let data = msg[0];
+			upThis.#cc[128 * channel] = data > 1 ? 127 : 0;
+			console.info(`XG Part use mode "${xgPartMode[data]}" for channel ${channel}.`);
+		}).add([14], function (msg, channel) {
+			//console.info(`XG Part panning for channel ${channel}: ${msg[0]}.`);
+			upThis.#cc[128 * channel + 10] = msg[0];
+		}).add([17], function (msg, channel) {
+			console.info(`XG Part dry level ${msg[0]} for channel ${channel}.`);
+		}).add([18], function (msg, channel) {
+			console.info(`XG Part chorus send ${toDecibel(msg[0])}dB for channel ${channel}.`);
+		}).add([19], function (msg, channel) {
+			console.info(`XG Part reverb send ${toDecibel(msg[0])}dB for channel ${channel}.`);
+		}).add([20], function (msg, channel) {
+			console.info(`XG Part variation send ${toDecibel(msg[0])}dB for channel ${channel}.`);
+		}).add([21], function (msg, channel) {
+			console.info(`XG Part LFO speed ${msg[0]} for channel ${channel}.`);
+		}).add([29], function (msg, channel) {
+			console.info(`XG Part MW bend ${msg[0] - 64} semitones for channel ${channel}.`);
+		}).add([32], function (msg, channel) {
+			console.info(`XG Part MW LFO pitch depth ${msg[0]} for channel ${channel}.`);
+		}).add([33], function (msg, channel) {
+			console.info(`XG Part MW LFO filter depth ${msg[0]} for channel ${channel}.`);
+		}).add([35], function (msg, channel) {
+			console.info(`XG Part bend pitch ${msg[0] - 64} semitones for channel ${channel}.`);
+		}).add([83], function (msg, channel) {
+			// Polyphonic aftertouch (PAT) pitch control
+			//console.info(`XG Part PAT pitch ${msg[0] - 64} semitones for channel ${channel}.`);
+		}).add([103], function (msg, channel) {
+			// Same as cc65
+			upThis.#cc[channel * 128 + 65] = msg[0];
+		}).add([104], function (msg, channel) {
+			// Same as cc5
+			upThis.#cc[channel * 128 + 5] = msg[0];
+		}).add([105], function (msg, channel) {
+			console.info(`XG Part EG initial ${msg[0] - 64} for channel ${channel}.`);
+		}).add([106], function (msg, channel) {
+			console.info(`XG Part EG attack time ${msg[0] - 64} for channel ${channel}.`);
+		});
+		// Roland GS Part Setup SysEx
+		upThis.#seGsPart.add([21, 2], function (msg, channel) {
+			// Set channel to drum
+			console.info(`GS Part ${channel + 1} set to drums. ${msg}`);
+			upThis.#cc[channel * 128] = 120;
+		}).add([28, 0], function (msg, channel) {
+			// Enable random pan
+			console.info(`GS Part ${channel + 1} enabled random pan. ${msg}`);
 		});
 	};
 };
