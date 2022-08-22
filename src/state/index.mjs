@@ -329,14 +329,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seMain.default = function (sysEx) {
 			console.debug("Unparsed SysEx: ", sysEx);
 		};
-		this.#seGsPart.default = function (sysEx) {
-			console.debug("Unparsed GS Part: ", sysEx);
+		this.#seGsPart.default = function (sysEx, channel) {
+			console.debug(`Unparsed GS Part on channel ${channel}: `, sysEx);
 		};
-		this.#seXgPart.default = function (sysEx) {
-			console.debug("Unparsed XG Part: ", sysEx);
+		this.#seXgPart.default = function (sysEx, channel) {
+			console.debug(`Unparsed XG Part on channel ${channel}: `, sysEx);
 		};
-		this.#seXgDrumInst.default = function (sysEx) {
-			console.debug("Unparsed XG Drum Part: ", sysEx);
+		this.#seXgDrumInst.default = function (sysEx, channel) {
+			console.debug(`Unparsed XG Drum Part on channel ${channel}: `, sysEx);
 		};
 		// Metadata events
 		this.#metaRun[1] = function (data) {
@@ -798,9 +798,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.info(`XG Part EG attack time ${msg[0] - 64} for channel ${channel}.`);
 		});
 		// Roland GS Part Setup SysEx
-		upThis.#seGsPart.add([21, 2], function (msg, channel) {
-			// Set channel to drum
+		upThis.#seGsPart.add([21, 1], function (msg, channel) {
+			// Set channel to drums
 			console.info(`GS Part ${channel + 1} set to drums. ${msg}`);
+			upThis.#cc[channel * 128] = 120;
+		}).add([21, 2], function (msg, channel) {
+			// Set channel to drum 2
+			console.info(`GS Part ${channel + 1} set to drums 2. ${msg}`);
 			upThis.#cc[channel * 128] = 120;
 		}).add([28, 0], function (msg, channel) {
 			// Enable random pan
