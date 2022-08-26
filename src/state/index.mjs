@@ -11,6 +11,10 @@ import {
 	getXgRevTime,
 	getXgDelayOffset
 } from "./xgValues.js";
+import {
+	gsRevType,
+	gsChoType
+} from "./gsValues.js";
 import {toDecibel} from "./utils.js";
 
 const modeIdx = [
@@ -180,6 +184,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#seMain;
 	// GS Part SysEx pool
 	#seGsPart;
+	#seGsPartProp;
 	// XG Part SysEx pool
 	#seXgPart;
 	#seXgDrumInst;
@@ -323,6 +328,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		let upThis = this;
 		this.#seMain = new BinaryMatch();
 		this.#seGsPart = new BinaryMatch();
+		this.#seGsPartProp = new BinaryMatch();
 		this.#seXgPart = new BinaryMatch();
 		this.#seXgDrumInst = new BinaryMatch();
 		this.#seMtSysEx = new BinaryMatch();
@@ -424,12 +430,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[1152] = 120;
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: GS");
-		}).add([65, 16, 66, 18, 0, 0, 127, 0, 1], function () {
-			// Roland GS reset on SC-88 Pro
-			upThis.switchMode("gs", true);
-			upThis.#cc[1152] = 120;
-			upThis.#modeKaraoke = false;
-			console.info("MIDI reset: GS (SC-88 Pro)");
 		}).add([66, 48, 66, 52, 0], function (msg) {
 			// KORG NS5R/NX5R System Exclusive
 			// No available data for parsing yet...
@@ -637,8 +637,72 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.debug(`MT-32 tone properties on channel ${channel + 1} (${setName}): ${msg.slice(10)}`);
 		});
 		// Roland GS SysEx
-		this.#seMain.add([65, 16, 69, 18, 16, 1, 0], function (msg) {
-			// GS Frame Draw
+		this.#seMain.add([65, 16, 66, 18, 0, 0, 127], function (msg) {
+			// GS module mode (single port 16 channel, or double port 32 channel)
+			upThis.switchMode("gs", true);
+			console.info(`GS system set to ${msg[0] ? "dual" : "single"} mode.`);
+		}).add([65, 16, 66, 18, 64, 0, 0], function (msg) {
+			// GS Master Tune, 4 bytes but I don't know how to process
+		}).add([65, 16, 66, 18, 64, 0, 4], function (msg) {
+			// GS Master Volume, same as universal master volume but with MSB only.
+			upThis.#masterVol = msg[0] * 129 / 163.83;
+		}).add([65, 16, 66, 18, 64, 0, 5], function (msg) {
+			// GS Master Key Shift
+			console.info(`GS master key shift: ${msg[0] - 64} semitones.`);
+		}).add([65, 16, 66, 18, 64, 0, 6], function (msg) {
+			// GS Master Pan
+			console.info(`GS master pan:${msg[0] - 64}.`);
+		}).add([65, 16, 66, 18, 64, 1, 48], function (msg) {
+			// GS reverb macro
+			console.info(`GS reverb type: ${gsRevType[msg[0]]}`);
+		}).add([65, 16, 66, 18, 64, 1, 49], function (msg) {
+			// GS reverb Character
+		}).add([65, 16, 66, 18, 64, 1, 50], function (msg) {
+			// GS reverb pre-LPF
+			console.info(`GS reverb pre-LPF: ${msg[0]}`);
+		}).add([65, 16, 66, 18, 64, 1, 51], function (msg) {
+			// GS reverb level
+			console.info(`GS reverb level: ${msg[0]}`);
+		}).add([65, 16, 66, 18, 64, 1, 52], function (msg) {
+			// GS reverb time (NEED A LOOKUP TABLE FOR REAL VALUES)
+			console.info(`GS reverb time: ${msg[0]}`);
+		}).add([65, 16, 66, 18, 64, 1, 53], function (msg) {
+			// GS reverb delay feedback
+			console.info(`GS reverb delay feedback: ${msg[0]}`);
+		}).add([65, 16, 66, 18, 64, 1, 55], function (msg) {
+			// GS reverb pre-delay time
+			console.info(`GS reverb pre-delay time: ${msg[0]}`);
+		}).add([65, 16, 66, 18, 64, 1, 56], function (msg) {
+			// GS reverb chorus macro
+			console.info(`GS chorus type: ${gsChoType[msg[0]]}`);
+		}).add([65, 16, 66, 18, 64, 1, 57], function (msg) {
+			// GS reverb chorus pre-LPF (SC-88 Pro manual page 195)
+			console.info(`GS chorus pre-LPF: ${msg[0]}`);
+		}).add([65, 16, 66, 18, 64, 2, 0], function (msg) {
+			// GS EQ low freq
+			console.info(`GS EQ low: ${msg[0] ? 400 : 200}Hz`);
+		}).add([65, 16, 66, 18, 64, 2, 1], function (msg) {
+			// GS EQ low gain
+			console.info(`GS EQ low: ${msg[0] - 64}dB`);
+		}).add([65, 16, 66, 18, 64, 2, 2], function (msg) {
+			// GS EQ high freq
+			console.info(`GS EQ high: ${msg[0] ? 6000 : 3000}Hz`);
+		}).add([65, 16, 66, 18, 64, 2, 3], function (msg) {
+			// GS EQ high gain
+			console.info(`GS EQ high: ${msg[0] - 64}dB`);
+		}).add([65, 16, 66, 18, 64, 3], function (msg) {
+			// GS EFX params, have to ignore for now (SC-88 Pro manual page 196)
+		}).add([65, 16, 69, 18, 16, 0], function (msg) {
+			// GS Text Insert (same as XG Letter Display)
+			let offset = msg[0];
+			upThis.#letterDisp = " ".repeat(offset);
+			upThis.#letterExpire = Date.now() + 3200;
+			msg.pop();
+			msg.slice(1).forEach(function (e) {
+				upThis.#letterDisp += String.fromCharCode(e);
+			});
+		}).add([65, 16, 69, 18, 16, 1, 0], function (msg) {
+			// GS Frame Draw (same as XG Bitmap Display)
 			upThis.#bitmapExpire = Date.now() + 3200;
 			msg.forEach(function (e, i) {
 				if (i < 64) {
@@ -702,6 +766,54 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([65, 16, 66, 18, 64, 31], function (msg) {
 			// GS Part channel 16
 			upThis.#seGsPart.run(msg, 15);
+		}).add([65, 16, 66, 18, 64, 64], function (msg) {
+			// GS Part channel 10
+			upThis.#seGsPartProp.run(msg, 9);
+		}).add([65, 16, 66, 18, 64, 65], function (msg) {
+			// GS Part channel 01
+			upThis.#seGsPartProp.run(msg, 0);
+		}).add([65, 16, 66, 18, 64, 66], function (msg) {
+			// GS Part channel 02
+			upThis.#seGsPartProp.run(msg, 1);
+		}).add([65, 16, 66, 18, 64, 67], function (msg) {
+			// GS Part channel 03
+			upThis.#seGsPartProp.run(msg, 2);
+		}).add([65, 16, 66, 18, 64, 68], function (msg) {
+			// GS Part channel 04
+			upThis.#seGsPartProp.run(msg, 3);
+		}).add([65, 16, 66, 18, 64, 69], function (msg) {
+			// GS Part channel 05
+			upThis.#seGsPartProp.run(msg, 4);
+		}).add([65, 16, 66, 18, 64, 70], function (msg) {
+			// GS Part channel 06
+			upThis.#seGsPartProp.run(msg, 5);
+		}).add([65, 16, 66, 18, 64, 71], function (msg) {
+			// GS Part channel 07
+			upThis.#seGsPartProp.run(msg, 6);
+		}).add([65, 16, 66, 18, 64, 72], function (msg) {
+			// GS Part channel 08
+			upThis.#seGsPartProp.run(msg, 7);
+		}).add([65, 16, 66, 18, 64, 73], function (msg) {
+			// GS Part channel 09
+			upThis.#seGsPartProp.run(msg, 8);
+		}).add([65, 16, 66, 18, 64, 74], function (msg) {
+			// GS Part channel 11
+			upThis.#seGsPartProp.run(msg, 10);
+		}).add([65, 16, 66, 18, 64, 75], function (msg) {
+			// GS Part channel 12
+			upThis.#seGsPartProp.run(msg, 11);
+		}).add([65, 16, 66, 18, 64, 76], function (msg) {
+			// GS Part channel 13
+			upThis.#seGsPartProp.run(msg, 12);
+		}).add([65, 16, 66, 18, 64, 77], function (msg) {
+			// GS Part channel 14
+			upThis.#seGsPartProp.run(msg, 13);
+		}).add([65, 16, 66, 18, 64, 78], function (msg) {
+			// GS Part channel 15
+			upThis.#seGsPartProp.run(msg, 14);
+		}).add([65, 16, 66, 18, 64, 79], function (msg) {
+			// GS Part channel 16
+			upThis.#seGsPartProp.run(msg, 15);
 		});
 		// Yamaha XG Drum Setup SysEx
 		upThis.#seXgDrumInst.add([0], function (msg, setupNum, noteNum) {
@@ -798,17 +910,49 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.info(`XG Part EG attack time ${msg[0] - 64} for channel ${channel}.`);
 		});
 		// Roland GS Part Setup SysEx
-		upThis.#seGsPart.add([21, 1], function (msg, channel) {
-			// Set channel to drums
-			console.info(`GS Part ${channel + 1} set to drums. ${msg}`);
-			upThis.#cc[channel * 128] = 120;
-		}).add([21, 2], function (msg, channel) {
-			// Set channel to drum 2
-			console.info(`GS Part ${channel + 1} set to drums 2. ${msg}`);
-			upThis.#cc[channel * 128] = 120;
-		}).add([28, 0], function (msg, channel) {
-			// Enable random pan
-			console.info(`GS Part ${channel + 1} enabled random pan. ${msg}`);
+		upThis.#seGsPart.add([0], function (msg, channel) {
+			// Same as cc00 and program change
+			upThis.#cc[channel * 128] = msg[0] || 0;
+			upThis.#prg[channel] = msg[1] || 0;
+		}).add([2], function (msg, channel) {
+			// Channel redirect might be required
+			// 3 to 18 controls whether to receive messages. Not implemented for now.
+		}).add([19], function (msg, channel) {
+			// Switch to mono (0) or poly (1)
+		}).add([20], function (msg, channel) {
+			// Switch assign mode
+		}).add([21], function (msg, channel) {
+			// Channel use rhythm or not
+			// Only two drum kits can even be used at the same time
+			console.info(`GS Part ${channel + 1} type: ${["melodic", "drum 1", "drum 2"][msg[0]]}.`);
+			if (msg[0] > 0) {
+				upThis.#cc[channel * 128] = 120;
+			};
+		}).add([25], function (msg, channel) {
+			// Set volume
+			upThis.#cc[channel * 128 + 7] = msg[0];
+		}).add([28], function (msg, channel) {
+			// Set pan
+			upThis.#cc[channel * 128 + 10] = msg[0];
+		}).add([33], function (msg, channel) {
+			// Set chorus
+			upThis.#cc[channel * 128 + 93] = msg[0];
+		}).add([34], function (msg, channel) {
+			// Set reverb
+			upThis.#cc[channel * 128 + 91] = msg[0];
+		});
+		// Roland GS Part Properties
+		upThis.#seGsPartProp.add([0], function(msg, channel) {
+			upThis.#cc[channel * 128 + 32] = msg[0];
+		}).add([1], function(msg, channel) {
+			// This should be per-channel subLsb, but currently not implemented, sooooo...
+			upThis.#cc[channel * 128 + 32] = msg[0];
+		}).add([32], function(msg, channel) {
+			console.info(`GS Part ${channel + 1} turned EQ ${msg[0] ? "on" : "off"}.`);
+		}).add([33], function(msg, channel) {
+			// GS output assign
+		}).add([34], function(msg, channel) {
+			console.info(`GS Part ${channel + 1} turned EFX ${msg[0] ? "on" : "off"}.`);
 		});
 	};
 };
