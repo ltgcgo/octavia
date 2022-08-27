@@ -97,7 +97,7 @@ let VoiceBank = class {
 				standard = "GS";
 			};
 			default: {
-				if (args[0] < 40) {
+				if (args[0] < 48) {
 					standard = "GS";
 				};
 			};

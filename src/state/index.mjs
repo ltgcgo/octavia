@@ -136,6 +136,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Do not change drum channel to a melodic
 						det.data[1] = 120;
 						//console.debug(`Forced channel ${det.part + 1} to stay drums.`);
+					} else {
+						//console.debug(`Channel ${det.part + 1} switched MSB to ${det.data[1]}.`);
 					};
 				};
 			};
@@ -640,6 +642,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seMain.add([65, 16, 66, 18, 0, 0, 127], function (msg) {
 			// GS module mode (single port 16 channel, or double port 32 channel)
 			upThis.switchMode("gs", true);
+			upThis.#cc[1152] = 120;
+			upThis.#modeKaraoke = false;
 			console.info(`GS system set to ${msg[0] ? "dual" : "single"} mode.`);
 		}).add([65, 16, 66, 18, 64, 0, 0], function (msg) {
 			// GS Master Tune, 4 bytes but I don't know how to process
@@ -912,6 +916,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Roland GS Part Setup SysEx
 		upThis.#seGsPart.add([0], function (msg, channel) {
 			// Same as cc00 and program change
+			if (upThis.#cc[channel * 128] == 120) {
+				msg[0] = 120;
+			};
 			upThis.#cc[channel * 128] = msg[0] || 0;
 			upThis.#prg[channel] = msg[1] || 0;
 		}).add([2], function (msg, channel) {
