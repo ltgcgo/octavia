@@ -9,6 +9,7 @@ import {
 } from "../../libs/lightfelt@ltgcgo/ext/timedEvents.js";
 
 let rawToPool = function (midiJson) {
+	console.debug(midiJson);
 	let list = new TimedEvents();
 	let upThis = this;
 	let timeDiv = midiJson.timeDivision,
@@ -72,6 +73,7 @@ let rawToPool = function (midiJson) {
 	midiJson.track.forEach(function (e0, i0) {
 		pointer = 0,
 		pointerOffset = 0;
+		let movedTrk = i0 + 1;
 		e0.event.forEach(function (e1, i1) {
 			pointer += e1.deltaTime;
 			// Load the correct tempo changes and offsets
@@ -83,7 +85,7 @@ let rawToPool = function (midiJson) {
 			let appendObj = {
 				type: e1.type,
 				data: e1.data,
-				track: i0,
+				track: movedTrk,
 				part: 0
 			};
 			if (e1.type > 14) {
@@ -97,6 +99,7 @@ let rawToPool = function (midiJson) {
 	list.fresh();
 	//console.debug("All MIDI events: ", list);
 	// Give back the processed events
+	console.debug(`Parsed a type ${midiJson.formatType} MIDI sequence.`);
 	return list;
 };
 

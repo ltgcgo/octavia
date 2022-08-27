@@ -75,14 +75,39 @@ let OctaviaDevice = class extends CustomEventSource {
 	#modeKaraoke = false;
 	// Metadata text events
 	#metaTexts = [];
+	// GS Track Occupation
+	#gsTrkRedir = new Uint8Array(32);
+	chRedir(part, track) {
+		if (this.#mode == modeMap.gs) {
+			// Trying to support 32 channel...
+			let shift = 0;
+			//console.debug(`T${track} TC${part} AT${this.#gsTrkRedir[part]}`);
+			if (this.#gsTrkRedir[part] == 0) {
+				this.#gsTrkRedir[part] = track;
+				console.debug(`Assign track ${track} to channel ${part + 1}.`);
+			} else if (this.#gsTrkRedir[part] != track) {
+				shift = 16;
+				if (this.#gsTrkRedir[part + shift] == 0) {
+					this.#gsTrkRedir[part + shift] = track;
+					console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
+				} else if (this.#gsTrkRedir[part + shift] != track) {
+					shift = 0;
+				};
+			};
+			return part + shift;
+		} else {
+			return part;
+		};
+	};
 	// Exec Pools
 	// Meta event pool
 	#metaRun = [];
 	// Channel event pool
 	#runChEvent = {
 		8: function (det) {
+			let part = this.chRedir(det.part, det.track);
 			// Note off, velocity should be ignored.
-			let rawNote = det.part * 128 + det.data[0];
+			let rawNote = part * 128 + det.data[0];
 			let polyIdx = this.#poly.indexOf(rawNote);
 			if (polyIdx > -1) {
 				this.#poly[polyIdx] = 0;
@@ -90,10 +115,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		},
 		9: function (det) {
+			let part = this.chRedir(det.part, det.track);
 			// Note on, but should be off if velocity is 0.
 			// Set channel active
-			this.#chActive[det.part] = 1;
-			let rawNote = det.part * 128 + det.data[0];
+			this.#chActive[part] = 1;
+			let rawNote = part * 128 + det.data[0];
 			if (det.data[1] > 0) {
 				let place = 0;
 				while (this.#poly[place] > 0) {
@@ -102,8 +128,8 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (place < 256) {
 					this.#poly[place] = rawNote;
 					this.#velo[rawNote] = det.data[1];
-					if (this.#rawStrength[det.part] < det.data[1]) {
-						this.#rawStrength[det.part] = det.data[1];
+					if (this.#rawStrength[part] < det.data[1]) {
+						this.#rawStrength[part] = det.data[1];
 					};
 				} else {
 					console.error("Polyphony exceeded.");
@@ -117,22 +143,24 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		},
 		10: function (det) {
+			let part = this.chRedir(det.part, det.track);
 			// Note aftertouch.
 			// Currently it directly changes velocity to set value.
-			let rawNote = det.part * 128 + det.data[0];
+			let rawNote = part * 128 + det.data[0];
 			let polyIdx = this.#poly.indexOf(rawNote);
 			if (polyIdx > -1) {
 				this.#velo[rawNote] = data[1];
 			};
 		},
 		11: function (det) {
+			let part = this.chRedir(det.part, det.track);
 			// CC event, directly assign values to the register.
-			this.#chActive[det.part] = 1;
+			this.#chActive[part] = 1;
 			// Pre interpret
 			if (det.data[0] == 0) {
 				//console.debug(`Channel ${det.part + 1} MSB set from ${this.#cc[128 * det.part]} to ${det.data[1]}`);
 				if (this.#mode == modeMap.gs) {
-					if (this.#cc[128 * det.part] == 120 && det.data[1] == 0) {
+					if (this.#cc[128 * part] == 120 && det.data[1] == 0) {
 						// Do not change drum channel to a melodic
 						det.data[1] = 120;
 						//console.debug(`Forced channel ${det.part + 1} to stay drums.`);
@@ -141,33 +169,36 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			};
-			this.#cc[det.part * 128 + det.data[0]] = det.data[1];
+			this.#cc[part * 128 + det.data[0]] = det.data[1];
 		},
 		12: function (det) {
+			let part = this.chRedir(det.part, det.track);
 			// Program change
-			this.#chActive[det.part] = 1;
-			this.#prg[det.part] = det.data;
-			this.#customName[det.part] = 0;
+			this.#chActive[part] = 1;
+			this.#prg[part] = det.data;
+			this.#customName[part] = 0;
+			//console.debug(`T:${det.track} C:${part} P:${det.data}`);
 		},
 		13: function (det) {
 			// Channel aftertouch
 			let upThis = this;
 			this.#poly.forEach(function (e) {
 				let realCh = e >> 7;
-				if (det.part == realCh) {
+				if (part == realCh) {
 					upThis.#velo[e] = det.data;
 				};
 			});
 		},
 		14: function (det) {
+			let part = this.chRedir(det.part, det.track);
 			// Pitch bending
-			this.#pitch[det.part] = det.data[1] * 128 + det.data[0] - 8192;
+			this.#pitch[part] = det.data[1] * 128 + det.data[0] - 8192;
 		},
 		15: function (det) {
 			// SysEx
 			let upThis = this;
 			sysExSplitter(det.data).forEach(function (seq) {
-				upThis.#seMain.run(seq);
+				upThis.#seMain.run(seq, det.track);
 			});
 		},
 		255: function (det) {
@@ -292,8 +323,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#bitmap.forEach(toZero);
 		this.#customName.forEach(toZero);
 		this.#modeKaraoke = false;
+		// Reset channel redirection
+		this.#gsTrkRedir.forEach(toZero);
 		// Channel 10 to drum set
 		this.#cc[1152] = 127;
+		this.#cc[3200] = 127;
 		for (let ch = 0; ch < 64; ch ++) {
 			// Volume and expression to full
 			this.#cc[ch * 128 + 7] = 127;
@@ -430,7 +464,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Roland GS reset
 			upThis.switchMode("gs", true);
 			upThis.#cc[1152] = 120;
+			upThis.#cc[3200] = 120;
 			upThis.#modeKaraoke = false;
+			upThis.#gsTrkRedir.forEach(toZero);
 			console.info("MIDI reset: GS");
 		}).add([66, 48, 66, 52, 0], function (msg) {
 			// KORG NS5R/NX5R System Exclusive
@@ -643,6 +679,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			// GS module mode (single port 16 channel, or double port 32 channel)
 			upThis.switchMode("gs", true);
 			upThis.#cc[1152] = 120;
+			upThis.#cc[3200] = 120;
+			upThis.#gsTrkRedir.forEach(toZero);
 			upThis.#modeKaraoke = false;
 			console.info(`GS system set to ${msg[0] ? "dual" : "single"} mode.`);
 		}).add([65, 16, 66, 18, 64, 0, 0], function (msg) {
