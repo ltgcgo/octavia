@@ -31,6 +31,7 @@ const substList = [
 	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
 	[0, 0, 3, 0, 0, 127, 0, 0, 0, 0]
 ];
+const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 
 let toZero = function (e, i, a) {
@@ -84,12 +85,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			//console.debug(`T${track} TC${part} AT${this.#gsTrkRedir[part]}`);
 			if (this.#gsTrkRedir[part] == 0) {
 				this.#gsTrkRedir[part] = track;
-				console.debug(`Assign track ${track} to channel ${part + 1}.`);
+				//console.debug(`Assign track ${track} to channel ${part + 1}.`);
 			} else if (this.#gsTrkRedir[part] != track) {
 				shift = 16;
 				if (this.#gsTrkRedir[part + shift] == 0) {
 					this.#gsTrkRedir[part + shift] = track;
-					console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
+					//console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
 				} else if (this.#gsTrkRedir[part + shift] != track) {
 					shift = 0;
 				};
@@ -203,7 +204,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		255: function (det) {
 			// Meta
-			(this.#metaRun[det.meta] || function () {}).call(this, det.data, det.track);
+			(this.#metaRun[det.meta] || function (data, track, meta) {}).call(this, det.data, det.track, det.meta);
+			if (det.meta != 32) {
+				this.#metaChannel = 0;
+			};
 			let useReply = passedMeta.indexOf(det.meta) > -1;
 			if (useReply) {
 				det.reply = "meta";
@@ -345,6 +349,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#mode = idx;
 				this.#subMsb = substList[0][idx];
 				this.#subLsb = substList[1][idx];
+				for (let ch = 0; ch < 64; ch ++) {
+					if (drumMsb.indexOf(this.#cc[ch * 128]) > -1) {
+						this.#cc[ch * 128] = drumMsb[idx];
+					};
+				};
 				this.dispatchEvent("mode", mode);
 			};
 		} else {
@@ -443,6 +452,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		this.#metaRun[32] = function (data) {
 			this.#metaChannel = data[0] + 1;
+		};
+		this.#metaRun[33] = function (data, track) {
+			//console.debug(`Track ${track} requests to get assigned to output ${data}.`);
+		};
+		this.#metaRun[127] = function (data, track) {
+			console.debug(`Sequencer specific on track ${track}: `, data);
 		};
 		// Standard resets
 		this.#seMain.add([126, 127, 9, 1], function () {
