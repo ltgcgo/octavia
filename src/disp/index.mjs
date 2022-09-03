@@ -120,9 +120,26 @@ let TuiDisplay = class extends RootDisplay {
 	};
 };
 
+
+let inactivePixel = "#0002",
+activePixel = "#000a";
+let mprWidth = 8,
+mpaWidth = 7,
+mprHeight = 4,
+mpaHeight = 3;
 let MuDisplay = class extends RootDisplay {
+	#mmdb = new Uint8Array(1360);
+	#pmdb = new Uint8Array(200);
+	#bmdb = new Uint8Array(256);
+	#ch = 0;
 	constructor() {
 		super();
+	};
+	setCh(ch) {
+		this.#ch = ch;
+	};
+	getCh() {
+		return this.#ch;
 	};
 	render(time, ctx) {
 		let sum = super.render(time);
@@ -131,58 +148,94 @@ let MuDisplay = class extends RootDisplay {
 		// Fill with green
 		ctx.fillStyle = "#8f1";
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-		// Inactive color
-		let inactivePixel = "#0002",
-		activePixel = "#000a";
-		let mprWidth = 8,
-		mpaWidth = 7,
-		mprHeight = 4,
-		mpaHeight = 3;
 		// Main matrix display
-		let mmba = new Array(1360);
+		this.#mmdb.forEach((e, i, a) => {a[i] = 0});
+		// Part display
+		this.#pmdb.forEach((e, i, a) => {a[i] = 0});
 		// Strength
-		let alreadyMin = false,
-		minCh = 0, maxCh = 15;
+		let alreadyMin = false;
+		let minCh = 0, maxCh = 0;
 		sum.chInUse.forEach(function (e, i) {
-			if (!alreadyMin) {
-				alreadyMin = true;
-				minCh = i;
+			if (e) {
+				if (!alreadyMin) {
+					alreadyMin = true;
+					minCh = i;
+				};
+				maxCh = i;
 			};
-			maxCh = i;
 		});
 		let part = minCh >> 4;
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
+		if (this.#ch > maxCh) {
+			this.#ch = minCh;
+		};
+		if (this.#ch < minCh) {
+			this.#ch = maxCh;
+		};
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
-		for (let ch = minCh; ch <= maxCh; ch ++) {
-			let curStrn = sum.strength[ch];
-			if (rendMode) {
-				curStrn = curStrn >> 5;
-			} else {
-				curStrn = curStrn >> 4;
-			};
-			if (rendMode == 0 || rendMode == 1) {
-				// 16 channel
-				for (let pI = 0; pI <= curStrn; pI ++) {
-					let pR = 5 + rendPos * 3 + (15 - pI) * 85 - Math.floor(rendPos / 2);
-					mmba[pR] = true;
-					mmba[pR + 1] = true;
+		if (timeNow <= sum.letter.expire && sum.letter.text.trim().length > 0) {
+			// Show display text
+		} else {
+			// Show strength metre
+			for (let ch = minCh; ch <= maxCh; ch ++) {
+				let curStrn = sum.strength[ch];
+				if (rendMode) {
+					curStrn = curStrn >> 5;
+				} else {
+					curStrn = curStrn >> 4;
 				};
-			} else {
-				// 64 channel
+				if (rendMode == 0 || rendMode == 1) {
+					// 16 channel
+					for (let pI = 0; pI <= curStrn; pI ++) {
+						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - Math.floor(rendPos / 2);
+						upThis.#mmdb[pR] = 1;
+						upThis.#mmdb[pR + 1] = 1;
+					};
+				} else {
+					// 64 channel
+				};
+				rendPos ++;
 			};
-			rendPos ++;
 		};
-		// Commit to screen
+		// Commit to main screen
 		for (let i = 0; i < 1360; i ++) {
 			let pX = i % 85;
 			let pY = Math.floor(i / 85);
 			ctx.fillStyle = inactivePixel;
-			if (mmba[i]) {
+			if (upThis.#mmdb[i]) {
 				ctx.fillStyle = activePixel;
 			};
 			ctx.fillRect(16 + (pX + Math.floor(pX / 5)) * mprWidth, 12 + pY * mprWidth, mpaWidth, mpaWidth);
+		};
+		// Commit to part screen
+		for (let i = 0; i < 200; i ++) {
+			let pX = i % 25;
+			let pY = Math.floor(i / 25);
+			ctx.fillStyle = inactivePixel;
+			if (upThis.#pmdb[i]) {
+				ctx.fillStyle = activePixel;
+			};
+			ctx.fillRect(16 + (pX + Math.floor(pX / 5)) * mprWidth, 180 + pY * mprWidth, mpaWidth, mpaWidth);
+		};
+		// Commit to bitmap screen
+		let useBm;
+		if (timeNow <= sum.bitmap.expire) {
+			// Use provided bitmap
+			useBm = sum.bitmap.bitmap;
+		} else {
+			// Use stored pic
+			useBm = this.#bmdb;
+		};
+		for (let i = 0; i < 256; i ++) {
+			let pX = i % 16;
+			let pY = Math.floor(i / 16);
+			ctx.fillStyle = inactivePixel;
+			if (useBm[i]) {
+				ctx.fillStyle = activePixel;
+			};
+			ctx.fillRect(264 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
 		};
 	};
 };

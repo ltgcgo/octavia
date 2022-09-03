@@ -66,6 +66,7 @@ stDemo.forEach(function (e, i, a) {
 // Start the visualizers
 self.muVis = new MuDisplay();
 muVis.addEventListener("reset", function (e) {
+	console.info("Processor reset.");
 });
 
 // Listen to mode switches
@@ -93,6 +94,14 @@ $e("#openAudio").addEventListener("click", async function () {
 // Get canvas
 let dispCanv = $e("#ymhMu");
 let dispCtx = dispCanv.getContext("2d");
+dispCanv.addEventListener("wheel", function (ev) {
+	let ch = muVis.getCh();
+	if (ev.deltaY > 0) {
+		muVis.setCh(ch + 1);
+	} else {
+		muVis.setCh(ch - 1);
+	};
+});
 
 // Render frames
 let audioPlayer = $e("#audioPlayer");
