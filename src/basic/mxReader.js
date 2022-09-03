@@ -38,7 +38,37 @@ let MxFont40 = class {
 		return arr;
 	};
 };
+let MxBm256 = class {
+	#bm = {};
+	async loadFile(fileSrc) {
+		let upThis = this;
+		(await (await fetch(fileSrc)).text()).split("\n").forEach(function (e, i) {
+			if (i > 0 && e?.length > 0) {
+				let arr = e.split("\t");
+				let bm = new Uint8Array(256);
+				Array.from(arr[1]).forEach(function (e, i) {
+					let iOff = i * 4,
+					proxy = parseInt(e, 16), dp = 3;
+					while (proxy > 0 || dp >= 0) {
+						let pos = iOff + dp;
+						bm[pos] = proxy & 1;
+						proxy = proxy >> 1;
+						dp --;
+					};
+				});
+				upThis.#bm[arr[0]] = bm;
+			};
+		});
+	};
+	constructor(fileSrc) {
+		this.loadFile(fileSrc);
+	};
+	getBm(rscNme) {
+		return this.#bm[rscNme]?.slice();
+	};
+};
 
 export {
-	MxFont40
+	MxFont40,
+	MxBm256
 };

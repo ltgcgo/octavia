@@ -2,7 +2,7 @@
 
 import {textedPanning, textedPitchBend} from "./texted.js";
 import {RootDisplay} from "../basic/index.mjs";
-import {MxFont40} from "../basic/mxFontReader.js";
+import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
 const noteNames = [
 	"C~", "C#", "D~", "Eb",
@@ -180,10 +180,22 @@ let MuDisplay = class extends RootDisplay {
 	#mmdb = new Uint8Array(1360);
 	#pmdb = new Uint8Array(200);
 	#bmdb = new Uint8Array(256);
+	#bmst = 0; // 0 for voice bank, 2 for standard, 1 for sysex
+	#bmex = 0; // state expiration
 	#ch = 0;
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
+	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	constructor() {
 		super();
+		let upThis = this;
+		this.addEventListener("mode", function (ev) {
+			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
+				upThis.#bmdb[i] = e;
+			});
+			upThis.#bmst = 2;
+			upThis.#bmex = Date.now() + 1600;
+		});
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -307,6 +319,7 @@ let MuDisplay = class extends RootDisplay {
 			};
 			ctx.fillRect(16 + (pX + Math.floor(pX / 5)) * mprWidth, 180 + pY * mprWidth, mpaWidth, mpaWidth);
 		};
+		// Fetch voice bitmap
 		// Commit to bitmap screen
 		let useBm;
 		if (timeNow <= sum.bitmap.expire) {
@@ -314,7 +327,18 @@ let MuDisplay = class extends RootDisplay {
 			useBm = sum.bitmap.bitmap;
 		} else {
 			// Use stored pic
-			useBm = this.#bmdb;
+			useBm = this.#bmdb.slice();
+			if (timeNow >= this.#bmex) {
+				this.#bmst = 0;
+				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name) || this.sysBm.getBm("f_play");
+			} else {
+				if (this.#bmst == 2) {
+					useBm.forEach((e, i, a) => {
+						let crit = Math.floor((this.#bmex - timeNow) / 400);
+						a[i] = crit % 2 == e;
+					});
+				};
+			};
 		};
 		for (let i = 0; i < 256; i ++) {
 			let pX = i % 16;
