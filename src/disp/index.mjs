@@ -260,11 +260,11 @@ let MuDisplay = class extends RootDisplay {
 			};
 			// Render fonts
 			if (rendMode < 2) {
-				let voiceName = upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name.padEnd(8, " ");
+				let voiceName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name).slice(0, 8).padEnd(8, " ");
 				let bnkInfo = `\u0080${(sum.chContr[chOff + 32] || sum.chContr[chOff + 0] || 0).toString().padStart(3, "0")}\u0081${((sum.chProgr[this.#ch] || 0) + 1).toString().padStart(3, "0")}`;
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
-					let regionX = 0, regionY = 1;
+					let regionX = 0, regionY = 0;
 					if (rendMode) {
 						regionX = i0 * 5 + 5;
 					} else {
