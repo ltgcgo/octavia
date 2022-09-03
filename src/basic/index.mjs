@@ -141,13 +141,12 @@ let RootDisplay = class extends CustomEventSource {
 		let chInUse = this.#midiState.getActive(); // Active channels
 		let chKeyPr = []; // Pressed keys and their pressure
 		let chPitch = upThis.#midiState.getPitch(); // All pitch bends
-		let chContr = []; // All CC values
+		let chContr = upThis.#midiState.getCcAll(); // All CC values
 		let chProgr = upThis.#midiState.getProgram();
 		let curPoly = 0;
 		chInUse.forEach(function (e, i) {
 			if (e) {
 				chKeyPr[i] = upThis.#midiState.getVel(i);
-				chContr[i] = upThis.#midiState.getCc(i);
 				curPoly += chKeyPr[i].size;
 			};
 		});
