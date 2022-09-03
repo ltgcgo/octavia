@@ -49,12 +49,13 @@ let TuiDisplay = class extends RootDisplay {
 			if (e) {
 				maxCh = i;
 				if (line < fields.length - 5 && i >= (self.minCh || 0)) {
-					let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32], sum.mode);
+					let voiceName = upThis.voices.get(sum.chContr[chOffset + 0], sum.chProgr[i], sum.chContr[chOffset + 32], sum.mode);
 					if (sum.names[i]) {
 						voiceName.name = sum.names[i];
 						voiceName.ending = "~";
 					};
-					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[i][7] >> 1]}${map[sum.chContr[i][11] >> 1]}${waveMap[sum.chContr[i][1] >> 5]} ${map[sum.chContr[i][91] >> 1]}${map[sum.chContr[i][93] >> 1]}${map[sum.chContr[i][94] >> 1]}${map[sum.chContr[i][74] >> 1]} ${sum.chContr[i][65] > 63 ? "O" : "X"}${map[sum.chContr[i][5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[i][10])}:`;
+					let chOffset = i * 128;
+					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[chOffset + 7] >> 1]}${map[sum.chContr[chOffset + 11] >> 1]}${waveMap[sum.chContr[chOffset + 1] >> 5]} ${map[sum.chContr[chOffset + 91] >> 1]}${map[sum.chContr[chOffset + 93] >> 1]}${map[sum.chContr[chOffset + 94] >> 1]}${map[sum.chContr[chOffset + 74] >> 1]} ${sum.chContr[chOffset + 65] > 63 ? "O" : "X"}${map[sum.chContr[chOffset + 5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + 10])}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
 						if (e1 > 0) {
 							fields[line] += ` <span style="opacity:${Math.round(e1 / 1.27) / 100}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
@@ -127,6 +128,43 @@ let mprWidth = 8,
 mpaWidth = 7,
 mprHeight = 4,
 mpaHeight = 3;
+
+let normParamPaint = function (sup, offsetX, ctx) {
+	let paramW = mprWidth * 4 - 1;
+	let paramH = mprHeight * 1.5 - 1;
+	let sub = sup >> 4;
+	for (let i = 0; i < 8; i ++) {
+		if (sub >= 0) {
+			ctx.fillStyle = activePixel;
+		} else {
+			ctx.fillStyle = inactivePixel;
+		};
+		sub --;
+		let invI = 7 - i;
+		ctx.fillRect(offsetX, 181 + invI * mprWidth, paramW, paramH);
+	};
+};
+let startA = Math.PI * 255 / 180;
+let endA = Math.PI * 285 / 180;
+let efxParamPaint = function (sup, offsetX, ctx) {
+	let paramW = mprWidth * 4 - 1;
+	let paramH = mprHeight * 1.5 - 1;
+	let sub = sup >> 4;
+	for (let i = 0; i < 8; i ++) {
+		if (sub >= 0) {
+			ctx.strokeStyle = activePixel;
+		} else {
+			ctx.strokeStyle = inactivePixel;
+		};
+		sub --;
+		let invI = 7 - i;
+		ctx.beginPath();
+		ctx.arc(offsetX, 256, (9 - invI) * mprWidth, startA, endA);
+		ctx.lineWidth = paramH;
+		ctx.stroke();
+	};
+};
+
 let MuDisplay = class extends RootDisplay {
 	#mmdb = new Uint8Array(1360);
 	#pmdb = new Uint8Array(200);
@@ -235,8 +273,16 @@ let MuDisplay = class extends RootDisplay {
 			if (useBm[i]) {
 				ctx.fillStyle = activePixel;
 			};
-			ctx.fillRect(264 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
+			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
 		};
+		// Show volume
+		let chOff = this.#ch * 128;
+		normParamPaint(sum.chContr[chOff + 7], 404, ctx);
+		normParamPaint(sum.chContr[chOff + 11], 452, ctx);
+		normParamPaint(sum.chContr[chOff + 74], 500, ctx);
+		efxParamPaint(sum.chContr[chOff + 91], 660, ctx);
+		efxParamPaint(sum.chContr[chOff + 93], 708, ctx);
+		efxParamPaint(sum.chContr[chOff + 70], 756, ctx);
 	};
 };
 
