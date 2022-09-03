@@ -2,6 +2,7 @@
 
 import {textedPanning, textedPitchBend} from "./texted.js";
 import {RootDisplay} from "../basic/index.mjs";
+import {MxFont40} from "../basic/mxFontReader.js";
 
 const noteNames = [
 	"C~", "C#", "D~", "Eb",
@@ -180,6 +181,7 @@ let MuDisplay = class extends RootDisplay {
 	#pmdb = new Uint8Array(200);
 	#bmdb = new Uint8Array(256);
 	#ch = 0;
+	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	constructor() {
 		super();
 	};
@@ -193,6 +195,7 @@ let MuDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
+		let chOff = this.#ch * 128;
 		// Fill with green
 		ctx.fillStyle = "#af2";
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -225,6 +228,15 @@ let MuDisplay = class extends RootDisplay {
 		rendPos = 0;
 		if (timeNow <= sum.letter.expire && sum.letter.text.trim().length > 0) {
 			// Show display text
+			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
+				let regionX = i0 * 5 + 5,
+				regionY = Math.floor(i0 / 16) * 8;
+				e0.forEach(function (e1, i1) {
+					let partX = i1 % 5,
+					partY = Math.floor(i1 / 5);
+					upThis.#mmdb[(regionY + partY) * 85 + regionX + partX] = e1;
+				});
+			});
 		} else {
 			// Show strength metre
 			for (let ch = minCh; ch <= maxCh; ch ++) {
@@ -246,6 +258,26 @@ let MuDisplay = class extends RootDisplay {
 				};
 				rendPos ++;
 			};
+			// Render fonts
+			if (rendMode < 2) {
+				let voiceName = upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name.padEnd(8, " ");
+				let bnkInfo = `\u0080${(sum.chContr[chOff + 32] || sum.chContr[chOff + 0] || 0).toString().padStart(3, "0")}\u0081${((sum.chProgr[this.#ch] || 0) + 1).toString().padStart(3, "0")}`;
+				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
+				bitSeq.forEach(function (e0, i0) {
+					let regionX = 0, regionY = 1;
+					if (rendMode) {
+						regionX = i0 * 5 + 5;
+					} else {
+						regionX = (i0 % 8) * 5 + 45,
+						regionY = 8 - Math.floor(i0 / 8) * 8;
+					};
+					e0.forEach(function (e1, i1) {
+						let partX = i1 % 5,
+						partY = Math.floor(i1 / 5);
+						upThis.#mmdb[(regionY + partY) * 85 + regionX + partX] = e1;
+					});
+				});
+			};
 		};
 		// Commit to main screen
 		for (let i = 0; i < 1360; i ++) {
@@ -257,6 +289,14 @@ let MuDisplay = class extends RootDisplay {
 			};
 			ctx.fillRect(16 + (pX + Math.floor(pX / 5)) * mprWidth, 12 + pY * mprWidth, mpaWidth, mpaWidth);
 		};
+		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
+			let regionX = i0 * 5;
+			e0.forEach(function (e1, i1) {
+				let partX = i1 % 5,
+				partY = Math.floor(i1 / 5);
+				upThis.#pmdb[partY * 25 + regionX + partX] = e1;
+			});
+		});
 		// Commit to part screen
 		for (let i = 0; i < 200; i ++) {
 			let pX = i % 25;
@@ -286,7 +326,6 @@ let MuDisplay = class extends RootDisplay {
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
 		};
 		// Show param
-		let chOff = this.#ch * 128;
 		normParamPaint(sum.chContr[chOff + 7], 404, ctx); // vol
 		normParamPaint(sum.chContr[chOff + 11], 452, ctx); // exp
 		normParamPaint(sum.chContr[chOff + 74], 500, ctx); // bri
@@ -295,7 +334,7 @@ let MuDisplay = class extends RootDisplay {
 		efxParamPaint(sum.chContr[chOff + 70], 756, ctx); // var
 		// Show pan
 		ctx.beginPath();
-		ctx.arc(588, 222, 40, 2.6179938779914944, 6.8067840827778845);
+		ctx.arc(588, 216, 34, 2.356194490192345, 7.068583470577034);
 		ctx.lineWidth = 2;
 		ctx.strokeStyle = "#000f";
 		ctx.stroke();
@@ -315,15 +354,15 @@ let MuDisplay = class extends RootDisplay {
 			if (pan == i) {
 				ctx.strokeStyle = activePixel;
 			};
-			ctx.radial(588, 222, [
-				2.6179938779914944,
-				3.3161255787892263,
-				4.014257279586958,
+			ctx.radial(588, 216, [
+				2.356194490192345,
+				3.141592653589793,
+				3.9269908169872414,
 				4.71238898038469,
-				5.410520681182422,
-				6.108652381980153,
-				6.8067840827778845
-			][i], 10, 30)
+				5.497787143782138,
+				6.283185307179586,
+				7.068583470577034
+			][i], 8, 26)
 		};
 	};
 };
