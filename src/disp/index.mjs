@@ -165,6 +165,16 @@ let efxParamPaint = function (sup, offsetX, ctx) {
 	};
 };
 
+CanvasRenderingContext2D.prototype.radial = function (centreX, centreY, angle, startR, stopR) {
+	let adjAngle = angle - 1.5707963267948966;
+	let vSin = Math.sin(adjAngle);
+	let vCos = Math.cos(adjAngle);
+	this.beginPath();
+	this.moveTo(centreX + (vSin * startR), centreY + (vCos * startR));
+	this.lineTo(centreX + (vSin * stopR), centreY + (vCos * stopR));
+	this.stroke();
+};
+
 let MuDisplay = class extends RootDisplay {
 	#mmdb = new Uint8Array(1360);
 	#pmdb = new Uint8Array(200);
@@ -275,14 +285,46 @@ let MuDisplay = class extends RootDisplay {
 			};
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
 		};
-		// Show volume
+		// Show param
 		let chOff = this.#ch * 128;
-		normParamPaint(sum.chContr[chOff + 7], 404, ctx);
-		normParamPaint(sum.chContr[chOff + 11], 452, ctx);
-		normParamPaint(sum.chContr[chOff + 74], 500, ctx);
-		efxParamPaint(sum.chContr[chOff + 91], 660, ctx);
-		efxParamPaint(sum.chContr[chOff + 93], 708, ctx);
-		efxParamPaint(sum.chContr[chOff + 70], 756, ctx);
+		normParamPaint(sum.chContr[chOff + 7], 404, ctx); // vol
+		normParamPaint(sum.chContr[chOff + 11], 452, ctx); // exp
+		normParamPaint(sum.chContr[chOff + 74], 500, ctx); // bri
+		efxParamPaint(sum.chContr[chOff + 91], 660, ctx); // rev
+		efxParamPaint(sum.chContr[chOff + 93], 708, ctx); // cho
+		efxParamPaint(sum.chContr[chOff + 70], 756, ctx); // var
+		// Show pan
+		ctx.beginPath();
+		ctx.arc(588, 222, 40, 2.6179938779914944, 6.8067840827778845);
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = "#000f";
+		ctx.stroke();
+		let pan = sum.chContr[chOff + 10];
+		if (pan == 0) {
+			pan = 0;
+		} else if (pan == 64) {
+			pan = 3;
+		} else if (pan < 64) {
+			pan = Math.floor(pan / 21);
+		} else {
+			pan = 4 + Math.floor((pan - 65) / 21);
+		};
+		ctx.lineWidth = mprHeight;
+		for (let i = 0; i < 7; i ++) {
+			ctx.strokeStyle = inactivePixel;
+			if (pan == i) {
+				ctx.strokeStyle = activePixel;
+			};
+			ctx.radial(588, 222, [
+				2.6179938779914944,
+				3.3161255787892263,
+				4.014257279586958,
+				4.71238898038469,
+				5.410520681182422,
+				6.108652381980153,
+				6.8067840827778845
+			][i], 10, 30)
+		};
 	};
 };
 
