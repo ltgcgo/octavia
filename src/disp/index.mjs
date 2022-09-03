@@ -184,7 +184,7 @@ let MuDisplay = class extends RootDisplay {
 		let upThis = this;
 		let timeNow = Date.now();
 		// Fill with green
-		ctx.fillStyle = "#8f1";
+		ctx.fillStyle = "#af2";
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		// Main matrix display
 		this.#mmdb.forEach((e, i, a) => {a[i] = 0});

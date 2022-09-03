@@ -20,7 +20,7 @@ div#display {
 	white-space: pre-wrap;
 }
 canvas#ymhMu {
-	background: #8f1;
+	background: #af2;
 };
 
 @media (prefers-color-scheme: dark){
