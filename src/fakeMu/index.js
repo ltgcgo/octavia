@@ -102,6 +102,14 @@ dispCanv.addEventListener("wheel", function (ev) {
 		muVis.setCh(ch - 1);
 	};
 });
+dispCanv.addEventListener("mousedown", function (ev) {
+	let ch = muVis.getCh();
+	if (ev.offsetX < 64) {
+		muVis.setCh(ch - 1);
+	} else if (ev.offsetX >= 776) {
+		muVis.setCh(ch + 1);
+	};
+});
 
 // Render frames
 let audioPlayer = $e("#audioPlayer");
