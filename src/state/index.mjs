@@ -244,7 +244,13 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getCcAll() {
 		// Return all CC registers
-		return this.#cc.slice();
+		let arr = this.#cc.slice();
+		for (let c = 0; c < 64; c ++) {
+			let chOff = c * 128;
+			arr[chOff] = arr[chOff] || this.#subMsb;
+			arr[chOff + 32] = arr[chOff + 32] || this.#subLsb;
+		};
+		return arr;
 	};
 	getPitch() {
 		return this.#pitch.slice();
