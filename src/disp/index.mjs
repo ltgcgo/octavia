@@ -229,7 +229,7 @@ let MuDisplay = class extends RootDisplay {
 		if (timeNow <= sum.letter.expire && sum.letter.text.trim().length > 0) {
 			// Show display text
 			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
-				let regionX = i0 * 5 + 5,
+				let regionX = (i0 % 16) * 5 + 5,
 				regionY = Math.floor(i0 / 16) * 8;
 				e0.forEach(function (e1, i1) {
 					let partX = i1 % 5,
