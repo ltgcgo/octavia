@@ -2,15 +2,13 @@
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
-import {TuiDisplay} from "../disp/index.mjs";
+import {MuDisplay} from "../disp/index.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 
 let demoBlobs = {};
 let demoModes = [];
 demoModes[2] = "x5d";
 demoModes[9] = "gm";
-
-self.minCh = 0;
 
 // Standard switching
 let stSwitch = $a("b.mode");
@@ -26,7 +24,7 @@ stSwitch.to = function (i) {
 stSwitch.forEach(function (e, i, a) {
 	stSwitchMode[i] = e.title;
 	e.addEventListener("click", function () {
-		tuiVis.switchMode(e.title, true);
+		muVis.switchMode(e.title, true);
 		stSwitch.to(i);
 	});
 });
@@ -46,34 +44,32 @@ stDemo.forEach(function (e, i, a) {
 		audioPlayer.pause();
 		if (!demoBlobs[e.title]?.midi) {
 			demoBlobs[e.title] = {};
-			textDisplay.innerHTML = `Loading demo ${e.innerText.toUpperCase()}.${"<br/>".repeat(23)}`;
+			audioPlayer.src = "about:blank";
 			demoBlobs[e.title].midi = await (await fetch(`./demo/${e.title}.mid`)).blob();
 			demoBlobs[e.title].wave = await (await fetch(`./demo/${e.title}.opus`)).blob();
 		};
-		textDisplay.innerHTML = `Demo ${e.innerText.toUpperCase()} ready.${"<br/>".repeat(23)}`;
 		audioPlayer.currentTime = 0;
-		tuiVis.reset();
-		tuiVis.loadFile(demoBlobs[e.title].midi);
+		muVis.reset();
+		muVis.loadFile(demoBlobs[e.title].midi);
 		if (audioBlob) {
 			URL.revokeObjectURL(audioBlob);
 		};
 		audioBlob = demoBlobs[e.title].wave;
 		audioPlayer.src = URL.createObjectURL(audioBlob);
 		if (demoModes[i]?.length > 0) {
-			tuiVis.switchMode(demoModes[i]);
+			muVis.switchMode(demoModes[i]);
 		};
 		stDemo.to(i);
 	});
 });
 
 // Start the visualizers
-self.tuiVis = new TuiDisplay();
-tuiVis.addEventListener("reset", function (e) {
-	minCh = 0;
+self.muVis = new MuDisplay();
+muVis.addEventListener("reset", function (e) {
 });
 
 // Listen to mode switches
-tuiVis.addEventListener("mode", function (ev) {
+muVis.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
 });
 
@@ -83,8 +79,8 @@ const propsMid = JSON.parse('{"extensions":[".mid",".MID"],"startIn":"music","id
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	stDemo.to(-1);
-	tuiVis.reset();
-	tuiVis.loadFile(await fileOpen(propsMid));
+	muVis.reset();
+	muVis.loadFile(await fileOpen(propsMid));
 });
 $e("#openAudio").addEventListener("click", async function () {
 	if (audioBlob) {
@@ -94,64 +90,30 @@ $e("#openAudio").addEventListener("click", async function () {
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 });
 
-// Get the canvas
-let dispCanvas = $e("#bmDisp"),
-dispCtx = dispCanvas.getContext("2d");
-dispCanvas.addEventListener("wheel", function (ev) {
-	if (ev.deltaY > 0) {
-		if (minCh < 48) {
-			minCh ++;
-		};
-	} else {
-		if (minCh > 0) {
-			minCh --;
-		};
-	};
-});
-dispCanvas.addEventListener("mouseup", function (ev) {
-	if (ev.layerY > 47) {
-		if (minCh < 48) {
-			minCh = (1 + (minCh >> 4)) << 4;
-		};
-	} else if (ev.layerY < 47) {
-		if (minCh > 0) {
-			if (minCh < 16) {
-				minCh = 16;
-			};
-			minCh = ((minCh >> 4) - 1) << 4;
-		};
-	};
-});
+// Get canvas
+let dispCanv = $e("#ymhMu");
+let dispCtx = dispCanv.getContext("2d");
 
 // Render frames
 let audioPlayer = $e("#audioPlayer");
-let textDisplay = $e("#display");
-dispCanvas.style.left = `${textDisplay.offsetLeft + textDisplay.offsetWidth - dispCanvas.offsetWidth}px`;
-dispCanvas.style.top = `${textDisplay.offsetTop}px`;
 audioPlayer.onended = function () {
-	tuiVis.reset();
+	muVis.reset();
 };
 (async function () {
-	tuiVis.reset();
+	muVis.reset();
 	let midiBlob = await (await fetch("./demo/KANDI8.mid")).blob();
 	demoBlobs.KANDI8 = {};
 	demoBlobs.KANDI8.midi = midiBlob;
-	tuiVis.loadFile(midiBlob);
+	muVis.loadFile(midiBlob);
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
 	audioBlob = await (await fetch("./demo/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
-	textDisplay.innerHTML = `${"<br/>".repeat(23)}`;
 })();
 let renderThread = setInterval(function () {
 	if (!audioPlayer.paused) {
-		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0), dispCtx);
+		muVis.render(audioPlayer.currentTime - (self.audioDelay || 0), dispCtx);
 	};
 }, 20);
-
-addEventListener("resize", function () {
-	dispCanvas.style.left = `${textDisplay.offsetLeft + textDisplay.offsetWidth - dispCanvas.offsetWidth}px`;
-	dispCanvas.style.top = `${textDisplay.offsetTop}px`;
-});

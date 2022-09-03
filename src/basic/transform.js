@@ -9,7 +9,7 @@ import {
 } from "../../libs/lightfelt@ltgcgo/ext/timedEvents.js";
 
 let rawToPool = function (midiJson) {
-	console.debug(midiJson);
+	//console.debug(midiJson);
 	let list = new TimedEvents();
 	let upThis = this;
 	let timeDiv = midiJson.timeDivision,

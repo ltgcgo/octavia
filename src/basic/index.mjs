@@ -13,8 +13,8 @@ let toZero = function (e, i, a) {
 MidiParser.customInterpreter = function (type, file, rawMtLen) {
 	let u8Data = [];
 	let metaLength = rawMtLen == false ? file.readIntVLV() : rawMtLen;
-	if (type == 127) {
-		metaLength = 1;
+	if (type == 0 || type == 127) {
+		//metaLength = 1;
 	};
 	for (let c = 0; c < metaLength; c ++) {
 		let byte = file.readInt(1);
@@ -26,11 +26,13 @@ MidiParser.customInterpreter = function (type, file, rawMtLen) {
 		} else if (byte > 127) {
 			// Start of a new event
 			console.debug(`Early termination: ${u8Data}`);
+			u8Data.pop();
 			file.backOne();
 			file.backOne();
 			return u8Data;
 		};
 	};
+	//console.debug(`Constructed data: `, u8Data);
 	return u8Data;
 };
 
@@ -133,7 +135,7 @@ let RootDisplay = class extends CustomEventSource {
 		// Mimic strength variation
 		this.#midiState.getStrength().forEach(function (e, i) {
 			let diff = e - upThis.#mimicStrength[i];
-			upThis.#mimicStrength[i] += Math.ceil(diff - (diff / 2));
+			upThis.#mimicStrength[i] += Math.ceil(diff - (diff * 0.5));
 		});
 		// Pass params to actual displays
 		let chInUse = this.#midiState.getActive(); // Active channels

@@ -48,7 +48,7 @@ let TuiDisplay = class extends RootDisplay {
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
 				maxCh = i;
-				if (line < fields.length) {
+				if (line < fields.length - 5 && i >= (self.minCh || 0)) {
 					let voiceName = upThis.voices.get(sum.chContr[i][0], sum.chProgr[i], sum.chContr[i][32], sum.mode);
 					if (sum.names[i]) {
 						voiceName.name = sum.names[i];
@@ -120,6 +120,74 @@ let TuiDisplay = class extends RootDisplay {
 	};
 };
 
+let MuDisplay = class extends RootDisplay {
+	constructor() {
+		super();
+	};
+	render(time, ctx) {
+		let sum = super.render(time);
+		let upThis = this;
+		let timeNow = Date.now();
+		// Fill with green
+		ctx.fillStyle = "#8f1";
+		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		// Inactive color
+		let inactivePixel = "#0002",
+		activePixel = "#000a";
+		let mprWidth = 8,
+		mpaWidth = 7,
+		mprHeight = 4,
+		mpaHeight = 3;
+		// Main matrix display
+		let mmba = new Array(1360);
+		// Strength
+		let alreadyMin = false,
+		minCh = 0, maxCh = 15;
+		sum.chInUse.forEach(function (e, i) {
+			if (!alreadyMin) {
+				alreadyMin = true;
+				minCh = i;
+			};
+			maxCh = i;
+		});
+		let part = minCh >> 4;
+		minCh = part << 4;
+		maxCh = ((maxCh >> 4) << 4) + 15;
+		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
+		rendPos = 0;
+		for (let ch = minCh; ch <= maxCh; ch ++) {
+			let curStrn = sum.strength[ch];
+			if (rendMode) {
+				curStrn = curStrn >> 5;
+			} else {
+				curStrn = curStrn >> 4;
+			};
+			if (rendMode == 0 || rendMode == 1) {
+				// 16 channel
+				for (let pI = 0; pI <= curStrn; pI ++) {
+					let pR = 5 + rendPos * 3 + (15 - pI) * 85 - Math.floor(rendPos / 2);
+					mmba[pR] = true;
+					mmba[pR + 1] = true;
+				};
+			} else {
+				// 64 channel
+			};
+			rendPos ++;
+		};
+		// Commit to screen
+		for (let i = 0; i < 1360; i ++) {
+			let pX = i % 85;
+			let pY = Math.floor(i / 85);
+			ctx.fillStyle = inactivePixel;
+			if (mmba[i]) {
+				ctx.fillStyle = activePixel;
+			};
+			ctx.fillRect(16 + (pX + Math.floor(pX / 5)) * mprWidth, 12 + pY * mprWidth, mpaWidth, mpaWidth);
+		};
+	};
+};
+
 export {
-	TuiDisplay
+	TuiDisplay,
+	MuDisplay
 };
