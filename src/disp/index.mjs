@@ -226,7 +226,7 @@ let MuDisplay = class extends RootDisplay {
 		};
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
-		if (timeNow <= sum.letter.expire && sum.letter.text.trim().length > 0) {
+		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
 			// Show display text
 			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
 				let regionX = (i0 % 16) * 5 + 5,
