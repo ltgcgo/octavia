@@ -49,13 +49,13 @@ let TuiDisplay = class extends RootDisplay {
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
 				maxCh = i;
+				let chOffset = i * 128;
 				if (line < fields.length - 5 && i >= (self.minCh || 0)) {
 					let voiceName = upThis.voices.get(sum.chContr[chOffset + 0], sum.chProgr[i], sum.chContr[chOffset + 32], sum.mode);
 					if (sum.names[i]) {
 						voiceName.name = sum.names[i];
 						voiceName.ending = "~";
 					};
-					let chOffset = i * 128;
 					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[chOffset + 7] >> 1]}${map[sum.chContr[chOffset + 11] >> 1]}${waveMap[sum.chContr[chOffset + 1] >> 5]} ${map[sum.chContr[chOffset + 91] >> 1]}${map[sum.chContr[chOffset + 93] >> 1]}${map[sum.chContr[chOffset + 94] >> 1]}${map[sum.chContr[chOffset + 74] >> 1]} ${sum.chContr[chOffset + 65] > 63 ? "O" : "X"}${map[sum.chContr[chOffset + 5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + 10])}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
 						if (e1 > 0) {
@@ -90,7 +90,7 @@ let TuiDisplay = class extends RootDisplay {
 				renderer = new Array(256);
 				if (maxCh < 16) {
 					sum.strength.forEach(function (e, i) {
-						if (i < 16 && sum.chContr[i]?.length > 0) {
+						if (i < 16) {
 							let strength = e >> 4;
 							for (let dot = 0; dot <= strength; dot ++) {
 								renderer[i + (15 - dot) * 16] = 1;
@@ -99,7 +99,7 @@ let TuiDisplay = class extends RootDisplay {
 					});
 				} else {
 					sum.strength.forEach(function (e, i) {
-						if (i < 32 && sum.chContr[i]?.length > 0) {
+						if (i < 32) {
 							let strength = e >> 5;
 							for (let dot = 0; dot <= strength; dot ++) {
 								renderer[i + ((i > 15 ? 6 : 15) - dot) * 16] = 1;
@@ -330,7 +330,7 @@ let MuDisplay = class extends RootDisplay {
 			useBm = this.#bmdb.slice();
 			if (timeNow >= this.#bmex) {
 				this.#bmst = 0;
-				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name) || this.sysBm.getBm("f_play");
+				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name) || this.sysBm.getBm("no_abm");
 			} else {
 				if (this.#bmst == 2) {
 					useBm.forEach((e, i, a) => {
