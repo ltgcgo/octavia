@@ -130,7 +130,7 @@ audioPlayer.onended = function () {
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 })();
 let renderThread = setInterval(function () {
-	if (!audioPlayer.paused) {
+	if (/*!audioPlayer.paused*/true) {
 		muVis.render(audioPlayer.currentTime - (self.audioDelay || 0), dispCtx);
 	};
 }, 20);

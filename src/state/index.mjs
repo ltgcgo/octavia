@@ -77,21 +77,25 @@ let OctaviaDevice = class extends CustomEventSource {
 	// Metadata text events
 	#metaTexts = [];
 	// GS Track Occupation
-	#gsTrkRedir = new Uint8Array(32);
+	#trkRedir = new Uint8Array(32);
+	#trkAsReq = new Uint8Array(128); // Track Assignment request
 	chRedir(part, track) {
-		if (this.#mode == modeMap.gs) {
+		/*if (this.#trkAsReq[track]) {
+			// Allow part assigning via meta
+			return (this.#trkAsReq[track] - 1) * 16 + part;
+		} else */if (this.#mode == modeMap.gs) {
 			// Trying to support 32 channel...
 			let shift = 0;
-			//console.debug(`T${track} TC${part} AT${this.#gsTrkRedir[part]}`);
-			if (this.#gsTrkRedir[part] == 0) {
-				this.#gsTrkRedir[part] = track;
+			//console.debug(`T${track} TC${part} AT${this.#trkRedir[part]}`);
+			if (this.#trkRedir[part] == 0) {
+				this.#trkRedir[part] = track;
 				//console.debug(`Assign track ${track} to channel ${part + 1}.`);
-			} else if (this.#gsTrkRedir[part] != track) {
+			} else if (this.#trkRedir[part] != track) {
 				shift = 16;
-				if (this.#gsTrkRedir[part + shift] == 0) {
-					this.#gsTrkRedir[part + shift] = track;
+				if (this.#trkRedir[part + shift] == 0) {
+					this.#trkRedir[part + shift] = track;
 					//console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
-				} else if (this.#gsTrkRedir[part + shift] != track) {
+				} else if (this.#trkRedir[part + shift] != track) {
 					shift = 0;
 				};
 			};
@@ -103,6 +107,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	// Exec Pools
 	// Meta event pool
 	#metaRun = [];
+	// Sequencer specific meta pool
+	#metaSeq;
 	// Channel event pool
 	#runChEvent = {
 		8: function (det) {
@@ -338,7 +344,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#customName.forEach(toZero);
 		this.#modeKaraoke = false;
 		// Reset channel redirection
-		this.#gsTrkRedir.forEach(toZero);
+		this.#trkRedir.forEach(toZero);
+		this.#trkAsReq.forEach(toZero);
 		// Channel 10 to drum set
 		this.#cc[1152] = 127;
 		this.#cc[3200] = 127;
@@ -381,12 +388,16 @@ let OctaviaDevice = class extends CustomEventSource {
 	constructor() {
 		super();
 		let upThis = this;
+		this.#metaSeq = new BinaryMatch();
 		this.#seMain = new BinaryMatch();
 		this.#seGsPart = new BinaryMatch();
 		this.#seGsPartProp = new BinaryMatch();
 		this.#seXgPart = new BinaryMatch();
 		this.#seXgDrumInst = new BinaryMatch();
 		this.#seMtSysEx = new BinaryMatch();
+		this.#metaSeq.default = function (seq, track) {
+			console.debug("Unparsed meta 127 sequence on track ${track}: ", seq);
+		};
 		this.#seMain.default = function (sysEx) {
 			console.debug("Unparsed SysEx: ", sysEx);
 		};
@@ -465,9 +476,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		this.#metaRun[33] = function (data, track) {
 			//console.debug(`Track ${track} requests to get assigned to output ${data}.`);
+			upThis.#trkAsReq[track] = data + 1;
 		};
 		this.#metaRun[127] = function (data, track) {
-			console.debug(`Sequencer specific on track ${track}: `, data);
+			//console.debug(`Sequencer specific on track ${track}: `, data);
+			upThis.#metaSeq.run(data, track);
 		};
 		// Standard resets
 		this.#seMain.add([126, 127, 9, 1], function () {
@@ -491,7 +504,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[1152] = 120;
 			upThis.#cc[3200] = 120;
 			upThis.#modeKaraoke = false;
-			upThis.#gsTrkRedir.forEach(toZero);
+			upThis.#trkRedir.forEach(toZero);
 			console.info("MIDI reset: GS");
 		}).add([66, 48, 66, 52, 0], function (msg) {
 			// KORG NS5R/NX5R System Exclusive
@@ -504,6 +517,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("xg", true);
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: XG");
+		});
+		// Sequencer specific meta event
+		this.#metaSeq.add([67, 0, 1], function (msg, track) {
+			//console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
+			upThis.#trkAsReq[track] = msg[0] + 1;
 		});
 		// General MIDI SysEx
 		this.#seMain.add([127, 127, 4, 1], function (msg) {
@@ -642,9 +660,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.info(`XG variation AC1: ${msg[0] - 64}`);
 		}).add([67, 16, 76, 2, 1, 96], function (msg) {
 			console.info(`XG variation AC2: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 8], function (msg, channel, time) {
+		}).add([67, 16, 76, 8], function (msg, track) {
 			// XG part setup
-			upThis.#seXgPart.run(msg.slice(1), msg[0], time);
+			//console.info(`XG Part Setup trk ${track} ch ${msg[0]} real ${upThis.chRedir(msg[0], track)}.`);
+			upThis.#seXgPart.run(msg.slice(1), upThis.chRedir(msg[0], track));
 		}).add([67, 16, 76, 48], function (msg) {
 			// XG drum 1 setup
 			upThis.#seXgDrumInst.run(msg.slice(1), 0, msg[0]);
@@ -705,7 +724,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("gs", true);
 			upThis.#cc[1152] = 120;
 			upThis.#cc[3200] = 120;
-			upThis.#gsTrkRedir.forEach(toZero);
+			upThis.#trkRedir.forEach(toZero);
 			upThis.#modeKaraoke = false;
 			console.info(`GS system set to ${msg[0] ? "dual" : "single"} mode.`);
 		}).add([65, 16, 66, 18, 64, 0, 0], function (msg) {
