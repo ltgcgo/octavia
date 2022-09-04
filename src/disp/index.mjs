@@ -301,6 +301,30 @@ let MuDisplay = class extends RootDisplay {
 			};
 			ctx.fillRect(16 + (pX + Math.floor(pX / 5)) * mprWidth, 12 + pY * mprWidth, mpaWidth, mpaWidth);
 		};
+		ctx.font = '12px "Arial Web"';
+		// Display parts under strengths
+		{
+			let initOff = 65;
+			for (let c = -2; c < 32; c ++) {
+				ctx.fillStyle = activePixel;
+				if (c == this.#ch) {
+					ctx.fillStyle = inactivePixel;
+				};
+				let filler = "";
+				if (c >= 0) {
+					filler = (c + 1).toString().padStart(2, "0");
+				} else {
+					filler = `A${c + 3}`;
+				};
+				ctx.fillText(filler, initOff + 24 * c, 150);
+			};
+		};
+		// Show bottom caps
+		ctx.fillStyle = activePixel;
+		ctx.fillText("CHANNEL     SEC     PART", 45, 254);
+		ctx.fillText("VOL       EXP       BRT                                    REV       CHO       VAR       KEY", 409, 254);
+		ctx.fillText("PAN", 577, 254);
+		// Show parts
 		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
 			e0.forEach(function (e1, i1) {
