@@ -301,10 +301,11 @@ let MuDisplay = class extends RootDisplay {
 			};
 			ctx.fillRect(16 + (pX + Math.floor(pX / 5)) * mprWidth, 12 + pY * mprWidth, mpaWidth, mpaWidth);
 		};
+		ctx.textAlign = "center";
 		ctx.font = '12px "Arial Web"';
 		// Display parts under strengths
 		{
-			let initOff = 65;
+			let initOff = 71.5;
 			for (let c = -2; c < 32; c ++) {
 				ctx.fillStyle = activePixel;
 				if (c == this.#ch) {
@@ -321,9 +322,15 @@ let MuDisplay = class extends RootDisplay {
 		};
 		// Show bottom caps
 		ctx.fillStyle = activePixel;
-		ctx.fillText("CHANNEL     SEC     PART", 45, 254);
-		ctx.fillText("VOL       EXP       BRT                                    REV       CHO       VAR       KEY", 409, 254);
-		ctx.fillText("PAN", 577, 254);
+		ctx.fillText("CHANNEL     SEC     PART", 118, 254);
+		ctx.fillText("VOL", 420, 254);
+		ctx.fillText("EXP", 468, 254);
+		ctx.fillText("BRT", 516, 254);
+		ctx.fillText("REV", 660, 254);
+		ctx.fillText("CHO", 708.5, 254);
+		ctx.fillText("VAR", 757, 254);
+		ctx.fillText("KEY", 807, 254);
+		ctx.fillText("PAN", 589, 254);
 		// Show parts
 		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
@@ -354,7 +361,7 @@ let MuDisplay = class extends RootDisplay {
 			useBm = this.#bmdb.slice();
 			if (timeNow >= this.#bmex) {
 				this.#bmst = 0;
-				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name) || this.sysBm.getBm("no_abm");
+				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name) || this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], 0, sum.mode).name) || this.sysBm.getBm("no_abm");
 			} else {
 				if (this.#bmst == 2) {
 					useBm.forEach((e, i, a) => {
@@ -410,7 +417,7 @@ let MuDisplay = class extends RootDisplay {
 				5.497787143782138,
 				6.283185307179586,
 				7.068583470577034
-			][i], 10, 30)
+			][i], 8, 26)
 		};
 	};
 };

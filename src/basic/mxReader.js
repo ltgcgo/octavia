@@ -45,18 +45,22 @@ let MxBm256 = class {
 		(await (await fetch(fileSrc)).text()).split("\n").forEach(function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
-				let bm = new Uint8Array(256);
-				Array.from(arr[1]).forEach(function (e, i) {
-					let iOff = i * 4,
-					proxy = parseInt(e, 16), dp = 3;
-					while (proxy > 0 || dp >= 0) {
-						let pos = iOff + dp;
-						bm[pos] = proxy & 1;
-						proxy = proxy >> 1;
-						dp --;
-					};
-				});
-				upThis.#bm[arr[0]] = bm;
+				if (arr[1][0] != "@") {
+					let bm = new Uint8Array(256);
+					Array.from(arr[1]).forEach(function (e, i) {
+						let iOff = i * 4,
+						proxy = parseInt(e, 16), dp = 3;
+						while (proxy > 0 || dp >= 0) {
+							let pos = iOff + dp;
+							bm[pos] = proxy & 1;
+							proxy = proxy >> 1;
+							dp --;
+						};
+					});
+					upThis.#bm[arr[0]] = bm;
+				} else {
+					upThis.#bm[arr[0]] = upThis.#bm[arr[1].slice(1)];
+				};
 			};
 		});
 	};
