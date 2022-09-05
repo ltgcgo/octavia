@@ -29,7 +29,7 @@ modeIdx.forEach(function (e, i) {
 });
 const substList = [
 	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
-	[0, 0, 3, 0, 0, 127, 0, 0, 0, 0]
+	[0, 0, 1, 0, 0, 127, 0, 0, 0, 0]
 ];
 const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
@@ -726,6 +726,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[3200] = 120;
 			upThis.#trkRedir.forEach(toZero);
 			upThis.#modeKaraoke = false;
+			upThis.#subLsb = 3;
 			console.info(`GS system set to ${msg[0] ? "dual" : "single"} mode.`);
 		}).add([65, 16, 66, 18, 64, 0, 0], function (msg) {
 			// GS Master Tune, 4 bytes but I don't know how to process
