@@ -321,7 +321,14 @@ let MuDisplay = class extends RootDisplay {
 			};
 		};
 		// Show bottom caps
+		let showLsb = !sum.chContr[chOff + 0];
+		ctx.fillStyle = showLsb ? inactivePixel : activePixel;
+		ctx.fillText("MSB", 515, 164);
+		ctx.fillStyle = showLsb ? activePixel : inactivePixel;
+		ctx.fillText("LSB", 564, 164);
 		ctx.fillStyle = activePixel;
+		ctx.fillText("BANK", 467.5, 164);
+		ctx.fillText("PRG#", 660, 164);
 		ctx.fillText("CHANNEL     SEC     PART", 118, 254);
 		ctx.fillText("VOL", 420, 254);
 		ctx.fillText("EXP", 468, 254);

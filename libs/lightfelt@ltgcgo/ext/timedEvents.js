@@ -64,7 +64,7 @@ let TimedEvents = class extends Array {
 				};
 			};
 		} else {
-			let rawArray = this.getRange(time - 1, time);
+			let rawArray = this.getRange(this.#index == -1 ? 0 : (time - 1), time);
 			let upThis = this;
 			rawArray.forEach(function (e) {
 				if (e.index > upThis.#index) {

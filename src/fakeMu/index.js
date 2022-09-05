@@ -115,6 +115,7 @@ dispCanv.addEventListener("mousedown", function (ev) {
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
 	muVis.reset();
+	audioPlayer.currentTime = 0;
 };
 (async function () {
 	muVis.reset();
@@ -129,8 +130,13 @@ audioPlayer.onended = function () {
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 })();
+let lastTime = 0;
 let renderThread = setInterval(function () {
 	if (/*!audioPlayer.paused*/true) {
-		muVis.render(audioPlayer.currentTime - (self.audioDelay || 0), dispCtx);
+		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
+		if (curTime < lastTime) {
+		};
+		muVis.render(curTime, dispCtx);
+		lastTime = curTime;
 	};
 }, 20);
