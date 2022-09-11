@@ -189,6 +189,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		13: function (det) {
 			// Channel aftertouch
 			let upThis = this;
+			let part = this.chRedir(det.part, det.track);
 			this.#poly.forEach(function (e) {
 				let realCh = e >> 7;
 				if (part == realCh) {
