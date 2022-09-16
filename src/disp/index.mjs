@@ -125,8 +125,8 @@ let TuiDisplay = class extends RootDisplay {
 
 //let inactivePixel = "#000a",
 //activePixel = "#0002";
-let inactivePixel = "#00000009",
-activePixel = "#00000060";
+let inactivePixel = "#0000000b",
+activePixel = "#00000068";
 let mprWidth = 8,
 mpaWidth = 7,
 mprHeight = 4,
@@ -212,7 +212,7 @@ let MuDisplay = class extends RootDisplay {
 		let chOff = this.#ch * 128;
 		// Fill with green
 		//ctx.fillStyle = "#af2";
-		ctx.fillStyle = "#aaff2244";
+		ctx.fillStyle = "#aaff2264";
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		// Main matrix display
 		this.#mmdb.forEach((e, i, a) => {a[i] = 0});
