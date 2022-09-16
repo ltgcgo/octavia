@@ -80,23 +80,28 @@ let OctaviaDevice = class extends CustomEventSource {
 	#trkRedir = new Uint8Array(32);
 	#trkAsReq = new Uint8Array(128); // Track Assignment request
 	chRedir(part, track) {
-		/*if (this.#trkAsReq[track]) {
-			// Allow part assigning via meta
-			return (this.#trkAsReq[track] - 1) * 16 + part;
-		} else */if (this.#mode == modeMap.gs) {
+		if (this.#mode == modeMap.gs) {
+			if (this.#trkAsReq[track]) {
+				// Allow part assigning via meta
+				return (this.#trkAsReq[track] - 1) * 16 + part;
+			};
 			// Trying to support 32 channel...
 			let shift = 0;
 			//console.debug(`T${track} TC${part} AT${this.#trkRedir[part]}`);
 			if (this.#trkRedir[part] == 0) {
 				this.#trkRedir[part] = track;
-				//console.debug(`Assign track ${track} to channel ${part + 1}.`);
+				console.debug(`Assign track ${track} to channel ${part + 1}.`);
 			} else if (this.#trkRedir[part] != track) {
 				shift = 16;
 				if (this.#trkRedir[part + shift] == 0) {
 					this.#trkRedir[part + shift] = track;
-					//console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
+					console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
 				} else if (this.#trkRedir[part + shift] != track) {
-					shift = 0;
+					shift = 32;
+					if (this.#trkRedir[part + shift] == 0) {
+						this.#trkRedir[part + shift] = track;
+						console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
+					};
 				};
 			};
 			return part + shift;
@@ -167,9 +172,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (det.data[0] == 0) {
 				//console.debug(`Channel ${det.part + 1} MSB set from ${this.#cc[128 * det.part]} to ${det.data[1]}`);
 				if (this.#mode == modeMap.gs) {
-					if (this.#cc[128 * part] == 120 && det.data[1] == 0) {
+					if (det.data[1] == 0) {
 						// Do not change drum channel to a melodic
-						det.data[1] = 120;
+						if (this.#cc[128 * part] > 119) {
+							det.data[1] = this.#cc[128 * part];
+						};
 						//console.debug(`Forced channel ${det.part + 1} to stay drums.`);
 					} else {
 						//console.debug(`Channel ${det.part + 1} switched MSB to ${det.data[1]}.`);
@@ -350,6 +357,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Channel 10 to drum set
 		this.#cc[1152] = 127;
 		this.#cc[3200] = 127;
+		this.#cc[5248] = 127;
+		this.#cc[7296] = 127;
 		for (let ch = 0; ch < 64; ch ++) {
 			// Volume and expression to full
 			this.#cc[ch * 128 + 7] = 127;
@@ -476,7 +485,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#metaChannel = data[0] + 1;
 		};
 		this.#metaRun[33] = function (data, track) {
-			//console.debug(`Track ${track} requests to get assigned to output ${data}.`);
+			console.debug(`Track ${track} requests to get assigned to output ${data}.`);
 			upThis.#trkAsReq[track] = data + 1;
 		};
 		this.#metaRun[127] = function (data, track) {
@@ -504,6 +513,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("gs", true);
 			upThis.#cc[1152] = 120;
 			upThis.#cc[3200] = 120;
+			upThis.#cc[5248] = 120;
+			upThis.#cc[7296] = 120;
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.forEach(toZero);
 			console.info("MIDI reset: GS");
@@ -725,6 +736,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("gs", true);
 			upThis.#cc[1152] = 120;
 			upThis.#cc[3200] = 120;
+			upThis.#cc[5248] = 120;
+			upThis.#cc[7296] = 120;
 			upThis.#trkRedir.forEach(toZero);
 			upThis.#modeKaraoke = false;
 			upThis.#subLsb = 3;
@@ -806,102 +819,102 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			});
-		}).add([65, 16, 66, 18, 64, 16], function (msg) {
+		}).add([65, 16, 66, 18, 64, 16], function (msg, track) {
 			// GS Part channel 10
-			upThis.#seGsPart.run(msg, 9);
-		}).add([65, 16, 66, 18, 64, 17], function (msg) {
+			upThis.#seGsPart.run(msg, upThis.chRedir(9, track));
+		}).add([65, 16, 66, 18, 64, 17], function (msg, track) {
 			// GS Part channel 01
 			upThis.#seGsPart.run(msg, 0);
-		}).add([65, 16, 66, 18, 64, 18], function (msg) {
+		}).add([65, 16, 66, 18, 64, 18], function (msg, track) {
 			// GS Part channel 02
 			upThis.#seGsPart.run(msg, 1);
-		}).add([65, 16, 66, 18, 64, 19], function (msg) {
+		}).add([65, 16, 66, 18, 64, 19], function (msg, track) {
 			// GS Part channel 03
 			upThis.#seGsPart.run(msg, 2);
-		}).add([65, 16, 66, 18, 64, 20], function (msg) {
+		}).add([65, 16, 66, 18, 64, 20], function (msg, track) {
 			// GS Part channel 04
 			upThis.#seGsPart.run(msg, 3);
-		}).add([65, 16, 66, 18, 64, 21], function (msg) {
+		}).add([65, 16, 66, 18, 64, 21], function (msg, track) {
 			// GS Part channel 05
 			upThis.#seGsPart.run(msg, 4);
-		}).add([65, 16, 66, 18, 64, 22], function (msg) {
+		}).add([65, 16, 66, 18, 64, 22], function (msg, track) {
 			// GS Part channel 06
 			upThis.#seGsPart.run(msg, 5);
-		}).add([65, 16, 66, 18, 64, 23], function (msg) {
+		}).add([65, 16, 66, 18, 64, 23], function (msg, track) {
 			// GS Part channel 07
 			upThis.#seGsPart.run(msg, 6);
-		}).add([65, 16, 66, 18, 64, 24], function (msg) {
+		}).add([65, 16, 66, 18, 64, 24], function (msg, track) {
 			// GS Part channel 08
 			upThis.#seGsPart.run(msg, 7);
-		}).add([65, 16, 66, 18, 64, 25], function (msg) {
+		}).add([65, 16, 66, 18, 64, 25], function (msg, track) {
 			// GS Part channel 09
 			upThis.#seGsPart.run(msg, 8);
-		}).add([65, 16, 66, 18, 64, 26], function (msg) {
+		}).add([65, 16, 66, 18, 64, 26], function (msg, track) {
 			// GS Part channel 11
 			upThis.#seGsPart.run(msg, 10);
-		}).add([65, 16, 66, 18, 64, 27], function (msg) {
+		}).add([65, 16, 66, 18, 64, 27], function (msg, track) {
 			// GS Part channel 12
 			upThis.#seGsPart.run(msg, 11);
-		}).add([65, 16, 66, 18, 64, 28], function (msg) {
+		}).add([65, 16, 66, 18, 64, 28], function (msg, track) {
 			// GS Part channel 13
 			upThis.#seGsPart.run(msg, 12);
-		}).add([65, 16, 66, 18, 64, 29], function (msg) {
+		}).add([65, 16, 66, 18, 64, 29], function (msg, track) {
 			// GS Part channel 14
 			upThis.#seGsPart.run(msg, 13);
-		}).add([65, 16, 66, 18, 64, 30], function (msg) {
+		}).add([65, 16, 66, 18, 64, 30], function (msg, track) {
 			// GS Part channel 15
 			upThis.#seGsPart.run(msg, 14);
-		}).add([65, 16, 66, 18, 64, 31], function (msg) {
+		}).add([65, 16, 66, 18, 64, 31], function (msg, track) {
 			// GS Part channel 16
-			upThis.#seGsPart.run(msg, 15);
-		}).add([65, 16, 66, 18, 64, 64], function (msg) {
+			upThis.#seGsPart.run(msg, upThis.chRedir(15, track));
+		}).add([65, 16, 66, 18, 64, 64], function (msg, track) {
 			// GS Part channel 10
-			upThis.#seGsPartProp.run(msg, 9);
-		}).add([65, 16, 66, 18, 64, 65], function (msg) {
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(9, track));
+		}).add([65, 16, 66, 18, 64, 65], function (msg, track) {
 			// GS Part channel 01
 			upThis.#seGsPartProp.run(msg, 0);
-		}).add([65, 16, 66, 18, 64, 66], function (msg) {
+		}).add([65, 16, 66, 18, 64, 66], function (msg, track) {
 			// GS Part channel 02
 			upThis.#seGsPartProp.run(msg, 1);
-		}).add([65, 16, 66, 18, 64, 67], function (msg) {
+		}).add([65, 16, 66, 18, 64, 67], function (msg, track) {
 			// GS Part channel 03
 			upThis.#seGsPartProp.run(msg, 2);
-		}).add([65, 16, 66, 18, 64, 68], function (msg) {
+		}).add([65, 16, 66, 18, 64, 68], function (msg, track) {
 			// GS Part channel 04
 			upThis.#seGsPartProp.run(msg, 3);
-		}).add([65, 16, 66, 18, 64, 69], function (msg) {
+		}).add([65, 16, 66, 18, 64, 69], function (msg, track) {
 			// GS Part channel 05
 			upThis.#seGsPartProp.run(msg, 4);
-		}).add([65, 16, 66, 18, 64, 70], function (msg) {
+		}).add([65, 16, 66, 18, 64, 70], function (msg, track) {
 			// GS Part channel 06
 			upThis.#seGsPartProp.run(msg, 5);
-		}).add([65, 16, 66, 18, 64, 71], function (msg) {
+		}).add([65, 16, 66, 18, 64, 71], function (msg, track) {
 			// GS Part channel 07
 			upThis.#seGsPartProp.run(msg, 6);
-		}).add([65, 16, 66, 18, 64, 72], function (msg) {
+		}).add([65, 16, 66, 18, 64, 72], function (msg, track) {
 			// GS Part channel 08
 			upThis.#seGsPartProp.run(msg, 7);
-		}).add([65, 16, 66, 18, 64, 73], function (msg) {
+		}).add([65, 16, 66, 18, 64, 73], function (msg, track) {
 			// GS Part channel 09
 			upThis.#seGsPartProp.run(msg, 8);
-		}).add([65, 16, 66, 18, 64, 74], function (msg) {
+		}).add([65, 16, 66, 18, 64, 74], function (msg, track) {
 			// GS Part channel 11
 			upThis.#seGsPartProp.run(msg, 10);
-		}).add([65, 16, 66, 18, 64, 75], function (msg) {
+		}).add([65, 16, 66, 18, 64, 75], function (msg, track) {
 			// GS Part channel 12
 			upThis.#seGsPartProp.run(msg, 11);
-		}).add([65, 16, 66, 18, 64, 76], function (msg) {
+		}).add([65, 16, 66, 18, 64, 76], function (msg, track) {
 			// GS Part channel 13
 			upThis.#seGsPartProp.run(msg, 12);
-		}).add([65, 16, 66, 18, 64, 77], function (msg) {
+		}).add([65, 16, 66, 18, 64, 77], function (msg, track) {
 			// GS Part channel 14
 			upThis.#seGsPartProp.run(msg, 13);
-		}).add([65, 16, 66, 18, 64, 78], function (msg) {
+		}).add([65, 16, 66, 18, 64, 78], function (msg, track) {
 			// GS Part channel 15
 			upThis.#seGsPartProp.run(msg, 14);
-		}).add([65, 16, 66, 18, 64, 79], function (msg) {
+		}).add([65, 16, 66, 18, 64, 79], function (msg, track) {
 			// GS Part channel 16
-			upThis.#seGsPartProp.run(msg, 15);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(15, track));
 		});
 		// Yamaha XG Drum Setup SysEx
 		upThis.#seXgDrumInst.add([0], function (msg, setupNum, noteNum) {
