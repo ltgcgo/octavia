@@ -824,46 +824,46 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#seGsPart.run(msg, upThis.chRedir(9, track));
 		}).add([65, 16, 66, 18, 64, 17], function (msg, track) {
 			// GS Part channel 01
-			upThis.#seGsPart.run(msg, 0);
+			upThis.#seGsPart.run(msg, upThis.chRedir(0, track));
 		}).add([65, 16, 66, 18, 64, 18], function (msg, track) {
 			// GS Part channel 02
-			upThis.#seGsPart.run(msg, 1);
+			upThis.#seGsPart.run(msg, upThis.chRedir(1, track));
 		}).add([65, 16, 66, 18, 64, 19], function (msg, track) {
 			// GS Part channel 03
-			upThis.#seGsPart.run(msg, 2);
+			upThis.#seGsPart.run(msg, upThis.chRedir(2, track));
 		}).add([65, 16, 66, 18, 64, 20], function (msg, track) {
 			// GS Part channel 04
-			upThis.#seGsPart.run(msg, 3);
+			upThis.#seGsPart.run(msg, upThis.chRedir(3, track));
 		}).add([65, 16, 66, 18, 64, 21], function (msg, track) {
 			// GS Part channel 05
-			upThis.#seGsPart.run(msg, 4);
+			upThis.#seGsPart.run(msg, upThis.chRedir(4, track));
 		}).add([65, 16, 66, 18, 64, 22], function (msg, track) {
 			// GS Part channel 06
-			upThis.#seGsPart.run(msg, 5);
+			upThis.#seGsPart.run(msg, upThis.chRedir(5, track));
 		}).add([65, 16, 66, 18, 64, 23], function (msg, track) {
 			// GS Part channel 07
-			upThis.#seGsPart.run(msg, 6);
+			upThis.#seGsPart.run(msg, upThis.chRedir(6, track));
 		}).add([65, 16, 66, 18, 64, 24], function (msg, track) {
 			// GS Part channel 08
-			upThis.#seGsPart.run(msg, 7);
+			upThis.#seGsPart.run(msg, upThis.chRedir(7, track));
 		}).add([65, 16, 66, 18, 64, 25], function (msg, track) {
 			// GS Part channel 09
-			upThis.#seGsPart.run(msg, 8);
+			upThis.#seGsPart.run(msg, upThis.chRedir(8, track));
 		}).add([65, 16, 66, 18, 64, 26], function (msg, track) {
 			// GS Part channel 11
-			upThis.#seGsPart.run(msg, 10);
+			upThis.#seGsPart.run(msg, upThis.chRedir(10, track));
 		}).add([65, 16, 66, 18, 64, 27], function (msg, track) {
 			// GS Part channel 12
-			upThis.#seGsPart.run(msg, 11);
+			upThis.#seGsPart.run(msg, upThis.chRedir(11, track));
 		}).add([65, 16, 66, 18, 64, 28], function (msg, track) {
 			// GS Part channel 13
-			upThis.#seGsPart.run(msg, 12);
+			upThis.#seGsPart.run(msg, upThis.chRedir(12, track));
 		}).add([65, 16, 66, 18, 64, 29], function (msg, track) {
 			// GS Part channel 14
-			upThis.#seGsPart.run(msg, 13);
+			upThis.#seGsPart.run(msg, upThis.chRedir(13, track));
 		}).add([65, 16, 66, 18, 64, 30], function (msg, track) {
 			// GS Part channel 15
-			upThis.#seGsPart.run(msg, 14);
+			upThis.#seGsPart.run(msg, upThis.chRedir(14, track));
 		}).add([65, 16, 66, 18, 64, 31], function (msg, track) {
 			// GS Part channel 16
 			upThis.#seGsPart.run(msg, upThis.chRedir(15, track));
@@ -872,46 +872,46 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#seGsPartProp.run(msg, upThis.chRedir(9, track));
 		}).add([65, 16, 66, 18, 64, 65], function (msg, track) {
 			// GS Part channel 01
-			upThis.#seGsPartProp.run(msg, 0);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(0, track));
 		}).add([65, 16, 66, 18, 64, 66], function (msg, track) {
 			// GS Part channel 02
-			upThis.#seGsPartProp.run(msg, 1);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(1, track));
 		}).add([65, 16, 66, 18, 64, 67], function (msg, track) {
 			// GS Part channel 03
-			upThis.#seGsPartProp.run(msg, 2);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(2, track));
 		}).add([65, 16, 66, 18, 64, 68], function (msg, track) {
 			// GS Part channel 04
-			upThis.#seGsPartProp.run(msg, 3);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(3, track));
 		}).add([65, 16, 66, 18, 64, 69], function (msg, track) {
 			// GS Part channel 05
-			upThis.#seGsPartProp.run(msg, 4);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(4, track));
 		}).add([65, 16, 66, 18, 64, 70], function (msg, track) {
 			// GS Part channel 06
-			upThis.#seGsPartProp.run(msg, 5);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(5, track));
 		}).add([65, 16, 66, 18, 64, 71], function (msg, track) {
 			// GS Part channel 07
-			upThis.#seGsPartProp.run(msg, 6);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(6, track));
 		}).add([65, 16, 66, 18, 64, 72], function (msg, track) {
 			// GS Part channel 08
-			upThis.#seGsPartProp.run(msg, 7);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(7, track));
 		}).add([65, 16, 66, 18, 64, 73], function (msg, track) {
 			// GS Part channel 09
-			upThis.#seGsPartProp.run(msg, 8);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(8, track));
 		}).add([65, 16, 66, 18, 64, 74], function (msg, track) {
 			// GS Part channel 11
-			upThis.#seGsPartProp.run(msg, 10);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(10, track));
 		}).add([65, 16, 66, 18, 64, 75], function (msg, track) {
 			// GS Part channel 12
-			upThis.#seGsPartProp.run(msg, 11);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(11, track));
 		}).add([65, 16, 66, 18, 64, 76], function (msg, track) {
 			// GS Part channel 13
-			upThis.#seGsPartProp.run(msg, 12);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(12, track));
 		}).add([65, 16, 66, 18, 64, 77], function (msg, track) {
 			// GS Part channel 14
-			upThis.#seGsPartProp.run(msg, 13);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(13, track));
 		}).add([65, 16, 66, 18, 64, 78], function (msg, track) {
 			// GS Part channel 15
-			upThis.#seGsPartProp.run(msg, 14);
+			upThis.#seGsPartProp.run(msg, upThis.chRedir(14, track));
 		}).add([65, 16, 66, 18, 64, 79], function (msg, track) {
 			// GS Part channel 16
 			upThis.#seGsPartProp.run(msg, upThis.chRedir(15, track));

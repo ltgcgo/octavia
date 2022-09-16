@@ -40,8 +40,13 @@ let VoiceBank = class {
 				args[2] = 0;
 				ending = "^";
 				if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
-					args[0] = 0;
-					ending = "*";
+					if (msb < 120) {
+						args[0] = 0;
+						ending = "*";
+					} else {
+						args[1] = 0;
+						ending = "!";
+					};
 				};
 			};
 		};
