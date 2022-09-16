@@ -251,6 +251,10 @@ let MuDisplay = class extends RootDisplay {
 			});
 		} else {
 			// Show strength metre
+			upThis.#mmdb[1275] = 1;
+			upThis.#mmdb[1276] = 1;
+			upThis.#mmdb[1278] = 1;
+			upThis.#mmdb[1279] = 1;
 			for (let ch = minCh; ch <= maxCh; ch ++) {
 				let curStrn = sum.strength[ch];
 				if (rendMode) {
@@ -267,6 +271,14 @@ let MuDisplay = class extends RootDisplay {
 					};
 				} else {
 					// 64 channel
+					for (let pI = 0; pI <= curStrn; pI ++) {
+						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - Math.floor(rendPos / 2);
+						if (rendPos > 31) {
+							pR -= 760;
+						};
+						upThis.#mmdb[pR] = 1;
+						upThis.#mmdb[pR + 1] = 1;
+					};
 				};
 				rendPos ++;
 			};
@@ -277,15 +289,18 @@ let MuDisplay = class extends RootDisplay {
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
 					let regionX = 0, regionY = 0;
-					if (rendMode) {
-						regionX = i0 * 5 + 5;
-					} else {
+					if (rendMode == 1) {
+						regionX = i0 * 5;
+					} else if (!rendMode) {
 						regionX = (i0 % 8) * 5 + 45,
 						regionY = 8 - Math.floor(i0 / 8) * 8;
 					};
 					e0.forEach(function (e1, i1) {
 						let partX = i1 % 5,
 						partY = Math.floor(i1 / 5);
+						if (rendMode == 1 && i0 > 7) {
+							partX = partX + 5;
+						};
 						upThis.#mmdb[(regionY + partY) * 85 + regionX + partX] = e1;
 					});
 				});
