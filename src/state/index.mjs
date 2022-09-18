@@ -97,11 +97,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#trkRedir[part + shift] = track;
 					console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
 				} else if (this.#trkRedir[part + shift] != track) {
-					shift = 32;
-					if (this.#trkRedir[part + shift] == 0) {
-						this.#trkRedir[part + shift] = track;
-						console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
-					};
+					shift = 0;
 				};
 			};
 			return part + shift;
@@ -171,15 +167,28 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Pre interpret
 			if (det.data[0] == 0) {
 				//console.debug(`Channel ${det.part + 1} MSB set from ${this.#cc[128 * det.part]} to ${det.data[1]}`);
-				if (this.#mode == modeMap.gs) {
-					if (det.data[1] == 0) {
+				if (this.#mode == modeMap.gs || this.#mode == 0) {
+					if (det.data[1] < 48) {
 						// Do not change drum channel to a melodic
 						if (this.#cc[128 * part] > 119) {
 							det.data[1] = this.#cc[128 * part];
+							if (!this.#mode) {
+								det.data[1] = 120;
+							};
 						};
+						this.switchMode("gs");
 						//console.debug(`Forced channel ${det.part + 1} to stay drums.`);
 					} else {
 						//console.debug(`Channel ${det.part + 1} switched MSB to ${det.data[1]}.`);
+					};
+				} else if (this.#mode == modeMap.gm) {
+					if (det.data[1] < 48) {
+						// Do not change drum channel to a melodic
+						if (this.#cc[128 * part] > 119) {
+							det.data[1] = 120;
+						};
+						this.switchMode("gs", true);
+						//console.debug(`Forced channel ${det.part + 1} to stay drums.`);
 					};
 				};
 			};
@@ -406,7 +415,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seXgDrumInst = new BinaryMatch();
 		this.#seMtSysEx = new BinaryMatch();
 		this.#metaSeq.default = function (seq, track) {
-			console.debug("Unparsed meta 127 sequence on track ${track}: ", seq);
+			console.debug(`Unparsed meta 127 sequence on track ${track}: `, seq);
 		};
 		this.#seMain.default = function (sysEx) {
 			console.debug("Unparsed SysEx: ", sysEx);
@@ -424,6 +433,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#metaRun[1] = function (data) {
 			// Normal text
 			switch (data.slice(0, 2)) {
+				case "@I": {
+					this.#modeKaraoke = true;
+					this.#metaTexts.unshift(`Kar.Info: ${data.slice(2)}`);
+					break;
+				};
 				case "@K": {
 					this.#modeKaraoke = true;
 					this.#metaTexts.unshift(`Karaoke mode active.`);
@@ -437,14 +451,19 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case "@T": {
 					this.#modeKaraoke = true;
-					this.#metaTexts.unshift(`Ka.Title: ${data.slice(3)}`);
+					this.#metaTexts.unshift(`Ka.Title: ${data.slice(2)}`);
+					break;
+				};
+				case "@V": {
+					this.#modeKaraoke = true;
+					this.#metaTexts.unshift(`Kara.Ver: ${data.slice(2)}`);
 					break;
 				};
 				default: {
 					if (this.#modeKaraoke) {
 						if (data[0] == "\\") {
 							// New section
-							this.#metaTexts.unshift(`@@ ${data.slice(1)}`);
+							this.#metaTexts.unshift(`@ ${data.slice(1)}`);
 						} else if (data[0] == "/") {
 							// New line
 							this.#metaTexts.unshift(data.slice(1));
@@ -453,7 +472,8 @@ let OctaviaDevice = class extends CustomEventSource {
 							this.#metaTexts[0] += data;
 						};
 					} else {
-						this.#metaTexts.unshift(data);
+						this.#metaTexts[0] = data;
+						this.#metaTexts.unshift("");
 					};
 				};
 			};
@@ -473,7 +493,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		this.#metaRun[5] = function (data) {
-			this.#metaTexts.unshift(`C.Lyrics: ${data}`);
+			if (data.trim() == "") {
+				this.#metaTexts.unshift("");
+			} else {
+				this.#metaTexts[0] += `${data}`;
+			};
 		};
 		this.#metaRun[6] = function (data) {
 			this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}C.Marker: ${data}`);
@@ -496,12 +520,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seMain.add([126, 127, 9, 1], function () {
 			// General MIDI reset
 			upThis.switchMode("gm", true);
-			upThis.#modeKaraoke = false;
+			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
 			console.info("MIDI reset: GM");
 		}).add([126, 127, 9, 3], function () {
 			// General MIDI rev. 2 reset
 			upThis.switchMode("g2", true);
-			upThis.#modeKaraoke = false;
+			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
 			console.info("MIDI reset: GM2");
 		}).add([65, 16, 22, 18, 127, 1], function () {
 			// MT-32 reset

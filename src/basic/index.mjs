@@ -102,11 +102,20 @@ let RootDisplay = class extends CustomEventSource {
 		let extraPoly = 0, notes = new Set();
 		let upThis = this;
 		let metaReplies = [];
+		let writeStrength = this.#midiState.getStrength();
+		// Mimic strength variation
+		writeStrength.forEach(function (e, i) {
+			let diff = e - upThis.#mimicStrength[i];
+			upThis.#mimicStrength[i] += Math.ceil(diff - (diff * 0.5));
+		});
 		events.forEach(function (e) {
 			let raw = e.data;
 			if (raw.type == 9) {
 				if (raw.data[1] > 0) {
 					notes.add(raw.part * 128 + raw.data[0]);
+					if (writeStrength[raw.part] < (raw.data[1] / 3)) {
+						upThis.#mimicStrength[raw.part] = raw.data[1];
+					};
 				} else {
 					if (notes.has(raw.part * 128 + raw.data[0])) {
 						extraPoly ++;
@@ -132,11 +141,6 @@ let RootDisplay = class extends CustomEventSource {
 		if (metaReplies?.length > 0) {
 			this.dispatchEvent("meta", metaReplies);
 		};
-		// Mimic strength variation
-		this.#midiState.getStrength().forEach(function (e, i) {
-			let diff = e - upThis.#mimicStrength[i];
-			upThis.#mimicStrength[i] += Math.ceil(diff - (diff * 0.5));
-		});
 		// Pass params to actual displays
 		let chInUse = this.#midiState.getActive(); // Active channels
 		let chKeyPr = []; // Pressed keys and their pressure
