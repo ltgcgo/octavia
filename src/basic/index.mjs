@@ -86,7 +86,11 @@ let RootDisplay = class extends CustomEventSource {
 		return Math.floor(this.noteOverall / this.#noteNomin);
 	};
 	get noteBeat() {
-		return this.noteOverall % this.#noteNomin;
+		let beat = this.noteOverall % this.#noteNomin;
+		if (beat < 0) {
+			beat += this.#noteNomin;
+		};
+		return beat;
 	};
 	getTimeSig() {
 		return [this.#noteNomin, this.#noteDenom];
@@ -102,20 +106,16 @@ let RootDisplay = class extends CustomEventSource {
 		let extraPoly = 0, notes = new Set();
 		let upThis = this;
 		let metaReplies = [];
-		let writeStrength = this.#midiState.getStrength();
-		// Mimic strength variation
-		writeStrength.forEach(function (e, i) {
-			let diff = e - upThis.#mimicStrength[i];
-			upThis.#mimicStrength[i] += Math.ceil(diff - (diff * 0.5));
-		});
+		// Reset strength for a new frame
+		upThis.#midiState.newStrength();
 		events.forEach(function (e) {
 			let raw = e.data;
 			if (raw.type == 9) {
 				if (raw.data[1] > 0) {
 					notes.add(raw.part * 128 + raw.data[0]);
-					if (writeStrength[raw.part] < (raw.data[1] / 3)) {
+					/*if (writeStrength[raw.part] == 0) {
 						upThis.#mimicStrength[raw.part] = raw.data[1];
-					};
+					};*/
 				} else {
 					if (notes.has(raw.part * 128 + raw.data[0])) {
 						extraPoly ++;
@@ -137,6 +137,12 @@ let RootDisplay = class extends CustomEventSource {
 			if (reply?.reply) {
 				delete reply.reply;
 			};
+		});
+		// Mimic strength variation
+		let writeStrength = this.#midiState.getStrength();
+		writeStrength.forEach(function (e, i) {
+			let diff = e - upThis.#mimicStrength[i];
+			upThis.#mimicStrength[i] += Math.ceil(diff - (diff * 0.5));
 		});
 		if (metaReplies?.length > 0) {
 			this.dispatchEvent("meta", metaReplies);
@@ -217,7 +223,7 @@ let RootDisplay = class extends CustomEventSource {
 					if (oldNomin < upThis.#noteNomin) {
 						upThis.#noteBarOffset += noteProgress - curBeat - curBar * upThis.#noteNomin;
 					} else {
-						upThis.#noteBarOffset += noteOverall * upThis.#noteNomin / oldNomin;
+						upThis.#noteBarOffset += curBar * upThis.#noteNomin - noteProgress;
 						console.warn(`Fuck me! Any trick to make tSig shrinking WORK in any condition!`);
 					};
 				} else {
