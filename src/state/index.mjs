@@ -138,6 +138,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#velo[rawNote] = det.data[1];
 					if (this.#rawStrength[part] < det.data[1]) {
 						this.#rawStrength[part] = det.data[1];
+						//console.info(`${part}: ${det.data[1]}`);
 					};
 				} else {
 					console.error("Polyphony exceeded.");
@@ -396,9 +397,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new Error(`Unknown mode ${mode}`));
 		};
 	};
+	newStrength() {
+		this.#rawStrength.forEach(toZero);
+	};
 	runJson(json) {
 		// Execute transformed JSON event
-		this.#rawStrength.forEach(toZero);
 		return this.#runChEvent[json.type].call(this, json);
 	};
 	runRaw(midiArr) {
