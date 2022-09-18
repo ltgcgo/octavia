@@ -1,0 +1,1 @@
+../../dist/fakeNs5r.js
