@@ -223,7 +223,7 @@ let RootDisplay = class extends CustomEventSource {
 					if (oldNomin < upThis.#noteNomin) {
 						upThis.#noteBarOffset += noteProgress - curBeat - curBar * upThis.#noteNomin;
 					} else {
-						upThis.#noteBarOffset += curBar * upThis.#noteNomin - noteProgress;
+						upThis.#noteBarOffset += noteOverall * upThis.#noteNomin / oldNomin;
 						console.warn(`Fuck me! Any trick to make tSig shrinking WORK in any condition!`);
 					};
 				} else {
