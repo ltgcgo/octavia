@@ -76,7 +76,7 @@ muVis.addEventListener("mode", function (ev) {
 
 // Open the files
 let audioBlob;
-const propsMid = JSON.parse('{"extensions":[".mid",".MID"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
+const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	stDemo.to(-1);
