@@ -43,6 +43,9 @@ let VoiceBank = class {
 					if (msb < 120) {
 						args[0] = 0;
 						ending = "*";
+					} else if (msb == 121) {
+						bankName = `GM2Vox0${lsb}`;
+						ending = "#";
 					} else {
 						args[1] = 0;
 						ending = "!";
@@ -89,7 +92,6 @@ let VoiceBank = class {
 				break;
 			};
 			case 64:
-			case 121:
 			case 126: {
 				standard = "XG";
 				break;
@@ -100,6 +102,11 @@ let VoiceBank = class {
 			};
 			case 120: {
 				standard = "GS";
+				break;
+			};
+			case 121: {
+				standard = "G2";
+				break;
 			};
 			default: {
 				if (args[0] < 48) {
@@ -116,24 +123,32 @@ let VoiceBank = class {
 	load(text) {
 		let upThis = this;
 		let sig = []; // Significance
+		let loadCount = 0, allCount = 0;
 		text.split("\n").forEach(function (e, i) {
 			let assign = e.split("\t"), to = [];
 			if (i == 0) {
 				assign.forEach(function (e0, i0) {
 					sig[sgCrit.indexOf(e0)] = i0;
 				});
-				console.info(`Bank map significance: ${sig}`);
+				//console.info(`Bank map significance: ${sig}`);
 			} else {
 				assign.forEach(function (e1, i1) {
 					if (i1 > 2) {
 						upThis.#bankInfo[to[sig[1]]] = upThis.#bankInfo[to[sig[1]]] || [];
-						upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]] = assign[3];
+						if (!upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]?.length) {
+							upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]] = assign[3];
+							loadCount ++;
+						} else {
+							//console.debug(`Skipped overwriting ${to[sig[0]]},${to[sig[1]]},${to[sig[2]]}: [${upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]}] to [${assign[3]}]`);
+						};
+						allCount ++;
 					} else {
 						to.push(parseInt(assign[i1]));
 					};
 				});
 			};
 		});
+		console.info(`${allCount} entries in total, loaded ${loadCount} entries.`);
 	};
 	async loadFiles(...type) {
 		this.#bankInfo = [];

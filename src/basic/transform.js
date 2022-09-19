@@ -98,6 +98,7 @@ let rawToPool = function (midiJson) {
 	});
 	list.fresh();
 	//console.debug("All MIDI events: ", list);
+	self.midiEvents = list;
 	// Give back the processed events
 	console.debug(`Parsed a type ${midiJson.formatType} MIDI sequence.`);
 	return list;

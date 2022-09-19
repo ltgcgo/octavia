@@ -160,7 +160,7 @@ let RootDisplay = class extends CustomEventSource {
 				curPoly += chKeyPr[i].size;
 			};
 		});
-		return {
+		let repObj = {
 			extraPoly,
 			curPoly,
 			chInUse,
@@ -182,6 +182,7 @@ let RootDisplay = class extends CustomEventSource {
 			noteBar: this.noteBar,
 			noteBeat: Math.floor(this.noteBeat)
 		};
+		return repObj;
 	};
 	constructor() {
 		super();
