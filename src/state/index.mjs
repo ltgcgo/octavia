@@ -356,6 +356,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#velo.forEach(toZero);
 		this.#poly.forEach(toZero);
 		this.#rawStrength.forEach(toZero);
+		this.#pitch.forEach(toZero);
 		this.#masterVol = 100;
 		this.#metaTexts = [];
 		this.#letterExpire = 0;

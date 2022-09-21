@@ -209,7 +209,6 @@ let MuDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
-		let chOff = this.#ch * 128;
 		// Fill with green
 		//ctx.fillStyle = "#af2";
 		ctx.fillStyle = "#aaff2264";
@@ -239,6 +238,7 @@ let MuDisplay = class extends RootDisplay {
 		if (this.#ch < minCh) {
 			this.#ch = maxCh;
 		};
+		let chOff = this.#ch * 128;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
 		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
@@ -476,7 +476,6 @@ let ScDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
-		let chOff = this.#ch * 128;
 		// Fill with green
 		//ctx.fillStyle = "#af2";
 		ctx.fillStyle = "#ffaa2264";
@@ -505,6 +504,7 @@ let ScDisplay = class extends RootDisplay {
 		if (this.#ch < minCh) {
 			this.#ch = maxCh;
 		};
+		let chOff = this.#ch * 128;
 		// Text matrix display
 		this.#tmdb.forEach((e, i, a) => {a[i] = 0});
 		let infoTxt, isTextNull = sum.letter.text.trim();
