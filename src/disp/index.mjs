@@ -511,8 +511,25 @@ let ScDisplay = class extends RootDisplay {
 		while (isTextNull.indexOf("  ") > -1) {
 			isTextNull = isTextNull.replaceAll("  ", " ");
 		};
-		if (timeNow <= sum.letter.expire && isTextNull?.length > 0) {
+		if (timeNow <= sum.letter.expire) {
 			infoTxt = isTextNull;
+			let original = sum.letter.text,
+			leftTrim = original.length - original.trimLeft().length,
+			rightTrim = original.length - original.trimRight().length;
+			if (original.length > infoTxt.length && infoTxt.length < 16) {
+				if (leftTrim > 0) {
+					while(infoTxt.length < 15) {
+						infoTxt = ` ${infoTxt} `;
+					};
+					if (infoTxt.length < 16) {
+						if (leftTrim < rightTrim) {
+							infoTxt = ` ${infoTxt}`;
+						} else {
+							infoTxt = `${infoTxt} `;
+						};
+					};
+				};
+			};
 			let xShift = 0;
 			if (infoTxt.length > 16) {
 				xShift = Math.floor((sum.letter.expire - timeNow) / 33) - 96;
@@ -572,7 +589,7 @@ let ScDisplay = class extends RootDisplay {
 		} else {
 			paramText += "+";
 		};
-		paramText += (cPit < 0 ? cPit + 1 : cPit).toString().padStart(2, "0");
+		paramText += (cPit < 0 ? Math.abs(cPit + 1) : cPit).toString().padStart(2, "0");
 		let cPan = sum.chContr[chOff + 10];
 		if (cPan == 64) {
 			paramText += "C  ";
@@ -640,15 +657,21 @@ let ScDisplay = class extends RootDisplay {
 				upThis.#linger[i] = val;
 			};
 		});
-		if (timeNow <= sum.bitmap.expire) {} else {
+		let useBm = this.#bmdb;
+		if (timeNow <= sum.bitmap.expire) {
+			useBm = sum.bitmap.bitmap;
+		} else {
 			let rendPos = 0;
 			for (let c = minCh; c <= maxCh; c ++) {
+				let rendPart = rendPos >> 4;
 				let strSmooth = this.#strength[c] >> (4 + rendMode),
 				lingered = this.#linger[c] >> (4 + rendMode);
 				if (rendMode == 2) {
-
+					let offY = 4 * (3 - rendPart);
+					for (let d = 3 - strSmooth; d < 4; d ++) {
+						this.#bmdb[rendPos % 16 + (d + offY) * 16] = 1;
+					};
 				} else if (rendMode == 1) {
-					let rendPart = rendPos >> 4;
 					let offY = 8 * (1 - rendPart);
 					for (let d = 7 - strSmooth; d < 8; d ++) {
 						this.#bmdb[rendPos % 16 + (d + offY) * 16] = 1;
@@ -664,7 +687,7 @@ let ScDisplay = class extends RootDisplay {
 			};
 		};
 		// Commit to bitmap display
-		this.#bmdb.forEach(function (e, i) {
+		useBm.forEach(function (e, i) {
 			ctx.fillStyle = inactivePixel;
 			if (e) {
 				ctx.fillStyle = activePixel;
@@ -678,6 +701,68 @@ let ScDisplay = class extends RootDisplay {
 				mspHeightY
 			);
 		});
+		// Show text
+		ctx.fillStyle = "#000c";
+		ctx.textAlign = "left";
+		ctx.font = '16px "Arial Web"';
+		ctx.fillText("PART", 21, 20);
+		ctx.fillText("INSTRUMENT", 154, 20);
+		ctx.fillText("LEVEL", 21, 91);
+		ctx.fillText("PAN", 154, 91);
+		ctx.fillText("REVERB", 21, 162);
+		ctx.fillText("CHORUS", 154, 162);
+		ctx.fillText("KEY SHIFT", 21, 233);
+		ctx.fillText("BANK", 154, 233);
+		ctx.textAlign = "right";
+		ctx.fillText("SB", 274, 233);
+		ctx.textAlign = "center";
+		for (let c = 1; c <= 16; c ++) {
+			ctx.fillText(`${c}`.padStart(2, "0"), 308 + cmpHeightX * c, 300);
+		};
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "#000c";
+		let circle = 2 * Math.PI;
+		for (let c = 0; c < 16; c ++) {
+			let d = c % 8;
+			ctx.beginPath();
+			if (!d) {
+				ctx.ellipse(
+					316,
+					(15 - c) * 12 + 100,
+					4, 4,
+					0, 0, circle
+				);
+				ctx.fill();
+			} else if (d == 4) {
+				ctx.ellipse(
+					316,
+					(15 - c) * 12 + 100,
+					3, 3,
+					0, 0, circle
+				);
+				ctx.fill();
+			} else {
+				ctx.ellipse(
+					316,
+					(15 - c) * 12 + 100,
+					2, 2,
+					0, 0, circle
+				);
+				ctx.stroke();
+			};
+		};
+		if (sum.chContr[chOff]) {
+			ctx.fillStyle = activePixel;
+		} else {
+			ctx.fillStyle = inactivePixel;
+		};
+		ctx.fillText("M", 236, 233);
+		if (sum.chContr[chOff]) {
+			ctx.fillStyle = inactivePixel;
+		} else {
+			ctx.fillStyle = activePixel;
+		};
+		ctx.fillText("L", 248, 233);
 	};
 };
 
