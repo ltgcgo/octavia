@@ -41,6 +41,7 @@ stDemo.to = function (i) {
 stDemo.forEach(function (e, i, a) {
 	e.addEventListener("click", async function () {
 		audioPlayer.pause();
+		scVis.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, e.innerText.toUpperCase().charCodeAt(0)]});
 		if (!demoBlobs[e.title]?.midi) {
 			demoBlobs[e.title] = {};
 			audioPlayer.src = "about:blank";
@@ -70,15 +71,36 @@ stDemo.forEach(function (e, i, a) {
 	});
 });
 
+let title = "";
 // Start the visualizers
 self.scVis = new ScDisplay();
 scVis.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
+	title = "";
 });
 
 // Listen to mode switches
 scVis.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
+});
+scVis.addEventListener("meta", function (ev) {
+	if (!title) {
+		ev.data.forEach(function (e) {
+			if (!title && e.meta == 3) {
+				title = e.data;
+			};
+		});
+		if (title) {
+			let textCmd = [67, 16, 76, 6, 0, 0];
+			Array.from(title).forEach(function (e) {
+				let charCode = e.charCodeAt(0);
+				if (charCode < 128) {
+					textCmd.push(charCode);
+				};
+			});
+			scVis.sendCmd({type: 15, track: 0, data: textCmd});
+		};
+	};
 });
 
 // Open the files
@@ -88,14 +110,18 @@ propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpe
 $e("#openMidi").addEventListener("click", async function () {
 	stDemo.to(-1);
 	scVis.reset();
+	scVis.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 105, 110, 103, 32, 77, 73, 68, 73, 32, 102, 105, 108, 101]});
 	scVis.loadFile(await fileOpen(propsMid));
+	scVis.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 77, 73, 68, 73, 32, 102, 105, 108, 101, 32, 108, 111, 97, 100, 101, 100]});
 });
 $e("#openAudio").addEventListener("click", async function () {
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
+	scVis.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 105, 110, 103, 32, 97, 117, 100, 105, 111, 32, 102, 105, 108, 101]});
 	audioBlob = await fileOpen(propsAud);
 	audioPlayer.src = URL.createObjectURL(audioBlob);
+	scVis.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 65, 117, 100, 105, 111, 32, 108, 111, 97, 100, 101, 100]});
 });
 
 // Get canvas
