@@ -59,14 +59,7 @@ stDemo.forEach(function (e, i, a) {
 		if (demoModes[i]?.length > 0) {
 			scVis.switchMode(demoModes[i]);
 		};
-		let textCmd = [67, 16, 76, 6, 0, 0];
-		Array.from(e.title).forEach(function (e) {
-			let charCode = e.charCodeAt(0);
-			if (charCode < 128) {
-				textCmd.push(charCode);
-			};
-		});
-		scVis.sendCmd({type: 15, track: 0, data: textCmd});
+		scVis.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, e.innerText.toUpperCase().charCodeAt(0)]});
 		stDemo.to(i);
 	});
 });
