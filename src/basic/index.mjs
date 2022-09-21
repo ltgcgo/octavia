@@ -50,6 +50,7 @@ let RootDisplay = class extends CustomEventSource {
 	#noteDenom = 4;
 	#noteBarOffset = 0;
 	#noteTime = 0;
+	smoothing = 0;
 	reset() {
 		// Dispatching the event
 		this.dispatchEvent("reset");
@@ -98,6 +99,9 @@ let RootDisplay = class extends CustomEventSource {
 	getTempo() {
 		return this.#noteTempo;
 	};
+	sendCmd(raw) {
+		this.#midiState.runJson(raw);
+	};
 	render(time) {
 		if (time > this.#noteTime) {
 			this.#noteTime = time;
@@ -142,7 +146,7 @@ let RootDisplay = class extends CustomEventSource {
 		let writeStrength = this.#midiState.getStrength();
 		writeStrength.forEach(function (e, i) {
 			let diff = e - upThis.#mimicStrength[i];
-			upThis.#mimicStrength[i] += Math.ceil(diff - (diff * 0.5));
+			upThis.#mimicStrength[i] += Math.ceil(diff - (diff * upThis.smoothing));
 		});
 		if (metaReplies?.length > 0) {
 			this.dispatchEvent("meta", metaReplies);
@@ -177,6 +181,7 @@ let RootDisplay = class extends CustomEventSource {
 			master: this.#midiState.getMaster(),
 			mode: this.#midiState.getMode(),
 			strength: this.#mimicStrength.slice(),
+			velo: writeStrength,
 			tSig: this.getTimeSig(),
 			tempo: this.getTempo(),
 			noteBar: this.noteBar,
@@ -187,6 +192,7 @@ let RootDisplay = class extends CustomEventSource {
 	constructor() {
 		super();
 		let upThis = this;
+		this.smoothing = 0.5;
 		this.addEventListener("meta", function (raw) {
 			raw?.data?.forEach(function (e) {
 				(upThis.#metaRun[e.meta] || console.debug).call(upThis, e.meta, e.data);

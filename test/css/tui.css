@@ -22,6 +22,9 @@ div#display {
 canvas#ymhMu {
 	background: #af2;
 }
+canvas#rlndSc {
+	background: #fa0;
+}
 
 @media (prefers-color-scheme: dark){
 	span.letter {
