@@ -127,11 +127,11 @@ let TuiDisplay = class extends RootDisplay {
 //activePixel = "#0002";
 let inactivePixel = "#0000000b",
 activePixel = "#00000068";
+
 let mprWidth = 8,
 mpaWidth = 7,
 mprHeight = 4,
 mpaHeight = 3;
-
 let normParamPaint = function (sup, offsetX, ctx) {
 	let paramW = mprWidth * 4 - 1;
 	let paramH = mprHeight * 1.5 - 1;
@@ -447,7 +447,242 @@ let MuDisplay = class extends RootDisplay {
 	};
 };
 
+let cmpWidth = 7,
+mspWidth = 6,
+cmpHeightX = 31,
+cmpHeightY = 12,
+mspHeightX = 29,
+mspHeightY = 10,
+pdsX = cmpWidth * (17 + 2),
+pdsY = cmpWidth * (7 + 3) + 1;
+let ScDisplay = class extends RootDisplay {
+	#tmdb = new Uint8Array(665); // Text display
+	#pmdb = new Uint8Array(735); // Param display
+	#bmdb = new Uint8Array(256); // Bitmap display
+	#strength = new Uint8Array(64);
+	#linger = new Uint8Array(64);
+	#ch = 0;
+	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	constructor() {
+		super();
+	};
+	setCh(ch) {
+		this.#ch = ch;
+	};
+	getCh() {
+		return this.#ch;
+	};
+	render(time, ctx) {
+		let sum = super.render(time);
+		let upThis = this;
+		let timeNow = Date.now();
+		let chOff = this.#ch * 128;
+		// Fill with green
+		//ctx.fillStyle = "#af2";
+		ctx.fillStyle = "#ffaa2264";
+		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		// Universal offset
+		let pdaX = 22,
+		pdaY = 24;
+		// Channel test
+		let alreadyMin = false;
+		let minCh = 0, maxCh = 0;
+		sum.chInUse.forEach(function (e, i) {
+			if (e) {
+				if (!alreadyMin) {
+					alreadyMin = true;
+					minCh = i;
+				};
+				maxCh = i;
+			};
+		});
+		let part = minCh >> 4;
+		minCh = part << 4;
+		maxCh = ((maxCh >> 4) << 4) + 15;
+		if (this.#ch > maxCh) {
+			this.#ch = minCh;
+		};
+		if (this.#ch < minCh) {
+			this.#ch = maxCh;
+		};
+		// Text matrix display
+		this.#tmdb.forEach((e, i, a) => {a[i] = 0});
+		let infoTxt, isTextNull = sum.letter.text.trim();
+		while (isTextNull.indexOf("  ") > -1) {
+			isTextNull = isTextNull.replaceAll("  ", " ");
+		};
+		if (timeNow <= sum.letter.expire && isTextNull?.length > 0) {
+			infoTxt = isTextNull;
+			let xShift = 0;
+			if (infoTxt.length > 16) {
+				xShift = Math.floor((sum.letter.expire - timeNow) / 33) - 96;
+				let maxShift = (infoTxt.length - 16) * -6;
+				if (xShift < maxShift) {
+					xShift = maxShift;
+				} else if (xShift > 0) {
+					xShift = 0;
+				};
+			};
+			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
+				e0.forEach(function (e1, i1) {
+					let pX = i0 * 6 + i1 % 5 + xShift,
+					pY = Math.floor(i1 / 5);
+					if (pX >= 0 && pX < 95) {
+						upThis.#tmdb[pY * 95 + pX] = e1;
+					};
+				});
+			});
+		} else {
+			infoTxt = `${sum.chProgr[this.#ch] + 1}`.padStart(3, "0");
+			infoTxt += " ";
+			infoTxt += (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name).slice(0, 12).padEnd(12, " ");
+			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
+				e0.forEach(function (e1, i1) {
+					let pX = i0 * 6 + i1 % 5,
+					pY = Math.floor(i1 / 5);
+					upThis.#tmdb[pY * 95 + pX] = e1;
+				});
+			});
+		};
+		// Commit to text matrix display
+		this.#tmdb.forEach(function (e, i) {
+			ctx.fillStyle = inactivePixel;
+			if (e) {
+				ctx.fillStyle = activePixel;
+			};
+			let pixelX = i % 95,
+			pixelY = Math.floor(i / 95);
+			ctx.fillRect(
+				pdaX + 133 + pixelX * cmpWidth,
+				pdaY + pixelY * cmpWidth,
+				mspWidth,
+				mspWidth
+			);
+		});
+		// Param display
+		this.#pmdb.forEach((e, i, a) => {a[i] = 0});
+		// Assemble text
+		let paramText = "";
+		paramText += `${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
+		paramText += sum.chContr[chOff + 7].toString().padStart(3, " ");
+		paramText += sum.chContr[chOff + 91].toString().padStart(3, " ");
+		let cPit = Math.floor(sum.chPitch[this.#ch] / 82);
+		if (cPit < 0) {
+			paramText += "-";
+		} else {
+			paramText += "+";
+		};
+		paramText += (cPit < 0 ? cPit + 1 : cPit).toString().padStart(2, "0");
+		let cPan = sum.chContr[chOff + 10];
+		if (cPan == 64) {
+			paramText += "C  ";
+		} else {
+			if (cPan > 64) {
+				paramText += "R";
+			} else {
+				paramText += "L";
+			};
+			paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
+		};
+		paramText += sum.chContr[chOff + 93].toString().padStart(3, " ");
+		paramText += (sum.chContr[chOff] || sum.chContr[chOff + 32]).toString().padStart(3, "0");
+		// Render fonts
+		this.xgFont.getStr(paramText).forEach(function (e0, i0) {
+			e0.forEach(function (e1, i1) {
+				let pX = Math.floor(i0 / 3) * 90 + i0 * 5 + i1 % 5,
+				pY = Math.floor(i1 / 5);
+				if (pY < 7) {
+					upThis.#pmdb[pY * 15 + pX] = e1;
+				};
+			});
+		});
+		// Commit to param display
+		this.#pmdb.forEach(function (e, i) {
+			ctx.fillStyle = inactivePixel;
+			if (e) {
+				ctx.fillStyle = activePixel;
+			};
+			let regionX = i > 419 ? 1 : 0,
+			regionY = 0,
+			pixelX = i % 15 + Math.floor(i % 15 / 5),
+			pixelY = Math.floor((i % 105) / 15);
+			if (!regionX) {
+				regionY = Math.floor(i / 105);
+			} else {
+				regionY = Math.floor((i - 315) / 105);
+			};
+			ctx.fillRect(
+				pdaX + pdsX * regionX + pixelX * cmpWidth,
+				pdaY + pdsY * regionY + pixelY * cmpWidth,
+				mspWidth,
+				mspWidth
+			);
+		});
+		// Bitmap display
+		this.#bmdb.forEach((e, i, a) => {a[i] = 0});
+		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
+		rendPos = 0;
+		// Strength calculation
+		sum.velo.forEach(function (e, i) {
+			if (e >= upThis.#strength[i]) {
+				upThis.#strength[i] = e;
+			} else {
+				let diff = upThis.#strength[i] - e;
+				upThis.#strength[i] -= diff / 8;
+			};
+			if (e >= upThis.#linger[i]) {
+				upThis.#linger[i] = e;
+			} else {
+				let val = upThis.#linger[i] - 2;
+				if (val < 0) {
+					val = 0;
+				};
+				upThis.#linger[i] = val;
+			};
+		});
+		if (timeNow <= sum.bitmap.expire) {} else {
+			let rendPos = 0;
+			for (let c = minCh; c <= maxCh; c ++) {
+				let strSmooth = this.#strength[c] >> (4 + rendMode),
+				lingered = this.#linger[c] >> (4 + rendMode);
+				if (rendMode == 2) {
+
+				} else if (rendMode == 1) {
+					let rendPart = rendPos >> 4;
+					let offY = 8 * (1 - rendPart);
+					for (let d = 7 - strSmooth; d < 8; d ++) {
+						this.#bmdb[rendPos % 16 + (d + offY) * 16] = 1;
+					};
+					this.#bmdb[rendPos % 16 + (7 - lingered + offY) * 16] = 1;
+				} else {
+					for (let d = 15 - strSmooth; d < 16; d ++) {
+						this.#bmdb[rendPos % 16 + d * 16] = 1;
+					};
+					this.#bmdb[rendPos + (15 - lingered) * 16] = 1;
+				};
+				rendPos ++;
+			};
+		};
+		// Commit to bitmap display
+		this.#bmdb.forEach(function (e, i) {
+			ctx.fillStyle = inactivePixel;
+			if (e) {
+				ctx.fillStyle = activePixel;
+			};
+			let pixelX = i % 16,
+			pixelY = Math.floor(i / 16);
+			ctx.fillRect(
+				pdaX + 302 + pixelX * cmpHeightX,
+				pdaY + 71 + pixelY * cmpHeightY,
+				mspHeightX,
+				mspHeightY
+			);
+		});
+	};
+};
+
 export {
 	TuiDisplay,
-	MuDisplay
+	MuDisplay,
+	ScDisplay
 };

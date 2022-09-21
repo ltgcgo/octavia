@@ -1,9 +1,36 @@
 <!DOCTYPE html>
 <head>
 	<meta http-equiv="200" charset="utf-8" />
-	<title>Default Web Page</title>
+	<title>Fake SoundCanvas Screen</title>
 	<meta content="true" name="HandheldFriendly" />
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<link rel="stylesheet" href="css/water.min.css" />
+	<link rel="stylesheet" href="css/fonts.css" />
+	<link rel="stylesheet" href="css/tui.css" />
 </head>
 <body>
+	<p>
+		Open <b id="openMidi">MIDI</b> or <b id="openAudio">audio</b>. Mode as <b class="mode" title="gm">GM</b>, <b class="mode" title="gs">GS</b>, <b class="mode" title="xg">XG</b>, <b class="mode" title="g2">GM2</b>, <b class="mode" title="mt32">MT-32</b>, <b class="mode" title="ns5r">NS5R</b>, <b class="mode" title="ag10">AG-10</b>, <b class="mode" title="05rw">05R/W</b>, <b class="mode" title="x5d">X5D</b>.
+	</p>
+	<p>
+		<audio id="audioPlayer" controls></audio> Demo:
+		<b class="demo active" title="KANDI8">a</b>
+		<b class="demo" title="HORIZON">b</b>
+		<b class="demo" title="Stephen Kay - Around the World">c</b>
+		<b class="demo" title="KORG - 2000 Fever">d</b>
+		<b class="demo" title="KORG - MissionMan">e</b>
+		<b class="demo" title="Sam Sketty - Ambient">f</b>
+		<b class="demo" title="David Reading - Galactic Invasion">g</b>
+		<b class="demo" title="Sam Sketty - Low Down">h</b>
+		<b class="demo" title="StarGame">i</b>
+		<b class="demo" title="onestop">j</b>
+		<b class="demo" title="21Ochstr">k</b>
+		<b class="demo" title="Y4002_07">l</b>
+		<b class="demo" title="TSoMI2_MI_1">m</b>
+		<b class="demo" title="25Japan">n</b>
+		<b class="demo" title="LEYA">o</b>
+		<b class="demo" title="Y4002_06">p</b>
+	</p>
+	<canvas id="rlndSc" width="840" height="310"></canvas>
+	<script src="js/fakeSc.js"></script>
 </body>
