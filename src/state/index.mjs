@@ -28,7 +28,7 @@ modeIdx.forEach(function (e, i) {
 	modeMap[e] = i;
 });
 const substList = [
-	[0, 0, 0, 0, 0, 0, 0, 56, 82, 81],
+	[0, 0, 0, 0, 121, 0, 0, 56, 82, 81],
 	[0, 0, 1, 0, 0, 127, 0, 0, 0, 0]
 ];
 const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62];
@@ -171,6 +171,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#chActive[part] = 1;
 			// Pre interpret
 			if (det.data[0] == 0) {
+				//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
 				if (this.#mode == modeMap.gs || this.#mode == 0) {
 					if (det.data[1] < 48) {
 						// Do not change drum channel to a melodic
@@ -178,21 +179,41 @@ let OctaviaDevice = class extends CustomEventSource {
 							det.data[1] = this.#cc[128 * part];
 							if (!this.#mode) {
 								det.data[1] = 120;
+								console.debug(`Forced channel ${det.part + 1} to stay drums.`);
 							};
 						};
-						this.switchMode("gs");
-						//console.debug(`Forced channel ${det.part + 1} to stay drums.`);
-					} else {
-						//console.debug(`Channel ${det.part + 1} switched MSB to ${det.data[1]}.`);
+						if (det.data[1] > 0) {
+							console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
+							this.switchMode("gs");
+						};
+					} else if (det.data[1] == 61) {
+						this.switchMode("ns5r");
+					} else if (det.data[1] == 62) {
+						this.switchMode("x5d");
 					};
 				} else if (this.#mode == modeMap.gm) {
 					if (det.data[1] < 48) {
 						// Do not change drum channel to a melodic
 						if (this.#cc[128 * part] > 119) {
 							det.data[1] = 120;
+							this.switchMode("gs", true);
+							console.debug(`Forced channel ${det.part + 1} to stay drums.`);
 						};
-						this.switchMode("gs", true);
-						//console.debug(`Forced channel ${det.part + 1} to stay drums.`);
+					};
+				} else if (this.#mode == modeMap.x5d) {
+					if (det.data[1] > 0 && det.data[1] < 8) {
+						this.switchMode("05rw", true);
+					} else if (det.data[1] == 56) {
+						let agCount = 0;
+						for (let c = 0; c < 16; c ++) {
+							let d = this.#cc[128 * c];
+							if (d == 56 || d == 62) {
+								agCount ++;
+							};
+						};
+						if (agCount > 14) {
+							this.switchMode("ag10", true);
+						};
 					};
 				};
 			};
