@@ -182,6 +182,7 @@ let RootDisplay = class extends CustomEventSource {
 			mode: this.#midiState.getMode(),
 			strength: this.#mimicStrength.slice(),
 			velo: writeStrength,
+			rpn: this.#midiState.getRpn(),
 			tSig: this.getTimeSig(),
 			tempo: this.getTempo(),
 			noteBar: this.noteBar,

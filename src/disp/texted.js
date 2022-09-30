@@ -16,6 +16,9 @@ let textedPitchBend = function (number) {
 	return result.join("");
 };
 let textedPanning = function (number) {
+	if (number == 128) {
+		return "<<>>";
+	};
 	let result = Array.from("----");
 	if (number > 64) {
 		for (let c = 0; number > 64; c ++) {

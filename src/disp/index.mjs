@@ -67,9 +67,15 @@ let TuiDisplay = class extends RootDisplay {
 			};
 		});
 		if (sum.texts.length > 0) {
-			let metaLine = 0;
-			for (let st = fields.length - 1; st >= line; st --) {
-				fields[st] = (sum.texts[metaLine] || "").padEnd(100, " ");
+			let metaLine = 0,
+			st = fields.length - 1;
+			while (st >= line) {
+				if (sum.texts[metaLine]?.length) {
+					fields[st] = (sum.texts[metaLine] || "").padEnd(100, " ");
+				};
+				if (sum.texts[metaLine]?.length > 0 || sum.texts[metaLine]?.length == undefined) {
+					st --;
+				};
 				metaLine ++;
 			};
 		};
@@ -185,6 +191,7 @@ let MuDisplay = class extends RootDisplay {
 	#bmst = 0; // 0 for voice bank, 2 for standard, 1 for sysex
 	#bmex = 0; // state expiration
 	#ch = 0;
+	#panStrokes = new Uint8Array(7);
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
@@ -419,19 +426,23 @@ let MuDisplay = class extends RootDisplay {
 		ctx.strokeStyle = "#000f";
 		ctx.stroke();
 		let pan = sum.chContr[chOff + 10];
+		this.#panStrokes.forEach((e, i, a) => {a[i] = 0});
 		if (pan == 0) {
-			pan = 0;
+			this.#panStrokes[0] = 1;
 		} else if (pan == 64) {
-			pan = 3;
+			this.#panStrokes[3] = 1;
+		} else if (pan == 128) {
+			this.#panStrokes[1] = 1;
+			this.#panStrokes[5] = 1;
 		} else if (pan < 64) {
-			pan = Math.floor(pan / 21);
+			this.#panStrokes[Math.floor(pan / 21)] = 1;
 		} else {
-			pan = 4 + Math.floor((pan - 65) / 21);
+			this.#panStrokes[4 + Math.floor((pan - 65) / 21)] = 1;
 		};
 		ctx.lineWidth = mprHeight;
 		for (let i = 0; i < 7; i ++) {
 			ctx.strokeStyle = inactivePixel;
-			if (pan == i) {
+			if (this.#panStrokes[i]) {
 				ctx.strokeStyle = activePixel;
 			};
 			ctx.radial(588, 216, [
@@ -583,16 +594,18 @@ let ScDisplay = class extends RootDisplay {
 		paramText += `${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
 		paramText += sum.chContr[chOff + 7].toString().padStart(3, " ");
 		paramText += sum.chContr[chOff + 91].toString().padStart(3, " ");
-		let cPit = Math.floor(sum.chPitch[this.#ch] / 82);
+		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 4]);
 		if (cPit < 0) {
 			paramText += "-";
 		} else {
 			paramText += "+";
 		};
-		paramText += (cPit < 0 ? Math.abs(cPit + 1) : cPit).toString().padStart(2, "0");
+		paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, "0");
 		let cPan = sum.chContr[chOff + 10];
 		if (cPan == 64) {
 			paramText += "C  ";
+		} else if (cPan == 128) {
+			paramText += "RND";
 		} else {
 			if (cPan > 64) {
 				paramText += "R";

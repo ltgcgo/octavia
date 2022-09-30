@@ -34,6 +34,9 @@ const substList = [
 const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 
+const useNormNrpn = [8, 9, 10, 32, 33, 36, 37, 99, 100, 101],
+useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65];
+
 let toZero = function (e, i, a) {
 	a[i] = 0;
 };
@@ -67,6 +70,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	#pitch = new Int16Array(64); // Pitch for channels, from -8192 to 8191
 	#customName = new Array(64); // Allow custom naming
 	#rawStrength = new Uint8Array(64);
+	#dataCommit = 0; // 0 for RPN, 1 for NRPN
+	#rpn = new Uint8Array(256); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB)
+	#nrpn = new Int8Array(640); // Normal section of NRPN registers
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
@@ -169,55 +175,99 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = this.chRedir(det.part, det.track);
 			// CC event, directly assign values to the register.
 			this.#chActive[part] = 1;
+			let chOffset = part * 128;
 			// Pre interpret
-			if (det.data[0] == 0) {
-				//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
-				if (this.#mode == modeMap.gs || this.#mode == 0) {
-					if (det.data[1] < 48) {
-						// Do not change drum channel to a melodic
-						if (this.#cc[128 * part] > 119) {
-							det.data[1] = this.#cc[128 * part];
-							if (!this.#mode) {
+			switch (det.data[0]) {
+				case 0: {
+					// Detect mode via bank MSB
+					//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
+					if (this.#mode == modeMap.gs || this.#mode == 0) {
+						if (det.data[1] < 48) {
+							// Do not change drum channel to a melodic
+							if (this.#cc[chOffset] > 119) {
+								det.data[1] = this.#cc[chOffset];
+								if (!this.#mode) {
+									det.data[1] = 120;
+									console.debug(`Forced channel ${part + 1} to stay drums.`);
+								};
+							};
+							if (det.data[1] > 0) {
+								console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
+								this.switchMode("gs");
+							};
+						} else if (det.data[1] == 62) {
+							this.switchMode("x5d");
+						};
+					} else if (this.#mode == modeMap.gm) {
+						if (det.data[1] < 48) {
+							// Do not change drum channel to a melodic
+							if (this.#cc[chOffset] > 119) {
 								det.data[1] = 120;
-								console.debug(`Forced channel ${det.part + 1} to stay drums.`);
+								this.switchMode("gs", true);
+								console.debug(`Forced channel ${part + 1} to stay drums.`);
 							};
 						};
-						if (det.data[1] > 0) {
-							console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
-							this.switchMode("gs");
-						};
-					} else if (det.data[1] == 61) {
-						this.switchMode("ns5r");
-					} else if (det.data[1] == 62) {
-						this.switchMode("x5d");
-					};
-				} else if (this.#mode == modeMap.gm) {
-					if (det.data[1] < 48) {
-						// Do not change drum channel to a melodic
-						if (this.#cc[128 * part] > 119) {
-							det.data[1] = 120;
-							this.switchMode("gs", true);
-							console.debug(`Forced channel ${det.part + 1} to stay drums.`);
-						};
-					};
-				} else if (this.#mode == modeMap.x5d) {
-					if (det.data[1] > 0 && det.data[1] < 8) {
-						this.switchMode("05rw", true);
-					} else if (det.data[1] == 56) {
-						let agCount = 0;
-						for (let c = 0; c < 16; c ++) {
-							let d = this.#cc[128 * c];
-							if (d == 56 || d == 62) {
-								agCount ++;
+					} else if (this.#mode == modeMap.x5d) {
+						if (det.data[1] > 0 && det.data[1] < 8) {
+							this.switchMode("05rw", true);
+						} else if (det.data[1] == 56) {
+							let agCount = 0;
+							for (let c = 0; c < 16; c ++) {
+								let d = this.#cc[128 * c];
+								if (d == 56 || d == 62) {
+									agCount ++;
+								};
+							};
+							if (agCount > 14) {
+								this.switchMode("ag10", true);
 							};
 						};
-						if (agCount > 14) {
-							this.switchMode("ag10", true);
+					};
+					break;
+				};
+				case 6: {
+					// Show RPN and NRPN
+					if (this.#dataCommit) {
+						if (this.#cc[chOffset + 99] == 1) {
+							let nrpnIdx = useNormNrpn.indexOf(this.#cc[chOffset + 98]);
+							if (nrpnIdx > -1) {
+								this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
+							};
+						} else {
+							//console.debug(`${part + 1} MSB ${det.data[1]} NRPN ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
+						};
+					} else {
+						// Commit supported RPN values
+						if (this.#cc[chOffset + 101] == 0 && this.#cc[chOffset + 100] < 3) {
+							this.#rpn[part * 4 + [0, 1, 3][this.#cc[chOffset + 100]]] = det.data[1];
 						};
 					};
+					break;
+				};
+				case 38: {
+					// Show RPN and NRPN
+					if (!this.#dataCommit) {
+						// Commit supported RPN values
+						if (this.#cc[chOffset + 101] == 0 && this.#cc[chOffset + 100] == 1) {
+							this.#rpn[part * 4 + 2] = det.data[1];
+						};
+					} else {
+						//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
+					};
+					break;
+				};
+				case 98:
+				case 99: {
+					this.#dataCommit = 1;
+					break;
+				};
+				case 100:
+				case 101: {
+					this.#dataCommit = 0;
+					break;
 				};
 			};
-			this.#cc[part * 128 + det.data[0]] = det.data[1];
+			this.#cc[chOffset + det.data[0]] = det.data[1];
 		},
 		12: function (det) {
 			let part = this.chRedir(det.part, det.track);
@@ -301,10 +351,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		return arr;
 	};
 	getPitch() {
-		return this.#pitch.slice();
+		return this.#pitch;
 	};
 	getProgram() {
-		return this.#prg.slice();
+		return this.#prg;
 	};
 	getTexts() {
 		return this.#metaTexts.slice();
@@ -324,7 +374,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getBitmap() {
 		return {
-			bitmap: this.#bitmap.slice(),
+			bitmap: this.#bitmap,
 			expire: this.#bitmapExpire
 		};
 	};
@@ -354,7 +404,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#rawStrength[channel] = upThis.#velo[e];
 			};
 		});
-		return this.#rawStrength.slice();
+		return this.#rawStrength;
 	};
 	getStrength() {
 		// 0 to 255
@@ -363,6 +413,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			str[i] = Math.floor(e * upThis.#cc[i * 128 + 7] * upThis.#cc[i * 128 + 11] * upThis.#masterVol / 803288);
 		});
 		return str;
+	};
+	getRpn() {
+		return this.#rpn;
+	};
+	getNrpn() {
+		return this.#nrpn;
 	};
 	init() {
 		this.dispatchEvent("mode", "?");
@@ -378,6 +434,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#poly.forEach(toZero);
 		this.#rawStrength.forEach(toZero);
 		this.#pitch.forEach(toZero);
+		this.#nrpn.forEach(toZero);
 		this.#masterVol = 100;
 		this.#metaTexts = [];
 		this.#letterExpire = 0;
@@ -395,13 +452,26 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#cc[5248] = 127;
 		this.#cc[7296] = 127;
 		for (let ch = 0; ch < 64; ch ++) {
+			let chOff = ch * 128;
 			// Volume and expression to full
-			this.#cc[ch * 128 + 7] = 127;
-			this.#cc[ch * 128 + 11] = 127;
+			this.#cc[chOff + 7] = 127;
+			this.#cc[chOff + 11] = 127;
 			// Full brightness
-			this.#cc[ch * 128 + 74] = 127;
+			this.#cc[chOff + 74] = 127;
 			// Center panning
-			this.#cc[ch * 128 + 10] = 64;
+			this.#cc[chOff + 10] = 64;
+			// RPN/NRPN to null
+			this.#cc[chOff + 101] = 127;
+			this.#cc[chOff + 100] = 127;
+			this.#cc[chOff + 99] = 127;
+			this.#cc[chOff + 98] = 127;
+			// RPN reset
+			let rpnOff = ch * 4;
+			this.#rpn[rpnOff] = 2; // Pitch bend sensitivity
+			this.#rpn[rpnOff + 1] = 64; // Fine tune MSB
+			this.#rpn[rpnOff + 2] = 0; // Fine tune LSB
+			this.#rpn[rpnOff + 3] = 64; // Coarse tune MSB
+			// NRPN drum section reset
 		};
 	};
 	switchMode(mode, forced = false) {
@@ -1029,7 +1099,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.info(`XG Part use mode "${xgPartMode[data]}" for channel ${channel}.`);
 		}).add([14], function (msg, channel) {
 			//console.info(`XG Part panning for channel ${channel}: ${msg[0]}.`);
-			upThis.#cc[128 * channel + 10] = msg[0];
+			upThis.#cc[128 * channel + 10] = msg[0] || 128;
 		}).add([17], function (msg, channel) {
 			console.info(`XG Part dry level ${msg[0]} for channel ${channel}.`);
 		}).add([18], function (msg, channel) {
@@ -1089,7 +1159,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[channel * 128 + 7] = msg[0];
 		}).add([28], function (msg, channel) {
 			// Set pan
-			upThis.#cc[channel * 128 + 10] = msg[0];
+			upThis.#cc[channel * 128 + 10] = msg[0] || 128;
 		}).add([33], function (msg, channel) {
 			// Set chorus
 			upThis.#cc[channel * 128 + 93] = msg[0];
