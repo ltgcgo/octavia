@@ -86,7 +86,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#trkRedir = new Uint8Array(32);
 	#trkAsReq = new Uint8Array(128); // Track Assignment request
 	chRedir(part, track, noConquer) {
-		if (this.#mode == modeMap.gs) {
+		if ([modeMap.gs, modeMap.ns5r].indexOf(this.#mode) > -1) {
 			if (this.#trkAsReq[track]) {
 				// Allow part assigning via meta
 				return (this.#trkAsReq[track] - 1) * 16 + part;
