@@ -203,6 +203,9 @@ let RootDisplay = class extends CustomEventSource {
 			upThis.dispatchEvent("mode", ev.data);
 		});
 		this.#midiState.addEventListener("mapupdate", function (ev) {
+			if (ev.data.clearRange) {
+				upThis.voices.clearRange(ev.data.clearRange);
+			};
 			upThis.voices.load(ev.data.voiceMap, ev.data.overwrite);
 		});
 		this.#metaRun[3] = function (type, data) {

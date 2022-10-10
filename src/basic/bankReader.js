@@ -44,14 +44,17 @@ let VoiceBank = class {
 						args[0] = 0;
 						ending = "*";
 					} else if (msb == 80) {
-						bankName = `PrgU:${prg}`;
+						bankName = `PrgU:${prg.toString().padStart(3, "0")}`;
 						ending = "!";
 					} else if (msb == 88) {
-						bankName = `CmbU:${prg}`;
+						bankName = `CmbU:${prg.toString().padStart(3, "0")}`;
 						ending = "!";
 					} else if (msb == 121) {
 						bankName = `GM2Vox0${lsb}`;
 						ending = "#";
+					} else if (args[1] == 0) {
+						bankName = `${msb.toString().padStart(3, "0")} ${prg.toString().padStart(3, "0")} ${lsb.toString().padStart(3, "0")}`;
+						ending = "!";
 					} else {
 						args[1] = 0;
 						ending = "!";
@@ -84,7 +87,12 @@ let VoiceBank = class {
 				break;
 			};
 			case 61:
-			case 83: {
+			case 80:
+			case 83:
+			case 88:
+			case 89:
+			case 90:
+			case 91: {
 				standard = "AI";
 				break;
 			};
@@ -155,6 +163,21 @@ let VoiceBank = class {
 			};
 		});
 		console.info(`${allCount} entries in total, loaded ${loadCount} entries.`);
+	};
+	clearRange(options) {
+		let prg = options.prg != undefined ? (options.prg.constructor == Array ? options.prg : [options.prg, options.prg]) : [0, 127],
+		msb = options.msb != undefined ? (options.msb.constructor == Array ? options.msb : [options.msb, options.msb]) : [0, 127],
+		lsb = options.lsb != undefined ? (options.lsb.constructor == Array ? options.lsb : [options.lsb, options.lsb]) : [0, 127];
+		console.info(msb, prg, lsb);
+		for (let cMsb = msb[0]; cMsb <= msb[1]; cMsb ++) {
+			let precalMsb = cMsb << 7;
+			for (let cLsb = lsb[0]; cLsb <= lsb[1]; cLsb ++) {
+				let precalBnk = precalMsb + cLsb;
+				for (let cPrg = prg[0]; cPrg <= prg[1]; cPrg ++) {
+					delete this.#bankInfo[cPrg][precalBnk];
+				};
+			};
+		};
 	};
 	async loadFiles(...type) {
 		this.#bankInfo = [];

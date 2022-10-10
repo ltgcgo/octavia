@@ -644,12 +644,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.forEach(toZero);
 			console.info("MIDI reset: GS");
-		}).add([66, 48, 66, 52, 0], function (msg) {
-			// KORG NS5R/NX5R System Exclusive
-			// No available data for parsing yet...
-			upThis.switchMode("ns5r", true);
-			upThis.#modeKaraoke = false;
-			console.info("KORG reset:", msg);
 		}).add([67, 16, 76, 0, 0, 126, 0], function (msg) {
 			// Yamaha XG reset
 			upThis.switchMode("xg", true);
@@ -1054,7 +1048,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("x5d", true);
 			korgFilter(msg, function (e, i) {
 				if (i < 192) {
-					let part = upThis.chRedir(Math.floor(i / 12), track, true);
+					let part = upThis.chRedir(Math.floor(i / 12), track, true),
+					chOff = part * 128;
 					switch (i % 12) {
 						case 0: {
 							// Program change
@@ -1063,7 +1058,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						case 1: {
 							// Volume
-							upThis.#cc[part * 128 + 7] = e;
+							upThis.#cc[chOff + 7] = e;
 							break;
 						};
 						case 2: {
@@ -1078,13 +1073,13 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 4: {
 							// Pan
 							if (e < 31) {
-								upThis.#cc[part * 128 + 10] = Math.round((e - 15) * 4.2 + 64);
+								upThis.#cc[chOff + 10] = Math.round((e - 15) * 4.2 + 64);
 							};
 							break;
 						};
 						case 10: {
 							// Control filter
-							upThis.#cc[part * 128] = (e & 3) ? 82 : 56;
+							upThis.#cc[chOff] = (e & 3) ? 82 : 56;
 							break;
 						};
 					};
@@ -1118,6 +1113,134 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("mapupdate", {
 				overwrite: true,
 				voiceMap
+			});
+		}).add([66, 48, 66, 54], function (msg, track) {
+			// NS5R Program Dump
+			upThis.switchMode("ns5r", true);
+			let name = "", msb = 80, prg = 0, lsb = 0;
+			let voiceMap = "MSB\tPRG\tLSB\tNME";
+			korgFilter(msg, function (e, i) {
+				let p = i % 158;
+				switch (true) {
+					case (p < 10): {
+						name += String.fromCharCode(e);
+						break;
+					};
+					case (p == 11): {
+						msb = e;
+						break;
+					};
+					case (p == 12): {
+						lsb = e;
+						break;
+					};
+					case (p == 13): {
+						voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim()}`;
+						prg ++;
+						name = "";
+						break;
+					};
+				};
+			});
+			upThis.dispatchEvent("mapupdate", {
+				clearRange: {
+					msb: 80,
+					lsb: 0
+				},
+				voiceMap
+			});
+		}).add([66, 48, 66, 52], function (msg) {
+			// KORG NS5R/NX5R System Exclusive
+			// Current effect dump, but cannot find parsing docs.
+			upThis.switchMode("ns5r", true);
+			upThis.#modeKaraoke = false;
+			//console.debug(`NS5R effect dump: `, msg);
+		}).add([66, 48, 66, 53], function (msg) {
+			// NS5R Current multi dump
+			upThis.switchMode("ns5r", true);
+			//console.debug(`NS5R part dump: `, msg);
+			korgFilter(msg, function (e, i) {
+				switch (true) {
+					case i < 2944: {
+						// 32 part setup params, 2944 bytes
+						let part = Math.floor(i / 92),
+						chOff = part * 128;
+						switch (i % 92) {
+							case 0: {
+								// MSB Bank
+								upThis.#cc[chOff] = e;
+								break;
+							};
+							case 1: {
+								// LSB Bank
+								upThis.#cc[chOff + 32] = e;
+								break;
+							};
+							case 2: {
+								// Program
+								upThis.#prg[part] = e;
+								break;
+							};
+							case 7: {
+								// 0 for melodic, 1 for drum, 2~5 for mod drums 1~4
+								break;
+							};
+							case 8: {
+								// Coarse Tune
+								upThis.#rpn[part * 4 + 3] = e;
+								break;
+							};
+							case 10: {
+								// Volume
+								upThis.#cc[chOff + 7] = e;
+								break;
+							};
+							case 11: {
+								// Expression
+								upThis.#cc[chOff + 11] = e;
+								break;
+							};
+							case 14: {
+								// Pan
+								upThis.#cc[chOff + 10] = e || 128;
+								break;
+							};
+							case 19: {
+								// Chorus
+								upThis.#cc[chOff + 93] = e;
+								break;
+							};
+							case 20: {
+								// Reverb
+								upThis.#cc[chOff + 91] = e;
+								break;
+							};
+							case 84: {
+								// Portamento Switch
+								upThis.#cc[chOff + 65] = e;
+								break;
+							};
+							case 85: {
+								// Portamento Time
+								upThis.#cc[chOff + 5] = e;
+								break;
+							};
+						};
+						break;
+					};
+					case i < 3096: {
+						// part common params, 152 bytes
+						break;
+					};
+					case i < 3134: {
+						// currnet effect params, 38 bytes
+						break;
+					};
+					case i < 8566: {
+						// 4 mod drum params, 5432 bytes
+						break;
+					};
+				};
 			});
 		});
 		// Yamaha XG Drum Setup SysEx
