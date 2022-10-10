@@ -13,7 +13,7 @@ let sysexBlob = await Deno.readFile(`${Deno.args[0]}`);
 console.error(`KORG NS5R SysEx file size: ${sysexBlob.length} bytes.`);
 let pointer = 6, dataOff = 0;
 console.info(`MSB\tPRG\tLSB\tNME`);
-let name = "", isDouble = false, msb = 81, lsb = 0, prg = 0;
+let name = "", isDouble = false, msb = 82, lsb = 0, prg = 0;
 while (pointer < sysexBlob.length) {
 	if (dataOff % 7 == 0) {
 		pointer ++;

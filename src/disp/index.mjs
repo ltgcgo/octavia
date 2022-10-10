@@ -594,7 +594,7 @@ let ScDisplay = class extends RootDisplay {
 		paramText += `${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
 		paramText += sum.chContr[chOff + 7].toString().padStart(3, " ");
 		paramText += sum.chContr[chOff + 91].toString().padStart(3, " ");
-		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 4]);
+		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 4] + (sum.rpn[this.#ch * 4 + 3] - 64));
 		if (cPit < 0) {
 			paramText += "-";
 		} else {

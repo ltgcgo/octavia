@@ -126,7 +126,7 @@ let VoiceBank = class {
 			standard
 		};
 	};
-	load(text) {
+	load(text, allowOverwrite) {
 		let upThis = this;
 		let sig = []; // Significance
 		let loadCount = 0, allCount = 0;
@@ -141,7 +141,7 @@ let VoiceBank = class {
 				assign.forEach(function (e1, i1) {
 					if (i1 > 2) {
 						upThis.#bankInfo[to[sig[1]]] = upThis.#bankInfo[to[sig[1]]] || [];
-						if (!upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]?.length) {
+						if (!upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]?.length || allowOverwrite) {
 							upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]] = assign[3];
 							loadCount ++;
 						} else {
