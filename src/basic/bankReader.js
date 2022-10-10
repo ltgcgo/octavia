@@ -40,9 +40,15 @@ let VoiceBank = class {
 				args[2] = 0;
 				ending = "^";
 				if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
-					if (msb < 120) {
+					if (msb < 64) {
 						args[0] = 0;
 						ending = "*";
+					} else if (msb == 80) {
+						bankName = `PrgU:${prg}`;
+						ending = "!";
+					} else if (msb == 88) {
+						bankName = `CmbU:${prg}`;
+						ending = "!";
 					} else if (msb == 121) {
 						bankName = `GM2Vox0${lsb}`;
 						ending = "#";
