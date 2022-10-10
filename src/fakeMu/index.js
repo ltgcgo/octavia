@@ -78,9 +78,19 @@ let audioBlob;
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
-	stDemo.to(-1);
-	muVis.reset();
-	muVis.loadFile(await fileOpen(propsMid));
+	let file = await fileOpen(propsMid);
+	let fileSplit = file.name.lastIndexOf("."), ext = "";
+	if (fileSplit > -1) {
+		ext = file.name.slice(fileSplit + 1).toLowerCase();
+	};
+	if (ext == "syx") {
+		// Load SysEx blobs
+		muVis.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+	} else {
+		stDemo.to(-1);
+		muVis.reset();
+		muVis.loadFile(file);
+	};
 });
 $e("#openAudio").addEventListener("click", async function () {
 	if (audioBlob) {
