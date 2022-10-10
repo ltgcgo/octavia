@@ -1,9 +1,9 @@
 <table>
 	<thead>
 		<tr>
-			<td colspan=2>Function</td>
-			<td>Recognized</td>
-			<td>Remarks</td>
+			<th colspan=2>Function</th>
+			<th>Recognized</th>
+			<th>Remarks</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -144,7 +144,7 @@
 		<tr>
 			<td>70</td>
 			<td>✓</td>
-			<td>Variation</td>
+			<td>Timbre Variation</td>
 		</tr>
 		<tr>
 			<td>71</td>
@@ -189,7 +189,7 @@
 		<tr>
 			<td>94</td>
 			<td>✓</td>
-			<td>Detune</td>
+			<td>Variation</td>
 		</tr>
 		<tr>
 			<td>95</td>

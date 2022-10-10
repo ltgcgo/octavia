@@ -358,11 +358,11 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("VOL", 420, 254);
 		ctx.fillText("EXP", 468, 254);
 		ctx.fillText("BRT", 516, 254);
-		ctx.fillText("REV", 660, 254);
-		ctx.fillText("CHO", 708.5, 254);
-		ctx.fillText("VAR", 757, 254);
-		ctx.fillText("KEY", 807, 254);
-		ctx.fillText("PAN", 589, 254);
+		ctx.fillText("REV", 648, 254);
+		ctx.fillText("CHO", 696.5, 254);
+		ctx.fillText("VAR", 745, 254);
+		ctx.fillText("KEY", 801, 254);
+		ctx.fillText("PAN", 583, 254);
 		// Show parts
 		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
@@ -416,12 +416,12 @@ let MuDisplay = class extends RootDisplay {
 		normParamPaint(sum.chContr[chOff + 7], 404, ctx); // vol
 		normParamPaint(sum.chContr[chOff + 11], 452, ctx); // exp
 		normParamPaint(sum.chContr[chOff + 74], 500, ctx); // bri
-		efxParamPaint(sum.chContr[chOff + 91], 660, ctx); // rev
-		efxParamPaint(sum.chContr[chOff + 93], 708, ctx); // cho
-		efxParamPaint(sum.chContr[chOff + 70], 756, ctx); // var
+		efxParamPaint(sum.chContr[chOff + 91], 648, ctx); // rev
+		efxParamPaint(sum.chContr[chOff + 93], 696, ctx); // cho
+		efxParamPaint(sum.chContr[chOff + 94], 744, ctx); // var
 		// Show pan
 		ctx.beginPath();
-		ctx.arc(588, 216, 34, 2.356194490192345, 7.068583470577034);
+		ctx.arc(582, 216, 34, 2.356194490192345, 7.068583470577034);
 		ctx.lineWidth = 2;
 		ctx.strokeStyle = "#000f";
 		ctx.stroke();
@@ -445,7 +445,7 @@ let MuDisplay = class extends RootDisplay {
 			if (this.#panStrokes[i]) {
 				ctx.strokeStyle = activePixel;
 			};
-			ctx.radial(588, 216, [
+			ctx.radial(582, 216, [
 				7.068583470577034,
 				6.283185307179586,
 				5.497787143782138,
