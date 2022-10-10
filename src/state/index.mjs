@@ -15,7 +15,10 @@ import {
 	gsRevType,
 	gsChoType
 } from "./gsValues.js";
-import {toDecibel} from "./utils.js";
+import {
+	toDecibel,
+	korgFilter
+} from "./utils.js";
 
 const modeIdx = [
 	"?",
@@ -615,6 +618,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#metaSeq.run(data, track);
 		};
 		// Standard resets
+		// Refactor this!
 		this.#seMain.add([126, 127, 9, 1], function () {
 			// General MIDI reset
 			upThis.switchMode("gm", true);
@@ -653,17 +657,20 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.info("MIDI reset: XG");
 		});
 		// Sequencer specific meta event
+		// No refactoring needed.
 		this.#metaSeq.add([67, 0, 1], function (msg, track) {
 			//console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		});
 		// General MIDI SysEx
+		// No refactoring needed.
 		this.#seMain.add([127, 127, 4, 1], function (msg) {
 			// Master volume
 			upThis.switchMode("gm");
 			upThis.#masterVol = (msg[1] << 7 + msg[0]) / 163.83;
 		});
 		// Yamaha XG SysEx
+		// Refactor this!
 		this.#seMain.add([67, 16, 76, 6, 0], function (msg) {
 			// XG Letter Display
 			let offset = msg[0];
@@ -812,6 +819,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#seXgDrumInst.run(msg.slice(1), 3, msg[0]);
 		});
 		// Roland MT-32 SysEx
+		// Refactor this!
 		this.#seMain.add([65, 1], function (msg) {
 			upThis.switchMode("mt32");
 			upThis.#seMtSysEx.run(msg, 1);
@@ -843,6 +851,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		this.#seMtSysEx.add([22, 18, 2, 0, 0], function (msg, channel) {
 			// MT-32 tone properties
+			// Refactor this!
 			let setName = "";
 			msg.slice(0, 10).forEach(function (e) {
 				if (e > 31) {
@@ -853,6 +862,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.debug(`MT-32 tone properties on channel ${channel + 1} (${setName}): ${msg.slice(10)}`);
 		});
 		// Roland GS SysEx
+		// Refactor this!
 		this.#seMain.add([65, 16, 66, 18, 0, 0, 127], function (msg) {
 			// GS module mode (single port 16 channel, or double port 32 channel)
 			upThis.switchMode("gs", true);
@@ -1038,7 +1048,80 @@ let OctaviaDevice = class extends CustomEventSource {
 			// GS Part channel 16
 			upThis.#seGsPartProp.run(msg, upThis.chRedir(15, track, true));
 		});
+		// KORG X5D SysEx
+		upThis.#seMain.add([66, 48, 54, 104], function (msg, track) {
+			// X5D extended multi setup
+			upThis.switchMode("x5d", true);
+			korgFilter(msg, function (e, i) {
+				if (i < 192) {
+					let part = upThis.chRedir(Math.floor(i / 12), track, true);
+					switch (i % 12) {
+						case 0: {
+							// Program change
+							upThis.#prg[part] = e;
+							break;
+						};
+						case 1: {
+							// Volume
+							upThis.#cc[part * 128 + 7] = e;
+							break;
+						};
+						case 2: {
+							// Coarse tune
+							upThis.#rpn[part * 4 + 3] = (e > 127 ? 256 - e : 64 + e);
+							break;
+						};
+						case 3: {
+							// Fine tune
+							break;
+						};
+						case 4: {
+							// Pan
+							if (e < 31) {
+								upThis.#cc[part * 128 + 10] = Math.round((e - 15) * 4.2 + 64);
+							};
+							break;
+						};
+						case 10: {
+							// Control filter
+							upThis.#cc[part * 128] = (e & 3) ? 82 : 56;
+							break;
+						};
+					};
+				} else {
+					let part = upThis.chRedir(i - 192, track, true);
+					// What the heck is pitch bend range 0xF4(-12) to 0x0C(12)?
+				};
+			});
+		}).add([66, 48, 54, 76, 0], function (msg, track) {
+			// X5D program dump
+			upThis.switchMode("x5d", true);
+			let name = "", msb = 82, prg = 0, lsb = 0;
+			let voiceMap = "MSB\tPRG\tLSB\tNME";
+			korgFilter(msg, function (e, i) {
+				if (prg < 100) {
+					let p = i % 164;
+					switch (true) {
+						case (p < 10): {
+							name += String.fromCharCode(e);
+							break;
+						};
+						case (p == 11): {
+							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim()}`;
+							prg ++;
+							name = "";
+							break;
+						};
+					};
+				};
+			});
+			upThis.dispatchEvent("mapupdate", {
+				overwrite: true,
+				voiceMap
+			});
+		});
 		// Yamaha XG Drum Setup SysEx
+		// Refactor this!
 		upThis.#seXgDrumInst.add([0], function (msg, setupNum, noteNum) {
 			console.info(`XG Drum ${setupNum} note ${noteNum} coarse pitch bend ${msg[0] - 64}.`);
 		}).add([1], function (msg, setupNum, noteNum) {
@@ -1073,6 +1156,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// EG decay 2 rate
 		});
 		// Yamaha XG Part Setup SysEx
+		// Refactor this!
 		upThis.#seXgPart.add([0], function (msg, channel) {
 			console.info(`XG Part reserve ${msg[0]} elements for channel ${channel}.`);
 		}).add([1], function (msg, channel) {
@@ -1133,6 +1217,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.info(`XG Part EG attack time ${msg[0] - 64} for channel ${channel}.`);
 		});
 		// Roland GS Part Setup SysEx
+		// Refactor this!
 		upThis.#seGsPart.add([0], function (msg, channel) {
 			// Same as cc00 and program change
 			if (upThis.#cc[channel * 128] == 120) {
@@ -1168,6 +1253,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[channel * 128 + 91] = msg[0];
 		});
 		// Roland GS Part Properties
+		// Refactor this!
 		upThis.#seGsPartProp.add([0], function(msg, channel) {
 			upThis.#cc[channel * 128 + 32] = msg[0];
 		}).add([1], function(msg, channel) {
