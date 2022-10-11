@@ -147,7 +147,7 @@ let VoiceBank = class {
 				assign.forEach(function (e0, i0) {
 					sig[sgCrit.indexOf(e0)] = i0;
 				});
-				//console.info(`Bank map significance: ${sig}`);
+				//console.debug(`Bank map significance: ${sig}`);
 			} else {
 				assign.forEach(function (e1, i1) {
 					if (i1 > 2) {
@@ -165,13 +165,12 @@ let VoiceBank = class {
 				});
 			};
 		});
-		console.info(`${allCount} entries in total, loaded ${loadCount} entries.`);
+		console.debug(`${allCount} entries in total, loaded ${loadCount} entries.`);
 	};
 	clearRange(options) {
 		let prg = options.prg != undefined ? (options.prg.constructor == Array ? options.prg : [options.prg, options.prg]) : [0, 127],
 		msb = options.msb != undefined ? (options.msb.constructor == Array ? options.msb : [options.msb, options.msb]) : [0, 127],
 		lsb = options.lsb != undefined ? (options.lsb.constructor == Array ? options.lsb : [options.lsb, options.lsb]) : [0, 127];
-		console.info(msb, prg, lsb);
 		for (let cMsb = msb[0]; cMsb <= msb[1]; cMsb ++) {
 			let precalMsb = cMsb << 7;
 			for (let cLsb = lsb[0]; cLsb <= lsb[1]; cLsb ++) {
@@ -187,7 +186,7 @@ let VoiceBank = class {
 		let upThis = this;
 		for (let c = 0; c < type.length; c ++) {
 			await fetch(`./data/bank/${type[c]}.tsv`).then(function (response) {
-				console.info(`Parsing voice map: ${type[c]}`);
+				console.debug(`Parsing voice map: ${type[c]}`);
 				return response.text()
 			}).then(function (text) {
 				upThis.load.call(upThis, text);

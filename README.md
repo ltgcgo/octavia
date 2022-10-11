@@ -12,7 +12,8 @@ _See the [MIDI Implementation Chart](IMPLEMENTATION.md)_
 * KORG NS5R
 
 ## Features
-* Supports multiple standards
+* 4 ports, 64 channels, 256-voice polyphony.
+* Supports multiple standards.
 * Available in JS (browser and Deno) and Go (not yet).
 
 ## API & more
