@@ -17,7 +17,8 @@ import {
 } from "./gsValues.js";
 import {
 	toDecibel,
-	korgFilter
+	korgFilter,
+	x5dSendLevel
 } from "./utils.js";
 
 const modeIdx = [
@@ -65,7 +66,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	#mode = 0;
 	#bitmap = new Array(256);
 	#bitmapExpire = 0;
-	#chActive = new Array(64); // Whether the channel is in use
+	#chActive = new Uint8Array(64); // Whether the channel is in use
+	#chReceive = new Uint8Array(64); // Determine the receiving channel
 	#cc = new Uint8ClampedArray(8192); // 64 channels, 128 controllers
 	#prg = new Uint8ClampedArray(64);
 	#velo = new Uint8ClampedArray(8192); // 64 channels. 128 velocity registers
@@ -126,43 +128,55 @@ let OctaviaDevice = class extends CustomEventSource {
 	// Channel event pool
 	#runChEvent = {
 		8: function (det) {
-			let part = this.chRedir(det.part, det.track);
-			// Note off, velocity should be ignored.
-			let rawNote = part * 128 + det.data[0];
-			let polyIdx = this.#poly.indexOf(rawNote);
-			if (polyIdx > -1) {
-				this.#poly[polyIdx] = 0;
-				this.#velo[rawNote] = 0;
-			};
+			let rcvPart = this.chRedir(det.part, det.track),
+			upThis = this;
+			this.#chReceive.forEach(function (e, i) {
+				if (e == rcvPart) {
+					let part = upThis.chRedir(i, det.track);
+					// Note off, velocity should be ignored.
+					let rawNote = part * 128 + det.data[0];
+					let polyIdx = upThis.#poly.indexOf(rawNote);
+					if (polyIdx > -1) {
+						upThis.#poly[polyIdx] = 0;
+						upThis.#velo[rawNote] = 0;
+					};
+				};
+			});
 		},
 		9: function (det) {
-			let part = this.chRedir(det.part, det.track);
+			let rcvPart = this.chRedir(det.part, det.track),
+			upThis = this;
 			// Note on, but should be off if velocity is 0.
 			// Set channel active
-			this.#chActive[part] = 1;
-			let rawNote = part * 128 + det.data[0];
-			if (det.data[1] > 0) {
-				let place = 0;
-				while (this.#poly[place] > 0) {
-					place ++;
-				};
-				if (place < 256) {
-					this.#poly[place] = rawNote;
-					this.#velo[rawNote] = det.data[1];
-					if (this.#rawStrength[part] < det.data[1]) {
-						this.#rawStrength[part] = det.data[1];
-						//console.info(`${part}: ${det.data[1]}`);
+			this.#chReceive.forEach(function (e, i) {
+				if (e == rcvPart) {
+					let part = upThis.chRedir(i, det.track);
+					upThis.#chActive[part] = 1;
+					let rawNote = part * 128 + det.data[0];
+					if (det.data[1] > 0) {
+						let place = 0;
+						while (upThis.#poly[place] > 0) {
+							place ++;
+						};
+						if (place < 256) {
+							upThis.#poly[place] = rawNote;
+							upThis.#velo[rawNote] = det.data[1];
+							if (upThis.#rawStrength[part] < det.data[1]) {
+								upThis.#rawStrength[part] = det.data[1];
+								//console.info(`${part}: ${det.data[1]}`);
+							};
+						} else {
+							console.error("Polyphony exceeded.");
+						};
+					} else {
+						let polyIdx = upThis.#poly.indexOf(rawNote);
+						if (polyIdx > -1) {
+							upThis.#poly[polyIdx] = 0;
+							upThis.#velo[rawNote] = 0;
+						};
 					};
-				} else {
-					console.error("Polyphony exceeded.");
 				};
-			} else {
-				let polyIdx = this.#poly.indexOf(rawNote);
-				if (polyIdx > -1) {
-					this.#poly[polyIdx] = 0;
-					this.#velo[rawNote] = 0;
-				};
-			};
+			});
 		},
 		10: function (det) {
 			let part = this.chRedir(det.part, det.track);
@@ -175,102 +189,107 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		},
 		11: function (det) {
-			let part = this.chRedir(det.part, det.track);
-			// CC event, directly assign values to the register.
-			this.#chActive[part] = 1;
-			let chOffset = part * 128;
-			// Pre interpret
-			switch (det.data[0]) {
-				case 0: {
-					// Detect mode via bank MSB
-					//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
-					if (this.#mode == modeMap.gs || this.#mode == 0) {
-						if (det.data[1] < 48) {
-							// Do not change drum channel to a melodic
-							if (this.#cc[chOffset] > 119) {
-								det.data[1] = this.#cc[chOffset];
-								if (!this.#mode) {
-									det.data[1] = 120;
-									console.debug(`Forced channel ${part + 1} to stay drums.`);
+			let rcvPart = this.chRedir(det.part, det.track);
+			this.#chReceive.forEach((e, i) => {
+				if (e == rcvPart) {
+					let part = this.chRedir(i, det.track);
+					// CC event, directly assign values to the register.
+					this.#chActive[part] = 1;
+					let chOffset = part * 128;
+					// Pre interpret
+					switch (det.data[0]) {
+						case 0: {
+							// Detect mode via bank MSB
+							//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
+							if (this.#mode == modeMap.gs || this.#mode == 0) {
+								if (det.data[1] < 48) {
+									// Do not change drum channel to a melodic
+									if (this.#cc[chOffset] > 119) {
+										det.data[1] = this.#cc[chOffset];
+										if (!this.#mode) {
+											det.data[1] = 120;
+											console.debug(`Forced channel ${part + 1} to stay drums.`);
+										};
+									};
+									if (det.data[1] > 0) {
+										console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
+										this.switchMode("gs");
+									};
+								} else if (det.data[1] == 62) {
+									this.switchMode("x5d");
+								};
+							} else if (this.#mode == modeMap.gm) {
+								if (det.data[1] < 48) {
+									// Do not change drum channel to a melodic
+									if (this.#cc[chOffset] > 119) {
+										det.data[1] = 120;
+										this.switchMode("gs", true);
+										console.debug(`Forced channel ${part + 1} to stay drums.`);
+									};
+								};
+							} else if (this.#mode == modeMap.x5d) {
+								if (det.data[1] > 0 && det.data[1] < 8) {
+									this.switchMode("05rw", true);
+								} else if (det.data[1] == 56) {
+									let agCount = 0;
+									for (let c = 0; c < 16; c ++) {
+										let d = this.#cc[128 * c];
+										if (d == 56 || d == 62) {
+											agCount ++;
+										};
+									};
+									if (agCount > 14) {
+										this.switchMode("ag10", true);
+									};
 								};
 							};
-							if (det.data[1] > 0) {
-								console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
-								this.switchMode("gs");
-							};
-						} else if (det.data[1] == 62) {
-							this.switchMode("x5d");
+							break;
 						};
-					} else if (this.#mode == modeMap.gm) {
-						if (det.data[1] < 48) {
-							// Do not change drum channel to a melodic
-							if (this.#cc[chOffset] > 119) {
-								det.data[1] = 120;
-								this.switchMode("gs", true);
-								console.debug(`Forced channel ${part + 1} to stay drums.`);
-							};
-						};
-					} else if (this.#mode == modeMap.x5d) {
-						if (det.data[1] > 0 && det.data[1] < 8) {
-							this.switchMode("05rw", true);
-						} else if (det.data[1] == 56) {
-							let agCount = 0;
-							for (let c = 0; c < 16; c ++) {
-								let d = this.#cc[128 * c];
-								if (d == 56 || d == 62) {
-									agCount ++;
+						case 6: {
+							// Show RPN and NRPN
+							if (this.#dataCommit) {
+								if (this.#cc[chOffset + 99] == 1) {
+									let nrpnIdx = useNormNrpn.indexOf(this.#cc[chOffset + 98]);
+									if (nrpnIdx > -1) {
+										this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
+									};
+								} else {
+									//console.debug(`${part + 1} MSB ${det.data[1]} NRPN ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
+								};
+							} else {
+								// Commit supported RPN values
+								if (this.#cc[chOffset + 101] == 0 && this.#cc[chOffset + 100] < 3) {
+									this.#rpn[part * 4 + [0, 1, 3][this.#cc[chOffset + 100]]] = det.data[1];
 								};
 							};
-							if (agCount > 14) {
-								this.switchMode("ag10", true);
+							break;
+						};
+						case 38: {
+							// Show RPN and NRPN
+							if (!this.#dataCommit) {
+								// Commit supported RPN values
+								if (this.#cc[chOffset + 101] == 0 && this.#cc[chOffset + 100] == 1) {
+									this.#rpn[part * 4 + 2] = det.data[1];
+								};
+							} else {
+								//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
 							};
+							break;
+						};
+						case 98:
+						case 99: {
+							this.#dataCommit = 1;
+							break;
+						};
+						case 100:
+						case 101: {
+							this.#dataCommit = 0;
+							break;
 						};
 					};
-					break;
+					this.#cc[chOffset + det.data[0]] = det.data[1];
 				};
-				case 6: {
-					// Show RPN and NRPN
-					if (this.#dataCommit) {
-						if (this.#cc[chOffset + 99] == 1) {
-							let nrpnIdx = useNormNrpn.indexOf(this.#cc[chOffset + 98]);
-							if (nrpnIdx > -1) {
-								this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
-							};
-						} else {
-							//console.debug(`${part + 1} MSB ${det.data[1]} NRPN ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
-						};
-					} else {
-						// Commit supported RPN values
-						if (this.#cc[chOffset + 101] == 0 && this.#cc[chOffset + 100] < 3) {
-							this.#rpn[part * 4 + [0, 1, 3][this.#cc[chOffset + 100]]] = det.data[1];
-						};
-					};
-					break;
-				};
-				case 38: {
-					// Show RPN and NRPN
-					if (!this.#dataCommit) {
-						// Commit supported RPN values
-						if (this.#cc[chOffset + 101] == 0 && this.#cc[chOffset + 100] == 1) {
-							this.#rpn[part * 4 + 2] = det.data[1];
-						};
-					} else {
-						//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
-					};
-					break;
-				};
-				case 98:
-				case 99: {
-					this.#dataCommit = 1;
-					break;
-				};
-				case 100:
-				case 101: {
-					this.#dataCommit = 0;
-					break;
-				};
-			};
-			this.#cc[chOffset + det.data[0]] = det.data[1];
+			});
 		},
 		12: function (det) {
 			let part = this.chRedir(det.part, det.track);
@@ -446,6 +465,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#bitmap.forEach(toZero);
 		this.#customName.forEach(toZero);
 		this.#modeKaraoke = false;
+		// Reset MIDI receive channel
+		this.#chReceive.forEach(function (e, i, a) {
+			a[i] = i;
+		});
 		// Reset channel redirection
 		this.#trkRedir.forEach(toZero);
 		this.#trkAsReq.forEach(toZero);
@@ -1054,6 +1077,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 0: {
 							// Program change
 							upThis.#prg[part] = e;
+							if (e > 0) {
+								upThis.#chActive[part] = 1;
+							};
 							break;
 						};
 						case 1: {
@@ -1068,6 +1094,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						case 3: {
 							// Fine tune
+							upThis.#rpn[part * 4 + 1] = (e > 127 ? 256 - e : 64 + e);
 							break;
 						};
 						case 4: {
@@ -1077,10 +1104,27 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 							break;
 						};
+						case 5: {
+							// Reverb + Chorus
+							let choSend = e >> 4,
+							revSend = e & 15;
+							upThis.#cc[chOff + 91] = x5dSendLevel(revSend);
+							upThis.#cc[chOff + 93] = x5dSendLevel(choSend);
+							break;
+						};
 						case 10: {
 							// Control filter
 							upThis.#cc[chOff] = (e & 3) ? 82 : 56;
 							break;
+						};
+						case 11: {
+							// MIDI Rc Ch + Track Switch
+							let midiCh = e & 15,
+							trkSw = e >> 4;
+							upThis.#chReceive[part] = midiCh;
+							if (midiCh != part || trkSw) {
+								console.debug(`X5D CH${part + 1} requested to receive from CH${midiCh + 1}. Track is ${trkSw ? "inactive" : "active"}.`);
+							};
 						};
 					};
 				} else {
@@ -1094,15 +1138,53 @@ let OctaviaDevice = class extends CustomEventSource {
 			let name = "", msb = 82, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
-				if (prg < 100) {
+				if (i < 16400) {
 					let p = i % 164;
 					switch (true) {
 						case (p < 10): {
-							name += String.fromCharCode(e);
+							if (e > 31) {
+								name += String.fromCharCode(e);
+							};
 							break;
 						};
 						case (p == 11): {
-							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim()}`;
+							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Voice", "")}`;
+							prg ++;
+							name = "";
+							break;
+						};
+					};
+					if (prg > 99) {
+						msb = 90;
+						prg = 0;
+					};
+				};
+			});
+			upThis.dispatchEvent("mapupdate", {
+				clearRange: {
+					msb: 82,
+					prg: [0, 99],
+					lsb: 0
+				},
+				voiceMap
+			});
+		}).add([66, 48, 54, 77, 0], function (msg, track) {
+			// X5D combi dump
+			upThis.switchMode("x5d", true);
+			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
+			let voiceMap = "MSB\tPRG\tLSB\tNME";
+			korgFilter(msg, function (e, i) {
+				if (i < 13600) {
+					let p = i % 136;
+					switch (true) {
+						case (p < 10): {
+							if (e > 31) {
+								name += String.fromCharCode(e);
+							};
+							break;
+						};
+						case (p == 11): {
+							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Combi", "")}`;
 							prg ++;
 							name = "";
 							break;
@@ -1111,11 +1193,15 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 			upThis.dispatchEvent("mapupdate", {
-				overwrite: true,
+				clearRange: {
+					msb: 90,
+					prg: [0, 99],
+					lsb: 0
+				},
 				voiceMap
 			});
 		}).add([66, 48, 66, 54], function (msg, track) {
-			// NS5R Program Dump
+			// NS5R program dump
 			upThis.switchMode("ns5r", true);
 			let name = "", msb = 80, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
@@ -1123,7 +1209,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				let p = i % 158;
 				switch (true) {
 					case (p < 10): {
-						name += String.fromCharCode(e);
+						if (e > 31) {
+							name += String.fromCharCode(e);
+						};
 						break;
 					};
 					case (p == 11): {
@@ -1179,7 +1267,16 @@ let OctaviaDevice = class extends CustomEventSource {
 							case 2: {
 								// Program
 								upThis.#prg[part] = e;
+								if (e > 0) {
+									upThis.#chActive[part] = 1;
+								};
 								break;
+							};
+							case 3: {
+								// Receive MIDI channel
+								if (part != e) {
+									console.debug(`NS5R CH${part + 1} requested to receive from CH${e + 1}.`);
+								};
 							};
 							case 7: {
 								// 0 for melodic, 1 for drum, 2~5 for mod drums 1~4
@@ -1189,6 +1286,10 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Coarse Tune
 								upThis.#rpn[part * 4 + 3] = e;
 								break;
+							};
+							case 9: {
+								// Fine Tune
+								// This is trying to use absolute values.
 							};
 							case 10: {
 								// Volume
