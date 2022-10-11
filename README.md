@@ -2,7 +2,7 @@
 🎻 The multi-standard MIDI state displaying solution. Visualizing MIDI should be made easy while being professional!
 
 ## Supported standard/devices
-_See the [MIDI Implementation Chart](IMPLEMENTATION.md)_
+_See the [MIDI Implementation Chart](docs/IMPLEMENTATION.md)_
 * Roland MT-32
 * KORG AG-10
 * YAMAHA XG

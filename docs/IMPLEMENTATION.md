@@ -1,3 +1,4 @@
+## MIDI Implementation Chart
 <table>
 	<thead>
 		<tr>
@@ -16,7 +17,7 @@
 		<tr>
 			<td>Changed</td>
 			<td>✓ 1-16</td>
-			<td></td>
+			<td>Supports up to 64 channels.</td>
 		</tr>
 		<tr>
 			<td colspan=2>Note number</td>

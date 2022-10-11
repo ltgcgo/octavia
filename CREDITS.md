@@ -1,13 +1,29 @@
 ## Project Credits
 Octavia will never become a reality without help from the following people.
 
-* **Eastern_Digital** for suggesting a better cross-platform MIDI support and being a tester. Without them, Octavia would've never been born.
-* **NiceChord** for making easy-to-understand multi-lingual music courses, and providing video & audio references of tone generators (YAMAHA MU80, Roland SC-55).
-* **Ham Seung-woo** for providing videos using MegaMID (inspiration of Octavia's default GUI) with audio references of real tone generators (YAMAHA MU90).
-* **JayB** for providing picture, video & audio references (YAMAHA QY70, YAMAHA QY100, KORG NS5R), testing on real modules, demo files and technical insights.
-* **DearHoney** for providing video & audio references (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro), and providing some hard-to-find demo MIDI files.
+### Software Testers
+* **Eastern_Digital**
+* **GFHK-SDGM**
+* **JayB**
+
+### Reference providers
+* **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
+* **DearHoney** (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro)
+* **Ham Seung-woo** (YAMAHA MU90)
+* **NiceChord** (YAMAHA MU80, Roland SC-55 mk. II)
+* **Lupinzar** _DarkWolf, garoux.net_ (YAMAHA MU80, Roland SC-55 mk. II)
+
+### Hardware Testers
+* **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
+
+### Demo providers
+* **DearHoney**
+* **JayB**
+
+### Miscellaneous
+* **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
+* **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI).
 * **Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).
-* **GFHK-SDGM** for being a tester.
 
 ## Demo Credits
 * A: JayB - KANDI8 (XG) _Recorded by JayB_
@@ -25,7 +41,7 @@ Octavia will never become a reality without help from the following people.
 * M: Michael Z. Land - Introduction (MT-32)
 * N: Roland - Japanese (GS, SC-88 Pro) _Recorded by DearHoney_
 * O: Adrian Scott - Leya's Song (GS, SC-55) _Recorded by DearHoney_
-* P: 久光ヒロシ - 韋駄天 (GS, SC-88) _Recorded by DearHoney_
+* P: 久光ひろし - 韋駄天 (GS, SC-88) _Recorded by DearHoney_
 * Q: David J. Reading - Cybergate _Recorded by JayB_
-* R: KORG - Mad Robot (05R/W) _Recorded by TopWave32_
+* R: KORG - Mad Robot (05R/W) _Recorded by DearHoney_
 * S: KORG - Clasitario (AG-10) _Recorded by DearHoney_
