@@ -15,7 +15,12 @@ let korgFilter = function (korgArr, iterator) {
 	};
 };
 
+let x5dSendLevel = function (sendParam) {
+	return Math.floor(sendParam * 14.2);
+};
+
 export {
 	toDecibel,
-	korgFilter
+	korgFilter,
+	x5dSendLevel
 };

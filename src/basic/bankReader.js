@@ -40,7 +40,10 @@ let VoiceBank = class {
 				args[2] = 0;
 				ending = "^";
 				if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
-					if (msb < 64) {
+					if (msb == 62) {
+						args[1] --;
+						ending = " ";
+					} else if (msb < 64) {
 						args[0] = 0;
 						ending = "*";
 					} else if (msb == 80) {
@@ -91,13 +94,13 @@ let VoiceBank = class {
 			case 83:
 			case 88:
 			case 89:
-			case 90:
 			case 91: {
 				standard = "AI";
 				break;
 			};
 			case 62:
-			case 82: {
+			case 82:
+			case 90: {
 				standard = "XD";
 				break;
 			};
