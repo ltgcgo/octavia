@@ -37,6 +37,15 @@ const substList = [
 ];
 const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
+const eventTypes = {
+	8: "Off",
+	9: "On",
+	10: "Note aftertouch",
+	11: "cc",
+	12: "pc",
+	13: "Channel aftertouch",
+	14: "Pitch"
+};
 
 const useNormNrpn = [8, 9, 10, 32, 33, 36, 37, 99, 100, 101],
 useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65];
@@ -85,6 +94,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#letterDisp = "";
 	#letterExpire = 0;
 	#modeKaraoke = false;
+	#receiveTree;
 	// Metadata text events
 	#metaTexts = [];
 	// GS Track Occupation
@@ -331,6 +341,20 @@ let OctaviaDevice = class extends CustomEventSource {
 	#seXgDrumInst;
 	// MT-32 SysEx pool
 	#seMtSysEx;
+	buildRchTree() {
+		// Build a receiving tree from currently set receive channels
+		// Now builds from the ground up each time
+		// Can be optimized to move elements instead
+		let tree = [];
+		this.#chReceive.forEach((e, i) => {
+			if (!tree[e]?.constructor) {
+				tree[e] = [];
+			};
+			tree[e].push(i);
+		});
+		this.#receiveTree = tree;
+		//console.debug(tree);
+	};
 	getActive() {
 		let result = this.#chActive.slice();
 		if (this.#mode == modeMap.mt32) {
@@ -453,6 +477,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#chReceive.forEach(function (e, i, a) {
 			a[i] = i;
 		});
+		this.buildRchTree();
 		// Reset channel redirection
 		this.#trkRedir.forEach(toZero);
 		this.#trkAsReq.forEach(toZero);
@@ -513,16 +538,21 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Universal MIDI channel receive support.
 			let rcvPart = this.chRedir(json.part, json.track),
 			executed = false;
-			this.#chReceive.forEach((e, i) => {
+			this.#receiveTree[rcvPart]?.forEach((e) => {
+				json.channel = e;
+				executed = true;
+				this.#runChEvent[json.type].call(this, json);
+			});
+			/* this.#chReceive.forEach((e, i) => {
 				if (e == rcvPart) {
 					//json.channel = this.chRedir(i, json.track);
 					json.channel = i;
 					executed = true;
 					this.#runChEvent[json.type].call(this, json);
 				};
-			});
+			}); */
 			if (!executed) {
-				console.debug(`Message not received. Type ${json.type} send to CH${rcvPart + 1}.`);
+				console.warn(`${eventTypes[json.type] ? eventTypes[json.type] : json.type}${[11, 12].includes(json.type) ? (json.data[0] != undefined ? json.data[0] : json.data).toString() : ""} event sent to CH${rcvPart + 1} without any recipient.`);
 			};
 		};
 	};
@@ -1126,6 +1156,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.#chReceive[part] = e;
 							if (midiCh != part || trkSw) {
 								console.info(`X5D Part CH${part + 1} receives from CH${midiCh + 1}. Track is ${trkSw ? "inactive" : "active"}.`);
+								upThis.buildRchTree();
 							};
 						};
 					};
@@ -1278,7 +1309,8 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Receive MIDI channel
 								upThis.#chReceive[part] = e;
 								if (part != e) {
-									console.debug(`NS5R CH${part + 1} receives from CH${e + 1}.`);
+									console.info(`NS5R CH${part + 1} receives from CH${e + 1}.`);
+									upThis.buildRchTree();
 								};
 							};
 							case 7: {
@@ -1400,6 +1432,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#chReceive[channel] = msg[0];
 			if (channel != msg[0]) {
 				console.info(`XG Part CH${channel + 1} receives from CH${msg[0] + 1}.`);
+				upThis.buildRchTree();
 			};
 		}).add([5], function (msg, channel) {
 			// Mono/poly switching
@@ -1458,10 +1491,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([2], function (msg, channel, track) {
 			// Channel redirect might be required
 			// 3 to 18 controls whether to receive messages. Not implemented for now.
-			let targetCh = upThis.chRedir(msg[0], track);
+			let targetCh = upThis.chRedir(msg[0], track, true);
 			upThis.#chReceive[channel] = targetCh;
 			if (channel != targetCh) {
 				console.info(`GS Part CH${channel + 1} receives from CH${targetCh + 1.}.`);
+				upThis.buildRchTree();
 			};
 		}).add([19], function (msg, channel) {
 			// Switch to mono (0) or poly (1)
