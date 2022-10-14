@@ -94,8 +94,8 @@ let TuiDisplay = class extends RootDisplay {
 				fields[st + startLn] = `${(fields[st + startLn] || "").slice(0, 82).padEnd(81)} <span class="letter"> ${letterDisp.slice(st * 16, st * 16 + 16).padEnd(" ", 16)} </span>`;
 			};
 		};
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		if (ctx) {
+			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			ctx.fillStyle = "#202020";
 			let renderer;
 			if (timeNow <= sum.bitmap.expire) {
