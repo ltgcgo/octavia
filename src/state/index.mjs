@@ -27,10 +27,6 @@ const modeIdx = [
 	"mt32", "ns5r",
 	"ag10", "x5d", "05rw"
 ];
-let modeMap = {};
-modeIdx.forEach(function (e, i) {
-	modeMap[e] = i;
-});
 const substList = [
 	[0, 0, 0, 0, 121, 0, 0, 56, 82, 81],
 	[0, 0, 1, 0, 0, 127, 0, 0, 0, 0]
@@ -48,7 +44,20 @@ const eventTypes = {
 };
 
 const useNormNrpn = [8, 9, 10, 32, 33, 36, 37, 99, 100, 101],
-useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65];
+useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65],
+ccAccepted = [0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32, 38, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 84, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 120, 121, 123, 124, 125, 126, 127];
+
+
+let modeMap = {};
+modeIdx.forEach((e, i) => {
+	modeMap[e] = i;
+});
+let ccToPos = {
+	length: ccAccepted.length
+};
+ccAccepted.forEach((e, i) => {
+	ccToPos[e] = i;
+});
 
 let toZero = function (e, i, a) {
 	a[i] = 0;
@@ -70,23 +79,31 @@ let showTrue = function (data, prefix = "", suffix = "", length = 2) {
 	return data ? `${prefix}${data.toString().padStart(length, "0")}${suffix}` : "";
 };
 
+const allocated = {
+	ch: 64, // channels
+	cc: ccAccepted.length, // control changes
+	nn: 128, // notes per channel
+	pl: 512, // polyphony
+	tr: 256 // tracks
+};
+
 let OctaviaDevice = class extends CustomEventSource {
 	// Values
 	#mode = 0;
-	#bitmap = new Array(256);
+	#bitmap = new Uint8Array(256);
 	#bitmapExpire = 0;
-	#chActive = new Uint8Array(64); // Whether the channel is in use
-	#chReceive = new Uint8Array(64); // Determine the receiving channel
+	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
+	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
 	#cc = new Uint8ClampedArray(8192); // 64 channels, 128 controllers
-	#prg = new Uint8ClampedArray(64);
-	#velo = new Uint8ClampedArray(8192); // 64 channels. 128 velocity registers
-	#poly = new Uint16Array(512); // 512 polyphony allowed
-	#pitch = new Int16Array(64); // Pitch for channels, from -8192 to 8191
-	#customName = new Array(64); // Allow custom naming
-	#rawStrength = new Uint8Array(64);
+	#prg = new Uint8ClampedArray(allocated.ch);
+	#velo = new Uint8ClampedArray(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
+	#poly = new Uint16Array(allocated.pl); // 512 polyphony allowed
+	#pitch = new Int16Array(allocated.ch); // Pitch for channels, from -8192 to 8191
+	#customName = new Array(allocated.ch); // Allow custom naming
+	#rawStrength = new Uint8Array(allocated.ch);
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
-	#rpn = new Uint8Array(256); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB)
-	#nrpn = new Int8Array(640); // Normal section of NRPN registers
+	#rpn = new Uint8Array(allocated.ch * 4); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB)
+	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
@@ -98,8 +115,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	// Metadata text events
 	#metaTexts = [];
 	// GS Track Occupation
-	#trkRedir = new Uint8Array(32);
-	#trkAsReq = new Uint8Array(128); // Track Assignment request
+	#trkRedir = new Uint8Array(allocated.ch);
+	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
 	chRedir(part, track, noConquer) {
 		if ([modeMap.gs, modeMap.ns5r].indexOf(this.#mode) > -1) {
 			if (this.#trkAsReq[track]) {
@@ -136,6 +153,17 @@ let OctaviaDevice = class extends CustomEventSource {
 	#metaRun = [];
 	// Sequencer specific meta pool
 	#metaSeq;
+	// Universal actions
+	#ua = {
+		ano: () => {
+			// All notes off
+			// Current implementation uses the static velocity register
+			this.#poly.forEach((e, i, a) => {
+				this.#velo[e] = 0;
+				a[i] = 0;
+			});
+		}
+	};
 	// Channel event pool
 	#runChEvent = {
 		8: function (det) {
@@ -192,6 +220,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			// CC event, directly assign values to the register.
 			this.#chActive[part] = 1;
 			let chOffset = part * 128;
+			// Check if control change is accepted
+			if (ccToPos[det.data[0]] == undefined) {
+				console.warn(`cc${det.data[0]} is not accepted.`);
+			};
 			// Pre interpret
 			switch (det.data[0]) {
 				case 0: {
@@ -282,6 +314,49 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#dataCommit = 0;
 					break;
 				};
+				case 120: {
+					// All sound off
+					this.#ua.ano();
+					break;
+				};
+				case 121: {
+					// Reset controllers
+					// Pitch bend = 0
+					// Modulation = 0
+					// Expression = 0
+					// cc64 (Hold) = 0
+					// Portamento = 0
+					// Portamento control = 0
+					// Sostenuto = 0
+					// Soft Pedal = 0
+					// 98, 99, 100, 101 = 127
+					// All keys and channels have presure set to off
+					break;
+				};
+				case 123: {
+					this.#ua.ano();
+					break;
+				};
+				case 124: {
+					// Omni off
+					this.#ua.ano();
+					break;
+				};
+				case 125: {
+					// Omni on
+					this.#ua.ano();
+					break;
+				};
+				case 126: {
+					// Mono mode
+					this.#ua.ano();
+					break;
+				};
+				case 127: {
+					// Poly mode
+					this.#ua.ano();
+					break;
+				};
 			};
 			this.#cc[chOffset + det.data[0]] = det.data[1];
 		},
@@ -358,7 +433,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	getActive() {
 		let result = this.#chActive.slice();
 		if (this.#mode == modeMap.mt32) {
-			result[0] = 0;
+			//result[0] = 0;
 		};
 		return result;
 	};
@@ -688,6 +763,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("mt32", true);
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: MT-32");
+			console.debug("Reset with the shorter one.");
+		}).add([65, 16, 22, 18, 127, 0, 0, 1, 0], function () {
+			// MT-32 reset
+			upThis.switchMode("mt32", true);
+			upThis.#modeKaraoke = false;
+			console.info("MIDI reset: MT-32");
+			console.debug("Reset with the longer one.");
 		}).add([65, 16, 66, 18, 64, 0, 127, 0, 65], function () {
 			// Roland GS reset
 			upThis.switchMode("gs", true);
@@ -897,6 +979,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("mt32");
 			upThis.#chActive[9] = 1;
 			upThis.#seMtSysEx.run(msg, 9);
+		}).add([65, 16, 22, 18, 32, 0], function (msg) {
+			let offset = msg[0];
+			upThis.#letterDisp = " ".repeat(offset);
+			msg.unshift();
+			msg.pop();
+			upThis.#letterDisp = " ".repeat(offset);
+			upThis.#letterExpire = Date.now() + 3200;
+			msg.forEach(function (e) {
+				if (e > 31) {
+					upThis.#letterDisp += String.fromCharCode(e);
+				};
+			});
+			upThis.#letterDisp += " ".repeat(32 - upThis.#letterDisp.length);
 		});
 		this.#seMtSysEx.add([22, 18, 2, 0, 0], function (msg, channel) {
 			// MT-32 tone properties
@@ -1539,5 +1634,6 @@ let OctaviaDevice = class extends CustomEventSource {
 };
 
 export {
-	OctaviaDevice
+	OctaviaDevice,
+	ccToPos
 };

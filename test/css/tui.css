@@ -6,7 +6,7 @@ p {
 	margin: 0.2em;
 }
 
-b[class] {
+b[class], b[id^=open] {
 	cursor: default;
 }
 b.active {

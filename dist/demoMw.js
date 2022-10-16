@@ -1,0 +1,2 @@
+"use strict";(()=>{var jsonConvert=function(data,track=0){let type=data[0]>>4,part=data[0]&15,replyObj={track:(track&15)+240,type,data:data.slice(1)};if(type<15)return replyObj.part=part,replyObj;if(part==0)return replyObj;console.warn(`Unknown special event channel ${part}.`)},getBridge=function(){return new BroadcastChannel("cc.ltgc.octavia:MainBus")};(async function(){self.midiAccess=await navigator.requestMIDIAccess({sysex:!0,software:!0}),self.jsonConvert=jsonConvert,self.midiLine=getBridge()})();})();
+//# sourceMappingURL=demoMw.js.map
