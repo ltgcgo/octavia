@@ -63,7 +63,7 @@
 			<td>0-24 semitone steps<br/>14-bit resolution</td>
 		</tr>
 		<tr>
-			<td rowspan=42>Control Change</td>
+			<td rowspan=46>Control Change</td>
 			<td>0</td>
 			<td>✓</td>
 			<td>MSB Bank Select</td>
@@ -177,6 +177,26 @@
 			<td>74</td>
 			<td>✓</td>
 			<td>Brightness</td>
+		</tr>
+		<tr>
+			<td>75</td>
+			<td>✓</td>
+			<td>Decay Time</td>
+		</tr>
+		<tr>
+			<td>76</td>
+			<td>✓</td>
+			<td>Vibrato Rate</td>
+		</tr>
+		<tr>
+			<td>77</td>
+			<td>✓</td>
+			<td>Vibrato Depth</td>
+		</tr>
+		<tr>
+			<td>78</td>
+			<td>✓</td>
+			<td>Vibrato Delay</td>
 		</tr>
 		<tr>
 			<td>84</td>

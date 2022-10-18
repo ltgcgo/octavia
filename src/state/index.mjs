@@ -43,9 +43,20 @@ const eventTypes = {
 	14: "Pitch"
 };
 
-const useNormNrpn = [8, 9, 10, 32, 33, 36, 37, 99, 100, 101],
+const useRpnMap = {
+	0: 0,
+	1: 1,
+	2: 3,
+	5: 4
+},
+useNormNrpn = [8, 9, 10, 32, 33, 36, 37, 99, 100, 101],
 useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65],
-ccAccepted = [0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32, 38, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 84, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 120, 121, 123, 124, 125, 126, 127];
+ccAccepted = [
+	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,
+	38, 64, 65, 66, 67, 68, 69, 70, 71,
+	72, 73, 74, 75, 76, 77, 78, 84, 91,
+	92, 93, 94, 95, 98, 99, 100, 101
+]; // 96, 97, 120 to 127 all have special functions
 
 
 let modeMap = {};
@@ -84,7 +95,8 @@ const allocated = {
 	cc: ccAccepted.length, // control changes
 	nn: 128, // notes per channel
 	pl: 512, // polyphony
-	tr: 256 // tracks
+	tr: 256, // tracks
+	rpn: 6
 };
 
 let OctaviaDevice = class extends CustomEventSource {
@@ -97,12 +109,13 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cc = new Uint8ClampedArray(8192); // 64 channels, 128 controllers
 	#prg = new Uint8ClampedArray(allocated.ch);
 	#velo = new Uint8ClampedArray(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
+	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
 	#poly = new Uint16Array(allocated.pl); // 512 polyphony allowed
 	#pitch = new Int16Array(allocated.ch); // Pitch for channels, from -8192 to 8191
 	#customName = new Array(allocated.ch); // Allow custom naming
 	#rawStrength = new Uint8Array(allocated.ch);
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
-	#rpn = new Uint8Array(allocated.ch * 4); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB)
+	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
@@ -286,8 +299,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 					} else {
 						// Commit supported RPN values
-						if (this.#cc[chOffset + 101] == 0 && this.#cc[chOffset + 100] < 3) {
-							this.#rpn[part * 4 + [0, 1, 3][this.#cc[chOffset + 100]]] = det.data[1];
+						if (this.#cc[chOffset + 101] == 0 && useRpnMap[this.#cc[chOffset + 100]] != undefined) {
+							this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + 100]]] = det.data[1];
 						};
 					};
 					break;
@@ -296,8 +309,8 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Show RPN and NRPN
 					if (!this.#dataCommit) {
 						// Commit supported RPN values
-						if (this.#cc[chOffset + 101] == 0 && this.#cc[chOffset + 100] == 1) {
-							this.#rpn[part * 4 + 2] = det.data[1];
+						if (this.#cc[chOffset + 101] == 0 && useRpnMap[this.#cc[chOffset + 100]] != undefined) {
+							this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + 100]] + 1] = det.data[1];
 						};
 					} else {
 						//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
@@ -315,25 +328,17 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case 120: {
-					// All sound off
-					this.#ua.ano();
+					// All sound off, but keys stay on
 					break;
 				};
 				case 121: {
 					// Reset controllers
-					// Pitch bend = 0
-					// Modulation = 0
-					// Expression = 0
-					// cc64 (Hold) = 0
-					// Portamento = 0
-					// Portamento control = 0
-					// Sostenuto = 0
-					// Soft Pedal = 0
-					// 98, 99, 100, 101 = 127
-					// All keys and channels have presure set to off
+					this.init(1);
+					this.#ua.ano();
 					break;
 				};
 				case 123: {
+					// All notes off
 					this.#ua.ano();
 					break;
 				};
@@ -349,11 +354,13 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case 126: {
 					// Mono mode
+					this.#mono[part] = 1;
 					this.#ua.ano();
 					break;
 				};
 				case 127: {
 					// Poly mode
+					this.#mono[part] = 0;
 					this.#ua.ano();
 					break;
 				};
@@ -525,9 +532,32 @@ let OctaviaDevice = class extends CustomEventSource {
 	getNrpn() {
 		return this.#nrpn;
 	};
-	init() {
-		this.dispatchEvent("mode", "?");
+	init(type = 0) {
+		// Type 0 is full reset
+		// Type 1 is controller reset
+		if (type == 1) {
+			this.#pitch.forEach(toZero);
+			for (let ch = 0; ch < 64; ch ++) {
+				let chOff = ch * 128;
+				// Reset to zero
+				this.#cc[chOff] = 0; // Modulation
+				this.#cc[chOff + 5] = 0; // Portamento Time
+				this.#cc[chOff + 64] = 0; // Sustain
+				this.#cc[chOff + 65] = 0; // Portamento
+				this.#cc[chOff + 66] = 0; // Sostenuto
+				this.#cc[chOff + 67] = 0; // Soft Pedal
+				// Reset to full
+				this.#cc[chOff + 11] = 127; // Expression
+				// RPN/NRPN to null
+				this.#cc[chOff + 101] = 127;
+				this.#cc[chOff + 100] = 127;
+				this.#cc[chOff + 99] = 127;
+				this.#cc[chOff + 98] = 127;
+			};
+			return;
+		};
 		// Full reset
+		this.dispatchEvent("mode", "?");
 		this.#mode = 0;
 		this.#subMsb = 0;
 		this.#subLsb = 0;
@@ -563,26 +593,35 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#cc[7296] = 127;
 		for (let ch = 0; ch < 64; ch ++) {
 			let chOff = ch * 128;
-			// Volume and expression to full
-			this.#cc[chOff + 7] = 127;
-			this.#cc[chOff + 11] = 127;
-			// Full brightness
-			this.#cc[chOff + 74] = 127;
-			// Center panning
-			this.#cc[chOff + 10] = 64;
+			// Reset to full
+			this.#cc[chOff + 7] = 127; // Volume
+			this.#cc[chOff + 11] = 127; // Expression
+			// Reset to centre
+			this.#cc[chOff + 10] = 64; // Pan
+			this.#cc[chOff + 71] = 64; // Harmonic Content
+			this.#cc[chOff + 72] = 64; // Release Time
+			this.#cc[chOff + 73] = 64; // Attack Time
+			this.#cc[chOff + 74] = 64; // Brightness
+			this.#cc[chOff + 75] = 64; // Decay Time
+			this.#cc[chOff + 76] = 64; // Vibrato Rate
+			this.#cc[chOff + 77] = 64; // Vibrato Depth
+			this.#cc[chOff + 78] = 64; // Vibrato Delay
 			// RPN/NRPN to null
 			this.#cc[chOff + 101] = 127;
 			this.#cc[chOff + 100] = 127;
 			this.#cc[chOff + 99] = 127;
 			this.#cc[chOff + 98] = 127;
 			// RPN reset
-			let rpnOff = ch * 4;
+			let rpnOff = ch * allocated.rpn;
 			this.#rpn[rpnOff] = 2; // Pitch bend sensitivity
 			this.#rpn[rpnOff + 1] = 64; // Fine tune MSB
 			this.#rpn[rpnOff + 2] = 0; // Fine tune LSB
 			this.#rpn[rpnOff + 3] = 64; // Coarse tune MSB
+			this.#rpn[rpnOff + 4] = 0; // Mod sensitivity MSB
+			this.#rpn[rpnOff + 5] = 0; // Mod sensitivity LSB
 			// NRPN drum section reset
 		};
+		return;
 	};
 	switchMode(mode, forced = false) {
 		let idx = modeIdx.indexOf(mode);
@@ -1216,12 +1255,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						case 2: {
 							// Coarse tune
-							upThis.#rpn[part * 4 + 3] = (e > 127 ? 256 - e : 64 + e);
+							upThis.#rpn[part * allocated.rpn + 3] = (e > 127 ? 256 - e : 64 + e);
 							break;
 						};
 						case 3: {
 							// Fine tune
-							upThis.#rpn[part * 4 + 1] = (e > 127 ? 256 - e : 64 + e);
+							upThis.#rpn[part * allocated.rpn + 1] = (e > 127 ? 256 - e : 64 + e);
 							break;
 						};
 						case 4: {
@@ -1414,7 +1453,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 							case 8: {
 								// Coarse Tune
-								upThis.#rpn[part * 4 + 3] = e;
+								upThis.#rpn[part * allocated.rpn + 3] = e;
 								break;
 							};
 							case 9: {
