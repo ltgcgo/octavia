@@ -11,7 +11,7 @@
 		<tr>
 			<td rowspan=2>Basic Channel</td>
 			<td>Default</td>
-			<td>✓ 1</td>
+			<td>✓ 1-16</td>
 			<td></td>
 		</tr>
 		<tr>
@@ -22,6 +22,17 @@
 		<tr>
 			<td colspan=2>Note number</td>
 			<td>0-127</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td rowspan=2>Mode</td>
+			<td>Default</td>
+			<td>3</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Messages</td>
+			<td>✓ 3, 4</td>
 			<td></td>
 		</tr>
 		<tr>
@@ -115,7 +126,7 @@
 		<tr>
 			<td>64</td>
 			<td>✓</td>
-			<td>Sustain (Hold)</td>
+			<td>Sustain (Hold)<br/><i>Store only</i></td>
 		</tr>
 		<tr>
 			<td>65</td>
@@ -125,7 +136,7 @@
 		<tr>
 			<td>66</td>
 			<td>✓</td>
-			<td>Sostenuto</td>
+			<td>Sostenuto<br/><i>Store only</i></td>
 		</tr>
 		<tr>
 			<td>67</td>
@@ -135,17 +146,17 @@
 		<tr>
 			<td>68</td>
 			<td>✓</td>
-			<td>Legato</td>
+			<td>Legato<br/><i>Store only</i></td>
 		</tr>
 		<tr>
 			<td>69</td>
 			<td>✓</td>
-			<td>Hold 2</td>
+			<td>Hold 2<br/><i>Store only</i></td>
 		</tr>
 		<tr>
 			<td>70</td>
 			<td>✓</td>
-			<td>Timbre Variation</td>
+			<td>Timbre Variation<br/><i>Store only</i></td>
 		</tr>
 		<tr>
 			<td>71</td>
@@ -199,12 +210,12 @@
 		</tr>
 		<tr>
 			<td>96</td>
-			<td>✕</td>
+			<td>✓</td>
 			<td>Data Increment</td>
 		</tr>
 		<tr>
 			<td>97</td>
-			<td>✕</td>
+			<td>✓</td>
 			<td>Data Decrement</td>
 		</tr>
 		<tr>
@@ -234,32 +245,32 @@
 		</tr>
 		<tr>
 			<td>121</td>
-			<td>✕</td>
+			<td>✓</td>
 			<td>All Controllers Reset</td>
 		</tr>
 		<tr>
 			<td>123</td>
-			<td>✕</td>
+			<td>✓</td>
 			<td>All Notes Off</td>
 		</tr>
 		<tr>
 			<td>124</td>
 			<td>✕</td>
-			<td>Omni Off</td>
+			<td>Omni Off<br/><i>Same as cc123</i></td>
 		</tr>
 		<tr>
 			<td>125</td>
 			<td>✕</td>
-			<td>Omni On</td>
+			<td>Omni On<br/><i>Same as cc123</i></td>
 		</tr>
 		<tr>
 			<td>126</td>
-			<td>✕</td>
+			<td>✓</td>
 			<td>Mono</td>
 		</tr>
 		<tr>
 			<td>127</td>
-			<td>✕</td>
+			<td>✓</td>
 			<td>Poly</td>
 		</tr>
 		<tr>
@@ -268,7 +279,7 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan=7>System Exclusive</td>
+			<td rowspan=9>System Exclusive</td>
 			<td>General MIDI</td>
 			<td>✓</td>
 			<td></td>
@@ -296,6 +307,16 @@
 		<tr>
 			<td>KORG NS5R</td>
 			<td>✓</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>KORG X5D(R)</td>
+			<td>✓</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>KORG 05R/W</td>
+			<td>✕</td>
 			<td></td>
 		</tr>
 		<tr>
@@ -332,7 +353,7 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td>All Notes OFF</td>
+			<td>Active Sense</td>
 			<td>✕</td>
 			<td></td>
 		</tr>
