@@ -168,12 +168,14 @@ let OctaviaDevice = class extends CustomEventSource {
 	#metaSeq;
 	// Universal actions
 	#ua = {
-		ano: () => {
+		ano: (part) => {
 			// All notes off
 			// Current implementation uses the static velocity register
 			this.#poly.forEach((e, i, a) => {
-				this.#velo[e] = 0;
-				a[i] = 0;
+				if (e >> 128 == part) {
+					this.#velo[e] = 0;
+					a[i] = 0;
+				};
 			});
 		}
 	};
@@ -252,7 +254,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
 							};
-							if (det.data[1] > 0 && this.#mode != modeMap.gs) {
+							if (det.data[1] > 0 && !this.#mode) {
 								console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
 								this.switchMode("gs");
 							};
@@ -333,35 +335,49 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case 121: {
 					// Reset controllers
-					this.init(1);
-					this.#ua.ano();
+					this.#pitch[part] = 0;
+					let chOff = part * 128;
+					// Reset to zero
+					this.#cc[chOff + 1] = 0; // Modulation
+					this.#cc[chOff + 5] = 0; // Portamento Time
+					this.#cc[chOff + 64] = 0; // Sustain
+					this.#cc[chOff + 65] = 0; // Portamento
+					this.#cc[chOff + 66] = 0; // Sostenuto
+					this.#cc[chOff + 67] = 0; // Soft Pedal
+					// Reset to full
+					this.#cc[chOff + 11] = 127; // Expression
+					// RPN/NRPN to null
+					this.#cc[chOff + 101] = 127;
+					this.#cc[chOff + 100] = 127;
+					this.#cc[chOff + 99] = 127;
+					this.#cc[chOff + 98] = 127;
 					break;
 				};
 				case 123: {
 					// All notes off
-					this.#ua.ano();
+					this.#ua.ano(part);
 					break;
 				};
 				case 124: {
 					// Omni off
-					this.#ua.ano();
+					this.#ua.ano(part);
 					break;
 				};
 				case 125: {
 					// Omni on
-					this.#ua.ano();
+					this.#ua.ano(part);
 					break;
 				};
 				case 126: {
 					// Mono mode
 					this.#mono[part] = 1;
-					this.#ua.ano();
+					this.#ua.ano(part);
 					break;
 				};
 				case 127: {
 					// Poly mode
 					this.#mono[part] = 0;
-					this.#ua.ano();
+					this.#ua.ano(part);
 					break;
 				};
 			};
@@ -534,28 +550,6 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	init(type = 0) {
 		// Type 0 is full reset
-		// Type 1 is controller reset
-		if (type == 1) {
-			this.#pitch.forEach(toZero);
-			for (let ch = 0; ch < 64; ch ++) {
-				let chOff = ch * 128;
-				// Reset to zero
-				this.#cc[chOff] = 0; // Modulation
-				this.#cc[chOff + 5] = 0; // Portamento Time
-				this.#cc[chOff + 64] = 0; // Sustain
-				this.#cc[chOff + 65] = 0; // Portamento
-				this.#cc[chOff + 66] = 0; // Sostenuto
-				this.#cc[chOff + 67] = 0; // Soft Pedal
-				// Reset to full
-				this.#cc[chOff + 11] = 127; // Expression
-				// RPN/NRPN to null
-				this.#cc[chOff + 101] = 127;
-				this.#cc[chOff + 100] = 127;
-				this.#cc[chOff + 99] = 127;
-				this.#cc[chOff + 98] = 127;
-			};
-			return;
-		};
 		// Full reset
 		this.dispatchEvent("mode", "?");
 		this.#mode = 0;
@@ -587,10 +581,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#trkRedir.forEach(toZero);
 		this.#trkAsReq.forEach(toZero);
 		// Channel 10 to drum set
-		this.#cc[1152] = 127;
-		this.#cc[3200] = 127;
-		this.#cc[5248] = 127;
-		this.#cc[7296] = 127;
+		this.#cc[1152] = drumMsb[0];
+		this.#cc[3200] = drumMsb[0];
+		this.#cc[5248] = drumMsb[0];
+		this.#cc[7296] = drumMsb[0];
 		for (let ch = 0; ch < 64; ch ++) {
 			let chOff = ch * 128;
 			// Reset to full
