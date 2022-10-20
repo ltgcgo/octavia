@@ -1,25 +1,107 @@
 RsrcName	Bitmap
-AccordIt	7ffc40045554555455547ffc7ffe6aaa7ffe3ffe40003ffe40007ffe7aae3d5e
+Acordion	7ffc40045554555455547ffc7ffe6aaa7ffe3ffe40003ffe40007ffe7aae3d5e
 Alto Sax	3a007e00cd008f000e88078c070c070c039e039e03bf01ff01fc00f800f00060
-BrasSect	00100010003000707ff0fff0a270a230a210fffe7fff012112411fff1ffe1000
+DrawOrgn	07e007e07ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe6a0a55566a4a55567ffe
+EGrndPno	1e003f003f807fe07ffc7ffe7ffe7ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe
+El.Piano	7ffe7ffe54aa54aa40027ffe7ffe4002400240024002400240027ffe7ffe4142
 Eng.Horn	0000000000000000000005513aafefff3fbf0041000000000000000000000000
 Flute	0000000000000000000000000550baaffaafffff000000000000000000000000
+FrchHorn	4000408040c040604e705b78517c6ffe7afe6ef87af06fe031c03bc01f800f00
 GrandPno	fffcfffc9ffebffe9ffebffe9ffe9ffebffc9ffcbff89fc0bf009f00fe00fe00
 Harmnica	0000000000003ffc6aac7ffe40024002600660064002400240023ffc00000000
+NewAgePd	ffffdfffdd57ad57dd57dfffffff8001ffffffffea55ea55ea55e001e0011ffe
+OvrDrvGt	300078007dc0ffc0ff04e10ae3fde3fee3ffe109e100e500cf80d98070002000
 Recorder	000000000000000000007405fffffeafffff7405000000000000000000000000
-RockOrgn	07e007e07ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe6a0a55566a4a55567ffe
 SquareLd	000000000fffffff9d57ffffffff08010fff0fff0a950a950a950801080107fe
 Shakhchi	0000000000000000008003ffffff76dfffffffff083f00000000000000000000
 SprnoSax	000000000000000002f905535fffffffffff5fff02a300010000000000000000
 Standard	000ee01f700018e400e400e4738437c477c47fe47c647fe47fe457c457ca5391
+Strings1	08081c1c0808080808081c1c3d3d3a3a36360c0c1c1c3e3e7e7ebebe3e3e1c1c
 Swt Alto	0000000000000000000e001e303efffecfd630260016000e0000000000000000
 SynVoice	2108739c739c739c739c739c5294739c210821085294def6def7ffffffffffff
+Taiko	10001038104438827c827c447cba7cc67cfe7cfefefefefe00fe0cfe0cfe0c7c
+TnklBell	10001038104438827c827c447cba7cc67cfe7cfefefefefe00fe0cfe0cfe0c7c
+Trombone	00100010003000707ff0fff0a270a230a210fffe7fff012112411fff1ffe1000
 Trumpet	05410541000305438547c54fffffffffffffd83f901718331ff30fe100010000
+Agogo	@TnklBell
 Bass&Ld	@SquareLd
+BrasSect	@Trombone
+BritePno	@GrandPno
 CaliopLd	@SquareLd
 CharanLd	@SquareLd
+ChoirAah	@SynVoice
+ChoirPad	@NewAgePd
 Digi.Saw	@SquareLd
+Dist.Gtr	@OvrDrvGt
+ElPiano2	@El.Piano
 Fifth Ld	@SquareLd
+GtrHarmo	@OvrDrvGt
+Halo Pad	@NewAgePd
+MelodTom	@Taiko
+MetalPad	@NewAgePd
+MutedTrp	@Trumpet
+PercOrgn	@DrawOrgn
+PolySyPd	@NewAgePd
+ReedOrgn	@DrawOrgn
+RevCymbl	@TnklBell
+RockOrgn	@DrawOrgn
 Saw Lead	@SquareLd
-Standrd2	@Standard
+SteelDrm	@TnklBell
+Strings2	@Strings1
+Syn. Str	@Strings1
+Syn.Str2	@Strings1
+SweepPad	@NewAgePd
+SynBrass	@Trumpet
+SynBras2	@Trumpet
+Syn Drum	@Taiko
+TangoAcd	@Acordion
+VoiceOoh	@SynVoice
+Warm Pad	@NewAgePd
 WireLead	@SquareLd
+Woodblok	@TnklBell
+GM Kit	@Standard
+Standrd2	@Standard
+Standrd3	@Standard
+Dry Kit	@Standard
+BrightKt	@Standard
+Skim Kit	@Standard
+Slim Kit	@Standard
+RogueKit	@Standard
+Hob Kit	@Standard
+Room Kit	@Standard
+DarkRoom	@Standard
+TechnoKt	@Standard
+PowerKit	@Standard
+Rock Kit	@Standard
+RockKit2	@Standard
+Electro	@Standard
+AnalogKt	@Standard
+Anal.Kt2	@Standard
+DanceKit	@Standard
+HipHopKt	@Standard
+JungleKt	@Standard
+ApogeeKt	@Standard
+Perigee	@Standard
+Jazz Kit	@Standard
+JazzKit2	@Standard
+BrushKit	@Standard
+BrushKt2	@Standard
+Symphony	@Standard
+Orch.Kit	@Standard
+EthnicKt	@Standard
+KikSnare	@Standard
+AsianKit	@Standard
+CymblKit	@Standard
+SFX Kit	@Standard
+Ntrl Kit	@Standard
+NtrlFunk	@Standard
+TrampKit	@Standard
+AmberKit	@Standard
+CoffinKt	@Standard
+Live Std	@Standard
+LiveFunk	@Standard
+Lv Brush	@Standard
+Std&Perc	@Standard
+FunkPerc	@Standard
+Brush&P.	@Standard
+MT-32 Kt	@Standard
