@@ -864,6 +864,29 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 		};
 	};
+	#renderCompass(startX, startY, value) {
+		let radius = 7, circleStep = 40;
+		for (let c = 0; c < circleStep; c ++) {
+			let angle = Math.PI * c * 2 / circleStep;
+			let intX = radius * Math.sin(angle),
+			drawX = Math.sign(intX) * Math.round(Math.abs(intX));
+			let intY = radius * Math.cos(angle),
+			drawY = Math.sign(intY) * Math.round(Math.abs(intY));
+			this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
+		};
+		if (value < 128) {
+			let normAngle = Math.floor(value / 9.85) * 22.5;
+			let lineStep = 5, angle = Math.PI * (315 - normAngle) / 180;
+			let deltaX = Math.sin(angle), deltaY = Math.cos(angle);
+			for (let c = 0; c <= lineStep; c ++) {
+				let drawX = Math.round(c * deltaX),
+				drawY = Math.round(c * deltaY);
+				this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
+			};
+		} else {
+			this.#nmdb[(startY) * 144 + startX] = 1;
+		};
+	};
 	render(time, ctx) {
 		let sum = super.render(time);
 		let upThis = this;
@@ -1029,11 +1052,21 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 		});
 		// Render channel strength
+		// Strength calculation
+		sum.velo.forEach((e, i) => {
+			if (e >= this.#strength[i]) {
+				let diff = e - this.#strength[i];
+				this.#strength[i] += Math.ceil(diff * 0.8);
+			} else {
+				let diff = this.#strength[i] - e;
+				this.#strength[i] -= Math.ceil(diff / 6);
+			};
+		});
 		let showReduction = 22;
 		if (maxCh > 31) {
 			showReduction = 43;
 		};
-		sum.strength.forEach((e, i) => {
+		this.#strength.forEach((e, i) => {
 			if (maxCh < 32 && i > 31) {
 				return;
 			};
@@ -1048,6 +1081,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		// Render params
 		this.#renderParamBox(20, sum.chContr[chOff + 7]);
 		this.#renderParamBox(33, sum.chContr[chOff + 11]);
+		this.#renderCompass(53, 7, sum.chContr[chOff + 10]);
 		this.#renderParamBox(62, sum.chContr[chOff + 91]);
 		this.#renderParamBox(75, sum.chContr[chOff + 93]);
 		this.#renderParamBox(88, sum.chContr[chOff + 74]);
