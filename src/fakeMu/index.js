@@ -4,10 +4,14 @@ import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
 import {MuDisplay} from "../disp/index.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
+import {
+	getBridge
+} from "../bridge/index.mjs";
 
 let demoBlobs = {};
 let demoModes = [];
 demoModes[9] = "gm";
+let useMidiBus = false;
 
 // Standard switching
 let stSwitch = $a("b.mode");
@@ -74,10 +78,13 @@ muVis.addEventListener("mode", function (ev) {
 });
 
 // Open the files
+let midwIndicator = $e("#openMidw");
 let audioBlob;
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
+	useMidiBus = false;
+	midwIndicator.classList.off("active");
 	let file = await fileOpen(propsMid);
 	let fileSplit = file.name.lastIndexOf("."), ext = "";
 	if (fileSplit > -1) {
@@ -93,11 +100,24 @@ $e("#openMidi").addEventListener("click", async function () {
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
+	useMidiBus = false;
+	midwIndicator.classList.off("active");
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
 	audioBlob = await fileOpen(propsAud);
 	audioPlayer.src = URL.createObjectURL(audioBlob);
+});
+midwIndicator.addEventListener("click", function () {
+	stDemo.to(-1);
+	if (audioBlob) {
+		URL.revokeObjectURL(audioBlob);
+	};
+	audioBlob = null;
+	audioPlayer.src = "";
+	muVis.reset();
+	useMidiBus = true;
+	midwIndicator.classList.on("active");
 });
 
 // Get canvas
@@ -149,3 +169,9 @@ let renderThread = setInterval(function () {
 		lastTime = curTime;
 	};
 }, 20);
+
+getBridge().addEventListener("message", function (ev) {
+	if (useMidiBus) {
+		muVis.sendCmd(ev.data);
+	};
+});

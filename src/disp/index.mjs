@@ -401,7 +401,13 @@ let MuDisplay = class extends RootDisplay {
 			useBm = this.#bmdb.slice();
 			if (timeNow >= this.#bmex) {
 				this.#bmst = 0;
-				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name) || this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], 0, sum.mode).name) || this.sysBm.getBm("no_abm");
+				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name) || this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff], sum.chProgr[this.#ch], 0, sum.mode).name);
+				if (!useBm && (sum.chContr[chOff] < 48 || sum.chContr[chOff] == 56)) {
+					useBm = this.voxBm.getBm(upThis.voices.get(0, sum.chProgr[this.#ch], 0, sum.mode).name)
+				};
+				if (!useBm) {
+					useBm = this.sysBm.getBm("no_abm");
+				};
 			} else {
 				if (this.#bmst == 2) {
 					useBm.forEach((e, i, a) => {
@@ -602,7 +608,7 @@ let ScDisplay = class extends RootDisplay {
 		paramText += `${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
 		paramText += sum.chContr[chOff + 7].toString().padStart(3, " ");
 		paramText += sum.chContr[chOff + 91].toString().padStart(3, " ");
-		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 4] + (sum.rpn[this.#ch * 4 + 3] - 64));
+		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
 		if (cPit < 0) {
 			paramText += "-";
 		} else {

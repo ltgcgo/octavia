@@ -172,7 +172,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			// All notes off
 			// Current implementation uses the static velocity register
 			this.#poly.forEach((e, i, a) => {
-				if (e >> 128 == part) {
+				let ch = e >> 7;
+				if (e == 0 && this.#velo[0] == 0) {
+				} else if (ch == part) {
 					this.#velo[e] = 0;
 					a[i] = 0;
 				};
@@ -335,6 +337,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case 121: {
 					// Reset controllers
+					this.#ua.ano(part);
 					this.#pitch[part] = 0;
 					let chOff = part * 128;
 					// Reset to zero
@@ -797,7 +800,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: MT-32");
 			console.debug("Reset with the shorter one.");
-		}).add([65, 16, 22, 18, 127, 0, 0, 1, 0], function () {
+		}).add([65, 16, 22, 18, 127, 0, 0, 1], function () {
 			// MT-32 reset
 			upThis.switchMode("mt32", true);
 			upThis.#modeKaraoke = false;
@@ -1012,7 +1015,29 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("mt32");
 			upThis.#chActive[9] = 1;
 			upThis.#seMtSysEx.run(msg, 9);
+		}).add([65, 16, 22, 18, 8], function (msg, track) {
+			upThis.switchMode("mt32");
+			let section = msg[0]/*upThis.chRedir(msg[0], track, true)*/,
+			funcId = msg[1],
+			theText = "";
+			if (funcId == 0) {
+				msg.slice(2, 12).forEach((e) => {
+					if (e > 31) {
+						theText += String.fromCharCode(e);
+					};
+				});
+				console.debug(`MT-32 voice setup on section ${section}: ${theText}.`);
+			} else {
+				//console.debug(`Mysterious sequence on channel ${part + 1}: ${msg}`);
+			};
+		}).add([65, 16, 22, 18, 16, 0, 13], function (msg, track) {
+			upThis.switchMode("mt32");
+			console.info(`MT-32 receive channel: ${msg}`);
+		}).add([65, 16, 22, 18, 16, 0, 22], function (msg, track) {
+			upThis.switchMode("mt32");
+			console.info(`MT-32 all notes off? ${msg}`);
 		}).add([65, 16, 22, 18, 32, 0], function (msg) {
+			upThis.switchMode("mt32");
 			let offset = msg[0];
 			upThis.#letterDisp = " ".repeat(offset);
 			msg.unshift();
@@ -1036,7 +1061,15 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 			upThis.#customName[channel] = setName;
-			console.debug(`MT-32 tone properties on channel ${channel + 1} (${setName}): ${msg.slice(10)}`);
+			console.debug(`MT-32 tone properties on channel ${channel + 1} (${setName}).`);
+			let matchedPart = [];
+			msg.slice(10).forEach((e, i) => {
+				if (e < 10) {
+					matchedPart[e] = matchedPart[e] || [];
+					matchedPart[e].push(i);
+				};
+			});
+			console.info(matchedPart[channel]);
 		});
 		// Roland GS SysEx
 		// Refactor this!

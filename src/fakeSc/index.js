@@ -1,12 +1,17 @@
 "use strict";
+
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
 import {ScDisplay} from "../disp/index.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
+import {
+	getBridge
+} from "../bridge/index.mjs";
 
 let demoBlobs = {};
 let demoModes = [];
 demoModes[9] = "gm";
+let useMidiBus = false;
 
 // Standard switching
 let stSwitch = $a("b.mode");
@@ -96,10 +101,13 @@ scVis.addEventListener("meta", function (ev) {
 });
 
 // Open the files
+let midwIndicator = $e("#openMidw");
 let audioBlob;
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
+	useMidiBus = false;
+	midwIndicator.classList.off("active");
 	let file = await fileOpen(propsMid);
 	let fileSplit = file.name.lastIndexOf("."), ext = "";
 	if (fileSplit > -1) {
@@ -117,6 +125,8 @@ $e("#openMidi").addEventListener("click", async function () {
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
+	useMidiBus = false;
+	midwIndicator.classList.off("active");
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
@@ -124,6 +134,17 @@ $e("#openAudio").addEventListener("click", async function () {
 	audioBlob = await fileOpen(propsAud);
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 	scVis.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 65, 117, 100, 105, 111, 32, 108, 111, 97, 100, 101, 100]});
+});
+midwIndicator.addEventListener("click", function () {
+	stDemo.to(-1);
+	if (audioBlob) {
+		URL.revokeObjectURL(audioBlob);
+	};
+	audioBlob = null;
+	audioPlayer.src = "";
+	scVis.reset();
+	useMidiBus = true;
+	midwIndicator.classList.on("active");
 });
 
 // Get canvas
@@ -175,3 +196,9 @@ let renderThread = setInterval(function () {
 		lastTime = curTime;
 	};
 }, 20);
+
+getBridge().addEventListener("message", function (ev) {
+	if (useMidiBus) {
+		scVis.sendCmd(ev.data);
+	};
+});
