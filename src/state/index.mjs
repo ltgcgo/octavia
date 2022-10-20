@@ -1480,7 +1480,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 							case 8: {
 								// Coarse Tune
-								upThis.#rpn[part * allocated.rpn + 3] = e;
+								upThis.#rpn[part * allocated.rpn + 3] = (e < 40 || e > 88) ? e + (e > 63 ? -192 : 64) : e;
 								break;
 							};
 							case 9: {

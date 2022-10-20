@@ -26,6 +26,11 @@ const modeNames = {
 	"ns5r": "KorgNS5R"
 };
 
+const bgOrange = "#ffaa2264",
+bgGreen = "#aaff2264",
+bgWhite = "#b3d8de64",
+bgRed = "#ff798664";
+
 // Velocity to brightness
 let velToLuma = function (velo) {
 	let newVel = velo * 2 + 1;
@@ -226,7 +231,7 @@ let MuDisplay = class extends RootDisplay {
 		let timeNow = Date.now();
 		// Fill with green
 		//ctx.fillStyle = "#af2";
-		ctx.fillStyle = "#aaff2264";
+		ctx.fillStyle = bgGreen;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		// Main matrix display
 		this.#mmdb.forEach((e, i, a) => {a[i] = 0});
@@ -501,9 +506,9 @@ let ScDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
-		// Fill with green
+		// Fill with orange
 		//ctx.fillStyle = "#af2";
-		ctx.fillStyle = "#ffaa2264";
+		ctx.fillStyle = bgOrange;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		// Universal offset
 		let pdaX = 22,
@@ -793,8 +798,308 @@ let ScDisplay = class extends RootDisplay {
 	};
 };
 
+let Ns5rDisplay = class extends RootDisplay {
+	#omdb = new Uint8Array(5760); // Full display
+	#nmdb = new Uint8Array(5760); // Full display, but on commit
+	#mode = "?";
+	#strength = new Uint8Array(64);
+	#ch = 0;
+	#backlight;
+	#refreshed = true;
+	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	constructor() {
+		super();
+		this.#backlight = bgWhite;
+		this.addEventListener("mode", (ev) => {
+			this.#backlight = {
+				"?": bgWhite,
+				"gm": bgWhite,
+				"g2": bgWhite,
+				"gs": bgOrange,
+				"mt32": bgOrange,
+				"xg": bgGreen,
+				"ns5r": bgGreen,
+				"x5d": bgGreen,
+				"ag10": bgRed,
+				"05rw": bgGreen
+			}[ev.data];
+			this.#mode = ev.data;
+			this.#refreshed = true;
+		});
+	};
+	setCh(ch) {
+		this.#ch = ch;
+	};
+	getCh() {
+		return this.#ch;
+	};
+	#renderParamBox(startX, value) {
+		// Draw the lever rest
+		for (let p = 0; p < 180; p ++) {
+			let pX = p % 12, pY = Math.floor(p / 12);
+			if (
+				(pY == 0 && pX < 11) ||
+				(pY == 14 && pX > 0) ||
+				(pY == 13)
+			) {
+				this.#nmdb[pY * 144 + pX + startX] = 1;
+			} else if (pY > 0 && pY < 13) {
+				if (
+					pX == 0 || pX > 9 ||
+					(pX == 5 && pY > 1 && pY < 12)
+				) {
+					this.#nmdb[pY * 144 + pX + startX] = 1;
+				};
+			};
+		};
+		let convertedValue = Math.floor(value / 16);
+		// Draw the lever
+		for (let c = 0; c < 21; c ++) {
+			let pX = c % 7, pY = Math.floor(c / 7),
+			pcY = pY + (9 - convertedValue);
+			if (pY != 1 || pX == 0 || pX == 6) {
+				this.#nmdb[pcY * 144 + pX + startX + 2] = 1;
+			} else {
+				this.#nmdb[pcY * 144 + pX + startX + 2] = 0;
+			};
+		};
+	};
+	render(time, ctx) {
+		let sum = super.render(time);
+		let upThis = this;
+		let timeNow = Date.now();
+		// Channel test
+		let alreadyMin = false;
+		let minCh = 0, maxCh = 0;
+		sum.chInUse.forEach(function (e, i) {
+			if (e) {
+				if (!alreadyMin) {
+					alreadyMin = true;
+					minCh = i;
+				};
+				maxCh = i;
+			};
+		});
+		let part = minCh >> 4;
+		minCh = part << 4;
+		maxCh = ((maxCh >> 4) << 4) + 15;
+		if (this.#ch > maxCh) {
+			this.#ch = minCh;
+		};
+		if (this.#ch < minCh) {
+			this.#ch = maxCh;
+		};
+		let chOff = this.#ch * 128;
+		// Clear out the current working display buffer.
+		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
+		// Screen buffer write begin.
+		// Show current channel
+		this.xgFont.getStr(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+			let secX = i0 * 6 + 1;
+			e0.forEach((e1, i1) => {
+				let charX = i1 % 5,
+				charY = Math.floor(i1 / 5);
+				this.#nmdb[charY * 144 + secX + charX] = e1;
+			});
+		});
+		// Show current pitch shift
+		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
+		this.xgFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+			let secX = i0 * 6 + 1;
+			e0.forEach((e1, i1) => {
+				let charX = i1 % 5,
+				charY = Math.floor(i1 / 5) + 8;
+				this.#nmdb[charY * 144 + secX + charX] = e1;
+			});
+		});
+		// Render bank background
+		for (let bankSect = 0; bankSect < 225; bankSect ++) {
+			let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
+			this.#nmdb[pixY * 144 + pixX] = 1;
+		};
+		// Show current bank
+		let bankInfo = "", readOffset = 0;
+		switch (sum.chContr[chOff]) {
+			case 0: {
+				if (sum.chContr[chOff + 32] == 127) {
+					bankInfo = "MT-A";
+				} else if (sum.chContr[chOff + 32] == 126) {
+					bankInfo = "MT-B";
+				} else if (sum.chContr[chOff + 32] == 0) {
+					bankInfo = "GM-a";
+				} else if (this.#mode == "gs") {
+					bankInfo = "GM-a";
+				} else {
+					bankInfo = "y";
+					readOffset = 32;
+				};
+				break;
+			};
+			case 48: {
+				bankInfo = "yM";
+				readOffset = 32;
+				break;
+			};
+			case 56: {
+				bankInfo = "GM-b";
+				break;
+			};
+			case 61:
+			case 120: {
+				bankInfo = "rDrm";
+				break;
+			};
+			case 62: {
+				bankInfo = "kDrm";
+				break;
+			};
+			case 64: {
+				bankInfo = "ySFX";
+				break;
+			};
+			case 80:
+			case 81:
+			case 82:
+			case 83: {
+				bankInfo = `Prg${"UABC"[sum.chContr[chOff] - 80]}`;
+				break;
+			};
+			case 88:
+			case 89:
+			case 90:
+			case 91: {
+				bankInfo = `Cmb${"UABC"[sum.chContr[chOff] - 88]}`;
+				break;
+			};
+			case 121: {
+				bankInfo = "g";
+				readOffset = 32;
+				break;
+			};
+			case 126: {
+				bankInfo = "yDrS";
+				break;
+			};
+			case 127: {
+				if (sum.chContr[chOff + 32] == 127) {
+					bankInfo = "MT-A";
+				} else {
+					bankInfo = "yDrm";
+				};
+				break;
+			};
+			default: {
+				if (sum.chContr[chOff] < 48) {
+					bankInfo = "r";
+				} else {
+					bankInfo = "M";
+				};
+			};
+		};
+		if (bankInfo.length < 4) {
+			bankInfo += `${sum.chContr[chOff + readOffset]}`.padStart(4 - bankInfo.length, "0");
+		};
+		this.xgFont.getStr(bankInfo).forEach((e0, i0) => {
+			let secX = i0 * 6 + 1;
+			e0.forEach((e1, i1) => {
+				let charX = i1 % 5,
+				charY = Math.floor(i1 / 5) + 16;
+				if (e1) {
+					this.#nmdb[charY * 144 + secX + charX] = 0;
+				};
+			});
+		});
+		// Render program info
+		let bankName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name).slice(0, 10).padEnd(10, " ");
+		this.xgFont.getStr(`:${sum.chProgr[this.#ch].toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
+			let secX = i0 * 6 + 25;
+			e0.forEach((e1, i1) => {
+				let charX = i1 % 5,
+				charY = Math.floor(i1 / 5) + 16;
+				this.#nmdb[charY * 144 + secX + charX] = e1;
+			});
+		});
+		// Render current channel
+		this.xgFont.getStr(`${this.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
+			let secX = i0 * 6;
+			e0.forEach((e1, i1) => {
+				let charX = i1 % 5,
+				charY = Math.floor(i1 / 5) + 32;
+				this.#nmdb[charY * 144 + secX + charX] = e1;
+			});
+		});
+		// Render channel strength
+		let showReduction = 22;
+		if (maxCh > 31) {
+			showReduction = 43;
+		};
+		sum.strength.forEach((e, i) => {
+			if (maxCh < 32 && i > 31) {
+				return;
+			};
+			for (let c = Math.floor(e / showReduction); c >= 0; c --) {
+				let pixX = (i % 32) * 4 + 12,
+				pixY = (i > 31 ? 32 : 39) - c;
+				this.#nmdb[pixY * 144 + pixX] = 1;
+				this.#nmdb[pixY * 144 + pixX + 1] = 1;
+				this.#nmdb[pixY * 144 + pixX + 2] = 1;
+			};
+		});
+		// Render params
+		this.#renderParamBox(20, sum.chContr[chOff + 7]);
+		this.#renderParamBox(33, sum.chContr[chOff + 11]);
+		this.#renderParamBox(62, sum.chContr[chOff + 91]);
+		this.#renderParamBox(75, sum.chContr[chOff + 93]);
+		this.#renderParamBox(88, sum.chContr[chOff + 74]);
+		// Render fonts
+		this.xgFont.getStr("FxA:001Rev/Cho").forEach((e0, i0) => {
+			let secX = (i0 % 7) * 6 + 102,
+			secY = Math.floor(i0 / 7) * 8;
+			e0.forEach((e1, i1) => {
+				let charX = i1 % 5,
+				charY = Math.floor(i1 / 5) + secY;
+				this.#nmdb[charY * 144 + secX + charX] = e1;
+			});
+		});
+		// Screen buffer write finish.
+		// Determine if full render is required.
+		let drawPixMode = false;
+		if (this.#refreshed) {
+			// Full render required.
+			// Clear all pixels.
+			ctx.fillStyle = this.#backlight.replace("64", "");
+			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			drawPixMode = true;
+			this.#refreshed = false;
+		};
+		// Commit to display accordingly.
+		this.#nmdb.forEach((e, i) => {
+			let pixX = i % 144, pixY = Math.floor(i / 144);
+			let hasDifference = this.#omdb[i] != e;
+			if (!drawPixMode && hasDifference) {
+				ctx.fillStyle = this.#backlight.slice(0, 7);
+				ctx.fillRect(6 * pixX + 1, 12 + 6 * pixY, 6, 6);
+			};
+			if (drawPixMode || hasDifference) {
+				ctx.fillStyle = ["#0000001a", "#0000009f"][e];
+				if (drawPixMode) {
+					ctx.fillStyle = ctx.fillStyle.slice(0, 7);
+				};
+				ctx.fillRect(6 * pixX + 1, 12 + 6 * pixY, 5.5, 5.5);
+			};
+		});
+		// Commit to old display buffer.
+		this.#nmdb.forEach((e, i) => {
+			if (this.#omdb[i] != e) {
+				this.#omdb[i] = e;
+			};
+		});
+	};
+};
+
 export {
 	TuiDisplay,
 	MuDisplay,
-	ScDisplay
+	ScDisplay,
+	Ns5rDisplay
 };
