@@ -876,6 +876,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		};
 		if (value < 128) {
 			let normAngle = Math.floor(value / 9.85) * 22.5;
+			//let normAngle = Math.floor(value * 2.126);
 			let lineStep = 5, angle = Math.PI * (315 - normAngle) / 180;
 			let deltaX = Math.sin(angle), deltaY = Math.cos(angle);
 			for (let c = 0; c <= lineStep; c ++) {
@@ -945,9 +946,9 @@ let Ns5rDisplay = class extends RootDisplay {
 		switch (sum.chContr[chOff]) {
 			case 0: {
 				if (sum.chContr[chOff + 32] == 127) {
-					bankInfo = "MT-A";
+					bankInfo = "MT-a";
 				} else if (sum.chContr[chOff + 32] == 126) {
-					bankInfo = "MT-B";
+					bankInfo = "MT-b";
 				} else if (sum.chContr[chOff + 32] == 0) {
 					bankInfo = "GM-a";
 				} else if (this.#mode == "gs") {
@@ -1034,7 +1035,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		});
 		// Render program info
 		let bankName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name).slice(0, 10).padEnd(10, " ");
-		this.xgFont.getStr(`:${sum.chProgr[this.#ch].toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
+		this.xgFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
 			let secX = i0 * 6 + 25;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
@@ -1051,7 +1052,6 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#nmdb[charY * 144 + secX + charX] = e1;
 			});
 		});
-		// Render channel strength
 		// Strength calculation
 		sum.velo.forEach((e, i) => {
 			if (e >= this.#strength[i]) {
@@ -1062,6 +1062,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#strength[i] -= Math.ceil(diff / 6);
 			};
 		});
+		// Render channel strength
 		let showReduction = 22;
 		if (maxCh > 31) {
 			showReduction = 43;
@@ -1085,7 +1086,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		this.#renderParamBox(62, sum.chContr[chOff + 91]);
 		this.#renderParamBox(75, sum.chContr[chOff + 93]);
 		this.#renderParamBox(88, sum.chContr[chOff + 74]);
-		// Render fonts
+		// Render effect types
 		this.xgFont.getStr("FxA:001Rev/Cho").forEach((e0, i0) => {
 			let secX = (i0 % 7) * 6 + 102,
 			secY = Math.floor(i0 / 7) * 8;
@@ -1095,6 +1096,63 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#nmdb[charY * 144 + secX + charX] = e1;
 			});
 		});
+		// Render letter displays
+		if (timeNow < sum.letter.expire) {
+			// White bounding box
+			for (let i = 0; i < 2000; i ++) {
+				let x = i % 100, y = Math.floor(i / 100);
+				// Top and bottom borders
+				if (
+					(y == 0 && x < 99) ||
+					(y == 18) ||
+					(y == 19 && x > 0)
+				) {
+					this.#nmdb[y * 144 + x + 20] = 1;
+				};
+				if (y > 0 && y < 18) {
+					this.#nmdb[y * 144 + x + 20] = +(x < 1 || x > 97);
+				};
+			};
+			// Actual text
+			this.xgFont.getStr(sum.letter.text).forEach((e0, i0) => {
+				let secX = (i0 % 16) * 6 + 22,
+				secY = Math.floor(i0 / 16) * 8 + 2;
+				e0.forEach((e1, i1) => {
+					let charX = i1 % 5,
+					charY = Math.floor(i1 / 5) + secY;
+					this.#nmdb[charY * 144 + secX + charX] = e1;
+				});
+			});
+		};
+		// Render bitmap displays
+		if (timeNow < sum.bitmap.expire) {
+			// White bounding box
+			for (let i = 0; i < 777; i ++) {
+				let x = i % 37, y = Math.floor(i / 37);
+				let realX = x + 77, realY = y + 19;
+				// Top and bottom borders
+				if (
+					(y == 0 && x < 36) ||
+					(y == 19) ||
+					(y == 20 && x > 0)
+				) {
+					this.#nmdb[realY * 144 + realX] = 1;
+				};
+				if (y > 0 && y < 19) {
+					this.#nmdb[realY * 144 + realX] = +(x < 1 || x > 34);
+				};
+			};
+			// Actual bitmap
+			let colUnit = (sum.bitmap.bitmap.length == 512) ? 1 : 2;
+			for (let i = 0; i < 512; i += colUnit) {
+				let x = i & 31, y = i >> 5;
+				let realX = x + 79, realY = y + 21;
+				this.#nmdb[realY * 144 + realX] = sum.bitmap.bitmap[i / colUnit];
+				if (colUnit == 2) {
+					this.#nmdb[realY * 144 + realX + 1] = sum.bitmap.bitmap[i / colUnit];
+				};
+			};
+		};
 		// Screen buffer write finish.
 		// Determine if full render is required.
 		let drawPixMode = false;

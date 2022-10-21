@@ -294,6 +294,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Show RPN and NRPN
 					if (this.#dataCommit) {
 						if (this.#cc[chOffset + 99] == 1) {
+							if (this.#cc[chOffset + 98] == 32) {
+								this.#cc[chOffset + 74] = det.data[1];
+							};
 							let nrpnIdx = useNormNrpn.indexOf(this.#cc[chOffset + 98]);
 							if (nrpnIdx > -1) {
 								this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
