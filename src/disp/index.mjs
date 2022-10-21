@@ -1006,7 +1006,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 			case 127: {
 				if (sum.chContr[chOff + 32] == 127) {
-					bankInfo = "MT-A";
+					bankInfo = "rDrm";
 				} else {
 					bankInfo = "yDrm";
 				};
@@ -1161,6 +1161,33 @@ let Ns5rDisplay = class extends RootDisplay {
 			// Clear all pixels.
 			ctx.fillStyle = this.#backlight.replace("64", "");
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			ctx.textAlign = "center";
+			ctx.font = '11px "Arial Web"';
+			ctx.fillStyle = "#000e";
+			ctx.fillText("MIDI. CH", 58, 10);
+			ctx.fillText("VOL", 153.5, 10);
+			ctx.fillText("EXP", 231.5, 10);
+			ctx.fillText("PAN", 322.5, 10);
+			ctx.fillText("REV", 405, 10);
+			ctx.fillText("CHO", 484, 10);
+			ctx.fillText("BRT", 561.5, 10);
+			ctx.fillText("EFFECT TYPE", 738, 10);
+			ctx.fillText("PART", 37, 262);
+			let circle = 2 * Math.PI;
+			for (let c = 1; c < 33; c ++) {
+				if (c == 1 || c == 32 || c % 5 == 0) {
+					ctx.fillText(`${c}`, 24 * c + 58, 262);
+				} else {
+					ctx.beginPath();
+					ctx.ellipse(
+						24 * c + 58,
+						258,
+						2, 2,
+						0, 0, circle
+					);
+					ctx.fill();
+				};
+			};
 			drawPixMode = true;
 			this.#refreshed = false;
 		};
