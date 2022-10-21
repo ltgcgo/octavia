@@ -836,7 +836,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seMain.add([127, 127, 4, 1], function (msg) {
 			// Master volume
 			upThis.switchMode("gm");
-			upThis.#masterVol = (msg[1] << 7 + msg[0]) / 163.83;
+			upThis.#masterVol = ((msg[1] << 7) + msg[0]) / 163.83;
 		});
 		// Yamaha XG SysEx
 		// Refactor this!
@@ -1443,7 +1443,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 48, 66, 53], function (msg) {
 			// NS5R Current multi dump
 			upThis.switchMode("ns5r", true);
-			//console.debug(`NS5R part dump: `, msg);
 			korgFilter(msg, function (e, i) {
 				switch (true) {
 					case i < 2944: {

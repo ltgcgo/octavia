@@ -96,7 +96,7 @@ let TuiDisplay = class extends RootDisplay {
 			let letterDisp = sum.letter.text.padEnd(32, " ");
 			let startLn = fields.length - 2;
 			for (let st = 0; st < 2; st ++) {
-				fields[st + startLn] = `${(fields[st + startLn] || "").slice(0, 82).padEnd(81)} <span class="letter"> ${letterDisp.slice(st * 16, st * 16 + 16).padEnd(" ", 16)} </span>`;
+				fields[st + startLn] = `${(fields[st + startLn] || "").slice(0, 82).padEnd(81, " ")} <span class="letter"> ${letterDisp.slice(st * 16, st * 16 + 16).padEnd(" ", 16)} </span>`;
 			};
 		};
 		if (ctx) {
@@ -852,7 +852,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				};
 			};
 		};
-		let convertedValue = Math.floor(value / 16);
+		let convertedValue = value >> 4;
 		// Draw the lever
 		for (let c = 0; c < 21; c ++) {
 			let pX = c % 7, pY = Math.floor(c / 7),
@@ -1172,7 +1172,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			ctx.fillText("CHO", 484, 10);
 			ctx.fillText("BRT", 561.5, 10);
 			ctx.fillText("EFFECT TYPE", 738, 10);
-			ctx.fillText("PART", 37, 262);
+			ctx.fillText("PART", 34, 262);
 			let circle = 2 * Math.PI;
 			for (let c = 1; c < 33; c ++) {
 				if (c == 1 || c == 32 || c % 5 == 0) {
