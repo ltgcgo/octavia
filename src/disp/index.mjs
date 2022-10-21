@@ -1107,15 +1107,15 @@ let Ns5rDisplay = class extends RootDisplay {
 					(y == 18) ||
 					(y == 19 && x > 0)
 				) {
-					this.#nmdb[y * 144 + x + 20] = 1;
+					this.#nmdb[y * 144 + x + 19] = 1;
 				};
 				if (y > 0 && y < 18) {
-					this.#nmdb[y * 144 + x + 20] = +(x < 1 || x > 97);
+					this.#nmdb[y * 144 + x + 19] = +(x < 1 || x > 97);
 				};
 			};
 			// Actual text
 			this.xgFont.getStr(sum.letter.text).forEach((e0, i0) => {
-				let secX = (i0 % 16) * 6 + 22,
+				let secX = (i0 % 16) * 6 + 21,
 				secY = Math.floor(i0 / 16) * 8 + 2;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
