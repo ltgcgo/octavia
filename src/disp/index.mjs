@@ -888,7 +888,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			this.#nmdb[(startY) * 144 + startX] = 1;
 		};
 	};
-	render(time, ctx) {
+	render(time, ctx, trueMode) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
@@ -1014,7 +1014,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 			default: {
 				if (sum.chContr[chOff] < 48) {
-					bankInfo = "r";
+					bankInfo = "r:";
 				} else {
 					bankInfo = "M";
 				};
@@ -1059,7 +1059,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#strength[i] += Math.ceil(diff * 0.8);
 			} else {
 				let diff = this.#strength[i] - e;
-				this.#strength[i] -= Math.ceil(diff / 6);
+				this.#strength[i] -= Math.ceil(diff / 10);
 			};
 		});
 		// Render channel strength
@@ -1079,17 +1079,11 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#nmdb[pixY * 144 + pixX + 2] = 1;
 			};
 		});
-		// Render params
-		this.#renderParamBox(20, sum.chContr[chOff + 7]);
-		this.#renderParamBox(33, sum.chContr[chOff + 11]);
-		this.#renderCompass(53, 7, sum.chContr[chOff + 10]);
-		this.#renderParamBox(62, sum.chContr[chOff + 91]);
-		this.#renderParamBox(75, sum.chContr[chOff + 93]);
-		this.#renderParamBox(88, sum.chContr[chOff + 74]);
 		// Render effect types
-		this.xgFont.getStr("FxA:001Rev/Cho").forEach((e0, i0) => {
-			let secX = (i0 % 7) * 6 + 102,
-			secY = Math.floor(i0 / 7) * 8;
+		this.xgFont.getStr(trueMode ? "Fx A:001Rev/Cho" : "FxA:001Rev/Cho").forEach((e0, i0) => {
+			let lineChars = trueMode ? 8 : 7;
+			let secX = (i0 % lineChars) * 6 + (trueMode ? 96 : 102),
+			secY = Math.floor(i0 / lineChars) * 8;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
 				charY = Math.floor(i1 / 5) + secY;
@@ -1123,6 +1117,17 @@ let Ns5rDisplay = class extends RootDisplay {
 					this.#nmdb[charY * 144 + secX + charX] = e1;
 				});
 			});
+		} else {
+			// Render params only when it's not covered
+			let xShift = trueMode ? 2 : 0;
+			this.#renderParamBox(20 + xShift, sum.chContr[chOff + 7]);
+			this.#renderParamBox(33 + xShift, sum.chContr[chOff + 11]);
+			this.#renderCompass(53 + (+trueMode) + xShift, 7, sum.chContr[chOff + 10]);
+			this.#renderParamBox(62 + 2 * (+trueMode) + xShift, sum.chContr[chOff + 91]);
+			this.#renderParamBox(75 + 2 * (+trueMode) + xShift, sum.chContr[chOff + 93]);
+			if (!trueMode) {
+				this.#renderParamBox(88, sum.chContr[chOff + 74]);
+			};
 		};
 		// Render bitmap displays
 		if (timeNow < sum.bitmap.expire) {

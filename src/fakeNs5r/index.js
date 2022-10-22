@@ -165,7 +165,7 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
-		ns5rVis.render(curTime, dispCtx);
+		ns5rVis.render(curTime, dispCtx, location.hash?.length > 1);
 		lastTime = curTime;
 	};
 }, 20);
