@@ -1082,7 +1082,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		// Render effect types
 		this.xgFont.getStr(trueMode ? "Fx A:001Rev/Cho" : "FxA:001Rev/Cho").forEach((e0, i0) => {
 			let lineChars = trueMode ? 8 : 7;
-			let secX = (i0 % lineChars) * 6 + (trueMode ? 96 : 102),
+			let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
 			secY = Math.floor(i0 / lineChars) * 8;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
@@ -1092,6 +1092,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		});
 		// Render letter displays
 		if (timeNow < sum.letter.expire) {
+			let xShift = 19 + (+trueMode) * 3;
 			// White bounding box
 			for (let i = 0; i < 2000; i ++) {
 				let x = i % 100, y = Math.floor(i / 100);
@@ -1101,15 +1102,15 @@ let Ns5rDisplay = class extends RootDisplay {
 					(y == 18) ||
 					(y == 19 && x > 0)
 				) {
-					this.#nmdb[y * 144 + x + 19] = 1;
+					this.#nmdb[y * 144 + x + xShift] = 1;
 				};
 				if (y > 0 && y < 18) {
-					this.#nmdb[y * 144 + x + 19] = +(x < 1 || x > 97);
+					this.#nmdb[y * 144 + x + xShift] = +(x < 1 || x > 97);
 				};
 			};
 			// Actual text
 			this.xgFont.getStr(sum.letter.text).forEach((e0, i0) => {
-				let secX = (i0 % 16) * 6 + 21,
+				let secX = (i0 % 16) * 6 + xShift + 2,
 				secY = Math.floor(i0 / 16) * 8 + 2;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
@@ -1134,7 +1135,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			// White bounding box
 			for (let i = 0; i < 777; i ++) {
 				let x = i % 37, y = Math.floor(i / 37);
-				let realX = x + 77, realY = y + 19;
+				let realX = x + 77 + (+trueMode), realY = y + 19;
 				// Top and bottom borders
 				if (
 					(y == 0 && x < 36) ||
@@ -1151,7 +1152,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			let colUnit = (sum.bitmap.bitmap.length == 512) ? 1 : 2;
 			for (let i = 0; i < 512; i += colUnit) {
 				let x = i & 31, y = i >> 5;
-				let realX = x + 79, realY = y + 21;
+				let realX = x + 79 + (+trueMode), realY = y + 21;
 				this.#nmdb[realY * 144 + realX] = sum.bitmap.bitmap[i / colUnit];
 				if (colUnit == 2) {
 					this.#nmdb[realY * 144 + realX + 1] = sum.bitmap.bitmap[i / colUnit];
