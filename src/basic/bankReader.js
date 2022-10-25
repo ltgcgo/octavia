@@ -19,13 +19,8 @@ let VoiceBank = class {
 		let bankName;
 		let args = Array.from(arguments);
 		if (mode == "gs") {
-			if ((msb == 0) && lsb != 0) {
+			if ((msb == 0) && lsb < 5) {
 				args[2] = 0;
-			};
-		};
-		if (args[0] == 127 && args[2] == 0) {
-			if (args[1] > 111 && args[1] < 127) {
-				args[1] = 0;
 			};
 		};
 		if (args[0] == 0) {
@@ -44,8 +39,13 @@ let VoiceBank = class {
 						args[1] --;
 						ending = " ";
 					} else if (msb < 64) {
-						args[0] = 0;
-						ending = "*";
+						if (mode == "xg" && msb == 16) {
+							bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
+							ending = " ";
+						} else {
+							args[0] = 0;
+							ending = "*";
+						};
 					} else if (msb == 80) {
 						bankName = `PrgU:${prg.toString().padStart(3, "0")}`;
 						ending = "!";
@@ -127,7 +127,11 @@ let VoiceBank = class {
 			};
 			default: {
 				if (args[0] < 48) {
-					standard = "GS";
+					if (args[0] == 16 && mode == "xg") {
+						standard = "XG";
+					} else {
+						standard = "GS";
+					};
 				};
 			};
 		};
