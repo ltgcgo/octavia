@@ -951,7 +951,7 @@ let Ns5rDisplay = class extends RootDisplay {
 					bankInfo = "MT-b";
 				} else if (sum.chContr[chOff + 32] == 0) {
 					bankInfo = "GM-a";
-				} else if (this.#mode == "gs") {
+				} else if (this.#mode == "gs" && sum.chContr[chOff + 32] < 5) {
 					bankInfo = "GM-a";
 				} else {
 					bankInfo = "y";
