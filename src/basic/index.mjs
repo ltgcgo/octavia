@@ -40,7 +40,7 @@ let RootDisplay = class extends CustomEventSource {
 	#midiState = new OctaviaDevice();
 	#midiPool;
 	#titleName = "";
-	voices = new VoiceBank("xg", "gs", "ns5r");
+	voices = new VoiceBank("xg", "gs", "ns5r", "kross");
 	#metaRun = [];
 	#mimicStrength = new Uint8ClampedArray(64);
 	// Used to provide tempo, tSig and bar information

@@ -46,3 +46,4 @@ Octavia will never become a reality without help from the following people.
 * R: KORG - Mad Robot (05R/W) _Recorded by DearHoney_
 * S: KORG - Clasitario (AG-10) _Recorded by DearHoney_
 * T: David J. Reading - Greg's Mantra (XG) _Recorded by JayB on QY70_
+* U: KORG - The Far East (KROSS 2) _Recorded by PianoManChuck_
