@@ -25,7 +25,7 @@ const modeIdx = [
 	"?",
 	"gm", "gs", "xg", "g2",
 	"mt32", "ns5r",
-	"ag10", "x5d", "05rw"
+	"ag10", "x5d", "05rw", "krs"
 ];
 const substList = [
 	[0, 0, 0, 0, 121, 0, 0, 56, 82, 81],
@@ -262,6 +262,8 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						} else if (det.data[1] == 62) {
 							this.switchMode("x5d");
+						} else if (det.data[1] == 63) {
+							this.switchMode("krs");
 						};
 					} else if (this.#mode == modeMap.gm) {
 						if (det.data[1] < 48) {
@@ -308,6 +310,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Commit supported RPN values
 						if (this.#cc[chOffset + 101] == 0 && useRpnMap[this.#cc[chOffset + 100]] != undefined) {
 							this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + 100]]] = det.data[1];
+							console.debug(`RPN (0 ${this.#cc[chOffset + 100]}) commit: ${det.data[1]}`);
 						};
 					};
 					break;
