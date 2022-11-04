@@ -61,6 +61,7 @@ let VoiceBank = class {
 						} else {
 							args[1] %= 7;
 						};
+						ending = " ";
 					} else if (args[1] == 0) {
 						bankName = `${msb.toString().padStart(3, "0")} ${prg.toString().padStart(3, "0")} ${lsb.toString().padStart(3, "0")}`;
 						ending = "!";
