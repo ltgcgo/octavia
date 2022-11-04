@@ -15,6 +15,7 @@ _See the [MIDI Implementation Chart](docs/IMPLEMENTATION.md)_
 * 4 ports, 64 channels, 256-voice polyphony.
 * Supports multiple standards.
 * Available in JS (browser and Deno) and Go (not yet).
+* Wide support of bank mapping via [`midi-db`](https://github.com/ltgcgo/midi-db)
 
 ## API & more
 Please read the [documentation](docs/README.md).

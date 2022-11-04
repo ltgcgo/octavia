@@ -24,7 +24,9 @@ const modeNames = {
 	"x5d": "Korg X5D",
 	"05rw": "Korg05RW",
 	"ns5r": "KorgNS5R",
-	"krs": "KorgKros"
+	"krs": "KorgKros",
+	"k11": "KawaiK11",
+	"sg": "AkaiPrSG"
 };
 
 const bgOrange = "#ffaa2264",
@@ -213,7 +215,7 @@ let MuDisplay = class extends RootDisplay {
 		super();
 		let upThis = this;
 		this.addEventListener("mode", function (ev) {
-			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
+			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;
@@ -823,7 +825,10 @@ let Ns5rDisplay = class extends RootDisplay {
 				"x5d": bgGreen,
 				"ag10": bgRed,
 				"05rw": bgGreen,
-				"krs": bgWhite
+				"krs": bgWhite,
+				"k11": bgGreen,
+				"gmlx": bgGreen,
+				"sg01": bgRed
 			}[ev.data];
 			this.#mode = ev.data;
 			this.#refreshed = true;
@@ -1006,6 +1011,10 @@ let Ns5rDisplay = class extends RootDisplay {
 			case 121: {
 				bankInfo = "g";
 				readOffset = 32;
+				break;
+			};
+			case 122: {
+				bankInfo = "lDrm";
 				break;
 			};
 			case 126: {
