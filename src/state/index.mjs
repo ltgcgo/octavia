@@ -25,13 +25,14 @@ const modeIdx = [
 	"?",
 	"gm", "gs", "xg", "g2",
 	"mt32", "ns5r",
-	"ag10", "x5d", "05rw", "krs"
+	"ag10", "x5d", "05rw", "krs",
+	"k11", "sg"
 ];
 const substList = [
-	[0, 0, 0, 0, 121, 0, 0, 56, 82, 81],
-	[0, 0, 1, 0, 0, 127, 0, 0, 0, 0]
+	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 63, 0, 0],
+	[0, 0, 1, 0, 0,   127, 0, 0,  0,  0,  0,  0, 0]
 ];
-const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62];
+const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 127];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -800,6 +801,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("g2", true);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
 			console.info("MIDI reset: GM2");
+		}).add([64, 0, 16, 0, 8, 0, 0, 0, 0], function () {
+			upThis.switchMode("k11", true);
+			upThis.#modeKaraoke = false;
+			console.info("MIDI reset: KAWAI GMega/K11");
 		}).add([65, 16, 22, 18, 127, 1], function () {
 			// MT-32 reset
 			upThis.switchMode("mt32", true);

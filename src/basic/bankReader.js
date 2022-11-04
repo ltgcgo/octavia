@@ -55,6 +55,12 @@ let VoiceBank = class {
 					} else if (msb == 121) {
 						bankName = `GM2Vox0${lsb}`;
 						ending = "#";
+					} else if (msb == 122) {
+						if (args[1] == 32) {
+							args[1] == 0;
+						} else {
+							args[1] %= 7;
+						};
 					} else if (args[1] == 0) {
 						bankName = `${msb.toString().padStart(3, "0")} ${prg.toString().padStart(3, "0")} ${lsb.toString().padStart(3, "0")}`;
 						ending = "!";
@@ -78,6 +84,8 @@ let VoiceBank = class {
 			case 0: {
 				if (args[2] == 0) {
 					standard = "GM";
+				} else if (args[2] == 5 || args[2] == 7) {
+					standard = "KG";
 				} else if (args[2] < 120) {
 					standard = "XG";
 				} else if (args[2] == 127) {
@@ -104,6 +112,9 @@ let VoiceBank = class {
 				standard = "XD";
 				break;
 			};
+			case 63: {
+				standard = "KR";
+			};
 			case 81: {
 				standard = "RW";
 				break;
@@ -113,16 +124,20 @@ let VoiceBank = class {
 				standard = "XG";
 				break;
 			};
-			case 127: {
-				standard = lsb == 127 ? "MT" : (prg == 0 ? "GM" : "XG");
-				break;
-			};
 			case 120: {
 				standard = "GS";
 				break;
 			};
 			case 121: {
 				standard = "G2";
+				break;
+			};
+			case 122: {
+				standard = "KG";
+				break;
+			};
+			case 127: {
+				standard = lsb == 127 ? "MT" : (prg == 0 ? "GM" : "XG");
 				break;
 			};
 			default: {
