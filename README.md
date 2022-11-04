@@ -3,16 +3,19 @@
 
 ## Supported standard/devices
 _See the [MIDI Implementation Chart](docs/IMPLEMENTATION.md)_
-* Roland MT-32
+* Roland MT-32 (partial)
 * KORG AG-10
 * YAMAHA XG
 * Roland GS
 * KORG X5D
-* KORG 05R/W
+* KORG 05R/W (no SysEx)
 * KORG NS5R
+* KAWAI GMega
+* KAWAI GMega LX
+* AKAI SG01k
 
 ## Features
-* 4 ports, 64 channels, 256-voice polyphony.
+* 4 ports, 64 channels, 512-voice polyphony.
 * Supports multiple standards.
 * Available in JS (browser and Deno) and Go (not yet).
 * Wide support of bank mapping via [`midi-db`](https://github.com/ltgcgo/midi-db)

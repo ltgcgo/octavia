@@ -56,7 +56,8 @@ ccAccepted = [
 	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,
 	38, 64, 65, 66, 67, 68, 69, 70, 71,
 	72, 73, 74, 75, 76, 77, 78, 84, 91,
-	92, 93, 94, 95, 98, 99, 100, 101
+	92, 93, 94, 95, 98, 99, 100, 101,
+	12, 13
 ]; // 96, 97, 120 to 127 all have special functions
 
 
@@ -602,7 +603,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#cc[chOff + 11] = 127; // Expression
 			// Reset to centre
 			this.#cc[chOff + 10] = 64; // Pan
-			this.#cc[chOff + 71] = 64; // Harmonic Content
+			this.#cc[chOff + 71] = 64; // Resonance
 			this.#cc[chOff + 72] = 64; // Release Time
 			this.#cc[chOff + 73] = 64; // Attack Time
 			this.#cc[chOff + 74] = 64; // Brightness
