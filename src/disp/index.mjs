@@ -815,9 +815,6 @@ let Ns5rDisplay = class extends RootDisplay {
 		this.#backlight = bgWhite;
 		this.addEventListener("mode", (ev) => {
 			this.#backlight = {
-				"?": bgWhite,
-				"gm": bgWhite,
-				"g2": bgWhite,
 				"gs": bgOrange,
 				"mt32": bgOrange,
 				"xg": bgGreen,
@@ -825,11 +822,10 @@ let Ns5rDisplay = class extends RootDisplay {
 				"x5d": bgGreen,
 				"ag10": bgRed,
 				"05rw": bgGreen,
-				"krs": bgWhite,
 				"k11": bgGreen,
 				"gmlx": bgGreen,
 				"sg01": bgRed
-			}[ev.data];
+			}[ev.data] || bgWhite;
 			this.#mode = ev.data;
 			this.#refreshed = true;
 		});

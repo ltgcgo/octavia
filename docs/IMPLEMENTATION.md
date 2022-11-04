@@ -114,6 +114,16 @@
 			<td>Expression</td>
 		</tr>
 		<tr>
+			<td>12</td>
+			<td>✓</td>
+			<td>General-purpose</td>
+		</tr>
+		<tr>
+			<td>13</td>
+			<td>✓</td>
+			<td>General-purpose</td>
+		</tr>
+		<tr>
 			<td>32</td>
 			<td>✓</td>
 			<td>LSB Bank Select</td>
@@ -161,7 +171,7 @@
 		<tr>
 			<td>71</td>
 			<td>✓</td>
-			<td>Harmonic Content</td>
+			<td>Resonance</td>
 		</tr>
 		<tr>
 			<td>72</td>
@@ -299,7 +309,7 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan=9>System Exclusive</td>
+			<td rowspan=10>System Exclusive</td>
 			<td>General MIDI</td>
 			<td>✓</td>
 			<td></td>
@@ -338,6 +348,11 @@
 			<td>KORG 05R/W</td>
 			<td>✕</td>
 			<td></td>
+		</tr>
+		<tr>
+			<td>KAWAI GMega</td>
+			<td>✓</td>
+			<td>Also known as KAWAI K11</td>
 		</tr>
 		<tr>
 			<td>AKAI SG01</td>
