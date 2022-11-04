@@ -47,3 +47,5 @@ Octavia will never become a reality without help from the following people.
 * S: KORG - Clasitario (AG-10) _Recorded by DearHoney_
 * T: David J. Reading - Greg's Mantra (XG) _Recorded by JayB on QY70_
 * U: KORG - The Far East (KROSS 2) _Recorded by PianoManChuck_
+* V: KAWAI - 君がいるだけで (KAWAI GMega) _Recorded by DearHoney, might be replaced due to copyright concerns_
+* W: KAWAI - Do-Re-Mi (KAWAI GMega) _Recorded by DearHoney, might be replaced due to copyright concerns_
