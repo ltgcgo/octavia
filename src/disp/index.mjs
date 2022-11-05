@@ -948,13 +948,20 @@ let Ns5rDisplay = class extends RootDisplay {
 		let bankInfo = "", readOffset = 0;
 		switch (sum.chContr[chOff]) {
 			case 0: {
-				if (sum.chContr[chOff + 32] == 127) {
+				let lsb = sum.chContr[chOff + 32];
+				if (lsb == 127) {
 					bankInfo = "MT-a";
-				} else if (sum.chContr[chOff + 32] == 126) {
+				} else if (lsb == 126) {
 					bankInfo = "MT-b";
-				} else if (sum.chContr[chOff + 32] == 0) {
+				} else if (lsb == 7) {
+					bankInfo = "SP-k";
+				} else if (lsb == 5) {
+					bankInfo = "SG-v";
+				} else if (lsb == 4) {
+					bankInfo = "SP-l";
+				} else if (lsb == 0) {
 					bankInfo = "GM-a";
-				} else if (this.#mode == "gs" && sum.chContr[chOff + 32] < 5) {
+				} else if (this.#mode == "gs" && lsb < 5) {
 					bankInfo = "GM-a";
 				} else {
 					bankInfo = "y";

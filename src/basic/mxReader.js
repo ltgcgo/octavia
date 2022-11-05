@@ -1,10 +1,23 @@
 "use strict";
 
+let blankFont = new Uint8Array(40);
+
+let shiftIndex = 0, shiftLoading, shiftLoader = setInterval(() => {
+	if (shiftLoading) {
+		blankFont[shiftIndex] = !blankFont[shiftIndex];
+		shiftIndex ++;
+		if (shiftIndex > 34) {
+			shiftIndex = 0;
+		};
+	};
+}, 1000 / 50);
+
 let MxFont40 = class {
 	#fonts = [];
 	async loadFile(fileSrc) {
 		let upThis = this;
-		(await (await fetch(fileSrc)).text()).split("\n").forEach(function (e, i) {
+		console.debug(`Requested font file from "${fileSrc}".`);
+		(await (await fetch(fileSrc)).text()).split("\n").forEach(async function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
 				let bm = new Uint8Array(40);
@@ -22,8 +35,10 @@ let MxFont40 = class {
 				upThis.#fonts[parseInt(arr[0], 16)] = bm;
 			};
 		});
+		shiftLoading = false;
 	};
 	constructor(fileSrc) {
+		shiftLoading = true;
 		this.loadFile(fileSrc);
 	};
 	getCP(codePoint) {
@@ -33,7 +48,7 @@ let MxFont40 = class {
 		let arr = [],
 		upThis = this;
 		Array.from(codePoint).forEach(function (e) {
-			arr.push(upThis.#fonts[e.charCodeAt(0)] || upThis.#fonts[32]);
+			arr.push(upThis.#fonts[e.charCodeAt(0)] || upThis.#fonts[32] || blankFont);
 		});
 		return arr;
 	};
@@ -42,6 +57,7 @@ let MxBm256 = class {
 	#bm = {};
 	async loadFile(fileSrc) {
 		let upThis = this;
+		console.debug(`Requested fixed 256 bitmap file from "${fileSrc}".`);
 		(await (await fetch(fileSrc)).text()).split("\n").forEach(function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");

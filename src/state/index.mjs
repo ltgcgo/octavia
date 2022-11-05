@@ -300,19 +300,21 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (this.#cc[chOffset + 99] == 1) {
 							if (this.#cc[chOffset + 98] == 32) {
 								this.#cc[chOffset + 74] = det.data[1];
+								console.debug(`Redirected NRPN to cc74.`);
 							};
 							let nrpnIdx = useNormNrpn.indexOf(this.#cc[chOffset + 98]);
 							if (nrpnIdx > -1) {
 								this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
 							};
+							console.debug(`CH${part + 1} voice NRPN ${this.#cc[chOffset + 99]} ${this.#cc[chOffset + 98]} commit`);
 						} else {
-							//console.debug(`${part + 1} MSB ${det.data[1]} NRPN ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
+							console.debug(`CH${part + 1} drum NRPN ${this.#cc[chOffset + 99]} ${this.#cc[chOffset + 98]} commit`);
 						};
 					} else {
 						// Commit supported RPN values
 						if (this.#cc[chOffset + 101] == 0 && useRpnMap[this.#cc[chOffset + 100]] != undefined) {
 							this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + 100]]] = det.data[1];
-							console.debug(`RPN (0 ${this.#cc[chOffset + 100]}) commit: ${det.data[1]}`);
+							console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + 100]} commit: ${det.data[1]}`);
 						};
 					};
 					break;
@@ -1636,7 +1638,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([33], function (msg, channel) {
 			console.debug(`XG Part MW LFO filter depth ${msg[0]} for channel ${channel}.`);
 		}).add([35], function (msg, channel) {
-			console.debug(`XG Part bend pitch ${msg[0] - 64} semitones for channel ${channel}.`);
+			upThis.#rpn[channel * allocated.rpn + 3] = msg[0];
+			//console.debug(`XG Part bend pitch ${msg[0] - 64} semitones for channel ${channel}.`);
 		}).add([83], function (msg, channel) {
 			// Polyphonic aftertouch (PAT) pitch control
 			//console.debug(`XG Part PAT pitch ${msg[0] - 64} semitones for channel ${channel}.`);
