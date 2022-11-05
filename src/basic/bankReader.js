@@ -14,7 +14,7 @@ const modeIdx = [
 ];
 
 let VoiceBank = class {
-	#bankInfo = [];
+	#bankInfo;
 	get(msb = 0, prg = 0, lsb = 0, mode) {
 		let bankName;
 		let args = Array.from(arguments);
@@ -29,7 +29,7 @@ let VoiceBank = class {
 			};
 		};
 		let ending = " ";
-		while (!(bankName?.length > 0)) {
+		while (!(bankName?.length >= 0)) {
 			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
 			if (!bankName) {
 				args[2] = 0;
@@ -157,7 +157,7 @@ let VoiceBank = class {
 			standard
 		};
 	};
-	load(text, allowOverwrite) {
+	async load(text, allowOverwrite, name) {
 		let upThis = this;
 		let sig = []; // Significance
 		let loadCount = 0, allCount = 0;
@@ -169,7 +169,7 @@ let VoiceBank = class {
 				});
 				//console.debug(`Bank map significance: ${sig}`);
 			} else {
-				assign.forEach(function (e1, i1) {
+				assign.forEach(async function (e1, i1) {
 					if (i1 > 2) {
 						upThis.#bankInfo[to[sig[1]]] = upThis.#bankInfo[to[sig[1]]] || [];
 						if (!upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]?.length || allowOverwrite) {
@@ -185,7 +185,7 @@ let VoiceBank = class {
 				});
 			};
 		});
-		console.debug(`${allCount} entries in total, loaded ${loadCount} entries.`);
+		console.debug(`Map "${name}" contains ${allCount} entries in total, loaded ${loadCount} entries.`);
 	};
 	clearRange(options) {
 		let prg = options.prg != undefined ? (options.prg.constructor == Array ? options.prg : [options.prg, options.prg]) : [0, 127],
@@ -201,17 +201,23 @@ let VoiceBank = class {
 			};
 		};
 	};
-	async loadFiles(...type) {
+	init() {
 		this.#bankInfo = [];
-		let upThis = this;
-		for (let c = 0; c < type.length; c ++) {
-			await fetch(`./data/bank/${type[c]}.tsv`).then(function (response) {
-				console.debug(`Parsing voice map: ${type[c]}`);
-				return response.text()
-			}).then(function (text) {
-				upThis.load.call(upThis, text);
-			});
+		for (let prg = 0; prg < 128; prg ++) {
+			this.#bankInfo.push([""]);
 		};
+	};
+	async loadFiles(...type) {
+		this.init();
+		let upThis = this;
+		type.forEach(async function (e, i) {
+			await fetch(`./data/bank/${e}.tsv`).then(function (response) {
+				//console.debug(`Parsing voice map "${e}".`);
+				return response.text();
+			}).then((text) => {
+				upThis.load(text, false, e);
+			});
+		});
 	};
 	constructor(...args) {
 		this.loadFiles(...args);

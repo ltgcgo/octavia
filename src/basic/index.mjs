@@ -106,7 +106,7 @@ let RootDisplay = class extends CustomEventSource {
 		if (time > this.#noteTime) {
 			this.#noteTime = time;
 		};
-		let events = this.#midiPool.step(time);
+		let events = this.#midiPool?.step(time) || [];
 		let extraPoly = 0, notes = new Set();
 		let upThis = this;
 		let metaReplies = [];
