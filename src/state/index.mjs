@@ -58,7 +58,8 @@ ccAccepted = [
 	72, 73, 74, 75, 76, 77, 78, 84, 91,
 	92, 93, 94, 95, 98, 99, 100, 101,
 	12, 13
-]; // 96, 97, 120 to 127 all have special functions
+], // 96, 97, 120 to 127 all have special functions
+nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
 
 let modeMap = {};
@@ -297,18 +298,21 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 6: {
 					// Show RPN and NRPN
 					if (this.#dataCommit) {
-						if (this.#cc[chOffset + 99] == 1) {
-							if (this.#cc[chOffset + 98] == 32) {
-								this.#cc[chOffset + 74] = det.data[1];
-								console.debug(`Redirected NRPN to cc74.`);
+						let msb = this.#cc[chOffset + 99],
+						lsb = this.#cc[chOffset + 98];
+						if (msb == 1) {
+							let toCc = nrpnCcMap.indexOf(lsb);
+							if (toCc > -1) {
+								this.#cc[chOffset + 71 + toCc] = det.data[1];
+								console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
 							};
-							let nrpnIdx = useNormNrpn.indexOf(this.#cc[chOffset + 98]);
+							let nrpnIdx = useNormNrpn.indexOf(lsb);
 							if (nrpnIdx > -1) {
 								this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
 							};
-							console.debug(`CH${part + 1} voice NRPN ${this.#cc[chOffset + 99]} ${this.#cc[chOffset + 98]} commit`);
+							console.debug(`CH${part + 1} voice NRPN ${msb} ${lsb} commit`);
 						} else {
-							console.debug(`CH${part + 1} drum NRPN ${this.#cc[chOffset + 99]} ${this.#cc[chOffset + 98]} commit`);
+							console.debug(`CH${part + 1} drum NRPN ${msb} ${lsb} commit`);
 						};
 					} else {
 						// Commit supported RPN values
@@ -422,9 +426,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		15: function (det) {
 			// SysEx
-			let upThis = this;
-			sysExSplitter(det.data).forEach(function (seq) {
-				upThis.#seMain.run(seq, det.track);
+			sysExSplitter(det.data).forEach((seq) => {
+				let manId = seq[0],
+				deviceId = seq[1] & 15;
+				(this.#seMan[manId] || function () {
+					console.debug(`Unknown manufacturer ${manId}.`);
+				})(deviceId, seq.slice(2));
+				//upThis.#seMain.run(seq, det.track);
 			});
 		},
 		255: function (det) {
@@ -442,16 +450,48 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}
 	};
-	// Main SysEx pool
-	#seMain;
-	// GS Part SysEx pool
-	#seGsPart;
-	#seGsPartProp;
-	// XG Part SysEx pool
-	#seXgPart;
-	#seXgDrumInst;
-	// MT-32 SysEx pool
-	#seMtSysEx;
+	// SysEx manufacturer table
+	#seMan = {
+		64: (id, msg) => {
+			// Kawai
+			this.#seKg.run(msg);
+		},
+		65: (id, msg) => {
+			// Roland
+			this.#seGs.run(msg);
+		},
+		66: (id, msg) => {
+			// Korg
+			this.#seXd.run(msg);
+		},
+		67: (id, msg) => {
+			// Yamaha
+			this.#seXg.run(msg);
+		},
+		68: (id, msg) => {
+			// Casio
+			this.#seCs.run(msg);
+		},
+		71: (id, msg) => {
+			// Akai
+			this.#seSg.run(msg);
+		},
+		126: (id, msg) => {
+			// Universal non-realtime
+			this.#seUnr.run(msg);
+		},
+		127: (id, msg) => {
+			// Universal realtime
+		}
+	};
+	#seUnr; // Universal non-realtime
+	#seUr; // Universal realtime
+	#seXg; // YAMAHA
+	#seGs; // Roland
+	#seXd; // KORG
+	#seKg; // Kawai
+	#seSg; // Akai
+	#seCs; // Casio
 	buildRchTree() {
 		// Build a receiving tree from currently set receive channels
 		// Now builds from the ground up each time
@@ -683,29 +723,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	constructor() {
 		super();
 		let upThis = this;
-		this.#metaSeq = new BinaryMatch();
-		this.#seMain = new BinaryMatch();
-		this.#seGsPart = new BinaryMatch();
-		this.#seGsPartProp = new BinaryMatch();
-		this.#seXgPart = new BinaryMatch();
-		this.#seXgDrumInst = new BinaryMatch();
-		this.#seMtSysEx = new BinaryMatch();
-		this.#metaSeq.default = function (seq, track) {
-			console.debug(`Unparsed meta 127 sequence on track ${track}: `, seq);
-		};
-		this.#seMain.default = function (sysEx) {
-			console.debug("Unparsed SysEx: ", sysEx);
-		};
-		this.#seGsPart.default = function (sysEx, channel) {
-			console.debug(`Unparsed GS Part on channel ${channel}: `, sysEx);
-		};
-		this.#seXgPart.default = function (sysEx, channel) {
-			console.debug(`Unparsed XG Part on channel ${channel}: `, sysEx);
-		};
-		this.#seXgDrumInst.default = function (sysEx, channel) {
-			console.debug(`Unparsed XG Drum Part on channel ${channel}: `, sysEx);
-		};
 		// Metadata events
+		// Should be moved to somewhere else
 		this.#metaRun[1] = function (data) {
 			// Normal text
 			switch (data.slice(0, 2)) {
@@ -792,36 +811,45 @@ let OctaviaDevice = class extends CustomEventSource {
 			//console.debug(`Sequencer specific on track ${track}: `, data);
 			upThis.#metaSeq.run(data, track);
 		};
-		// Standard resets
-		// Refactor this!
-		this.#seMain.add([126, 127, 9, 1], function () {
-			// General MIDI reset
+		this.#seUnr = new BinaryMatch();
+		this.#seUr = new BinaryMatch();
+		this.#seXg = new BinaryMatch();
+		this.#seGs = new BinaryMatch();
+		this.#seXd = new BinaryMatch();
+		this.#seKg = new BinaryMatch();
+		this.#seSg = new BinaryMatch();
+		this.#seCs = new BinaryMatch();
+		// The new SysEx engine only defines actions when absolutely needed.
+		// Mode reset section
+		this.#seUnr.add([9, 1], () => {
+			// General MIDI reset.
 			upThis.switchMode("gm", true);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
 			console.info("MIDI reset: GM");
-		}).add([126, 127, 9, 3], function () {
-			// General MIDI rev. 2 reset
+		}).add([9, 2], () => {
+			// General MIDI off, interpret as fresh init.
+			upThis.switchMode("?", true);
+			upThis.init();
+			console.info("MIDI reset: Init");
+		}).add([9, 3], () => {
+			// General MIDI 2 reset.
 			upThis.switchMode("g2", true);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
 			console.info("MIDI reset: GM2");
-		}).add([64, 0, 16, 0, 8, 0, 0, 0, 0], function () {
-			upThis.switchMode("k11", true);
+		});
+		this.#seXg.add([76, 0, 0, 126, 0], () => {
+			// Yamaha XG reset, refactor needed
+			upThis.switchMode("xg", true);
 			upThis.#modeKaraoke = false;
-			console.info("MIDI reset: KAWAI GMega/K11");
-		}).add([65, 16, 22, 18, 127, 1], function () {
-			// MT-32 reset
+			console.info("MIDI reset: XG");
+		});
+		this.#seGs.add([22, 18, 127, 0, 0, 1], () => {
+			// MT-32 reset, refactor needed
 			upThis.switchMode("mt32", true);
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: MT-32");
-			console.debug("Reset with the shorter one.");
-		}).add([65, 16, 22, 18, 127, 0, 0, 1], function () {
-			// MT-32 reset
-			upThis.switchMode("mt32", true);
-			upThis.#modeKaraoke = false;
-			console.info("MIDI reset: MT-32");
-			console.debug("Reset with the longer one.");
-		}).add([65, 16, 66, 18, 64, 0, 127, 0, 65], function () {
-			// Roland GS reset
+		}).add([66, 18, 64, 0, 127, 0, 65], () => {
+			// Roland GS reset, refactor needed
 			upThis.switchMode("gs", true);
 			upThis.#cc[1152] = 120;
 			upThis.#cc[3200] = 120;
@@ -830,885 +858,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.forEach(toZero);
 			console.info("MIDI reset: GS");
-		}).add([67, 16, 76, 0, 0, 126, 0], function (msg) {
-			// Yamaha XG reset
-			upThis.switchMode("xg", true);
+		});
+		this.#seKg.add([16, 0, 8, 0, 0, 0, 0], () => {
+			// Kawai GMega, refactor needed
+			upThis.switchMode("k11", true);
 			upThis.#modeKaraoke = false;
-			console.info("MIDI reset: XG");
-		});
-		// Sequencer specific meta event
-		// No refactoring needed.
-		this.#metaSeq.add([67, 0, 1], function (msg, track) {
-			//console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
-			upThis.#trkAsReq[track] = msg[0] + 1;
-		});
-		// General MIDI SysEx
-		// No refactoring needed.
-		this.#seMain.add([127, 127, 4, 1], function (msg) {
-			// Master volume
-			upThis.switchMode("gm");
-			upThis.#masterVol = ((msg[1] << 7) + msg[0]) / 163.83;
-		});
-		// Yamaha XG SysEx
-		// Refactor this!
-		this.#seMain.add([67, 16, 76, 6, 0], function (msg) {
-			// XG Letter Display
-			let offset = msg[0];
-			upThis.#letterDisp = " ".repeat(offset);
-			upThis.#letterExpire = Date.now() + 3200;
-			msg.slice(1).forEach(function (e) {
-				upThis.#letterDisp += String.fromCharCode(e);
-			});
-		}).add([67, 16, 76, 7, 0, 0], function (msg) {
-			// XG Bitmap Display
-			upThis.#bitmapExpire = Date.now() + 3200;
-			while (msg.length < 48) {
-				msg.unshift(0);
-			};
-			msg.forEach(function (e, i) {
-				let ln = Math.floor(i / 16), co = i % 16;
-				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
-				pt -= co * 5;
-				if (ln == 2) {
-					threshold = 2;
-				};
-				while (bi < threshold) {
-					upThis.#bitmap[pt + bi] = (e >> (6 - bi)) & 1;
-					bi ++;
-				};
-			});
-		}).add([67, 16, 76, 2, 1, 0], function (msg) {
-			console.debug(`XG reverb type: ${xgEffType[msg[0]]}${msg[1] > 0 ? " " + (msg[1] + 1) : ""}`);
-		}).add([67, 16, 76, 2, 1, 2], function (msg) {
-			console.debug(`XG reverb time: ${getXgRevTime(msg)}s`);
-		}).add([67, 16, 76, 2, 1, 3], function (msg) {
-			console.debug(`XG reverb diffusion: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 4], function (msg) {
-			console.debug(`XG reverb initial delay: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 5], function (msg) {
-			console.debug(`XG reverb high pass cutoff: ${xgNormFreq[msg[0]]}Hz`);
-		}).add([67, 16, 76, 2, 1, 6], function (msg) {
-			console.debug(`XG reverb low pass cutoff: ${xgNormFreq[msg[0]]}Hz`);
-		}).add([67, 16, 76, 2, 1, 7], function (msg) {
-			console.debug(`XG reverb width: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 8], function (msg) {
-			console.debug(`XG reverb height: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 9], function (msg) {
-			console.debug(`XG reverb depth: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 10], function (msg) {
-			console.debug(`XG reverb wall type: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 11], function (msg) {
-			console.debug(`XG reverb dry/wet: ${msg[0]}`);
-		}).add([67, 16, 76, 2, 1, 12], function (msg) {
-			console.debug(`XG reverb return: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 13], function (msg) {
-			console.debug(`XG reverb pan: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 2, 1, 16], function (msg) {
-			console.debug(`XG reverb delay: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 17], function (msg) {
-			console.debug(`XG density: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 18], function (msg) {
-			console.debug(`XG reverb balance: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 20], function (msg) {
-			console.debug(`XG reverb feedback: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 32], function (msg) {
-			console.debug(`XG chorus type: ${xgEffType[msg[0]]}${msg[1] > 0 ? " " + (msg[1] + 1) : ""}`);
-		}).add([67, 16, 76, 2, 1, 34], function (msg) {
-			console.debug(`XG chorus LFO: ${xgLfoFreq[msg[0]]}Hz`);
-		}).add([67, 16, 76, 2, 1, 35], function (msg) {
-			//console.debug(`XG chorus LFO phase: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 36], function (msg) {
-			console.debug(`XG chorus feedback: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 37], function (msg) {
-			console.debug(`XG chorus delay offset: ${getXgDelayOffset(msg[0])}ms`);
-		}).add([67, 16, 76, 2, 1, 39], function (msg) {
-			console.debug(`XG chorus low: ${xgNormFreq[msg[0]]}Hz`);
-		}).add([67, 16, 76, 2, 1, 40], function (msg) {
-			console.debug(`XG chorus low: ${msg[0] - 64}dB`);
-		}).add([67, 16, 76, 2, 1, 41], function (msg) {
-			console.debug(`XG chorus high: ${xgNormFreq[msg[0]]}Hz`);
-		}).add([67, 16, 76, 2, 1, 42], function (msg) {
-			console.debug(`XG chorus high: ${msg[0] - 64}dB`);
-		}).add([67, 16, 76, 2, 1, 43], function (msg) {
-			console.debug(`XG chorus dry/wet: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 44], function (msg) {
-			console.debug(`XG chorus return: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 45], function (msg) {
-			console.debug(`XG chorus pan: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 2, 1, 46], function (msg) {
-			console.debug(`XG chorus to reverb: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 64], function (msg) {
-			console.debug(`XG variation type: ${xgEffType[msg[0]]}${msg[1] > 0 ? " " + (msg[1] + 1) : ""}`);
-		}).add([67, 16, 76, 2, 1, 66], function (msg) {
-			console.debug(`XG variation 1: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 68], function (msg) {
-			console.debug(`XG variation 2: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 70], function (msg) {
-			console.debug(`XG variation 3: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 72], function (msg) {
-			console.debug(`XG variation 4: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 74], function (msg) {
-			console.debug(`XG variation 5: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 76], function (msg) {
-			console.debug(`XG variation 6: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 78], function (msg) {
-			console.debug(`XG variation 7: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 80], function (msg) {
-			console.debug(`XG variation 8: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 82], function (msg) {
-			console.debug(`XG variation 9: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 84], function (msg) {
-			console.debug(`XG variation 10: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 86], function (msg) {
-			console.debug(`XG variation return: ${toDecibel(msg[0])}dB`);
-		}).add([67, 16, 76, 2, 1, 87], function (msg) {
-			console.debug(`XG variation pan: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 2, 1, 88], function (msg) {
-			console.debug(`XG variation to reverb: ${toDecibel(msg[0])}dB`);
-		}).add([67, 16, 76, 2, 1, 89], function (msg) {
-			console.debug(`XG variation to chorus: ${toDecibel(msg[0])}dB`);
-		}).add([67, 16, 76, 2, 1, 90], function (msg) {
-			console.debug(`XG variation connection: ${msg[0] ? "system" : "insertion"}`);
-		}).add([67, 16, 76, 2, 1, 91], function (msg) {
-			console.debug(`XG variation part: ${msg}`);
-		}).add([67, 16, 76, 2, 1, 92], function (msg) {
-			console.debug(`XG variation mod wheel: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 2, 1, 93], function (msg) {
-			console.debug(`XG variation bend wheel: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 2, 1, 94], function (msg) {
-			console.debug(`XG variation channel after touch: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 2, 1, 95], function (msg) {
-			console.debug(`XG variation AC1: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 2, 1, 96], function (msg) {
-			console.debug(`XG variation AC2: ${msg[0] - 64}`);
-		}).add([67, 16, 76, 8], function (msg, track) {
-			// XG part setup
-			//console.info(`XG Part Setup trk ${track} ch ${msg[0]} real ${upThis.chRedir(msg[0], track)}.`);
-			// THIS CAN CONTAIN BUGS
-			upThis.#seXgPart.run(msg.slice(1), upThis.chRedir(msg[0], track));
-		}).add([67, 16, 76, 48], function (msg) {
-			// XG drum 1 setup
-			upThis.#seXgDrumInst.run(msg.slice(1), 0, msg[0]);
-		}).add([67, 16, 76, 49], function (msg) {
-			// XG drum 2 setup
-			upThis.#seXgDrumInst.run(msg.slice(1), 1, msg[0]);
-		}).add([67, 16, 76, 50], function (msg) {
-			// XG drum 3 setup
-			upThis.#seXgDrumInst.run(msg.slice(1), 2, msg[0]);
-		}).add([67, 16, 76, 51], function (msg) {
-			// XG drum 4 setup
-			upThis.#seXgDrumInst.run(msg.slice(1), 3, msg[0]);
-		});
-		// Roland MT-32 SysEx
-		// Refactor this!
-		this.#seMain.add([65, 1], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#seMtSysEx.run(msg, 1);
-		}).add([65, 2], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#seMtSysEx.run(msg, 2);
-		}).add([65, 3], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#seMtSysEx.run(msg, 3);
-		}).add([65, 4], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#seMtSysEx.run(msg, 4);
-		}).add([65, 5], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#seMtSysEx.run(msg, 5);
-		}).add([65, 6], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#seMtSysEx.run(msg, 6);
-		}).add([65, 7], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#seMtSysEx.run(msg, 7);
-		}).add([65, 8], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#seMtSysEx.run(msg, 8);
-		}).add([65, 9], function (msg) {
-			upThis.switchMode("mt32");
-			upThis.#chActive[9] = 1;
-			upThis.#seMtSysEx.run(msg, 9);
-		}).add([65, 16, 22, 18, 8], function (msg, track) {
-			upThis.switchMode("mt32");
-			let section = msg[0]/*upThis.chRedir(msg[0], track, true)*/,
-			funcId = msg[1],
-			theText = "";
-			if (funcId == 0) {
-				msg.slice(2, 12).forEach((e) => {
-					if (e > 31) {
-						theText += String.fromCharCode(e);
-					};
-				});
-				console.debug(`MT-32 voice setup on section ${section}: ${theText}.`);
-			} else {
-				//console.debug(`Mysterious sequence on channel ${part + 1}: ${msg}`);
-			};
-		}).add([65, 16, 22, 18, 16, 0, 13], function (msg, track) {
-			upThis.switchMode("mt32");
-			console.info(`MT-32 receive channel: ${msg}`);
-		}).add([65, 16, 22, 18, 16, 0, 22], function (msg, track) {
-			upThis.switchMode("mt32");
-			console.info(`MT-32 all notes off? ${msg}`);
-		}).add([65, 16, 22, 18, 32, 0], function (msg) {
-			upThis.switchMode("mt32");
-			let offset = msg[0];
-			upThis.#letterDisp = " ".repeat(offset);
-			msg.unshift();
-			msg.pop();
-			upThis.#letterDisp = " ".repeat(offset);
-			upThis.#letterExpire = Date.now() + 3200;
-			msg.forEach(function (e) {
-				if (e > 31) {
-					upThis.#letterDisp += String.fromCharCode(e);
-				};
-			});
-			upThis.#letterDisp += " ".repeat(32 - upThis.#letterDisp.length);
-		});
-		this.#seMtSysEx.add([22, 18, 2, 0, 0], function (msg, channel) {
-			// MT-32 tone properties
-			// Refactor this!
-			let setName = "";
-			msg.slice(0, 10).forEach(function (e) {
-				if (e > 31) {
-					setName += String.fromCharCode(e);
-				};
-			});
-			upThis.#customName[channel] = setName;
-			console.debug(`MT-32 tone properties on channel ${channel + 1} (${setName}).`);
-			let matchedPart = [];
-			msg.slice(10).forEach((e, i) => {
-				if (e < 10) {
-					matchedPart[e] = matchedPart[e] || [];
-					matchedPart[e].push(i);
-				};
-			});
-			console.info(matchedPart[channel]);
-		});
-		// Roland GS SysEx
-		// Refactor this!
-		this.#seMain.add([65, 16, 66, 18, 0, 0, 127], function (msg) {
-			// GS module mode (single port 16 channel, or double port 32 channel)
-			upThis.switchMode("gs", true);
-			upThis.#cc[1152] = 120;
-			upThis.#cc[3200] = 120;
-			upThis.#cc[5248] = 120;
-			upThis.#cc[7296] = 120;
-			upThis.#trkRedir.forEach(toZero);
-			upThis.#modeKaraoke = false;
-			upThis.#subLsb = 3;
-			console.info(`GS system set to ${msg[0] ? "dual" : "single"} mode.`);
-		}).add([65, 16, 66, 18, 64, 0, 0], function (msg) {
-			// GS Master Tune, 4 bytes but I don't know how to process
-		}).add([65, 16, 66, 18, 64, 0, 4], function (msg) {
-			// GS Master Volume, same as universal master volume but with MSB only.
-			upThis.#masterVol = msg[0] * 129 / 163.83;
-		}).add([65, 16, 66, 18, 64, 0, 5], function (msg) {
-			// GS Master Key Shift
-			console.debug(`GS master key shift: ${msg[0] - 64} semitones.`);
-		}).add([65, 16, 66, 18, 64, 0, 6], function (msg) {
-			// GS Master Pan
-			console.debug(`GS master pan:${msg[0] - 64}.`);
-		}).add([65, 16, 66, 18, 64, 1, 48], function (msg) {
-			// GS reverb macro
-			console.debug(`GS reverb type: ${gsRevType[msg[0]]}`);
-		}).add([65, 16, 66, 18, 64, 1, 49], function (msg) {
-			// GS reverb Character
-		}).add([65, 16, 66, 18, 64, 1, 50], function (msg) {
-			// GS reverb pre-LPF
-			console.debug(`GS reverb pre-LPF: ${msg[0]}`);
-		}).add([65, 16, 66, 18, 64, 1, 51], function (msg) {
-			// GS reverb level
-			console.debug(`GS reverb level: ${msg[0]}`);
-		}).add([65, 16, 66, 18, 64, 1, 52], function (msg) {
-			// GS reverb time (NEED A LOOKUP TABLE FOR REAL VALUES)
-			console.debug(`GS reverb time: ${msg[0]}`);
-		}).add([65, 16, 66, 18, 64, 1, 53], function (msg) {
-			// GS reverb delay feedback
-			console.debug(`GS reverb delay feedback: ${msg[0]}`);
-		}).add([65, 16, 66, 18, 64, 1, 55], function (msg) {
-			// GS reverb pre-delay time
-			console.debug(`GS reverb pre-delay time: ${msg[0]}`);
-		}).add([65, 16, 66, 18, 64, 1, 56], function (msg) {
-			// GS reverb chorus macro
-			console.debug(`GS chorus type: ${gsChoType[msg[0]]}`);
-		}).add([65, 16, 66, 18, 64, 1, 57], function (msg) {
-			// GS reverb chorus pre-LPF (SC-88 Pro manual page 195)
-			console.debug(`GS chorus pre-LPF: ${msg[0]}`);
-		}).add([65, 16, 66, 18, 64, 2, 0], function (msg) {
-			// GS EQ low freq
-			console.debug(`GS EQ low: ${msg[0] ? 400 : 200}Hz`);
-		}).add([65, 16, 66, 18, 64, 2, 1], function (msg) {
-			// GS EQ low gain
-			console.debug(`GS EQ low: ${msg[0] - 64}dB`);
-		}).add([65, 16, 66, 18, 64, 2, 2], function (msg) {
-			// GS EQ high freq
-			console.debug(`GS EQ high: ${msg[0] ? 6000 : 3000}Hz`);
-		}).add([65, 16, 66, 18, 64, 2, 3], function (msg) {
-			// GS EQ high gain
-			console.debug(`GS EQ high: ${msg[0] - 64}dB`);
-		}).add([65, 16, 66, 18, 64, 3], function (msg) {
-			// GS EFX params, have to ignore for now (SC-88 Pro manual page 196)
-		}).add([65, 16, 69, 18, 16, 0], function (msg) {
-			// GS Text Insert (same as XG Letter Display)
-			let offset = msg[0];
-			upThis.#letterDisp = " ".repeat(offset);
-			upThis.#letterExpire = Date.now() + 3200;
-			msg.pop();
-			msg.slice(1).forEach(function (e) {
-				upThis.#letterDisp += String.fromCharCode(e);
-			});
-		}).add([65, 16, 69, 18, 16, 1, 0], function (msg) {
-			// GS Frame Draw (same as XG Bitmap Display)
-			upThis.#bitmapExpire = Date.now() + 3200;
-			msg.forEach(function (e, i) {
-				if (i < 64) {
-					let ln = Math.floor(i / 16), co = i % 16;
-					let pt = (co * 4 + ln) * 5, threshold = 5, bi = 0;
-					pt -= co * 4;
-					if (ln == 3) {
-						threshold = 1;
-					};
-					while (bi < threshold) {
-						upThis.#bitmap[pt + bi] = (e >> (4 - bi)) & 1;
-						bi ++;
-					};
-				};
-			});
-		}).add([65, 16, 66, 18, 64, 16], function (msg, track) {
-			// GS Part channel 10
-			upThis.#seGsPart.run(msg, upThis.chRedir(9, track, true), track);
-		}).add([65, 16, 66, 18, 64, 17], function (msg, track) {
-			// GS Part channel 01
-			upThis.#seGsPart.run(msg, upThis.chRedir(0, track, true), track);
-		}).add([65, 16, 66, 18, 64, 18], function (msg, track) {
-			// GS Part channel 02
-			upThis.#seGsPart.run(msg, upThis.chRedir(1, track, true), track);
-		}).add([65, 16, 66, 18, 64, 19], function (msg, track) {
-			// GS Part channel 03
-			upThis.#seGsPart.run(msg, upThis.chRedir(2, track, true), track);
-		}).add([65, 16, 66, 18, 64, 20], function (msg, track) {
-			// GS Part channel 04
-			upThis.#seGsPart.run(msg, upThis.chRedir(3, track, true), track);
-		}).add([65, 16, 66, 18, 64, 21], function (msg, track) {
-			// GS Part channel 05
-			upThis.#seGsPart.run(msg, upThis.chRedir(4, track, true), track);
-		}).add([65, 16, 66, 18, 64, 22], function (msg, track) {
-			// GS Part channel 06
-			upThis.#seGsPart.run(msg, upThis.chRedir(5, track, true), track);
-		}).add([65, 16, 66, 18, 64, 23], function (msg, track) {
-			// GS Part channel 07
-			upThis.#seGsPart.run(msg, upThis.chRedir(6, track, true), track);
-		}).add([65, 16, 66, 18, 64, 24], function (msg, track) {
-			// GS Part channel 08
-			upThis.#seGsPart.run(msg, upThis.chRedir(7, track, true), track);
-		}).add([65, 16, 66, 18, 64, 25], function (msg, track) {
-			// GS Part channel 09
-			upThis.#seGsPart.run(msg, upThis.chRedir(8, track, true), track);
-		}).add([65, 16, 66, 18, 64, 26], function (msg, track) {
-			// GS Part channel 11
-			upThis.#seGsPart.run(msg, upThis.chRedir(10, track, true), track);
-		}).add([65, 16, 66, 18, 64, 27], function (msg, track) {
-			// GS Part channel 12
-			upThis.#seGsPart.run(msg, upThis.chRedir(11, track, true), track);
-		}).add([65, 16, 66, 18, 64, 28], function (msg, track) {
-			// GS Part channel 13
-			upThis.#seGsPart.run(msg, upThis.chRedir(12, track, true), track);
-		}).add([65, 16, 66, 18, 64, 29], function (msg, track) {
-			// GS Part channel 14
-			upThis.#seGsPart.run(msg, upThis.chRedir(13, track, true), track);
-		}).add([65, 16, 66, 18, 64, 30], function (msg, track) {
-			// GS Part channel 15
-			upThis.#seGsPart.run(msg, upThis.chRedir(14, track, true), track);
-		}).add([65, 16, 66, 18, 64, 31], function (msg, track) {
-			// GS Part channel 16
-			upThis.#seGsPart.run(msg, upThis.chRedir(15, track, true), track);
-		}).add([65, 16, 66, 18, 64, 64], function (msg, track) {
-			// GS Part channel 10
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(9, track, true));
-		}).add([65, 16, 66, 18, 64, 65], function (msg, track) {
-			// GS Part channel 01
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(0, track, true));
-		}).add([65, 16, 66, 18, 64, 66], function (msg, track) {
-			// GS Part channel 02
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(1, track, true));
-		}).add([65, 16, 66, 18, 64, 67], function (msg, track) {
-			// GS Part channel 03
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(2, track, true));
-		}).add([65, 16, 66, 18, 64, 68], function (msg, track) {
-			// GS Part channel 04
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(3, track, true));
-		}).add([65, 16, 66, 18, 64, 69], function (msg, track) {
-			// GS Part channel 05
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(4, track, true));
-		}).add([65, 16, 66, 18, 64, 70], function (msg, track) {
-			// GS Part channel 06
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(5, track, true));
-		}).add([65, 16, 66, 18, 64, 71], function (msg, track) {
-			// GS Part channel 07
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(6, track, true));
-		}).add([65, 16, 66, 18, 64, 72], function (msg, track) {
-			// GS Part channel 08
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(7, track, true));
-		}).add([65, 16, 66, 18, 64, 73], function (msg, track) {
-			// GS Part channel 09
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(8, track, true));
-		}).add([65, 16, 66, 18, 64, 74], function (msg, track) {
-			// GS Part channel 11
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(10, track, true));
-		}).add([65, 16, 66, 18, 64, 75], function (msg, track) {
-			// GS Part channel 12
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(11, track, true));
-		}).add([65, 16, 66, 18, 64, 76], function (msg, track) {
-			// GS Part channel 13
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(12, track, true));
-		}).add([65, 16, 66, 18, 64, 77], function (msg, track) {
-			// GS Part channel 14
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(13, track, true));
-		}).add([65, 16, 66, 18, 64, 78], function (msg, track) {
-			// GS Part channel 15
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(14, track, true));
-		}).add([65, 16, 66, 18, 64, 79], function (msg, track) {
-			// GS Part channel 16
-			upThis.#seGsPartProp.run(msg, upThis.chRedir(15, track, true));
-		});
-		// KORG X5D SysEx
-		upThis.#seMain.add([66, 48, 54, 104], function (msg, track) {
-			// X5D extended multi setup
-			upThis.switchMode("x5d", true);
-			korgFilter(msg, function (e, i) {
-				if (i < 192) {
-					let part = upThis.chRedir(Math.floor(i / 12), track, true),
-					chOff = part * 128;
-					switch (i % 12) {
-						case 0: {
-							// Program change
-							upThis.#prg[part] = e;
-							if (e > 0) {
-								upThis.#chActive[part] = 1;
-							};
-							break;
-						};
-						case 1: {
-							// Volume
-							upThis.#cc[chOff + 7] = e;
-							break;
-						};
-						case 2: {
-							// Coarse tune
-							upThis.#rpn[part * allocated.rpn + 3] = (e > 127 ? 256 - e : 64 + e);
-							break;
-						};
-						case 3: {
-							// Fine tune
-							upThis.#rpn[part * allocated.rpn + 1] = (e > 127 ? 256 - e : 64 + e);
-							break;
-						};
-						case 4: {
-							// Pan
-							if (e < 31) {
-								upThis.#cc[chOff + 10] = Math.round((e - 15) * 4.2 + 64);
-							};
-							break;
-						};
-						case 5: {
-							// Reverb + Chorus
-							let choSend = e >> 4,
-							revSend = e & 15;
-							upThis.#cc[chOff + 91] = x5dSendLevel(revSend);
-							upThis.#cc[chOff + 93] = x5dSendLevel(choSend);
-							break;
-						};
-						case 10: {
-							// Control filter
-							upThis.#cc[chOff] = (e & 3) ? 82 : 56;
-							break;
-						};
-						case 11: {
-							// MIDI Rc Ch + Track Switch
-							let midiCh = e & 15,
-							trkSw = e >> 4;
-							upThis.#chReceive[part] = e;
-							if (midiCh != part || trkSw) {
-								console.info(`X5D Part CH${part + 1} receives from CH${midiCh + 1}. Track is ${trkSw ? "inactive" : "active"}.`);
-								upThis.buildRchTree();
-							};
-						};
-					};
-				} else {
-					let part = upThis.chRedir(i - 192, track, true);
-					// What the heck is pitch bend range 0xF4(-12) to 0x0C(12)?
-				};
-			});
-		}).add([66, 48, 54, 76, 0], function (msg, track) {
-			// X5D program dump
-			upThis.switchMode("x5d", true);
-			let name = "", msb = 82, prg = 0, lsb = 0;
-			let voiceMap = "MSB\tPRG\tLSB\tNME";
-			korgFilter(msg, function (e, i) {
-				if (i < 16400) {
-					let p = i % 164;
-					switch (true) {
-						case (p < 10): {
-							if (e > 31) {
-								name += String.fromCharCode(e);
-							};
-							break;
-						};
-						case (p == 11): {
-							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Voice", "")}`;
-							prg ++;
-							name = "";
-							break;
-						};
-					};
-					if (prg > 99) {
-						msb = 90;
-						prg = 0;
-					};
-				};
-			});
-			upThis.dispatchEvent("mapupdate", {
-				clearRange: {
-					msb: 82,
-					prg: [0, 99],
-					lsb: 0
-				},
-				voiceMap
-			});
-		}).add([66, 48, 54, 77, 0], function (msg, track) {
-			// X5D combi dump
-			upThis.switchMode("x5d", true);
-			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
-			let voiceMap = "MSB\tPRG\tLSB\tNME";
-			korgFilter(msg, function (e, i) {
-				if (i < 13600) {
-					let p = i % 136;
-					switch (true) {
-						case (p < 10): {
-							if (e > 31) {
-								name += String.fromCharCode(e);
-							};
-							break;
-						};
-						case (p == 11): {
-							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Combi", "")}`;
-							prg ++;
-							name = "";
-							break;
-						};
-					};
-				};
-			});
-			upThis.dispatchEvent("mapupdate", {
-				clearRange: {
-					msb: 90,
-					prg: [0, 99],
-					lsb: 0
-				},
-				voiceMap
-			});
-		}).add([66, 48, 66, 54], function (msg, track) {
-			// NS5R program dump
-			upThis.switchMode("ns5r", true);
-			let name = "", msb = 80, prg = 0, lsb = 0;
-			let voiceMap = "MSB\tPRG\tLSB\tNME";
-			korgFilter(msg, function (e, i) {
-				let p = i % 158;
-				switch (true) {
-					case (p < 10): {
-						if (e > 31) {
-							name += String.fromCharCode(e);
-						};
-						break;
-					};
-					case (p == 11): {
-						msb = e;
-						break;
-					};
-					case (p == 12): {
-						lsb = e;
-						break;
-					};
-					case (p == 13): {
-						voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim()}`;
-						prg ++;
-						name = "";
-						break;
-					};
-				};
-			});
-			upThis.dispatchEvent("mapupdate", {
-				clearRange: {
-					msb: 80,
-					lsb: 0
-				},
-				voiceMap
-			});
-		}).add([66, 48, 66, 52], function (msg) {
-			// KORG NS5R/NX5R System Exclusive
-			// Current effect dump, but cannot find parsing docs.
-			upThis.switchMode("ns5r", true);
-			upThis.#modeKaraoke = false;
-			//console.debug(`NS5R effect dump: `, msg);
-		}).add([66, 48, 66, 53], function (msg) {
-			// NS5R Current multi dump
-			upThis.switchMode("ns5r", true);
-			korgFilter(msg, function (e, i) {
-				switch (true) {
-					case i < 2944: {
-						// 32 part setup params, 2944 bytes
-						let part = Math.floor(i / 92),
-						chOff = part * 128;
-						switch (i % 92) {
-							case 0: {
-								// MSB Bank
-								upThis.#cc[chOff] = e;
-								break;
-							};
-							case 1: {
-								// LSB Bank
-								upThis.#cc[chOff + 32] = e;
-								break;
-							};
-							case 2: {
-								// Program
-								upThis.#prg[part] = e;
-								if (e > 0) {
-									upThis.#chActive[part] = 1;
-								};
-								break;
-							};
-							case 3: {
-								// Receive MIDI channel
-								upThis.#chReceive[part] = e;
-								if (part != e) {
-									console.info(`NS5R CH${part + 1} receives from CH${e + 1}.`);
-									upThis.buildRchTree();
-								};
-							};
-							case 7: {
-								// 0 for melodic, 1 for drum, 2~5 for mod drums 1~4
-								break;
-							};
-							case 8: {
-								// Coarse Tune
-								upThis.#rpn[part * allocated.rpn + 3] = (e < 40 || e > 88) ? e + (e > 63 ? -192 : 64) : e;
-								break;
-							};
-							case 9: {
-								// Fine Tune
-								// This is trying to use absolute values.
-							};
-							case 10: {
-								// Volume
-								upThis.#cc[chOff + 7] = e;
-								break;
-							};
-							case 11: {
-								// Expression
-								upThis.#cc[chOff + 11] = e;
-								break;
-							};
-							case 14: {
-								// Pan
-								upThis.#cc[chOff + 10] = e || 128;
-								break;
-							};
-							case 19: {
-								// Chorus
-								upThis.#cc[chOff + 93] = e;
-								break;
-							};
-							case 20: {
-								// Reverb
-								upThis.#cc[chOff + 91] = e;
-								break;
-							};
-							case 84: {
-								// Portamento Switch
-								upThis.#cc[chOff + 65] = e;
-								break;
-							};
-							case 85: {
-								// Portamento Time
-								upThis.#cc[chOff + 5] = e;
-								break;
-							};
-						};
-						break;
-					};
-					case i < 3096: {
-						// part common params, 152 bytes
-						break;
-					};
-					case i < 3134: {
-						// currnet effect params, 38 bytes
-						break;
-					};
-					case i < 8566: {
-						// 4 mod drum params, 5432 bytes
-						break;
-					};
-				};
-			});
-		});
-		// Yamaha XG Drum Setup SysEx
-		// Refactor this!
-		upThis.#seXgDrumInst.add([0], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} coarse pitch bend ${msg[0] - 64}.`);
-		}).add([1], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} fine pitch bend ${msg[0] - 64}.`);
-		}).add([2], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} level ${msg[0]}.`);
-		}).add([3], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} alt group ${msg[0]}.`);
-		}).add([4], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} pan ${msg[0] - 64}.`);
-		}).add([5], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} reverb send ${toDecibel(msg[0])}dB.`);
-		}).add([6], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} chorus send ${toDecibel(msg[0])}dB.`);
-		}).add([7], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} variation send ${toDecibel(msg[0])}dB.`);
-		}).add([8], function (msg, setupNum, noteNum) {
-			console.debug(`XG Drum ${setupNum} note ${noteNum} key assign as ${msg[0] > 0 ? "multi" : "single"}.`);
-		}).add([9], function (msg, setupNum, noteNum) {
-			// Note off send
-		}).add([10], function (msg, setupNum, noteNum) {
-			// Note on send
-		}).add([11], function (msg, setupNum, noteNum) {
-			// Filter cutoff (brightness)
-		}).add([12], function (msg, setupNum, noteNum) {
-			// Filter resonance
-		}).add([13], function (msg, setupNum, noteNum) {
-			// EG attack rate
-		}).add([14], function (msg, setupNum, noteNum) {
-			// EG decay 1 rate
-		}).add([15], function (msg, setupNum, noteNum) {
-			// EG decay 2 rate
-		});
-		// Yamaha XG Part Setup SysEx
-		// Refactor this!
-		upThis.#seXgPart.add([0], function (msg, channel) {
-			console.debug(`XG Part reserve ${msg[0]} elements for channel ${channel}.`);
-		}).add([1], function (msg, channel) {
-			// Same as cc0
-			upThis.#cc[channel * 128] = msg[0];
-		}).add([2], function (msg, channel) {
-			// Same as cc32
-			upThis.#cc[channel * 128 + 32] = msg[0];
-		}).add([3], function (msg, channel) {
-			// Same as program change
-			upThis.#prg[channel] = msg[0];
-		}).add([4], function (msg, channel) {
-			// Change receive channel. May require channel redirect feature to be implemented!
-			upThis.#chReceive[channel] = msg[0];
-			if (channel != msg[0]) {
-				console.info(`XG Part CH${channel + 1} receives from CH${msg[0] + 1}.`);
-				upThis.buildRchTree();
-			};
-		}).add([5], function (msg, channel) {
-			// Mono/poly switching
-			console.debug(`XG Part mono/poly set to ${msg[0] ? "mono" : "poly"} for channel ${channel}.`);
-		}).add([6], function (msg, channel) {
-			// Same note number key on assign (what does this mean???)
-			console.debug(`XG Part repeat pressing set to ${["single", "multi", "inst"][msg[0]]} mode for channel ${channel}.`);
-		}).add([7], function (msg, channel) {
-			let data = msg[0];
-			upThis.#cc[128 * channel] = data > 1 ? 127 : 0;
-			console.debug(`XG Part use mode "${xgPartMode[data]}" for channel ${channel}.`);
-		}).add([14], function (msg, channel) {
-			//console.debug(`XG Part panning for channel ${channel}: ${msg[0]}.`);
-			upThis.#cc[128 * channel + 10] = msg[0] || 128;
-		}).add([17], function (msg, channel) {
-			console.debug(`XG Part dry level ${msg[0]} for channel ${channel}.`);
-		}).add([18], function (msg, channel) {
-			console.debug(`XG Part chorus send ${toDecibel(msg[0])}dB for channel ${channel}.`);
-		}).add([19], function (msg, channel) {
-			console.debug(`XG Part reverb send ${toDecibel(msg[0])}dB for channel ${channel}.`);
-		}).add([20], function (msg, channel) {
-			console.debug(`XG Part variation send ${toDecibel(msg[0])}dB for channel ${channel}.`);
-		}).add([21], function (msg, channel) {
-			console.debug(`XG Part LFO speed ${msg[0]} for channel ${channel}.`);
-		}).add([29], function (msg, channel) {
-			console.debug(`XG Part MW bend ${msg[0] - 64} semitones for channel ${channel}.`);
-		}).add([32], function (msg, channel) {
-			console.debug(`XG Part MW LFO pitch depth ${msg[0]} for channel ${channel}.`);
-		}).add([33], function (msg, channel) {
-			console.debug(`XG Part MW LFO filter depth ${msg[0]} for channel ${channel}.`);
-		}).add([35], function (msg, channel) {
-			upThis.#rpn[channel * allocated.rpn + 3] = msg[0];
-			//console.debug(`XG Part bend pitch ${msg[0] - 64} semitones for channel ${channel}.`);
-		}).add([83], function (msg, channel) {
-			// Polyphonic aftertouch (PAT) pitch control
-			//console.debug(`XG Part PAT pitch ${msg[0] - 64} semitones for channel ${channel}.`);
-		}).add([103], function (msg, channel) {
-			// Same as cc65
-			upThis.#cc[channel * 128 + 65] = msg[0];
-		}).add([104], function (msg, channel) {
-			// Same as cc5
-			upThis.#cc[channel * 128 + 5] = msg[0];
-		}).add([105], function (msg, channel) {
-			console.debug(`XG Part EG initial ${msg[0] - 64} for channel ${channel}.`);
-		}).add([106], function (msg, channel) {
-			console.debug(`XG Part EG attack time ${msg[0] - 64} for channel ${channel}.`);
-		});
-		// Roland GS Part Setup SysEx
-		// Refactor this!
-		upThis.#seGsPart.add([0], function (msg, channel) {
-			// Same as cc00 and program change
-			if (upThis.#cc[channel * 128] == 120) {
-				msg[0] = 120;
-			};
-			upThis.#cc[channel * 128] = msg[0] || 0;
-			upThis.#prg[channel] = msg[1] || 0;
-		}).add([2], function (msg, channel, track) {
-			// Channel redirect might be required
-			// 3 to 18 controls whether to receive messages. Not implemented for now.
-			let targetCh = upThis.chRedir(msg[0], track, true);
-			upThis.#chReceive[channel] = targetCh;
-			if (channel != targetCh) {
-				console.info(`GS Part CH${channel + 1} receives from CH${targetCh + 1.}.`);
-				upThis.buildRchTree();
-			};
-		}).add([19], function (msg, channel) {
-			// Switch to mono (0) or poly (1)
-		}).add([20], function (msg, channel) {
-			// Switch assign mode
-		}).add([21], function (msg, channel) {
-			// Channel use rhythm or not
-			// Only two drum kits can even be used at the same time
-			console.debug(`GS Part ${channel + 1} type: ${["melodic", "drum 1", "drum 2"][msg[0]]}.`);
-			if (msg[0] > 0) {
-				upThis.#cc[channel * 128] = 120;
-			};
-		}).add([25], function (msg, channel) {
-			// Set volume
-			upThis.#cc[channel * 128 + 7] = msg[0];
-		}).add([28], function (msg, channel) {
-			// Set pan
-			upThis.#cc[channel * 128 + 10] = msg[0] || 128;
-		}).add([33], function (msg, channel) {
-			// Set chorus
-			upThis.#cc[channel * 128 + 93] = msg[0];
-		}).add([34], function (msg, channel) {
-			// Set reverb
-			upThis.#cc[channel * 128 + 91] = msg[0];
-		});
-		// Roland GS Part Properties
-		// Refactor this!
-		upThis.#seGsPartProp.add([0], function(msg, channel) {
-			upThis.#cc[channel * 128 + 32] = msg[0];
-		}).add([1], function(msg, channel) {
-			// This should be per-channel subLsb, but currently not implemented, sooooo...
-			upThis.#cc[channel * 128 + 32] = msg[0];
-		}).add([32], function(msg, channel) {
-			console.debug(`GS Part ${channel + 1} turned EQ ${msg[0] ? "on" : "off"}.`);
-		}).add([33], function(msg, channel) {
-			// GS output assign
-		}).add([34], function(msg, channel) {
-			console.debug(`GS Part ${channel + 1} turned EFX ${msg[0] ? "on" : "off"}.`);
+			console.info("MIDI reset: KAWAI GMega/K11");
 		});
 	};
 };
