@@ -545,7 +545,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		127: (id, msg, track) => {
 			// Universal realtime
 			this.switchMode("gm");
-			this.#seUnr.run(msg, track, id);
+			this.#seUr.run(msg, track, id);
 		}
 	};
 	#seUnr; // Universal non-realtime
