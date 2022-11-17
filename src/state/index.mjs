@@ -50,6 +50,14 @@ const useRpnMap = {
 	2: 3,
 	5: 4
 },
+rpnCap = [
+	[0, 24],
+	[0, 127],
+	[0, 127],
+	[40, 88],
+	[0, 127],
+	[0, 127]
+],
 useNormNrpn = [36, 37],
 useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65],
 ccAccepted = [
@@ -135,17 +143,15 @@ let OctaviaDevice = class extends CustomEventSource {
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
 	chRedir(part, track, noConquer) {
-		if ([modeMap.gs, modeMap.ns5r].indexOf(this.#mode) > -1) {
-			if (this.#trkAsReq[track]) {
-				// Allow part assigning via meta
-				let metaChosen = (this.#trkAsReq[track] - 1) * 16 + part;
-				return metaChosen;
-			};
+		if (this.#trkAsReq[track]) {
+			// Allow part assigning via meta
+			let metaChosen = (this.#trkAsReq[track] - 1) * 16 + part;
+			return metaChosen;
+		} else if ([modeMap.gs, modeMap.ns5r].indexOf(this.#mode) > -1) {
 			// Do not conquer channels if requested.
 			if (noConquer == 1) {
 				return part;
 			};
-			// Trying to support 32 channel...
 			let shift = 0, unmet = true;
 			while (unmet) {
 				if (this.#trkRedir[part + shift] == 0) {
@@ -323,7 +329,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				switch (det.data[0]) {
 					case 0: {
 						// Detect mode via bank MSB
-						console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
+						//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
 						if (this.#mode == 0) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
@@ -399,9 +405,11 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						} else {
 							// Commit supported RPN values
-							if (this.#cc[chOffset + ccToPos[101]] == 0 && useRpnMap[this.#cc[chOffset + ccToPos[100]]] != undefined) {
-								this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + ccToPos[100]]]] = det.data[1];
+							let rpnIndex = useRpnMap[this.#cc[chOffset + ccToPos[100]]];
+							if (this.#cc[chOffset + ccToPos[101]] == 0 && rpnIndex != undefined) {
 								console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + ccToPos[100]]} commit: ${det.data[1]}`);
+								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
+								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
 							};
 						};
 						break;
