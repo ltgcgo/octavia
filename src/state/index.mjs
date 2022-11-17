@@ -664,7 +664,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		for (let ch = 0; ch < 64; ch ++) {
 			let chOff = ch * allocated.cc;
 			// Reset to full
-			this.#cc[chOff + ccToPos[7]] = 127; // Volume
+			this.#cc[chOff + ccToPos[7]] = 100; // Volume
 			this.#cc[chOff + ccToPos[11]] = 127; // Expression
 			// Reset to centre
 			this.#cc[chOff + ccToPos[10]] = 64; // Pan
@@ -676,6 +676,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#cc[chOff + ccToPos[76]] = 64; // Vibrato Rate
 			this.#cc[chOff + ccToPos[77]] = 64; // Vibrato Depth
 			this.#cc[chOff + ccToPos[78]] = 64; // Vibrato Delay
+			// Extra default values
+			this.#cc[chOff + ccToPos[91]] = 40; // Reverb
 			// RPN/NRPN to null
 			this.#cc[chOff + ccToPos[101]] = 127;
 			this.#cc[chOff + ccToPos[100]] = 127;
