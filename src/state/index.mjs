@@ -95,7 +95,7 @@ let showTrue = function (data, prefix = "", suffix = "", length = 2) {
 };
 
 const allocated = {
-	ch: 64, // channels
+	ch: 128, // channels
 	cc: ccAccepted.length, // control changes
 	nn: 128, // notes per channel
 	pl: 512, // polyphony
@@ -146,18 +146,20 @@ let OctaviaDevice = class extends CustomEventSource {
 				return part;
 			};
 			// Trying to support 32 channel...
-			let shift = 0;
-			//console.debug(`T${track} TC${part} AT${this.#trkRedir[part]}`);
-			if (this.#trkRedir[part] == 0) {
-				this.#trkRedir[part] = track;
-				console.debug(`Assign track ${track} to channel ${part + 1}.`);
-			} else if (this.#trkRedir[part] != track) {
-				shift = 16;
+			let shift = 0, unmet = true;
+			while (unmet) {
 				if (this.#trkRedir[part + shift] == 0) {
 					this.#trkRedir[part + shift] = track;
 					console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
-				} else if (this.#trkRedir[part + shift] != track) {
-					shift = 0;
+					unmet = false;
+				} else if (this.#trkRedir[part + shift] == track) {
+					unmet = false;
+				} else {
+					shift += 16;
+					if (shift >= 128) {
+						shift = 0;
+						unmet = false;
+					};
 				};
 			};
 			return part + shift;
@@ -321,18 +323,16 @@ let OctaviaDevice = class extends CustomEventSource {
 				switch (det.data[0]) {
 					case 0: {
 						// Detect mode via bank MSB
-						//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
-						if (this.#mode == modeMap.gs || this.#mode == 0) {
+						console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
+						if (this.#mode == 0) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
 								if (this.#cc[chOffset] > 119) {
 									det.data[1] = this.#cc[chOffset];
-									if (!this.#mode) {
-										det.data[1] = 120;
-										console.debug(`Forced channel ${part + 1} to stay drums.`);
-									};
+									det.data[1] = 120;
+									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
-								if (det.data[1] > 0 && !this.#mode) {
+								if (det.data[1] > 0) {
 									console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
 									this.switchMode("gs");
 								};
@@ -340,6 +340,15 @@ let OctaviaDevice = class extends CustomEventSource {
 								this.switchMode("x5d");
 							} else if (det.data[1] == 63) {
 								this.switchMode("krs");
+							};
+						} else if (this.#mode == modeMap.gs) {
+							if (det.data[1] < 64) {
+								// Do not change drum channel to a melodic
+								if (this.#cc[chOffset] > 119) {
+									det.data[1] = this.#cc[chOffset];
+									det.data[1] = 120;
+									console.debug(`Forced channel ${part + 1} to stay drums.`);
+								};
 							};
 						} else if (this.#mode == modeMap.gm) {
 							if (det.data[1] < 48) {
