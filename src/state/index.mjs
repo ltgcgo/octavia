@@ -50,14 +50,15 @@ const useRpnMap = {
 	2: 3,
 	5: 4
 },
-useNormNrpn = [8, 9, 10, 32, 33, 36, 37, 99, 100, 101],
+useNormNrpn = [36, 37],
 useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65],
 ccAccepted = [
 	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,
 	38, 64, 65, 66, 67, 68, 69, 70, 71,
 	72, 73, 74, 75, 76, 77, 78, 84, 91,
 	92, 93, 94, 95, 98, 99, 100, 101,
-	12, 13
+	12, 13, // General-purpose effect controllers
+	16, 17, 18, 19 // General-purpose sound controllers
 ], // 96, 97, 120 to 127 all have special functions
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
@@ -305,14 +306,15 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (toCc > -1) {
 								this.#cc[chOffset + 71 + toCc] = det.data[1];
 								console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
+							} else {
+								let nrpnIdx = useNormNrpn.indexOf(lsb);
+								if (nrpnIdx > -1) {
+									this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
+								};
+								console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
 							};
-							let nrpnIdx = useNormNrpn.indexOf(lsb);
-							if (nrpnIdx > -1) {
-								this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
-							};
-							console.debug(`CH${part + 1} voice NRPN ${msb} ${lsb} commit`);
 						} else {
-							console.debug(`CH${part + 1} drum NRPN ${msb} ${lsb} commit`);
+							//console.debug(`CH${part + 1} drum NRPN ${msb} commit`);
 						};
 					} else {
 						// Commit supported RPN values
@@ -811,6 +813,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			//console.debug(`Sequencer specific on track ${track}: `, data);
 			upThis.#metaSeq.run(data, track);
 		};
+		// Binary match should be avoided in favour of a circular structure
 		this.#seUnr = new BinaryMatch();
 		this.#seUr = new BinaryMatch();
 		this.#seXg = new BinaryMatch();

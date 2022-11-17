@@ -63,7 +63,7 @@
 			<td>0-24 semitone steps<br/>14-bit resolution</td>
 		</tr>
 		<tr>
-			<td rowspan=46>Control Change</td>
+			<td rowspan=52>Control Change</td>
 			<td>0</td>
 			<td>✓</td>
 			<td>MSB Bank Select</td>
@@ -116,12 +116,32 @@
 		<tr>
 			<td>12</td>
 			<td>✓</td>
-			<td>General-purpose</td>
+			<td>General-purpose effect</td>
 		</tr>
 		<tr>
 			<td>13</td>
 			<td>✓</td>
-			<td>General-purpose</td>
+			<td>General-purpose effect</td>
+		</tr>
+		<tr>
+			<td>16</td>
+			<td>✓</td>
+			<td>General-purpose sound</td>
+		</tr>
+		<tr>
+			<td>17</td>
+			<td>✓</td>
+			<td>General-purpose sound</td>
+		</tr>
+		<tr>
+			<td>18</td>
+			<td>✓</td>
+			<td>General-purpose sound</td>
+		</tr>
+		<tr>
+			<td>19</td>
+			<td>✓</td>
+			<td>General-purpose sound</td>
 		</tr>
 		<tr>
 			<td>32</td>
