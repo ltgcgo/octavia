@@ -15,7 +15,7 @@ _See the [MIDI Implementation Chart](docs/IMPLEMENTATION.md)_
 * AKAI SG01k
 
 ## Features
-* 4 ports, 64 channels, 512-voice polyphony.
+* 8 ports, 128 channels, 512-voice polyphony.
 * Supports multiple standards.
 * Available in JS (browser and Deno) and Go (not yet).
 * Wide support of bank mapping via [`midi-db`](https://github.com/ltgcgo/midi-db)
