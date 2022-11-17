@@ -17,6 +17,7 @@ import {
 } from "./gsValues.js";
 import {
 	toDecibel,
+	gsChecksum,
 	korgFilter,
 	x5dSendLevel
 } from "./utils.js";
@@ -114,8 +115,15 @@ const allocated = {
 let OctaviaDevice = class extends CustomEventSource {
 	// Values
 	#mode = 0;
-	#bitmap = new Uint8Array(256);
+	#bitmapPage = 0;
 	#bitmapExpire = 0;
+	#bitmapStore = new Array(10); // 10 pages of bitmaps
+	get #bitmap() {
+		return this.#bitmapStore[this.#bitmapPage];
+	};
+	set #bitmap(value) {
+		this.#bitmapStore[this.#bitmapPage] = value;
+	};
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
 	#cc = new Uint8ClampedArray(allocated.ch * allocated.cc); // 64 channels, 128 controllers
@@ -348,7 +356,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								this.switchMode("krs");
 							};
 						} else if (this.#mode == modeMap.gs) {
-							if (det.data[1] < 64) {
+							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
 								if (this.#cc[chOffset] > 119) {
 									det.data[1] = this.#cc[chOffset];
@@ -468,10 +476,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			// SysEx
 			sysExSplitter(det.data).forEach((seq) => {
 				let manId = seq[0],
-				deviceId = seq[1] & 15;
+				deviceId = seq[1];
 				(this.#seMan[manId] || function () {
 					console.debug(`Unknown manufacturer ${manId}.`);
-				})(deviceId, seq.slice(2));
+				})(deviceId, seq.slice(2), det.track);
 				//upThis.#seMain.run(seq, det.track);
 			});
 		},
@@ -492,36 +500,52 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	// SysEx manufacturer table
 	#seMan = {
-		64: (id, msg) => {
+		64: (id, msg, track) => {
 			// Kawai
-			this.#seKg.run(msg);
+			this.#seKg.run(msg, track, id);
 		},
-		65: (id, msg) => {
+		65: (id, msg, track) => {
 			// Roland
-			this.#seGs.run(msg);
+			// CmdId is usually 18 (DT1)
+			// C/M: [22, CmdId]
+			// GS: [66, CmdId, HH, MM, LL, ...DD, Checksum]
+			if (msg[0] < 64) {
+				this.#seGs.run(msg, track, id);
+			} else {
+				let sentCs = msg.pop();
+				let calcCs = gsChecksum(msg.slice(2));
+				if (sentCs == calcCs) {
+					this.#seGs.run(msg, track, id);
+				} else {
+					console.warn(`Bad GS checksum ${sentCs}. Should be ${calcCs}.`);
+				};
+			};
 		},
-		66: (id, msg) => {
+		66: (id, msg, track) => {
 			// Korg
-			this.#seXd.run(msg);
+			this.#seXd.run(msg, track, id);
 		},
-		67: (id, msg) => {
+		67: (id, msg, track) => {
 			// Yamaha
-			this.#seXg.run(msg);
+			// XG: [76, HH, MM, LL, ...DD]
+			this.#seXg.run(msg, track, id);
 		},
-		68: (id, msg) => {
+		68: (id, msg, track) => {
 			// Casio
-			this.#seCs.run(msg);
+			this.#seCs.run(msg, track, id);
 		},
-		71: (id, msg) => {
+		71: (id, msg, track) => {
 			// Akai
-			this.#seSg.run(msg);
+			this.#seSg.run(msg, track, id);
 		},
-		126: (id, msg) => {
+		126: (id, msg, track) => {
 			// Universal non-realtime
-			this.#seUnr.run(msg);
+			this.#seUnr.run(msg, track, id);
 		},
-		127: (id, msg) => {
+		127: (id, msg, track) => {
 			// Universal realtime
+			this.switchMode("gm");
+			this.#seUnr.run(msg, track, id);
 		}
 	};
 	#seUnr; // Universal non-realtime
@@ -662,6 +686,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#letterExpire = 0;
 		this.#letterDisp = "";
 		this.#bitmapExpire = 0;
+		this.#bitmapPage = 0;
 		this.#bitmap.forEach(toZero);
 		this.#customName.forEach(toZero);
 		this.#modeKaraoke = false;
@@ -717,6 +742,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (idx > -1) {
 			if (this.#mode == 0 || forced) {
 				this.#mode = idx;
+				this.#bitmapPage = 0; // Restore page
 				this.#subMsb = substList[0][idx];
 				this.#subLsb = substList[1][idx];
 				for (let ch = 0; ch < 64; ch ++) {
@@ -765,6 +791,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	constructor() {
 		super();
 		let upThis = this;
+		this.#bitmap = new Uint8Array(256);
+		this.#metaSeq = new BinaryMatch();
 		// Metadata events
 		// Should be moved to somewhere else
 		this.#metaRun[1] = function (data) {
@@ -853,6 +881,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			//console.debug(`Sequencer specific on track ${track}: `, data);
 			upThis.#metaSeq.run(data, track);
 		};
+		// Sequencer specific meta event
+		// No refactoring needed.
+		this.#metaSeq.add([67, 0, 1], function (msg, track) {
+			//console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
+			upThis.#trkAsReq[track] = msg[0] + 1;
+		});
 		// Binary match should be avoided in favour of a circular structure
 		this.#seUnr = new BinaryMatch();
 		this.#seUr = new BinaryMatch();
@@ -864,24 +898,17 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seCs = new BinaryMatch();
 		// The new SysEx engine only defines actions when absolutely needed.
 		// Mode reset section
-		this.#seUnr.add([9, 1], () => {
+		this.#seUnr.add([9], (msg) => {
 			// General MIDI reset.
-			upThis.switchMode("gm", true);
+			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], true);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
-			console.info("MIDI reset: GM");
-		}).add([9, 2], () => {
-			// General MIDI off, interpret as fresh init.
-			upThis.switchMode("?", true);
-			upThis.init();
-			console.info("MIDI reset: Init");
-		}).add([9, 3], () => {
-			// General MIDI 2 reset.
-			upThis.switchMode("g2", true);
-			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
-			console.info("MIDI reset: GM2");
+			console.info(`MIDI reset: ${["GM", "Init", "GM2"][msg[0]]}`);
+			if (msg[0] == 2) {
+				upThis.init();
+			};
 		});
-		this.#seXg.add([76, 0, 0, 126, 0], () => {
-			// Yamaha XG reset, refactor needed
+		this.#seXg.add([76, 0, 0, 126], (msg) => {
+			// Yamaha XG reset
 			upThis.switchMode("xg", true);
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: XG");
@@ -907,6 +934,105 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("k11", true);
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: KAWAI GMega/K11");
+		});
+		// GM SysEx section
+		this.#seUr.add([4, 1], (msg) => {
+			// Master volume
+			upThis.#masterVol = ((msg[1] << 7) + msg[0]) / 16383 * 100;
+		}).add([4, 3], (msg) => {
+			// Master fine tune
+			return (((msg[1] << 7) + msg[0] - 8192) / 8192);
+		}).add([4, 4], (msg) => {
+			// Master coarse tune
+			return (msg[1] - 64);
+		});
+		// XG SysEx section
+		this.#seXg.add([76, 6, 0], (msg) => {
+			// XG Letter Display
+			let offset = msg[0];
+			upThis.#letterDisp = " ".repeat(offset);
+			upThis.#letterExpire = Date.now() + 3200;
+			msg.slice(1).forEach(function (e) {
+				upThis.#letterDisp += String.fromCharCode(e);
+			});
+			upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
+		}).add([76, 7, 0], (msg) => {
+			// XG Bitmap Display
+			let offset = msg[0];
+			upThis.#bitmapExpire = Date.now() + 3200;
+			upThis.#bitmap.fill(0); // Init
+			let workArr = msg.slice(1);
+			for (let index = 0; index < offset; index ++) {
+				workArr.unshift(0);
+			};
+			workArr.forEach(function (e, i) {
+				let ln = Math.floor(i / 16), co = i % 16;
+				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
+				pt -= co * 5;
+				if (ln == 2) {
+					threshold = 2;
+				};
+				while (bi < threshold) {
+					upThis.#bitmap[pt + bi] = (e >> (6 - bi)) & 1;
+					bi ++;
+				};
+			});
+		});
+		// GS SysEx section
+		this.#seGs.add([69, 18, 16], (msg) => {
+			// GS display section
+			switch (msg[0]) {
+				case 0: {
+					// GS display letter
+					upThis.#letterExpire = Date.now() + 3200;
+					let offset = msg[1];
+					upThis.#letterDisp = " ".repeat(offset);
+					msg.slice(2).forEach(function (e) {
+						if (e < 128) {
+							upThis.#letterDisp += String.fromCharCode(e);
+						};
+					});
+					break;
+				};
+				case 32: {
+					upThis.#bitmapExpire = Date.now() + 3200;
+					if (msg[1] == 0) {
+						// GS display page
+						upThis.#bitmapPage = Math.max(Math.min(msg[2] - 1, 9), 0);
+					};
+					break;
+				};
+				default: {
+					if (msg[0] < 11) {
+						// GS display bitmap
+						upThis.#bitmapExpire = Date.now() + 3200;
+						if (!upThis.#bitmapStore[msg[0] - 1]?.length) {
+							upThis.#bitmapStore[msg[0] - 1] = new Uint8Array(256);
+						};
+						let target = upThis.#bitmapStore[msg[0] - 1];
+						let offset = msg[1];
+						target.fill(0); // Init
+						let workArr = msg.slice(2);
+						for (let index = 0; index < offset; index ++) {
+							workArr.unshift(0);
+						};
+						workArr.forEach(function (e, i) {
+							let ln = Math.floor(i / 16), co = i % 16;
+							let pt = (co * 4 + ln) * 5, threshold = 5, bi = 0;
+							pt -= co * 4;
+							if (ln == 3) {
+								threshold = 1;
+							};
+							while (bi < threshold) {
+								target[pt + bi] = (e >> (4 - bi)) & 1;
+								bi ++;
+							};
+						});
+					} else {
+						console.warn(`Unknown GS display section: ${msg[0]}`);
+					};
+				};
+			};
 		});
 	};
 };

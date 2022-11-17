@@ -4,6 +4,18 @@ let toDecibel = function (data = 64) {
 	return Math.round(2000 * Math.log10(data / 64)) / 100;
 };
 
+let gsChecksum = function (sequence) {
+	// Only pass along the three-byte address and their data.
+	let checksum = 0;
+	sequence.forEach((e) => {
+		checksum += e;
+		if (checksum > 127) {
+			checksum %= 128;
+		};
+	});
+	return (128 - checksum);
+};
+
 // Why KORG adds a byte every seven bytes is a mistery to me.
 let korgFilter = function (korgArr, iterator) {
 	let realData = 0;
@@ -21,6 +33,7 @@ let x5dSendLevel = function (sendParam) {
 
 export {
 	toDecibel,
+	gsChecksum,
 	korgFilter,
 	x5dSendLevel
 };
