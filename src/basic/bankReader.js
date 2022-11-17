@@ -1,5 +1,7 @@
 "use strict";
 
+import {ccToPos} from "../state/index.mjs";
+
 const sgCrit = ["MSB", "PRG", "LSB"];
 const modeIdx = [
 	"??",

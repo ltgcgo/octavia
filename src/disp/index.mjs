@@ -1,7 +1,7 @@
 "use strict";
 
 import {textedPanning, textedPitchBend} from "./texted.js";
-import {RootDisplay} from "../basic/index.mjs";
+import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
 const noteNames = [
@@ -65,14 +65,14 @@ let TuiDisplay = class extends RootDisplay {
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
 				maxCh = i;
-				let chOffset = i * 128;
+				let chOffset = i * ccToPos.length;
 				if (line < fields.length - 5 && i >= (self.minCh || 0)) {
-					let voiceName = upThis.voices.get(sum.chContr[chOffset + 0], sum.chProgr[i], sum.chContr[chOffset + 32], sum.mode);
+					let voiceName = upThis.voices.get(sum.chContr[chOffset + ccToPos[0]], sum.chProgr[i], sum.chContr[chOffset + ccToPos[32]], sum.mode);
 					if (sum.names[i]) {
 						voiceName.name = sum.names[i];
 						voiceName.ending = "~";
 					};
-					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[chOffset + 7] >> 1]}${map[sum.chContr[chOffset + 11] >> 1]}${waveMap[sum.chContr[chOffset + 1] >> 5]} ${map[sum.chContr[chOffset + 91] >> 1]}${map[sum.chContr[chOffset + 93] >> 1]}${map[sum.chContr[chOffset + 94] >> 1]}${map[sum.chContr[chOffset + 74] >> 1]} ${sum.chContr[chOffset + 65] > 63 ? "O" : "X"}${map[sum.chContr[chOffset + 5] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + 10])}:`;
+					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]} ${sum.chContr[chOffset + ccToPos[65]] > 63 ? "O" : "X"}${map[sum.chContr[chOffset + ccToPos[5]] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
 						if (e1 > 0) {
 							fields[line] += ` <span style="opacity:${Math.round(e1 / 1.27) / 100}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
@@ -261,7 +261,7 @@ let MuDisplay = class extends RootDisplay {
 		if (this.#ch < minCh) {
 			this.#ch = maxCh;
 		};
-		let chOff = this.#ch * 128;
+		let chOff = this.#ch * ccToPos.length;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
 		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
@@ -310,8 +310,8 @@ let MuDisplay = class extends RootDisplay {
 			};
 			// Render fonts
 			if (rendMode < 2) {
-				let voiceName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name).slice(0, 8).padEnd(8, " ");
-				let bnkInfo = `\u0080${(sum.chContr[chOff + 0] == 64 ? "SFX" : sum.chContr[chOff + 0] || sum.chContr[chOff + 32] || 0).toString().padStart(3, "0")}\u0081${((sum.chProgr[this.#ch] || 0) + 1).toString().padStart(3, "0")}`;
+				let voiceName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name).slice(0, 8).padEnd(8, " ");
+				let bnkInfo = `\u0080${(sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0")}\u0081${((sum.chProgr[this.#ch] || 0) + 1).toString().padStart(3, "0")}`;
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
 					let regionX = 0, regionY = 0;
@@ -362,7 +362,7 @@ let MuDisplay = class extends RootDisplay {
 			};
 		};
 		// Show bottom caps
-		let showLsb = !sum.chContr[chOff + 0];
+		let showLsb = !sum.chContr[chOff + ccToPos[0]];
 		ctx.fillStyle = showLsb ? inactivePixel : activePixel;
 		ctx.fillText("MSB", 515, 164);
 		ctx.fillStyle = showLsb ? activePixel : inactivePixel;
@@ -409,8 +409,8 @@ let MuDisplay = class extends RootDisplay {
 			useBm = this.#bmdb.slice();
 			if (timeNow >= this.#bmex) {
 				this.#bmst = 0;
-				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name) || this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff], sum.chProgr[this.#ch], 0, sum.mode).name);
-				if (!useBm && (sum.chContr[chOff] < 48 || sum.chContr[chOff] == 56)) {
+				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name) || this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
+				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
 					useBm = this.voxBm.getBm(upThis.voices.get(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 				};
 				if (!useBm) {
@@ -435,19 +435,19 @@ let MuDisplay = class extends RootDisplay {
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
 		};
 		// Show param
-		normParamPaint(sum.chContr[chOff + 7], 404, ctx); // vol
-		normParamPaint(sum.chContr[chOff + 11], 452, ctx); // exp
-		normParamPaint(sum.chContr[chOff + 74], 500, ctx); // bri
-		efxParamPaint(sum.chContr[chOff + 91], 648, ctx); // rev
-		efxParamPaint(sum.chContr[chOff + 93], 696, ctx); // cho
-		efxParamPaint(sum.chContr[chOff + 94], 744, ctx); // var
+		normParamPaint(sum.chContr[chOff + ccToPos[7]], 404, ctx); // vol
+		normParamPaint(sum.chContr[chOff + ccToPos[11]], 452, ctx); // exp
+		normParamPaint(sum.chContr[chOff + ccToPos[74]], 500, ctx); // bri
+		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 648, ctx); // rev
+		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 696, ctx); // cho
+		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 744, ctx); // var
 		// Show pan
 		ctx.beginPath();
 		ctx.arc(582, 216, 34, 2.356194490192345, 7.068583470577034);
 		ctx.lineWidth = 2;
 		ctx.strokeStyle = "#000f";
 		ctx.stroke();
-		let pan = sum.chContr[chOff + 10];
+		let pan = sum.chContr[chOff + ccToPos[10]];
 		this.#panStrokes.forEach((e, i, a) => {a[i] = 0});
 		if (pan == 0) {
 			this.#panStrokes[0] = 1;
@@ -537,7 +537,7 @@ let ScDisplay = class extends RootDisplay {
 		if (this.#ch < minCh) {
 			this.#ch = maxCh;
 		};
-		let chOff = this.#ch * 128;
+		let chOff = this.#ch * ccToPos.length;
 		// Text matrix display
 		this.#tmdb.forEach((e, i, a) => {a[i] = 0});
 		let infoTxt, isTextNull = sum.letter.text.trim();
@@ -585,7 +585,7 @@ let ScDisplay = class extends RootDisplay {
 		} else {
 			infoTxt = `${sum.chProgr[this.#ch] + 1}`.padStart(3, "0");
 			infoTxt += " ";
-			infoTxt += (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name).slice(0, 12).padEnd(12, " ");
+			infoTxt += (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name).slice(0, 12).padEnd(12, " ");
 			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
 					let pX = i0 * 6 + i1 % 5,
@@ -614,8 +614,8 @@ let ScDisplay = class extends RootDisplay {
 		// Assemble text
 		let paramText = "";
 		paramText += `${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
-		paramText += sum.chContr[chOff + 7].toString().padStart(3, " ");
-		paramText += sum.chContr[chOff + 91].toString().padStart(3, " ");
+		paramText += sum.chContr[chOff + ccToPos[7]].toString().padStart(3, " ");
+		paramText += sum.chContr[chOff + ccToPos[91]].toString().padStart(3, " ");
 		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
 		if (cPit < 0) {
 			paramText += "-";
@@ -623,7 +623,7 @@ let ScDisplay = class extends RootDisplay {
 			paramText += "+";
 		};
 		paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, "0");
-		let cPan = sum.chContr[chOff + 10];
+		let cPan = sum.chContr[chOff + ccToPos[10]];
 		if (cPan == 64) {
 			paramText += "C  ";
 		} else if (cPan == 128) {
@@ -636,8 +636,8 @@ let ScDisplay = class extends RootDisplay {
 			};
 			paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
 		};
-		paramText += sum.chContr[chOff + 93].toString().padStart(3, " ");
-		paramText += (sum.chContr[chOff] || sum.chContr[chOff + 32]).toString().padStart(3, "0");
+		paramText += sum.chContr[chOff + ccToPos[93]].toString().padStart(3, " ");
+		paramText += (sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]]).toString().padStart(3, "0");
 		// Render fonts
 		this.xgFont.getStr(paramText).forEach(function (e0, i0) {
 			e0.forEach(function (e1, i1) {
@@ -786,13 +786,13 @@ let ScDisplay = class extends RootDisplay {
 				ctx.stroke();
 			};
 		};
-		if (sum.chContr[chOff]) {
+		if (sum.chContr[chOff + ccToPos[0]]) {
 			ctx.fillStyle = activePixel;
 		} else {
 			ctx.fillStyle = inactivePixel;
 		};
 		ctx.fillText("M", 236, 233);
-		if (sum.chContr[chOff]) {
+		if (sum.chContr[chOff + ccToPos[0]]) {
 			ctx.fillStyle = inactivePixel;
 		} else {
 			ctx.fillStyle = activePixel;
@@ -916,7 +916,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		if (this.#ch < minCh) {
 			this.#ch = maxCh;
 		};
-		let chOff = this.#ch * 128;
+		let chOff = this.#ch * ccToPos.length;
 		// Clear out the current working display buffer.
 		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
 		// Screen buffer write begin.
@@ -946,9 +946,9 @@ let Ns5rDisplay = class extends RootDisplay {
 		};
 		// Show current bank
 		let bankInfo = "", readOffset = 0;
-		switch (sum.chContr[chOff]) {
+		switch (sum.chContr[chOff + ccToPos[0]]) {
 			case 0: {
-				let lsb = sum.chContr[chOff + 32];
+				let lsb = sum.chContr[chOff + ccToPos[32]];
 				if (lsb == 127) {
 					bankInfo = "MT-a";
 				} else if (lsb == 126) {
@@ -988,7 +988,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				break;
 			};
 			case 63: {
-				let kLsb = sum.chContr[chOff + 32];
+				let kLsb = sum.chContr[chOff + ccToPos[32]];
 				bankInfo = (kLsb < 10) ? "kP:" : "kC:";
 				bankInfo += kLsb % 10;
 				break;
@@ -1001,14 +1001,14 @@ let Ns5rDisplay = class extends RootDisplay {
 			case 81:
 			case 82:
 			case 83: {
-				bankInfo = `Prg${"UABC"[sum.chContr[chOff] - 80]}`;
+				bankInfo = `Prg${"UABC"[sum.chContr[chOff + ccToPos[0]] - 80]}`;
 				break;
 			};
 			case 88:
 			case 89:
 			case 90:
 			case 91: {
-				bankInfo = `Cmb${"UABC"[sum.chContr[chOff] - 88]}`;
+				bankInfo = `Cmb${"UABC"[sum.chContr[chOff + ccToPos[0]] - 88]}`;
 				break;
 			};
 			case 121: {
@@ -1025,7 +1025,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				break;
 			};
 			case 127: {
-				if (sum.chContr[chOff + 32] == 127) {
+				if (sum.chContr[chOff + ccToPos[32]] == 127) {
 					bankInfo = "rDrm";
 				} else {
 					bankInfo = "yDrm";
@@ -1033,7 +1033,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				break;
 			};
 			default: {
-				if (sum.chContr[chOff] < 48) {
+				if (sum.chContr[chOff + ccToPos[0]] < 48) {
 					bankInfo = "r:";
 				} else {
 					bankInfo = "M";
@@ -1041,7 +1041,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 		};
 		if (bankInfo.length < 4) {
-			bankInfo += `${sum.chContr[chOff + readOffset]}`.padStart(4 - bankInfo.length, "0");
+			bankInfo += `${sum.chContr[chOff + ccToPos[readOffset]]}`.padStart(4 - bankInfo.length, "0");
 		};
 		this.xgFont.getStr(bankInfo).forEach((e0, i0) => {
 			let secX = i0 * 6 + 1;
@@ -1054,7 +1054,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 		});
 		// Render program info
-		let bankName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + 0], sum.chProgr[this.#ch], sum.chContr[chOff + 32], sum.mode).name).slice(0, 10).padEnd(10, " ");
+		let bankName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name).slice(0, 10).padEnd(10, " ");
 		this.xgFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
 			let secX = i0 * 6 + 25;
 			e0.forEach((e1, i1) => {
@@ -1141,13 +1141,13 @@ let Ns5rDisplay = class extends RootDisplay {
 		} else {
 			// Render params only when it's not covered
 			let xShift = trueMode ? 2 : 0;
-			this.#renderParamBox(20 + xShift, sum.chContr[chOff + 7]);
-			this.#renderParamBox(33 + xShift, sum.chContr[chOff + 11]);
-			this.#renderCompass(53 + (+trueMode) + xShift, 7, sum.chContr[chOff + 10]);
-			this.#renderParamBox(62 + 2 * (+trueMode) + xShift, sum.chContr[chOff + 91]);
-			this.#renderParamBox(75 + 2 * (+trueMode) + xShift, sum.chContr[chOff + 93]);
+			this.#renderParamBox(20 + xShift, sum.chContr[chOff + ccToPos[7]]);
+			this.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
+			this.#renderCompass(53 + (+trueMode) + xShift, 7, sum.chContr[chOff + ccToPos[10]]);
+			this.#renderParamBox(62 + 2 * (+trueMode) + xShift, sum.chContr[chOff + ccToPos[91]]);
+			this.#renderParamBox(75 + 2 * (+trueMode) + xShift, sum.chContr[chOff + ccToPos[93]]);
 			if (!trueMode) {
-				this.#renderParamBox(88, sum.chContr[chOff + 74]);
+				this.#renderParamBox(88, sum.chContr[chOff + ccToPos[74]]);
 			};
 		};
 		// Render bitmap displays

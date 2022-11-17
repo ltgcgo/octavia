@@ -110,7 +110,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#bitmapExpire = 0;
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
-	#cc = new Uint8ClampedArray(8192); // 64 channels, 128 controllers
+	#cc = new Uint8ClampedArray(allocated.ch * allocated.cc); // 64 channels, 128 controllers
 	#prg = new Uint8ClampedArray(allocated.ch);
 	#velo = new Uint8ClampedArray(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
@@ -240,167 +240,188 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = det.channel;
 			// CC event, directly assign values to the register.
 			this.#chActive[part] = 1;
-			let chOffset = part * 128;
-			// Check if control change is accepted
-			if (ccToPos[det.data[0]] == undefined) {
-				console.warn(`cc${det.data[0]} is not accepted.`);
-			};
-			// Pre interpret
+			let chOffset = part * allocated.cc;
+			// Non-store CC messages
 			switch (det.data[0]) {
-				case 0: {
-					// Detect mode via bank MSB
-					//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
-					if (this.#mode == modeMap.gs || this.#mode == 0) {
-						if (det.data[1] < 48) {
-							// Do not change drum channel to a melodic
-							if (this.#cc[chOffset] > 119) {
-								det.data[1] = this.#cc[chOffset];
-								if (!this.#mode) {
-									det.data[1] = 120;
-									console.debug(`Forced channel ${part + 1} to stay drums.`);
-								};
-							};
-							if (det.data[1] > 0 && !this.#mode) {
-								console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
-								this.switchMode("gs");
-							};
-						} else if (det.data[1] == 62) {
-							this.switchMode("x5d");
-						} else if (det.data[1] == 63) {
-							this.switchMode("krs");
-						};
-					} else if (this.#mode == modeMap.gm) {
-						if (det.data[1] < 48) {
-							// Do not change drum channel to a melodic
-							if (this.#cc[chOffset] > 119) {
-								det.data[1] = 120;
-								this.switchMode("gs", true);
-								console.debug(`Forced channel ${part + 1} to stay drums.`);
-							};
-						};
-					} else if (this.#mode == modeMap.x5d) {
-						if (det.data[1] > 0 && det.data[1] < 8) {
-							this.switchMode("05rw", true);
-						} else if (det.data[1] == 56) {
-							let agCount = 0;
-							for (let c = 0; c < 16; c ++) {
-								let d = this.#cc[128 * c];
-								if (d == 56 || d == 62) {
-									agCount ++;
-								};
-							};
-							if (agCount > 14) {
-								this.switchMode("ag10", true);
-							};
-						};
-					};
+				case 96: {
+					// RPN Data increment
+					return;
 					break;
 				};
-				case 6: {
-					// Show RPN and NRPN
-					if (this.#dataCommit) {
-						let msb = this.#cc[chOffset + 99],
-						lsb = this.#cc[chOffset + 98];
-						if (msb == 1) {
-							let toCc = nrpnCcMap.indexOf(lsb);
-							if (toCc > -1) {
-								this.#cc[chOffset + 71 + toCc] = det.data[1];
-								console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
-							} else {
-								let nrpnIdx = useNormNrpn.indexOf(lsb);
-								if (nrpnIdx > -1) {
-									this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
-								};
-								console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
-							};
-						} else {
-							//console.debug(`CH${part + 1} drum NRPN ${msb} commit`);
-						};
-					} else {
-						// Commit supported RPN values
-						if (this.#cc[chOffset + 101] == 0 && useRpnMap[this.#cc[chOffset + 100]] != undefined) {
-							this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + 100]]] = det.data[1];
-							console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + 100]} commit: ${det.data[1]}`);
-						};
-					};
-					break;
-				};
-				case 38: {
-					// Show RPN and NRPN
-					if (!this.#dataCommit) {
-						// Commit supported RPN values
-						if (this.#cc[chOffset + 101] == 0 && useRpnMap[this.#cc[chOffset + 100]] != undefined) {
-							this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + 100]] + 1] = det.data[1];
-						};
-					} else {
-						//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
-					};
-					break;
-				};
-				case 98:
-				case 99: {
-					this.#dataCommit = 1;
-					break;
-				};
-				case 100:
-				case 101: {
-					this.#dataCommit = 0;
+				case 97: {
+					// RPN Data decrement
+					return;
 					break;
 				};
 				case 120: {
 					// All sound off, but keys stay on
+					return;
 					break;
 				};
 				case 121: {
 					// Reset controllers
 					this.#ua.ano(part);
 					this.#pitch[part] = 0;
-					let chOff = part * 128;
+					let chOff = part * allocated.cc;
 					// Reset to zero
-					this.#cc[chOff + 1] = 0; // Modulation
-					this.#cc[chOff + 5] = 0; // Portamento Time
-					this.#cc[chOff + 64] = 0; // Sustain
-					this.#cc[chOff + 65] = 0; // Portamento
-					this.#cc[chOff + 66] = 0; // Sostenuto
-					this.#cc[chOff + 67] = 0; // Soft Pedal
+					this.#cc[chOff + ccToPos[1]] = 0; // Modulation
+					this.#cc[chOff + ccToPos[5]] = 0; // Portamento Time
+					this.#cc[chOff + ccToPos[64]] = 0; // Sustain
+					this.#cc[chOff + ccToPos[65]] = 0; // Portamento
+					this.#cc[chOff + ccToPos[66]] = 0; // Sostenuto
+					this.#cc[chOff + ccToPos[67]] = 0; // Soft Pedal
 					// Reset to full
-					this.#cc[chOff + 11] = 127; // Expression
+					this.#cc[chOff + ccToPos[11]] = 127; // Expression
 					// RPN/NRPN to null
-					this.#cc[chOff + 101] = 127;
-					this.#cc[chOff + 100] = 127;
-					this.#cc[chOff + 99] = 127;
-					this.#cc[chOff + 98] = 127;
+					this.#cc[chOff + ccToPos[101]] = 127;
+					this.#cc[chOff + ccToPos[100]] = 127;
+					this.#cc[chOff + ccToPos[99]] = 127;
+					this.#cc[chOff + ccToPos[98]] = 127;
+					return;
 					break;
 				};
 				case 123: {
 					// All notes off
 					this.#ua.ano(part);
+					return;
 					break;
 				};
 				case 124: {
 					// Omni off
 					this.#ua.ano(part);
+					return;
 					break;
 				};
 				case 125: {
 					// Omni on
 					this.#ua.ano(part);
+					return;
 					break;
 				};
 				case 126: {
 					// Mono mode
 					this.#mono[part] = 1;
 					this.#ua.ano(part);
+					return;
 					break;
 				};
 				case 127: {
 					// Poly mode
 					this.#mono[part] = 0;
 					this.#ua.ano(part);
+					return;
 					break;
 				};
 			};
-			this.#cc[chOffset + det.data[0]] = det.data[1];
+			// Check if control change is accepted
+			if (ccToPos[det.data[0]] == undefined) {
+				console.warn(`cc${det.data[0]} is not accepted.`);
+			} else {
+				// Stored CC messages
+				switch (det.data[0]) {
+					case 0: {
+						// Detect mode via bank MSB
+						//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
+						if (this.#mode == modeMap.gs || this.#mode == 0) {
+							if (det.data[1] < 48) {
+								// Do not change drum channel to a melodic
+								if (this.#cc[chOffset] > 119) {
+									det.data[1] = this.#cc[chOffset];
+									if (!this.#mode) {
+										det.data[1] = 120;
+										console.debug(`Forced channel ${part + 1} to stay drums.`);
+									};
+								};
+								if (det.data[1] > 0 && !this.#mode) {
+									console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
+									this.switchMode("gs");
+								};
+							} else if (det.data[1] == 62) {
+								this.switchMode("x5d");
+							} else if (det.data[1] == 63) {
+								this.switchMode("krs");
+							};
+						} else if (this.#mode == modeMap.gm) {
+							if (det.data[1] < 48) {
+								// Do not change drum channel to a melodic
+								if (this.#cc[chOffset] > 119) {
+									det.data[1] = 120;
+									this.switchMode("gs", true);
+									console.debug(`Forced channel ${part + 1} to stay drums.`);
+								};
+							};
+						} else if (this.#mode == modeMap.x5d) {
+							if (det.data[1] > 0 && det.data[1] < 8) {
+								this.switchMode("05rw", true);
+							} else if (det.data[1] == 56) {
+								let agCount = 0;
+								for (let c = 0; c < 16; c ++) {
+									let d = this.#cc[allocated.cc * c];
+									if (d == 56 || d == 62) {
+										agCount ++;
+									};
+								};
+								if (agCount > 14) {
+									this.switchMode("ag10", true);
+								};
+							};
+						};
+						break;
+					};
+					case 6: {
+						// Show RPN and NRPN
+						if (this.#dataCommit) {
+							let msb = this.#cc[chOffset + ccToPos[99]],
+							lsb = this.#cc[chOffset + ccToPos[98]];
+							if (msb == 1) {
+								let toCc = nrpnCcMap.indexOf(lsb);
+								if (toCc > -1) {
+									this.#cc[chOffset + ccToPos[71 + toCc]] = det.data[1];
+									console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
+								} else {
+									let nrpnIdx = useNormNrpn.indexOf(lsb);
+									if (nrpnIdx > -1) {
+										this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
+									};
+									console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
+								};
+							} else {
+								//console.debug(`CH${part + 1} drum NRPN ${msb} commit`);
+							};
+						} else {
+							// Commit supported RPN values
+							if (this.#cc[chOffset + ccToPos[101]] == 0 && useRpnMap[this.#cc[chOffset + ccToPos[100]]] != undefined) {
+								this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + ccToPos[100]]]] = det.data[1];
+								console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + ccToPos[100]]} commit: ${det.data[1]}`);
+							};
+						};
+						break;
+					};
+					case 38: {
+						// Show RPN and NRPN
+						if (!this.#dataCommit) {
+							// Commit supported RPN values
+							if (this.#cc[chOffset + 101] == 0 && useRpnMap[this.#cc[chOffset + 100]] != undefined) {
+								this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + 100]] + 1] = det.data[1];
+							};
+						} else {
+							//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
+						};
+						break;
+					};
+					case 98:
+					case 99: {
+						this.#dataCommit = 1;
+						break;
+					};
+					case 100:
+					case 101: {
+						this.#dataCommit = 0;
+						break;
+					};
+				};
+				this.#cc[chOffset + ccToPos[det.data[0]]] = det.data[1];
+			};
 		},
 		12: function (det) {
 			let part = det.channel;
@@ -517,19 +538,19 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getCc(channel) {
 		// Return channel CC registers
-		let start = channel * 128;
-		let arr = this.#cc.slice(start, start + 128);
-		arr[0] = arr[0] || this.#subMsb;
-		arr[32] = arr[32] || this.#subLsb;
+		let start = channel * allocated.cc;
+		let arr = this.#cc.slice(start, start + allocated.cc);
+		arr[ccToPos[0]] = arr[ccToPos[0]] || this.#subMsb;
+		arr[ccToPos[32]] = arr[ccToPos[32]] || this.#subLsb;
 		return arr;
 	};
 	getCcAll() {
 		// Return all CC registers
 		let arr = this.#cc.slice();
 		for (let c = 0; c < 64; c ++) {
-			let chOff = c * 128;
-			arr[chOff] = arr[chOff] || this.#subMsb;
-			arr[chOff + 32] = arr[chOff + 32] || this.#subLsb;
+			let chOff = c * allocated.cc;
+			arr[chOff + ccToPos[0]] = arr[chOff + ccToPos[0]] || this.#subMsb;
+			arr[chOff + ccToPos[32]] = arr[chOff + ccToPos[32]] || this.#subLsb;
 		};
 		return arr;
 	};
@@ -593,7 +614,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// 0 to 255
 		let str = [], upThis = this;
 		this.getRawStrength().forEach(function (e, i) {
-			str[i] = Math.floor(e * upThis.#cc[i * 128 + 7] * upThis.#cc[i * 128 + 11] * upThis.#masterVol / 803288);
+			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * upThis.#masterVol / 803288);
 		});
 		return str;
 	};
@@ -636,30 +657,30 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#trkRedir.forEach(toZero);
 		this.#trkAsReq.forEach(toZero);
 		// Channel 10 to drum set
-		this.#cc[1152] = drumMsb[0];
-		this.#cc[3200] = drumMsb[0];
-		this.#cc[5248] = drumMsb[0];
-		this.#cc[7296] = drumMsb[0];
+		this.#cc[allocated.cc * 9] = drumMsb[0];
+		this.#cc[allocated.cc * 25] = drumMsb[0];
+		this.#cc[allocated.cc * 41] = drumMsb[0];
+		this.#cc[allocated.cc * 57] = drumMsb[0];
 		for (let ch = 0; ch < 64; ch ++) {
-			let chOff = ch * 128;
+			let chOff = ch * allocated.cc;
 			// Reset to full
-			this.#cc[chOff + 7] = 127; // Volume
-			this.#cc[chOff + 11] = 127; // Expression
+			this.#cc[chOff + ccToPos[7]] = 127; // Volume
+			this.#cc[chOff + ccToPos[11]] = 127; // Expression
 			// Reset to centre
-			this.#cc[chOff + 10] = 64; // Pan
-			this.#cc[chOff + 71] = 64; // Resonance
-			this.#cc[chOff + 72] = 64; // Release Time
-			this.#cc[chOff + 73] = 64; // Attack Time
-			this.#cc[chOff + 74] = 64; // Brightness
-			this.#cc[chOff + 75] = 64; // Decay Time
-			this.#cc[chOff + 76] = 64; // Vibrato Rate
-			this.#cc[chOff + 77] = 64; // Vibrato Depth
-			this.#cc[chOff + 78] = 64; // Vibrato Delay
+			this.#cc[chOff + ccToPos[10]] = 64; // Pan
+			this.#cc[chOff + ccToPos[71]] = 64; // Resonance
+			this.#cc[chOff + ccToPos[72]] = 64; // Release Time
+			this.#cc[chOff + ccToPos[73]] = 64; // Attack Time
+			this.#cc[chOff + ccToPos[74]] = 64; // Brightness
+			this.#cc[chOff + ccToPos[75]] = 64; // Decay Time
+			this.#cc[chOff + ccToPos[76]] = 64; // Vibrato Rate
+			this.#cc[chOff + ccToPos[77]] = 64; // Vibrato Depth
+			this.#cc[chOff + ccToPos[78]] = 64; // Vibrato Delay
 			// RPN/NRPN to null
-			this.#cc[chOff + 101] = 127;
-			this.#cc[chOff + 100] = 127;
-			this.#cc[chOff + 99] = 127;
-			this.#cc[chOff + 98] = 127;
+			this.#cc[chOff + ccToPos[101]] = 127;
+			this.#cc[chOff + ccToPos[100]] = 127;
+			this.#cc[chOff + ccToPos[99]] = 127;
+			this.#cc[chOff + ccToPos[98]] = 127;
 			// RPN reset
 			let rpnOff = ch * allocated.rpn;
 			this.#rpn[rpnOff] = 2; // Pitch bend sensitivity
@@ -680,8 +701,8 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#subMsb = substList[0][idx];
 				this.#subLsb = substList[1][idx];
 				for (let ch = 0; ch < 64; ch ++) {
-					if (drumMsb.indexOf(this.#cc[ch * 128]) > -1) {
-						this.#cc[ch * 128] = drumMsb[idx];
+					if (drumMsb.indexOf(this.#cc[ch * allocated.cc]) > -1) {
+						this.#cc[ch * allocated.cc] = drumMsb[idx];
 					};
 				};
 				this.dispatchEvent("mode", mode);
@@ -854,10 +875,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 18, 64, 0, 127, 0, 65], () => {
 			// Roland GS reset, refactor needed
 			upThis.switchMode("gs", true);
-			upThis.#cc[1152] = 120;
-			upThis.#cc[3200] = 120;
-			upThis.#cc[5248] = 120;
-			upThis.#cc[7296] = 120;
+			upThis.#cc[allocated.cc * 9] = 120;
+			upThis.#cc[allocated.cc * 25] = 120;
+			upThis.#cc[allocated.cc * 41] = 120;
+			upThis.#cc[allocated.cc * 57] = 120;
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.forEach(toZero);
 			console.info("MIDI reset: GS");
@@ -873,5 +894,6 @@ let OctaviaDevice = class extends CustomEventSource {
 
 export {
 	OctaviaDevice,
+	allocated,
 	ccToPos
 };
