@@ -1116,8 +1116,28 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}).add([76, 2, 64], (msg) => {
 			// XG 5-part EQ
+			msg.slice(1).forEach((e, i) => {
+				let c = i + msg[0];
+				if (c == 0) {
+					console.debug(`XG EQ preset: ${["flat", "jazz", "pop", "rock", "classic"][e]}`);
+				} else {
+					let band = (c - 1) >> 2,
+					prop = (c - 1) & 3,
+					dPref = `XG EQ ${band} ${["gain", "freq", "Q", "shape"][prop]}: `;
+					[() => {
+						console.debug(`${dPref}${e - 64}dB`);
+					}, () => {
+						console.debug(`${dPref}${e} (raw)`); // HELP WANTED
+					}, () => {
+						console.debug(`${dPref}${e / 10}`);
+					}, () => {
+						console.debug(`${dPref}${["shelf", "peak"][+!!e]}`);
+					}][prop]();
+				};
+			});
 		}).add([76, 3], (msg) => {
 			// XG insertion effects
+			// Won't implement for now
 		}).add([76, 6, 0], (msg) => {
 			// XG Letter Display
 			let offset = msg[0];
@@ -1150,8 +1170,87 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([76, 8], (msg, track) => {
 			// XG part setup
+			let part = upThis.chRedir(msg[0], track, true),
+			id = msg[1],
+			chOff = allocated.cc * part,
+			dPref = `XG CH${part + 1} `,
+			errMsg = `Unknown XG part address ${id}.`;
+			if (id < 1) {
+				console.debug(errMsg);
+			} else if (id < 41) {
+				msg.slice(2).forEach((e, i) => {
+					// CC manipulation can be further shrunk
+					([() => {
+						upThis.#cc[chOff + ccToPos[0]] = e; // MSB
+					}, () => {
+						upThis.#cc[chOff + ccToPos[32]] = e; // LSB
+					}, () => {
+						upThis.#prg[part] = e; // program
+					}, () => {
+						upThis.#chReceive[part] = e; // Rx CH
+						if (part != e) {
+							upThis.buildRchTree();
+							console.info(`${dPref}receives from CH${e + 1}`);
+						};
+					}, () => {
+						upThis.#mono[part] = +!e; // mono/poly
+					}, () => {
+						// same note key on assign?
+					}, () => {
+						upThis.#cc[chOff + ccToPos[0]] = e > 1 ? 127 : 0;
+						console.debug(`${dPref}set to type ${xgPartMode[e]}`);
+					}, () => {
+						// coarse tune, need to implement a universal RPN reg function first
+					}, false, false, () => {
+						upThis.#cc[chOff + ccToPos[7]] = e; // volume
+					}, false, false, () => {
+						upThis.#cc[chOff + ccToPos[10]] = e || 128; // pan
+					}, false, false, () => {
+						upThis.#cc[chOff + ccToPos[11]] = e; // dry level or expression
+					}, () => {
+						upThis.#cc[chOff + ccToPos[93]] = e; // chorus
+					}, () => {
+						upThis.#cc[chOff + ccToPos[91]] = e; // reverb
+					}, () => {
+						upThis.#cc[chOff + ccToPos[94]] = e; // variation
+					}, () => {
+						upThis.#cc[chOff + ccToPos[76]] = e; // vib rate
+					}, () => {
+						upThis.#cc[chOff + ccToPos[77]] = e; // vib depth
+					}, () => {
+						upThis.#cc[chOff + ccToPos[78]] = e; // vib delay
+					}, () => {
+						upThis.#cc[chOff + ccToPos[74]] = e; // brightness
+					}, () => {
+						upThis.#cc[chOff + ccToPos[71]] = e; // resonance
+					}, () => {
+						upThis.#cc[chOff + ccToPos[73]] = e; // attack
+					}, () => {
+						upThis.#cc[chOff + ccToPos[75]] = e; // decay
+					}, () => {
+						upThis.#cc[chOff + ccToPos[72]] = e; // release
+					}][id + i - 1] || function () {})();
+				});
+			} else if (id < 48) {
+				console.debug(errMsg);
+			} else if (id < 111) {
+				if (id > 102 && id < 105) {
+					upThis.#cc[chOff + ccToPos[[5, 65][id & 1]]] = e; // portamento
+				};
+			} else if (id < 114) {
+				console.debug(errMsg);
+			} else if (id < 116) {
+				console.debug(`${dPref}EQ ${["bass", "treble"][id & 1]} gain: ${e - 64}dB`);
+			} else if (id < 118) {
+				console.debug(errMsg);
+			} else if (id < 120) {
+				console.debug(`${dPref}EQ ${["bass", "treble"][id & 1]} freq: ${e}`);
+			} else {
+				console.debug(errMsg);
+			};
 		}).add([76, 10], (msg) => {
 			// XG HPF cutoff at 76, 10, nn, 32
+			// Won't implement for now
 		}).add([76, 16], (msg) => {
 			// XG A/D part, won't implement for now
 		}).add([76, 17, 0, 0], (msg) => {
