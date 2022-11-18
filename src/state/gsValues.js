@@ -20,10 +20,23 @@ let gsChoType = [
 	"short delay",
 	"short delay feedback"
 ];
+let gsDelType = [
+	"delay 1",
+	"delay 2",
+	"delay 3",
+	"delay 4",
+	"pan delay 1",
+	"pan delay 2",
+	"pan delay 3",
+	"pan delay 4",
+	"delay to reverb",
+	"pan repeat"
+];
 let gsParts = [9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15];
 
 export {
 	gsRevType,
 	gsChoType,
+	gsDelType,
 	gsParts
 };

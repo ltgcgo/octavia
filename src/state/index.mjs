@@ -14,6 +14,7 @@ import {
 import {
 	gsRevType,
 	gsChoType,
+	gsDelType,
 	gsParts
 } from "./gsValues.js";
 import {
@@ -913,16 +914,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("mt32", true);
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: MT-32");
-		}).add([66, 18, 64, 0, 127, 0], () => {
-			// Roland GS reset, refactor needed
-			upThis.switchMode("gs", true);
-			upThis.#cc[allocated.cc * 9] = 120;
-			upThis.#cc[allocated.cc * 25] = 120;
-			upThis.#cc[allocated.cc * 41] = 120;
-			upThis.#cc[allocated.cc * 57] = 120;
-			upThis.#modeKaraoke = false;
-			upThis.#trkRedir.forEach(toZero);
-			console.info("MIDI reset: GS");
 		});
 		this.#seKg.add([16, 0, 8, 0, 0, 0, 0], () => {
 			// Kawai GMega, refactor needed
@@ -1085,7 +1076,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				dPref += "variation ";
 				msg.slice(1).forEach((e, i) => {
 					([(e) => {
-						console.debug(`${dPref}return: ${toDecibel(e)}dB`);
+						console.debug(`${dPref}send: ${toDecibel(e)}dB`);
 					}, (e) => {
 						console.debug(`${dPref}pan: ${e - 64}`);
 					}, (e) => {
@@ -1270,7 +1261,173 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		// XG drum setup would be blank for now
 		// GS SysEx section
-		this.#seGs.add([69, 18, 16], (msg) => {
+		this.#seGs.add([66, 18, 0, 0, 127], (msg) => {
+			// GS mode set
+			upThis.switchMode("gs", true);
+			upThis.#cc[allocated.cc * 9] = 120;
+			upThis.#cc[allocated.cc * 25] = 120;
+			upThis.#cc[allocated.cc * 41] = 120;
+			upThis.#cc[allocated.cc * 57] = 120;
+			upThis.#subLsb = 3; // Use SC-88 Pro map by default
+			upThis.#modeKaraoke = false;
+			upThis.#trkRedir.forEach(toZero);
+			console.info(`GS system to ${["single", "dual"][msg[0]]} mode.`);
+		}).add([66, 18, 64, 0], (msg) => {
+			switch (msg[0]) {
+				case 127: {
+					// Roland GS reset
+					upThis.switchMode("gs", true);
+					upThis.#cc[allocated.cc * 9] = 120;
+					upThis.#cc[allocated.cc * 25] = 120;
+					upThis.#cc[allocated.cc * 41] = 120;
+					upThis.#cc[allocated.cc * 57] = 120;
+					upThis.#modeKaraoke = false;
+					upThis.#trkRedir.forEach(toZero);
+					console.info("MIDI reset: GS");
+					break;
+				};
+				default: {
+					let mTune = [0, 0, 0, 0];
+					let writeTune = (e, i) => {
+						// XG master fine tune
+						mTune[i] = e;
+					};
+					msg.slice(1).forEach((e, i) => {
+						let addr = i + msg[0];
+						[
+							writeTune, writeTune, writeTune, writeTune,
+							(e) => {
+								// XG master volume
+								this.#masterVol = e * 129 / 16383 * 100;
+							},
+							(e) => {/* XG master coarse tune */},
+							(e) => {/* XG master pan */}
+						][addr](e, i);
+					});
+					if (msg[0] < 4) {
+						// Commit master tune
+						let rTune = 0;
+						mTune.forEach((e) => {
+							rTune = rTune << 4;
+							rTune += e;
+						});
+						rTune -= 1024;
+					};
+				};
+			};
+		}).add([66, 18, 64, 1], (msg) => {
+			// GS patch params
+			let offset = msg[0];
+			if (offset < 16) {
+				// GS patch name (what for?)
+				let string = "".padStart(offset, " ");
+				msg.slice(1).forEach((e, i) => {
+					string += String.fromCharCode(Math.max(32, e));
+				});
+				string = string.padEnd(16, " ");
+				console.debug(`GS patch name: ${string}`);
+			} else if (offset < 48) {
+				// GS partial reserve
+			} else if (offset < 65) {
+				// GS reverb and chorus
+				msg.slice(1).forEach((e, i) => {
+					let dPref = `GS ${["reverb", "chorus"][+((offset + i) > 37)]} `;
+					([() => {
+						console.debug(`${dPref}type: ${gsRevType[e]}`);
+					}, () => {// character
+					}, () => {// pre-LPF
+					}, () => {// level
+					}, () => {// time
+					}, () => {// delay feedback
+					}, false, () => {
+						console.debug(`${dPref}predelay: ${e}ms`);
+					}, () => {
+						console.debug(`${dPref}type: ${gsChoType[e]}`);
+					}, () => {// pre-LPF
+					}, () => {// level
+					}, () => {// feedback
+					}, () => {// delay
+					}, () => {// rate
+					}, () => {// depth
+					}, () => {
+						console.debug(`${dPref}to reverb: ${toDecibel(e)}`);
+					}, () => {
+						console.debug(`${dPref}to delay: ${toDecibel(e)}`);
+					}][offset + i - 48] || function () {})();
+				});
+			} else if (offset < 80) {
+				console.debug(`Unknown GS patch address: ${offset}`);
+			} else if (offset < 91) {
+				// GS delay
+				msg.slice(1).forEach((e, i) => {
+					let dPref = `GS delay `;
+					([() => {
+						console.debug(`${dPref}type: ${gsDelType[e]}`);
+					}, () => {// pre-LPF
+					}, () => {// time C
+					}, () => {// time L
+					}, () => {// time R
+					}, () => {// level C
+					}, () => {// level L
+					}, () => {// level R
+					}, () => {// level
+					}, () => {// feedback
+					}, () => {
+						console.debug(`${dPref}to reverb: ${toDecibel(e)}`);
+					}][offset + i - 80] || function () {})();
+				});
+			} else {
+				console.debug(`Unknown GS patch address: ${offset}`);
+			};
+		}).add([66, 18, 64, 2], (msg) => {
+			// GS EQ
+			let dPref = `GS EQ `;
+			msg.slice(1).forEach((e, i) => {
+				([() => {
+					console.debug(`${dPref}low freq: ${[200, 400][e]}Hz`);
+				}, () => {
+					console.debug(`${dPref}low gain: ${e - 64}dB`);
+				}, () => {
+					console.debug(`${dPref}high freq: ${[3E3, 6E3][e]}Hz`);
+				}, () => {
+					console.debug(`${dPref}high gain: ${e - 64}dB`);
+				}][msg[0] + i] || function () {
+					console.warn(`Unknown GS EQ address: ${msg[0] + i}`);
+				})();
+			});
+		}).add([66, 18, 64, 3], (msg) => {
+			// GS EFX
+			let dPref = `GS EFX `;
+			msg.slice(1).forEach((e, i) => {
+				([() => {
+					console.debug(`${dPref}type MSB: ${e}`);
+				}, () => {
+					console.debug(`${dPref}type LSB: ${e}`);
+				}, false, false, false, false, false, false,
+				false, false, false, false, false,
+				false, false, false, false, false,
+				false, false, false, false, false,
+				() => {
+					console.debug(`${dPref}to reverb: ${toDecibel(e)}dB`);
+				}, () => {
+					console.debug(`${dPref}to chorus: ${toDecibel(e)}dB`);
+				}, () => {
+					console.debug(`${dPref}to delay: ${toDecibel(e)}dB`);
+				}, false, () => {
+					console.debug(`${dPref}1 source: ${e}`);
+				}, () => {
+					console.debug(`${dPref}1 depth: ${e - 64}`);
+				}, () => {
+					console.debug(`${dPref}2 source: ${e}`);
+				}, () => {
+					console.debug(`${dPref}2 depth: ${e - 64}`);
+				}, () => {
+					console.debug(`${dPref}to EQ: ${e ? "ON" : "OFF"}`);
+				}][msg[0] + i] || function () {})();
+			});
+		}).add([66, 18, 65], (msg) => {
+			// GS drum setup
+		}).add([69, 18, 16], (msg) => {
 			// GS display section
 			switch (msg[0]) {
 				case 0: {
