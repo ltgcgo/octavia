@@ -13,7 +13,8 @@ import {
 } from "./xgValues.js";
 import {
 	gsRevType,
-	gsChoType
+	gsChoType,
+	gsParts
 } from "./gsValues.js";
 import {
 	toDecibel,
@@ -400,7 +401,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
 									this.#cc[chOffset + ccToPos[71 + toCc]] = det.data[1];
-									console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
+									//console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
 								} else {
 									let nrpnIdx = useNormNrpn.indexOf(lsb);
 									if (nrpnIdx > -1) {
@@ -523,7 +524,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		66: (id, msg, track) => {
 			// Korg
-			this.#seXd.run(msg, track, id);
+			this.#seAi.run(msg, track, id);
 		},
 		67: (id, msg, track) => {
 			// Yamaha
@@ -552,7 +553,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#seUr; // Universal realtime
 	#seXg; // YAMAHA
 	#seGs; // Roland
-	#seXd; // KORG
+	#seAi; // KORG
 	#seKg; // Kawai
 	#seSg; // Akai
 	#seCs; // Casio
@@ -892,7 +893,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seUr = new BinaryMatch();
 		this.#seXg = new BinaryMatch();
 		this.#seGs = new BinaryMatch();
-		this.#seXd = new BinaryMatch();
+		this.#seAi = new BinaryMatch();
 		this.#seKg = new BinaryMatch();
 		this.#seSg = new BinaryMatch();
 		this.#seCs = new BinaryMatch();
@@ -902,23 +903,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			// General MIDI reset.
 			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], true);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
-			console.info(`MIDI reset: ${["GM", "Init", "GM2"][msg[0]]}`);
+			console.info(`MIDI reset: ${["GM", "Init", "GM2"][msg[0] - 1]}`);
 			if (msg[0] == 2) {
 				upThis.init();
 			};
-		});
-		this.#seXg.add([76, 0, 0, 126], (msg) => {
-			// Yamaha XG reset
-			upThis.switchMode("xg", true);
-			upThis.#modeKaraoke = false;
-			console.info("MIDI reset: XG");
 		});
 		this.#seGs.add([22, 18, 127, 0, 0, 1], () => {
 			// MT-32 reset, refactor needed
 			upThis.switchMode("mt32", true);
 			upThis.#modeKaraoke = false;
 			console.info("MIDI reset: MT-32");
-		}).add([66, 18, 64, 0, 127, 0, 65], () => {
+		}).add([66, 18, 64, 0, 127, 0], () => {
 			// Roland GS reset, refactor needed
 			upThis.switchMode("gs", true);
 			upThis.#cc[allocated.cc * 9] = 120;
@@ -947,7 +942,183 @@ let OctaviaDevice = class extends CustomEventSource {
 			return (msg[1] - 64);
 		});
 		// XG SysEx section
-		this.#seXg.add([76, 6, 0], (msg) => {
+		this.#seXg.add([76, 0, 0], (msg) => {
+			switch (msg[0]) {
+				case 126: {
+					// Yamaha XG reset
+					upThis.switchMode("xg", true);
+					upThis.#modeKaraoke = false;
+					console.info("MIDI reset: XG");
+					break;
+				};
+				default: {
+					let mTune = [0, 0, 0, 0];
+					let writeTune = (e, i) => {
+						// XG master fine tune
+						mTune[i] = e;
+					};
+					msg.slice(1).forEach((e, i) => {
+						let addr = i + msg[0];
+						[
+							writeTune, writeTune, writeTune, writeTune,
+							(e) => {
+								// XG master volume
+								this.#masterVol = e * 129 / 16383 * 100;
+							},
+							(e) => {/* XG master attenuator */},
+							(e) => {/* XG master coarse tune */}
+						][addr](e, i);
+					});
+					if (msg[0] < 4) {
+						// Commit master tune
+						let rTune = 0;
+						mTune.forEach((e) => {
+							rTune = rTune << 4;
+							rTune += e;
+						});
+						rTune -= 1024;
+					};
+				};
+			};
+		}).add([76, 2, 1], (msg) => {
+			// XG reverb, chorus and variation
+			let dPref = "XG ";
+			if (msg[0] < 32) {
+				// XG reverb
+				dPref += "reverb ";
+				msg.slice(1).forEach((e, i) => {
+					([(e) => {
+						console.debug(`${dPref}main type: ${xgEffType[e]}`);
+					}, (e) => {
+						console.debug(`${dPref}sub type: ${e + 1}`);
+					}, (e) => {
+						console.debug(`${dPref}time: ${getXgRevTime(e)}s`);
+					}, (e) => {
+						console.debug(`${dPref}diffusion: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}initial delay: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}HPF cutoff: ${xgNormFreq[e]}Hz`);
+					}, (e) => {
+						console.debug(`${dPref}LPF cutoff: ${xgNormFreq[e]}Hz`);
+					}, (e) => {
+						console.debug(`${dPref}width: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}height: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}depth: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}wall type: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}dry/wet: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}send: ${toDecibel(e)}dB`);
+					}, (e) => {
+						console.debug(`${dPref}pan: ${e - 64}`);
+					}, false, false, (e) => {
+						console.debug(`${dPref}delay: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}density: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}balance: ${e}`);
+					}, (e) => {
+					}, (e) => {
+						console.debug(`${dPref}feedback: ${e}`);
+					}, (e) => {
+					}][msg[0] + i] || function () {
+						console.warn(`Unknown XG reverb address: ${msg[0]}.`);
+					})(e);
+				});
+			} else if (msg[0] < 64) {
+				// XG chorus
+				dPref += "chorus ";
+				msg.slice(1).forEach((e, i) => {
+					([(e) => {
+						console.debug(`${dPref}main type: ${xgEffType[e]}`);
+					}, (e) => {
+						console.debug(`${dPref}sub type: ${e + 1}`);
+					}, (e) => {
+						console.debug(`${dPref}LFO: ${xgLfoFreq[e]}Hz`);
+					}, (e) => {
+						//console.debug(`${dPref}LFO phase: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}feedback: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}delay offset: ${getXgDelayOffset(e)}ms`);
+					}, (e) => {
+					}, (e) => {
+						console.debug(`${dPref}low: ${xgNormFreq[e]}Hz`);
+					}, (e) => {
+						console.debug(`${dPref}low: ${e - 64}dB`);
+					}, (e) => {
+						console.debug(`${dPref}high: ${xgNormFreq[e]}Hz`);
+					}, (e) => {
+						console.debug(`${dPref}high: ${e - 64}dB`);
+					}, (e) => {
+						console.debug(`${dPref}dry/wet: ${e}`);
+					}, (e) => {
+						console.debug(`${dPref}send: ${toDecibel(e)}dB`);
+					}, (e) => {
+						console.debug(`${dPref}pan: ${e - 64}`);
+					}, (e) => {
+						console.debug(`${dPref}to reverb: ${toDecibel(e)}dB`);
+					}, false, (e) => {
+					}, (e) => {
+					}, (e) => {
+					}, (e) => {
+						console.debug(`${dPref}LFO phase diff: ${(e - 64) * 3}deg`);
+					}, (e) => {
+						console.debug(`${dPref}input mode: ${e ? "stereo" : "mono"}`);
+					}, (e) => {
+					}][msg[0] - 32 + i] || function () {
+						console.warn(`Unknown XG chorus address: ${msg[0]}.`);
+					})(e);
+				});
+			} else if (msg[0] < 86) {
+				// XG variation section 1
+				dPref += "variation ";
+				if (msg[0] == 64) {
+					console.debug(`${dPref}type: ${xgEffType[msg[1]]}${msg[2] > 0 ? " " + (msg[2] + 1) : ""}`);
+				};
+			} else if (msg[0] < 97) {
+				// XG variation section 2
+				dPref += "variation ";
+				msg.slice(1).forEach((e, i) => {
+					([(e) => {
+						console.debug(`${dPref}return: ${toDecibel(e)}dB`);
+					}, (e) => {
+						console.debug(`${dPref}pan: ${e - 64}`);
+					}, (e) => {
+						console.debug(`${dPref}to reverb: ${toDecibel(e)}dB`);
+					}, (e) => {
+						console.debug(`${dPref}to chorus: ${toDecibel(e)}dB`);
+					}, (e) => {
+						console.debug(`${dPref}connection: ${e ? "system" : "insertion"}`);
+					}, (e) => {
+						console.debug(`${dPref}channel: CH${e + 1}`);
+					}, (e) => {
+						console.debug(`${dPref}mod wheel: ${e - 64}`);
+					}, (e) => {
+						console.debug(`${dPref}bend wheel: ${e - 64}`);
+					}, (e) => {
+						console.debug(`${dPref}channel after touch: ${e - 64}`);
+					}, (e) => {
+						console.debug(`${dPref}AC1: ${e - 64}`);
+					}, (e) => {
+						console.debug(`${dPref}AC2: ${e - 64}`);
+					}][msg[0] - 86 + i])(e);
+				});
+			} else if (msg[0] > 111 && msg[0] < 118) {
+				// XG variation section 3
+				dPref += "variation ";
+			} else {
+				console.warn(`Unknown XG variation address: ${msg[0]}`);
+			};
+		}).add([76, 2, 64], (msg) => {
+			// XG 5-part EQ
+		}).add([76, 3], (msg) => {
+			// XG insertion effects
+		}).add([76, 6, 0], (msg) => {
 			// XG Letter Display
 			let offset = msg[0];
 			upThis.#letterDisp = " ".repeat(offset);
@@ -977,7 +1148,28 @@ let OctaviaDevice = class extends CustomEventSource {
 					bi ++;
 				};
 			});
+		}).add([76, 8], (msg, track) => {
+			// XG part setup
+		}).add([76, 10], (msg) => {
+			// XG HPF cutoff at 76, 10, nn, 32
+		}).add([76, 16], (msg) => {
+			// XG A/D part, won't implement for now
+		}).add([76, 17, 0, 0], (msg) => {
+			// XG A/D mono/stereo mode, won't implement for now
+		}).add([112], (msg) => {
+			// XG plugin board
+			console.debug(`XG plugin PLG100-${["VL", "SG", "DX"][msg[0]]} enabled for channel ${msg[2] + 1}.`);
 		});
+		this.#seXg.add([76, 48], (msg) => {
+			// XG drum setup 1
+		}).add([76, 49], (msg) => {
+			// XG drum setup 2
+		}).add([76, 50], (msg) => {
+			// XG drum setup 3
+		}).add([76, 51], (msg) => {
+			// XG drum setup 4
+		});
+		// XG drum setup would be blank for now
 		// GS SysEx section
 		this.#seGs.add([69, 18, 16], (msg) => {
 			// GS display section
