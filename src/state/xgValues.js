@@ -1,6 +1,6 @@
 "use strict";
 
-let xgEffType = [
+const xgEffType = [
 	"off",
 	"hall",
 	"room",
@@ -13,31 +13,54 @@ let xgEffType = [
 	"early reflections",
 	"gate reverb",
 	"reverse gate"
-];
-xgEffType[16] = "white room";
-xgEffType[17] = "tunnel";
-xgEffType[19] = "basement";
-xgEffType[20] = "karaoke";
-xgEffType[64] = "pass through";
-xgEffType[65] = "chorus";
-xgEffType[66] = "celeste";
-xgEffType[67] = "flanger";
-xgEffType[68] = "symphonic";
-xgEffType[69] = "rotary speaker";
-xgEffType[70] = "tremelo";
-xgEffType[71] = "auto pan";
-xgEffType[72] = "phaser";
-xgEffType[73] = "distortion";
-xgEffType[74] = "overdrive";
-xgEffType[75] = "amplifier";
-xgEffType[76] = "3-band EQ";
-xgEffType[77] = "2-band EQ";
-xgEffType[78] = "auto wah";
+].concat((new Array(4)), [
+	"white room",
+	"tunnel",
+	"canyon",
+	"basement",
+	"karaoke"
+], new Array(43), [
+	"pass through",
+	"chorus",
+	"celeste",
+	"flanger",
+	"symphonic",
+	"rotary speaker",
+	"tremelo",
+	"auto pan",
+	"phaser",
+	"distortion",
+	"overdrive",
+	"amplifier",
+	"3-band EQ",
+	"2-band EQ",
+	"auto wah"
+], new Array(1), [
+	"pitch change",
+	"harmonic",
+	"touch wah",
+	"compressor",
+	"noise gate",
+	"voice channel",
+	"2-way rotary speaker",
+	"ensemble detune",
+	"ambience"
+], new Array(4), [
+	"talking mod",
+	"Lo-Fi",
+	"dist + delay",
+	"comp + dist + delay",
+	"wah + dist + delay",
+	"V dist",
+	"dual rotor speaker"
+]);
 let xgPartMode = [
 	"melodic",
 	"drum",
 	"drum set 1",
-	"drum set 2"
+	"drum set 2",
+	"drum set 3",
+	"drum set 4"
 ];
 let xgDelOffset = [
 	17.1, 18.6, 20.2, 21.8, 23.3,
