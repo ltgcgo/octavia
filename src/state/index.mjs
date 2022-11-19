@@ -15,7 +15,9 @@ import {
 	gsRevType,
 	gsChoType,
 	gsDelType,
-	gsParts
+	gsParts,
+	getGsEfx,
+	getGsEfxDesc
 } from "./gsValues.js";
 import {
 	toDecibel,
@@ -72,7 +74,6 @@ ccAccepted = [
 	16, 17, 18, 19 // General-purpose sound controllers
 ], // 96, 97, 120 to 127 all have special functions
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
-
 
 let modeMap = {};
 modeIdx.forEach((e, i) => {
@@ -147,6 +148,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	#letterExpire = 0;
 	#modeKaraoke = false;
 	#receiveTree;
+	// Temporary EFX storage
+	#gsEfxSto = new Uint8Array(2);
 	// Metadata text events
 	#metaTexts = [];
 	// GS Track Occupation
@@ -402,7 +405,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
 									this.#cc[chOffset + ccToPos[71 + toCc]] = det.data[1];
-									//console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
+									console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
 								} else {
 									let nrpnIdx = useNormNrpn.indexOf(lsb);
 									if (nrpnIdx > -1) {
@@ -675,22 +678,22 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#subMsb = 0;
 		this.#subLsb = 0;
 		this.#metaChannel = 0;
-		this.#chActive.forEach(toZero);
-		this.#cc.forEach(toZero);
-		this.#prg.forEach(toZero);
-		this.#velo.forEach(toZero);
-		this.#poly.forEach(toZero);
-		this.#rawStrength.forEach(toZero);
-		this.#pitch.forEach(toZero);
-		this.#nrpn.forEach(toZero);
+		this.#chActive.fill(0);
+		this.#cc.fill(0);
+		this.#prg.fill(0);
+		this.#velo.fill(0);
+		this.#poly.fill(0);
+		this.#rawStrength.fill(0);
+		this.#pitch.fill(0);
+		this.#nrpn.fill(0);
 		this.#masterVol = 100;
 		this.#metaTexts = [];
 		this.#letterExpire = 0;
 		this.#letterDisp = "";
 		this.#bitmapExpire = 0;
 		this.#bitmapPage = 0;
-		this.#bitmap.forEach(toZero);
-		this.#customName.forEach(toZero);
+		this.#bitmap.fill(0);
+		this.#customName.fill(0);
 		this.#modeKaraoke = false;
 		// Reset MIDI receive channel
 		this.#chReceive.forEach(function (e, i, a) {
@@ -698,13 +701,15 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		this.buildRchTree();
 		// Reset channel redirection
-		this.#trkRedir.forEach(toZero);
-		this.#trkAsReq.forEach(toZero);
+		this.#trkRedir.fill(0);
+		this.#trkAsReq.fill(0);
 		// Channel 10 to drum set
 		this.#cc[allocated.cc * 9] = drumMsb[0];
 		this.#cc[allocated.cc * 25] = drumMsb[0];
 		this.#cc[allocated.cc * 41] = drumMsb[0];
 		this.#cc[allocated.cc * 57] = drumMsb[0];
+		// Reset effect storage
+		this.#gsEfxSto.fill(0);
 		for (let ch = 0; ch < 64; ch ++) {
 			let chOff = ch * allocated.cc;
 			// Reset to full
@@ -759,7 +764,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 	};
 	newStrength() {
-		this.#rawStrength.forEach(toZero);
+		this.#rawStrength.fill(0);
 	};
 	runJson(json) {
 		// Execute transformed JSON event
@@ -979,7 +984,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				dPref += "reverb ";
 				msg.slice(1).forEach((e, i) => {
 					([(e) => {
-						console.debug(`${dPref}main type: ${xgEffType[e]}`);
+						console.info(`${dPref}main type: ${xgEffType[e]}`);
 					}, (e) => {
 						console.debug(`${dPref}sub type: ${e + 1}`);
 					}, (e) => {
@@ -1025,7 +1030,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				dPref += "chorus ";
 				msg.slice(1).forEach((e, i) => {
 					([(e) => {
-						console.debug(`${dPref}main type: ${xgEffType[e]}`);
+						console.info(`${dPref}main type: ${xgEffType[e]}`);
 					}, (e) => {
 						console.debug(`${dPref}sub type: ${e + 1}`);
 					}, (e) => {
@@ -1069,7 +1074,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				// XG variation section 1
 				dPref += "variation ";
 				if (msg[0] == 64) {
-					console.debug(`${dPref}type: ${xgEffType[msg[1]]}${msg[2] > 0 ? " " + (msg[2] + 1) : ""}`);
+					console.info(`${dPref}type: ${xgEffType[msg[1]]}${msg[2] > 0 ? " " + (msg[2] + 1) : ""}`);
 				};
 			} else if (msg[0] < 97) {
 				// XG variation section 2
@@ -1178,10 +1183,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						upThis.#prg[part] = e; // program
 					}, () => {
-						upThis.#chReceive[part] = e; // Rx CH
-						if (part != e) {
+						let ch = upThis.chRedir(e, track, true);
+						upThis.#chReceive[part] = ch; // Rx CH
+						if (part != ch) {
 							upThis.buildRchTree();
-							console.info(`${dPref}receives from CH${e + 1}`);
+							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
 					}, () => {
 						upThis.#mono[part] = +!e; // mono/poly
@@ -1189,9 +1195,10 @@ let OctaviaDevice = class extends CustomEventSource {
 						// same note key on assign?
 					}, () => {
 						upThis.#cc[chOff + ccToPos[0]] = e > 1 ? 127 : 0;
-						console.debug(`${dPref}set to type ${xgPartMode[e]}`);
+						console.debug(`${dPref}type: ${xgPartMode[e]}`);
 					}, () => {
-						// coarse tune, need to implement a universal RPN reg function first
+						// coarse tune
+						upThis.#cc[allocated.rpn * part + 3] = e;
 					}, false, false, () => {
 						upThis.#cc[chOff + ccToPos[7]] = e; // volume
 					}, false, false, () => {
@@ -1270,7 +1277,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[allocated.cc * 57] = 120;
 			upThis.#subLsb = 3; // Use SC-88 Pro map by default
 			upThis.#modeKaraoke = false;
-			upThis.#trkRedir.forEach(toZero);
+			upThis.#trkRedir.fill(0);
 			console.info(`GS system to ${["single", "dual"][msg[0]]} mode.`);
 		}).add([66, 18, 64, 0], (msg) => {
 			switch (msg[0]) {
@@ -1282,14 +1289,14 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cc[allocated.cc * 41] = 120;
 					upThis.#cc[allocated.cc * 57] = 120;
 					upThis.#modeKaraoke = false;
-					upThis.#trkRedir.forEach(toZero);
+					upThis.#trkRedir.fill(0);
 					console.info("MIDI reset: GS");
 					break;
 				};
 				default: {
 					let mTune = [0, 0, 0, 0];
 					let writeTune = (e, i) => {
-						// XG master fine tune
+						// GS master fine tune
 						mTune[i] = e;
 					};
 					msg.slice(1).forEach((e, i) => {
@@ -1331,9 +1338,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else if (offset < 65) {
 				// GS reverb and chorus
 				msg.slice(1).forEach((e, i) => {
-					let dPref = `GS ${["reverb", "chorus"][+((offset + i) > 37)]} `;
+					let dPref = `GS ${(offset + i) > 55 ? "chorus" : "reverb"} `;
 					([() => {
-						console.debug(`${dPref}type: ${gsRevType[e]}`);
+						console.info(`${dPref}type: ${gsRevType[e]}`);
 					}, () => {// character
 					}, () => {// pre-LPF
 					}, () => {// level
@@ -1342,7 +1349,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, false, () => {
 						console.debug(`${dPref}predelay: ${e}ms`);
 					}, () => {
-						console.debug(`${dPref}type: ${gsChoType[e]}`);
+						console.info(`${dPref}type: ${gsChoType[e]}`);
 					}, () => {// pre-LPF
 					}, () => {// level
 					}, () => {// feedback
@@ -1362,7 +1369,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				msg.slice(1).forEach((e, i) => {
 					let dPref = `GS delay `;
 					([() => {
-						console.debug(`${dPref}type: ${gsDelType[e]}`);
+						console.info(`${dPref}type: ${gsDelType[e]}`);
 					}, () => {// pre-LPF
 					}, () => {// time C
 					}, () => {// time L
@@ -1398,15 +1405,23 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 18, 64, 3], (msg) => {
 			// GS EFX
 			let dPref = `GS EFX `;
+			let prefDesc = function (e, i) {
+				let desc = getGsEfxDesc(upThis.#gsEfxSto, i, e);
+				if (desc) {
+					console.debug(`${dPref}${getGsEfx(upThis.#gsEfxSto)} ${desc}`);
+				};
+			};
 			msg.slice(1).forEach((e, i) => {
 				([() => {
-					console.debug(`${dPref}type MSB: ${e}`);
+					upThis.#gsEfxSto[0] = e;
 				}, () => {
-					console.debug(`${dPref}type LSB: ${e}`);
-				}, false, false, false, false, false, false,
-				false, false, false, false, false,
-				false, false, false, false, false,
-				false, false, false, false, false,
+					upThis.#gsEfxSto[1] = e;
+					console.info(`${dPref}type: ${getGsEfx(upThis.#gsEfxSto)}`);
+				}, false,
+				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
+				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
+				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
+				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
 				() => {
 					console.debug(`${dPref}to reverb: ${toDecibel(e)}dB`);
 				}, () => {
@@ -1423,7 +1438,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(`${dPref}2 depth: ${e - 64}`);
 				}, () => {
 					console.debug(`${dPref}to EQ: ${e ? "ON" : "OFF"}`);
-				}][msg[0] + i] || function () {})();
+				}][msg[0] + i] || function (e, i) {
+					console.warn(`Unknown GS EFX address: ${i}`);
+				})(e, msg[0] + i);
 			});
 		}).add([66, 18, 65], (msg) => {
 			// GS drum setup
@@ -1481,6 +1498,175 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			};
+		});
+		// GS Part setup
+		// I wanted this to also be written in a circular structure
+		// But clearly Roland hates me
+		let gsPartSec = function (msg, part, track) {
+			let offset = msg[0],
+			chOff = allocated.cc * part,
+			rpnOff = allocated.rpn * part,
+			dPref = `GS CH${part + 1} `;
+			if (offset < 3) {
+				// Program, MSB and receive channel
+				msg.slice(1).forEach((e, i) => {
+					[() => {
+						upThis.#cc[chOff + ccToPos[0]] = e; // MSB
+					}, () => {
+						upThis.#prg[part] = e; // program
+					}, () => {
+						let ch = upThis.chRedir(e, track, true);
+						upThis.#chReceive[part] = ch; // Rx CH
+						if (part != e) {
+							upThis.buildRchTree();
+							console.info(`${dPref}receives from CH${ch + 1}`);
+						};
+					}][offset + i]();
+				});
+			} else if (offset < 19) {} else if (offset < 44) {
+				msg.slice(1).forEach((e, i) => {
+					([() => {
+						upThis.#mono[part] = +!e; // mono/poly
+					}, false // assign mode
+					, () => {
+						// drum map
+						upThis.#cc[chOff + ccToPos[0]] = e ? 120 : 0;
+						console.debug(`${dPref}type: ${e ? "drum " : "melodic"}${e ? e : ""}`);
+					}, () => {
+						// coarse tune
+						upThis.#rpn[rpnOff + 3] = e;
+					}, false // pitch offset
+					, () => {
+						// volume
+						upThis.#cc[chOff + ccToPos[7]] = e;
+					}, false // velocity sense depth
+					, false // velocity sense offset
+					, () => {
+						// pan
+						upThis.#cc[chOff + ccToPos[10]] = e || 128;
+					}, false // note upperbound
+					, false // note lowerbound
+					, () => {
+						// general-purpose CC source A
+						console.debug(`${dPref}CC 1: cc${e}`);
+					}, () => {
+						// general-purpose CC source B
+						console.debug(`${dPref}CC 2: cc${e}`);
+					}, () => {
+						// chorus
+						upThis.#cc[chOff + ccToPos[93]] = e;
+					}, () => {
+						// reverb
+						upThis.#cc[chOff + ccToPos[91]] = e;
+					}, false // Rx bank select MSB
+					, false // Rx bank select LSB
+					, () => {
+						// fine tune MSB
+						upThis.#rpn[rpnOff + 1] = e;
+					}, () => {
+						// fine tune LSB
+						upThis.#rpn[rpnOff + 2] = e;
+					}, () => {
+						// delay (variation in XG)
+						upThis.#cc[chOff + ccToPos[94]] = e;
+					}][offset + i - 19] || function () {})();
+				});
+			} else if (offset < 76) {} else {
+				console.debug(`Unknown GS part address: ${offset}`);
+			};
+		},
+		gsMiscSec = function (msg, part) {
+			let offset = msg[0],
+			dPref = `GS CH${part + 1} `;
+			if (offset < 2) {
+				msg.slice(1).forEach((e, i) => {
+					[() => {
+						// GS part LSB
+						upThis.#cc[allocated.cc * part + ccToPos[32]] = e;
+					}, () => {// GS part fallback LSB
+					}][offset + i]();
+				});
+			} else if (offset < 32) {
+				console.warn(`Unknown GS misc address: ${offset}`);
+			} else if (offset < 35) {
+				msg.slice(1).forEach((e, i) => {
+					[() => {
+						// GS part EQ toggle
+						console.debug(`${dPref}EQ: o${["ff", "n"][e]}`);
+					}, () => {// GS part output
+					}, () => {
+						// GS part EFX toggle
+						console.debug(`${dPref}EFX: o${["ff", "n"][e]}`);
+					}][offset + i - 32]();
+				});
+			} else {
+				console.warn(`Unknown GS misc address: ${offset}`);
+			};
+		};
+		this.#seGs.add([66, 18, 64, 16], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(9, track, true), track);
+		}).add([66, 18, 64, 17], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(0, track, true), track);
+		}).add([66, 18, 64, 18], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(1, track, true), track);
+		}).add([66, 18, 64, 19], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(2, track, true), track);
+		}).add([66, 18, 64, 20], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(3, track, true), track);
+		}).add([66, 18, 64, 21], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(4, track, true), track);
+		}).add([66, 18, 64, 22], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(5, track, true), track);
+		}).add([66, 18, 64, 23], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(6, track, true), track);
+		}).add([66, 18, 64, 24], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(7, track, true), track);
+		}).add([66, 18, 64, 25], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(8, track, true), track);
+		}).add([66, 18, 64, 26], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(10, track, true), track);
+		}).add([66, 18, 64, 27], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(11, track, true), track);
+		}).add([66, 18, 64, 28], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(12, track, true), track);
+		}).add([66, 18, 64, 29], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(13, track, true), track);
+		}).add([66, 18, 64, 30], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(14, track, true), track);
+		}).add([66, 18, 64, 31], (msg, track) => {
+			gsPartSec(msg, upThis.chRedir(15, track, true), track);
+		}).add([66, 18, 64, 64], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(9, track, true));
+		}).add([66, 18, 64, 65], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(0, track, true));
+		}).add([66, 18, 64, 66], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(1, track, true));
+		}).add([66, 18, 64, 67], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(2, track, true));
+		}).add([66, 18, 64, 68], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(3, track, true));
+		}).add([66, 18, 64, 69], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(4, track, true));
+		}).add([66, 18, 64, 70], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(5, track, true));
+		}).add([66, 18, 64, 71], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(6, track, true));
+		}).add([66, 18, 64, 72], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(7, track, true));
+		}).add([66, 18, 64, 73], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(8, track, true));
+		}).add([66, 18, 64, 74], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(10, track, true));
+		}).add([66, 18, 64, 75], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(11, track, true));
+		}).add([66, 18, 64, 76], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(12, track, true));
+		}).add([66, 18, 64, 77], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(13, track, true));
+		}).add([66, 18, 64, 78], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(14, track, true));
+		}).add([66, 18, 64, 79], (msg, track) => {
+			gsMiscSec(msg, upThis.chRedir(15, track, true));
 		});
 	};
 };
