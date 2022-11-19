@@ -187,7 +187,7 @@ let VoiceBank = class {
 				});
 			};
 		});
-		console.debug(`Map "${name}" contains ${allCount} entries in total, loaded ${loadCount} entries.`);
+		console.debug(`Map "${name}": ${allCount} total, ${loadCount} loaded.`);
 	};
 	clearRange(options) {
 		let prg = options.prg != undefined ? (options.prg.constructor == Array ? options.prg : [options.prg, options.prg]) : [0, 127],
