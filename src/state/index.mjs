@@ -1684,6 +1684,142 @@ let OctaviaDevice = class extends CustomEventSource {
 			gsMiscSec(msg, upThis.chRedir(15, track, true));
 		});
 		// KORG X5DR SysEx section
+		this.#seAi.add([54, 76, 0], (msg, track) => {
+			// program dump
+			upThis.switchMode("x5d", true);
+			let name = "", msb = 82, prg = 0, lsb = 0;
+			let voiceMap = "MSB\tPRG\tLSB\tNME";
+			korgFilter(msg, function (e, i) {
+				if (i < 16400) {
+					let p = i % 164;
+					switch (true) {
+						case (p < 10): {
+							if (e > 31) {
+								name += String.fromCharCode(e);
+							};
+							break;
+						};
+						case (p == 11): {
+							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Voice", "")}`;
+							prg ++;
+							name = "";
+							break;
+						};
+					};
+					if (prg > 99) {
+						msb = 90;
+						prg = 0;
+					};
+				};
+			});
+			upThis.dispatchEvent("mapupdate", {
+				clearRange: {
+					msb: 82,
+					prg: [0, 99],
+					lsb: 0
+				},
+				voiceMap
+			});
+		}).add([54, 77, 0], (msg, track) => {
+			// combi dump
+			upThis.switchMode("x5d", true);
+			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
+			let voiceMap = "MSB\tPRG\tLSB\tNME";
+			korgFilter(msg, function (e, i) {
+				if (i < 13600) {
+					let p = i % 136;
+					switch (true) {
+						case (p < 10): {
+							if (e > 31) {
+								name += String.fromCharCode(e);
+							};
+							break;
+						};
+						case (p == 11): {
+							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Combi", "")}`;
+							prg ++;
+							name = "";
+							break;
+						};
+					};
+				};
+			});
+			upThis.dispatchEvent("mapupdate", {
+				clearRange: {
+					msb: 90,
+					prg: [0, 99],
+					lsb: 0
+				},
+				voiceMap
+			});
+		}).add([54, 104], (msg, track) => {
+			// extended multi setup
+			upThis.switchMode("x5d", true);
+			korgFilter(msg, function (e, i) {
+				if (i < 192) {
+					let part = upThis.chRedir(Math.floor(i / 12), track, true),
+					chOff = part * allocated.cc;
+					switch (i % 12) {
+						case 0: {
+							// Program change
+							upThis.#prg[part] = e;
+							if (e > 0) {
+								upThis.#chActive[part] = 1;
+							};
+							break;
+						};
+						case 1: {
+							// Volume
+							upThis.#cc[chOff + ccToPos[7]] = e;
+							break;
+						};
+						case 2: {
+							// Coarse tune
+							upThis.#rpn[part * allocated.rpn + 3] = (e > 127 ? 256 - e : 64 + e);
+							break;
+						};
+						case 3: {
+							// Fine tune
+							upThis.#rpn[part * allocated.rpn + 1] = (e > 127 ? 256 - e : 64 + e);
+							break;
+						};
+						case 4: {
+							// Pan
+							if (e < 31) {
+								upThis.#cc[chOff + ccToPos[10]] = Math.round((e - 15) * 4.2 + 64);
+							};
+							break;
+						};
+						case 5: {
+							// Reverb + Chorus
+							let choSend = e >> 4,
+							revSend = e & 15;
+							upThis.#cc[chOff + ccToPos[91]] = x5dSendLevel(revSend);
+							upThis.#cc[chOff + ccToPos[93]] = x5dSendLevel(choSend);
+							break;
+						};
+						case 10: {
+							// Control filter
+							upThis.#cc[chOff] = (e & 3) ? 82 : 56;
+							break;
+						};
+						case 11: {
+							// MIDI Rc Ch + Track Switch
+							let midiCh = upThis.chRedir(e & 15, track, true),
+							trkSw = e >> 4;
+							upThis.#chReceive[part] = e;
+							if (midiCh != part || trkSw) {
+								console.info(`X5D Part CH${part + 1} receives from CH${midiCh + 1}.`);
+								upThis.buildRchTree();
+							};
+						};
+					};
+				} else {
+					let part = upThis.chRedir(i - 192, track, true);
+					// What the heck is pitch bend range 0xF4(-12) to 0x0C(12)?
+				};
+			});
+		});
 		// KORG NS5R SysEx section
 		this.#seAi.add([66, 0], (msg, track) => {
 			// Mode switch
@@ -1826,6 +1962,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([66, 18, 8, 0], (msg, track) => {
 			// Display (letter and bitmap)
+			// Mehh I'll fill this up when I have time
 		}).add([66, 52], (msg, track) => {
 			// Currect effect dump
 			// Still no docs, sigh...
@@ -1835,12 +1972,186 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Current multi dump
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
+			// I'm lazy I just ported the old code here don't judge meee
+			korgFilter(msg, function (e, i) {
+				switch (true) {
+					case i < 2944: {
+						// 32 part setup params, 2944 bytes
+						let part = upThis.chRedir(Math.floor(i / 92), track, true),
+						chOff = part * allocated.cc;
+						switch (i % 92) {
+							case 0: {
+								// MSB Bank
+								upThis.#cc[chOff + ccToPos[0]] = e;
+								break;
+							};
+							case 1: {
+								// LSB Bank
+								upThis.#cc[chOff + ccToPos[32]] = e;
+								break;
+							};
+							case 2: {
+								// Program
+								upThis.#prg[part] = e;
+								if (e > 0) {
+									upThis.#chActive[part] = 1;
+								};
+								break;
+							};
+							case 3: {
+								// Receive MIDI channel
+								let ch = upThis.chRedir(e, track, true);
+								upThis.#chReceive[part] = ch;
+								if (part != ch) {
+									console.info(`NS5R CH${part + 1} receives from CH${ch + 1}.`);
+									upThis.buildRchTree();
+								};
+							};
+							case 7: {
+								// 0 for melodic, 1 for drum, 2~5 for mod drums 1~4
+								// KORG has multiple MSBs for drums, well...
+								break;
+							};
+							case 8: {
+								// Coarse Tune
+								upThis.#rpn[part * allocated.rpn + 3] = (e < 40 || e > 88) ? e + (e > 63 ? -192 : 64) : e;
+								break;
+							};
+							case 9: {
+								// Fine Tune
+								// This is trying to use absolute values.
+							};
+							case 10: {
+								// Volume
+								upThis.#cc[chOff + ccToPos[7]] = e;
+								break;
+							};
+							case 11: {
+								// Expression
+								upThis.#cc[chOff + ccToPos[11]] = e;
+								break;
+							};
+							case 14: {
+								// Pan
+								upThis.#cc[chOff + ccToPos[10]] = e || 128;
+								break;
+							};
+							case 19: {
+								// Chorus
+								upThis.#cc[chOff + ccToPos[93]] = e;
+								break;
+							};
+							case 20: {
+								// Reverb
+								upThis.#cc[chOff + ccToPos[91]] = e;
+								break;
+							};
+							case 84: {
+								// Portamento Switch
+								upThis.#cc[chOff + ccToPos[65]] = e;
+								break;
+							};
+							case 85: {
+								// Portamento Time
+								upThis.#cc[chOff + ccToPos[5]] = e;
+								break;
+							};
+						};
+						break;
+					};
+					case i < 3096: {
+						// part common params, 152 bytes
+						break;
+					};
+					case i < 3134: {
+						// currnet effect params, 38 bytes
+						break;
+					};
+					case i < 8566: {
+						// 4 mod drum params, 5432 bytes
+						break;
+					};
+				};
+			});
 		}).add([66, 54], (msg, track) => {
 			// All program dump
+			// Yup this one is also ported from old code
 			upThis.switchMode("ns5r", true);
+			let name = "", msb = 80, prg = 0, lsb = 0;
+			let voiceMap = "MSB\tPRG\tLSB\tNME";
+			korgFilter(msg, function (e, i) {
+				let p = i % 158;
+				switch (true) {
+					case (p < 10): {
+						if (e > 31) {
+							name += String.fromCharCode(e);
+						};
+						break;
+					};
+					case (p == 11): {
+						msb = e;
+						break;
+					};
+					case (p == 12): {
+						lsb = e;
+						break;
+					};
+					case (p == 13): {
+						voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Voice", "")}`;
+						prg ++;
+						name = "";
+						break;
+					};
+				};
+			});
+			upThis.dispatchEvent("mapupdate", {
+				clearRange: {
+					msb: 80,
+					lsb: 0
+				},
+				voiceMap
+			});
 		}).add([66, 55], (msg, track) => {
 			// All combination dump
+			// Just modified from above
 			upThis.switchMode("ns5r", true);
+			let name = "", msb = 88, prg = 0, lsb = 0;
+			let voiceMap = "MSB\tPRG\tLSB\tNME";
+			korgFilter(msg, function (e, i) {
+				let p = i % 126;
+				switch (true) {
+					case (p < 10): {
+						if (e > 31) {
+							name += String.fromCharCode(e);
+						};
+						break;
+					};
+					case (p == 11): {
+						//msb = e;
+						break;
+					};
+					case (p == 12): {
+						//lsb = e;
+						break;
+					};
+					case (p == 13): {
+						voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Combi", "")}`;
+						prg ++;
+						name = "";
+						break;
+					};
+				};
+			});
+			upThis.dispatchEvent("mapupdate", {
+				clearRange: {
+					msb: 88,
+					lsb: 0
+				},
+				voiceMap
+			});
+		}).add([66, 125], (msg) => {
+			// Backlight
+			upThis.dispatchEvent("backlight", ["green", "orange", "red", false, "yellow", "blue", "purple"][msg[0]] || "white");
 		}).add([76], (msg, track, id) => {
 			// N1R to NS5R redirector
 			upThis.#seAi.run([66, ...msg], track, id);

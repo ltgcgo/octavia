@@ -17,7 +17,7 @@
 		<tr>
 			<td>Changed</td>
 			<td>✓ 1-16</td>
-			<td>Supports up to 64 channels.</td>
+			<td>Supports up to 128 channels.</td>
 		</tr>
 		<tr>
 			<td colspan=2>Note number</td>
@@ -329,7 +329,7 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan=11>System Exclusive</td>
+			<td rowspan=12>System Exclusive</td>
 			<td>General MIDI</td>
 			<td>✓</td>
 			<td></td>
@@ -381,7 +381,12 @@
 		</tr>
 		<tr>
 			<td>AKAI SG01</td>
-			<td>✕</td>
+			<td>✓</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>CASIO GZ-50M</td>
+			<td>✓</td>
 			<td></td>
 		</tr>
 		<tr>
