@@ -488,6 +488,21 @@ let OctaviaDevice = class extends CustomEventSource {
 				//upThis.#seMain.run(seq, det.track);
 			});
 		},
+		248: function (det) {
+			// MIDI clock
+		},
+		250: function (det) {
+			// MIDI start
+		},
+		251: function (det) {
+			// MIDI continue
+		},
+		252: function (det) {
+			// MIDI stop
+		},
+		254: function (det) {
+			// Active sense
+		},
 		255: function (det) {
 			// Meta
 			(this.#metaRun[det.meta] || function (data, track, meta) {}).call(this, det.data, det.track, det.meta);
@@ -1198,7 +1213,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						console.debug(`${dPref}type: ${xgPartMode[e]}`);
 					}, () => {
 						// coarse tune
-						upThis.#cc[allocated.rpn * part + 3] = e;
+						upThis.#rpn[allocated.rpn * part + 3] = e;
 					}, false, false, () => {
 						upThis.#cc[chOff + ccToPos[7]] = e; // volume
 					}, false, false, () => {
@@ -1517,7 +1532,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						let ch = upThis.chRedir(e, track, true);
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part != e) {
+						if (part != ch) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -1667,6 +1682,168 @@ let OctaviaDevice = class extends CustomEventSource {
 			gsMiscSec(msg, upThis.chRedir(14, track, true));
 		}).add([66, 18, 64, 79], (msg, track) => {
 			gsMiscSec(msg, upThis.chRedir(15, track, true));
+		});
+		// KORG X5DR SysEx section
+		// KORG NS5R SysEx section
+		this.#seAi.add([66, 0], (msg, track) => {
+			// Mode switch
+			upThis.switchMode("ns5r", true);
+			upThis.#modeKaraoke = false;
+			console.debug(`NS5R mode switch requested: ${["global", "multi", "prog edit", "comb edit", "drum edit", "effect edit"][msg[0]]} mode.`);
+		}).add([66, 1], (msg, track) => {
+			// Map switch
+			upThis.switchMode(["ns5r", "05rw"][msg[0]], true);
+			upThis.#modeKaraoke = false;
+		}).add([66, 18, 0, 0], (msg, track) => {
+			// Master setup
+			let offset = msg[0];
+			switch (offset) {
+				case 124: // all param reset
+				case 126: // XG reset for NS5R
+				case 127: { // GS reset for NS5R
+					upThis.switchMode("ns5r", true);
+					upThis.#modeKaraoke = false;
+					break;
+				};
+				case 125: {// drum reset
+					break;
+				};
+				default: {
+					if (offset < 10) {
+						let mTune = [0, 0, 0, 0];
+						let writeTune = (e, i) => {
+							// NS5R master fine tune
+							mTune[i] = e;
+						};
+						msg.slice(1).forEach((e, i) => {
+							[writeTune, writeTune, writeTune, writeTune,
+							() => {
+								upThis.#masterVol = e * 129 / 16383 * 100;
+							}, () => {
+								return (e - 64);
+							}, () => {
+								return (e - 64);
+							}, () => { // EFX MSB
+							}, () => { // EFX LSB
+							}, () => { // EFX PRG
+							}][offset + i]();
+						});
+						if (msg[0] < 4) {
+							// Commit master tune
+							let rTune = 0;
+							mTune.forEach((e) => {
+								rTune = rTune << 4;
+								rTune += e;
+							});
+							rTune -= 1024;
+						};
+					};
+				};
+			};
+		}).add([66, 18, 0, 1], (msg, track) => {
+			// Channel out port setup, trap for now
+		}).add([66, 18, 0, 2], (msg, track) => {
+			// Program out port setup, trap for now
+		}).add([66, 18, 1], (msg, track) => {
+			// Part setup
+			let part = upThis.chRedir(msg[0], track, true),
+			chOff = part * allocated.cc;
+			let offset = msg[1];
+			let dPref = `NS5R CH${part + 1}`;
+			msg.slice(2).forEach((e, i) => {
+				let c = offset + i;
+				if (c < 3) {
+					// MSB, LSB, PRG
+					[() => {
+						upThis.#cc[chOff + ccToPos[0]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[32]] = e;
+					}, () => {
+						upThis.#prg[part] = e;
+					}][c]();
+				} else if (c < 8) {
+					// Trap for junk data
+				} else if (c < 14) {
+					[() => {
+						let ch = upThis.chRedir(e, track, true);
+						upThis.#chReceive[part] = ch; // Rx CH
+						if (part != ch) {
+							upThis.buildRchTree();
+							console.info(`${dPref}receives from CH${ch + 1}`);
+						};
+					}, () => {
+						upThis.#mono[part] = +!e;
+					}, () => {
+						console.debug(`${dPref}type: ${xgPartMode[e]}`);
+					}, () => {
+						upThis.#rpn[allocated.rpn * part + 3] = e;
+					}, () => {
+					}, () => {
+					}][c - 8]();
+				} else if (c < 16) {
+					// Trap for junk data
+				} else if (c < 33) {
+					[() => {
+						upThis.#cc[chOff + ccToPos[7]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[11]] = e;
+					}, () => {
+					}, () => {
+					}, () => {
+						upThis.#cc[chOff + ccToPos[10]] = e || 128;
+					}, () => {
+					}, () => {
+					}, () => {
+						upThis.#cc[chOff + ccToPos[93]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[91]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[76]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[77]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[78]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[74]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[71]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[73]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[75]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[72]] = e;
+					}][c - 16]();
+				} else if (c < 112) {
+					// Trap for data not supported
+				} else if (c < 114) {
+					[() => {
+						upThis.#cc[chOff + ccToPos[5]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[65]] = e;
+					}][c - 112]();
+				};
+			});
+		}).add([66, 18, 8, 0], (msg, track) => {
+			// Display (letter and bitmap)
+		}).add([66, 52], (msg, track) => {
+			// Currect effect dump
+			// Still no docs, sigh...
+			upThis.switchMode("ns5r", true);
+			upThis.#modeKaraoke = false;
+		}).add([66, 53], (msg, track) => {
+			// Current multi dump
+			upThis.switchMode("ns5r", true);
+			upThis.#modeKaraoke = false;
+		}).add([66, 54], (msg, track) => {
+			// All program dump
+			upThis.switchMode("ns5r", true);
+		}).add([66, 55], (msg, track) => {
+			// All combination dump
+			upThis.switchMode("ns5r", true);
+		}).add([76], (msg, track, id) => {
+			// N1R to NS5R redirector
+			upThis.#seAi.run([66, ...msg], track, id);
 		});
 	};
 };
