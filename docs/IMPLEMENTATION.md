@@ -329,7 +329,7 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan=10>System Exclusive</td>
+			<td rowspan=11>System Exclusive</td>
 			<td>General MIDI</td>
 			<td>✓</td>
 			<td></td>
@@ -358,6 +358,11 @@
 			<td>KORG NS5R</td>
 			<td>✓</td>
 			<td></td>
+		</tr>
+		<tr>
+			<td>KORG N1R</td>
+			<td>✓</td>
+			<td>Redirected to NS5R</td>
 		</tr>
 		<tr>
 			<td>KORG X5D(R)</td>
@@ -396,10 +401,25 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td>System RealTime</td>
+			<td rowspan=4>System RealTime</td>
 			<td>Clock</td>
 			<td>✕</td>
-			<td></td>
+			<td><i>No action defined</i></td>
+		</tr>
+		<tr>
+			<td>Start</td>
+			<td>✕</td>
+			<td><i>No action defined</i></td>
+		</tr>
+		<tr>
+			<td>Continue</td>
+			<td>✕</td>
+			<td><i>No action defined</i></td>
+		</tr>
+		<tr>
+			<td>Stop</td>
+			<td>✕</td>
+			<td><i>No action defined</i></td>
 		</tr>
 		<tr>
 			<td rowspan=2>Aux messages</td>
@@ -410,7 +430,7 @@
 		<tr>
 			<td>Active Sense</td>
 			<td>✕</td>
-			<td></td>
+			<td><i>No action defined</i></td>
 		</tr>
 	</tbody>
 </table>
