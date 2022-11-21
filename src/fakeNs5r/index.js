@@ -140,6 +140,11 @@ dispCanv.addEventListener("mousedown", function (ev) {
 	};
 });
 
+// Allow channel switching in browser console
+self.toCh = function (ch) {
+	ns5rVis.setCh(ch);
+};
+
 // Render frames
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
