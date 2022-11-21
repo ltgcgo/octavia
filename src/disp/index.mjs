@@ -256,10 +256,10 @@ let MuDisplay = class extends RootDisplay {
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
 		if (this.#ch > maxCh) {
-			this.#ch = minCh;
+			this.#ch = minCh + this.#ch & 15;
 		};
 		if (this.#ch < minCh) {
-			this.#ch = maxCh;
+			this.#ch = maxCh - 15 + (this.#ch & 15);
 		};
 		let chOff = this.#ch * ccToPos.length;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
@@ -532,10 +532,10 @@ let ScDisplay = class extends RootDisplay {
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
 		if (this.#ch > maxCh) {
-			this.#ch = minCh;
+			this.#ch = minCh + this.#ch & 15;
 		};
 		if (this.#ch < minCh) {
-			this.#ch = maxCh;
+			this.#ch = maxCh - 15 + (this.#ch & 15);
 		};
 		let chOff = this.#ch * ccToPos.length;
 		// Text matrix display
@@ -810,6 +810,7 @@ let Ns5rDisplay = class extends RootDisplay {
 	#backlight;
 	#refreshed = true;
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv");
 	constructor() {
 		super();
 		this.#backlight = bgWhite;
@@ -911,17 +912,19 @@ let Ns5rDisplay = class extends RootDisplay {
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
 		if (this.#ch > maxCh) {
-			this.#ch = minCh;
+			this.#ch = minCh + this.#ch & 15;
 		};
 		if (this.#ch < minCh) {
-			this.#ch = maxCh;
+			this.#ch = maxCh - 15 + (this.#ch & 15);
 		};
 		let chOff = this.#ch * ccToPos.length;
 		// Clear out the current working display buffer.
 		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
 		// Screen buffer write begin.
+		// Determine the used font
+		let targetFont = trueMode ? this.trueFont : this.xgFont;
 		// Show current channel
-		this.xgFont.getStr(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+		targetFont.getStr(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
 			let secX = i0 * 6 + 1;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
@@ -931,7 +934,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		});
 		// Show current pitch shift
 		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
-		this.xgFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+		targetFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
 			let secX = i0 * 6 + 1;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
@@ -1043,7 +1046,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		if (bankInfo.length < 4) {
 			bankInfo += `${sum.chContr[chOff + ccToPos[readOffset]]}`.padStart(4 - bankInfo.length, "0");
 		};
-		this.xgFont.getStr(bankInfo).forEach((e0, i0) => {
+		targetFont.getStr(bankInfo).forEach((e0, i0) => {
 			let secX = i0 * 6 + 1;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
@@ -1055,7 +1058,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		});
 		// Render program info
 		let bankName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name).slice(0, 10).padEnd(10, " ");
-		this.xgFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
+		targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
 			let secX = i0 * 6 + 25;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
@@ -1064,7 +1067,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 		});
 		// Render current channel
-		this.xgFont.getStr(`${this.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
+		targetFont.getStr(`${this.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
 			let secX = i0 * 6;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
@@ -1100,7 +1103,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 		});
 		// Render effect types
-		this.xgFont.getStr(trueMode ? "Fx A:001Rev/Cho" : "FxA:001Rev/Cho").forEach((e0, i0) => {
+		targetFont.getStr(trueMode ? "Fx A:001Rev/Cho" : "FxA:001Rev/Cho").forEach((e0, i0) => {
 			let lineChars = trueMode ? 8 : 7;
 			let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
 			secY = Math.floor(i0 / lineChars) * 8;
@@ -1129,7 +1132,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				};
 			};
 			// Actual text
-			this.xgFont.getStr(sum.letter.text).forEach((e0, i0) => {
+			targetFont.getStr(sum.letter.text).forEach((e0, i0) => {
 				let secX = (i0 % 16) * 6 + xShift + 2,
 				secY = Math.floor(i0 / 16) * 8 + 2;
 				e0.forEach((e1, i1) => {
