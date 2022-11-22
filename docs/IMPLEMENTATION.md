@@ -329,7 +329,7 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan=12>System Exclusive</td>
+			<td rowspan=13>System Exclusive</td>
 			<td>General MIDI</td>
 			<td>✓</td>
 			<td></td>
@@ -341,6 +341,11 @@
 		</tr>
 		<tr>
 			<td>YAMAHA XG</td>
+			<td>✓</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>YAMAHA PLG-100SG</td>
 			<td>✓</td>
 			<td></td>
 		</tr>

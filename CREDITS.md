@@ -37,11 +37,11 @@ Octavia will never become a reality without help from the following people.
 * I: John Campbell - Star Games (GS, SC-55) _Recorded by DearHoney on SC-88 Pro_
 * J: David Yackley - One Stop (GM)
 * K: Roland - Orchestra (GS, SC-88 Pro) _Recorded by DearHoney_
-* L: 太田川京子 - Midnight Chaser (GS, SC-88) _Recorded by DearHoney_
+* L: 大田川恭子 - Midnight Chaser (GS, SC-88) _Recorded by DearHoney_
 * M: Michael Z. Land - Introduction (MT-32)
 * N: Roland - Japanese (GS, SC-88 Pro) _Recorded by DearHoney_
 * O: Adrian Scott - Leya's Song (GS, SC-55) _Recorded by DearHoney_
-* P: 久光ひろし - 韋駄天 (GS, SC-88) _Recorded by DearHoney_
+* P: 久光浩 - 韋駄天 (GS, SC-88) _Recorded by DearHoney_
 * Q: David J. Reading - Cybergate (XG) _Recorded by JayB on QY70_
 * R: KORG - Mad Robot (05R/W) _Recorded by DearHoney_
 * S: KORG - Clasitario (AG-10) _Recorded by DearHoney_
@@ -49,3 +49,4 @@ Octavia will never become a reality without help from the following people.
 * U: KORG - The Far East (KROSS 2) _Recorded by PianoManChuck_
 * V: KAWAI - 君がいるだけで (KAWAI GMega) _Recorded by DearHoney, might be replaced due to copyright concerns_
 * W: KAWAI - Do-Re-Mi (KAWAI GMega) _Recorded by DearHoney, might be replaced due to copyright concerns_
+* X: 松任谷由実 - 春よ、来い (XG, PLG-100SG) _Recorded by superdeadite_
