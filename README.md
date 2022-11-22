@@ -6,6 +6,7 @@ _See the [MIDI Implementation Chart](docs/IMPLEMENTATION.md)_
 * Roland MT-32 (partial)
 * KORG AG-10
 * YAMAHA XG
+* YAMAHA PLG-100SG
 * Roland GS
 * KORG X5D
 * KORG 05R/W (no SysEx)
