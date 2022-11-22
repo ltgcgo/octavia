@@ -168,7 +168,7 @@ muu,む
 mee,め
 moo,も
 my,み!
-mm,ン
+mm,
 raa,ら
 rii,り
 ruu,る
@@ -185,7 +185,7 @@ nguu,グ
 ngee,ゲ
 ngoo,ゴ
 ngy,ギ!
-ng,ン
+ng,
 gaa,が
 gii,ぎ
 guu,ぐ
@@ -253,8 +253,10 @@ i,い
 u,う
 e,え
 o,お
+^*,
 *,っ
-^_,
+~,
+^,
 _,`.split("\n").forEach((e) => {
 	let param = e.split(",");
 	xgSgMap[param[0]] = param[1];
