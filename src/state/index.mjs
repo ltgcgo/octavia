@@ -812,6 +812,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.warn(`${eventTypes[json.type] ? eventTypes[json.type] : json.type}${[11, 12].includes(json.type) ? (json.data[0] != undefined ? json.data[0] : json.data).toString() : ""} event sent to CH${rcvPart + 1} without any recipient.`);
 			};
 		};
+		if (this.#metaTexts.length > 100) {
+			this.#metaTexts.splice(100, this.#metaTexts.length - 99);
+		};
 	};
 	runRaw(midiArr) {
 		// Translate raw byte stream into JSON MIDI event
@@ -1295,9 +1298,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				});
 				if (timeNow >= upThis.#convertLastSyllable) {
-					upThis.#metaTexts.unshift("SG:");
+					upThis.#metaTexts.unshift("SG Lyric: ");
 				};
-				upThis.#metaTexts[0] += ` ${getSgKana(vocal)}`;
+				upThis.#metaTexts[0] += `${getSgKana(vocal)}`;
 				upThis.#convertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
 				//console.debug(`${dPref}vocals: ${getSgKana(vocal)}`);
 			} else {
