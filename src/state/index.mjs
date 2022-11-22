@@ -1302,7 +1302,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				upThis.#metaTexts[0] += `${getSgKana(vocal)}`;
 				upThis.#convertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
-				//console.debug(`${dPref}vocals: ${getSgKana(vocal)}`);
+				if (self.debugMode) {
+					console.debug(`${dPref}vocals: ${vocal}`);
+				};
 			} else {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};

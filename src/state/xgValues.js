@@ -271,8 +271,18 @@ let getSgKana = function (seq) {
 			target = target.replace(e, e[0]);
 		};
 	});
+	// Replacement based on the conversion table
 	for (let mark in xgSgMap) {
 		target = target.replaceAll(mark, xgSgMap[mark]);
+	};
+	// Removing the unnecessary ん prefix
+	if (target.indexOf("ん") == 0 && target.length > 1) {
+		target = target.slice(1);
+	};
+	// Removing the trailing special charecters
+	let youOn = target.indexOf("!");
+	if (youOn > -1 && target.length > 1) {
+		target = target.slice(youOn + 1);
 	};
 	return target;
 };
