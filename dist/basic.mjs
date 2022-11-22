@@ -5,6 +5,8 @@ kee,\u3051
 koo,\u3053
 ky,\u304D!
 kw,\u304Fl
+tsu,\u3064
+ts,\u3064l
 saa,\u3055
 sii,\u3059\u3043
 suu,\u3059
@@ -19,8 +21,6 @@ tee,\u3066
 too,\u3068
 tchy,\u3061!
 tchi,\u3061
-tsu,\u3064
-ts,\u3064l
 naa,\u306A
 nii,\u306B
 nuu,\u306C

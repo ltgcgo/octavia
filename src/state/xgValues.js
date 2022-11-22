@@ -127,6 +127,8 @@ kee,け
 koo,こ
 ky,き!
 kw,くl
+tsu,つ
+ts,つl
 saa,さ
 sii,すぃ
 suu,す
@@ -141,8 +143,6 @@ tee,て
 too,と
 tchy,ち!
 tchi,ち
-tsu,つ
-ts,つl
 naa,な
 nii,に
 nuu,ぬ
