@@ -118,12 +118,162 @@ let getXgDelayOffset = function (data) {
 	};
 };
 
+let xgSgVocals = `,a,i,u,e,o,ka,ki,ku,ke,ko,ky,kw,sa,si,su,se,so,sh,ta,ti,tu,te,to,t,ch,t,s,na,ni,nu,ne,no,ny,nn,ha,hi,hu,he,ho,hy,fa,fi,fu,fe,fo,ma,mi,mu,me,mo,my,mm,ya,yu,ye,yo,ra,ri,ru,re,ro,ry,wa,wi,we,wo,ga,gi,gu,ge,go,gy,gw,za,zi,zu,ze,zo,ja,ji,ju,je,jo,jy,da,di,du,de,do,dy,ba,bi,bu,be,bo,by,va,vi,vu,ve,vo,pa,pi,pu,pe,po,py,nga,ngi,ngu,nge,ngo,ngy,ng,hha,hhi,hhu,hhe,hho,hhy,hhw,_,_,,,~,.`.split(",");
+let xgSgMap = {};
+`kaa,か
+kii,き
+kuu,く
+kee,け
+koo,こ
+ky,き!
+kw,くl
+saa,さ
+sii,すぃ
+suu,す
+see,せ
+soo,そ
+shi,し
+sh,し!
+taa,た
+tii,てぃ
+tuu,とぅ
+tee,て
+too,と
+tchy,ち!
+tchi,ち
+tsu,つ
+ts,つl
+naa,な
+nii,に
+nuu,ぬ
+nee,ね
+noo,の
+ny,に!
+nn,ん
+haa,は
+hii,ひ
+huu,ほぅ
+hee,へ
+hoo,ほ
+hi,^
+hy,ひ!
+faa,ふぁ
+fii,ふぃ
+fuu,ふ
+fee,ふぇ
+foo,ふぉ
+maa,ま
+mii,み
+muu,む
+mee,め
+moo,も
+my,み!
+mm,ン
+raa,ら
+rii,り
+ruu,る
+ree,れ
+roo,ろ
+ry,り!
+waa,わ
+wii,うぃ
+wee,うぇ
+woo,を
+ngaa,ンが
+ngii,ンぎ
+nguu,ンぐ
+ngee,ンげ
+ngoo,ンご
+ngy,ンぎ!
+ng,ン
+gaa,が
+gii,ぎ
+guu,ぐ
+gee,げ
+goo,ご
+gy,ぎ!
+gw,ぐl
+zaa,ざ
+zii,ずぃ
+zuu,ず
+zee,ぜ
+zoo,ぞ
+jaa,じゃ
+jii,じ
+juu,じゅ
+jee,じぇ
+joo,じょ
+jy,じ!
+daa,だ
+dii,でぃ
+duu,どぅ
+dee,で
+doo,ど
+dy,で!
+baa,ば
+bii,び
+buu,ぶ
+bee,べ
+boo,ぼ
+by,び!
+va,ゔぁ
+vi,ゔぃ
+vu,ゔ
+ve,ゔぇ
+vo,ゔぉ
+paa,ぱ
+pii,ぴ
+puu,ぷ
+pee,ペ
+poo,ぽ
+py,ぴ!
+!yaa,ゃ
+!yuu,ゅ
+!yee,ぇ
+!yoo,ょ
+yaa,や
+yuu,ゆ
+yee,いぇ
+yoo,よ
+!aa,ゃ
+!uu,ゅ
+!ee,ぇ
+!oo,ょ
+!a,ゃ
+!u,ゅ
+!e,ぇ
+!o,ょ
+la,ぁ
+li,ぃ
+lu,ぅ
+le,ぇ
+lo,ぉ
+a,あ
+i,い
+u,う
+e,え
+o,お
+^_,
+_,`.split("\n").forEach((e) => {
+	let param = e.split(",");
+	xgSgMap[param[0]] = param[1];
+});
+let getSgKana = function (seq) {
+	let target = seq;
+	for (let mark in xgSgMap) {
+		target = target.replaceAll(mark, xgSgMap[mark]);
+	};
+	return target;
+};
+
 export {
 	xgEffType,
 	xgPartMode,
+	xgSgVocals,
 	xgDelOffset,
 	xgNormFreq,
 	xgLfoFreq,
+	getSgKana,
 	getXgRevTime,
 	getXgDelayOffset
 };

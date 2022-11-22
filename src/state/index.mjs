@@ -5,9 +5,11 @@ import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js
 import {
 	xgEffType,
 	xgPartMode,
+	xgSgVocals,
 	xgDelOffset,
 	xgNormFreq,
 	xgLfoFreq,
+	getSgKana,
 	getXgRevTime,
 	getXgDelayOffset
 } from "./xgValues.js";
@@ -120,7 +122,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#mode = 0;
 	#bitmapPage = 0;
 	#bitmapExpire = 0;
-	#bitmapStore = new Array(10); // 10 pages of bitmaps
+	#bitmapStore = new Array(11); // 10 pages of bitmaps, 1 KORG bitmap
 	get #bitmap() {
 		return this.#bitmapStore[this.#bitmapPage];
 	};
@@ -814,6 +816,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		super();
 		let upThis = this;
 		this.#bitmap = new Uint8Array(256);
+		this.#bitmapStore[10] = new Uint8Array(512);
 		this.#metaSeq = new BinaryMatch();
 		// Metadata events
 		// Should be moved to somewhere else
@@ -1268,9 +1271,25 @@ let OctaviaDevice = class extends CustomEventSource {
 			// XG A/D part, won't implement for now
 		}).add([76, 17, 0, 0], (msg) => {
 			// XG A/D mono/stereo mode, won't implement for now
+		}).add([93, 3], (msg, track) => {
+			// PLG-100SG singing voice
+			let part = upThis.chRedir(msg[0], track, true),
+			dPref = `PLG-100SG CH${part + 1} `;
+			if (msg[1] == 0) {
+				// Vocal information
+				let vocal = "";
+				msg.slice(2).forEach((e, i) => {
+					if (i % 2 == 0) {
+						vocal += xgSgVocals[e] || e.toString().padStart("0");
+					};
+				});
+				console.debug(`${dPref}vocals: ${getSgKana(vocal)}`);
+			} else {
+				console.warn(`Unknown PLG-100SG data: ${msg}`);
+			};
 		}).add([112], (msg) => {
 			// XG plugin board
-			console.debug(`XG plugin PLG100-${["VL", "SG", "DX"][msg[0]]} enabled for channel ${msg[2] + 1}.`);
+			console.debug(`XG plugin PLG1-${["00VL", "00SG", "00DX"][msg[0]]} enabled for channel ${msg[2] + 1}.`);
 		});
 		this.#seXg.add([76, 48], (msg) => {
 			// XG drum setup 1
