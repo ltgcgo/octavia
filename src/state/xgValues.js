@@ -118,7 +118,7 @@ let getXgDelayOffset = function (data) {
 	};
 };
 
-let xgSgVocals = `,a,i,u,e,o,ka,ki,ku,ke,ko,ky,kw,sa,si,su,se,so,sh,ta,ti,tu,te,to,t,ch,t,s,na,ni,nu,ne,no,ny,nn,ha,hi,hu,he,ho,hy,fa,fi,fu,fe,fo,ma,mi,mu,me,mo,my,mm,ya,yu,ye,yo,ra,ri,ru,re,ro,ry,wa,wi,we,wo,ga,gi,gu,ge,go,gy,gw,za,zi,zu,ze,zo,ja,ji,ju,je,jo,jy,da,di,du,de,do,dy,ba,bi,bu,be,bo,by,va,vi,vu,ve,vo,pa,pi,pu,pe,po,py,nga,ngi,ngu,nge,ngo,ngy,ng,hha,hhi,hhu,hhe,hho,hhy,hhw,_,_,,,~,.`.split(",");
+let xgSgVocals = `,a,i,u,e,o,ka,ki,ku,ke,ko,ky,kw,sa,si,su,se,so,sh,ta,ti,tu,te,to,t,ch,t,s,na,ni,nu,ne,no,ny,nn,ha,hi,hu,he,ho,hy,fa,fi,fu,fe,fo,ma,mi,mu,me,mo,my,mm,ya,yu,ye,yo,ra,ri,ru,re,ro,ry,wa,wi,we,wo,ga,gi,gu,ge,go,gy,gw,za,zi,zu,ze,zo,ja,ji,ju,je,jo,jy,da,di,du,de,do,dy,ba,bi,bu,be,bo,by,va,vi,vu,ve,vo,pa,pi,pu,pe,po,py,nga,ngi,ngu,nge,ngo,ngy,ng,hha,hhi,hhu,hhe,hho,hhy,hhw,*,_,,,~,.`.split(",");
 let xgSgMap = {};
 `kaa,か
 kii,き
@@ -179,12 +179,12 @@ waa,わ
 wii,うぃ
 wee,うぇ
 woo,を
-ngaa,ンが
-ngii,ンぎ
-nguu,ンぐ
-ngee,ンげ
-ngoo,ンご
-ngy,ンぎ!
+ngaa,ガ
+ngii,ギ
+nguu,グ
+ngee,ゲ
+ngoo,ゴ
+ngy,ギ!
 ng,ン
 gaa,が
 gii,ぎ
@@ -216,11 +216,11 @@ buu,ぶ
 bee,べ
 boo,ぼ
 by,び!
-va,ゔぁ
-vi,ゔぃ
-vu,ゔ
-ve,ゔぇ
-vo,ゔぉ
+vaa,ゔぁ
+vii,ゔぃ
+vuu,ゔ
+vee,ゔぇ
+voo,ゔぉ
 paa,ぱ
 pii,ぴ
 puu,ぷ
@@ -253,6 +253,7 @@ i,い
 u,う
 e,え
 o,お
+*,っ
 ^_,
 _,`.split("\n").forEach((e) => {
 	let param = e.split(",");
@@ -260,6 +261,9 @@ _,`.split("\n").forEach((e) => {
 });
 let getSgKana = function (seq) {
 	let target = seq;
+	if (seq[0] == "*") {
+		target = target.slice(1);
+	};
 	for (let mark in xgSgMap) {
 		target = target.replaceAll(mark, xgSgMap[mark]);
 	};

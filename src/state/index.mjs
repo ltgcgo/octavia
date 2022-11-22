@@ -146,6 +146,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	#subLsb = 0;
 	#masterVol = 100;
 	#metaChannel = 0;
+	#noteLength = 500;
+	#convertLastSyllable = 0;
 	#letterDisp = "";
 	#letterExpire = 0;
 	#modeKaraoke = false;
@@ -705,6 +707,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#nrpn.fill(0);
 		this.#masterVol = 100;
 		this.#metaTexts = [];
+		this.#noteLength = 500;
+		this.#convertLastSyllable = 0;
 		this.#letterExpire = 0;
 		this.#letterDisp = "";
 		this.#bitmapExpire = 0;
@@ -901,6 +905,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#metaRun[33] = function (data, track) {
 			console.debug(`Track ${track} requests to get assigned to output ${data}.`);
 			upThis.#trkAsReq[track] = data + 1;
+		};
+		this.#metaRun[81] = function (data, track) {
+			upThis.#noteLength = data / 1000;
 		};
 		this.#metaRun[127] = function (data, track) {
 			//console.debug(`Sequencer specific on track ${track}: `, data);
@@ -1274,16 +1281,25 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([93, 3], (msg, track) => {
 			// PLG-100SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
-			dPref = `PLG-100SG CH${part + 1} `;
+			dPref = `PLG-100SG CH${part + 1} `,
+			timeNow = Date.now();
 			if (msg[1] == 0) {
 				// Vocal information
-				let vocal = "";
+				let vocal = "",
+				length = 0;
 				msg.slice(2).forEach((e, i) => {
 					if (i % 2 == 0) {
 						vocal += xgSgVocals[e] || e.toString().padStart("0");
+					} else {
+						length += e * 13; // 7.5ms
 					};
 				});
-				console.debug(`${dPref}vocals: ${getSgKana(vocal)}`);
+				if (timeNow >= upThis.#convertLastSyllable) {
+					upThis.#metaTexts.unshift("SG:");
+				};
+				upThis.#metaTexts[0] += ` ${getSgKana(vocal)}`;
+				upThis.#convertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
+				//console.debug(`${dPref}vocals: ${getSgKana(vocal)}`);
 			} else {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};
