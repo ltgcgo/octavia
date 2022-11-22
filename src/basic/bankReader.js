@@ -20,9 +20,17 @@ let VoiceBank = class {
 	get(msb = 0, prg = 0, lsb = 0, mode) {
 		let bankName;
 		let args = Array.from(arguments);
-		if (mode == "gs") {
-			if ((msb == 0) && lsb < 5) {
-				args[2] = 0;
+		switch (mode) {
+			case "xg": {
+				if (msb == 82) {
+					args[0] = 98;
+				};
+			};
+			case "gs": {
+				if ((msb == 0) && lsb < 5) {
+					args[2] = 0;
+				};
+				break;
 			};
 		};
 		if (args[0] == 0) {
@@ -121,6 +129,9 @@ let VoiceBank = class {
 			case 81: {
 				standard = "RW";
 				break;
+			};
+			case 98: {
+				standard = "XG";
 			};
 			case 64:
 			case 126: {
