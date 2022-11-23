@@ -22,8 +22,10 @@ let VoiceBank = class {
 		let args = Array.from(arguments);
 		switch (mode) {
 			case "xg": {
-				if (msb == 82) {
-					args[0] = 98;
+				if (msb == 81) {
+					args[0] = 97; // PLG-100VL/PLG-150VL redirection
+				} else if (msb == 82) {
+					args[0] = 98; // PLG-100SG redirection
 				};
 			};
 			case "gs": {
@@ -31,11 +33,6 @@ let VoiceBank = class {
 					args[2] = 0;
 				};
 				break;
-			};
-		};
-		if (args[0] == 0) {
-			if (args[2] > 111 && args[2] < 120) {
-				args[2] = 0;
 			};
 		};
 		let ending = " ";
@@ -130,8 +127,13 @@ let VoiceBank = class {
 				standard = "RW";
 				break;
 			};
+			case 97: {
+				standard = "VL";
+				break;
+			};
 			case 98: {
-				standard = "XG";
+				standard = "XG"; // PLG-100SG
+				break;
 			};
 			case 64:
 			case 126: {

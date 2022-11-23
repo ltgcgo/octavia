@@ -1199,10 +1199,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			chOff = allocated.cc * part,
 			dPref = `XG CH${part + 1} `,
 			errMsg = `Unknown XG part address ${id}.`;
-			if (id < 1) {
-				console.debug(errMsg);
-			} else if (id < 41) {
-				msg.slice(2).forEach((e, i) => {
+			msg.slice(2).forEach((e, i) => {
+				if (id < 1) {
+					console.debug(errMsg);
+				} else if (id < 41) {
 					// CC manipulation can be further shrunk
 					([() => {
 						upThis.#cc[chOff + ccToPos[0]] = e; // MSB
@@ -1256,24 +1256,24 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						upThis.#cc[chOff + ccToPos[72]] = e; // release
 					}][id + i - 1] || function () {})();
-				});
-			} else if (id < 48) {
-				console.debug(errMsg);
-			} else if (id < 111) {
-				if (id > 102 && id < 105) {
-					upThis.#cc[chOff + ccToPos[[5, 65][id & 1]]] = e; // portamento
+				} else if (id < 48) {
+					console.debug(errMsg);
+				} else if (id < 111) {
+					if (id > 102 && id < 105) {
+						upThis.#cc[chOff + ccToPos[[5, 65][id & 1]]] = e; // portamento
+					};
+				} else if (id < 114) {
+					console.debug(errMsg);
+				} else if (id < 116) {
+					console.debug(`${dPref}EQ ${["bass", "treble"][id & 1]} gain: ${e - 64}dB`);
+				} else if (id < 118) {
+					console.debug(errMsg);
+				} else if (id < 120) {
+					console.debug(`${dPref}EQ ${["bass", "treble"][id & 1]} freq: ${e}`);
+				} else {
+					console.debug(errMsg);
 				};
-			} else if (id < 114) {
-				console.debug(errMsg);
-			} else if (id < 116) {
-				console.debug(`${dPref}EQ ${["bass", "treble"][id & 1]} gain: ${e - 64}dB`);
-			} else if (id < 118) {
-				console.debug(errMsg);
-			} else if (id < 120) {
-				console.debug(`${dPref}EQ ${["bass", "treble"][id & 1]} freq: ${e}`);
-			} else {
-				console.debug(errMsg);
-			};
+			});
 		}).add([76, 10], (msg) => {
 			// XG HPF cutoff at 76, 10, nn, 32
 			// Won't implement for now
