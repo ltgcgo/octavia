@@ -6,6 +6,9 @@ _See the [MIDI Implementation Chart](docs/IMPLEMENTATION.md)_
 * Roland MT-32 (partial)
 * KORG AG-10
 * YAMAHA XG
+* YAMAHA PLG-150AP (no SysEx)
+* YAMAHA PLG-150DR/PC (no SysEx)
+* YAMAHA PLG-150PF (no SysEx)
 * YAMAHA PLG-150VL (no SysEx)
 * YAMAHA PLG-100SG
 * Roland GS
