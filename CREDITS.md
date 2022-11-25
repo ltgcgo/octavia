@@ -51,3 +51,5 @@ Octavia will never become a reality without help from the following people.
 * W: KAWAI - Do-Re-Mi (KAWAI GMega) _Recorded by DearHoney, might be replaced due to copyright concerns_
 * X: 松任谷由実 - 春よ、来い (XG, PLG-100SG) _Recorded by superdeadite_
 * Y: Unknown - VLjazzy (XG, PLG-150VL) _Recorded by DearHoney_
+* Z: 大平勇 - A Phoenix to the 21st Century (Part A, Music Factory) (XG) _Recorded by DearHoney_
+* 0: 大平勇 - A Phoenix to the 21st Century (Part B, Invitation) (XG) _Recorded by DearHoney_

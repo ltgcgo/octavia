@@ -101,6 +101,10 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case 48: {
+				standard = "MU"; // MU-100 Native
+				break;
+			};
 			case 56: {
 				standard = "AG";
 				break;
@@ -123,21 +127,21 @@ let VoiceBank = class {
 			case 63: {
 				standard = "KR";
 			};
+			case 64:
+			case 126: {
+				standard = "XG";
+				break;
+			};
 			case 81: {
 				standard = "RW";
 				break;
 			};
 			case 97: {
-				standard = "VL";
+				standard = "VL"; // PLG-150VL / SONDIUS-XG
 				break;
 			};
 			case 98: {
 				standard = "XG"; // PLG-100SG
-				break;
-			};
-			case 64:
-			case 126: {
-				standard = "XG";
 				break;
 			};
 			case 120: {
