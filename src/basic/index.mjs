@@ -228,22 +228,25 @@ let RootDisplay = class extends CustomEventSource {
 			let curBeat = upThis.noteBeat;
 			// Change time signature
 			let oldNomin = upThis.#noteNomin;
-			let oldDemon = upThis.#noteDenom;
+			let oldDenom = upThis.#noteDenom;
 			upThis.#noteNomin = data[0];
 			upThis.#noteDenom = 1 << data[1];
 			let metroClick = 24 * (32 / data[3]) / data[2];
 			if (oldNomin != upThis.#noteNomin) {
-				if (curBeat < 1) {
+				let targetBar = curBar;
+				upThis.#noteBarOffset -= targetBar * (upThis.#noteNomin - oldNomin);
+				if (curBeat + 1 >= oldNomin) {
 					if (oldNomin < upThis.#noteNomin) {
-						upThis.#noteBarOffset += noteProgress - curBeat - curBar * upThis.#noteNomin;
+						// For example, 4/4 > 6/4
+						//console.warn(`Padded into a new bar.`);
+						upThis.#noteBarOffset -= Math.ceil(upThis.#noteNomin - curBeat - 1);
 					} else {
-						upThis.#noteBarOffset += noteOverall * upThis.#noteNomin / oldNomin;
-						console.warn(`Fuck me! Any trick to make tSig shrinking WORK in any condition!`);
+						// For example, 6/4 > 4/4
+						//console.warn(`Stayed on the bar.`);
+						upThis.#noteBarOffset += upThis.#noteNomin;
 					};
-				} else {
-					upThis.#noteBarOffset += noteProgress - upThis.#noteNomin * (curBar + 1);
 				};
-				console.info(`${upThis.#noteNomin}/${upThis.#noteDenom}`);
+				//console.info(`TSig changed at bar ${upThis.noteBar}, from ${oldNomin}/${oldDenom} to ${upThis.#noteNomin}/${upThis.#noteDenom}.`);
 			};
 		};
 	};
