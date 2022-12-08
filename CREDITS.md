@@ -53,3 +53,5 @@ Octavia will never become a reality without help from the following people.
 * Y: Unknown - VLjazzy (XG, PLG-150VL) _Recorded by DearHoney_
 * Z: 大平勇 - A Phoenix to the 21st Century (Part A, Music Factory) (XG) _Recorded by DearHoney_
 * 0: 大平勇 - A Phoenix to the 21st Century (Part B, Invitation) (XG) _Recorded by DearHoney_
+* 1: Yamaha - Ninety Hipty (XG, MU90) _ROM: JayB, ana&dump: LÉ, fix: JayB, audio: BEXY'S PC, soft: ValleyBell_
+* 2: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle (MT-32)
