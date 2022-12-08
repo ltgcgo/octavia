@@ -4,11 +4,6 @@ import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js
 import {OctaviaDevice, ccToPos} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
-import {VoiceBank} from	"./bankReader.js";
-
-let toZero = function (e, i, a) {
-	a[i] = 0;
-};
 
 MidiParser.customInterpreter = function (type, file, rawMtLen) {
 	let u8Data = [];
@@ -40,7 +35,6 @@ let RootDisplay = class extends CustomEventSource {
 	#midiState = new OctaviaDevice();
 	#midiPool;
 	#titleName = "";
-	voices = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "sg", "plg-150vl", "plg-100sg", "kross");
 	#metaRun = [];
 	#mimicStrength = new Uint8ClampedArray(64);
 	// Used to provide tempo, tSig and bar information
@@ -76,6 +70,12 @@ let RootDisplay = class extends CustomEventSource {
 	};
 	getMode() {
 		return this.#midiState.mode;
+	};
+	getVoice() {
+		return this.#midiState.getVoice(...arguments);
+	};
+	getChVoice(ch) {
+		return this.#midiState.getChVoice(ch);
 	};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;
@@ -176,7 +176,6 @@ let RootDisplay = class extends CustomEventSource {
 			title: this.#titleName,
 			bitmap: this.#midiState.getBitmap(),
 			letter: this.#midiState.getLetter(),
-			names: this.#midiState.getCustomNames(),
 			texts: this.#midiState.getTexts(),
 			master: this.#midiState.getMaster(),
 			mode: this.#midiState.getMode(),
@@ -202,12 +201,12 @@ let RootDisplay = class extends CustomEventSource {
 		this.#midiState.addEventListener("mode", function (ev) {
 			upThis.dispatchEvent("mode", ev.data);
 		});
-		this.#midiState.addEventListener("mapupdate", function (ev) {
+		/*this.#midiState.addEventListener("mapupdate", function (ev) {
 			if (ev.data.clearRange) {
 				upThis.voices.clearRange(ev.data.clearRange);
 			};
 			upThis.voices.load(ev.data.voiceMap, ev.data.overwrite);
-		});
+		});*/
 		this.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;
@@ -238,15 +237,12 @@ let RootDisplay = class extends CustomEventSource {
 				if (curBeat + 1 >= oldNomin) {
 					if (oldNomin < upThis.#noteNomin) {
 						// For example, 4/4 > 6/4
-						//console.warn(`Padded into a new bar.`);
 						upThis.#noteBarOffset -= Math.ceil(upThis.#noteNomin - curBeat - 1);
 					} else {
 						// For example, 6/4 > 4/4
-						//console.warn(`Stayed on the bar.`);
 						upThis.#noteBarOffset += upThis.#noteNomin;
 					};
 				};
-				//console.info(`TSig changed at bar ${upThis.noteBar}, from ${oldNomin}/${oldDenom} to ${upThis.#noteNomin}/${upThis.#noteDenom}.`);
 			};
 		};
 	};

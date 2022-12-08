@@ -46,6 +46,8 @@ stDemo.to = function (i) {
 };
 stDemo.forEach(function (e, i, a) {
 	e.addEventListener("click", async function () {
+		useMidiBus = false;
+		midwIndicator.classList.off("active");
 		audioPlayer.pause();
 		if (!demoBlobs[e.title]?.midi) {
 			demoBlobs[e.title] = {};

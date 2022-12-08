@@ -204,7 +204,9 @@ let VoiceBank = class {
 				});
 			};
 		});
-		console.debug(`Map "${name}": ${allCount} total, ${loadCount} loaded.`);
+		if (!allowOverwrite) {
+			console.debug(`Map "${name || "(internal)"}": ${allCount} total, ${loadCount} loaded.`);
+		};
 	};
 	clearRange(options) {
 		let prg = options.prg != undefined ? (options.prg.constructor == Array ? options.prg : [options.prg, options.prg]) : [0, 127],
