@@ -13,7 +13,8 @@ let gsChecksum = function (sequence) {
 			checksum %= 128;
 		};
 	});
-	return (128 - checksum);
+	checksum = 128 - checksum;
+	return (checksum == 128 ? 0 : checksum);
 };
 
 // Why KORG adds a byte every seven bytes is a mistery to me.

@@ -2,6 +2,7 @@
 
 import {BinaryMatch} from "../../libs/lightfelt@ltgcgo/ext/binMatch.js";
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
+import {VoiceBank} from	"./bankReader.js";
 import {
 	xgEffType,
 	xgPartMode,
@@ -88,9 +89,6 @@ ccAccepted.forEach((e, i) => {
 	ccToPos[e] = i;
 });
 
-let toZero = function (e, i, a) {
-	a[i] = 0;
-};
 let sysExSplitter = function (seq) {
 	let seqArr = [[]];
 	seq?.forEach(function (e) {
@@ -114,7 +112,8 @@ const allocated = {
 	nn: 128, // notes per channel
 	pl: 512, // polyphony
 	tr: 256, // tracks
-	rpn: 6
+	cmt: 14, // C/M timbre storage size
+	rpn: 6,
 };
 
 let OctaviaDevice = class extends CustomEventSource {
@@ -137,11 +136,12 @@ let OctaviaDevice = class extends CustomEventSource {
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
 	#poly = new Uint16Array(allocated.pl); // 512 polyphony allowed
 	#pitch = new Int16Array(allocated.ch); // Pitch for channels, from -8192 to 8191
-	#customName = new Array(allocated.ch); // Allow custom naming
 	#rawStrength = new Uint8Array(allocated.ch);
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
+	#cmPatch = new Uint8Array(1024); // C/M patch storage
+	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M timbre storage (64)
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
@@ -159,6 +159,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
+	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "sg", "plg-150vl", "plg-100sg", "kross"); // Load all possible voice banks
+	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	chRedir(part, track, noConquer) {
 		if (this.#trkAsReq[track]) {
 			// Allow part assigning via meta
@@ -462,7 +464,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Program change
 			this.#chActive[part] = 1;
 			this.#prg[part] = det.data;
-			this.#customName[part] = 0;
 			//console.debug(`T:${det.track} C:${part} P:${det.data}`);
 		},
 		13: function (det) {
@@ -531,10 +532,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		65: (id, msg, track) => {
 			// Roland
 			// CmdId is usually 18 (DT1)
+			// D-50: [20, CmdId]
 			// C/M: [22, CmdId]
 			// GS: [66, CmdId, HH, MM, LL, ...DD, Checksum]
-			if (msg[0] < 64) {
+			if (msg[0] < 16) {
 				this.#seGs.run(msg, track, id);
+				console.warn(`Unknown device SysEx!`);
 			} else {
 				let sentCs = msg.pop();
 				let calcCs = gsChecksum(msg.slice(2));
@@ -647,9 +650,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			expire: this.#bitmapExpire
 		};
 	};
-	getCustomNames() {
-		return this.#customName.slice();
-	};
 	getLetter() {
 		return {
 			text: this.#letterDisp,
@@ -689,9 +689,32 @@ let OctaviaDevice = class extends CustomEventSource {
 	getNrpn() {
 		return this.#nrpn;
 	};
+	getVoice(msb, prg, lsb, mode) {
+		let bank = this.userBank.get(msb || this.#subMsb, prg, lsb || this.#subLsb, mode);
+		if (modeIdx[this.#mode] == "mt32" && bank.name.indexOf("MT-m:") == 0) {
+			// Reload MT-32 user bank transparently
+			let patch = parseInt(bank.name.slice(5)),
+			timbreOff = patch * allocated.cmt,
+			userBank = "";
+			this.#cmTimbre.slice(timbreOff, timbreOff + 10).forEach((e) => {
+				if (e > 31) {
+					userBank += String.fromCharCode(e);
+				};
+			});
+			this.userBank.load(`MSB\tLSB\tPRG\n0\t127\t${prg}\t${userBank}`, true);
+			bank.name = userBank;
+			//console.debug(`Transparently loading MT-32 user bank.`);
+		} else if (bank.ending != " ") {
+			bank = this.baseBank.get(msb || this.#subMsb, prg, lsb || this.#subLsb, mode);
+		};
+		return bank;
+	};
+	getChVoice(part) {
+		return this.getVoice(this.#cc[part * allocated.cc + ccToPos[0]], this.#prg[part], this.#cc[part * allocated.cc + ccToPos[32]], modeIdx[this.#mode]);
+	};
 	init(type = 0) {
 		// Type 0 is full reset
-		// Full reset
+		// Full reset, except the loaded banks
 		this.dispatchEvent("mode", "?");
 		this.#mode = 0;
 		this.#subMsb = 0;
@@ -714,7 +737,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#bitmapExpire = 0;
 		this.#bitmapPage = 0;
 		this.#bitmap.fill(0);
-		this.#customName.fill(0);
 		this.#modeKaraoke = false;
 		// Reset MIDI receive channel
 		this.#chReceive.forEach(function (e, i, a) {
@@ -731,6 +753,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#cc[allocated.cc * 57] = drumMsb[0];
 		// Reset effect storage
 		this.#gsEfxSto.fill(0);
+		// Reset MT-32 user patch and timbre storage
+		this.#cmPatch.fill(0);
+		this.#cmTimbre.fill(0);
 		for (let ch = 0; ch < 64; ch ++) {
 			let chOff = ch * allocated.cc;
 			// Reset to full
@@ -941,12 +966,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (msg[0] == 2) {
 				upThis.init();
 			};
-		});
-		this.#seGs.add([22, 18, 127, 0, 0, 1], () => {
-			// MT-32 reset, refactor needed
-			upThis.switchMode("mt32", true);
-			upThis.#modeKaraoke = false;
-			console.info("MIDI reset: MT-32");
 		});
 		this.#seKg.add([16, 0, 8, 0, 0, 0, 0], () => {
 			// Kawai GMega, refactor needed
@@ -1752,14 +1771,12 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			});
-			upThis.dispatchEvent("mapupdate", {
-				clearRange: {
-					msb: 82,
-					prg: [0, 99],
-					lsb: 0
-				},
-				voiceMap
+			upThis.userBank.clearRange({
+				msb: 82,
+				prg: [0, 99],
+				lsb: 0
 			});
+			upThis.userBank.load(voiceMap);
 		}).add([54, 77, 0], (msg, track) => {
 			// combi dump
 			upThis.switchMode("x5d", true);
@@ -1784,14 +1801,12 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			});
-			upThis.dispatchEvent("mapupdate", {
-				clearRange: {
-					msb: 90,
-					prg: [0, 99],
-					lsb: 0
-				},
-				voiceMap
+			upThis.userBank.clearRange({
+				msb: 90,
+				prg: [0, 99],
+				lsb: 0
 			});
+			upThis.userBank.load(voiceMap);
 		}).add([54, 104], (msg, track) => {
 			// extended multi setup
 			upThis.switchMode("x5d", true);
@@ -1859,6 +1874,97 @@ let OctaviaDevice = class extends CustomEventSource {
 					// What the heck is pitch bend range 0xF4(-12) to 0x0C(12)?
 				};
 			});
+		});
+		// Roland MT-32 or C/M SysEx section
+		this.#seGs.add([22, 18, 127], (msg) => {
+			// MT-32 reset all params
+			upThis.switchMode("mt32", true);
+			upThis.#modeKaraoke = false;
+			console.info("MIDI reset: MT-32");
+		}).add([22, 18, 0], (msg, track, id) => {
+			// MT-32 Part Patch Setup (temp)
+			upThis.switchMode("mt32", true);
+			let part = upThis.chRedir(id, track, true);
+			console.debug(`MT-32 CH${part + 1} Patch: ${msg}`);
+		}).add([22, 18, 1], (msg, track, id) => {
+			// MT-32 Part Drum Setup (temp)
+			upThis.switchMode("mt32", true);
+			let part = upThis.chRedir(id, track, true);
+			console.debug(`MT-32 CH${part + 1} Drum: ${msg}`);
+		}).add([22, 18, 2], (msg, track, id) => {
+			// MT-32 Part Timbre Setup (temp)
+			upThis.switchMode("mt32", true);
+			let part = upThis.chRedir(id, track, true);
+			console.debug(`MT-32 CH${part + 1} (${customName}) Timbre: ${msg}`);
+		}).add([22, 18, 3], (msg, track, id) => {
+			// MT-32 Part Patch Setup (dev)
+			upThis.switchMode("mt32", true);
+			console.debug(`MT-32 Part Patch: ${msg}`);
+		}).add([22, 18, 4], (msg, track, id) => {
+			// MT-32 Part Timbre Setup (dev)
+			upThis.switchMode("mt32", true);
+			console.debug(`MT-32 Part Timbre: ${msg}`);
+		}).add([22, 18, 5], (msg, track, id) => {
+			// MT-32 Patch Memory Write
+			upThis.switchMode("mt32", true);
+			let offset = (msg[0] << 7) + msg[1];
+			msg.slice(2).forEach((e, i) => {
+				let realIndex = (offset + i);
+				let patch = Math.floor(realIndex / 8), slot = (realIndex & 7);
+				let patchOff = patch * 8;
+				upThis.#cmPatch[realIndex] = e;
+				([false, () => {
+					let timbreGroup = upThis.#cmPatch[patchOff];
+					if (timbreGroup < 3) {
+						// Write for bank A, B and M
+						let name = "";
+						if (timbreGroup == 2) {
+							let timbreOff = allocated.cmt * patch;
+							upThis.#cmTimbre.slice(timbreOff, timbreOff + 10).forEach((e) => {
+								if (e > 31) {
+									name += String.fromCharCode(e);
+								};
+							});
+							if (!name.length) {
+								name = `MT-m:${e.toString().padStart(3, "0")}`;
+							};
+						} else {
+							name = upThis.baseBank.get(0, e + (timbreGroup << 6), 127, "mt32").name;
+						};
+						upThis.userBank.clearRange({msb: 0, lsb: 127, prg: patch});
+						upThis.userBank.load(`MSB\tLSB\tPRG\tNME\n000\t127\t${patch}\t${name}`, true);
+						//console.debug(`MT-32 patch ${patch + 1} name (${"ABMR"[timbreGroup]}): ${name}`);
+					};
+					//console.debug(`MT-32 patch ${patch + 1} timbre number: ${e + 1}`);
+				}][slot] || function () {})();
+			});
+		}).add([22, 18, 8], (msg, track, id) => {
+			// MT-32 Timbre Memory Write
+			upThis.switchMode("mt32", true);
+			//let customName = "";
+			msg.slice(2, 16).forEach((e, i) => {
+				/* if (i < 10 && e > 31) {
+					customName += String.fromCharCode(e);
+				}; */
+				upThis.#cmTimbre[(msg[0] >> 1) * allocated.cmt + i] = e;
+			});
+			/* console.debug(`MT-32 timbre ${msg[0] >> 1} written as "${customName}".`); */
+		}).add([22, 18, 16], (msg, track, id) => {
+			// MT-32 System Setup
+			upThis.switchMode("mt32", true);
+			console.debug(`MT-32 System Setup: ${msg}`);
+		}).add([22, 18, 32], (msg) => {
+			// MT-32 Text Display
+			upThis.switchMode("mt32", true);
+			let offset = msg[1];
+			let text = " ".repeat(offset);
+			msg.slice(2).forEach((e) => {
+				if (e > 31) {
+					text += String.fromCharCode(e);
+				};
+			});
+			upThis.#letterDisp = text.padStart(20, " ");
+			upThis.#letterExpire = Date.now() + 3200;
 		});
 		// KORG NS5R SysEx section
 		this.#seAi.add([66, 0], (msg, track) => {
@@ -2144,13 +2250,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			});
-			upThis.dispatchEvent("mapupdate", {
-				clearRange: {
-					msb: 80,
-					lsb: 0
-				},
-				voiceMap
+			upThis.userBank.clearRange({
+				msb: 80,
+				lsb: 0
 			});
+			upThis.userBank.load(voiceMap);
 		}).add([66, 55], (msg, track) => {
 			// All combination dump
 			// Just modified from above
@@ -2182,13 +2286,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			});
-			upThis.dispatchEvent("mapupdate", {
-				clearRange: {
-					msb: 88,
-					lsb: 0
-				},
-				voiceMap
+			upThis.userBank.clearRange({
+				msb: 88,
+				lsb: 0
 			});
+			upThis.userBank.load(voiceMap);
 		}).add([66, 125], (msg) => {
 			// Backlight
 			upThis.dispatchEvent("backlight", ["green", "orange", "red", false, "yellow", "blue", "purple"][msg[0]] || "white");

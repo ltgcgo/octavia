@@ -67,11 +67,7 @@ let TuiDisplay = class extends RootDisplay {
 				maxCh = i;
 				let chOffset = i * ccToPos.length;
 				if (line < fields.length - 5 && i >= (self.minCh || 0)) {
-					let voiceName = upThis.voices.get(sum.chContr[chOffset + ccToPos[0]], sum.chProgr[i], sum.chContr[chOffset + ccToPos[32]], sum.mode);
-					if (sum.names[i]) {
-						voiceName.name = sum.names[i];
-						voiceName.ending = "~";
-					};
+					let voiceName = upThis.getChVoice(i);
 					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]} ${sum.chContr[chOffset + ccToPos[65]] > 63 ? "O" : "X"}${map[sum.chContr[chOffset + ccToPos[5]] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
 						if (e1 > 0) {
@@ -310,7 +306,7 @@ let MuDisplay = class extends RootDisplay {
 			};
 			// Render fonts
 			if (rendMode < 2) {
-				let voiceName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name).slice(0, 8).padEnd(8, " ");
+				let voiceName = (upThis.getChVoice(this.#ch).name).slice(0, 8).padEnd(8, " ");
 				let bnkInfo = `\u0080${(sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0")}\u0081${((sum.chProgr[this.#ch] || 0) + 1).toString().padStart(3, "0")}`;
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
@@ -409,9 +405,9 @@ let MuDisplay = class extends RootDisplay {
 			useBm = this.#bmdb.slice();
 			if (timeNow >= this.#bmex) {
 				this.#bmst = 0;
-				useBm = this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name) || this.voxBm.getBm(upThis.voices.get(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
+				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
 				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
-					useBm = this.voxBm.getBm(upThis.voices.get(0, sum.chProgr[this.#ch], 0, sum.mode).name)
+					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 				};
 				if (!useBm) {
 					useBm = this.sysBm.getBm("no_abm");
@@ -585,7 +581,7 @@ let ScDisplay = class extends RootDisplay {
 		} else {
 			infoTxt = `${sum.chProgr[this.#ch] + 1}`.padStart(3, "0");
 			infoTxt += " ";
-			infoTxt += (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name).slice(0, 12).padEnd(12, " ");
+			infoTxt += (upThis.getChVoice(this.#ch).name).slice(0, 12).padEnd(12, " ");
 			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
 					let pX = i0 * 6 + i1 % 5,
@@ -1057,7 +1053,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 		});
 		// Render program info
-		let bankName = (sum.names[this.#ch] || upThis.voices.get(sum.chContr[chOff + ccToPos[0]], sum.chProgr[this.#ch], sum.chContr[chOff + ccToPos[32]], sum.mode).name).slice(0, 10).padEnd(10, " ");
+		let bankName = (upThis.getChVoice(this.#ch).name).slice(0, 10).padEnd(10, " ");
 		targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
 			let secX = i0 * 6 + 25;
 			e0.forEach((e1, i1) => {
