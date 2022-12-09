@@ -40,7 +40,7 @@ const substList = [
 	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 63, 0, 0],
 	[0, 0, 1, 0, 0,   127, 0, 0,  0,  0,  0,  0, 0]
 ];
-const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 127];
+const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 122];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -704,7 +704,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.userBank.load(`MSB\tLSB\tPRG\n0\t127\t${prg}\t${userBank}`, true);
 			bank.name = userBank;
 			//console.debug(`Transparently loading MT-32 user bank.`);
-		} else if (bank.ending != " ") {
+		} else if (bank.ending != " " || !bank.name.length) {
 			bank = this.baseBank.get(msb || this.#subMsb, prg, lsb || this.#subLsb, mode);
 		};
 		return bank;
@@ -850,6 +850,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#bitmap = new Uint8Array(256);
 		this.#bitmapStore[10] = new Uint8Array(512);
 		this.#metaSeq = new BinaryMatch();
+		// Prevent bank readers from getting stalled
+		this.userBank.load(`MSB\tPRG\tLSB\tNME\n062\t000\t000\t\n122\t000\t000\t\n122\t001\t000\t\n122\t002\t000\t\n122\t003\t000\t\n122\t004\t000\t\n122\t005\t000\t\n122\t006\t000\t`);
 		// Metadata events
 		// Should be moved to somewhere else
 		this.#metaRun[1] = function (data) {
