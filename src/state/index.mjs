@@ -969,12 +969,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.init();
 			};
 		});
-		this.#seKg.add([16, 0, 8, 0, 0, 0, 0], () => {
-			// Kawai GMega, refactor needed
-			upThis.switchMode("k11", true);
-			upThis.#modeKaraoke = false;
-			console.info("MIDI reset: KAWAI GMega/K11");
-		});
 		// GM SysEx section
 		this.#seUr.add([4, 1], (msg) => {
 			// Master volume
@@ -2300,6 +2294,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			// N1R to NS5R redirector
 			upThis.#seAi.run([66, ...msg], track, id);
 		});
+		this.#seKg.add([16, 0, 8, 0, 0, 0, 0], () => {
+			// Kawai GMega, refactor needed
+			upThis.switchMode("k11", true);
+			upThis.#modeKaraoke = false;
+			console.info("MIDI reset: KAWAI GMega/K11");
+		});
 		this.#seSg.add([66, 93, 64], (msg, track, id) => {
 			let e = msg[2];
 			switch (msg[0]) {
@@ -2360,7 +2360,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			};
-		}).add([]);
+		});
+		this.#seCs.add([9], (msg, track, id) => {
+			// CASIO GZ-50M cc91 effect type set
+			console.debug(`GZ set effect: ${["stage reverb", "hall reverb", "room reverb", "chorus", "tremelo", "phaser", "rotary speaker", "enhancer", "flanger", "EQ"][msg[0]] || "off"}`);
+		});
 	};
 };
 
