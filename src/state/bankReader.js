@@ -22,7 +22,9 @@ let VoiceBank = class {
 		let args = Array.from(arguments);
 		switch (mode) {
 			case "xg": {
-				if (msb == 81) {
+				if (msb == 80) {
+					args[0] = 96; // PLG-150PF and PLG-150AP redirection
+				} else if (msb == 81) {
 					args[0] = 97; // PLG-100VL/PLG-150VL redirection
 				} else if (msb == 82) {
 					args[0] = 98; // PLG-100SG redirection
@@ -44,11 +46,11 @@ let VoiceBank = class {
 				} else if (args[2] == 126) {
 					sect = "MT-b";
 				} else if (args[2] == 7) {
-					sect = "SP-k";
+					sect = "GM-k"; // KAWAI GMega LX
 				} else if (args[2] == 5) {
-					sect = "SG-v";
+					sect = "SG-a"; // AKAI SG01k
 				} else if (args[2] == 4) {
-					sect = "SP-l";
+					sect = "SP-l"; // KAWAI GMega SP
 				} else if (args[2] == 0) {
 					sect = "GM-a";
 				} else if (mode == "gs" && args[2] < 5) {
@@ -56,6 +58,14 @@ let VoiceBank = class {
 				} else {
 					sect = "y";
 					useLsb = true;
+				};
+				break;
+			};
+			case 8: {
+				if (mode == "sg") {
+					sect = "GM-s";
+				} else {
+					sect = "r:";
 				};
 				break;
 			};
@@ -101,6 +111,14 @@ let VoiceBank = class {
 				sect = `Cmb${"UABC"[args[0] - 88]}`;
 				break;
 			};
+			case 96: {
+				sect = (args[2] == 106 ? "AP-a" : "PF");
+				if (args[2] > 63) {
+					baseShift = 63;
+				};
+				useLsb = true;
+				break;
+			};
 			case 97: {
 				sect = "VL:";
 				useLsb = true;
@@ -112,7 +130,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 121: {
-				sect = "GM";
+				sect = "GM-";
 				useLsb = true;
 				break;
 			};
