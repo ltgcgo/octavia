@@ -3,7 +3,7 @@
 
 ## Supported standard/devices
 _See the [MIDI Implementation Chart](docs/IMPLEMENTATION.md)_
-* Roland MT-32 (partial)
+* Roland MT-32
 * KORG AG-10
 * YAMAHA XG
 * YAMAHA PLG-150AP (no SysEx)

@@ -329,7 +329,7 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan=13>System Exclusive</td>
+			<td rowspan=17>System Exclusive</td>
 			<td>General MIDI</td>
 			<td>✓</td>
 			<td></td>
@@ -342,6 +342,21 @@
 		<tr>
 			<td>YAMAHA XG</td>
 			<td>✓</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>YAMAHA PLG-150AP</td>
+			<td>✕</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>YAMAHA PLG-150DR/PC</td>
+			<td>✕</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>YAMAHA PLG-150PF</td>
+			<td>✕</td>
 			<td></td>
 		</tr>
 		<tr>
