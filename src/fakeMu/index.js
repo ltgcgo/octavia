@@ -175,3 +175,5 @@ getBridge().addEventListener("message", function (ev) {
 		muVis.sendCmd(ev.data);
 	};
 });
+
+//self.visualizer = muVis;

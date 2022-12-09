@@ -405,7 +405,11 @@ let MuDisplay = class extends RootDisplay {
 			useBm = this.#bmdb.slice();
 			if (timeNow >= this.#bmex) {
 				this.#bmst = 0;
+				let standard = upThis.getChVoice(this.#ch).standard;
 				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
+				if (this.getMode() == "xg") {
+					useBm = this.sysBm.getBm(`plg_${standard.toLowerCase()}`);
+				};
 				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
 					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 				};
