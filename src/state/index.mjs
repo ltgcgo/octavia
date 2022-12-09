@@ -2294,12 +2294,84 @@ let OctaviaDevice = class extends CustomEventSource {
 			// N1R to NS5R redirector
 			upThis.#seAi.run([66, ...msg], track, id);
 		});
-		this.#seKg.add([16, 0, 8, 0, 0, 0, 0], () => {
-			// Kawai GMega, refactor needed
-			upThis.switchMode("k11", true);
-			upThis.#modeKaraoke = false;
-			console.info("MIDI reset: KAWAI GMega/K11");
+		// Kawai GMega
+		this.#seKg.add([16, 0, 8, 0], (msg, track, id) => {
+			// GMega system section
+			let e = (msg[2] << 4) + msg[3];
+			let dPref = "K11 ";
+			([() => {
+				// GMega bank set
+				upThis.switchMode("k11", true);
+				upThis.#modeKaraoke = false;
+				upThis.#subLsb = e ? 4 : 0;
+				console.info("MIDI reset: GMega/K11");
+			}, () => {
+				console.debug(`${dPref}reverb type: ${e}`);
+			}, () => {
+				console.debug(`${dPref}reverb time: ${e}`);
+			}, () => {
+				console.debug(`${dPref}reverb time: ${e}`);
+			}, () => {
+				console.debug(`${dPref}reverb predelay: ${e}`);
+			}, () => {
+				console.debug(`${dPref}reverb predelay: ${e}`);
+			}, () => {
+				console.debug(`${dPref}depth high: ${e}`);
+			}, () => {
+				console.debug(`${dPref}depth high: ${e}`);
+			}, () => {
+				console.debug(`${dPref}depth low: ${e}`);
+			}, () => {
+				console.debug(`${dPref}depth low: ${e}`);
+			}][msg[0]] || function () {})();
+		}).add([16, 0, 8, 1], (msg, track, id) => {
+			// GMega part setup
+			let part = upThis.chRedir(msg[1], track, true),
+			chOff = allocated.cc * part,
+			rpnOff = allocated.rpn * part,
+			e = (msg[3] << 4) + msg[4];
+			let dPref = `K11 CH${part + 1} `;
+			([() => {
+				if (e < 128) {
+					// Melodic voice
+					upThis.#cc[chOff + ccToPos[0]] = 0;
+					upThis.#prg[part] = e;
+				} else {
+					// Drum kit
+					upThis.#cc[chOff + ccToPos[0]] = 122;
+					upThis.#prg[part] = e - 128;
+				};
+			}, () => {
+				let ch = upThis.chRedir(e, track, true);
+				upThis.#chReceive[part] = ch; // Rx CH
+				if (part != ch) {
+					upThis.buildRchTree();
+					console.info(`${dPref}receives from CH${ch + 1}`);
+				};
+			}, () => {
+				upThis.#cc[chOff + ccToPos[7]] = e; // volume
+			}, () => {
+				upThis.#chActive[part] = e; // toggle channel
+			}, () => {
+				upThis.#cc[chOff + ccToPos[10]] = e; // pan
+			}, () => {
+				upThis.#rpn[rpnOff + 3] = e + 40; // coarse tune
+			}, () => {
+				upThis.#rpn[rpnOff + 1] = e >> 1; // fine tune
+				upThis.#rpn[rpnOff + 2] = e & 1;
+			}, () => {
+				upThis.#cc[chOff + ccToPos[91]] = e ? 127 : 0; // reverb
+			}, () => {
+				// What is a negative bend depth/sensitivity?
+			}, () => {
+				upThis.#cc[chOff + ccToPos[74]] = e; // brightness
+			}, () => {
+				upThis.#cc[chOff + ccToPos[73]] = e; // attack
+			}, () => {
+				upThis.#cc[chOff + ccToPos[72]] = e; // release
+			}][msg[0]] || function () {})();
 		});
+		// AKAI SG
 		this.#seSg.add([66, 93, 64], (msg, track, id) => {
 			let e = msg[2];
 			switch (msg[0]) {
