@@ -2370,6 +2370,75 @@ let OctaviaDevice = class extends CustomEventSource {
 			}, () => {
 				upThis.#cc[chOff + ccToPos[72]] = e; // release
 			}][msg[0]] || function () {})();
+		}).add([16, 0, 9, 0], (msg, track, id) => {
+			// GMega LX system section
+			let e = (msg[2] << 4) + msg[3];
+			let dPref = "GMLX ";
+			([() => {
+				console.debug(`${dPref}reverb type: ${e}`);
+			}, () => {
+				console.debug(`${dPref}reverb time: ${e}`);
+			}, () => {
+				console.debug(`${dPref}reverb predelay: ${e}`);
+			}, () => {
+				console.debug(`${dPref}depth high: ${e}`);
+			}, () => {
+				console.debug(`${dPref}depth low: ${e}`);
+			}][msg[0]] || function () {})();
+		}).add([16, 0, 9, 3], (msg, track, id) => {
+			// GMega LX part setup 1
+			let e = (msg[2] << 4) + msg[3];
+			let part = upThis.chRedir(msg[1], track, true),
+			chOff = part * allocated.cc;
+			[() => {
+				if (e < 128) {
+					// Melodic voice
+					upThis.#cc[chOff + ccToPos[0]] = 0;
+					upThis.#cc[chOff + ccToPos[32]] = 0;
+					upThis.#prg[part] = e;
+				} else if (e < 160) {
+					// Melodic voice
+					upThis.#cc[chOff + ccToPos[0]] = 0;
+					upThis.#cc[chOff + ccToPos[32]] = 7;
+					upThis.#prg[part] = e - 100;
+				} else {
+					// Drum kit
+					upThis.#cc[chOff + ccToPos[0]] = 122;
+					upThis.#cc[chOff + ccToPos[32]] = 0;
+					upThis.#prg[part] = e - 160;
+				};
+			}, () => {
+				let ch = upThis.chRedir(e, track, true);
+				upThis.#chReceive[part] = ch; // Rx CH
+				if (part != ch) {
+					upThis.buildRchTree();
+					console.info(`GMLX CH${part + 1} receives from CH${ch + 1}`);
+				};
+			}][msg[0]]();
+		}).add([16, 0, 9, 4], (msg, track, id) => {
+			// GMega LX part setup 2
+			let e = (msg[2] << 4) + msg[3];
+			let part = upThis.chRedir(msg[1], track, true),
+			chOff = part * allocated.cc,
+			rpnOff = part * allocated.rpn;
+			let dPref = `GMLX CH${part + 1} `;
+			[() => {
+				upThis.#chActive[part] = e; // toggle channel
+			}, () => {
+				upThis.#cc[chOff + ccToPos[7]] = e; // volume
+			}, () => {
+				upThis.#cc[chOff + ccToPos[10]] = e; // pan
+			}, () => {
+				upThis.#cc[chOff + ccToPos[91]] = e ? 127 : 0; // reverb
+			}, () => {
+				upThis.#rpn[rpnOff + 3] = e + 40; // coarse tune
+			}, () => {
+				upThis.#rpn[rpnOff + 1] = e; // fine tune
+			}, () => {
+				upThis.#rpn[rpnOff] = e; // pitch bend sensitivity
+			}, () => {
+				// mod depth
+			}][msg[0]]();
 		});
 		// AKAI SG
 		this.#seSg.add([66, 93, 64], (msg, track, id) => {
