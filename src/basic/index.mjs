@@ -69,7 +69,7 @@ let RootDisplay = class extends CustomEventSource {
 		this.#midiState.switchMode(modeName, forced);
 	};
 	getMode() {
-		return this.#midiState.mode;
+		return this.#midiState.getMode();
 	};
 	getVoice() {
 		return this.#midiState.getVoice(...arguments);
