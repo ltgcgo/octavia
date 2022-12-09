@@ -36,6 +36,12 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case "sg": {
+				if (msb == 8 && lsb == 0) {
+					args[2] = 5;
+				};
+				break;
+			};
 		};
 		let ending = " ", sect = `M`, useLsb = false, baseShift = 0;
 		// Section test
@@ -214,7 +220,7 @@ let VoiceBank = class {
 				};
 			};
 		};
-		if (mode == "gs" && ending == "^") {
+		if ((mode == "gs") && ending == "^") {
 			ending = " ";
 		};
 		if (ending != " ") {
@@ -269,6 +275,10 @@ let VoiceBank = class {
 			};
 			case 81: {
 				standard = "RW";
+				break;
+			};
+			case 96: {
+				standard = args[2] == 106 ? "AP" : "PF";
 				break;
 			};
 			case 97: {
