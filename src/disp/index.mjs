@@ -939,108 +939,10 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 		});
 		// Render bank background
+		let bankFetched = upThis.getChVoice(this.#ch), bankInfo = bankFetched.sect;
 		for (let bankSect = 0; bankSect < 225; bankSect ++) {
 			let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
 			this.#nmdb[pixY * 144 + pixX] = 1;
-		};
-		// Show current bank
-		let bankInfo = "", readOffset = 0;
-		switch (sum.chContr[chOff + ccToPos[0]]) {
-			case 0: {
-				let lsb = sum.chContr[chOff + ccToPos[32]];
-				if (lsb == 127) {
-					bankInfo = "MT-a";
-				} else if (lsb == 126) {
-					bankInfo = "MT-b";
-				} else if (lsb == 7) {
-					bankInfo = "SP-k";
-				} else if (lsb == 5) {
-					bankInfo = "SG-v";
-				} else if (lsb == 4) {
-					bankInfo = "SP-l";
-				} else if (lsb == 0) {
-					bankInfo = "GM-a";
-				} else if (this.#mode == "gs" && lsb < 5) {
-					bankInfo = "GM-a";
-				} else {
-					bankInfo = "y";
-					readOffset = 32;
-				};
-				break;
-			};
-			case 48: {
-				bankInfo = "yM";
-				readOffset = 32;
-				break;
-			};
-			case 56: {
-				bankInfo = "GM-b";
-				break;
-			};
-			case 61:
-			case 120: {
-				bankInfo = "rDrm";
-				break;
-			};
-			case 62: {
-				bankInfo = "kDrm";
-				break;
-			};
-			case 63: {
-				let kLsb = sum.chContr[chOff + ccToPos[32]];
-				bankInfo = (kLsb < 10) ? "kP:" : "kC:";
-				bankInfo += kLsb % 10;
-				break;
-			};
-			case 64: {
-				bankInfo = "ySFX";
-				break;
-			};
-			case 80:
-			case 81:
-			case 82:
-			case 83: {
-				bankInfo = `Prg${"UABC"[sum.chContr[chOff + ccToPos[0]] - 80]}`;
-				break;
-			};
-			case 88:
-			case 89:
-			case 90:
-			case 91: {
-				bankInfo = `Cmb${"UABC"[sum.chContr[chOff + ccToPos[0]] - 88]}`;
-				break;
-			};
-			case 121: {
-				bankInfo = "g";
-				readOffset = 32;
-				break;
-			};
-			case 122: {
-				bankInfo = "lDrm";
-				break;
-			};
-			case 126: {
-				bankInfo = "yDrS";
-				break;
-			};
-			case 127: {
-				if (sum.chContr[chOff + ccToPos[32]] == 127) {
-					bankInfo = "rDrm";
-				} else {
-					bankInfo = "yDrm";
-				};
-				break;
-			};
-			default: {
-				if (sum.chContr[chOff + ccToPos[0]] < 48) {
-					bankInfo = "r:";
-				} else {
-					bankInfo = "M";
-				};
-			};
-		};
-		if (bankInfo.length < 4) {
-			bankInfo += `${sum.chContr[chOff + ccToPos[readOffset]]}`.padStart(4 - bankInfo.length, "0");
 		};
 		targetFont.getStr(bankInfo).forEach((e0, i0) => {
 			let secX = i0 * 6 + 1;
@@ -1053,7 +955,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 		});
 		// Render program info
-		let bankName = (upThis.getChVoice(this.#ch).name).slice(0, 10).padEnd(10, " ");
+		let bankName = (bankFetched.name).slice(0, 10).padEnd(10, " ");
 		targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
 			let secX = i0 * 6 + 25;
 			e0.forEach((e1, i1) => {

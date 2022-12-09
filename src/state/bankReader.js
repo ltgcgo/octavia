@@ -35,7 +35,115 @@ let VoiceBank = class {
 				break;
 			};
 		};
-		let ending = " ";
+		let ending = " ", sect = `M`, useLsb = false, baseShift = 0;
+		// Section test
+		switch (args[0]) {
+			case 0: {
+				if (args[2] == 127) {
+					sect = "MT-a";
+				} else if (args[2] == 126) {
+					sect = "MT-b";
+				} else if (args[2] == 7) {
+					sect = "SP-k";
+				} else if (args[2] == 5) {
+					sect = "SG-v";
+				} else if (args[2] == 4) {
+					sect = "SP-l";
+				} else if (args[2] == 0) {
+					sect = "GM-a";
+				} else if (mode == "gs" && args[2] < 5) {
+					sect = "GM-a";
+				} else {
+					sect = "y";
+					useLsb = true;
+				};
+				break;
+			};
+			case 48: {
+				sect = "yM";
+				useLsb = true;
+				break;
+			};
+			case 56: {
+				sect = "GM-b";
+				break;
+			};
+			case 61:
+			case 120: {
+				sect = "rDrm";
+				break;
+			};
+			case 62: {
+				sect = "kDrm";
+				break;
+			};
+			case 63: {
+				let kLsb = args[2];
+				sect = (kLsb < 10) ? "kP:" : "kC:";
+				sect += kLsb % 10;
+				break;
+			};
+			case 64: {
+				sect = "ySFX";
+				break;
+			};
+			case 80:
+			case 81:
+			case 82:
+			case 83: {
+				sect = `Prg${"UABC"[args[0] - 80]}`;
+				break;
+			};
+			case 88:
+			case 89:
+			case 90:
+			case 91: {
+				sect = `Cmb${"UABC"[args[0] - 88]}`;
+				break;
+			};
+			case 97: {
+				sect = "VL:";
+				useLsb = true;
+				baseShift = 112;
+				break;
+			};
+			case 98: {
+				sect = "SG-a";
+				break;
+			};
+			case 121: {
+				sect = "GM";
+				useLsb = true;
+				break;
+			};
+			case 122: {
+				sect = "lDrm";
+				break;
+			};
+			case 126: {
+				sect = "yDrS";
+				break;
+			};
+			case 127: {
+				if (args[2] == 127) {
+					sect = "rDrm";
+				} else {
+					sect = "yDrm";
+				};
+				break;
+			};
+			default: {
+				if (args[0] < 48) {
+					sect = "r:";
+				} else {
+					sect = "M";
+				};
+			};
+		};
+		if (sect.length < 4) {
+			sect += `${(useLsb ? lsb : msb) - baseShift}`.padStart(4 - sect.length, "0");
+		};
+		// Bank read
 		while (!(bankName?.length >= 0)) {
 			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
 			if (!bankName) {
@@ -45,6 +153,9 @@ let VoiceBank = class {
 					if (msb == 62) {
 						args[1] --;
 						ending = " ";
+						if (args[1] < 1 && !bankName?.length) {
+							ending = "*";
+						};
 					} else if (msb < 64) {
 						if (mode == "xg" && msb == 16) {
 							bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
@@ -68,7 +179,13 @@ let VoiceBank = class {
 						} else {
 							args[1] %= 7;
 						};
-						ending = " ";
+						bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
+						if (bankName) {
+							ending = " ";
+						} else {
+							bankName = "";
+							ending = "*";
+						};
 					} else if (args[1] == 0) {
 						bankName = `${msb.toString().padStart(3, "0")} ${prg.toString().padStart(3, "0")} ${lsb.toString().padStart(3, "0")}`;
 						ending = "!";
@@ -173,6 +290,7 @@ let VoiceBank = class {
 		return {
 			name: bankName || (msb || 0).toString().padStart(3, "0") + " " + (prg || 0).toString().padStart(3, "0") + " " + (lsb || 0).toString().padStart(3, "0"),
 			ending,
+			sect,
 			standard
 		};
 	};
