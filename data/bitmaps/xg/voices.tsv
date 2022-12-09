@@ -1,14 +1,16 @@
 RsrcName	Bitmap
+Aco.Bass	00000000300079007f04fe08800dfffefffffc0bfc01fc007400200000000000
 Acordion	7ffc40045554555455547ffc7ffe6aaa7ffe3ffe40003ffe40007ffe7aae3d5e
 Alto Sax	3a007e00cd008f000e88078c070c070c039e039e03bf01ff01fc00f800f00060
 DrawOrgn	07e007e07ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe6a0a55566a4a55567ffe
 EGrndPno	1e003f003f807fe07ffc7ffe7ffe7ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe
-El.Piano	7ffe7ffe54aa54aa40027ffe7ffe4002400240024002400240027ffe7ffe4142
+ElPiano1	7ffe7ffe54aa54aa40027ffe7ffe4002400240024002400240027ffe7ffe4142
 Eng.Horn	0000000000000000000005513aafefff3fbf0041000000000000000000000000
 Flute	0000000000000000000000000550baaffaafffff000000000000000000000000
 FrchHorn	4000408040c040604e705b78517c6ffe7afe6ef87af06fe031c03bc01f800f00
 GrandPno	fffcfffc9ffebffe9ffebffe9ffe9ffebffc9ffcbff89fc0bf009f00fe00fe00
 Harmnica	0000000000003ffc6aac7ffe40024002600660064002400240023ffc00000000
+Ice Rain	f7fff7ffebbdebbbed57dd6fdeffdeffbfffbfffaa55ea55ea55e001e0011ffe
 NewAgePd	ffffdfffdd57ad57dd57dfffffff8001ffffffffea55ea55ea55e001e0011ffe
 OvrDrvGt	300078007dc0ffc0ff04e10ae3fde3fee3ffe109e100e500cf80d98070002000
 Recorder	000000000000000000007405fffffeafffff7405000000000000000000000000
@@ -25,55 +27,78 @@ Trombone	00100010003000707ff0fff0a270a230a210fffe7fff012112411fff1ffe1000
 Trumpet	05410541000305438547c54fffffffffffffd83f901718331ff30fe100010000
 Agogo	@TnklBell
 Anal.Str	@Strings1
+Atmosphr	@Ice Rain
 Bass&Ld	@SquareLd
 BigOrgan	@DrawOrgn
 Big Strs	@Strings1
 BrasBand	@Trombone
 BrasSect	@Trombone
 BrsSwell	@Trombone
+Bright	@Ice Rain
 BritePno	@GrandPno
 CaliopLd	@SquareLd
 CelloEns	@Strings1
 CharanLd	@SquareLd
+Chiff Ld	@SquareLd
 ChoirAah	@SynVoice
 ChoirPad	@NewAgePd
+ChrchOrg	@DrawOrgn
 Chrunchr	@OvrDrvGt
+CleanGtr	@OvrDrvGt
 ClickOrg	@DrawOrgn
+Crystal	@Ice Rain
 Digi.Saw	@SquareLd
 Dist.Gtr	@OvrDrvGt
-ElPiano2	@El.Piano
+Echoes	@Ice Rain
+ElPiano2	@ElPiano1
 EuroPipe	@DrawOrgn
 Fifth Ld	@SquareLd
+FngrBass	@Aco.Bass
+Fretless	@Aco.Bass
+Goblins	@Ice Rain
 GtrHarmo	@OvrDrvGt
 Halo Pad	@NewAgePd
 HardTine	@EGrndPno
+Jazz Gtr	@OvrDrvGt
+JoyStick	@OvrDrvGt
 Killer B	@DrawOrgn
 MagicFlu	@Flute
 Mega Syn	@SquareLd
 MelodTom	@Taiko
 MetalPad	@NewAgePd
+MonoLead	@SquareLd
+MutedGtr	@OvrDrvGt
 MutedTrp	@Trumpet
 PercOrgn	@DrawOrgn
+PickBass	@Aco.Bass
 PolySyPd	@NewAgePd
 ReedOrgn	@DrawOrgn
 RevCymbl	@TnklBell
 RockOn!!	@OvrDrvGt
 RockOrgn	@DrawOrgn
 Saw Lead	@SquareLd
+Sci-Fi	@Ice Rain
+SforzBrs	@Trombone
+SlpBass1	@Aco.Bass
+SlpBass2	@Aco.Bass
 Solo Syn	@SquareLd
+SoundTrk	@Ice Rain
 Sputnik	@NewAgePd
 St. Horn	@FrchHorn
 SteelDrm	@TnklBell
 Strings2	@Strings1
-Syn. Str	@Strings1
+SynBass1	@Aco.Bass
+SynBass2	@Aco.Bass
+Syn.Str1	@Strings1
 Syn.Str2	@Strings1
 SweepPad	@NewAgePd
-SynBrass	@Trombone
+SynBras1	@Trombone
 SynBras2	@Trumpet
 Syn Drum	@Taiko
 TangoAcd	@Acordion
 Transfms	@NewAgePd
 VoiceOoh	@SynVoice
+Voice Ld	@SquareLd
 Warm Pad	@NewAgePd
 WavSweep	@NewAgePd
 WireLead	@SquareLd
