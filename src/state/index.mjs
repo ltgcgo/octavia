@@ -159,7 +159,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "sg", "plg-150vl", "plg-150pf", "plg-100sg", "kross"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "plg-150vl", "plg-150pf", "plg-100sg", "kross"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	chRedir(part, track, noConquer) {
 		if (this.#trkAsReq[track]) {
@@ -2300,6 +2300,67 @@ let OctaviaDevice = class extends CustomEventSource {
 			// N1R to NS5R redirector
 			upThis.#seAi.run([66, ...msg], track, id);
 		});
+		this.#seSg.add([66, 93, 64], (msg, track, id) => {
+			let e = msg[2];
+			switch (msg[0]) {
+				case 0: {
+					// SG system section at 0x00
+					switch (msg[1]) {
+						case 4: {
+							// master volume
+							upThis.#masterVol = e * 129 / 16383 * 100;
+							break;
+						};
+						case 5: {
+							// master key shift, [-24, 24]
+							(e - 64);
+							break;
+						};
+						case 6: {
+							// global reverb toggle
+							console.debug(`SG global reverb: ${e ? "on" : "off"}`);
+							break;
+						};
+						case 127: {
+							// SG reset
+							upThis.switchMode("sg", true);
+							break;
+						};
+					};
+					break;
+				};
+				case 1: {
+					switch (msg[1]) {
+						case 48: {
+							// SG reverb macro
+							console.debug(`SG reverb type: ${gsRevType[e]}`);
+							break;
+						};
+					};
+					break;
+				};
+				default: {
+					if ((msg[0] >> 4) == 1) {
+						// SG part setup
+						let part = upThis.chRedir(msg[0] & 15, track, true);
+						if (msg[1] == 2) {
+							// SG receive channel
+							let ch = upThis.chRedir(e, track, true);
+							upThis.#chReceive[part] = ch; // Rx CH
+							if (part != ch) {
+								upThis.buildRchTree();
+								console.info(`SG CH${part + 1} receives from CH${ch + 1}`);
+							};
+						} else if (msg[1] == 19) {
+							// SG part level
+							upThis.#cc[allocated.cc * part + ccToPos[7]] = e;
+						};
+					} else {
+						console.warn(`Unknown AKAI SG SysEx: ${msg}`);
+					};
+				};
+			};
+		}).add([]);
 	};
 };
 

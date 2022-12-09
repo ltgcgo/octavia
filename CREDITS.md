@@ -8,7 +8,7 @@ Octavia will never become a reality without help from the following people.
 
 ### Reference providers
 * **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
-* **DearHoney** (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro)
+* **DearHoney** (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro, YAMAHA MU100, YAMAHA MU1000)
 * **Ham Seung-woo** (YAMAHA MU90)
 * **NiceChord** (YAMAHA MU80, Roland SC-55 mk. II)
 * **Lupinzar** _DarkWolf, garoux.net_ (YAMAHA MU80, Roland SC-55 mk. II)
@@ -55,3 +55,4 @@ Octavia will never become a reality without help from the following people.
 * 0: 大平勇 - A Phoenix to the 21st Century (Part B, Invitation) (XG) _Recorded by DearHoney_
 * 1: Yamaha - Ninety Hipty (XG, MU90) _ROM: JayB, ana&dump: LÉ, fix: JayB, audio: BEXY'S PC, soft: ValleyBell_
 * 2: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle (MT-32)
+* 3: Idecs Music Software - The PF Theatre (XG, PLG-150PF) _Recorded by DearHoney_
