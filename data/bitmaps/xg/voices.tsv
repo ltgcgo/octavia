@@ -2,6 +2,8 @@ RsrcName	Bitmap
 Aco.Bass	00000000300079007f04fe08800dfffefffffc0bfc01fc007400200000000000
 Acordion	7ffc40045554555455547ffc7ffe6aaa7ffe3ffe40003ffe40007ffe7aae3d5e
 Alto Sax	3a007e00cd008f000e88078c070c070c039e039e03bf01ff01fc00f800f00060
+Bassoon	00000200040008000800040003ff0377ffddffffffff00000000000000000000
+Celesta	db6cdb6cdb6cdb6cdb6cdb6cdb60db00d800d980c1ffc180c0000c000ffc0c00
 DrawOrgn	07e007e07ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe6a0a55566a4a55567ffe
 EGrndPno	1e003f003f807fe07ffc7ffe7ffe7ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe
 ElPiano1	7ffe7ffe54aa54aa40027ffe7ffe4002400240024002400240027ffe7ffe4142
@@ -12,7 +14,9 @@ GrandPno	fffcfffc9ffebffe9ffebffe9ffe9ffebffc9ffcbff89fc0bf009f00fe00fe00
 Harmnica	0000000000003ffc6aac7ffe40024002600660064002400240023ffc00000000
 Ice Rain	f7fff7ffebbdebbbed57dd6fdeffdeffbfffbfffaa55ea55ea55e001e0011ffe
 NewAgePd	ffffdfffdd57ad57dd57dfffffff8001ffffffffea55ea55ea55e001e0011ffe
+NylonGtr	000038007c007d85ffc5ffc0ffc7f3fff3fff3ffffc7ffc0ffc57d857c003800
 OvrDrvGt	300078007dc0ffc0ff04e10ae3fde3fee3ffe109e100e500cf80d98070002000
+PanFlute	000015543ffe3ffe155415541554155c157c15f417d01f401d00140010000000
 Recorder	000000000000000000007405fffffeafffff7405000000000000000000000000
 SquareLd	000000000fffffff9d57ffffffff08010fff0fff0a950a950a950801080107fe
 Shakhchi	0000000000000000008003ffffff76dfffffffff083f00000000000000000000
@@ -25,6 +29,8 @@ Taiko	10001038104438827c827c447cba7cc67cfe7cfefefefefe00fe0cfe0cfe0c7c
 TnklBell	10001038104438827c827c447cba7cc67cfe7cfefefefefe00fe0cfe0cfe0c7c
 Trombone	00100010003000707ff0fff0a270a230a210fffe7fff012112411fff1ffe1000
 Trumpet	05410541000305438547c54fffffffffffffd83f901718331ff30fe100010000
+Violin	30007b007b84ffc4efc0f1fefffef1c0efc4ffc47b807b0030000000060107ff
+Whistle	028007c007c00fe00fe01ef01c7018301c701ef00fe00fe005c005c003800380
 Agogo	@TnklBell
 Anal.Str	@Strings1
 Atmosphr	@Ice Rain
@@ -37,6 +43,7 @@ BrsSwell	@Trombone
 Bright	@Ice Rain
 BritePno	@GrandPno
 CaliopLd	@SquareLd
+Cello	@Violin
 CelloEns	@Strings1
 CharanLd	@SquareLd
 Chiff Ld	@SquareLd
@@ -46,15 +53,18 @@ ChrchOrg	@DrawOrgn
 Chrunchr	@OvrDrvGt
 CleanGtr	@OvrDrvGt
 ClickOrg	@DrawOrgn
+Contrbas	@Violin
 Crystal	@Ice Rain
 Digi.Saw	@SquareLd
 Dist.Gtr	@OvrDrvGt
+Dulcimer	@Celesta
 Echoes	@Ice Rain
 ElPiano2	@ElPiano1
 EuroPipe	@DrawOrgn
 Fifth Ld	@SquareLd
 FngrBass	@Aco.Bass
 Fretless	@Aco.Bass
+Glocken	@Celesta
 Goblins	@Ice Rain
 GtrHarmo	@OvrDrvGt
 Halo Pad	@NewAgePd
@@ -63,14 +73,17 @@ Jazz Gtr	@OvrDrvGt
 JoyStick	@OvrDrvGt
 Killer B	@DrawOrgn
 MagicFlu	@Flute
+Marimba	@Celesta
 Mega Syn	@SquareLd
 MelodTom	@Taiko
 MetalPad	@NewAgePd
 MonoLead	@SquareLd
+MusicBox	@Celesta
 MutedGtr	@OvrDrvGt
 MutedTrp	@Trumpet
 PercOrgn	@DrawOrgn
 PickBass	@Aco.Bass
+Pizz.Str	@Violin
 PolySyPd	@NewAgePd
 ReedOrgn	@DrawOrgn
 RevCymbl	@TnklBell
@@ -97,6 +110,10 @@ SynBras2	@Trumpet
 Syn Drum	@Taiko
 TangoAcd	@Acordion
 Transfms	@NewAgePd
+Trem.Str	@Violin
+TubulBel	@Celesta
+Vibrafon	@Celesta
+Viola	@Violin
 VoiceOoh	@SynVoice
 Voice Ld	@SquareLd
 Warm Pad	@NewAgePd
@@ -104,6 +121,7 @@ WavSweep	@NewAgePd
 WireLead	@SquareLd
 Woodblok	@TnklBell
 X Piano	@GrandPno
+Xylophon	@Celesta
 GM Kit	@Standard
 Standrd2	@Standard
 Standrd3	@Standard
