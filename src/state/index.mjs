@@ -756,6 +756,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Reset MT-32 user patch and timbre storage
 		this.#cmPatch.fill(0);
 		this.#cmTimbre.fill(0);
+		// Reset MT-32 user bank
+		this.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
 		for (let ch = 0; ch < 64; ch ++) {
 			let chOff = ch * allocated.cc;
 			// Reset to full
