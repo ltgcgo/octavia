@@ -56,3 +56,4 @@ Octavia will never become a reality without help from the following people.
 * 1: Yamaha - Ninety Hipty (XG, MU90) _ROM: JayB, ana&dump: LÉ, fix: JayB, audio: BEXY'S PC, soft: ValleyBell_
 * 2: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle (MT-32)
 * 3: Idecs Music Software - The PF Theatre (XG, PLG-150PF) _Recorded by DearHoney_
+* 4: JayB - Corgi (X5D & NS5R) _Recorded by JayB_
