@@ -290,7 +290,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 98: {
-				standard = "XG"; // PLG-100SG
+				standard = "SG"; // PLG-100SG
 				break;
 			};
 			case 120: {
