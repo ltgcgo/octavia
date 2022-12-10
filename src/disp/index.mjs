@@ -260,6 +260,7 @@ let MuDisplay = class extends RootDisplay {
 		let chOff = this.#ch * ccToPos.length;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
+		let showLsb = !sum.chContr[chOff + ccToPos[0]];
 		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
 			// Show display text
 			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
@@ -307,7 +308,14 @@ let MuDisplay = class extends RootDisplay {
 			// Render fonts
 			if (rendMode < 2) {
 				let voiceName = (upThis.getChVoice(this.#ch).name).slice(0, 8).padEnd(8, " ");
-				let bnkInfo = `\u0080${(sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0")}\u0081${((sum.chProgr[this.#ch] || 0) + 1).toString().padStart(3, "0")}`;
+				let bnkSel = (sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0");
+				if (upThis.getMode() == "xg") {
+					if ([80, 81, 82, 83, 96, 97, 98, 99].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
+						bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
+						showLsb = true;
+					};
+				};
+				let bnkInfo = `\u0080${bnkSel}\u0081${((sum.chProgr[this.#ch] || 0) + 1).toString().padStart(3, "0")}`;
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
 					let regionX = 0, regionY = 0;
@@ -358,7 +366,6 @@ let MuDisplay = class extends RootDisplay {
 			};
 		};
 		// Show bottom caps
-		let showLsb = !sum.chContr[chOff + ccToPos[0]];
 		ctx.fillStyle = showLsb ? inactivePixel : activePixel;
 		ctx.fillText("MSB", 515, 164);
 		ctx.fillStyle = showLsb ? activePixel : inactivePixel;
