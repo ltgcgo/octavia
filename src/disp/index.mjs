@@ -502,7 +502,7 @@ let ScDisplay = class extends RootDisplay {
 	#strength = new Uint8Array(64);
 	#linger = new Uint8Array(64);
 	#ch = 0;
-	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv");
 	constructor() {
 		super();
 	};

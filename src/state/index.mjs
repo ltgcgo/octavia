@@ -38,7 +38,7 @@ const modeIdx = [
 ];
 const substList = [
 	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 63, 0, 0],
-	[0, 0, 1, 0, 0,   127, 0, 0,  0,  0,  0,  0, 0]
+	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0,  0, 0]
 ];
 const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 122];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
@@ -348,7 +348,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				switch (det.data[0]) {
 					case 0: {
 						// Detect mode via bank MSB
-						//console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
+						if (self.debugMode) {
+							console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
+						};
 						if (this.#mode == 0) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
@@ -464,7 +466,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Program change
 			this.#chActive[part] = 1;
 			this.#prg[part] = det.data;
-			//console.debug(`T:${det.track} C:${part} P:${det.data}`);
+			if (self.debugMode) {
+				console.debug(`T:${det.track} C:${part} P:${det.data}`);
+			};
 		},
 		13: function (det) {
 			// Channel aftertouch
@@ -689,8 +693,16 @@ let OctaviaDevice = class extends CustomEventSource {
 	getNrpn() {
 		return this.#nrpn;
 	};
-	getVoice(msb, prg, lsb, mode) {
-		let bank = this.userBank.get(msb || this.#subMsb, prg, lsb || this.#subLsb, mode);
+	getVoice(msbO, prgO, lsbO, mode) {
+		let msb = msbO || this.#subMsb,
+		prg = prgO,
+		lsb = lsbO || this.#subLsb;
+		if (modeIdx[this.#mode] == "ns5r") {
+			if (msb > 0 && msb < 56) {
+				lsb = 3; // Use SC-88 Pro map
+			};
+		};
+		let bank = this.userBank.get(msb, prg, lsb, mode);
 		if (modeIdx[this.#mode] == "mt32" && bank.name.indexOf("MT-m:") == 0) {
 			// Reload MT-32 user bank transparently
 			let patch = parseInt(bank.name.slice(5)),
@@ -705,7 +717,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			bank.name = userBank;
 			//console.debug(`Transparently loading MT-32 user bank.`);
 		} else if (bank.ending != " " || !bank.name.length) {
-			bank = this.baseBank.get(msb || this.#subMsb, prg, lsb || this.#subLsb, mode);
+			bank = this.baseBank.get(msb, prg, lsb, mode);
 		};
 		return bank;
 	};
@@ -852,6 +864,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#bitmap = new Uint8Array(256);
 		this.#bitmapStore[10] = new Uint8Array(512);
 		this.#metaSeq = new BinaryMatch();
+		this.userBank.strictMode = true;
 		// Prevent bank readers from getting stalled
 		this.userBank.load(`MSB\tPRG\tLSB\tNME\n062\t000\t000\t\n122\t000\t000\t\n122\t001\t000\t\n122\t002\t000\t\n122\t003\t000\t\n122\t004\t000\t\n122\t005\t000\t\n122\t006\t000\t`);
 		// Metadata events
@@ -1881,30 +1894,30 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.info("MIDI reset: MT-32");
 		}).add([22, 18, 0], (msg, track, id) => {
 			// MT-32 Part Patch Setup (temp)
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			let part = upThis.chRedir(id, track, true);
 			console.debug(`MT-32 CH${part + 1} Patch: ${msg}`);
 		}).add([22, 18, 1], (msg, track, id) => {
 			// MT-32 Part Drum Setup (temp)
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			let part = upThis.chRedir(id, track, true);
 			console.debug(`MT-32 CH${part + 1} Drum: ${msg}`);
 		}).add([22, 18, 2], (msg, track, id) => {
 			// MT-32 Part Timbre Setup (temp)
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			let part = upThis.chRedir(id, track, true);
 			console.debug(`MT-32 CH${part + 1} (${customName}) Timbre: ${msg}`);
 		}).add([22, 18, 3], (msg, track, id) => {
 			// MT-32 Part Patch Setup (dev)
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			console.debug(`MT-32 Part Patch: ${msg}`);
 		}).add([22, 18, 4], (msg, track, id) => {
 			// MT-32 Part Timbre Setup (dev)
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			console.debug(`MT-32 Part Timbre: ${msg}`);
 		}).add([22, 18, 5], (msg, track, id) => {
 			// MT-32 Patch Memory Write
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			let offset = (msg[0] << 7) + msg[1];
 			msg.slice(2).forEach((e, i) => {
 				let realIndex = (offset + i);
@@ -1938,7 +1951,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([22, 18, 8], (msg, track, id) => {
 			// MT-32 Timbre Memory Write
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			//let customName = "";
 			msg.slice(2, 16).forEach((e, i) => {
 				/* if (i < 10 && e > 31) {
@@ -1949,11 +1962,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			/* console.debug(`MT-32 timbre ${msg[0] >> 1} written as "${customName}".`); */
 		}).add([22, 18, 16], (msg, track, id) => {
 			// MT-32 System Setup
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			console.debug(`MT-32 System Setup: ${msg}`);
 		}).add([22, 18, 32], (msg) => {
 			// MT-32 Text Display
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32");
 			let offset = msg[1];
 			let text = " ".repeat(offset);
 			msg.slice(2).forEach((e) => {

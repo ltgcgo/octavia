@@ -15,6 +15,7 @@ Harmnica	0000000000003ffc6aac7ffe40024002600660064002400240023ffc00000000
 Ice Rain	f7fff7ffebbdebbbed57dd6fdeffdeffbfffbfffaa55ea55ea55e001e0011ffe
 NewAgePd	ffffdfffdd57ad57dd57dfffffff8001ffffffffea55ea55ea55e001e0011ffe
 NylonGtr	000038007c007d85ffc5ffc0ffc7f3fff3fff3ffffc7ffc0ffc57d857c003800
+Ocarina	00000c000c000e001f001fc03ff07ffc7ffc6efc7bbc3ff83ff01fe00f800000
 OvrDrvGt	300078007dc0ffc0ff04e10ae3fde3fee3ffe109e100e500cf80d98070002000
 PanFlute	000015543ffe3ffe155415541554155c157c15f417d01f401d00140010000000
 Recorder	000000000000000000007405fffffeafffff7405000000000000000000000000
@@ -97,6 +98,7 @@ SlpBass2	@Aco.Bass
 Solo Syn	@SquareLd
 SoundTrk	@Ice Rain
 Sputnik	@NewAgePd
+Sqr.Bass	@Aco.Bass
 St. Horn	@FrchHorn
 SteelDrm	@TnklBell
 Strings2	@Strings1
