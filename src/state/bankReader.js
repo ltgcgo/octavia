@@ -15,8 +15,14 @@ const modeIdx = [
 	"RW"
 ];
 
+let halfHex = function (n) {
+	let segA = Math.floor(n / 10), segB = n % 10;
+	return `${segA.toString(16)}${segB}`;
+};
+
 let VoiceBank = class {
 	#bankInfo;
+	strictMode = false;
 	get(msb = 0, prg = 0, lsb = 0, mode) {
 		let bankName;
 		let args = Array.from(arguments);
@@ -173,62 +179,96 @@ let VoiceBank = class {
 		while (!(bankName?.length >= 0)) {
 			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
 			if (!bankName) {
-				args[2] = 0;
-				ending = "^";
-				if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
-					if (msb == 48) {
-						args[0] = 0;
+				if (!this.strictMode) {
+					if (mode != "gs" && mode != "ns5r") {
 						args[2] = 0;
-						ending = "!";
-					} else if (msb == 62) {
-						args[1] --;
-						ending = " ";
-						if (args[1] < 1 && !bankName?.length) {
-							ending = "*";
-						};
-					} else if (msb < 64) {
-						if (mode == "xg") {
-							if (msb == 16) {
-								bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
-								ending = " ";
+						ending = "^";
+					};
+					if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
+						if (msb == 48) {
+							args[0] = 0;
+							args[2] = 0;
+							ending = "!";
+						} else if (msb == 62) {
+							args[1] --;
+							ending = " ";
+							if (args[1] < 1 && !bankName?.length) {
+								args[0] = 0;
+								ending = "!";
 							};
+						} else if (msb < 64) {
+							if (mode == "xg" && msb == 16) {
+									bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
+									ending = " ";
+							} else if (args[0] == 0) {
+								args[2] = 0;
+								ending = "^";
+							} else {
+								if (args[2] < 1) {
+									args[0] = 0;
+									ending = "*";
+								} else {
+									args[2] --; // Descending bank search
+								};
+							};
+						} else if (msb == 80) {
+							bankName = `PrgU:${prg.toString().padStart(3, "0")}`;
+							ending = "!";
+						} else if (msb == 88) {
+							bankName = `CmbU:${prg.toString().padStart(3, "0")}`;
+							ending = "!";
+						} else if (msb == 121) {
+							bankName = `GM2Vox0${lsb}`;
+							ending = "#";
+						} else if (msb == 122) {
+							if (args[1] == 32) {
+								args[1] == 0;
+							} else {
+								args[1] %= 7;
+							};
+							bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
+							if (bankName) {
+								ending = " ";
+							} else {
+								bankName = "";
+								ending = "*";
+							};
+						} else if (args[1] == 0) {
+							bankName = `${msb.toString().padStart(3, "0")} ${prg.toString().padStart(3, "0")} ${lsb.toString().padStart(3, "0")}`;
+							ending = "!";
 						} else {
+							if (args[0] == 0) {
+								args[2] = 0;
+								ending = "^";
+							} else if (args[2] > 0) {
+								args[2] --;
+							} else if (args[1] > 0) {
+								args[1] = 0;
+								ending = "!";
+							} else {
+								args[0] = 0;
+								ending = "?";
+							};
+						};
+					} else {
+						if (args[0] == 0) {
+							args[2] = 0;
+							ending = "^";
+						} else if (args[2] < 1) {
 							args[0] = 0;
 							ending = "*";
-						};
-					} else if (msb == 80) {
-						bankName = `PrgU:${prg.toString().padStart(3, "0")}`;
-						ending = "!";
-					} else if (msb == 88) {
-						bankName = `CmbU:${prg.toString().padStart(3, "0")}`;
-						ending = "!";
-					} else if (msb == 121) {
-						bankName = `GM2Vox0${lsb}`;
-						ending = "#";
-					} else if (msb == 122) {
-						if (args[1] == 32) {
-							args[1] == 0;
 						} else {
-							args[1] %= 7;
+							args[2] --; // Descending bank search
+							ending = "^";
 						};
-						bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
-						if (bankName) {
-							ending = " ";
-						} else {
-							bankName = "";
-							ending = "*";
-						};
-					} else if (args[1] == 0) {
-						bankName = `${msb.toString().padStart(3, "0")} ${prg.toString().padStart(3, "0")} ${lsb.toString().padStart(3, "0")}`;
-						ending = "!";
-					} else {
-						args[1] = 0;
-						ending = "!";
 					};
+				} else {
+					bankName = "";
+					ending = "?";
 				};
 			};
 		};
-		if ((mode == "gs") && ending == "^") {
+		if ((mode == "gs" || mode == "ns5r") && ending == "^") {
 			ending = " ";
 		};
 		if (ending != " ") {
@@ -324,7 +364,7 @@ let VoiceBank = class {
 			};
 		};
 		return {
-			name: bankName || (msb || 0).toString().padStart(3, "0") + " " + (prg || 0).toString().padStart(3, "0") + " " + (lsb || 0).toString().padStart(3, "0"),
+			name: bankName || `${halfHex(msb || 0)} ${halfHex(prg || 0)} ${halfHex(lsb || 0)}`,
 			ending,
 			sect,
 			standard

@@ -22,8 +22,10 @@ Octavia will never become a reality without help from the following people.
 
 ### Miscellaneous
 * **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
+* **GFHK-SDGM** for helping collecting bitmaps.
 * **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI).
-* **Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).
+* ~~**Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).~~
+* アルゴ算法堂 for providing AKAI SG01k voice map.
 
 ## Demo Credits
 * A: JayB - KANDI8 (XG, QY100) _Recorded by JayB_
@@ -56,4 +58,5 @@ Octavia will never become a reality without help from the following people.
 * 1: Yamaha - Ninety Hipty (XG, MU90) _ROM: JayB, ana&dump: LÉ, fix: JayB, audio: BEXY'S PC, soft: ValleyBell_
 * 2: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle (MT-32)
 * 3: Idecs Music Software - The PF Theatre (XG, PLG-150PF) _Recorded by DearHoney_
-* 4: JayB - Corgi (X5D & NS5R) _Recorded by JayB_
+* 4: Idecs Music Software - The Secret Place (GS, SC-8850) _Recorded by Romantique Tp_
+* 5: 久光浩, 本郷久恵 - Space Flight (GS, SC-8850) _Recorded by Romantique Tp_
