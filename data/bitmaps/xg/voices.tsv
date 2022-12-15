@@ -9,7 +9,7 @@ Bassoon	00000200040008000800040003ff0377ffddffffffff00000000000000000000
 BotlBlow	000000000000000001fe023b05ffffffffffffff07ff03ff01fe000000000000
 BrthNoiz	01000380038013800b800380318003800900110006c00ee01ef01ff01ff01ff0
 Clarinet	000000000000000000010aa7755fdfffffff7f7f208700010000000000000000
-Celesta	db6cdb6cdb6cdb6cdb6cdb6cdb60db00d800d980c1ffc180c0000c000ffc0c00
+Celesta	7ffe6aaa7ffe7ffe54aa54aa4002ffffffff6aaa55566aaa55566aaabffdbffd
 Clvichrd	7ffe7ffe555e555e401e7ffe7ffe200420042004200420043ffc200420042004
 DrawOrgn	07e007e07ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe6a0a55566a4a55567ffe
 EGrndPno	1e003f003f807fe07ffc7ffe7ffe7ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe
@@ -19,6 +19,7 @@ Eng.Horn	0000000000000000000005513aafefff3fbf0041000000000000000000000000
 Flute	0000000000000000000000000550baaffaafffff000000000000000000000000
 FrchHorn	4000408040c040604e705b78517c6ffe7afe6ef87af06fe031c03bc01f800f00
 FretNoiz	001000100a340a6cfffd2a1bffffaa06ffffff9f7e0f7c077c03380038003800
+Glocken	db6cdb6cdb6cdb6cdb6cdb6cdb60db00d800d980c1ffc180c0000c000ffc0c00
 GrandPno	fffcfffc9ffebffe9ffebffe9ffe9ffebffc9ffcbff89fc0bf009f00fe00fe00
 Gunshot	5f017fff19ff1fff39e03fe07f007500f500fe00f000f000f000f000f0006000
 Harmnica	0000000000003ffc6aac7ffe40024002600660064002400240023ffc00000000
@@ -36,7 +37,7 @@ PanFlute	000015543ffe3ffe155415541554155c157c15f417d01f401d00140010000000
 Piccolo	00000000000000000000000005505aae7ffe7ffe000000000000000000000000
 Recorder	000000000000000000007405fffffeafffff7405000000000000000000000000
 Seashore	ffffbff3e4f9c07d803d9b3991b3b1bffbfffbffebdffbfffbfffbffaaaa5155
-Shakhchi	0000000000000000008003ffffff76dfffffffff083f00000000000000000000
+Shakhchi	0000000000000000004007ffffff76dfffffffff083f00000000000000000000
 Shamisen	000000007800fc00840484048404c7ffc7ff840a840a840afc00780000000000
 Shanai	0000000000000000000100072a9fffff3fff201f000700010000000000000000
 Sitar	30007800fc00ec05f605ff50dfafdfffdfffdfffff00f605ec05fc0078003000
@@ -86,7 +87,7 @@ Contrbas	@Violin
 Crystal	@Ice Rain
 Digi.Saw	@SquareLd
 Dist.Gtr	@OvrDrvGt
-Dulcimer	@Celesta
+Dulcimer	@Glocken
 Echoes	@Ice Rain
 ElonMusk	@Tweet
 EuroPipe	@DrawOrgn
@@ -94,7 +95,7 @@ Fiddle	@Violin
 Fifth Ld	@SquareLd
 FngrBass	@Aco.Bass
 Fretless	@Aco.Bass
-Glocken	@Celesta
+Glocken	@Glocken
 Goblins	@Ice Rain
 GtrHarmo	@OvrDrvGt
 Halo Pad	@NewAgePd
@@ -104,12 +105,12 @@ Jazz Gtr	@OvrDrvGt
 JoyStick	@OvrDrvGt
 Killer B	@DrawOrgn
 MagicFlu	@Flute
-Marimba	@Celesta
+Marimba	@Glocken
 Mega Syn	@SquareLd
 MelodTom	@Taiko
 MetalPad	@NewAgePd
 MonoLead	@SquareLd
-MusicBox	@Celesta
+MusicBox	@Glocken
 MutedGtr	@OvrDrvGt
 MutedTrp	@Trumpet
 Oboe	@Eng.Horn
@@ -146,8 +147,8 @@ Syn Drum	@Taiko
 TenorSax	@Alto Sax
 Transfms	@NewAgePd
 Trem.Str	@Violin
-TubulBel	@Celesta
-Vibrafon	@Celesta
+TubulBel	@Glocken
+Vibrafon	@Glocken
 Viola	@Violin
 VoiceOoh	@SynVoice
 Voice Ld	@SquareLd
@@ -156,7 +157,7 @@ WavSweep	@NewAgePd
 WireLead	@SquareLd
 Woodblok	@TnklBell
 X Piano	@GrandPno
-Xylophon	@Celesta
+Xylophon	@Glocken
 GM Kit	@Standard
 Standrd2	@Standard
 Standrd3	@Standard
