@@ -61,3 +61,5 @@ Octavia will never become a reality without help from the following people.
 * 3: Idecs Music Software - The PF Theatre (XG, PLG-150PF) _Recorded by DearHoney_
 * 4: Idecs Music Software - The Secret Place (GS, SC-8850) _Recorded by Romantique Tp_
 * 5: 久光浩, 本郷久恵 - Space Flight (GS, SC-8850) _Recorded by Romantique Tp_
+* 6: 森尾隆 - Is It Really Love? (XG, MU2000) _Recorded by KR. Palto47_
+* 7: JayB - Corgi (X5DR + NS5R) _Recorded by JayB_
