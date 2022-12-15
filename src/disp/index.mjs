@@ -420,6 +420,9 @@ let MuDisplay = class extends RootDisplay {
 				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
 					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 				};
+				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 126) {
+					useBm = this.sysBm.getBm("cat_smpl");
+				};
 				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 64) {
 					useBm = this.sysBm.getBm("cat_sfx");
 				};

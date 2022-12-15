@@ -26,6 +26,7 @@ Octavia will never become a reality without help from the following people.
 * **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI).
 * ~~**Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).~~
 * アルゴ算法堂 for providing AKAI SG01k voice map.
+* MIDIMan for checking bitmaps against YAMAHA MU2000.
 
 ## Demo Credits
 * A: JayB - KANDI8 (XG, QY100) _Recorded by JayB_

@@ -14,6 +14,7 @@ Clvichrd	7ffe7ffe555e555e401e7ffe7ffe200420042004200420043ffc200420042004
 DrawOrgn	07e007e07ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe6a0a55566a4a55567ffe
 EGrndPno	1e003f003f807fe07ffc7ffe7ffe7ffe7ffe7ffe7ffe54aa54aa40027ffe7ffe
 ElPiano1	7ffe7ffe54aa54aa40027ffe7ffe4002400240024002400240027ffe7ffe4142
+ElPiano2	3ffc7ffe7ffe7ffe54aa54aa40027ffe7ffe6bd65dba6bd65dba6bd65dba7ffe
 Eng.Horn	0000000000000000000005513aafefff3fbf0041000000000000000000000000
 Flute	0000000000000000000000000550baaffaafffff000000000000000000000000
 FrchHorn	4000408040c040604e705b78517c6ffe7afe6ef87af06fe031c03bc01f800f00
@@ -23,10 +24,10 @@ Gunshot	5f017fff19ff1fff39e03fe07f007500f500fe00f000f000f000f000f0006000
 Harmnica	0000000000003ffc6aac7ffe40024002600660064002400240023ffc00000000
 Harp	1e001e000f000f800da00ce00c700c100c900d100cb00d300c600c600cc00dc0
 Helicptr	ffe0ffe0040104010fff17ff27f927e14f804f807f807f003e0012007f807f80
-HnkyTonk	3ffc7ffe7ffe7ffe54aa54aa40027ffe7ffe6bd65dba6bd65dba6bd65dba7ffe
+Hrpschrd	fffefffe9ffebffe9ffebffe9ff89fe0bfc09f80bf809f00bf009e00fe00fc00
 Ice Rain	f7fff7ffebbdebbbed57dd6fdeffdeffbfffbfffaa55ea55ea55e001e0011ffe
 Kalimba	0000000000007ffc4aa45ff44aa44aa44aa44004ffc7ffc7ffc0000000000000
-Koto	000002800aa02fe83ff87ffcbffabffabffabffabffabffa7abc282820080000
+Koto	0000000000002800ffffaa05ffffa285ffffa085ffffffffffff400240020000
 NewAgePd	ffffdfffdd57ad57dd57dfffffff8001ffffffffea55ea55ea55e001e0011ffe
 NylonGtr	000038007c007d85ffc5ffc0ffc7f3fff3fff3ffffc7ffc0ffc57d857c003800
 Ocarina	000006000600060007000f800fe01ff83ffe3ffe377e3dde1ffc1ff80ff007c0
@@ -46,6 +47,7 @@ Strings1	08081c1c0808080808081c1c3d3d3a3a36360c0c1c1c3e3e7e7ebebe3e3e1c1c
 Swt Alto	0000000000000000000e001e303efffecfd630260016000e0000000000000000
 SynVoice	2108739c739c739c739c739c5294739c210821085294def6def7ffffffffffff
 Taiko	10001038104438827c827c447cba7cc67cfe7cfefefefefe00fe0cfe0cfe0c7c
+TangoAcd	000002800aa02fe83ff87ffcbffabffabffabffabffabffa7abc282820080000
 Telphone	0000000000001ff03ff838383ab8028407c00fe41ef01c741c701ef41ff01ffc
 Timpani	381c4422824182414422ba5dd66bfe7f7c3e7c3e7c3e381c7c3e542ad66b9249
 TnklBell	10001038104438827c827c447cba7cc67cfe7cfefefefefe00fe0cfe0cfe0c7c
@@ -87,8 +89,8 @@ Dist.Gtr	@OvrDrvGt
 Dulcimer	@Celesta
 Echoes	@Ice Rain
 ElonMusk	@Tweet
-ElPiano2	@ElPiano1
 EuroPipe	@DrawOrgn
+Fiddle	@Violin
 Fifth Ld	@SquareLd
 FngrBass	@Aco.Bass
 Fretless	@Aco.Bass
@@ -97,6 +99,7 @@ Goblins	@Ice Rain
 GtrHarmo	@OvrDrvGt
 Halo Pad	@NewAgePd
 HardTine	@EGrndPno
+HnkyTonk	@GrandPno
 Jazz Gtr	@OvrDrvGt
 JoyStick	@OvrDrvGt
 Killer B	@DrawOrgn
@@ -110,6 +113,7 @@ MusicBox	@Celesta
 MutedGtr	@OvrDrvGt
 MutedTrp	@Trumpet
 Oboe	@Eng.Horn
+Orch.Hit	@Strings1
 PercOrgn	@DrawOrgn
 PickBass	@Aco.Bass
 Pizz.Str	@Violin
@@ -139,7 +143,6 @@ SweepPad	@NewAgePd
 SynBras1	@Trombone
 SynBras2	@Trumpet
 Syn Drum	@Taiko
-TangoAcd	@Acordion
 TenorSax	@Alto Sax
 Transfms	@NewAgePd
 Trem.Str	@Violin
