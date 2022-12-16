@@ -8,10 +8,34 @@ import {
 	getBridge
 } from "../bridge/index.mjs";
 
+import {
+	PointEvent,
+	RangeEvent,
+	TimedEvents
+} from "../../libs/lightfelt@ltgcgo/ext/timedEvents.js";
+
 let demoBlobs = {};
+let demoPerfs = {};
 let demoModes = [];
 demoModes[9] = "gm";
+let currentPerformance;
 let useMidiBus = false;
+
+// Generate Octavia channel switch SysEx
+let generateSwitch = function (ch = 0, min, max) {
+	let data = [67, 16, 73, 0, 0, 10, ch];
+	if (min?.constructor == Number) {
+		data.push(min);
+		if (max.constructor == Number) {
+			data.push(max);
+		};
+	};
+	return {
+		type: 15,
+		track: 0,
+		data
+	};
+};
 
 // Standard switching
 let stSwitch = $a("b.mode");
@@ -50,6 +74,10 @@ stDemo.forEach(function (e, i, a) {
 			audioPlayer.src = "about:blank";
 			demoBlobs[e.title].midi = await (await fetch(`./demo/${e.title}.mid`)).blob();
 			demoBlobs[e.title].wave = await (await fetch(`./demo/${e.title}.opus`)).blob();
+		};
+		if (demoPerfs[e.title]) {
+			currentPerformance = demoPerfs[e.title];
+			currentPerformance.resetIndex();
 		};
 		audioPlayer.currentTime = 0;
 		muVis.reset();
@@ -144,6 +172,7 @@ dispCanv.addEventListener("mousedown", function (ev) {
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
 	muVis.reset();
+	currentPerformance?.resetIndex();
 	audioPlayer.currentTime = 0;
 };
 (async function () {
@@ -165,6 +194,11 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
+		if (currentPerformance) {
+			currentPerformance.step(curTime)?.forEach((e) => {
+				muVis.sendCmd(e.data);
+			});
+		};
 		muVis.render(curTime, dispCtx);
 		lastTime = curTime;
 	};
@@ -176,4 +210,31 @@ getBridge().addEventListener("message", function (ev) {
 	};
 });
 
-//self.visualizer = muVis;
+self.visualizer = muVis;
+self.performance = currentPerformance;
+
+// Hardcoded performance
+{
+	// Ninety Hipty
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0.5, generateSwitch(1, 0, 0)));
+	perf.push(new PointEvent(19.7, generateSwitch(11)));
+	perf.push(new PointEvent(28.5, generateSwitch(12)));
+	perf.push(new PointEvent(37.4, generateSwitch(4, 0, 1)));
+	perf.push(new PointEvent(45.8, generateSwitch(2)));
+	perf.push(new PointEvent(50.6, generateSwitch(3)));
+	perf.push(new PointEvent(54.9, generateSwitch(4)));
+	perf.push(new PointEvent(74.4, generateSwitch(0)));
+	perf.push(new PointEvent(76.85, generateSwitch(9)));
+	perf.push(new PointEvent(81.75, generateSwitch(10)));
+	perf.push(new PointEvent(86.6, generateSwitch(25)));
+	perf.push(new PointEvent(96.7, generateSwitch(13)));
+	perf.push(new PointEvent(106.2, generateSwitch(22)));
+	perf.push(new PointEvent(111.25, generateSwitch(23)));
+	perf.push(new PointEvent(116.1, generateSwitch(17)));
+	perf.push(new PointEvent(121, generateSwitch(13)));
+	perf.push(new PointEvent(127.9, generateSwitch(8)));
+	perf.push(new PointEvent(138, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["ninety_hipty"] = perf;
+};
