@@ -203,6 +203,8 @@ let MuDisplay = class extends RootDisplay {
 	#bmst = 0; // 0 for voice bank, 2 for standard, 1 for sysex
 	#bmex = 0; // state expiration
 	#ch = 0;
+	#minCh = 0;
+	#maxCh = 0;
 	#panStrokes = new Uint8Array(7);
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
@@ -217,12 +219,37 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#bmst = 2;
 			upThis.#bmex = Date.now() + 1600;
 		});
+		this.addEventListener("channelactive", (ev) => {
+			this.#ch = ev.data;
+		});
+		this.addEventListener("channelmin", (ev) => {
+			if (ev.data >= 0) {
+				this.#minCh = ev.data + 1;
+			};
+		});
+		this.addEventListener("channelmax", (ev) => {
+			if (ev.data > this.#minCh - 1) {
+				this.#maxCh = ev.data + 1;
+			} else {
+				this.#minCh = 0;
+				this.#maxCh = 0;
+			};
+		});
+		this.addEventListener("channelreset", () => {
+			this.#minCh = 0;
+			this.#maxCh = 0;
+		});
 	};
 	setCh(ch) {
 		this.#ch = ch;
 	};
 	getCh() {
 		return this.#ch;
+	};
+	reset() {
+		super.reset();
+		this.#minCh = 0;
+		this.#maxCh = 0;
 	};
 	render(time, ctx) {
 		let sum = super.render(time);
@@ -256,6 +283,12 @@ let MuDisplay = class extends RootDisplay {
 		};
 		if (this.#ch < minCh) {
 			this.#ch = maxCh - 15 + (this.#ch & 15);
+		};
+		if (this.#minCh && this.#minCh > 0) {
+			minCh = this.#minCh - 1;
+		};
+		if (this.#maxCh && this.#maxCh <= 128) {
+			maxCh = this.#maxCh - 1;
 		};
 		let chOff = this.#ch * ccToPos.length;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),

@@ -1311,6 +1311,34 @@ let OctaviaDevice = class extends CustomEventSource {
 			// XG A/D part, won't implement for now
 		}).add([76, 17, 0, 0], (msg) => {
 			// XG A/D mono/stereo mode, won't implement for now
+		}).add([73, 0, 0], (msg, track) => {
+			// MU1000/2000 System
+			let offset = msg[0];
+			msg.slice(1).forEach((e, i) => {
+				let ri = offset + i;
+				if (ri == 8) {
+					console.debug(`MU1000 set LCD contrast to ${e}.`);
+				} else if (ri > 9 && ri < 15) {
+					// Octavia custom SysEx
+					[() => {
+						upThis.dispatchEvent("channelactive", e);
+					}, () => {
+						if (e < 8) {
+							upThis.dispatchEvent("channelmin", (e << 4));
+						} else {
+							upThis.dispatchEvent("channelreset");
+						};
+					}, () => {
+						if (e < 8) {
+							upThis.dispatchEvent("channelmax", (e << 4) + 15);
+						} else {
+							upThis.dispatchEvent("channelreset");
+						};
+					}, () => {
+						upThis.dispatchEvent("channelreset");
+					}][ri - 10]();
+				};
+			});
 		}).add([93, 3], (msg, track) => {
 			// PLG-100SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
@@ -1339,7 +1367,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};
 		}).add([112], (msg) => {
-			// XG plugin board
+			// XG plugin board generic
 			console.debug(`XG plugin PLG1-${["00VL", "00SG", "00DX"][msg[0]]} enabled for channel ${msg[2] + 1}.`);
 		});
 		this.#seXg.add([76, 48], (msg) => {
@@ -2221,7 +2249,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case i < 3134: {
-						// currnet effect params, 38 bytes
+						// current effect params, 38 bytes
 						break;
 					};
 					case i < 8566: {

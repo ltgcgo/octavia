@@ -201,12 +201,18 @@ let RootDisplay = class extends CustomEventSource {
 		this.#midiState.addEventListener("mode", function (ev) {
 			upThis.dispatchEvent("mode", ev.data);
 		});
-		/*this.#midiState.addEventListener("mapupdate", function (ev) {
-			if (ev.data.clearRange) {
-				upThis.voices.clearRange(ev.data.clearRange);
-			};
-			upThis.voices.load(ev.data.voiceMap, ev.data.overwrite);
-		});*/
+		this.#midiState.addEventListener("channelactive", function (ev) {
+			upThis.dispatchEvent("channelactive", ev.data);
+		});
+		this.#midiState.addEventListener("channelmin", function (ev) {
+			upThis.dispatchEvent("channelmin", ev.data);
+		});
+		this.#midiState.addEventListener("channelmax", function (ev) {
+			upThis.dispatchEvent("channelmax", ev.data);
+		});
+		this.#midiState.addEventListener("channelreset", function (ev) {
+			upThis.dispatchEvent("channelreset");
+		});
 		this.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;
