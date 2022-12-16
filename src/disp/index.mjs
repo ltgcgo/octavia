@@ -386,7 +386,7 @@ let MuDisplay = class extends RootDisplay {
 			let initOff = 71.5;
 			for (let c = -2; c < 32; c ++) {
 				ctx.fillStyle = activePixel;
-				if (c == this.#ch) {
+				if (c + minCh == this.#ch) {
 					ctx.fillStyle = inactivePixel;
 				};
 				let filler = "";
