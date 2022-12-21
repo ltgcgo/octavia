@@ -32,17 +32,17 @@ Octavia will never become a reality without help from the following people.
 * A: JayB - KANDI8 (XG, QY100) _Recorded by JayB_
 * B: JayB - Straight to the Horizon (XG, QY100) _Recorded by JayB_
 * C: Stephen Kay - Around the World (X5D) _Recorded by DearHoney_
-* D: KORG - 2000 Fever (NS5R) _Recorded by DearHoney_
-* E: KORG - MissionMan (NS5R) _Recorded by DearHoney_
+* D: 堀越昭宏 - 2000 Fever (NS5R) _Recorded by DearHoney_
+* E: John Lehmkuhl - MissionMan (NS5R) _Recorded by DearHoney_
 * F: Sam Sketty - Ambient (XG) _Recorded by NiceChord on MU80_
 * G: David J. Reading - Galactic Invasion (XG)
 * H: Sam Sketty - Low Down (XG) _Recorded by Ham Seung-woo on MU90_
 * I: John Campbell - Star Games (GS, SC-55) _Recorded by DearHoney on SC-88 Pro_
 * J: David Yackley - One Stop (GM)
-* K: Roland - Orchestra (GS, SC-88 Pro) _Recorded by DearHoney_
+* K: 大田川恭子, 久光浩, 小室弥須彦 - Orchestra (GS, SC-88 Pro) _Recorded by DearHoney_
 * L: 大田川恭子 - Midnight Chaser (GS, SC-88) _Recorded by DearHoney_
 * M: Michael Z. Land - Introduction (MT-32)
-* N: Roland - Japanese (GS, SC-88 Pro) _Recorded by DearHoney_
+* N: Idecs Music Software - Japanese (GS, SC-88 Pro) _Recorded by DearHoney_
 * O: Adrian Scott - Leya's Song (GS, SC-55) _Recorded by DearHoney_
 * P: 久光浩 - 韋駄天 (GS, SC-88) _Recorded by DearHoney_
 * Q: David J. Reading - Cybergate (XG) _Recorded by JayB on QY70_
