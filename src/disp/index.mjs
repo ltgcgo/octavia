@@ -1201,14 +1201,27 @@ let QyDisplay = class extends RootDisplay {
 	#ch = 0;
 	#refreshed = true;
 	#backlight = bgWhite;
+	#bmst = 0;
+	#bmex = 0;
+	#bmdb = new Uint8Array(256);
 	songTitle = "";
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sqrFont = new MxFont40("./data/bitmaps/xg/qySqr.tsv");
 	qy35Font = new MxFont40("./data/bitmaps/xg/qyCh35.tsv");
 	qy55Font = new MxFont40("./data/bitmaps/xg/qyCh55.tsv");
 	qyRsrc = new MxBmDef("./data/bitmaps/xg/qyRsrc.tsv");
+	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
+	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	constructor() {
 		super(0, 0.95);
+		let upThis = this;
+		this.addEventListener("mode", function (ev) {
+			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
+				upThis.#bmdb[i] = e;
+			});
+			upThis.#bmst = 2;
+			upThis.#bmex = Date.now() + 1600;
+		});
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -1302,43 +1315,46 @@ let QyDisplay = class extends RootDisplay {
 			// Song info box
 			upThis.#renderBox(34, 6, 65, 11);
 			upThis.#renderFill(35, 7, 13, 9);
-			upThis.xgFont.getStr(`${id + 1}`.padStart(2, "0")).forEach((e, i) => {
-				e.render((e, x, y) => {
-					if (e) {
-						upThis.#nmdb[1060 + x + i * 6 + y * 128] = 0;
-					};
-				});
-			});
-			if (upThis.songTitle.length < 9) {
-				upThis.xgFont.getStr(upThis.songTitle || "Unknown").forEach((e, i) => {
+			upThis.#renderBox(100, 6, 28, 11); // Bar box
+			if (sum.letter.expire < timeNow) {
+				upThis.xgFont.getStr(`${id + 1}`.padStart(2, "0")).forEach((e, i) => {
 					e.render((e, x, y) => {
-						upThis.#nmdb[1073 + x + i * 6 + y * 128] = e;
-					});
-				});
-			} else {
-				let rollX = Math.floor(time * 25) % (6 * (10 + upThis.songTitle.length)) - 47;
-				upThis.xgFont.getStr(`${upThis.songTitle}  ${upThis.songTitle}`).forEach((e, i) => {
-					e.render((e, x, y) => {
-						let area = x + i * 6;
-						let tX = rollX;
-						if (rollX < 0) {
-							tX = rollX >= -48 ? 0 : rollX + 48;
-						};
-						if (area >= tX && area < tX + 47) {
-							upThis.#nmdb[1073 - tX + area + y * 128] = e;
+						if (e) {
+							upThis.#nmdb[1060 + x + i * 6 + y * 128] = 0;
 						};
 					});
 				});
-			};
-			// Bar info box
-			{
-				upThis.#renderBox(100, 6, 28, 11);
-				let blinker = sum.noteBeat % 1;
-				upThis.sqrFont.getStr(`${"$%"[+(blinker > 0 && blinker <= 0.25)]}${(sum.noteBar + 1).toString().padStart(3, "0")}`).forEach((e, i) => {
-					e.render((e, x, y) => {
-						upThis.#nmdb[1126 + x + i * 6 + y * 128] = e;
+				if (upThis.songTitle.length < 9) {
+					upThis.xgFont.getStr(upThis.songTitle || "Unknown").forEach((e, i) => {
+						e.render((e, x, y) => {
+							upThis.#nmdb[1073 + x + i * 6 + y * 128] = e;
+						});
 					});
-				});
+				} else {
+					let rollX = Math.floor(time * 25) % (6 * (10 + upThis.songTitle.length)) - 47;
+					let sngTtl = upThis.songTitle.replaceAll("  ", " ");
+					upThis.xgFont.getStr(`${sngTtl}  ${sngTtl.slice(0, 8)}`).forEach((e, i) => {
+						e.render((e, x, y) => {
+							let area = x + i * 6;
+							let tX = rollX;
+							if (rollX < 0) {
+								tX = rollX >= -48 ? 0 : rollX + 48;
+							};
+							if (area >= tX && area < tX + 47) {
+								upThis.#nmdb[1073 - tX + area + y * 128] = e;
+							};
+						});
+					});
+				};
+				// Bar info box
+				{
+					let blinker = sum.noteBeat % 1;
+					upThis.sqrFont.getStr(`${"$%"[+(blinker > 0 && blinker <= 0.25)]}${(sum.noteBar + 1).toString().padStart(3, "0")}`).forEach((e, i) => {
+						e.render((e, x, y) => {
+							upThis.#nmdb[1126 + x + i * 6 + y * 128] = e;
+						});
+					});
+				};
 			};
 			// Tempo render
 			upThis.sqrFont.getStr(`&=${Math.round(sum.tempo).toString().padStart(3, "0")}`).forEach((e, i) => {
@@ -1347,9 +1363,9 @@ let QyDisplay = class extends RootDisplay {
 				});
 			});
 			// tSig render
-			upThis.xgFont.getStr(`${sum.tSig[0]}/${sum.tSig[1]}`).forEach((e, i) => {
+			upThis.xgFont.getStr(`${sum.tSig[0].toString().padStart(2, " ")}/${sum.tSig[1].toString().padEnd(2, " ")}`).forEach((e, i) => {
 				e.render((e, x, y) => {
-					upThis.#nmdb[3078 + x + i * 6 + y * 128] = e;
+					upThis.#nmdb[3072 + x + i * 6 + y * 128] = e;
 				});
 			});
 			// Placeholder
@@ -1378,6 +1394,17 @@ let QyDisplay = class extends RootDisplay {
 			// Channel tabs
 			{
 				let curSeg = this.#ch >> 3;
+				// Arrows
+				if (curSeg < (maxCh >> 3)) {
+					upThis.qyRsrc.getBm("ArrowR1")?.render((e, x, y) => {
+						upThis.#nmdb[4989 + x + y * 128] = e;
+					});
+				};
+				if (curSeg > (minCh >> 3)) {
+					upThis.qyRsrc.getBm("ArrowL1")?.render((e, x, y) => {
+						upThis.#nmdb[4864 + x + y * 128] = e;
+					});
+				};
 				// PtCdTm
 				upThis.qyRsrc.getBm("PtCdTm")?.render((e, x, y) => {
 					upThis.#nmdb[4227 + x + y * 128] = e;
@@ -1422,18 +1449,76 @@ let QyDisplay = class extends RootDisplay {
 			upThis.qyRsrc.getBm("Mod_Usr")?.render((e, x, y) => {
 				upThis.#nmdb[6253 + x + y * 128] = e;
 			});
-		};
-		// Bank info
-		{
-			let voiceName = upThis.getChVoice(this.#ch);
-			upThis.xgFont.getStr(`${sum.chContr[chOff + ccToPos[0]].toString().padStart(3, "0")} ${sum.chProgr[this.#ch].toString().padStart(3, "0")} ${sum.chContr[chOff + ccToPos[32]].toString().padStart(3, "0")}`).forEach((e, i) => {
-				e.render((e, x, y) => {
-					upThis.#nmdb[6145 + 6 * i + x + y * 128] = e;
+			// Bank info
+			{
+				let voiceName = upThis.getChVoice(this.#ch);
+				upThis.xgFont.getStr(`${sum.chContr[chOff + ccToPos[0]].toString().padStart(3, "0")} ${sum.chProgr[this.#ch].toString().padStart(3, "0")} ${sum.chContr[chOff + ccToPos[32]].toString().padStart(3, "0")}`).forEach((e, i) => {
+					e.render((e, x, y) => {
+						upThis.#nmdb[6145 + 6 * i + x + y * 128] = e;
+					});
+				});;
+				upThis.xgFont.getStr(`${voiceName.standard}:${voiceName.name}`).forEach((e, i) => {
+					e.render((e, x, y) => {
+						upThis.#nmdb[7169 + 6 * i + x + y * 128] = e;
+					});
 				});
-			});;
-			upThis.xgFont.getStr(`${voiceName.standard}:${voiceName.name}`).forEach((e, i) => {
+			};
+			// Fetch voice bitmap
+			// Commit to bitmap screen
+			let useBm;
+			if (timeNow <= sum.bitmap.expire) {
+				// Use provided bitmap
+				useBm = sum.bitmap.bitmap;
+			} else {
+				// Use stored pic
+				useBm = this.#bmdb.slice();
+				if (timeNow >= this.#bmex) {
+					this.#bmst = 0;
+					let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
+					useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
+					if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
+						useBm = this.sysBm.getBm(`plg_${standard}`);
+					};
+					if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
+						useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
+					};
+					if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 126) {
+						useBm = this.sysBm.getBm("cat_smpl");
+					};
+					if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 64) {
+						useBm = this.sysBm.getBm("cat_sfx");
+					};
+					if (!useBm) {
+						useBm = this.sysBm.getBm("no_abm");
+					};
+				} else {
+					if (this.#bmst == 2) {
+						useBm.forEach((e, i, a) => {
+							let crit = Math.floor((this.#bmex - timeNow) / 400);
+							a[i] = crit % 2 == e;
+						});
+					};
+				};
+			};
+			useBm.width = useBm.length / 16;
+			useBm?.render((e, x, y) => {
+				if (useBm.width < 32) {
+					upThis.#nmdb[6219 + 2 * x + y * 128] = e;
+					upThis.#nmdb[6220 + 2 * x + y * 128] = e;
+				} else {
+					upThis.#nmdb[6219 + x + y * 128] = e;
+				};
+			});
+		};
+		if (timeNow <= sum.letter.expire) {
+			//upThis.#renderFill(12, 9, 109, 31);
+			upThis.qyRsrc.getBm("TxtDisp")?.render((e, x, y) => {
+				upThis.#nmdb[1035 + x + y * 128] = e;
+			});
+			upThis.xgFont.getStr(sum.letter.text).forEach((e, i) => {
+				let ri = (i % 16) * 6, ry = i >> 4;
 				e.render((e, x, y) => {
-					upThis.#nmdb[7169 + 6 * i + + x + y * 128] = e;
+					upThis.#nmdb[2067 + ri + x + (y + ry * 8) * 128] = e;
 				});
 			});
 		};
