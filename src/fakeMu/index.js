@@ -51,7 +51,7 @@ stSwitch.to = function (i) {
 stSwitch.forEach(function (e, i, a) {
 	stSwitchMode[i] = e.title;
 	e.addEventListener("click", function () {
-		muVis.switchMode(e.title, true);
+		visualizer.switchMode(e.title, true);
 		stSwitch.to(i);
 	});
 });
@@ -78,28 +78,28 @@ stDemo.forEach(function (e, i, a) {
 		currentPerformance = demoPerfs[e.title];
 		currentPerformance?.resetIndex();
 		audioPlayer.currentTime = 0;
-		muVis.reset();
-		muVis.loadFile(demoBlobs[e.title].midi);
+		visualizer.reset();
+		visualizer.loadFile(demoBlobs[e.title].midi);
 		if (audioBlob) {
 			URL.revokeObjectURL(audioBlob);
 		};
 		audioBlob = demoBlobs[e.title].wave;
 		audioPlayer.src = URL.createObjectURL(audioBlob);
 		if (demoModes[i]?.length > 0) {
-			muVis.switchMode(demoModes[i]);
+			visualizer.switchMode(demoModes[i]);
 		};
 		stDemo.to(i);
 	});
 });
 
 // Start the visualizers
-self.muVis = new MuDisplay();
-muVis.addEventListener("reset", function (e) {
+self.visualizer = new MuDisplay();
+visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 });
 
 // Listen to mode switches
-muVis.addEventListener("mode", function (ev) {
+visualizer.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
 });
 
@@ -118,11 +118,11 @@ $e("#openMidi").addEventListener("click", async function () {
 	};
 	if (ext == "syx") {
 		// Load SysEx blobs
-		muVis.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+		visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
 	} else {
 		stDemo.to(-1);
-		muVis.reset();
-		muVis.loadFile(file);
+		visualizer.reset();
+		visualizer.loadFile(file);
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -141,7 +141,7 @@ midwIndicator.addEventListener("click", function () {
 	};
 	audioBlob = null;
 	audioPlayer.src = "";
-	muVis.reset();
+	visualizer.reset();
 	useMidiBus = true;
 	midwIndicator.classList.on("active");
 });
@@ -150,35 +150,35 @@ midwIndicator.addEventListener("click", function () {
 let dispCanv = $e("#ymhMu");
 let dispCtx = dispCanv.getContext("2d");
 dispCanv.addEventListener("wheel", function (ev) {
-	let ch = muVis.getCh();
+	let ch = visualizer.getCh();
 	if (ev.deltaY > 0) {
-		muVis.setCh(ch + 1);
+		visualizer.setCh(ch + 1);
 	} else {
-		muVis.setCh(ch - 1);
+		visualizer.setCh(ch - 1);
 	};
 });
 dispCanv.addEventListener("mousedown", function (ev) {
-	let ch = muVis.getCh();
+	let ch = visualizer.getCh();
 	if (ev.offsetX < 64) {
-		muVis.setCh(ch - 1);
+		visualizer.setCh(ch - 1);
 	} else if (ev.offsetX >= 776) {
-		muVis.setCh(ch + 1);
+		visualizer.setCh(ch + 1);
 	};
 });
 
 // Render frames
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
-	muVis.reset();
+	visualizer.reset();
 	currentPerformance?.resetIndex();
 	audioPlayer.currentTime = 0;
 };
 (async function () {
-	muVis.reset();
+	visualizer.reset();
 	let midiBlob = await (await fetch("./demo/KANDI8.mid")).blob();
 	demoBlobs.KANDI8 = {};
 	demoBlobs.KANDI8.midi = midiBlob;
-	muVis.loadFile(midiBlob);
+	visualizer.loadFile(midiBlob);
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
@@ -194,21 +194,21 @@ let renderThread = setInterval(function () {
 		};
 		if (currentPerformance) {
 			currentPerformance.step(curTime)?.forEach((e) => {
-				muVis.sendCmd(e.data);
+				visualizer.sendCmd(e.data);
 			});
 		};
-		muVis.render(curTime, dispCtx);
+		visualizer.render(curTime, dispCtx);
 		lastTime = curTime;
 	};
 }, 20);
 
 getBridge().addEventListener("message", function (ev) {
 	if (useMidiBus) {
-		muVis.sendCmd(ev.data);
+		visualizer.sendCmd(ev.data);
 	};
 });
 
-self.visualizer = muVis;
+self.visualizer = visualizer;
 self.performance = currentPerformance;
 
 // Hardcoded performance

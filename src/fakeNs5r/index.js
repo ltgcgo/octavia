@@ -27,7 +27,7 @@ stSwitch.to = function (i) {
 stSwitch.forEach(function (e, i, a) {
 	stSwitchMode[i] = e.title;
 	e.addEventListener("click", function () {
-		ns5rVis.switchMode(e.title, true);
+		visualizer.switchMode(e.title, true);
 		stSwitch.to(i);
 	});
 });
@@ -52,28 +52,28 @@ stDemo.forEach(function (e, i, a) {
 			demoBlobs[e.title].wave = await (await fetch(`./demo/${e.title}.opus`)).blob();
 		};
 		audioPlayer.currentTime = 0;
-		ns5rVis.reset();
-		ns5rVis.loadFile(demoBlobs[e.title].midi);
+		visualizer.reset();
+		visualizer.loadFile(demoBlobs[e.title].midi);
 		if (audioBlob) {
 			URL.revokeObjectURL(audioBlob);
 		};
 		audioBlob = demoBlobs[e.title].wave;
 		audioPlayer.src = URL.createObjectURL(audioBlob);
 		if (demoModes[i]?.length > 0) {
-			ns5rVis.switchMode(demoModes[i]);
+			visualizer.switchMode(demoModes[i]);
 		};
 		stDemo.to(i);
 	});
 });
 
 // Start the visualizers
-self.ns5rVis = new Ns5rDisplay();
-ns5rVis.addEventListener("reset", function (e) {
+self.visualizer = new Ns5rDisplay();
+visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 });
 
 // Listen to mode switches
-ns5rVis.addEventListener("mode", function (ev) {
+visualizer.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
 });
 
@@ -92,11 +92,11 @@ $e("#openMidi").addEventListener("click", async function () {
 	};
 	if (ext == "syx") {
 		// Load SysEx blobs
-		ns5rVis.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+		visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
 	} else {
 		stDemo.to(-1);
-		ns5rVis.reset();
-		ns5rVis.loadFile(file);
+		visualizer.reset();
+		visualizer.loadFile(file);
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -115,7 +115,7 @@ midwIndicator.addEventListener("click", function () {
 	};
 	audioBlob = null;
 	audioPlayer.src = "";
-	ns5rVis.reset();
+	visualizer.reset();
 	useMidiBus = true;
 	midwIndicator.classList.on("active");
 });
@@ -124,39 +124,39 @@ midwIndicator.addEventListener("click", function () {
 let dispCanv = $e("#ns5rSc");
 let dispCtx = dispCanv.getContext("2d");
 dispCanv.addEventListener("wheel", function (ev) {
-	let ch = ns5rVis.getCh();
+	let ch = visualizer.getCh();
 	if (ev.deltaY > 0) {
-		ns5rVis.setCh(ch + 1);
+		visualizer.setCh(ch + 1);
 	} else {
-		ns5rVis.setCh(ch - 1);
+		visualizer.setCh(ch - 1);
 	};
 });
 dispCanv.addEventListener("mousedown", function (ev) {
-	let ch = ns5rVis.getCh();
+	let ch = visualizer.getCh();
 	if (ev.offsetX < 64) {
-		ns5rVis.setCh(ch - 1);
+		visualizer.setCh(ch - 1);
 	} else if (ev.offsetX >= 801) {
-		ns5rVis.setCh(ch + 1);
+		visualizer.setCh(ch + 1);
 	};
 });
 
 // Allow channel switching in browser console
 self.toCh = function (ch) {
-	ns5rVis.setCh(ch);
+	visualizer.setCh(ch);
 };
 
 // Render frames
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
-	ns5rVis.reset();
+	visualizer.reset();
 	audioPlayer.currentTime = 0;
 };
 (async function () {
-	ns5rVis.reset();
+	visualizer.reset();
 	let midiBlob = await (await fetch("./demo/KANDI8.mid")).blob();
 	demoBlobs.KANDI8 = {};
 	demoBlobs.KANDI8.midi = midiBlob;
-	ns5rVis.loadFile(midiBlob);
+	visualizer.loadFile(midiBlob);
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
@@ -170,13 +170,13 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
-		ns5rVis.render(curTime, dispCtx, location.hash?.length > 1);
+		visualizer.render(curTime, dispCtx, location.hash?.length > 1);
 		lastTime = curTime;
 	};
 }, 20);
 
 getBridge().addEventListener("message", function (ev) {
 	if (useMidiBus) {
-		ns5rVis.sendCmd(ev.data);
+		visualizer.sendCmd(ev.data);
 	};
 });

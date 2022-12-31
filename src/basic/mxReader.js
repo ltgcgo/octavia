@@ -12,6 +12,19 @@ let shiftIndex = 0, shiftLoading, shiftLoader = setInterval(() => {
 	};
 }, 1000 / 50);
 
+Uint8Array.prototype.render = function (receiveFunc) {
+	let x = 0, y = 0,
+	w = this.width || 5, h = this.height || 8;
+	for (let i = 0; i < this.length; i ++) {
+		receiveFunc(this[i], x, y, this);
+		x ++;
+		if (x >= w) {
+			x = 0;
+			y ++;
+		};
+	};
+};
+
 let MxFont40 = class {
 	#fonts = [];
 	async loadFile(fileSrc) {
@@ -87,8 +100,51 @@ let MxBm256 = class {
 		return this.#bm[rscNme]?.slice();
 	};
 };
+let MxBmDef = class {
+	#bm = {};
+	async loadFile(fileSrc) {
+		let upThis = this;
+		console.debug(`Requested pre-defined bitmap file from "${fileSrc}".`);
+		(await (await fetch(fileSrc)).text()).split("\n").forEach(function (e, i) {
+			if (i > 0 && e?.length > 0) {
+				let arr = e.split("\t");
+				if (arr[1][0] != "@") {
+					let bmWidth = parseInt(arr[1].slice(0, 4), 16),
+					bmHeight = parseInt(arr[1].slice(4, 8), 16);
+					let bm = new Uint8Array(bmWidth * bmHeight);
+					Array.from(arr[1]).slice(8).forEach(function (e, i) {
+						let iOff = i * 4,
+						proxy = parseInt(e, 16), dp = 3;
+						while (proxy > 0 || dp >= 0) {
+							let pos = iOff + dp;
+							if (pos <= bm.length) {
+								bm[pos] = proxy & 1;
+								proxy = proxy >> 1;
+							};
+							dp --;
+						};
+					});
+					bm.width = bmWidth;
+					bm.height = bmHeight;
+					upThis.#bm[arr[0]] = bm;
+					//console.debug(`W:${bmWidth} H:${bmHeight} L:${bm.length} ${arr[0]}`);
+				} else {
+					upThis.#bm[arr[0]] = upThis.#bm[arr[1].slice(1)];
+				};
+			};
+		});
+		self.mxDef = upThis;
+	};
+	constructor(fileSrc) {
+		this.loadFile(fileSrc);
+	};
+	getBm(rscNme) {
+		return this.#bm[rscNme];
+	};
+};
 
 export {
 	MxFont40,
-	MxBm256
+	MxBm256,
+	MxBmDef
 };
