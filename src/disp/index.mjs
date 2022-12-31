@@ -1201,13 +1201,14 @@ let QyDisplay = class extends RootDisplay {
 	#ch = 0;
 	#refreshed = true;
 	#backlight = bgWhite;
+	songTitle = "";
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sqrFont = new MxFont40("./data/bitmaps/xg/qySqr.tsv");
 	qy35Font = new MxFont40("./data/bitmaps/xg/qyCh35.tsv");
 	qy55Font = new MxFont40("./data/bitmaps/xg/qyCh55.tsv");
 	qyRsrc = new MxBmDef("./data/bitmaps/xg/qyRsrc.tsv");
 	constructor() {
-		super(0, 0.9);
+		super(0, 0.95);
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -1239,7 +1240,7 @@ let QyDisplay = class extends RootDisplay {
 			this.#nmdb[offset + x + y * 128] = 1;
 		};
 	};
-	render(time, ctx, mixerView) {
+	render(time, ctx, mixerView, id = 0) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
@@ -1301,18 +1302,34 @@ let QyDisplay = class extends RootDisplay {
 			// Song info box
 			upThis.#renderBox(34, 6, 65, 11);
 			upThis.#renderFill(35, 7, 13, 9);
-			upThis.xgFont.getStr(`01`).forEach((e, i) => {
+			upThis.xgFont.getStr(`${id + 1}`.padStart(2, "0")).forEach((e, i) => {
 				e.render((e, x, y) => {
 					if (e) {
 						upThis.#nmdb[1060 + x + i * 6 + y * 128] = 0;
 					};
 				});
 			});
-			upThis.xgFont.getStr(`BlankNme`).forEach((e, i) => {
-				e.render((e, x, y) => {
-					upThis.#nmdb[1073 + x + i * 6 + y * 128] = e;
+			if (upThis.songTitle.length < 9) {
+				upThis.xgFont.getStr(upThis.songTitle || "Unknown").forEach((e, i) => {
+					e.render((e, x, y) => {
+						upThis.#nmdb[1073 + x + i * 6 + y * 128] = e;
+					});
 				});
-			});
+			} else {
+				let rollX = Math.floor(time * 25) % (6 * (10 + upThis.songTitle.length)) - 47;
+				upThis.xgFont.getStr(`${upThis.songTitle}  ${upThis.songTitle}`).forEach((e, i) => {
+					e.render((e, x, y) => {
+						let area = x + i * 6;
+						let tX = rollX;
+						if (rollX < 0) {
+							tX = rollX >= -48 ? 0 : rollX + 48;
+						};
+						if (area >= tX && area < tX + 47) {
+							upThis.#nmdb[1073 - tX + area + y * 128] = e;
+						};
+					});
+				});
+			};
 			// Bar info box
 			{
 				upThis.#renderBox(100, 6, 28, 11);
@@ -1340,11 +1357,16 @@ let QyDisplay = class extends RootDisplay {
 				upThis.#nmdb[2338 + x + y * 128] = e;
 			});
 			// Transpose render
-			upThis.xgFont.getStr(`+00`).forEach((e, i) => {
-				e.render((e, x, y) => {
-					upThis.#nmdb[3127 + x + i * 6 + y * 128] = e;
+			{
+				let tPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
+				let tStr = tPit < 0 ? "-" : "+";
+				tStr += `${Math.round(Math.abs(tPit))}`.padStart(2, "0");
+				upThis.xgFont.getStr(tStr).forEach((e, i) => {
+					e.render((e, x, y) => {
+						upThis.#nmdb[3127 + x + i * 6 + y * 128] = e;
+					});
 				});
-			});
+			};
 			// Jump render
 			upThis.xgFont.getStr("001").forEach((e, i) => {
 				e.render((e, x, y) => {
@@ -1397,6 +1419,23 @@ let QyDisplay = class extends RootDisplay {
 			};
 			// Split line
 			upThis.#renderFill(71, 48, 1, 16);
+			upThis.qyRsrc.getBm("Mod_Usr")?.render((e, x, y) => {
+				upThis.#nmdb[6253 + x + y * 128] = e;
+			});
+		};
+		// Bank info
+		{
+			let voiceName = upThis.getChVoice(this.#ch);
+			upThis.xgFont.getStr(`${sum.chContr[chOff + ccToPos[0]].toString().padStart(3, "0")} ${sum.chProgr[this.#ch].toString().padStart(3, "0")} ${sum.chContr[chOff + ccToPos[32]].toString().padStart(3, "0")}`).forEach((e, i) => {
+				e.render((e, x, y) => {
+					upThis.#nmdb[6145 + 6 * i + x + y * 128] = e;
+				});
+			});;
+			upThis.xgFont.getStr(`${voiceName.standard}:${voiceName.name}`).forEach((e, i) => {
+				e.render((e, x, y) => {
+					upThis.#nmdb[7169 + 6 * i + + x + y * 128] = e;
+				});
+			});
 		};
 		// Screen buffer write finish.
 		// Determine if full render is required.
