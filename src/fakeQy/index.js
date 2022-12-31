@@ -12,6 +12,7 @@ let demoBlobs = {};
 let demoModes = [];
 demoModes[9] = "gm";
 let useMidiBus = false;
+let demoId = 0;
 
 // Standard switching
 let stSwitch = $a("b.mode");
@@ -63,12 +64,14 @@ stDemo.forEach(function (e, i, a) {
 			visualizer.switchMode(demoModes[i]);
 		};
 		stDemo.to(i);
+		demoId = i;
 	});
 });
 
 // Start the visualizers
 self.visualizer = new QyDisplay();
 visualizer.addEventListener("reset", function (e) {
+	visualizer.songTitle = "";
 	console.info("Processor reset.");
 });
 
@@ -97,6 +100,7 @@ $e("#openMidi").addEventListener("click", async function () {
 		stDemo.to(-1);
 		visualizer.reset();
 		visualizer.loadFile(file);
+		demoId = 0;
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -118,6 +122,16 @@ midwIndicator.addEventListener("click", function () {
 	visualizer.reset();
 	useMidiBus = true;
 	midwIndicator.classList.on("active");
+});
+
+visualizer.addEventListener("meta", function (ev) {
+	if (!visualizer.songTitle) {
+		ev.data.forEach(function (e) {
+			if (!visualizer.songTitle && e.meta == 3) {
+				visualizer.songTitle = e.data;
+			};
+		});
+	};
 });
 
 // Get canvas
@@ -143,7 +157,7 @@ dispCanv.addEventListener("mousedown", function (ev) {
 	if (ev.button == 0) {
 		if (ev.offsetX < 64) {
 			visualizer.setCh(ch - 1);
-		} else if (ev.offsetX >= 801) {
+		} else if (ev.offsetX >= 717) {
 			visualizer.setCh(ch + 1);
 		} else if (ev.offsetY < 72) {
 			mixerView = !mixerView;
@@ -181,7 +195,7 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
-		visualizer.render(curTime, dispCtx, mixerView);
+		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId);
 		lastTime = curTime;
 	};
 }, 20);
