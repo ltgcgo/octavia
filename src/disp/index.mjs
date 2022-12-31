@@ -2,7 +2,7 @@
 
 import {textedPanning, textedPitchBend} from "./texted.js";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
-import {MxFont40, MxBm256} from "../basic/mxReader.js";
+import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
 
 const noteNames = [
 	"C~", "C#", "D~", "Eb",
@@ -58,7 +58,7 @@ let TuiDisplay = class extends RootDisplay {
 		if (this.#maxPoly < curPoly) {
 			this.#maxPoly = curPoly;
 		};
-		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} ${curPoly.toString().padStart(3, "0")}:${this.#maxPoly.toString().padStart(3, "0")}/512 TSig:${sum.tSig[0]}/${sum.tSig[1]} Bar:${(sum.noteBar + 1).toString().padStart(3, "0")}/${sum.noteBeat + 1} Tempo:${Math.floor(cramTempo)}.${Math.floor(cramTempo % 1 * 100).toString().padStart(2, "0")} Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
+		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} ${curPoly.toString().padStart(3, "0")}:${this.#maxPoly.toString().padStart(3, "0")}/512 TSig:${sum.tSig[0]}/${sum.tSig[1]} Bar:${(sum.noteBar + 1).toString().padStart(3, "0")}/${Math.floor(sum.noteBeat) + 1} Tempo:${Math.floor(cramTempo)}.${Math.floor(cramTempo % 1 * 100).toString().padStart(2, "0")} Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
 		fields[1] = `Mode:${modeNames[sum.mode]} Title:${sum.title || "N/A"}`;
 		fields[2] = "Ch:VoiceNme#St VEM RCDB PP PiBd Pan : Note";
 		let line = 3, maxCh = 0;
@@ -1193,9 +1193,251 @@ let Ns5rDisplay = class extends RootDisplay {
 	};
 };
 
+let QyDisplay = class extends RootDisplay {
+	#omdb = new Uint8Array(8192); // Full display
+	#nmdb = new Uint8Array(8192); // Full display, but on commit
+	#mode = "?";
+	#strength = new Uint8Array(64);
+	#ch = 0;
+	#refreshed = true;
+	#backlight = bgWhite;
+	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	sqrFont = new MxFont40("./data/bitmaps/xg/qySqr.tsv");
+	qy35Font = new MxFont40("./data/bitmaps/xg/qyCh35.tsv");
+	qy55Font = new MxFont40("./data/bitmaps/xg/qyCh55.tsv");
+	qyRsrc = new MxBmDef("./data/bitmaps/xg/qyRsrc.tsv");
+	constructor() {
+		super(0, 0.9);
+	};
+	setCh(ch) {
+		this.#ch = ch;
+	};
+	getCh() {
+		return this.#ch;
+	};
+	#renderBox(sx, sy, width, height) {
+		let length = width * height;
+		let offset = sx + sy * 128;
+		for (let i = 0; i < length; i ++) {
+			let x = i % width, y = Math.floor(i / width);
+			if (
+				x == 0 && y < height - 1 ||
+				y == 0 && x < width - 1 ||
+				x == width - 1 && y > 0 ||
+				y == height - 1 && x > 0 ||
+				x == width - 2
+			) {
+				this.#nmdb[offset + x + y * 128] = 1;
+			};
+		};
+	};
+	#renderFill(sx, sy, width, height) {
+		let length = width * height;
+		let offset = sx + sy * 128;
+		for (let i = 0; i < length; i ++) {
+			let x = i % width, y = Math.floor(i / width);
+			this.#nmdb[offset + x + y * 128] = 1;
+		};
+	};
+	render(time, ctx, mixerView) {
+		let sum = super.render(time);
+		let upThis = this;
+		let timeNow = Date.now();
+		// Channel test
+		let alreadyMin = false;
+		let minCh = 0, maxCh = 0;
+		sum.chInUse.forEach(function (e, i) {
+			if (e) {
+				if (!alreadyMin) {
+					alreadyMin = true;
+					minCh = i;
+				};
+				maxCh = i;
+			};
+		});
+		let part = minCh >> 4;
+		minCh = part << 4;
+		maxCh = ((maxCh >> 4) << 4) + 15;
+		if (this.#ch > maxCh) {
+			this.#ch = minCh + this.#ch & 15;
+		};
+		if (this.#ch < minCh) {
+			this.#ch = maxCh - 15 + (this.#ch & 15);
+		};
+		let chOff = this.#ch * ccToPos.length;
+		// Clear out the current working display buffer.
+		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
+		// Start rendering
+		if (mixerView) {
+			// Mixer view
+			// Render the upperleft
+			upThis.qyRsrc.getBm("MixPill")?.render((e, x, y) => {
+				if (e) {
+					upThis.#nmdb[x + y * 128] = 1;
+				};
+			});
+			upThis.qyRsrc.getBm("MixIcon")?.render((e, x, y) => {
+				if (e) {
+					upThis.#nmdb[10 + x + y * 128] = 1;
+				};
+			});
+		} else {
+			// Normal view
+			// Render the pill
+			upThis.qyRsrc.getBm("NorPill")?.render((e, x, y) => {
+				if (e) {
+					upThis.#nmdb[x + y * 128] = 1;
+				};
+			});
+			// Carve out the text on that pill
+			upThis.xgFont.getStr("SONG").forEach((e, i) => {
+				e.render((e, x, y) => {
+					if (e) {
+						upThis.#nmdb[5 + x + i * 6 + y * 128] = 0;
+					};
+				});
+			});
+			// Prepare info boxes
+			// Song info box
+			upThis.#renderBox(34, 6, 65, 11);
+			upThis.#renderFill(35, 7, 13, 9);
+			upThis.xgFont.getStr(`01`).forEach((e, i) => {
+				e.render((e, x, y) => {
+					if (e) {
+						upThis.#nmdb[1060 + x + i * 6 + y * 128] = 0;
+					};
+				});
+			});
+			upThis.xgFont.getStr(`BlankNme`).forEach((e, i) => {
+				e.render((e, x, y) => {
+					upThis.#nmdb[1073 + x + i * 6 + y * 128] = e;
+				});
+			});
+			// Bar info box
+			{
+				upThis.#renderBox(100, 6, 28, 11);
+				let blinker = sum.noteBeat % 1;
+				upThis.sqrFont.getStr(`${"$%"[+(blinker > 0 && blinker <= 0.25)]}${(sum.noteBar + 1).toString().padStart(3, "0")}`).forEach((e, i) => {
+					e.render((e, x, y) => {
+						upThis.#nmdb[1126 + x + i * 6 + y * 128] = e;
+					});
+				});
+			};
+			// Tempo render
+			upThis.sqrFont.getStr(`&=${Math.round(sum.tempo).toString().padStart(3, "0")}`).forEach((e, i) => {
+				e.render((e, x, y) => {
+					upThis.#nmdb[2048 + x + i * 6 + y * 128] = e;
+				});
+			});
+			// tSig render
+			upThis.xgFont.getStr(`${sum.tSig[0]}/${sum.tSig[1]}`).forEach((e, i) => {
+				e.render((e, x, y) => {
+					upThis.#nmdb[3078 + x + i * 6 + y * 128] = e;
+				});
+			});
+			// Placeholder
+			upThis.qyRsrc.getBm("Vtfj")?.render((e, x, y) => {
+				upThis.#nmdb[2338 + x + y * 128] = e;
+			});
+			// Transpose render
+			upThis.xgFont.getStr(`+00`).forEach((e, i) => {
+				e.render((e, x, y) => {
+					upThis.#nmdb[3127 + x + i * 6 + y * 128] = e;
+				});
+			});
+			// Jump render
+			upThis.xgFont.getStr("001").forEach((e, i) => {
+				e.render((e, x, y) => {
+					upThis.#nmdb[3181 + x + i * 6 + y * 128] = e;
+				});
+			});
+			// Channel info box
+			upThis.#renderBox(0, 32, 128, 15);
+			// Channel tabs
+			{
+				let curSeg = this.#ch >> 3;
+				// PtCdTm
+				upThis.qyRsrc.getBm("PtCdTm")?.render((e, x, y) => {
+					upThis.#nmdb[4227 + x + y * 128] = e;
+				});
+				// The tempo pill
+				if (sum.tempo != 120) {
+					upThis.qyRsrc.getBm("ActPill")?.render((e, x, y) => {
+						upThis.#nmdb[5141 + x + y * 128] = e;
+					});
+				};
+				for (let tch = 0; tch < 8; tch ++) {// target channel
+					let rch = curSeg * 8 + tch,
+					textTarget = 1;
+					upThis.qyRsrc.getBm("CTabOff")?.render((e, x, y) => {
+						upThis.#nmdb[4254 + 12 * tch + x + y * 128] = e;
+					});
+					let cVelo = Math.floor(sum.strength[rch] / 51);
+					upThis.#renderFill(31 + 12 * tch, 44 - cVelo, 9, cVelo + 1);
+					if (this.#ch == rch) {
+						textTarget = 0;
+						upThis.#renderFill(31 + 12 * tch, 33, 9, 5);
+					};
+					if (rch < 19) {
+						upThis.qy55Font.getStr(String.fromCharCode(48 + rch))[0].render((e, x, y) => {
+							if (e) {
+								upThis.#nmdb[4257 + 12 * tch + x + y * 128] = textTarget;
+							};
+						});
+					} else {
+						upThis.qy35Font.getStr((rch + 1).toString()).forEach((e, i) => {
+							e.render((e, x, y) => {
+								if (e) {
+									upThis.#nmdb[4256 + 4 * i + 12 * tch + x + y * 128] = textTarget;
+								};
+							});
+						});
+					};
+				};
+			};
+			// Split line
+			upThis.#renderFill(71, 48, 1, 16);
+		};
+		// Screen buffer write finish.
+		// Determine if full render is required.
+		let drawPixMode = false;
+		if (this.#refreshed) {
+			// Full render required.
+			// Clear all pixels.
+			ctx.fillStyle = this.#backlight.replace("64", "");
+			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			drawPixMode = true;
+			this.#refreshed = false;
+		};
+		// Commit to display accordingly.
+		this.#nmdb.forEach((e, i) => {
+			let pixX = i % 128, pixY = Math.floor(i / 128);
+			let hasDifference = this.#omdb[i] != e;
+			if (!drawPixMode && hasDifference) {
+				ctx.fillStyle = this.#backlight.slice(0, 7);
+				ctx.fillRect(6 * pixX + 7, 7 + 8 * pixY, 6, 8);
+			};
+			if (drawPixMode || hasDifference) {
+				ctx.fillStyle = ["#0000001a", "#0000009f"][e];
+				if (drawPixMode) {
+					ctx.fillStyle = ctx.fillStyle.slice(0, 7);
+				};
+				ctx.fillRect(6 * pixX + 7, 7 + 8 * pixY, 5.5, 7.5);
+			};
+		});
+		// Commit to old display buffer.
+		this.#nmdb.forEach((e, i) => {
+			if (this.#omdb[i] != e) {
+				this.#omdb[i] = e;
+			};
+		});
+	};
+};
+
 export {
 	TuiDisplay,
 	MuDisplay,
 	ScDisplay,
-	Ns5rDisplay
+	Ns5rDisplay,
+	QyDisplay
 };
