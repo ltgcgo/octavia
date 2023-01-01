@@ -1331,8 +1331,11 @@ let QyDisplay = class extends RootDisplay {
 						});
 					});
 				} else {
-					let rollX = Math.floor(time * 25) % (6 * (10 + upThis.songTitle.length)) - 47;
-					let sngTtl = upThis.songTitle.replaceAll("  ", " ");
+					let sngTtl = upThis.songTitle;
+					while (sngTtl.indexOf("  ") > -1) {
+						sngTtl = sngTtl.replaceAll("  ", " ");
+					};
+					let rollX = Math.floor(time * 25) % (6 * (10 + sngTtl.length)) - 47;
 					upThis.xgFont.getStr(`${sngTtl}  ${sngTtl.slice(0, 8)}`).forEach((e, i) => {
 						e.render((e, x, y) => {
 							let area = x + i * 6;
@@ -1457,7 +1460,7 @@ let QyDisplay = class extends RootDisplay {
 						upThis.#nmdb[6145 + 6 * i + x + y * 128] = e;
 					});
 				});;
-				upThis.xgFont.getStr(`${voiceName.standard}:${voiceName.name}`).forEach((e, i) => {
+				upThis.xgFont.getStr(`${voiceName.standard}:${voiceName.name.slice(0, 8)}`).forEach((e, i) => {
 					e.render((e, x, y) => {
 						upThis.#nmdb[7169 + 6 * i + x + y * 128] = e;
 					});
@@ -1503,10 +1506,10 @@ let QyDisplay = class extends RootDisplay {
 			useBm.width = useBm.length / 16;
 			useBm?.render((e, x, y) => {
 				if (useBm.width < 32) {
-					upThis.#nmdb[6219 + 2 * x + y * 128] = e;
-					upThis.#nmdb[6220 + 2 * x + y * 128] = e;
+					upThis.#nmdb[6217 + 2 * x + y * 128] = e;
+					upThis.#nmdb[6218 + 2 * x + y * 128] = e;
 				} else {
-					upThis.#nmdb[6219 + x + y * 128] = e;
+					upThis.#nmdb[6217 + x + y * 128] = e;
 				};
 			});
 		};
