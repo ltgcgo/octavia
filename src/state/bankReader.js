@@ -84,7 +84,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 48: {
-				sect = "yM";
+				sect = `yM${(args[2] >> 3).toString().padStart(2, "0")}`;
 				useLsb = true;
 				break;
 			};
@@ -180,10 +180,10 @@ let VoiceBank = class {
 			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
 			if (!bankName) {
 				if (!this.strictMode) {
-					if (mode != "gs" && mode != "ns5r") {
+					/* if (mode != "gs" && mode != "ns5r") {
 						args[2] = 0;
 						ending = "^";
-					};
+					}; */
 					if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
 						if (msb == 48) {
 							args[0] = 0;
@@ -271,6 +271,9 @@ let VoiceBank = class {
 		if ((mode == "gs" || mode == "ns5r") && ending == "^") {
 			ending = " ";
 		};
+		if (msb == 127 && ending == "^") {
+			ending = " ";
+		};
 		if (ending != " ") {
 			if (self.debugMode) {
 				bankName = "";
@@ -350,7 +353,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 127: {
-				standard = lsb == 127 ? "MT" : (prg == 0 ? "GM" : "XG");
+				standard = args[2] == 127 ? "MT" : (prg == 0 ? "GM" : "XG");
 				break;
 			};
 			default: {
