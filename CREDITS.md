@@ -39,7 +39,7 @@ Octavia will never become a reality without help from the following people.
 * H: Sam Sketty - Low Down (XG) _Recorded by Ham Seung-woo on MU90_
 * I: John Campbell - Star Games (GS, SC-55) _Recorded by DearHoney on SC-88 Pro_
 * J: David Yackley - One Stop (GM)
-* K: 大田川恭子, 久光浩, 小室弥須彦 - Orchestra (GS, SC-88 Pro) _Recorded by DearHoney_
+* K: 大田川恭子 (Team-khy) - Orchestra (GS, SC-88 Pro) _Recorded by DearHoney_
 * L: 大田川恭子 - Midnight Chaser (GS, SC-88) _Recorded by DearHoney_
 * M: Michael Z. Land - Introduction (MT-32)
 * N: Idecs Music Software - Japanese (GS, SC-88 Pro) _Recorded by DearHoney_
