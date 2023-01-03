@@ -1245,13 +1245,51 @@ let QyDisplay = class extends RootDisplay {
 			};
 		};
 	};
-	#renderFill(sx, sy, width, height) {
+	#renderFill(sx, sy, width, height, target = 1) {
 		let length = width * height;
 		let offset = sx + sy * 128;
 		for (let i = 0; i < length; i ++) {
 			let x = i % width, y = Math.floor(i / width);
-			this.#nmdb[offset + x + y * 128] = 1;
+			this.#nmdb[offset + x + y * 128] = target;
 		};
+	};
+	#renderMosaic(sx, sy, width, height, start = 1) {
+		let curBit = !start;
+		let offset = sx + sy * 128,
+		length = width * height;
+		for (let i = 0; i < length; i ++) {
+			let x = i % width, y = Math.floor(i / width);
+			if (x == 0 && y > 0 && width % 2 == 0) {} else {
+				curBit = !curBit;
+			};
+			this.#nmdb[offset + x + y * 128] = +curBit;
+		};
+	};
+	#getCat(channel, msb, prg) {
+		let voiceInfo = this.getChVoice(channel);
+		let category;
+		if (["GM", "AG", "XG", "GS", "G2"].indexOf(voiceInfo.standard) > -1) {
+			switch(msb) {
+				case 64: {
+					category = "sfx";
+					break;
+				};
+				case 120:
+				case 122:
+				case 126:
+				case 127: {
+					category = "dr";
+					break;
+				};
+				default: {
+					category = (prg >> 3).toString(16);
+				};
+			};
+		} else {
+			category = voiceInfo.standard;
+			category = `${category[0]}${category[1].toLowerCase()}`;
+		};
+		return category;
 	};
 	render(time, ctx, mixerView, id = 0) {
 		let sum = super.render(time);
@@ -1295,6 +1333,59 @@ let QyDisplay = class extends RootDisplay {
 					upThis.#nmdb[10 + x + y * 128] = 1;
 				};
 			});
+			// Info labels
+			upThis.qyRsrc.getBm("MsVoice")?.render((e, x, y) => {
+				upThis.#nmdb[2176 + x + y * 128] = e;
+			});
+			upThis.qyRsrc.getBm("ElPan")?.render((e, x, y) => {
+				upThis.#nmdb[4096 + x + y * 128] = e;
+			});
+			upThis.qyRsrc.getBm("ElVol")?.render((e, x, y) => {
+				upThis.#nmdb[4864 + x + y * 128] = e;
+			});
+			upThis.qyRsrc.getBm("ElMsPa")?.render((e, x, y) => {
+				upThis.#nmdb[5634 + x + y * 128] = e;
+			});
+			// Global mosaic
+			upThis.#renderMosaic(0, 50, 5, 14, 1);
+			upThis.#renderFill(5, 50, 1, 14);
+			upThis.#renderMosaic(7, 50, 10, 14, 0);
+			upThis.#renderFill(10, 52, 1, 10);
+			upThis.#renderFill(11, 52, 1, 10, 0);
+			upThis.#renderFill(17, 50, 1, 14);
+			upThis.#renderMosaic(19, 50, 10, 14, 0);
+			upThis.#renderFill(22, 52, 1, 10);
+			upThis.#renderFill(23, 52, 1, 10, 0);
+			let masterVol = 9 - Math.floor(sum.master.volume / 10.1);
+			upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
+				upThis.#nmdb[7 + x + (50 + masterVol + y) * 128] = e;
+			});
+			upThis.#renderFill(8, 53 + masterVol, 8, 1);
+			upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
+				upThis.#nmdb[6419 + x + y * 128] = e;
+			});
+			upThis.#renderFill(20, 53, 8, 1);
+			upThis.#renderFill(29, 24, 1, 40);
+			// Bank info
+			let voiceInfo = upThis.getChVoice(this.#ch);
+			upThis.xgFont.getStr(`${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || sum.chContr[chOff] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
+				e.render((e, x, y) => {
+						upThis.#nmdb[55 + x + i * 6 + y * 128] = e;
+				});
+			});
+			let curCat = upThis.#getCat(this.#ch, sum.chContr[this.#ch * ccToPos.length], sum.chProgr[this.#ch]),
+			curCatBm = upThis.qyRsrc.getBm(`Vox_${curCat}`);
+			if (curCatBm) {
+				curCatBm.render((e, x, y) => {
+					upThis.#nmdb[37 + x + y * 128] = e;
+				});
+			} else {
+				upThis.xgFont.getStr(curCat).forEach((e, i) => {
+					e.render((e, x, y) => {
+						upThis.#nmdb[37 + x + i * 6 + y * 128] = e;
+					});
+				});
+			};
 		} else {
 			// Normal view
 			// Render the pill
@@ -1392,61 +1483,6 @@ let QyDisplay = class extends RootDisplay {
 					upThis.#nmdb[3181 + x + i * 6 + y * 128] = e;
 				});
 			});
-			// Channel info box
-			upThis.#renderBox(0, 32, 128, 15);
-			// Channel tabs
-			{
-				let curSeg = this.#ch >> 3;
-				// Arrows
-				if (curSeg < (maxCh >> 3)) {
-					upThis.qyRsrc.getBm("ArrowR1")?.render((e, x, y) => {
-						upThis.#nmdb[4989 + x + y * 128] = e;
-					});
-				};
-				if (curSeg > (minCh >> 3)) {
-					upThis.qyRsrc.getBm("ArrowL1")?.render((e, x, y) => {
-						upThis.#nmdb[4864 + x + y * 128] = e;
-					});
-				};
-				// PtCdTm
-				upThis.qyRsrc.getBm("PtCdTm")?.render((e, x, y) => {
-					upThis.#nmdb[4227 + x + y * 128] = e;
-				});
-				// The tempo pill
-				if (sum.tempo != 120) {
-					upThis.qyRsrc.getBm("ActPill")?.render((e, x, y) => {
-						upThis.#nmdb[5141 + x + y * 128] = e;
-					});
-				};
-				for (let tch = 0; tch < 8; tch ++) {// target channel
-					let rch = curSeg * 8 + tch,
-					textTarget = 1;
-					upThis.qyRsrc.getBm("CTabOff")?.render((e, x, y) => {
-						upThis.#nmdb[4254 + 12 * tch + x + y * 128] = e;
-					});
-					let cVelo = Math.floor(sum.strength[rch] / 51);
-					upThis.#renderFill(31 + 12 * tch, 44 - cVelo, 9, cVelo + 1);
-					if (this.#ch == rch) {
-						textTarget = 0;
-						upThis.#renderFill(31 + 12 * tch, 33, 9, 5);
-					};
-					if (rch < 19) {
-						upThis.qy55Font.getStr(String.fromCharCode(48 + rch))[0].render((e, x, y) => {
-							if (e) {
-								upThis.#nmdb[4257 + 12 * tch + x + y * 128] = textTarget;
-							};
-						});
-					} else {
-						upThis.qy35Font.getStr((rch + 1).toString()).forEach((e, i) => {
-							e.render((e, x, y) => {
-								if (e) {
-									upThis.#nmdb[4256 + 4 * i + 12 * tch + x + y * 128] = textTarget;
-								};
-							});
-						});
-					};
-				};
-			};
 			// Split line
 			upThis.#renderFill(71, 48, 1, 16);
 			upThis.qyRsrc.getBm("Mod_Usr")?.render((e, x, y) => {
@@ -1513,15 +1549,115 @@ let QyDisplay = class extends RootDisplay {
 				};
 			});
 		};
+		{
+			// Channel tabs
+			let curSeg = this.#ch >> 3;
+			let preCal = mixerView ? 1310 : 4254,
+			preCalY = mixerView ? 10 : 33;
+			// Channel info box
+			if (mixerView) {
+				upThis.#renderFill(28, preCalY - 1, 99, 15);
+				upThis.#renderFill(29, preCalY, 97, 13, 0);
+			} else {
+				upThis.#renderBox(0, preCalY - 1, 128, 15);
+			};
+			// Arrows
+			if (curSeg < (maxCh >> 3)) {
+				upThis.qyRsrc.getBm(`ArrowR${+mixerView + 1}`)?.render((e, x, y) => {
+					upThis.#nmdb[preCal + 735 + x + y * 128] = e;
+				});
+			};
+			if (curSeg > (minCh >> 3)) {
+				upThis.qyRsrc.getBm(`ArrowL${+mixerView + 1}`)?.render((e, x, y) => {
+					upThis.#nmdb[preCal + 610 + (+mixerView * 27) + x + y * 128] = e;
+				});
+			};
+			if (!mixerView) {
+				// PtCdTm
+				upThis.qyRsrc.getBm("PtCdTm")?.render((e, x, y) => {
+					upThis.#nmdb[4227 + x + y * 128] = e;
+				});
+				// The tempo pill
+				if (sum.tempo != 120) {
+					upThis.qyRsrc.getBm("ActPill")?.render((e, x, y) => {
+						upThis.#nmdb[5141 + x + y * 128] = e;
+					});
+				};
+			};
+			for (let tch = 0; tch < 8; tch ++) { // target channel
+				let rch = curSeg * 8 + tch,
+				textTarget = 1;
+				upThis.qyRsrc.getBm("CTabOff")?.render((e, x, y) => {
+					upThis.#nmdb[preCal + 12 * tch + x + y * 128] = e;
+				});
+				let cVelo = Math.floor(sum.strength[rch] / 51);
+				upThis.#renderFill(31 + 12 * tch, preCalY + 11 - cVelo, 9, cVelo + 1);
+				if (this.#ch == rch) {
+					textTarget = 0;
+					upThis.#renderFill(31 + 12 * tch, preCalY, 9, 5);
+					if (mixerView) {
+						upThis.#renderFill(30 + 12 * tch, preCalY + 14, 13, 8);
+					};
+				};
+				if (rch < 19) {
+					upThis.qy55Font.getStr(String.fromCharCode(48 + rch))[0].render((e, x, y) => {
+						if (e) {
+							upThis.#nmdb[preCal + 3 + 12 * tch + x + y * 128] = textTarget;
+						};
+					});
+				} else {
+					upThis.qy35Font.getStr((rch + 1).toString()).forEach((e, i) => {
+						e.render((e, x, y) => {
+							if (e) {
+								upThis.#nmdb[preCal + 2 + 4 * i + 12 * tch + x + y * 128] = textTarget;
+							};
+						});
+					});
+				};
+				if (mixerView) {
+					upThis.#renderMosaic(31 + tch * 12, 32, 10, 32, 0);
+					upThis.#renderFill(41 + tch * 12, 32, 1, 32);
+					upThis.#renderFill(34 + tch * 12, 43, 1, 18);
+					upThis.#renderFill(35 + tch * 12, 45, 1, 16, 0);
+					upThis.#renderFill(31 + tch * 12, 63, 10, 1);
+					upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
+						upThis.#nmdb[4255 + tch * 12 + x + y * 128] = e;
+					});
+					let volSlid = 15 - (sum.chContr[rch * ccToPos.length + ccToPos[7]] >> 3);
+					upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
+						upThis.#nmdb[5535 + tch * 12 + x + (volSlid + y) * 128] = e;
+					});
+					upThis.#renderFill(32 + tch * 12, 46 + volSlid, 8, 1);
+					// Category render
+					let curCat = upThis.#getCat(rch, sum.chContr[rch * ccToPos.length], sum.chProgr[rch]),
+					curCatBm = upThis.qyRsrc.getBm(`Vox_${curCat}`);
+					if (curCatBm) {
+						curCatBm.render((e, x, y) => {
+							if (e) {
+								upThis.#nmdb[3103 + tch * 12 + x + y * 128] = textTarget;
+							};
+						});
+					} else {
+						upThis.xgFont.getStr(curCat).forEach((e, i) => {
+							e.render((e, x, y) => {
+								if (e) {
+									upThis.#nmdb[3103 + tch * 12 + x + i * 6 + y * 128] = textTarget;
+								};
+							});
+						});
+					};
+				};
+			};
+		};
 		if (timeNow <= sum.letter.expire) {
 			//upThis.#renderFill(12, 9, 109, 31);
 			upThis.qyRsrc.getBm("TxtDisp")?.render((e, x, y) => {
-				upThis.#nmdb[1035 + x + y * 128] = e;
+				upThis.#nmdb[(mixerView ? 655 : 1036) + x + y * 128] = e;
 			});
 			upThis.xgFont.getStr(sum.letter.text).forEach((e, i) => {
 				let ri = (i % 16) * 6, ry = i >> 4;
 				e.render((e, x, y) => {
-					upThis.#nmdb[2067 + ri + x + (y + ry * 8) * 128] = e;
+					upThis.#nmdb[(mixerView ? 1686 : 2067) + ri + x + (y + ry * 8) * 128] = e;
 				});
 			});
 		};
