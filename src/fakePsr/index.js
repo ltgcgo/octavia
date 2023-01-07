@@ -94,6 +94,42 @@ stDemo.forEach(function (e, i, a) {
 	});
 });
 
+// Backlight color switching
+let backlightColor = "white";
+let blSwitch = $a("b.backlight");
+blSwitch.to = function (i) {
+	blSwitch.forEach(function (e) {
+		e.classList.off("active");
+	});
+	if (i > -1) {
+		blSwitch[i].classList.on("active");
+	};
+};
+blSwitch.forEach(function (e, i) {
+	e.addEventListener("click", function () {
+		// backlightColor;
+		blSwitch.to(i);
+	});
+});
+
+// Automatic channel switching
+let enableChannelSwitch = false;
+let csSwitch = $a("b.channelSwitching");
+csSwitch.to = function (i) {
+	csSwitch.forEach(function (e) {
+		e.classList.off("active");
+	});
+	if (i > -1) {
+		csSwitch[i].classList.on("active");
+	};
+};
+csSwitch.forEach(function (e, i) {
+	e.addEventListener("click", function () {
+		enableChannelSwitch = !enableChannelSwitch;
+		csSwitch.to(i);
+	});
+});
+
 // Start the visualizers
 self.visualizer = new PsrDisplay();
 visualizer.addEventListener("reset", function (e) {
@@ -163,6 +199,7 @@ visualizer.addEventListener("meta", function (ev) {
 // Get canvas
 let dispCanv = $e("#ymhPsr");
 let dispCtx = dispCanv.getContext("2d");
+let mixerView = false;
 dispCanv.addEventListener("wheel", function (ev) {
 	let ch = visualizer.getCh();
 	if (ev.deltaY > 0) {
@@ -181,7 +218,7 @@ dispCanv.addEventListener("mousedown", function (ev) {
 		} else if (ev.offsetX >= 1046) {
 			visualizer.setCh(ch + 1);
 		} else if (ev.offsetY < 72) {
-			// mixerView = !mixerView;
+			mixerView = !mixerView;
 		};
 	};
 });
@@ -217,13 +254,13 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
-		if (currentPerformance) {
+		if (enableChannelSwitch && currentPerformance) {
 			currentPerformance.step(curTime)?.forEach((e) => {
 				visualizer.sendCmd(e.data);
 			});
 		};
 		// visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId);
-		visualizer.render(curTime, dispCtx);
+		visualizer.render(curTime, dispCtx, backlightColor, mixerView);
 		lastTime = curTime;
 	};
 }, 20);
