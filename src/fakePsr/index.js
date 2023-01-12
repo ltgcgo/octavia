@@ -113,19 +113,20 @@ blSwitch.forEach(function (e, i) {
 });
 
 // Automatic channel switching
-let enableChannelSwitch = false;
+let enableChannelSwitch = true;
 let csSwitch = $a("b.channelSwitching");
 csSwitch.to = function (i) {
 	csSwitch.forEach(function (e) {
 		e.classList.off("active");
 	});
-	if (i > -1) {
+	if (enableChannelSwitch) {
 		csSwitch[i].classList.on("active");
 	};
 };
 csSwitch.forEach(function (e, i) {
 	e.addEventListener("click", function () {
 		enableChannelSwitch = !enableChannelSwitch;
+		enableChannelSwitch.innerText = enableChannelSwitch ? "ON" : "OFF";
 		csSwitch.to(i);
 	});
 });
