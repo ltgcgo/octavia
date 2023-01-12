@@ -218,7 +218,7 @@ dispCanv.addEventListener("mousedown", function (ev) {
 			visualizer.setCh(ch - 1);
 		} else if (ev.offsetX >= 1046) {
 			visualizer.setCh(ch + 1);
-		} else if (ev.offsetY < 72) {
+		} else if (ev.offsetY < 110) {
 			mixerView = !mixerView;
 		};
 	};
