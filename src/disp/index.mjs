@@ -1740,8 +1740,8 @@ let PsrDisplay = class extends RootDisplay {
 			D: new Uint8Array([0, 1, 0, 1, 1, 1, 1, 0]),
 			"-": new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0])
 		};
-		ctx.setTransform(scaleX, 0, skew, scaleY, 190 * i + offsetX, offsetY);
 		Array.from(str).forEach((e, i) => {
+			ctx.setTransform(scaleX, 0, skew, scaleY, 190 * i + offsetX, offsetY);
 			for (let i = 0; i < 8; i++) {
 				ctx.fillStyle = sevenSegFont[e][i] ? activePixel : inactivePixel;
 				ctx.fill(path[i]);
