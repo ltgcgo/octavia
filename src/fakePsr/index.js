@@ -126,7 +126,7 @@ csSwitch.to = function (i) {
 csSwitch.forEach(function (e, i) {
 	e.addEventListener("click", function () {
 		enableChannelSwitch = !enableChannelSwitch;
-		enableChannelSwitch.innerText = enableChannelSwitch ? "ON" : "OFF";
+		this.innerText = enableChannelSwitch ? "ON" : "OFF";
 		csSwitch.to(i);
 	});
 });
