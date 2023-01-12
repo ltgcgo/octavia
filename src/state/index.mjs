@@ -927,9 +927,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		this.#metaRun[4] = function (data, track) {
-			if (track < 1 && this.#metaChannel < 1) {
+			//if (track < 1 && this.#metaChannel < 1) {
 				this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}Instrmnt: ${data}`);
-			};
+			//};
 		};
 		this.#metaRun[5] = function (data) {
 			if (data.trim() == "") {
