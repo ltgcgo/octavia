@@ -329,7 +329,7 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan=17>System Exclusive</td>
+			<td rowspan=19>System Exclusive</td>
 			<td>General MIDI</td>
 			<td>✓</td>
 			<td></td>
@@ -361,6 +361,11 @@
 		</tr>
 		<tr>
 			<td>YAMAHA PLG-150VL</td>
+			<td>✕</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>YAMAHA TG</td>
 			<td>✕</td>
 			<td></td>
 		</tr>
@@ -412,6 +417,11 @@
 		<tr>
 			<td>CASIO GZ-50M</td>
 			<td>✓</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>ALESIS NanoSynth</td>
+			<td>✕</td>
 			<td></td>
 		</tr>
 		<tr>
