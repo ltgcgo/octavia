@@ -1711,6 +1711,55 @@ let PsrDisplay = class extends RootDisplay {
 	getCh() {
 		return this.#ch;
 	};
+	#render7seg(str, ctx, offsetX, offsetY, scaleX = 1, scaleY = 1, skew = -0.15) {
+		let path = [
+			new Path2D(),
+			new Path2D("M36 160 L48 148 L144 148 L156 160 L144 172 L48 172 Z"),
+			new Path2D("M32 156 L20 144 L20 48 L32 36 L44 48 L44 144 Z"),
+			new Path2D("M32 284 L20 272 L20 176 L32 164 L44 176 L44 272 Z"),
+			new Path2D("M156 288 L144 300 L48 300 L36 288 L48 276 L144 276 Z"),
+			new Path2D("M160 164 L172 176 L172 272 L160 284 L148 272 L148 176 Z"),
+			new Path2D("M160 36 L172 48 L172 144 L160 156 L148 144 L148 48 Z"),
+			new Path2D("M36 32 L48 20 L144 20 L156 32 L144 44 L48 44 Z")
+		];
+		let sevenSegFont = {
+			0: 63,
+			1: 6,
+			2: 91,
+			3: 79,
+			4: 102,
+			5: 109,
+			6: 125,
+			7: 39,
+			8: 127,
+			9: 111,
+			" ": 0,
+			A: 119,
+			B: 124,
+			C: 57,
+			D: 94,
+			"-": 64
+		};
+		Array.from(str).forEach((e, i) => {
+			ctx.setTransform(scaleX, 0, skew, scaleY, 190 * i + offsetX, offsetY);
+			let bits = sevenSegFont[e].toBits();
+			bits.forEach(function (e, i) {
+				ctx.fillStyle = e ? activePixel : inactivePixel;
+				ctx.fill(path[i]);
+			});
+		});
+		ctx.resetTransform();
+	};
+	#renderDotMatrix(str, ctx, offsetX, offsetY, scaleX = 8, scaleY = 8, skew = -0.15) {
+		ctx.setTransform(scaleX, 0, skew, scaleY, 0, 0);
+		upthis.xgFont.getStr(str).forEach((e, i) => {
+			e.render((e, x, y) => {
+				ctx.fillStyle = e ? activePixel : inactivePixel;
+				ctx.fillRect(offestX + x, offsetY + y, scaleX - 1, scaleY - 1);
+			});
+		});
+		ctx.resetTransform();
+	}
 	render(time, ctx, backlightColor = "white", mixerView) {
 		let sum = super.render(time);
 		let upThis = this;
@@ -1735,19 +1784,11 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fill(new Path2D("M376 262c4 0 9 1 13 1c155 0 256 -128 256 -261c0 -76 -33 -154 -107 -210c-22 -17 -47 -28 -73 -36c3 -35 5 -70 5 -105c0 -19 -1 -39 -2 -58c-7 -120 -90 -228 -208 -228c-108 0 -195 88 -195 197c0 58 53 103 112 103c54 0 95 -47 95 -103c0 -52 -43 -95 -95 -95 c-11 0 -21 2 -31 6c26 -39 68 -65 117 -65c96 0 157 92 163 191c1 18 2 37 2 55c0 31 -1 61 -4 92c-29 -5 -58 -8 -89 -8c-188 0 -333 172 -333 374c0 177 131 306 248 441c-19 62 -37 125 -45 190c-6 52 -7 104 -7 156c0 115 55 224 149 292c3 2 7 3 10 3c4 0 7 0 10 -3 c71 -84 133 -245 133 -358c0 -143 -86 -255 -180 -364c21 -68 39 -138 56 -207zM461 -203c68 24 113 95 113 164c0 90 -66 179 -173 190c24 -116 46 -231 60 -354zM74 28c0 -135 129 -247 264 -247c28 0 55 2 82 6c-14 127 -37 245 -63 364c-79 -8 -124 -61 -124 -119 c0 -44 25 -91 81 -123c5 -5 7 -10 7 -15c0 -11 -10 -22 -22 -22c-3 0 -6 1 -9 2c-80 43 -117 115 -117 185c0 88 58 174 160 197c-14 58 -29 117 -46 175c-107 -121 -213 -243 -213 -403zM408 1045c-99 -48 -162 -149 -162 -259c0 -74 18 -133 36 -194 c80 97 146 198 146 324c0 55 -4 79 -20 129z"));
 		ctx.setTransform(0.14, 0, 0, -0.14, 32, 146);
 		ctx.fill(new Path2D("M557 -125c0 28 23 51 51 51s51 -23 51 -51s-23 -51 -51 -51s-51 23 -51 51zM557 125c0 28 23 51 51 51s51 -23 51 -51s-23 -51 -51 -51s-51 23 -51 51zM232 263c172 0 293 -88 293 -251c0 -263 -263 -414 -516 -521c-3 -3 -6 -4 -9 -4c-7 0 -13 6 -13 13c0 3 1 6 4 9 c202 118 412 265 412 493c0 120 -63 235 -171 235c-74 0 -129 -54 -154 -126c11 5 22 8 34 8c55 0 100 -45 100 -100c0 -58 -44 -106 -100 -106c-60 0 -112 47 -112 106c0 133 102 244 232 244z"));
-		
-		// Dot matrix
-		ctx.setTransform(1, 0, -0.15, 1, 0, 0);
-		ctx.fillStyle = inactivePixel;
-		for (let i = 436; i < 820; i += 48) {
-			for (let j = 0; j < 40; j += 8) {
-				for (let k = 32; k < 96; k += 8) {
-					// ctx.fillStyle = inactivePixel;
-					ctx.fillRect(i + j, k, 7, 7);
-				}
-			}
-		}
 		ctx.resetTransform();
+		
+		this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24);
+		this.#render7seg(sum.noteBar, ctx, 821, 245, 0.17);
+		this.#renderDotMatrix(upThis.songTitle || "Unknown", ctx, 441, 32);
 	}
 }
 
