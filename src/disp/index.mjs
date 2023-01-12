@@ -1752,11 +1752,11 @@ let PsrDisplay = class extends RootDisplay {
 	};
 	#renderDotMatrix(str, ctx, offsetX, offsetY, scaleX = 8, scaleY = 8, skew = -0.15) {
 		let upThis = this;
-		ctx.setTransform(scaleX, 0, skew, scaleY, 0, 0);
+		ctx.setTransform(1, 0, skew, 1, 0, 0);
 		upThis.xgFont.getStr(str).forEach((e, i) => {
 			e.render((e, x, y) => {
 				ctx.fillStyle = e ? activePixel : inactivePixel;
-				ctx.fillRect(offsetX + x, offsetY + y, scaleX - 1, scaleY - 1);
+				ctx.fillRect(offsetX + (x + 6 * i) * scaleX, offsetY + y * scaleY, scaleX - 1, scaleY - 1);
 			});
 		});
 		ctx.resetTransform();
@@ -1787,9 +1787,16 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fill(new Path2D("M557 -125c0 28 23 51 51 51s51 -23 51 -51s-23 -51 -51 -51s-51 23 -51 51zM557 125c0 28 23 51 51 51s51 -23 51 -51s-23 -51 -51 -51s-51 23 -51 51zM232 263c172 0 293 -88 293 -251c0 -263 -263 -414 -516 -521c-3 -3 -6 -4 -9 -4c-7 0 -13 6 -13 13c0 3 1 6 4 9 c202 118 412 265 412 493c0 120 -63 235 -171 235c-74 0 -129 -54 -154 -126c11 5 22 8 34 8c55 0 100 -45 100 -100c0 -58 -44 -106 -100 -106c-60 0 -112 47 -112 106c0 133 102 244 232 244z"));
 		ctx.resetTransform();
 		
-		this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24);
-		this.#render7seg(sum.noteBar, ctx, 821, 245, 0.17);
-		this.#renderDotMatrix(upThis.songTitle || "Unknown", ctx, 441, 32);
+		this.#render7seg((upThis.#ch).toString().padStart(3, "0"), ctx, 112, 315, 0.17, 0.17);
+		this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
+		if (mixerView) {
+			this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+			this.#renderDotMatrix(upThis.getChVoice(this.#ch).name.padEnd(8, " "), ctx, 441, 32);
+		}
+		else {
+			this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+			this.#renderDotMatrix((upThis.songTitle || "Unknown").padEnd(8, " "), ctx, 441, 32);
+		}
 	}
 }
 
