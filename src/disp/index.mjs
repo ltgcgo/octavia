@@ -1723,30 +1723,30 @@ let PsrDisplay = class extends RootDisplay {
 			new Path2D("M36 32 L48 20 L144 20 L156 32 L144 44 L48 44 Z")
 		];
 		let sevenSegFont = {
-			0: 63,
-			1: 6,
-			2: 91,
-			3: 79,
-			4: 102,
-			5: 109,
-			6: 125,
-			7: 39,
-			8: 127,
-			9: 111,
-			" ": 0,
-			A: 119,
-			B: 124,
-			C: 57,
-			D: 94,
-			"-": 64
+			0: new Uint8Array([0, 0, 1, 1, 1, 1, 1, 1]),
+			1: new Uint8Array([0, 0, 0, 0, 0, 1, 1, 0]),
+			2: new Uint8Array([0, 1, 0, 1, 1, 0, 1, 1]),
+			3: new Uint8Array([0, 1, 0, 0, 1, 1, 1, 1]),
+			4: new Uint8Array([0, 1, 1, 0, 0, 1, 1, 0]),
+			5: new Uint8Array([0, 1, 1, 0, 1, 1, 0, 1]),
+			6: new Uint8Array([0, 1, 1, 1, 1, 1, 0, 1]),
+			7: new Uint8Array([0, 0, 1, 0, 0, 1, 1, 1]),
+			8: new Uint8Array([0, 1, 1, 1, 1, 1, 1, 1]),
+			9: new Uint8Array([0, 1, 1, 0, 1, 1, 1, 1]),
+			" ": new Uint8Array(8),
+			A: new Uint8Array([0, 1, 1, 1, 0, 1, 1, 1]),
+			B: new Uint8Array([0, 1, 1, 1, 1, 1, 0, 0]),
+			C: new Uint8Array([0, 0, 1, 1, 1, 0, 0, 1]),
+			D: new Uint8Array([0, 1, 0, 1, 1, 1, 1, 0]),
+			"-": new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0])
 		};
+		ctx.setTransform(scaleX, 0, skew, scaleY, 190 * i + offsetX, offsetY);
 		Array.from(str).forEach((e, i) => {
-			ctx.setTransform(scaleX, 0, skew, scaleY, 190 * i + offsetX, offsetY);
-			let bits = sevenSegFont[e].toBits();
-			bits.forEach(function (e, i) {
-				ctx.fillStyle = e ? activePixel : inactivePixel;
+			for (let i = 0; i < 8; i++) {
+				ctx.fillStyle = sevenSegFont[e][i] ? activePixel : inactivePixel;
 				ctx.fill(path[i]);
-			});
+				
+			}
 		});
 		ctx.resetTransform();
 	};
