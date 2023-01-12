@@ -261,7 +261,7 @@ let renderThread = setInterval(function () {
 			});
 		};
 		// visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId);
-		visualizer.render(curTime, dispCtx, backlightColor, mixerView);
+		visualizer.render(curTime, dispCtx, backlightColor, mixerView, useMidiBus ? 0 : demoId);
 		lastTime = curTime;
 	};
 }, 20);
