@@ -1760,7 +1760,7 @@ let PsrDisplay = class extends RootDisplay {
 		});
 		ctx.resetTransform();
 	}
-	render(time, ctx, backlightColor = "white", mixerView) {
+	render(time, ctx, backlightColor = "white", mixerView, id = 0) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
