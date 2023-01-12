@@ -1741,7 +1741,7 @@ let PsrDisplay = class extends RootDisplay {
 			"-": new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0])
 		};
 		Array.from(str).forEach((e, i) => {
-			ctx.setTransform(scaleX, 0, skew, scaleY, 190 * i + offsetX, offsetY);
+			ctx.setTransform(scaleX, 0, skew * scaleY, scaleY, 190 * scaleX * i + offsetX, offsetY);
 			for (let i = 0; i < 8; i++) {
 				ctx.fillStyle = sevenSegFont[e][i] ? activePixel : inactivePixel;
 				ctx.fill(path[i]);
@@ -1751,11 +1751,12 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.resetTransform();
 	};
 	#renderDotMatrix(str, ctx, offsetX, offsetY, scaleX = 8, scaleY = 8, skew = -0.15) {
+		let upThis = this;
 		ctx.setTransform(scaleX, 0, skew, scaleY, 0, 0);
-		upthis.xgFont.getStr(str).forEach((e, i) => {
+		upThis.xgFont.getStr(str).forEach((e, i) => {
 			e.render((e, x, y) => {
 				ctx.fillStyle = e ? activePixel : inactivePixel;
-				ctx.fillRect(offestX + x, offsetY + y, scaleX - 1, scaleY - 1);
+				ctx.fillRect(offsetX + x, offsetY + y, scaleX - 1, scaleY - 1);
 			});
 		});
 		ctx.resetTransform();
