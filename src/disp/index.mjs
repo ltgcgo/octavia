@@ -1752,6 +1752,8 @@ let PsrDisplay = class extends RootDisplay {
 	};
 	#renderDotMatrix(str, ctx, offsetX, offsetY, scaleX = 8, scaleY = 8, skew = -0.15) {
 		let upThis = this;
+		str = str.slice(0, 8)
+		str = str.padEnd(8, " ");
 		ctx.setTransform(1, 0, skew, 1, 0, 0);
 		upThis.xgFont.getStr(str).forEach((e, i) => {
 			e.render((e, x, y) => {
@@ -1796,6 +1798,8 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.textAlign = "left";
 		ctx.font = '23px "Arial Web"';
 		ctx.fillText("MEASURE", 664, 296);
+		ctx.font = '22px "Arial Web"';
+		ctx.fillText("C4", 548, 399);
 		
 		let oneTimeElement = new Path2D("M83 23 L49 23 L49 86 L83 86 M264 23 L297 23 L297 86 L264 86");
 		let staffLines = new Path2D("M30 110 L344 110 M356 110 L1074 110 M30 146 L344 146 M356 146 L1074 146 M30 182 L344 182 M356 182 L1074 182 M30 218 L344 218 M356 218 L1074 218 M30 254 L344 254 M356 254 L775 254 M894 254 L1074 254");
@@ -1808,6 +1812,14 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.setTransform(0.14, 0, 0, -0.14, 32, 146);
 		ctx.fill(new Path2D("M557 -125c0 28 23 51 51 51s51 -23 51 -51s-23 -51 -51 -51s-51 23 -51 51zM557 125c0 28 23 51 51 51s51 -23 51 -51s-23 -51 -51 -51s-51 23 -51 51zM232 263c172 0 293 -88 293 -251c0 -263 -263 -414 -516 -521c-3 -3 -6 -4 -9 -4c-7 0 -13 6 -13 13c0 3 1 6 4 9 c202 118 412 265 412 493c0 120 -63 235 -171 235c-74 0 -129 -54 -154 -126c11 5 22 8 34 8c55 0 100 -45 100 -100c0 -58 -44 -106 -100 -106c-60 0 -112 47 -112 106c0 133 102 244 232 244z"));
 		ctx.resetTransform();
+		
+		// Keyboard
+		for (let i = 0; i < 5; i++) {
+			ctx.translate(163 * i, 0);
+			ctx.stroke(new Path2D("M224 318 L380 318 L380 380 L224 380 Z M246 350 L246 380 M268 350 L268 380 M291 318 L291 380 M313 350 L313 380 M335 350 L335 380 M358 350 L358 380 M235 318 L235 350 L254 350 L254 318 M260 318 L260 350 L279 350 L279 318 M301 318 L301 350 L320 350 L320 318 M326 318 L326 350 L345 350 L345 318 M350 318 L350 350 L370 350 L370 318"));
+			ctx.resetTransform();
+		}
+		ctx.stroke(new Path2D("M1032 318 L1055 318 L1055 380 L1032 380")); // The last C key
 		
 		// Beat indicator
 		let downbeatStar = new Path2D("m 160.263,824.43605 c 0.939,1.039 1.482,2.434 1.482,3.833 0,1.402 -0.543,2.796 -1.482,3.834 1.038,-0.944 2.43,-1.483 3.837,-1.483 1.398,0 2.791,0.539 3.828,1.483 -0.948,-1.038 -1.482,-2.432 -1.482,-3.834 0,-1.399 0.534,-2.794 1.482,-3.833 -1.037,0.945 -2.43,1.483 -3.828,1.483 -1.407,0 -2.799,-0.538 -3.837,-1.483");
@@ -1834,15 +1846,74 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fill(downbeatStar);
 		ctx.resetTransform();
 		
-		this.#render7seg((upThis.#ch).toString().padStart(3, "0"), ctx, 112, 315, 0.24, 0.24);
+		// Keyboard display
+		let a = [
+			[228, 0],
+			[238.5, 1],
+			[250.3 , 0],
+			[263.5, 1],
+			[272.6, 0],
+			[295, 0],
+			[304.5, 1],
+			[317.3, 0],
+			[330, 1],
+			[339.5, 0],
+			[354, 1],
+			[361.8, 0]
+		];
+		// Reset all keys
+		ctx.fillStyle = inactivePixel;
+		for (let i = 0; i < 5; i++) {
+			for (let j = 0; j < 7; j++) {
+				ctx.fillRect(228 + 163 * i + 22.3 * j, 355, 14, 21);
+			}
+			for (let j = 0; j < 5; j++) {
+				let a = new Uint8Array([0, 25, 66, 91.5, 115.5]);
+				ctx.fillRect(238.5 + 163 * i + a[j], 321, 12, 26);
+			}
+		}
+		ctx.fillRect(1036, 355, 14, 21);
+		// Highlight keys
+		ctx.fillStyle = activePixel;
+		sum.chKeyPr[upThis.#ch]?.forEach((e, i) => {
+			if (e > 0) {
+				let octave = Math.floor(i / 12);
+				let note = i % 12;
+				if (octave > 3 && octave < 8) {
+					if (a[note][1]) { // black key
+						ctx.fillRect(a[note][0] + 163 * (octave - 3), 321, 12, 26);
+					}
+					else { // white key
+						ctx.fillRect(a[note][0] + 163 * (octave - 3), 355, 14, 21);
+					}
+				}
+				if (i == 96) { // deal with C7 (96)
+					ctx.fillRect(1036, 355, 14, 21);
+				}
+			}
+		});
+		
+		this.#render7seg((upThis.#ch).toString().padStart(3, "0"), ctx, 32, 315, 0.24, 0.24);
 		this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
-		if (mixerView) {
-			this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
-			this.#renderDotMatrix(upThis.getChVoice(this.#ch).name.padEnd(8, " "), ctx, 441, 32);
+		if (timeNow <= sum.letter.expire) {
+			let letterDisp = sum.letter.text.trim().padEnd(8, " ");
+			this.#renderDotMatrix(letterDisp.slice(0, 8), ctx, 454, 32);
+			if (mixerView) {
+				this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+			}
+			else {
+				this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+			}
 		}
 		else {
-			this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
-			this.#renderDotMatrix((upThis.songTitle || "Unknown").padEnd(8, " "), ctx, 441, 32);
+			if (mixerView) {
+				this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+				this.#renderDotMatrix(upThis.getChVoice(this.#ch).name, ctx, 454, 32);
+			}
+			else {
+				this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+				this.#renderDotMatrix(upThis.songTitle || "Unknown", ctx, 454, 32);
+			}
 		}
 	}
 }
