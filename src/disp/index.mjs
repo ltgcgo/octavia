@@ -1864,6 +1864,7 @@ let PsrDisplay = class extends RootDisplay {
 			[354, 1],
 			[361.8, 0]
 		];
+		/*
 		// Reset all keys
 		ctx.fillStyle = inactivePixel;
 		for (let i = 0; i < 5; i++) {
@@ -1895,6 +1896,66 @@ let PsrDisplay = class extends RootDisplay {
 				}
 			}
 		});
+		*/
+		// Reset the arrows
+		let arrowLeft = new Path2D("M199 349 L214 329 L214 369 Z"),
+		arrowRight = new Path2D("M1080 349 L1065 369 L1065 329 Z"),
+		arrowLeftFlag = false,
+		arrowRightFlag = false;
+		
+		let octave, note;
+		// Main range
+		for (let i = 36; i < 96; i++) {
+			octave = Math.floor(i / 12);
+			note = i % 12;
+			ctx.fillStyle = sum.chKeyPr[this.#ch]?.has(i) ? activePixel : inactivePixel;
+			a[note][1] ? ctx.fillRect(a[note][0] + 163 * (octave - 3), 321, 12, 26) : ctx.fillRect(a[note][0] + 163 * (octave - 3), 355, 14, 21);
+		}
+		// Lower octaves
+		for (let i = 0; i < 36; i++) {
+			octave = Math.floor(i / 12);
+			note = i % 12;
+			if (sum.chKeyPr[this.#ch]?.has(i)) {
+				ctx.fillStyle = activePixel;
+				a[note][1] ? ctx.fillRect(a[note][0], 321, 12, 26) : ctx.fillRect(a[note][0], 355, 14, 21);
+				arrowLeftFlag = true;
+			}
+		}
+		// Higher octaves
+		for (let i = 97; i < 128; i++) {
+			if (i == 108 || i == 120) continue;
+			octave = Math.floor(i / 12);
+			note = i % 12;
+			if (sum.chKeyPr[this.#ch]?.has(i)) {
+				ctx.fillStyle = activePixel;
+				a[note][1] ? ctx.fillRect(a[note][0] + 163 * 4, 321, 12, 26) : ctx.fillRect(a[note][0] + 163 * 4, 355, 14, 21);
+				arrowRightFlag = true;
+			}
+		}
+		// deal with C7 (96)
+		if (sum.chKeyPr[this.#ch]?.has(96)) {
+			ctx.fillStyle = activePixel;
+			ctx.fillRect(1036, 355, 14, 21);
+			arrowRightFlag = true;
+		}
+		// deal with C8 (108)
+		if (sum.chKeyPr[this.#ch]?.has(108)) {
+			ctx.fillStyle = activePixel;
+			ctx.fillRect(1036, 355, 14, 21);
+			arrowRightFlag = true;
+		}
+		// deal with C9 (120)
+		if (sum.chKeyPr[this.#ch]?.has(120)) {
+			ctx.fillStyle = activePixel;
+			ctx.fillRect(1036, 355, 14, 21);
+			arrowRightFlag = true;
+		}
+		
+		// Render the arrows
+		ctx.fillStyle = arrowLeftFlag ? activePixel : inactivePixel;
+		ctx.fill(arrowLeft);
+		ctx.fillStyle = arrowRightFlag ? activePixel : inactivePixel;
+		ctx.fill(arrowRight);
 		
 		this.#render7seg(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
 		this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
