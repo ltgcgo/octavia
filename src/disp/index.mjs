@@ -1704,6 +1704,9 @@ let PsrDisplay = class extends RootDisplay {
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv");
 	constructor() {
 		super();
+		this.addEventListener("channelactive", (ev) => {
+			this.#ch = ev.data;
+		});
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -1875,7 +1878,7 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillRect(1036, 355, 14, 21);
 		// Highlight keys
 		ctx.fillStyle = activePixel;
-		sum.chKeyPr[upThis.#ch]?.forEach((e, i) => {
+		sum.chKeyPr[this.#ch]?.forEach((e, i) => {
 			if (e > 0) {
 				let octave = Math.floor(i / 12);
 				let note = i % 12;
@@ -1893,7 +1896,7 @@ let PsrDisplay = class extends RootDisplay {
 			}
 		});
 		
-		this.#render7seg((upThis.#ch).toString().padStart(3, "0"), ctx, 32, 315, 0.24, 0.24);
+		this.#render7seg(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
 		this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
 		if (timeNow <= sum.letter.expire) {
 			let letterDisp = sum.letter.text.trim().padEnd(8, " ");
