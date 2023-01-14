@@ -287,3 +287,126 @@ getBridge().addEventListener("message", function (ev) {
 		visualizer.sendCmd(ev.data);
 	};
 });
+
+self.visualizer = visualizer;
+self.performance = currentPerformance;
+
+// Hardcoded channel switching
+{
+	// KANDI8
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(4, generateSwitch(15)));
+	perf.push(new PointEvent(5.7, generateSwitch(12)));
+	perf.push(new PointEvent(20, generateSwitch(1)));
+	perf.push(new PointEvent(89, generateSwitch(0)));
+	perf.push(new PointEvent(117, generateSwitch(6)));
+	perf.fresh();
+	demoPerfs["KANDI8"] = perf;
+};
+{
+	// Straight to the Horizon
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(7, generateSwitch(6)));
+	perf.push(new PointEvent(22, generateSwitch(5)));
+	perf.push(new PointEvent(80, generateSwitch(1)));
+	perf.fresh();
+	demoPerfs["HORIZON"] = perf;
+};
+{
+	// Low Down
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(3, generateSwitch(2)));
+	perf.push(new PointEvent(6, generateSwitch(5)));
+	perf.push(new PointEvent(28, generateSwitch(1)));
+	perf.push(new PointEvent(51, generateSwitch(6)));
+	perf.push(new PointEvent(73.5, generateSwitch(5)));
+	perf.push(new PointEvent(96, generateSwitch(4)));
+	perf.push(new PointEvent(118, generateSwitch(6)));
+	perf.push(new PointEvent(141, generateSwitch(5)));
+	perf.push(new PointEvent(163, generateSwitch(5)));
+	perf.push(new PointEvent(186, generateSwitch(5)));
+	perf.fresh();
+	demoPerfs["Sam Sketty - Low Down"] = perf;
+};
+{
+	// StarGame
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateSwitch(3)));
+	perf.push(new PointEvent(8.6, generateSwitch(2)));
+	perf.fresh();
+	demoPerfs["StarGame"] = perf;
+};
+{
+	// Japanese
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(2, generateSwitch(8)));
+	perf.push(new PointEvent(7.5, generateSwitch(9)));
+	perf.fresh();
+	demoPerfs["25Japan"] = perf;
+};
+{
+	// Clasitario
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(7.5, generateSwitch(2)));
+	perf.push(new PointEvent(21.5, generateSwitch(0)));
+	perf.push(new PointEvent(28.5, generateSwitch(2)));
+	perf.push(new PointEvent(53.5, generateSwitch(0)));
+	perf.push(new PointEvent(57.5, generateSwitch(2)));
+	perf.push(new PointEvent(93, generateSwitch(5)));
+	perf.push(new PointEvent(132, generateSwitch(2)));
+	perf.push(new PointEvent(160, generateSwitch(0)));
+	perf.push(new PointEvent(182.5, generateSwitch(2)));
+	perf.fresh();
+	demoPerfs["AGDEMO3"] = perf;
+};
+{
+	// Kimi ga Iru dake de
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(12, generateSwitch(3)));
+	perf.fresh();
+	demoPerfs["01KIMIGA"] = perf;
+};
+{
+	// Do-Re-Mi
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(15, generateSwitch(0)));
+	perf.push(new PointEvent(22, generateSwitch(1)));
+	perf.push(new PointEvent(30.5, generateSwitch(3)));
+	perf.push(new PointEvent(32.5, generateSwitch(2)));
+	perf.push(new PointEvent(38, generateSwitch(1)));
+	perf.push(new PointEvent(40, generateSwitch(3)));
+	perf.push(new PointEvent(42, generateSwitch(0)));
+	perf.push(new PointEvent(46, generateSwitch(7)));
+	perf.push(new PointEvent(47, generateSwitch(4)));
+	perf.push(new PointEvent(62.5, generateSwitch(11)));
+	perf.push(new PointEvent(77.5, generateSwitch(2)));
+	perf.push(new PointEvent(90, generateSwitch(11)));
+	perf.push(new PointEvent(104, generateSwitch(0)));
+	perf.push(new PointEvent(107.5, generateSwitch(1)));
+	perf.push(new PointEvent(121, generateSwitch(6)));
+	perf.push(new PointEvent(128, generateSwitch(1)));
+	perf.push(new PointEvent(141, generateSwitch(5)));
+	perf.push(new PointEvent(154.5, generateSwitch(12)));
+	perf.push(new PointEvent(168, generateSwitch(11)));
+	perf.push(new PointEvent(188, generateSwitch(3)));
+	perf.push(new PointEvent(201, generateSwitch(11)));
+	perf.push(new PointEvent(237, generateSwitch(1)));
+	perf.push(new PointEvent(244, generateSwitch(3)));
+	perf.fresh();
+	demoPerfs["10DOREMI"] = perf;
+};
+{
+	// Haru yo Koi
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(5, generateSwitch(3)));
+	perf.push(new PointEvent(27.5, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["haruyoko"] = perf;
+};
+{
+	// The PF Theatre
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["02THEATR"] = perf;
+};
