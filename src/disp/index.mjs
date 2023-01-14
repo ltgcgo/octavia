@@ -1766,7 +1766,7 @@ let PsrDisplay = class extends RootDisplay {
 		});
 		ctx.resetTransform();
 	}
-	render(time, ctx, backlightColor = "white", mixerView, id = 0) {
+	render(time, ctx, backlightColor = "white", mixerView, tempoView, id = 0) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
@@ -1799,8 +1799,6 @@ let PsrDisplay = class extends RootDisplay {
 		// Show text
 		ctx.fillStyle = "#000c";
 		ctx.textAlign = "left";
-		ctx.font = '23px "Arial Web"';
-		ctx.fillText("MEASURE", 664, 296);
 		ctx.font = '22px "Arial Web"';
 		ctx.fillText("C4", 548, 399);
 		
@@ -1903,6 +1901,9 @@ let PsrDisplay = class extends RootDisplay {
 		arrowLeftFlag = false,
 		arrowRightFlag = false;
 		
+		// Reset C7
+		ctx.fillStyle = inactivePixel;
+		ctx.fillRect(1036, 355, 14, 21);
 		let octave, note;
 		// Main range
 		for (let i = 36; i < 96; i++) {
@@ -1936,7 +1937,6 @@ let PsrDisplay = class extends RootDisplay {
 		if (sum.chKeyPr[this.#ch]?.has(96)) {
 			ctx.fillStyle = activePixel;
 			ctx.fillRect(1036, 355, 14, 21);
-			arrowRightFlag = true;
 		}
 		// deal with C8 (108)
 		if (sum.chKeyPr[this.#ch]?.has(108)) {
@@ -1958,7 +1958,20 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fill(arrowRight);
 		
 		this.#render7seg(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
-		this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
+		
+		// Measure / tempo view
+		ctx.font = '23px "Arial Web"';
+		ctx.fillStyle = tempoView ? inactivePixel : activePixel;
+		ctx.fillText("MEASURE", 664, 296);
+		ctx.fillStyle = tempoView? activePixel : inactivePixel;
+		ctx.fillText("TEMPO", 795, 242);
+		if (tempoView) {
+			this.#render7seg(Math.round(sum.tempo).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
+		}
+		else {
+			this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
+		}
+		
 		if (timeNow <= sum.letter.expire) {
 			let letterDisp = sum.letter.text.trim().padEnd(8, " ");
 			this.#renderDotMatrix(letterDisp.slice(0, 8), ctx, 454, 32);
