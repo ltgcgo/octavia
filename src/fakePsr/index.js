@@ -217,6 +217,7 @@ visualizer.addEventListener("meta", function (ev) {
 let dispCanv = $e("#ymhPsr");
 let dispCtx = dispCanv.getContext("2d");
 let mixerView = false;
+let tempoView = false;
 dispCanv.addEventListener("wheel", function (ev) {
 	let ch = visualizer.getCh();
 	if (ev.deltaY > 0) {
@@ -236,6 +237,8 @@ dispCanv.addEventListener("mousedown", function (ev) {
 			visualizer.setCh(ch + 1);
 		} else if (ev.offsetY < 110) {
 			mixerView = !mixerView;
+		} else if (ev.offsetY > 218) {
+			tempoView = !tempoView;
 		};
 	};
 });
@@ -277,7 +280,7 @@ let renderThread = setInterval(function () {
 			});
 		};
 		// visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId);
-		visualizer.render(curTime, dispCtx, backlightColor, mixerView, useMidiBus ? 0 : demoId);
+		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId);
 		lastTime = curTime;
 	};
 }, 20);
