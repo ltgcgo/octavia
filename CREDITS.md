@@ -23,9 +23,10 @@ Octavia will never become a reality without help from the following people.
 ### Miscellaneous
 * **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
 * **GFHK-SDGM** for helping collecting bitmaps.
-* **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI).
+* **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI, and the upcoming Cambiare).
 * ~~**Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).~~
 * **アルゴ算法堂** for providing AKAI SG01k voice map.
+* **youngmonkey** for [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
 * **MIDIMan** for checking bitmaps against YAMAHA MU2000.
 
 ## Demo Credits

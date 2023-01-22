@@ -20,7 +20,8 @@ import {
 	gsDelType,
 	gsParts,
 	getGsEfx,
-	getGsEfxDesc
+	getGsEfxDesc,
+	mt32DefProg
 } from "./gsValues.js";
 import {
 	toDecibel,
@@ -90,16 +91,19 @@ ccAccepted.forEach((e, i) => {
 });
 
 let sysExSplitter = function (seq) {
-	let seqArr = [[]];
-	seq?.forEach(function (e) {
+	let seqArr = [];
+	let seqStart = 0;
+	seq?.forEach(function (e, i) {
 		if (e == 247) {
 			// End of SysEx
+			seqArr.push(seq.subarray(seqStart, i));
 		} else if (e == 240) {
-			seqArr.push([]);
+			seqStart = i + 1;
 		} else {
-			seqArr[seqArr.length - 1].push(e);
+			//seqArr[seqArr.length - 1].push(e);
 		};
 	});
+	//console.info(seqArr);
 	return seqArr;
 };
 let showTrue = function (data, prefix = "", suffix = "", length = 2) {
@@ -140,8 +144,11 @@ let OctaviaDevice = class extends CustomEventSource {
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
-	#cmPatch = new Uint8Array(1024); // C/M patch storage
-	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M timbre storage (64)
+	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
+	#cmTPatch = new Uint8Array(128); // C/M part patch storage
+	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
+	#cmPatch = new Uint8Array(1024); // C/M device patch storage
+	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
@@ -466,6 +473,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Program change
 			this.#chActive[part] = 1;
 			this.#prg[part] = det.data;
+			this.#bnCustom[part] = 0;
 			if (self.debugMode) {
 				console.debug(`T:${det.track} C:${part} P:${det.data}`);
 			};
@@ -493,7 +501,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				deviceId = seq[1];
 				(this.#seMan[manId] || function () {
 					console.debug(`Unknown manufacturer ${manId}.`);
-				})(deviceId, seq.slice(2), det.track);
+				})(deviceId, seq.subarray(2), det.track);
 				//upThis.#seMain.run(seq, det.track);
 			});
 		},
@@ -543,10 +551,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#seGs.run(msg, track, id);
 				console.warn(`Unknown device SysEx!`);
 			} else {
-				let sentCs = msg.pop();
-				let calcCs = gsChecksum(msg.slice(2));
+				let sentCs = msg[msg.length - 1];
+				let calcCs = gsChecksum(msg.subarray(2, msg.length - 1));
 				if (sentCs == calcCs) {
-					this.#seGs.run(msg, track, id);
+					this.#seGs.run(msg.subarray(0, msg.length - 1), track, id);
 				} else {
 					console.warn(`Bad GS checksum ${sentCs}. Should be ${calcCs}.`);
 				};
@@ -619,7 +627,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	getCcAll() {
 		// Return all CC registers
 		let arr = this.#cc.slice();
-		for (let c = 0; c < 64; c ++) {
+		for (let c = 0; c < allocated.ch; c ++) {
 			let chOff = c * allocated.cc;
 			arr[chOff + ccToPos[0]] = arr[chOff + ccToPos[0]] || this.#subMsb;
 			arr[chOff + ccToPos[32]] = arr[chOff + ccToPos[32]] || this.#subLsb;
@@ -703,26 +711,44 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		let bank = this.userBank.get(msb, prg, lsb, mode);
-		if (modeIdx[this.#mode] == "mt32" && bank.name.indexOf("MT-m:") == 0) {
+		if (modeIdx[this.#mode] == "mt32") {
 			// Reload MT-32 user bank transparently
-			let patch = parseInt(bank.name.slice(5)),
-			timbreOff = patch * allocated.cmt,
-			userBank = "";
-			this.#cmTimbre.slice(timbreOff, timbreOff + 10).forEach((e) => {
-				if (e > 31) {
-					userBank += String.fromCharCode(e);
-				};
-			});
-			this.userBank.load(`MSB\tLSB\tPRG\n0\t127\t${prg}\t${userBank}`, true);
-			bank.name = userBank;
-			//console.debug(`Transparently loading MT-32 user bank.`);
-		} else if (bank.ending != " " || !bank.name.length) {
+			if (bank.name.indexOf("MT-m:") == 0) {
+				// Device patch
+				let patch = parseInt(bank.name.slice(5)),
+				timbreOff = patch * allocated.cmt,
+				userBank = "";
+				this.#cmTimbre.subarray(timbreOff, timbreOff + 10).forEach((e) => {
+					if (e > 31) {
+						userBank += String.fromCharCode(e);
+					};
+				});
+				this.userBank.load(`MSB\tLSB\tPRG\n0\t127\t${prg}\t${userBank}`, true);
+				bank.name = userBank;
+				bank.ending = " ";
+			};
+		};
+		if (bank.ending != " " || !bank.name.length) {
 			bank = this.baseBank.get(msb, prg, lsb, mode);
 		};
 		return bank;
 	};
 	getChVoice(part) {
-		return this.getVoice(this.#cc[part * allocated.cc + ccToPos[0]], this.#prg[part], this.#cc[part * allocated.cc + ccToPos[32]], modeIdx[this.#mode]);
+		let voice = this.getVoice(this.#cc[part * allocated.cc + ccToPos[0]], this.#prg[part], this.#cc[part * allocated.cc + ccToPos[32]], modeIdx[this.#mode]);
+		if (this.#bnCustom[part]) {
+			switch (this.#mode) {
+				case modeMap.mt32: {
+					voice.ending = "~";
+					voice.name = "";
+					this.#cmTTimbre.subarray(14 * (part - 1), 14 * (part - 1) + 10).forEach((e) => {
+						if (e > 31) {
+							voice.name += String.fromCharCode(e);
+						};
+					});
+				};
+			};
+		};
+		return voice;
 	};
 	init(type = 0) {
 		// Type 0 is full reset
@@ -768,9 +794,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Reset MT-32 user patch and timbre storage
 		this.#cmPatch.fill(0);
 		this.#cmTimbre.fill(0);
+		this.#cmTPatch.fill(0);
+		this.#cmTTimbre.fill(0);
+		this.#bnCustom.fill(0);
 		// Reset MT-32 user bank
 		this.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
-		for (let ch = 0; ch < 64; ch ++) {
+		for (let ch = 0; ch < allocated.ch; ch ++) {
 			let chOff = ch * allocated.cc;
 			// Reset to full
 			this.#cc[chOff + ccToPos[7]] = 100; // Volume
@@ -812,9 +841,21 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#bitmapPage = 0; // Restore page
 				this.#subMsb = substList[0][idx];
 				this.#subLsb = substList[1][idx];
-				for (let ch = 0; ch < 64; ch ++) {
+				for (let ch = 0; ch < allocated.ch; ch ++) {
 					if (drumMsb.indexOf(this.#cc[ch * allocated.cc]) > -1) {
 						this.#cc[ch * allocated.cc] = drumMsb[idx];
+					};
+				};
+				switch (idx) {
+					case modeMap.mt32: {
+						mt32DefProg.forEach((e, i) => {
+							let ch = i + 1;
+							if (!this.#chActive[ch]) {
+								this.#prg[ch] = e;
+								this.#cc[ch * allocated.cc + ccToPos[91]] = 127;
+							};
+						});
+						break;
 					};
 				};
 				this.dispatchEvent("mode", mode);
@@ -1011,7 +1052,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						// XG master fine tune
 						mTune[i] = e;
 					};
-					msg.slice(1).forEach((e, i) => {
+					msg.subarray(1).forEach((e, i) => {
 						let addr = i + msg[0];
 						[
 							writeTune, writeTune, writeTune, writeTune,
@@ -1040,7 +1081,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (msg[0] < 32) {
 				// XG reverb
 				dPref += "reverb ";
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					([(e) => {
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
 					}, (e) => {
@@ -1086,7 +1127,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else if (msg[0] < 64) {
 				// XG chorus
 				dPref += "chorus ";
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					([(e) => {
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
 					}, (e) => {
@@ -1137,7 +1178,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else if (msg[0] < 97) {
 				// XG variation section 2
 				dPref += "variation ";
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					([(e) => {
 						console.debug(`${dPref}send: ${toDecibel(e)}dB`);
 					}, (e) => {
@@ -1170,7 +1211,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}).add([76, 2, 64], (msg) => {
 			// XG 5-part EQ
-			msg.slice(1).forEach((e, i) => {
+			msg.subarray(1).forEach((e, i) => {
 				let c = i + msg[0];
 				if (c == 0) {
 					console.debug(`XG EQ preset: ${["flat", "jazz", "pop", "rock", "classic"][e]}`);
@@ -1197,7 +1238,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let offset = msg[0];
 			upThis.#letterDisp = " ".repeat(offset);
 			upThis.#letterExpire = Date.now() + 3200;
-			msg.slice(1).forEach(function (e) {
+			msg.subarray(1).forEach(function (e) {
 				upThis.#letterDisp += String.fromCharCode(e);
 			});
 			upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
@@ -1206,7 +1247,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let offset = msg[0];
 			upThis.#bitmapExpire = Date.now() + 3200;
 			upThis.#bitmap.fill(0); // Init
-			let workArr = msg.slice(1);
+			let workArr = msg.subarray(1);
 			for (let index = 0; index < offset; index ++) {
 				workArr.unshift(0);
 			};
@@ -1229,7 +1270,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			chOff = allocated.cc * part,
 			dPref = `XG CH${part + 1} `,
 			errMsg = `Unknown XG part address ${id}.`;
-			msg.slice(2).forEach((e, i) => {
+			msg.subarray(2).forEach((e, i) => {
 				if (id < 1) {
 					console.debug(errMsg);
 				} else if (id < 41) {
@@ -1285,7 +1326,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.#cc[chOff + ccToPos[75]] = e; // decay
 					}, () => {
 						upThis.#cc[chOff + ccToPos[72]] = e; // release
-					}][id + i - 1] || function () {})();
+					}][id + i - 1] || (() => {}))();
 				} else if (id < 48) {
 					console.debug(errMsg);
 				} else if (id < 111) {
@@ -1314,7 +1355,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([73, 0, 0], (msg, track) => {
 			// MU1000/2000 System
 			let offset = msg[0];
-			msg.slice(1).forEach((e, i) => {
+			msg.subarray(1).forEach((e, i) => {
 				let ri = offset + i;
 				if (ri == 8) {
 					console.debug(`MU1000 set LCD contrast to ${e}.`);
@@ -1348,7 +1389,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				// Vocal information
 				let vocal = "",
 				length = 0;
-				msg.slice(2).forEach((e, i) => {
+				msg.subarray(2).forEach((e, i) => {
 					if (i % 2 == 0) {
 						vocal += xgSgVocals[e] || e.toString().padStart("0");
 					} else {
@@ -1412,7 +1453,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						// GS master fine tune
 						mTune[i] = e;
 					};
-					msg.slice(1).forEach((e, i) => {
+					msg.subarray(1).forEach((e, i) => {
 						let addr = i + msg[0];
 						[
 							writeTune, writeTune, writeTune, writeTune,
@@ -1441,7 +1482,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (offset < 16) {
 				// GS patch name (what for?)
 				let string = "".padStart(offset, " ");
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					string += String.fromCharCode(Math.max(32, e));
 				});
 				string = string.padEnd(16, " ");
@@ -1450,7 +1491,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				// GS partial reserve
 			} else if (offset < 65) {
 				// GS reverb and chorus
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					let dPref = `GS ${(offset + i) > 55 ? "chorus" : "reverb"} `;
 					([() => {
 						console.info(`${dPref}type: ${gsRevType[e]}`);
@@ -1473,13 +1514,13 @@ let OctaviaDevice = class extends CustomEventSource {
 						console.debug(`${dPref}to reverb: ${toDecibel(e)}`);
 					}, () => {
 						console.debug(`${dPref}to delay: ${toDecibel(e)}`);
-					}][offset + i - 48] || function () {})();
+					}][offset + i - 48] || (() => {}))();
 				});
 			} else if (offset < 80) {
 				console.debug(`Unknown GS patch address: ${offset}`);
 			} else if (offset < 91) {
 				// GS delay
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					let dPref = `GS delay `;
 					([() => {
 						console.info(`${dPref}type: ${gsDelType[e]}`);
@@ -1494,7 +1535,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {// feedback
 					}, () => {
 						console.debug(`${dPref}to reverb: ${toDecibel(e)}`);
-					}][offset + i - 80] || function () {})();
+					}][offset + i - 80] || (() => {}))();
 				});
 			} else {
 				console.debug(`Unknown GS patch address: ${offset}`);
@@ -1502,7 +1543,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 18, 64, 2], (msg) => {
 			// GS EQ
 			let dPref = `GS EQ `;
-			msg.slice(1).forEach((e, i) => {
+			msg.subarray(1).forEach((e, i) => {
 				([() => {
 					console.debug(`${dPref}low freq: ${[200, 400][e]}Hz`);
 				}, () => {
@@ -1524,7 +1565,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(`${dPref}${getGsEfx(upThis.#gsEfxSto)} ${desc}`);
 				};
 			};
-			msg.slice(1).forEach((e, i) => {
+			msg.subarray(1).forEach((e, i) => {
 				([() => {
 					upThis.#gsEfxSto[0] = e;
 				}, () => {
@@ -1565,7 +1606,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#letterExpire = Date.now() + 3200;
 					let offset = msg[1];
 					upThis.#letterDisp = " ".repeat(offset);
-					msg.slice(2).forEach(function (e) {
+					msg.subarray(2).forEach(function (e) {
 						if (e < 128) {
 							upThis.#letterDisp += String.fromCharCode(e);
 						};
@@ -1590,7 +1631,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						let target = upThis.#bitmapStore[msg[0] - 1];
 						let offset = msg[1];
 						target.fill(0); // Init
-						let workArr = msg.slice(2);
+						let workArr = msg.subarray(2);
 						for (let index = 0; index < offset; index ++) {
 							workArr.unshift(0);
 						};
@@ -1622,7 +1663,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			dPref = `GS CH${part + 1} `;
 			if (offset < 3) {
 				// Program, MSB and receive channel
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					[() => {
 						upThis.#cc[chOff + ccToPos[0]] = e; // MSB
 					}, () => {
@@ -1637,7 +1678,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}][offset + i]();
 				});
 			} else if (offset < 19) {} else if (offset < 44) {
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					([() => {
 						upThis.#mono[part] = +!e; // mono/poly
 					}, false // assign mode
@@ -1682,7 +1723,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// delay (variation in XG)
 						upThis.#cc[chOff + ccToPos[94]] = e;
-					}][offset + i - 19] || function () {})();
+					}][offset + i - 19] || (() => {}))();
 				});
 			} else if (offset < 76) {} else {
 				console.debug(`Unknown GS part address: ${offset}`);
@@ -1692,7 +1733,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let offset = msg[0],
 			dPref = `GS CH${part + 1} `;
 			if (offset < 2) {
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					[() => {
 						// GS part LSB
 						upThis.#cc[allocated.cc * part + ccToPos[32]] = e;
@@ -1702,7 +1743,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else if (offset < 32) {
 				console.warn(`Unknown GS misc address: ${offset}`);
 			} else if (offset < 35) {
-				msg.slice(1).forEach((e, i) => {
+				msg.subarray(1).forEach((e, i) => {
 					[() => {
 						// GS part EQ toggle
 						console.debug(`${dPref}EQ: o${["ff", "n"][e]}`);
@@ -1924,30 +1965,134 @@ let OctaviaDevice = class extends CustomEventSource {
 			// MT-32 Part Patch Setup (temp)
 			upThis.switchMode("mt32");
 			let part = upThis.chRedir(id, track, true);
-			console.debug(`MT-32 CH${part + 1} Patch: ${msg}`);
+			let offset = msg[1];
+			msg.subarray(2).forEach((e, i) => {
+				let ri = i + offset;
+				upThis.#cmTPatch[ri + (part - 1) * 16] = e;
+				([false
+				, () => {
+					let timbreGroup = upThis.#cmTPatch[(part - 1) << 4];
+					if (timbreGroup < 3) {
+						upThis.#bnCustom[part] = 1;
+						if (timbreGroup == 2) {
+							// Copy name from timbre memory
+							for (let c = 0; c < name.length; c ++) {
+								upThis.#cmTTimbre[(part - 1) * allocated.cmt + c] = upThis.#cmTimbre[e * allocated.cmt + c];
+							};
+						} else {
+							// Copy name from bank
+							let name = upThis.baseBank.get(0, e + (timbreGroup << 6), 127, "mt32").name;
+							for (let c = 0; c < name.length; c ++) {
+								upThis.#cmTTimbre[(part - 1) * allocated.cmt + c] = name.charCodeAt(c);
+							};
+						};
+					};
+				}, () => {
+					upThis.#rpn[part * allocated.rpn + 3] = e + 40;
+				}, () => {
+					upThis.#rpn[part * allocated.rpn + 1] = e + 14;
+				}, () => {
+					upThis.#rpn[part * allocated.rpn] = e;
+				}, false
+				, () => {
+					upThis.#cc[allocated.cc * part + ccToPos[91]] = e ? 127 : 0;
+				}, false
+				, () => {
+					upThis.#cc[allocated.cc * part + ccToPos[7]] = e;
+				}, () => {
+					upThis.#cc[allocated.cc * part + ccToPos[10]] = Math.ceil(e * 9.05);
+				}][ri] || (() => {}))();
+			});
+			//console.debug(`MT-32 CH${part + 1} Patch: ${msg}`);
 		}).add([22, 18, 1], (msg, track, id) => {
 			// MT-32 Part Drum Setup (temp)
 			upThis.switchMode("mt32");
 			let part = upThis.chRedir(id, track, true);
-			console.debug(`MT-32 CH${part + 1} Drum: ${msg}`);
+			//console.debug(`MT-32 CH${part + 1} Drum: ${msg}`);
 		}).add([22, 18, 2], (msg, track, id) => {
 			// MT-32 Part Timbre Setup (temp)
 			upThis.switchMode("mt32");
 			let part = upThis.chRedir(id, track, true);
-			console.debug(`MT-32 CH${part + 1} (${customName}) Timbre: ${msg}`);
+			let offset = msg[1] + (msg[0] << 7);
+			if (offset < 10) {
+				upThis.#bnCustom[part] = 1;
+			};
+			msg.subarray(2).forEach((e, i) => {
+				let ri = i + offset;
+				if (ri < 14) {
+					upThis.#cmTTimbre[(part - 1) * allocated.cmt + ri] = e;
+				};
+			});
 		}).add([22, 18, 3], (msg, track, id) => {
 			// MT-32 Part Patch Setup (dev)
 			upThis.switchMode("mt32");
-			console.debug(`MT-32 Part Patch: ${msg}`);
+			if (msg[0]) {
+				// Rhythm setup
+				let offset = msg[1] - 16;
+			} else {
+				// Part setup
+				let offset = msg[1];
+				msg.subarray(2).forEach((e, i) => {
+					let ri = i + offset;
+					upThis.#cmTPatch[ri] = e;
+					let part = upThis.chRedir(1 + ri >> 4, track, true),
+					ptr = ri & 15;
+					([false
+					, () => {
+						let timbreGroup = upThis.#cmTPatch[(part - 1) << 4];
+						if (timbreGroup < 3) {
+							upThis.#bnCustom[part] = 1;
+							if (timbreGroup == 2) {
+								// Copy name from timbre memory
+								for (let c = 0; c < name.length; c ++) {
+									upThis.#cmTTimbre[(part - 1) * allocated.cmt + c] = upThis.#cmTimbre[e * allocated.cmt + c];
+								};
+							} else {
+								// Copy name from bank
+								let name = upThis.baseBank.get(0, e + (timbreGroup << 6), 127, "mt32").name;
+								for (let c = 0; c < name.length; c ++) {
+									upThis.#cmTTimbre[(part - 1) * allocated.cmt + c] = name.charCodeAt(c);
+								};
+							};
+						};
+					}, () => {
+						upThis.#rpn[part * allocated.rpn + 3] = e + 40;
+					}, () => {
+						upThis.#rpn[part * allocated.rpn + 1] = e + 14;
+					}, () => {
+						upThis.#rpn[part * allocated.rpn] = e;
+					}, false
+					, () => {
+						upThis.#cc[allocated.cc * part + ccToPos[91]] = e ? 127 : 0;
+					}, false
+					, () => {
+						upThis.#cc[allocated.cc * part + ccToPos[7]] = e;
+					}, () => {
+						upThis.#cc[allocated.cc * part + ccToPos[10]] = Math.ceil(e * 9.05);
+					}][ptr] || (() => {}))();
+				});
+			};
+			//console.debug(`MT-32 Part Patch: ${msg}`);
 		}).add([22, 18, 4], (msg, track, id) => {
 			// MT-32 Part Timbre Setup (dev)
 			upThis.switchMode("mt32");
-			console.debug(`MT-32 Part Timbre: ${msg}`);
+			let offsetTotal = msg[1] + (msg[0] << 7);
+			msg.subarray(2).forEach((e, i) => {
+				let ri = i + offsetTotal;
+				let part = upThis.chRedir(Math.floor(ri / 246 + 1), track, true),
+				offset = ri % 246;
+				if (offset < 14) {
+					upThis.#cmTTimbre[(part - 1) * allocated.cmt + offset] = e;
+				};
+				if (offset < 10) {
+					upThis.#bnCustom[part] = 1;
+				};
+			});
 		}).add([22, 18, 5], (msg, track, id) => {
 			// MT-32 Patch Memory Write
 			upThis.switchMode("mt32");
 			let offset = (msg[0] << 7) + msg[1];
-			msg.slice(2).forEach((e, i) => {
+			msg.subarray(2).forEach((e, i) => {
 				let realIndex = (offset + i);
 				let patch = Math.floor(realIndex / 8), slot = (realIndex & 7);
 				let patchOff = patch * 8;
@@ -1959,45 +2104,67 @@ let OctaviaDevice = class extends CustomEventSource {
 						let name = "";
 						if (timbreGroup == 2) {
 							let timbreOff = allocated.cmt * patch;
-							upThis.#cmTimbre.slice(timbreOff, timbreOff + 10).forEach((e) => {
-								if (e > 31) {
-									name += String.fromCharCode(e);
-								};
-							});
-							if (!name.length) {
-								name = `MT-m:${e.toString().padStart(3, "0")}`;
-							};
+							name = `MT-m:${e.toString().padStart(3, "0")}`;
 						} else {
 							name = upThis.baseBank.get(0, e + (timbreGroup << 6), 127, "mt32").name;
 						};
 						upThis.userBank.clearRange({msb: 0, lsb: 127, prg: patch});
 						upThis.userBank.load(`MSB\tLSB\tPRG\tNME\n000\t127\t${patch}\t${name}`, true);
-						//console.debug(`MT-32 patch ${patch + 1} name (${"ABMR"[timbreGroup]}): ${name}`);
 					};
-					//console.debug(`MT-32 patch ${patch + 1} timbre number: ${e + 1}`);
-				}][slot] || function () {})();
+				}][slot] || (() => {}))();
 			});
 		}).add([22, 18, 8], (msg, track, id) => {
 			// MT-32 Timbre Memory Write
 			upThis.switchMode("mt32");
-			//let customName = "";
-			msg.slice(2, 16).forEach((e, i) => {
-				/* if (i < 10 && e > 31) {
-					customName += String.fromCharCode(e);
-				}; */
+			msg.subarray(2, 16).forEach((e, i) => {
 				upThis.#cmTimbre[(msg[0] >> 1) * allocated.cmt + i] = e;
 			});
-			/* console.debug(`MT-32 timbre ${msg[0] >> 1} written as "${customName}".`); */
 		}).add([22, 18, 16], (msg, track, id) => {
 			// MT-32 System Setup
 			upThis.switchMode("mt32");
-			console.debug(`MT-32 System Setup: ${msg}`);
+			let offset = msg[1];
+			let updateRch = false;
+			let setMidiRch = function (e, i) {
+				upThis.#chReceive[i - 12] = e;
+				updateRch = true;
+			};
+			msg.subarray(2).forEach((e, i) => {
+				let ri = i + offset;
+				([false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				setMidiRch,
+				setMidiRch,
+				setMidiRch,
+				setMidiRch,
+				setMidiRch,
+				setMidiRch,
+				setMidiRch,
+				setMidiRch,
+				setMidiRch,
+				() => {
+					upThis.#masterVol = e;
+				}][ri] || (() => {}))(e, i);
+			});
+			if (updateRch) {
+				upThis.buildRchTree();
+			};
 		}).add([22, 18, 32], (msg) => {
 			// MT-32 Text Display
 			upThis.switchMode("mt32");
 			let offset = msg[1];
 			let text = " ".repeat(offset);
-			msg.slice(2).forEach((e) => {
+			msg.subarray(2).forEach((e) => {
 				if (e > 31) {
 					text += String.fromCharCode(e);
 				};
@@ -2036,7 +2203,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// NS5R master fine tune
 							mTune[i] = e;
 						};
-						msg.slice(1).forEach((e, i) => {
+						msg.subarray(1).forEach((e, i) => {
 							[writeTune, writeTune, writeTune, writeTune,
 							() => {
 								upThis.#masterVol = e * 129 / 16383 * 100;
@@ -2071,7 +2238,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			chOff = part * allocated.cc;
 			let offset = msg[1];
 			let dPref = `NS5R CH${part + 1}`;
-			msg.slice(2).forEach((e, i) => {
+			msg.subarray(2).forEach((e, i) => {
 				let c = offset + i;
 				if (c < 3) {
 					// MSB, LSB, PRG
@@ -2366,7 +2533,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.debug(`${dPref}depth low: ${e}`);
 			}, () => {
 				console.debug(`${dPref}depth low: ${e}`);
-			}][msg[0]] || function () {})();
+			}][msg[0]] || (() => {}))();
 		}).add([16, 0, 8, 1], (msg, track, id) => {
 			// GMega part setup
 			let part = upThis.chRedir(msg[1], track, true),
@@ -2412,7 +2579,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#cc[chOff + ccToPos[73]] = e; // attack
 			}, () => {
 				upThis.#cc[chOff + ccToPos[72]] = e; // release
-			}][msg[0]] || function () {})();
+			}][msg[0]] || (() => {}))();
 		}).add([16, 0, 9, 0], (msg, track, id) => {
 			// GMega LX system section
 			let e = (msg[2] << 4) + msg[3];
@@ -2427,7 +2594,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.debug(`${dPref}depth high: ${e}`);
 			}, () => {
 				console.debug(`${dPref}depth low: ${e}`);
-			}][msg[0]] || function () {})();
+			}][msg[0]] || (() => {}))();
 		}).add([16, 0, 9, 3], (msg, track, id) => {
 			// GMega LX part setup 1
 			let e = (msg[2] << 4) + msg[3];
