@@ -12,10 +12,10 @@ __export(mod_exports, {
   analyzeMetafileSync: () => analyzeMetafileSync,
   build: () => build,
   buildSync: () => buildSync,
+  context: () => context,
   formatMessages: () => formatMessages,
   formatMessagesSync: () => formatMessagesSync,
   initialize: () => initialize,
-  serve: () => serve,
   stop: () => stop,
   transform: () => transform,
   transformSync: () => transformSync,
@@ -156,26 +156,30 @@ var ByteBuffer = class {
 };
 var encodeUTF8;
 var decodeUTF8;
+var encodeInvariant;
 if (typeof TextEncoder !== "undefined" && typeof TextDecoder !== "undefined") {
   let encoder = new TextEncoder();
   let decoder = new TextDecoder();
   encodeUTF8 = (text) => encoder.encode(text);
   decodeUTF8 = (bytes) => decoder.decode(bytes);
+  encodeInvariant = 'new TextEncoder().encode("")';
 } else if (typeof Buffer !== "undefined") {
-  encodeUTF8 = (text) => {
-    let buffer = Buffer.from(text);
-    if (!(buffer instanceof Uint8Array)) {
-      buffer = new Uint8Array(buffer);
-    }
-    return buffer;
-  };
+  encodeUTF8 = (text) => Buffer.from(text);
   decodeUTF8 = (bytes) => {
     let { buffer, byteOffset, byteLength } = bytes;
     return Buffer.from(buffer, byteOffset, byteLength).toString();
   };
+  encodeInvariant = 'Buffer.from("")';
 } else {
   throw new Error("No UTF-8 codec found");
 }
+if (!(encodeUTF8("") instanceof Uint8Array))
+  throw new Error(`Invariant violation: "${encodeInvariant} instanceof Uint8Array" is incorrectly false
+
+This indicates that your JavaScript environment is broken. You cannot use
+esbuild in this environment because esbuild relies on this invariant. This
+is not a problem with esbuild. You need to fix your environment instead.
+`);
 function readUInt32LE(buffer, offset) {
   return buffer[offset++] | buffer[offset++] << 8 | buffer[offset++] << 16 | buffer[offset++] << 24;
 }
@@ -187,28 +191,31 @@ function writeUInt32LE(buffer, value, offset) {
 }
 
 // lib/shared/common.ts
+var quote = JSON.stringify;
+var buildLogLevelDefault = "warning";
+var transformLogLevelDefault = "silent";
 function validateTarget(target) {
-  target += "";
+  validateStringValue(target, "target");
   if (target.indexOf(",") >= 0)
     throw new Error(`Invalid target: ${target}`);
   return target;
 }
 var canBeAnything = () => null;
 var mustBeBoolean = (value) => typeof value === "boolean" ? null : "a boolean";
-var mustBeBooleanOrObject = (value) => typeof value === "boolean" || typeof value === "object" && !Array.isArray(value) ? null : "a boolean or an object";
 var mustBeString = (value) => typeof value === "string" ? null : "a string";
 var mustBeRegExp = (value) => value instanceof RegExp ? null : "a RegExp object";
 var mustBeInteger = (value) => typeof value === "number" && value === (value | 0) ? null : "an integer";
 var mustBeFunction = (value) => typeof value === "function" ? null : "a function";
 var mustBeArray = (value) => Array.isArray(value) ? null : "an array";
 var mustBeObject = (value) => typeof value === "object" && value !== null && !Array.isArray(value) ? null : "an object";
+var mustBeEntryPoints = (value) => typeof value === "object" && value !== null ? null : "an array or an object";
 var mustBeWebAssemblyModule = (value) => value instanceof WebAssembly.Module ? null : "a WebAssembly.Module";
-var mustBeArrayOrRecord = (value) => typeof value === "object" && value !== null ? null : "an array or an object";
 var mustBeObjectOrNull = (value) => typeof value === "object" && !Array.isArray(value) ? null : "an object or null";
 var mustBeStringOrBoolean = (value) => typeof value === "string" || typeof value === "boolean" ? null : "a string or a boolean";
 var mustBeStringOrObject = (value) => typeof value === "string" || typeof value === "object" && value !== null && !Array.isArray(value) ? null : "a string or an object";
 var mustBeStringOrArray = (value) => typeof value === "string" || Array.isArray(value) ? null : "a string or an array";
 var mustBeStringOrUint8Array = (value) => typeof value === "string" || value instanceof Uint8Array ? null : "a string or a Uint8Array";
+var mustBeStringOrURL = (value) => typeof value === "string" || value instanceof URL ? null : "a string or a URL";
 function getFlag(object, keys, key, mustBeFn) {
   let value = object[key];
   keys[key + ""] = true;
@@ -216,19 +223,19 @@ function getFlag(object, keys, key, mustBeFn) {
     return void 0;
   let mustBe = mustBeFn(value);
   if (mustBe !== null)
-    throw new Error(`"${key}" must be ${mustBe}`);
+    throw new Error(`${quote(key)} must be ${mustBe}`);
   return value;
 }
 function checkForInvalidFlags(object, keys, where) {
   for (let key in object) {
     if (!(key in keys)) {
-      throw new Error(`Invalid option ${where}: "${key}"`);
+      throw new Error(`Invalid option ${where}: ${quote(key)}`);
     }
   }
 }
 function validateInitializeOptions(options) {
   let keys = /* @__PURE__ */ Object.create(null);
-  let wasmURL = getFlag(options, keys, "wasmURL", mustBeString);
+  let wasmURL = getFlag(options, keys, "wasmURL", mustBeStringOrURL);
   let wasmModule = getFlag(options, keys, "wasmModule", mustBeWebAssemblyModule);
   let worker = getFlag(options, keys, "worker", mustBeBoolean);
   checkForInvalidFlags(options, keys, "in initialize() call");
@@ -242,12 +249,12 @@ function validateMangleCache(mangleCache) {
   let validated;
   if (mangleCache !== void 0) {
     validated = /* @__PURE__ */ Object.create(null);
-    for (let key of Object.keys(mangleCache)) {
+    for (let key in mangleCache) {
       let value = mangleCache[key];
       if (typeof value === "string" || value === false) {
         validated[key] = value;
       } else {
-        throw new Error(`Expected ${JSON.stringify(key)} in mangle cache to map to either a string or false`);
+        throw new Error(`Expected ${quote(key)} in mangle cache to map to either a string or false`);
       }
     }
   }
@@ -263,6 +270,12 @@ function pushLogFlags(flags, options, keys, isTTY, logLevelDefault) {
     flags.push(`--color=true`);
   flags.push(`--log-level=${logLevel || logLevelDefault}`);
   flags.push(`--log-limit=${logLimit || 0}`);
+}
+function validateStringValue(value, what, key) {
+  if (typeof value !== "string") {
+    throw new Error(`Expected value for ${what}${key !== void 0 ? " " + quote(key) : ""} to be a string, got ${typeof value} instead`);
+  }
+  return value;
 }
 function pushCommonFlags(flags, options, keys) {
   let legalComments = getFlag(options, keys, "legalComments", mustBeString);
@@ -285,11 +298,15 @@ function pushCommonFlags(flags, options, keys) {
   let jsx = getFlag(options, keys, "jsx", mustBeString);
   let jsxFactory = getFlag(options, keys, "jsxFactory", mustBeString);
   let jsxFragment = getFlag(options, keys, "jsxFragment", mustBeString);
+  let jsxImportSource = getFlag(options, keys, "jsxImportSource", mustBeString);
+  let jsxDev = getFlag(options, keys, "jsxDev", mustBeBoolean);
+  let jsxSideEffects = getFlag(options, keys, "jsxSideEffects", mustBeBoolean);
   let define = getFlag(options, keys, "define", mustBeObject);
   let logOverride = getFlag(options, keys, "logOverride", mustBeObject);
   let supported = getFlag(options, keys, "supported", mustBeObject);
   let pure = getFlag(options, keys, "pure", mustBeArray);
   let keepNames = getFlag(options, keys, "keepNames", mustBeBoolean);
+  let platform = getFlag(options, keys, "platform", mustBeString);
   if (legalComments)
     flags.push(`--legal-comments=${legalComments}`);
   if (sourceRoot !== void 0)
@@ -306,6 +323,8 @@ function pushCommonFlags(flags, options, keys) {
     flags.push(`--format=${format}`);
   if (globalName)
     flags.push(`--global-name=${globalName}`);
+  if (platform)
+    flags.push(`--platform=${platform}`);
   if (minify)
     flags.push("--minify");
   if (minifySyntax)
@@ -322,7 +341,7 @@ function pushCommonFlags(flags, options, keys) {
     flags.push(`--ignore-annotations`);
   if (drop)
     for (let what of drop)
-      flags.push(`--drop:${what}`);
+      flags.push(`--drop:${validateStringValue(what, "drop")}`);
   if (mangleProps)
     flags.push(`--mangle-props=${mangleProps.source}`);
   if (reserveProps)
@@ -335,30 +354,39 @@ function pushCommonFlags(flags, options, keys) {
     flags.push(`--jsx-factory=${jsxFactory}`);
   if (jsxFragment)
     flags.push(`--jsx-fragment=${jsxFragment}`);
+  if (jsxImportSource)
+    flags.push(`--jsx-import-source=${jsxImportSource}`);
+  if (jsxDev)
+    flags.push(`--jsx-dev`);
+  if (jsxSideEffects)
+    flags.push(`--jsx-side-effects`);
   if (define) {
     for (let key in define) {
       if (key.indexOf("=") >= 0)
         throw new Error(`Invalid define: ${key}`);
-      flags.push(`--define:${key}=${define[key]}`);
+      flags.push(`--define:${key}=${validateStringValue(define[key], "define", key)}`);
     }
   }
   if (logOverride) {
     for (let key in logOverride) {
       if (key.indexOf("=") >= 0)
         throw new Error(`Invalid log override: ${key}`);
-      flags.push(`--log-override:${key}=${logOverride[key]}`);
+      flags.push(`--log-override:${key}=${validateStringValue(logOverride[key], "log override", key)}`);
     }
   }
   if (supported) {
     for (let key in supported) {
       if (key.indexOf("=") >= 0)
         throw new Error(`Invalid supported: ${key}`);
-      flags.push(`--supported:${key}=${supported[key]}`);
+      const value = supported[key];
+      if (typeof value !== "boolean")
+        throw new Error(`Expected value for supported ${quote(key)} to be a boolean, got ${typeof value} instead`);
+      flags.push(`--supported:${key}=${value}`);
     }
   }
   if (pure)
     for (let fn of pure)
-      flags.push(`--pure:${fn}`);
+      flags.push(`--pure:${validateStringValue(fn, "pure")}`);
   if (keepNames)
     flags.push(`--keep-names`);
 }
@@ -368,25 +396,24 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
   let keys = /* @__PURE__ */ Object.create(null);
   let stdinContents = null;
   let stdinResolveDir = null;
-  let watchMode = null;
   pushLogFlags(flags, options, keys, isTTY, logLevelDefault);
   pushCommonFlags(flags, options, keys);
   let sourcemap = getFlag(options, keys, "sourcemap", mustBeStringOrBoolean);
   let bundle = getFlag(options, keys, "bundle", mustBeBoolean);
-  let watch = getFlag(options, keys, "watch", mustBeBooleanOrObject);
   let splitting = getFlag(options, keys, "splitting", mustBeBoolean);
   let preserveSymlinks = getFlag(options, keys, "preserveSymlinks", mustBeBoolean);
   let metafile = getFlag(options, keys, "metafile", mustBeBoolean);
   let outfile = getFlag(options, keys, "outfile", mustBeString);
   let outdir = getFlag(options, keys, "outdir", mustBeString);
   let outbase = getFlag(options, keys, "outbase", mustBeString);
-  let platform = getFlag(options, keys, "platform", mustBeString);
   let tsconfig = getFlag(options, keys, "tsconfig", mustBeString);
   let resolveExtensions = getFlag(options, keys, "resolveExtensions", mustBeArray);
   let nodePathsInput = getFlag(options, keys, "nodePaths", mustBeArray);
   let mainFields = getFlag(options, keys, "mainFields", mustBeArray);
   let conditions = getFlag(options, keys, "conditions", mustBeArray);
   let external = getFlag(options, keys, "external", mustBeArray);
+  let packages = getFlag(options, keys, "packages", mustBeString);
+  let alias = getFlag(options, keys, "alias", mustBeObject);
   let loader = getFlag(options, keys, "loader", mustBeObject);
   let outExtension = getFlag(options, keys, "outExtension", mustBeObject);
   let publicPath = getFlag(options, keys, "publicPath", mustBeString);
@@ -396,12 +423,11 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
   let inject = getFlag(options, keys, "inject", mustBeArray);
   let banner = getFlag(options, keys, "banner", mustBeObject);
   let footer = getFlag(options, keys, "footer", mustBeObject);
-  let entryPoints = getFlag(options, keys, "entryPoints", mustBeArrayOrRecord);
+  let entryPoints = getFlag(options, keys, "entryPoints", mustBeEntryPoints);
   let absWorkingDir = getFlag(options, keys, "absWorkingDir", mustBeString);
   let stdin = getFlag(options, keys, "stdin", mustBeObject);
   let write = getFlag(options, keys, "write", mustBeBoolean) ?? writeDefault;
   let allowOverwrite = getFlag(options, keys, "allowOverwrite", mustBeBoolean);
-  let incremental = getFlag(options, keys, "incremental", mustBeBoolean) === true;
   let mangleCache = getFlag(options, keys, "mangleCache", mustBeObject);
   keys.plugins = true;
   checkForInvalidFlags(options, keys, `in ${callName}() call`);
@@ -411,17 +437,6 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
     flags.push("--bundle");
   if (allowOverwrite)
     flags.push("--allow-overwrite");
-  if (watch) {
-    flags.push("--watch");
-    if (typeof watch === "boolean") {
-      watchMode = {};
-    } else {
-      let watchKeys = /* @__PURE__ */ Object.create(null);
-      let onRebuild = getFlag(watch, watchKeys, "onRebuild", mustBeFunction);
-      checkForInvalidFlags(watch, watchKeys, `on "watch" in ${callName}() call`);
-      watchMode = { onRebuild };
-    }
-  }
   if (splitting)
     flags.push("--splitting");
   if (preserveSymlinks)
@@ -434,14 +449,14 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
     flags.push(`--outdir=${outdir}`);
   if (outbase)
     flags.push(`--outbase=${outbase}`);
-  if (platform)
-    flags.push(`--platform=${platform}`);
   if (tsconfig)
     flags.push(`--tsconfig=${tsconfig}`);
+  if (packages)
+    flags.push(`--packages=${packages}`);
   if (resolveExtensions) {
     let values = [];
     for (let value of resolveExtensions) {
-      value += "";
+      validateStringValue(value, "resolve extension");
       if (value.indexOf(",") >= 0)
         throw new Error(`Invalid resolve extension: ${value}`);
       values.push(value);
@@ -459,7 +474,7 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
   if (mainFields) {
     let values = [];
     for (let value of mainFields) {
-      value += "";
+      validateStringValue(value, "main field");
       if (value.indexOf(",") >= 0)
         throw new Error(`Invalid main field: ${value}`);
       values.push(value);
@@ -469,7 +484,7 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
   if (conditions) {
     let values = [];
     for (let value of conditions) {
-      value += "";
+      validateStringValue(value, "condition");
       if (value.indexOf(",") >= 0)
         throw new Error(`Invalid condition: ${value}`);
       values.push(value);
@@ -478,52 +493,72 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
   }
   if (external)
     for (let name of external)
-      flags.push(`--external:${name}`);
+      flags.push(`--external:${validateStringValue(name, "external")}`);
+  if (alias) {
+    for (let old in alias) {
+      if (old.indexOf("=") >= 0)
+        throw new Error(`Invalid package name in alias: ${old}`);
+      flags.push(`--alias:${old}=${validateStringValue(alias[old], "alias", old)}`);
+    }
+  }
   if (banner) {
     for (let type in banner) {
       if (type.indexOf("=") >= 0)
         throw new Error(`Invalid banner file type: ${type}`);
-      flags.push(`--banner:${type}=${banner[type]}`);
+      flags.push(`--banner:${type}=${validateStringValue(banner[type], "banner", type)}`);
     }
   }
   if (footer) {
     for (let type in footer) {
       if (type.indexOf("=") >= 0)
         throw new Error(`Invalid footer file type: ${type}`);
-      flags.push(`--footer:${type}=${footer[type]}`);
+      flags.push(`--footer:${type}=${validateStringValue(footer[type], "footer", type)}`);
     }
   }
   if (inject)
     for (let path of inject)
-      flags.push(`--inject:${path}`);
+      flags.push(`--inject:${validateStringValue(path, "inject")}`);
   if (loader) {
     for (let ext in loader) {
       if (ext.indexOf("=") >= 0)
         throw new Error(`Invalid loader extension: ${ext}`);
-      flags.push(`--loader:${ext}=${loader[ext]}`);
+      flags.push(`--loader:${ext}=${validateStringValue(loader[ext], "loader", ext)}`);
     }
   }
   if (outExtension) {
     for (let ext in outExtension) {
       if (ext.indexOf("=") >= 0)
         throw new Error(`Invalid out extension: ${ext}`);
-      flags.push(`--out-extension:${ext}=${outExtension[ext]}`);
+      flags.push(`--out-extension:${ext}=${validateStringValue(outExtension[ext], "out extension", ext)}`);
     }
   }
   if (entryPoints) {
     if (Array.isArray(entryPoints)) {
-      for (let entryPoint of entryPoints) {
-        entries.push(["", entryPoint + ""]);
+      for (let i = 0, n = entryPoints.length; i < n; i++) {
+        let entryPoint = entryPoints[i];
+        if (typeof entryPoint === "object" && entryPoint !== null) {
+          let entryPointKeys = /* @__PURE__ */ Object.create(null);
+          let input = getFlag(entryPoint, entryPointKeys, "in", mustBeString);
+          let output = getFlag(entryPoint, entryPointKeys, "out", mustBeString);
+          checkForInvalidFlags(entryPoint, entryPointKeys, "in entry point at index " + i);
+          if (input === void 0)
+            throw new Error('Missing property "in" for entry point at index ' + i);
+          if (output === void 0)
+            throw new Error('Missing property "out" for entry point at index ' + i);
+          entries.push([output, input]);
+        } else {
+          entries.push(["", validateStringValue(entryPoint, "entry point at index " + i)]);
+        }
       }
     } else {
-      for (let [key, value] of Object.entries(entryPoints)) {
-        entries.push([key + "", value + ""]);
+      for (let key in entryPoints) {
+        entries.push([key, validateStringValue(entryPoints[key], "entry point", key)]);
       }
     }
   }
   if (stdin) {
     let stdinKeys = /* @__PURE__ */ Object.create(null);
-    let contents = getFlag(stdin, stdinKeys, "contents", mustBeString);
+    let contents = getFlag(stdin, stdinKeys, "contents", mustBeStringOrUint8Array);
     let resolveDir = getFlag(stdin, stdinKeys, "resolveDir", mustBeString);
     let sourcefile = getFlag(stdin, stdinKeys, "sourcefile", mustBeString);
     let loader2 = getFlag(stdin, stdinKeys, "loader", mustBeString);
@@ -533,8 +568,11 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
     if (loader2)
       flags.push(`--loader=${loader2}`);
     if (resolveDir)
-      stdinResolveDir = resolveDir + "";
-    stdinContents = contents ? contents + "" : "";
+      stdinResolveDir = resolveDir;
+    if (typeof contents === "string")
+      stdinContents = encodeUTF8(contents);
+    else if (contents instanceof Uint8Array)
+      stdinContents = contents;
   }
   let nodePaths = [];
   if (nodePathsInput) {
@@ -550,9 +588,7 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
     stdinContents,
     stdinResolveDir,
     absWorkingDir,
-    incremental,
     nodePaths,
-    watch: watchMode,
     mangleCache: validateMangleCache(mangleCache)
   };
 }
@@ -587,11 +623,9 @@ function flagsForTransformOptions(callName, options, isTTY, logLevelDefault) {
   };
 }
 function createChannel(streamIn) {
-  let responseCallbacks = /* @__PURE__ */ new Map();
-  let pluginCallbacks = /* @__PURE__ */ new Map();
-  let watchCallbacks = /* @__PURE__ */ new Map();
-  let serveCallbacks = /* @__PURE__ */ new Map();
-  let closeData = null;
+  const requestCallbacksByKey = {};
+  const closeData = { didClose: false, reason: "" };
+  let responseCallbacks = {};
   let nextRequestID = 0;
   let nextBuildKey = 0;
   let stdout = new Uint8Array(16 * 1024);
@@ -621,105 +655,53 @@ function createChannel(streamIn) {
     }
   };
   let afterClose = (error) => {
-    closeData = { reason: error ? ": " + (error.message || error) : "" };
+    closeData.didClose = true;
+    if (error)
+      closeData.reason = ": " + (error.message || error);
     const text = "The service was stopped" + closeData.reason;
-    for (let callback of responseCallbacks.values()) {
-      callback(text, null);
+    for (let id in responseCallbacks) {
+      responseCallbacks[id](text, null);
     }
-    responseCallbacks.clear();
-    for (let callbacks of serveCallbacks.values()) {
-      callbacks.onWait(text);
-    }
-    serveCallbacks.clear();
-    for (let callback of watchCallbacks.values()) {
-      try {
-        callback(new Error(text), null);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    watchCallbacks.clear();
+    responseCallbacks = {};
   };
   let sendRequest = (refs, value, callback) => {
-    if (closeData)
+    if (closeData.didClose)
       return callback("The service is no longer running" + closeData.reason, null);
     let id = nextRequestID++;
-    responseCallbacks.set(id, (error, response) => {
+    responseCallbacks[id] = (error, response) => {
       try {
         callback(error, response);
       } finally {
         if (refs)
           refs.unref();
       }
-    });
+    };
     if (refs)
       refs.ref();
     streamIn.writeToStdin(encodePacket({ id, isRequest: true, value }));
   };
   let sendResponse = (id, value) => {
-    if (closeData)
+    if (closeData.didClose)
       throw new Error("The service is no longer running" + closeData.reason);
     streamIn.writeToStdin(encodePacket({ id, isRequest: false, value }));
   };
   let handleRequest = async (id, request) => {
     try {
-      switch (request.command) {
-        case "ping": {
-          sendResponse(id, {});
-          break;
-        }
-        case "on-start": {
-          let callback = pluginCallbacks.get(request.key);
-          if (!callback)
-            sendResponse(id, {});
-          else
-            sendResponse(id, await callback(request));
-          break;
-        }
-        case "on-resolve": {
-          let callback = pluginCallbacks.get(request.key);
-          if (!callback)
-            sendResponse(id, {});
-          else
-            sendResponse(id, await callback(request));
-          break;
-        }
-        case "on-load": {
-          let callback = pluginCallbacks.get(request.key);
-          if (!callback)
-            sendResponse(id, {});
-          else
-            sendResponse(id, await callback(request));
-          break;
-        }
-        case "serve-request": {
-          let callbacks = serveCallbacks.get(request.key);
-          if (callbacks && callbacks.onRequest)
-            callbacks.onRequest(request.args);
-          sendResponse(id, {});
-          break;
-        }
-        case "serve-wait": {
-          let callbacks = serveCallbacks.get(request.key);
-          if (callbacks)
-            callbacks.onWait(request.error);
-          sendResponse(id, {});
-          break;
-        }
-        case "watch-rebuild": {
-          let callback = watchCallbacks.get(request.key);
-          try {
-            if (callback)
-              callback(null, request.args);
-          } catch (err) {
-            console.error(err);
-          }
-          sendResponse(id, {});
-          break;
-        }
-        default:
-          throw new Error(`Invalid command: ` + request.command);
+      if (request.command === "ping") {
+        sendResponse(id, {});
+        return;
       }
+      if (typeof request.key === "number") {
+        const requestCallbacks = requestCallbacksByKey[request.key];
+        if (requestCallbacks) {
+          const callback = requestCallbacks[request.command];
+          if (callback) {
+            await callback(id, request);
+            return;
+          }
+        }
+      }
+      throw new Error(`Invalid command: ` + request.command);
     } catch (e) {
       sendResponse(id, { errors: [extractErrorMessageV8(e, streamIn, null, void 0, "")] });
     }
@@ -729,8 +711,8 @@ function createChannel(streamIn) {
     if (isFirstPacket) {
       isFirstPacket = false;
       let binaryVersion = String.fromCharCode(...bytes);
-      if (binaryVersion !== "0.14.49") {
-        throw new Error(`Cannot start service: Host version "${"0.14.49"}" does not match binary version ${JSON.stringify(binaryVersion)}`);
+      if (binaryVersion !== "0.17.4") {
+        throw new Error(`Cannot start service: Host version "${"0.17.4"}" does not match binary version ${quote(binaryVersion)}`);
       }
       return;
     }
@@ -738,615 +720,61 @@ function createChannel(streamIn) {
     if (packet.isRequest) {
       handleRequest(packet.id, packet.value);
     } else {
-      let callback = responseCallbacks.get(packet.id);
-      responseCallbacks.delete(packet.id);
+      let callback = responseCallbacks[packet.id];
+      delete responseCallbacks[packet.id];
       if (packet.value.error)
         callback(packet.value.error, {});
       else
         callback(null, packet.value);
     }
   };
-  let handlePlugins = async (initialOptions, plugins, buildKey, stash, refs) => {
-    let onStartCallbacks = [];
-    let onEndCallbacks = [];
-    let onResolveCallbacks = {};
-    let onLoadCallbacks = {};
-    let nextCallbackID = 0;
-    let i = 0;
-    let requestPlugins = [];
-    let isSetupDone = false;
-    plugins = [...plugins];
-    for (let item of plugins) {
-      let keys = {};
-      if (typeof item !== "object")
-        throw new Error(`Plugin at index ${i} must be an object`);
-      const name = getFlag(item, keys, "name", mustBeString);
-      if (typeof name !== "string" || name === "")
-        throw new Error(`Plugin at index ${i} is missing a name`);
-      try {
-        let setup = getFlag(item, keys, "setup", mustBeFunction);
-        if (typeof setup !== "function")
-          throw new Error(`Plugin is missing a setup function`);
-        checkForInvalidFlags(item, keys, `on plugin ${JSON.stringify(name)}`);
-        let plugin = {
-          name,
-          onResolve: [],
-          onLoad: []
-        };
-        i++;
-        let resolve = (path, options = {}) => {
-          if (!isSetupDone)
-            throw new Error('Cannot call "resolve" before plugin setup has completed');
-          if (typeof path !== "string")
-            throw new Error(`The path to resolve must be a string`);
-          let keys2 = /* @__PURE__ */ Object.create(null);
-          let pluginName = getFlag(options, keys2, "pluginName", mustBeString);
-          let importer = getFlag(options, keys2, "importer", mustBeString);
-          let namespace = getFlag(options, keys2, "namespace", mustBeString);
-          let resolveDir = getFlag(options, keys2, "resolveDir", mustBeString);
-          let kind = getFlag(options, keys2, "kind", mustBeString);
-          let pluginData = getFlag(options, keys2, "pluginData", canBeAnything);
-          checkForInvalidFlags(options, keys2, "in resolve() call");
-          return new Promise((resolve2, reject) => {
-            const request = {
-              command: "resolve",
-              path,
-              key: buildKey,
-              pluginName: name
-            };
-            if (pluginName != null)
-              request.pluginName = pluginName;
-            if (importer != null)
-              request.importer = importer;
-            if (namespace != null)
-              request.namespace = namespace;
-            if (resolveDir != null)
-              request.resolveDir = resolveDir;
-            if (kind != null)
-              request.kind = kind;
-            if (pluginData != null)
-              request.pluginData = stash.store(pluginData);
-            sendRequest(refs, request, (error, response) => {
-              if (error !== null)
-                reject(new Error(error));
-              else
-                resolve2({
-                  errors: replaceDetailsInMessages(response.errors, stash),
-                  warnings: replaceDetailsInMessages(response.warnings, stash),
-                  path: response.path,
-                  external: response.external,
-                  sideEffects: response.sideEffects,
-                  namespace: response.namespace,
-                  suffix: response.suffix,
-                  pluginData: stash.load(response.pluginData)
-                });
-            });
-          });
-        };
-        let promise = setup({
-          initialOptions,
-          resolve,
-          onStart(callback2) {
-            let registeredText = `This error came from the "onStart" callback registered here:`;
-            let registeredNote = extractCallerV8(new Error(registeredText), streamIn, "onStart");
-            onStartCallbacks.push({ name, callback: callback2, note: registeredNote });
-          },
-          onEnd(callback2) {
-            let registeredText = `This error came from the "onEnd" callback registered here:`;
-            let registeredNote = extractCallerV8(new Error(registeredText), streamIn, "onEnd");
-            onEndCallbacks.push({ name, callback: callback2, note: registeredNote });
-          },
-          onResolve(options, callback2) {
-            let registeredText = `This error came from the "onResolve" callback registered here:`;
-            let registeredNote = extractCallerV8(new Error(registeredText), streamIn, "onResolve");
-            let keys2 = {};
-            let filter = getFlag(options, keys2, "filter", mustBeRegExp);
-            let namespace = getFlag(options, keys2, "namespace", mustBeString);
-            checkForInvalidFlags(options, keys2, `in onResolve() call for plugin ${JSON.stringify(name)}`);
-            if (filter == null)
-              throw new Error(`onResolve() call is missing a filter`);
-            let id = nextCallbackID++;
-            onResolveCallbacks[id] = { name, callback: callback2, note: registeredNote };
-            plugin.onResolve.push({ id, filter: filter.source, namespace: namespace || "" });
-          },
-          onLoad(options, callback2) {
-            let registeredText = `This error came from the "onLoad" callback registered here:`;
-            let registeredNote = extractCallerV8(new Error(registeredText), streamIn, "onLoad");
-            let keys2 = {};
-            let filter = getFlag(options, keys2, "filter", mustBeRegExp);
-            let namespace = getFlag(options, keys2, "namespace", mustBeString);
-            checkForInvalidFlags(options, keys2, `in onLoad() call for plugin ${JSON.stringify(name)}`);
-            if (filter == null)
-              throw new Error(`onLoad() call is missing a filter`);
-            let id = nextCallbackID++;
-            onLoadCallbacks[id] = { name, callback: callback2, note: registeredNote };
-            plugin.onLoad.push({ id, filter: filter.source, namespace: namespace || "" });
-          },
-          esbuild: streamIn.esbuild
-        });
-        if (promise)
-          await promise;
-        requestPlugins.push(plugin);
-      } catch (e) {
-        return { ok: false, error: e, pluginName: name };
-      }
-    }
-    const callback = async (request) => {
-      switch (request.command) {
-        case "on-start": {
-          let response = { errors: [], warnings: [] };
-          await Promise.all(onStartCallbacks.map(async ({ name, callback: callback2, note }) => {
-            try {
-              let result = await callback2();
-              if (result != null) {
-                if (typeof result !== "object")
-                  throw new Error(`Expected onStart() callback in plugin ${JSON.stringify(name)} to return an object`);
-                let keys = {};
-                let errors = getFlag(result, keys, "errors", mustBeArray);
-                let warnings = getFlag(result, keys, "warnings", mustBeArray);
-                checkForInvalidFlags(result, keys, `from onStart() callback in plugin ${JSON.stringify(name)}`);
-                if (errors != null)
-                  response.errors.push(...sanitizeMessages(errors, "errors", stash, name));
-                if (warnings != null)
-                  response.warnings.push(...sanitizeMessages(warnings, "warnings", stash, name));
-              }
-            } catch (e) {
-              response.errors.push(extractErrorMessageV8(e, streamIn, stash, note && note(), name));
-            }
-          }));
-          return response;
-        }
-        case "on-resolve": {
-          let response = {}, name = "", callback2, note;
-          for (let id of request.ids) {
-            try {
-              ({ name, callback: callback2, note } = onResolveCallbacks[id]);
-              let result = await callback2({
-                path: request.path,
-                importer: request.importer,
-                namespace: request.namespace,
-                resolveDir: request.resolveDir,
-                kind: request.kind,
-                pluginData: stash.load(request.pluginData)
-              });
-              if (result != null) {
-                if (typeof result !== "object")
-                  throw new Error(`Expected onResolve() callback in plugin ${JSON.stringify(name)} to return an object`);
-                let keys = {};
-                let pluginName = getFlag(result, keys, "pluginName", mustBeString);
-                let path = getFlag(result, keys, "path", mustBeString);
-                let namespace = getFlag(result, keys, "namespace", mustBeString);
-                let suffix = getFlag(result, keys, "suffix", mustBeString);
-                let external = getFlag(result, keys, "external", mustBeBoolean);
-                let sideEffects = getFlag(result, keys, "sideEffects", mustBeBoolean);
-                let pluginData = getFlag(result, keys, "pluginData", canBeAnything);
-                let errors = getFlag(result, keys, "errors", mustBeArray);
-                let warnings = getFlag(result, keys, "warnings", mustBeArray);
-                let watchFiles = getFlag(result, keys, "watchFiles", mustBeArray);
-                let watchDirs = getFlag(result, keys, "watchDirs", mustBeArray);
-                checkForInvalidFlags(result, keys, `from onResolve() callback in plugin ${JSON.stringify(name)}`);
-                response.id = id;
-                if (pluginName != null)
-                  response.pluginName = pluginName;
-                if (path != null)
-                  response.path = path;
-                if (namespace != null)
-                  response.namespace = namespace;
-                if (suffix != null)
-                  response.suffix = suffix;
-                if (external != null)
-                  response.external = external;
-                if (sideEffects != null)
-                  response.sideEffects = sideEffects;
-                if (pluginData != null)
-                  response.pluginData = stash.store(pluginData);
-                if (errors != null)
-                  response.errors = sanitizeMessages(errors, "errors", stash, name);
-                if (warnings != null)
-                  response.warnings = sanitizeMessages(warnings, "warnings", stash, name);
-                if (watchFiles != null)
-                  response.watchFiles = sanitizeStringArray(watchFiles, "watchFiles");
-                if (watchDirs != null)
-                  response.watchDirs = sanitizeStringArray(watchDirs, "watchDirs");
-                break;
-              }
-            } catch (e) {
-              return { id, errors: [extractErrorMessageV8(e, streamIn, stash, note && note(), name)] };
-            }
-          }
-          return response;
-        }
-        case "on-load": {
-          let response = {}, name = "", callback2, note;
-          for (let id of request.ids) {
-            try {
-              ({ name, callback: callback2, note } = onLoadCallbacks[id]);
-              let result = await callback2({
-                path: request.path,
-                namespace: request.namespace,
-                suffix: request.suffix,
-                pluginData: stash.load(request.pluginData)
-              });
-              if (result != null) {
-                if (typeof result !== "object")
-                  throw new Error(`Expected onLoad() callback in plugin ${JSON.stringify(name)} to return an object`);
-                let keys = {};
-                let pluginName = getFlag(result, keys, "pluginName", mustBeString);
-                let contents = getFlag(result, keys, "contents", mustBeStringOrUint8Array);
-                let resolveDir = getFlag(result, keys, "resolveDir", mustBeString);
-                let pluginData = getFlag(result, keys, "pluginData", canBeAnything);
-                let loader = getFlag(result, keys, "loader", mustBeString);
-                let errors = getFlag(result, keys, "errors", mustBeArray);
-                let warnings = getFlag(result, keys, "warnings", mustBeArray);
-                let watchFiles = getFlag(result, keys, "watchFiles", mustBeArray);
-                let watchDirs = getFlag(result, keys, "watchDirs", mustBeArray);
-                checkForInvalidFlags(result, keys, `from onLoad() callback in plugin ${JSON.stringify(name)}`);
-                response.id = id;
-                if (pluginName != null)
-                  response.pluginName = pluginName;
-                if (contents instanceof Uint8Array)
-                  response.contents = contents;
-                else if (contents != null)
-                  response.contents = encodeUTF8(contents);
-                if (resolveDir != null)
-                  response.resolveDir = resolveDir;
-                if (pluginData != null)
-                  response.pluginData = stash.store(pluginData);
-                if (loader != null)
-                  response.loader = loader;
-                if (errors != null)
-                  response.errors = sanitizeMessages(errors, "errors", stash, name);
-                if (warnings != null)
-                  response.warnings = sanitizeMessages(warnings, "warnings", stash, name);
-                if (watchFiles != null)
-                  response.watchFiles = sanitizeStringArray(watchFiles, "watchFiles");
-                if (watchDirs != null)
-                  response.watchDirs = sanitizeStringArray(watchDirs, "watchDirs");
-                break;
-              }
-            } catch (e) {
-              return { id, errors: [extractErrorMessageV8(e, streamIn, stash, note && note(), name)] };
-            }
-          }
-          return response;
-        }
-        default:
-          throw new Error(`Invalid command: ` + request.command);
-      }
-    };
-    let runOnEndCallbacks = (result, logPluginError, done) => done();
-    if (onEndCallbacks.length > 0) {
-      runOnEndCallbacks = (result, logPluginError, done) => {
-        (async () => {
-          for (const { name, callback: callback2, note } of onEndCallbacks) {
-            try {
-              await callback2(result);
-            } catch (e) {
-              result.errors.push(await new Promise((resolve) => logPluginError(e, name, note && note(), resolve)));
-            }
-          }
-        })().then(done);
-      };
-    }
-    isSetupDone = true;
+  let buildOrContext = ({ callName, refs, options, isTTY, defaultWD: defaultWD2, callback }) => {
     let refCount = 0;
-    return {
-      ok: true,
-      requestPlugins,
-      runOnEndCallbacks,
-      pluginRefs: {
-        ref() {
-          if (++refCount === 1)
-            pluginCallbacks.set(buildKey, callback);
-        },
-        unref() {
-          if (--refCount === 0)
-            pluginCallbacks.delete(buildKey);
-        }
-      }
-    };
-  };
-  let buildServeData = (refs, options, request, key) => {
-    let keys = {};
-    let port = getFlag(options, keys, "port", mustBeInteger);
-    let host = getFlag(options, keys, "host", mustBeString);
-    let servedir = getFlag(options, keys, "servedir", mustBeString);
-    let onRequest = getFlag(options, keys, "onRequest", mustBeFunction);
-    let onWait;
-    let wait = new Promise((resolve, reject) => {
-      onWait = (error) => {
-        serveCallbacks.delete(key);
-        if (error !== null)
-          reject(new Error(error));
-        else
-          resolve();
-      };
-    });
-    request.serve = {};
-    checkForInvalidFlags(options, keys, `in serve() call`);
-    if (port !== void 0)
-      request.serve.port = port;
-    if (host !== void 0)
-      request.serve.host = host;
-    if (servedir !== void 0)
-      request.serve.servedir = servedir;
-    serveCallbacks.set(key, {
-      onRequest,
-      onWait
-    });
-    return {
-      wait,
-      stop() {
-        sendRequest(refs, { command: "serve-stop", key }, () => {
-        });
-      }
-    };
-  };
-  const buildLogLevelDefault = "warning";
-  const transformLogLevelDefault = "silent";
-  let buildOrServe = (args) => {
-    let key = nextBuildKey++;
-    const details = createObjectStash();
-    let plugins;
-    let { refs, options, isTTY, callback } = args;
-    if (typeof options === "object") {
-      let value = options.plugins;
-      if (value !== void 0) {
-        if (!Array.isArray(value))
-          throw new Error(`"plugins" must be an array`);
-        plugins = value;
-      }
-    }
-    let logPluginError = (e, pluginName, note, done) => {
-      let flags = [];
-      try {
-        pushLogFlags(flags, options, {}, isTTY, buildLogLevelDefault);
-      } catch {
-      }
-      const message = extractErrorMessageV8(e, streamIn, details, note, pluginName);
-      sendRequest(refs, { command: "error", flags, error: message }, () => {
-        message.detail = details.load(message.detail);
-        done(message);
-      });
-    };
-    let handleError = (e, pluginName) => {
-      logPluginError(e, pluginName, void 0, (error) => {
-        callback(failureErrorWithLog("Build failed", [error], []), null);
-      });
-    };
-    if (plugins && plugins.length > 0) {
-      if (streamIn.isSync)
-        return handleError(new Error("Cannot use plugins in synchronous API calls"), "");
-      handlePlugins(options, plugins, key, details, refs).then((result) => {
-        if (!result.ok) {
-          handleError(result.error, result.pluginName);
-        } else {
-          try {
-            buildOrServeContinue({
-              ...args,
-              key,
-              details,
-              logPluginError,
-              requestPlugins: result.requestPlugins,
-              runOnEndCallbacks: result.runOnEndCallbacks,
-              pluginRefs: result.pluginRefs
-            });
-          } catch (e) {
-            handleError(e, "");
-          }
-        }
-      }, (e) => handleError(e, ""));
-    } else {
-      try {
-        buildOrServeContinue({
-          ...args,
-          key,
-          details,
-          logPluginError,
-          requestPlugins: null,
-          runOnEndCallbacks: (result, logPluginError2, done) => done(),
-          pluginRefs: null
-        });
-      } catch (e) {
-        handleError(e, "");
-      }
-    }
-  };
-  let buildOrServeContinue = ({
-    callName,
-    refs: callerRefs,
-    serveOptions,
-    options,
-    isTTY,
-    defaultWD: defaultWD2,
-    callback,
-    key,
-    details,
-    logPluginError,
-    requestPlugins,
-    runOnEndCallbacks,
-    pluginRefs
-  }) => {
-    const refs = {
+    const buildKey = nextBuildKey++;
+    const requestCallbacks = {};
+    const buildRefs = {
       ref() {
-        if (pluginRefs)
-          pluginRefs.ref();
-        if (callerRefs)
-          callerRefs.ref();
+        if (++refCount === 1) {
+          if (refs)
+            refs.ref();
+        }
       },
       unref() {
-        if (pluginRefs)
-          pluginRefs.unref();
-        if (callerRefs)
-          callerRefs.unref();
-      }
-    };
-    let writeDefault = !streamIn.isWriteUnavailable;
-    let {
-      entries,
-      flags,
-      write,
-      stdinContents,
-      stdinResolveDir,
-      absWorkingDir,
-      incremental,
-      nodePaths,
-      watch,
-      mangleCache
-    } = flagsForBuildOptions(callName, options, isTTY, buildLogLevelDefault, writeDefault);
-    let request = {
-      command: "build",
-      key,
-      entries,
-      flags,
-      write,
-      stdinContents,
-      stdinResolveDir,
-      absWorkingDir: absWorkingDir || defaultWD2,
-      incremental,
-      nodePaths
-    };
-    if (requestPlugins)
-      request.plugins = requestPlugins;
-    if (mangleCache)
-      request.mangleCache = mangleCache;
-    let serve2 = serveOptions && buildServeData(refs, serveOptions, request, key);
-    let rebuild;
-    let stop2;
-    let copyResponseToResult = (response, result) => {
-      if (response.outputFiles)
-        result.outputFiles = response.outputFiles.map(convertOutputFiles);
-      if (response.metafile)
-        result.metafile = JSON.parse(response.metafile);
-      if (response.mangleCache)
-        result.mangleCache = response.mangleCache;
-      if (response.writeToStdout !== void 0)
-        console.log(decodeUTF8(response.writeToStdout).replace(/\n$/, ""));
-    };
-    let buildResponseToResult = (response, callback2) => {
-      let result = {
-        errors: replaceDetailsInMessages(response.errors, details),
-        warnings: replaceDetailsInMessages(response.warnings, details)
-      };
-      copyResponseToResult(response, result);
-      runOnEndCallbacks(result, logPluginError, () => {
-        if (result.errors.length > 0) {
-          return callback2(failureErrorWithLog("Build failed", result.errors, result.warnings), null);
-        }
-        if (response.rebuild) {
-          if (!rebuild) {
-            let isDisposed = false;
-            rebuild = () => new Promise((resolve, reject) => {
-              if (isDisposed || closeData)
-                throw new Error("Cannot rebuild");
-              sendRequest(refs, { command: "rebuild", key }, (error2, response2) => {
-                if (error2) {
-                  const message = { id: "", pluginName: "", text: error2, location: null, notes: [], detail: void 0 };
-                  return callback2(failureErrorWithLog("Build failed", [message], []), null);
-                }
-                buildResponseToResult(response2, (error3, result3) => {
-                  if (error3)
-                    reject(error3);
-                  else
-                    resolve(result3);
-                });
-              });
-            });
-            refs.ref();
-            rebuild.dispose = () => {
-              if (isDisposed)
-                return;
-              isDisposed = true;
-              sendRequest(refs, { command: "rebuild-dispose", key }, () => {
-              });
-              refs.unref();
-            };
-          }
-          result.rebuild = rebuild;
-        }
-        if (response.watch) {
-          if (!stop2) {
-            let isStopped = false;
-            refs.ref();
-            stop2 = () => {
-              if (isStopped)
-                return;
-              isStopped = true;
-              watchCallbacks.delete(key);
-              sendRequest(refs, { command: "watch-stop", key }, () => {
-              });
-              refs.unref();
-            };
-            if (watch) {
-              watchCallbacks.set(key, (serviceStopError, watchResponse) => {
-                if (serviceStopError) {
-                  if (watch.onRebuild)
-                    watch.onRebuild(serviceStopError, null);
-                  return;
-                }
-                let result2 = {
-                  errors: replaceDetailsInMessages(watchResponse.errors, details),
-                  warnings: replaceDetailsInMessages(watchResponse.warnings, details)
-                };
-                copyResponseToResult(watchResponse, result2);
-                runOnEndCallbacks(result2, logPluginError, () => {
-                  if (result2.errors.length > 0) {
-                    if (watch.onRebuild)
-                      watch.onRebuild(failureErrorWithLog("Build failed", result2.errors, result2.warnings), null);
-                    return;
-                  }
-                  if (watchResponse.rebuildID !== void 0)
-                    result2.rebuild = rebuild;
-                  result2.stop = stop2;
-                  if (watch.onRebuild)
-                    watch.onRebuild(null, result2);
-                });
-              });
-            }
-          }
-          result.stop = stop2;
-        }
-        callback2(null, result);
-      });
-    };
-    if (write && streamIn.isWriteUnavailable)
-      throw new Error(`The "write" option is unavailable in this environment`);
-    if (incremental && streamIn.isSync)
-      throw new Error(`Cannot use "incremental" with a synchronous build`);
-    if (watch && streamIn.isSync)
-      throw new Error(`Cannot use "watch" with a synchronous build`);
-    sendRequest(refs, request, (error, response) => {
-      if (error)
-        return callback(new Error(error), null);
-      if (serve2) {
-        let serveResponse = response;
-        let isStopped = false;
-        refs.ref();
-        let result = {
-          port: serveResponse.port,
-          host: serveResponse.host,
-          wait: serve2.wait,
-          stop() {
-            if (isStopped)
-              return;
-            isStopped = true;
-            serve2.stop();
+        if (--refCount === 0) {
+          delete requestCallbacksByKey[buildKey];
+          if (refs)
             refs.unref();
-          }
-        };
-        refs.ref();
-        serve2.wait.then(refs.unref, refs.unref);
-        return callback(null, result);
+        }
       }
-      return buildResponseToResult(response, callback);
-    });
+    };
+    requestCallbacksByKey[buildKey] = requestCallbacks;
+    buildRefs.ref();
+    buildOrContextImpl(
+      callName,
+      buildKey,
+      sendRequest,
+      sendResponse,
+      buildRefs,
+      streamIn,
+      requestCallbacks,
+      options,
+      isTTY,
+      defaultWD2,
+      (err, res) => {
+        try {
+          callback(err, res);
+        } finally {
+          buildRefs.unref();
+        }
+      }
+    );
   };
   let transform2 = ({ callName, refs, input, options, isTTY, fs, callback }) => {
     const details = createObjectStash();
     let start = (inputPath) => {
       try {
-        if (typeof input !== "string")
-          throw new Error('The input to "transform" must be a string');
+        if (typeof input !== "string" && !(input instanceof Uint8Array))
+          throw new Error('The input to "transform" must be a string or a Uint8Array');
         let {
           flags,
           mangleCache
@@ -1355,7 +783,7 @@ function createChannel(streamIn) {
           command: "transform",
           flags,
           inputFS: inputPath !== null,
-          input: inputPath !== null ? inputPath : input
+          input: inputPath !== null ? encodeUTF8(inputPath) : typeof input === "string" ? encodeUTF8(input) : input
         };
         if (mangleCache)
           request.mangleCache = mangleCache;
@@ -1367,7 +795,15 @@ function createChannel(streamIn) {
           let outstanding = 1;
           let next = () => {
             if (--outstanding === 0) {
-              let result = { warnings, code: response.code, map: response.map };
+              let result = {
+                warnings,
+                code: response.code,
+                map: response.map,
+                mangleCache: void 0,
+                legalComments: void 0
+              };
+              if ("legalComments" in response)
+                result.legalComments = response?.legalComments;
               if (response.mangleCache)
                 result.mangleCache = response?.mangleCache;
               callback(null, result);
@@ -1412,7 +848,7 @@ function createChannel(streamIn) {
         });
       }
     };
-    if (typeof input === "string" && input.length > 1024 * 1024) {
+    if ((typeof input === "string" || input instanceof Uint8Array) && input.length > 1024 * 1024) {
       let next = start;
       start = () => fs.writeFile(input, next);
     }
@@ -1471,13 +907,601 @@ function createChannel(streamIn) {
     readFromStdout,
     afterClose,
     service: {
-      buildOrServe,
+      buildOrContext,
       transform: transform2,
       formatMessages: formatMessages2,
       analyzeMetafile: analyzeMetafile2
     }
   };
 }
+function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs, streamIn, requestCallbacks, options, isTTY, defaultWD2, callback) {
+  const details = createObjectStash();
+  const isContext = callName === "context";
+  const handleError = (e, pluginName) => {
+    const flags = [];
+    try {
+      pushLogFlags(flags, options, {}, isTTY, buildLogLevelDefault);
+    } catch {
+    }
+    const message = extractErrorMessageV8(e, streamIn, details, void 0, pluginName);
+    sendRequest(refs, { command: "error", flags, error: message }, () => {
+      message.detail = details.load(message.detail);
+      callback(failureErrorWithLog(isContext ? "Context failed" : "Build failed", [message], []), null);
+    });
+  };
+  let plugins;
+  if (typeof options === "object") {
+    const value = options.plugins;
+    if (value !== void 0) {
+      if (!Array.isArray(value))
+        return handleError(new Error(`"plugins" must be an array`), "");
+      plugins = value;
+    }
+  }
+  if (plugins && plugins.length > 0) {
+    if (streamIn.isSync)
+      return handleError(new Error("Cannot use plugins in synchronous API calls"), "");
+    handlePlugins(
+      buildKey,
+      sendRequest,
+      sendResponse,
+      refs,
+      streamIn,
+      requestCallbacks,
+      options,
+      plugins,
+      details
+    ).then(
+      (result) => {
+        if (!result.ok)
+          return handleError(result.error, result.pluginName);
+        try {
+          buildOrContextContinue(result.requestPlugins, result.runOnEndCallbacks, result.scheduleOnDisposeCallbacks);
+        } catch (e) {
+          handleError(e, "");
+        }
+      },
+      (e) => handleError(e, "")
+    );
+    return;
+  }
+  try {
+    buildOrContextContinue(null, (result, done) => done([], []), () => {
+    });
+  } catch (e) {
+    handleError(e, "");
+  }
+  function buildOrContextContinue(requestPlugins, runOnEndCallbacks, scheduleOnDisposeCallbacks) {
+    const writeDefault = streamIn.hasFS;
+    const {
+      entries,
+      flags,
+      write,
+      stdinContents,
+      stdinResolveDir,
+      absWorkingDir,
+      nodePaths,
+      mangleCache
+    } = flagsForBuildOptions(callName, options, isTTY, buildLogLevelDefault, writeDefault);
+    if (write && !streamIn.hasFS)
+      throw new Error(`The "write" option is unavailable in this environment`);
+    const request = {
+      command: "build",
+      key: buildKey,
+      entries,
+      flags,
+      write,
+      stdinContents,
+      stdinResolveDir,
+      absWorkingDir: absWorkingDir || defaultWD2,
+      nodePaths,
+      context: isContext
+    };
+    if (requestPlugins)
+      request.plugins = requestPlugins;
+    if (mangleCache)
+      request.mangleCache = mangleCache;
+    const buildResponseToResult = (response, callback2) => {
+      const result = {
+        errors: replaceDetailsInMessages(response.errors, details),
+        warnings: replaceDetailsInMessages(response.warnings, details),
+        outputFiles: void 0,
+        metafile: void 0,
+        mangleCache: void 0
+      };
+      const originalErrors = result.errors.slice();
+      const originalWarnings = result.warnings.slice();
+      if (response.outputFiles)
+        result.outputFiles = response.outputFiles.map(convertOutputFiles);
+      if (response.metafile)
+        result.metafile = JSON.parse(response.metafile);
+      if (response.mangleCache)
+        result.mangleCache = response.mangleCache;
+      if (response.writeToStdout !== void 0)
+        console.log(decodeUTF8(response.writeToStdout).replace(/\n$/, ""));
+      runOnEndCallbacks(result, (onEndErrors, onEndWarnings) => {
+        if (originalErrors.length > 0 || onEndErrors.length > 0) {
+          const error = failureErrorWithLog("Build failed", originalErrors.concat(onEndErrors), originalWarnings.concat(onEndWarnings));
+          return callback2(error, null, onEndErrors, onEndWarnings);
+        }
+        callback2(null, result, onEndErrors, onEndWarnings);
+      });
+    };
+    let latestResultPromise;
+    let provideLatestResult;
+    if (isContext)
+      requestCallbacks["on-end"] = (id, request2) => new Promise((resolve) => {
+        buildResponseToResult(request2, (err, result, onEndErrors, onEndWarnings) => {
+          const response = {
+            errors: onEndErrors,
+            warnings: onEndWarnings
+          };
+          if (provideLatestResult)
+            provideLatestResult(err, result);
+          latestResultPromise = void 0;
+          provideLatestResult = void 0;
+          sendResponse(id, response);
+          resolve();
+        });
+      });
+    sendRequest(refs, request, (error, response) => {
+      if (error)
+        return callback(new Error(error), null);
+      if (!isContext) {
+        return buildResponseToResult(response, (err, res) => {
+          scheduleOnDisposeCallbacks();
+          return callback(err, res);
+        });
+      }
+      if (response.errors.length > 0) {
+        return callback(failureErrorWithLog("Context failed", response.errors, response.warnings), null);
+      }
+      let didDispose = false;
+      const result = {
+        rebuild: () => {
+          if (!latestResultPromise)
+            latestResultPromise = new Promise((resolve, reject) => {
+              let settlePromise;
+              provideLatestResult = (err, result2) => {
+                if (!settlePromise)
+                  settlePromise = () => err ? reject(err) : resolve(result2);
+              };
+              const triggerAnotherBuild = () => {
+                const request2 = {
+                  command: "rebuild",
+                  key: buildKey
+                };
+                sendRequest(refs, request2, (error2, response2) => {
+                  if (error2) {
+                    reject(new Error(error2));
+                  } else if (settlePromise) {
+                    settlePromise();
+                  } else {
+                    triggerAnotherBuild();
+                  }
+                });
+              };
+              triggerAnotherBuild();
+            });
+          return latestResultPromise;
+        },
+        watch: (options2 = {}) => new Promise((resolve, reject) => {
+          if (!streamIn.hasFS)
+            throw new Error(`Cannot use the "watch" API in this environment`);
+          const keys = {};
+          checkForInvalidFlags(options2, keys, `in watch() call`);
+          const request2 = {
+            command: "watch",
+            key: buildKey
+          };
+          sendRequest(refs, request2, (error2) => {
+            if (error2)
+              reject(new Error(error2));
+            else
+              resolve(void 0);
+          });
+        }),
+        serve: (options2 = {}) => new Promise((resolve, reject) => {
+          if (!streamIn.hasFS)
+            throw new Error(`Cannot use the "serve" API in this environment`);
+          const keys = {};
+          const port = getFlag(options2, keys, "port", mustBeInteger);
+          const host = getFlag(options2, keys, "host", mustBeString);
+          const servedir = getFlag(options2, keys, "servedir", mustBeString);
+          const keyfile = getFlag(options2, keys, "keyfile", mustBeString);
+          const certfile = getFlag(options2, keys, "certfile", mustBeString);
+          const onRequest = getFlag(options2, keys, "onRequest", mustBeFunction);
+          checkForInvalidFlags(options2, keys, `in serve() call`);
+          const request2 = {
+            command: "serve",
+            key: buildKey,
+            onRequest: !!onRequest
+          };
+          if (port !== void 0)
+            request2.port = port;
+          if (host !== void 0)
+            request2.host = host;
+          if (servedir !== void 0)
+            request2.servedir = servedir;
+          if (keyfile !== void 0)
+            request2.keyfile = keyfile;
+          if (certfile !== void 0)
+            request2.certfile = certfile;
+          sendRequest(refs, request2, (error2, response2) => {
+            if (error2)
+              return reject(new Error(error2));
+            if (onRequest) {
+              requestCallbacks["serve-request"] = (id, request3) => {
+                onRequest(request3.args);
+                sendResponse(id, {});
+              };
+            }
+            resolve(response2);
+          });
+        }),
+        cancel: () => new Promise((resolve) => {
+          if (didDispose)
+            return resolve();
+          const request2 = {
+            command: "cancel",
+            key: buildKey
+          };
+          sendRequest(refs, request2, () => {
+            resolve();
+          });
+        }),
+        dispose: () => new Promise((resolve) => {
+          if (didDispose)
+            return resolve();
+          didDispose = true;
+          const request2 = {
+            command: "dispose",
+            key: buildKey
+          };
+          sendRequest(refs, request2, () => {
+            resolve();
+            scheduleOnDisposeCallbacks();
+            refs.unref();
+          });
+        })
+      };
+      refs.ref();
+      callback(null, result);
+    });
+  }
+}
+var handlePlugins = async (buildKey, sendRequest, sendResponse, refs, streamIn, requestCallbacks, initialOptions, plugins, details) => {
+  let onStartCallbacks = [];
+  let onEndCallbacks = [];
+  let onResolveCallbacks = {};
+  let onLoadCallbacks = {};
+  let onDisposeCallbacks = [];
+  let nextCallbackID = 0;
+  let i = 0;
+  let requestPlugins = [];
+  let isSetupDone = false;
+  plugins = [...plugins];
+  for (let item of plugins) {
+    let keys = {};
+    if (typeof item !== "object")
+      throw new Error(`Plugin at index ${i} must be an object`);
+    const name = getFlag(item, keys, "name", mustBeString);
+    if (typeof name !== "string" || name === "")
+      throw new Error(`Plugin at index ${i} is missing a name`);
+    try {
+      let setup = getFlag(item, keys, "setup", mustBeFunction);
+      if (typeof setup !== "function")
+        throw new Error(`Plugin is missing a setup function`);
+      checkForInvalidFlags(item, keys, `on plugin ${quote(name)}`);
+      let plugin = {
+        name,
+        onStart: false,
+        onEnd: false,
+        onResolve: [],
+        onLoad: []
+      };
+      i++;
+      let resolve = (path, options = {}) => {
+        if (!isSetupDone)
+          throw new Error('Cannot call "resolve" before plugin setup has completed');
+        if (typeof path !== "string")
+          throw new Error(`The path to resolve must be a string`);
+        let keys2 = /* @__PURE__ */ Object.create(null);
+        let pluginName = getFlag(options, keys2, "pluginName", mustBeString);
+        let importer = getFlag(options, keys2, "importer", mustBeString);
+        let namespace = getFlag(options, keys2, "namespace", mustBeString);
+        let resolveDir = getFlag(options, keys2, "resolveDir", mustBeString);
+        let kind = getFlag(options, keys2, "kind", mustBeString);
+        let pluginData = getFlag(options, keys2, "pluginData", canBeAnything);
+        checkForInvalidFlags(options, keys2, "in resolve() call");
+        return new Promise((resolve2, reject) => {
+          const request = {
+            command: "resolve",
+            path,
+            key: buildKey,
+            pluginName: name
+          };
+          if (pluginName != null)
+            request.pluginName = pluginName;
+          if (importer != null)
+            request.importer = importer;
+          if (namespace != null)
+            request.namespace = namespace;
+          if (resolveDir != null)
+            request.resolveDir = resolveDir;
+          if (kind != null)
+            request.kind = kind;
+          else
+            throw new Error(`Must specify "kind" when calling "resolve"`);
+          if (pluginData != null)
+            request.pluginData = details.store(pluginData);
+          sendRequest(refs, request, (error, response) => {
+            if (error !== null)
+              reject(new Error(error));
+            else
+              resolve2({
+                errors: replaceDetailsInMessages(response.errors, details),
+                warnings: replaceDetailsInMessages(response.warnings, details),
+                path: response.path,
+                external: response.external,
+                sideEffects: response.sideEffects,
+                namespace: response.namespace,
+                suffix: response.suffix,
+                pluginData: details.load(response.pluginData)
+              });
+          });
+        });
+      };
+      let promise = setup({
+        initialOptions,
+        resolve,
+        onStart(callback) {
+          let registeredText = `This error came from the "onStart" callback registered here:`;
+          let registeredNote = extractCallerV8(new Error(registeredText), streamIn, "onStart");
+          onStartCallbacks.push({ name, callback, note: registeredNote });
+          plugin.onStart = true;
+        },
+        onEnd(callback) {
+          let registeredText = `This error came from the "onEnd" callback registered here:`;
+          let registeredNote = extractCallerV8(new Error(registeredText), streamIn, "onEnd");
+          onEndCallbacks.push({ name, callback, note: registeredNote });
+          plugin.onEnd = true;
+        },
+        onResolve(options, callback) {
+          let registeredText = `This error came from the "onResolve" callback registered here:`;
+          let registeredNote = extractCallerV8(new Error(registeredText), streamIn, "onResolve");
+          let keys2 = {};
+          let filter = getFlag(options, keys2, "filter", mustBeRegExp);
+          let namespace = getFlag(options, keys2, "namespace", mustBeString);
+          checkForInvalidFlags(options, keys2, `in onResolve() call for plugin ${quote(name)}`);
+          if (filter == null)
+            throw new Error(`onResolve() call is missing a filter`);
+          let id = nextCallbackID++;
+          onResolveCallbacks[id] = { name, callback, note: registeredNote };
+          plugin.onResolve.push({ id, filter: filter.source, namespace: namespace || "" });
+        },
+        onLoad(options, callback) {
+          let registeredText = `This error came from the "onLoad" callback registered here:`;
+          let registeredNote = extractCallerV8(new Error(registeredText), streamIn, "onLoad");
+          let keys2 = {};
+          let filter = getFlag(options, keys2, "filter", mustBeRegExp);
+          let namespace = getFlag(options, keys2, "namespace", mustBeString);
+          checkForInvalidFlags(options, keys2, `in onLoad() call for plugin ${quote(name)}`);
+          if (filter == null)
+            throw new Error(`onLoad() call is missing a filter`);
+          let id = nextCallbackID++;
+          onLoadCallbacks[id] = { name, callback, note: registeredNote };
+          plugin.onLoad.push({ id, filter: filter.source, namespace: namespace || "" });
+        },
+        onDispose(callback) {
+          onDisposeCallbacks.push(callback);
+        },
+        esbuild: streamIn.esbuild
+      });
+      if (promise)
+        await promise;
+      requestPlugins.push(plugin);
+    } catch (e) {
+      return { ok: false, error: e, pluginName: name };
+    }
+  }
+  requestCallbacks["on-start"] = async (id, request) => {
+    let response = { errors: [], warnings: [] };
+    await Promise.all(onStartCallbacks.map(async ({ name, callback, note }) => {
+      try {
+        let result = await callback();
+        if (result != null) {
+          if (typeof result !== "object")
+            throw new Error(`Expected onStart() callback in plugin ${quote(name)} to return an object`);
+          let keys = {};
+          let errors = getFlag(result, keys, "errors", mustBeArray);
+          let warnings = getFlag(result, keys, "warnings", mustBeArray);
+          checkForInvalidFlags(result, keys, `from onStart() callback in plugin ${quote(name)}`);
+          if (errors != null)
+            response.errors.push(...sanitizeMessages(errors, "errors", details, name));
+          if (warnings != null)
+            response.warnings.push(...sanitizeMessages(warnings, "warnings", details, name));
+        }
+      } catch (e) {
+        response.errors.push(extractErrorMessageV8(e, streamIn, details, note && note(), name));
+      }
+    }));
+    sendResponse(id, response);
+  };
+  requestCallbacks["on-resolve"] = async (id, request) => {
+    let response = {}, name = "", callback, note;
+    for (let id2 of request.ids) {
+      try {
+        ({ name, callback, note } = onResolveCallbacks[id2]);
+        let result = await callback({
+          path: request.path,
+          importer: request.importer,
+          namespace: request.namespace,
+          resolveDir: request.resolveDir,
+          kind: request.kind,
+          pluginData: details.load(request.pluginData)
+        });
+        if (result != null) {
+          if (typeof result !== "object")
+            throw new Error(`Expected onResolve() callback in plugin ${quote(name)} to return an object`);
+          let keys = {};
+          let pluginName = getFlag(result, keys, "pluginName", mustBeString);
+          let path = getFlag(result, keys, "path", mustBeString);
+          let namespace = getFlag(result, keys, "namespace", mustBeString);
+          let suffix = getFlag(result, keys, "suffix", mustBeString);
+          let external = getFlag(result, keys, "external", mustBeBoolean);
+          let sideEffects = getFlag(result, keys, "sideEffects", mustBeBoolean);
+          let pluginData = getFlag(result, keys, "pluginData", canBeAnything);
+          let errors = getFlag(result, keys, "errors", mustBeArray);
+          let warnings = getFlag(result, keys, "warnings", mustBeArray);
+          let watchFiles = getFlag(result, keys, "watchFiles", mustBeArray);
+          let watchDirs = getFlag(result, keys, "watchDirs", mustBeArray);
+          checkForInvalidFlags(result, keys, `from onResolve() callback in plugin ${quote(name)}`);
+          response.id = id2;
+          if (pluginName != null)
+            response.pluginName = pluginName;
+          if (path != null)
+            response.path = path;
+          if (namespace != null)
+            response.namespace = namespace;
+          if (suffix != null)
+            response.suffix = suffix;
+          if (external != null)
+            response.external = external;
+          if (sideEffects != null)
+            response.sideEffects = sideEffects;
+          if (pluginData != null)
+            response.pluginData = details.store(pluginData);
+          if (errors != null)
+            response.errors = sanitizeMessages(errors, "errors", details, name);
+          if (warnings != null)
+            response.warnings = sanitizeMessages(warnings, "warnings", details, name);
+          if (watchFiles != null)
+            response.watchFiles = sanitizeStringArray(watchFiles, "watchFiles");
+          if (watchDirs != null)
+            response.watchDirs = sanitizeStringArray(watchDirs, "watchDirs");
+          break;
+        }
+      } catch (e) {
+        response = { id: id2, errors: [extractErrorMessageV8(e, streamIn, details, note && note(), name)] };
+        break;
+      }
+    }
+    sendResponse(id, response);
+  };
+  requestCallbacks["on-load"] = async (id, request) => {
+    let response = {}, name = "", callback, note;
+    for (let id2 of request.ids) {
+      try {
+        ({ name, callback, note } = onLoadCallbacks[id2]);
+        let result = await callback({
+          path: request.path,
+          namespace: request.namespace,
+          suffix: request.suffix,
+          pluginData: details.load(request.pluginData)
+        });
+        if (result != null) {
+          if (typeof result !== "object")
+            throw new Error(`Expected onLoad() callback in plugin ${quote(name)} to return an object`);
+          let keys = {};
+          let pluginName = getFlag(result, keys, "pluginName", mustBeString);
+          let contents = getFlag(result, keys, "contents", mustBeStringOrUint8Array);
+          let resolveDir = getFlag(result, keys, "resolveDir", mustBeString);
+          let pluginData = getFlag(result, keys, "pluginData", canBeAnything);
+          let loader = getFlag(result, keys, "loader", mustBeString);
+          let errors = getFlag(result, keys, "errors", mustBeArray);
+          let warnings = getFlag(result, keys, "warnings", mustBeArray);
+          let watchFiles = getFlag(result, keys, "watchFiles", mustBeArray);
+          let watchDirs = getFlag(result, keys, "watchDirs", mustBeArray);
+          checkForInvalidFlags(result, keys, `from onLoad() callback in plugin ${quote(name)}`);
+          response.id = id2;
+          if (pluginName != null)
+            response.pluginName = pluginName;
+          if (contents instanceof Uint8Array)
+            response.contents = contents;
+          else if (contents != null)
+            response.contents = encodeUTF8(contents);
+          if (resolveDir != null)
+            response.resolveDir = resolveDir;
+          if (pluginData != null)
+            response.pluginData = details.store(pluginData);
+          if (loader != null)
+            response.loader = loader;
+          if (errors != null)
+            response.errors = sanitizeMessages(errors, "errors", details, name);
+          if (warnings != null)
+            response.warnings = sanitizeMessages(warnings, "warnings", details, name);
+          if (watchFiles != null)
+            response.watchFiles = sanitizeStringArray(watchFiles, "watchFiles");
+          if (watchDirs != null)
+            response.watchDirs = sanitizeStringArray(watchDirs, "watchDirs");
+          break;
+        }
+      } catch (e) {
+        response = { id: id2, errors: [extractErrorMessageV8(e, streamIn, details, note && note(), name)] };
+        break;
+      }
+    }
+    sendResponse(id, response);
+  };
+  let runOnEndCallbacks = (result, done) => done([], []);
+  if (onEndCallbacks.length > 0) {
+    runOnEndCallbacks = (result, done) => {
+      (async () => {
+        const onEndErrors = [];
+        const onEndWarnings = [];
+        for (const { name, callback, note } of onEndCallbacks) {
+          let newErrors;
+          let newWarnings;
+          try {
+            const value = await callback(result);
+            if (value != null) {
+              if (typeof value !== "object")
+                throw new Error(`Expected onEnd() callback in plugin ${quote(name)} to return an object`);
+              let keys = {};
+              let errors = getFlag(value, keys, "errors", mustBeArray);
+              let warnings = getFlag(value, keys, "warnings", mustBeArray);
+              checkForInvalidFlags(value, keys, `from onEnd() callback in plugin ${quote(name)}`);
+              if (errors != null)
+                newErrors = sanitizeMessages(errors, "errors", details, name);
+              if (warnings != null)
+                newWarnings = sanitizeMessages(warnings, "warnings", details, name);
+            }
+          } catch (e) {
+            newErrors = [extractErrorMessageV8(e, streamIn, details, note && note(), name)];
+          }
+          if (newErrors) {
+            onEndErrors.push(...newErrors);
+            try {
+              result.errors.push(...newErrors);
+            } catch {
+            }
+          }
+          if (newWarnings) {
+            onEndWarnings.push(...newWarnings);
+            try {
+              result.warnings.push(...newWarnings);
+            } catch {
+            }
+          }
+        }
+        done(onEndErrors, onEndWarnings);
+      })();
+    };
+  }
+  let scheduleOnDisposeCallbacks = () => {
+    for (const cb of onDisposeCallbacks) {
+      setTimeout(() => cb(), 0);
+    }
+  };
+  isSetupDone = true;
+  return {
+    ok: true,
+    requestPlugins,
+    runOnEndCallbacks,
+    scheduleOnDisposeCallbacks
+  };
+};
 function createObjectStash() {
   const map = /* @__PURE__ */ new Map();
   let nextID = 0;
@@ -1660,7 +1684,7 @@ function sanitizeStringArray(values, property) {
   const result = [];
   for (const value of values) {
     if (typeof value !== "string")
-      throw new Error(`${JSON.stringify(property)} must be an array of strings`);
+      throw new Error(`${quote(property)} must be an array of strings`);
     result.push(value);
   }
   return result;
@@ -1671,8 +1695,11 @@ function convertOutputFiles({ path, contents }) {
     path,
     contents,
     get text() {
-      if (text === null)
-        text = decodeUTF8(contents);
+      const binary = this.contents;
+      if (text === null || binary !== contents) {
+        contents = binary;
+        text = decodeUTF8(binary);
+      }
       return text;
     }
   };
@@ -1680,9 +1707,9 @@ function convertOutputFiles({ path, contents }) {
 
 // lib/deno/mod.ts
 import * as denoflate from "https://deno.land/x/denoflate@1.2.1/mod.ts";
-var version = "0.14.49";
+var version = "0.17.4";
 var build = (options) => ensureServiceIsRunning().then((service) => service.build(options));
-var serve = (serveOptions, buildOptions) => ensureServiceIsRunning().then((service) => service.serve(serveOptions, buildOptions));
+var context = (options) => ensureServiceIsRunning().then((service) => service.context(options));
 var transform = (input, options) => ensureServiceIsRunning().then((service) => service.transform(input, options));
 var formatMessages = (messages, options) => ensureServiceIsRunning().then((service) => service.formatMessages(messages, options));
 var analyzeMetafile = (metafile, options) => ensureServiceIsRunning().then((service) => service.analyzeMetafile(metafile, options));
@@ -1723,12 +1750,14 @@ async function installFromNPM(name, subpath) {
     return finalPath;
   } catch (e) {
   }
-  const url = `https://registry.npmjs.org/${name}/-/${name}-${version}.tgz`;
+  const npmRegistry = Deno.env.get("NPM_CONFIG_REGISTRY") || "https://registry.npmjs.org";
+  const url = `${npmRegistry}/${name}/-/${name.replace("@esbuild/", "")}-${version}.tgz`;
   const buffer = await fetch(url).then((r) => r.arrayBuffer());
   const executable = extractFileFromTarGzip(new Uint8Array(buffer), subpath);
   await Deno.mkdir(finalDir, {
     recursive: true,
     mode: 448
+    // https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
   });
   await Deno.writeFile(finalPath, executable, { mode: 493 });
   return finalPath;
@@ -1765,7 +1794,7 @@ function getCachePath(name) {
   if (!baseDir)
     throw new Error("Failed to find cache directory");
   const finalDir = baseDir + `/esbuild/bin`;
-  const finalPath = finalDir + `/${name}@${version}`;
+  const finalPath = finalDir + `/${name.replace("/", "-")}@${version}`;
   return { finalPath, finalDir };
 }
 function extractFileFromTarGzip(buffer, file) {
@@ -1795,14 +1824,16 @@ async function install() {
     return overridePath;
   const platformKey = Deno.build.target;
   const knownWindowsPackages = {
-    "x86_64-pc-windows-msvc": "esbuild-windows-64"
+    "x86_64-pc-windows-msvc": "@esbuild/win32-x64"
   };
   const knownUnixlikePackages = {
-    "aarch64-apple-darwin": "esbuild-darwin-arm64",
-    "aarch64-unknown-linux-gnu": "esbuild-linux-arm64",
-    "x86_64-apple-darwin": "esbuild-darwin-64",
-    "x86_64-unknown-linux-gnu": "esbuild-linux-64",
-    "x86_64-unknown-freebsd": "esbuild-freebsd-64"
+    // These are the only platforms that Deno supports
+    "aarch64-apple-darwin": "@esbuild/darwin-arm64",
+    "aarch64-unknown-linux-gnu": "@esbuild/linux-arm64",
+    "x86_64-apple-darwin": "@esbuild/darwin-x64",
+    "x86_64-unknown-linux-gnu": "@esbuild/linux-x64",
+    // These platforms are not supported by Deno
+    "x86_64-unknown-freebsd": "@esbuild/freebsd-x64"
   };
   if (platformKey in knownWindowsPackages) {
     return await installFromNPM(knownWindowsPackages[platformKey], "esbuild.exe");
@@ -1856,7 +1887,7 @@ var ensureServiceIsRunning = () => {
           startWriteFromQueueWorker();
         },
         isSync: false,
-        isWriteUnavailable: false,
+        hasFS: true,
         esbuild: mod_exports
       });
       const stdoutBuffer = new Uint8Array(4 * 1024 * 1024);
@@ -1876,75 +1907,70 @@ var ensureServiceIsRunning = () => {
       });
       readMoreStdout();
       return {
-        build: (options) => {
-          return new Promise((resolve, reject) => {
-            service.buildOrServe({
-              callName: "build",
-              refs: null,
-              serveOptions: null,
-              options,
-              isTTY,
-              defaultWD,
-              callback: (err, res) => err ? reject(err) : resolve(res)
-            });
-          });
-        },
-        serve: (serveOptions, buildOptions) => {
-          if (serveOptions === null || typeof serveOptions !== "object")
-            throw new Error("The first argument must be an object");
-          return new Promise((resolve, reject) => service.buildOrServe({
-            callName: "serve",
+        build: (options) => new Promise((resolve, reject) => {
+          service.buildOrContext({
+            callName: "build",
             refs: null,
-            serveOptions,
-            options: buildOptions,
+            options,
             isTTY,
             defaultWD,
             callback: (err, res) => err ? reject(err) : resolve(res)
-          }));
-        },
-        transform: (input, options) => {
-          return new Promise((resolve, reject) => service.transform({
-            callName: "transform",
-            refs: null,
-            input,
-            options: options || {},
-            isTTY,
-            fs: {
-              readFile(tempFile, callback) {
-                Deno.readFile(tempFile).then((bytes) => {
+          });
+        }),
+        context: (options) => new Promise((resolve, reject) => service.buildOrContext({
+          callName: "context",
+          refs: null,
+          options,
+          isTTY,
+          defaultWD,
+          callback: (err, res) => err ? reject(err) : resolve(res)
+        })),
+        transform: (input, options) => new Promise((resolve, reject) => service.transform({
+          callName: "transform",
+          refs: null,
+          input,
+          options: options || {},
+          isTTY,
+          fs: {
+            readFile(tempFile, callback) {
+              Deno.readFile(tempFile).then(
+                (bytes) => {
                   let text = new TextDecoder().decode(bytes);
                   try {
                     Deno.remove(tempFile);
                   } catch (e) {
                   }
                   callback(null, text);
-                }, (err) => callback(err, null));
-              },
-              writeFile(contents, callback) {
-                Deno.makeTempFile().then((tempFile) => Deno.writeFile(tempFile, new TextEncoder().encode(contents)).then(() => callback(tempFile), () => callback(null)), () => callback(null));
-              }
+                },
+                (err) => callback(err, null)
+              );
             },
-            callback: (err, res) => err ? reject(err) : resolve(res)
-          }));
-        },
-        formatMessages: (messages, options) => {
-          return new Promise((resolve, reject) => service.formatMessages({
-            callName: "formatMessages",
-            refs: null,
-            messages,
-            options,
-            callback: (err, res) => err ? reject(err) : resolve(res)
-          }));
-        },
-        analyzeMetafile: (metafile, options) => {
-          return new Promise((resolve, reject) => service.analyzeMetafile({
-            callName: "analyzeMetafile",
-            refs: null,
-            metafile: typeof metafile === "string" ? metafile : JSON.stringify(metafile),
-            options,
-            callback: (err, res) => err ? reject(err) : resolve(res)
-          }));
-        }
+            writeFile(contents, callback) {
+              Deno.makeTempFile().then(
+                (tempFile) => Deno.writeFile(tempFile, typeof contents === "string" ? new TextEncoder().encode(contents) : contents).then(
+                  () => callback(tempFile),
+                  () => callback(null)
+                ),
+                () => callback(null)
+              );
+            }
+          },
+          callback: (err, res) => err ? reject(err) : resolve(res)
+        })),
+        formatMessages: (messages, options) => new Promise((resolve, reject) => service.formatMessages({
+          callName: "formatMessages",
+          refs: null,
+          messages,
+          options,
+          callback: (err, res) => err ? reject(err) : resolve(res)
+        })),
+        analyzeMetafile: (metafile, options) => new Promise((resolve, reject) => service.analyzeMetafile({
+          callName: "analyzeMetafile",
+          refs: null,
+          metafile: typeof metafile === "string" ? metafile : JSON.stringify(metafile),
+          options,
+          callback: (err, res) => err ? reject(err) : resolve(res)
+        }))
       };
     })();
   }
@@ -1966,10 +1992,10 @@ export {
   analyzeMetafileSync,
   build,
   buildSync,
+  context,
   formatMessages,
   formatMessagesSync,
   initialize,
-  serve,
   stop,
   transform,
   transformSync,
