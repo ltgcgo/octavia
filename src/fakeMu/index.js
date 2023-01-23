@@ -33,7 +33,7 @@ let generateSwitch = function (ch = 0, min, max) {
 	return {
 		type: 15,
 		track: 0,
-		data: Uint8Array.from(data)
+		data
 	};
 };
 
@@ -77,7 +77,6 @@ stDemo.forEach(function (e, i, a) {
 		};
 		currentPerformance = demoPerfs[e.title];
 		currentPerformance?.resetIndex();
-		self.demoPerf = currentPerformance;
 		audioPlayer.currentTime = 0;
 		visualizer.reset();
 		visualizer.loadFile(demoBlobs[e.title].midi);
@@ -274,4 +273,3 @@ self.performance = currentPerformance;
 	perf.fresh();
 	demoPerfs["R-love"] = perf;
 };
-self.demoPerfs = demoPerfs;

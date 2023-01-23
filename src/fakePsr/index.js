@@ -267,6 +267,7 @@ audioPlayer.onended = function () {
 	audioBlob = await (await fetch("./demo/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
+	currentPerformance = demoPerfs["KANDI8"];
 })();
 let lastTime = 0;
 let renderThread = setInterval(function () {

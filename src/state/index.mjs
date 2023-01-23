@@ -875,6 +875,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	runJson(json) {
 		// Execute transformed JSON event
 		if (json.type > 14) {
+			if (json.type == 15 && json.data.constructor != Uint8Array) {
+				json.data = Uint8Array.from(json.data);
+			};
 			return this.#runChEvent[json.type].call(this, json);
 		} else {
 			// Universal MIDI channel receive support.
