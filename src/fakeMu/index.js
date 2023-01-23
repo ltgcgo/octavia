@@ -36,6 +36,17 @@ let generateSwitch = function (ch = 0, min, max) {
 		data
 	};
 };
+let generateString = function (text) {
+	let data = [67, 16, 76, 6, 0, 0];
+	for (let c = 0; c < text.length; c ++) {
+		data.push(text.charCodeAt(c));
+	};
+	return {
+		type: 15,
+		track: 0,
+		data
+	};
+};
 
 // Standard switching
 let stSwitch = $a("b.mode");
@@ -212,6 +223,72 @@ self.visualizer = visualizer;
 self.performance = currentPerformance;
 
 // Hardcoded performance
+{
+	// PhoenixA
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateString(`     YAMAHA      TONE GENERATOR `)));
+	perf.push(new PointEvent(0, generateSwitch(0, 0, 0)));
+	perf.push(new PointEvent(2.52, generateString(`     YAMAHA      TONE GENERATOR `)));
+	perf.push(new PointEvent(5.04, generateString(`      YAMAHA      TONE GENERATOR`)));
+	perf.push(new PointEvent(5.21, generateString(`       YAMAHA      TONE GENERATO`)));
+	perf.push(new PointEvent(5.37, generateString(`        YAMAHA      TONE GENERAT`)));
+	perf.push(new PointEvent(5.54, generateString(`         YAMAHA      TONE GENERA`)));
+	perf.push(new PointEvent(5.71, generateString(`          YAMAHA      TONE GENER`)));
+	perf.push(new PointEvent(5.87, generateString(`           YAMAH       TONE GENE`)));
+	perf.push(new PointEvent(6.04, generateString(`            YAMA        TONE GEN`)));
+	perf.push(new PointEvent(6.21, generateString(`             YAM         TONE GE`)));
+	perf.push(new PointEvent(6.38, generateString(`              YA          TONE G`)));
+	perf.push(new PointEvent(6.54, generateString(`               Y           TONE `)));
+	perf.push(new PointEvent(6.71, generateString(`                            TONE`)));
+	perf.push(new PointEvent(6.88, generateString(`                             TON`)));
+	perf.push(new PointEvent(7.04, generateString(`                              TO`)));
+	perf.push(new PointEvent(7.21, generateString(`                               T`)));
+	perf.push(new PointEvent(7.38, generateString(`                                `)));
+	perf.push(new PointEvent(7.52, generateString(`        MU1000                  `)));
+	perf.push(new PointEvent(8.14, generateString(`                                `)));
+	perf.push(new PointEvent(8.76, generateString(`        MU1000                  `)));
+	perf.push(new PointEvent(9.38, generateString(`                                `)));
+	perf.push(new PointEvent(10.08, generateString(`        MU1000                  `)));
+	perf.push(new PointEvent(10.49, generateString(`        DU1000          \x80       `)));
+	perf.push(new PointEvent(10.92, generateString(`        Db1000          \x800      `)));
+	perf.push(new PointEvent(11.33, generateString(`        Dbl000          \x8006     `)));
+	perf.push(new PointEvent(11.75, generateString(`        DblC00          \x80066    `)));
+	perf.push(new PointEvent(12.17, generateString(`        DblCo0          \x80066\x81   `)));
+	perf.push(new PointEvent(12.59, generateString(`        DblCon          \x80066\x810  `)));
+	perf.push(new PointEvent(13.01, generateString(`        DblConG         \x80066\x8100 `)));
+	perf.push(new PointEvent(13.42, generateString(`        DblConGr        \x80066\x81001`)));
+	perf.push(new PointEvent(27.98, generateSwitch(4)));
+	perf.push(new PointEvent(43.85, generateSwitch(10)));
+	perf.push(new PointEvent(63.33, generateSwitch(19, 1, 1)));
+	perf.push(new PointEvent(103.31, generateSwitch(34, 2, 2)));
+	perf.push(new PointEvent(109.52, generateSwitch(35)));
+	perf.push(new PointEvent(114.32, generateSwitch(32)));
+	perf.push(new PointEvent(119.36, generateSwitch(33)));
+	perf.push(new PointEvent(123.68, generateSwitch(36)));
+	perf.push(new PointEvent(128.91, generateSwitch(41)));
+	perf.push(new PointEvent(140.83, generateSwitch(45)));
+	perf.push(new PointEvent(153.29, generateSwitch(42)));
+	perf.push(new PointEvent(176.74, generateSwitch(2, 0, 0)));
+	perf.push(new PointEvent(178.27, generateString(`        WindChim.       \x80SFX\x81070`)));
+	perf.push(new PointEvent(178.92, generateString(`        WindChim .      \x80SFX\x81070`)));
+	perf.push(new PointEvent(179.56, generateString(`        WindChim  .     \x80SFX\x81070`)));
+	perf.push(new PointEvent(180.21, generateString(`        WindChim   .    \x80SFX\x81070`)));
+	perf.push(new PointEvent(180.85, generateString(`        WindChim    .   \x80SFX\x81070`)));
+	perf.push(new PointEvent(181.5, generateString(`        WindChim     .  \x80SFX\x81070`)));
+	perf.push(new PointEvent(182.14, generateString(`        WindChim      . \x80SFX\x81070`)));
+	perf.push(new PointEvent(182.79, generateString(`        WindChim       .\x80SFX\x81070`)));
+	perf.push(new PointEvent(183.43, generateString(`        WindChim        .SFX\x81070`)));
+	perf.push(new PointEvent(184.08, generateString(`        BindChim        \x80.FX\x81070`)));
+	perf.push(new PointEvent(184.72, generateString(`        BrndChim        \x800.X\x81070`)));
+	perf.push(new PointEvent(185.36, generateString(`        BridChim        \x8006.\x81070`)));
+	perf.push(new PointEvent(186.01, generateString(`        BritChim        \x80066.070`)));
+	perf.push(new PointEvent(186.66, generateString(`        BritFhim        \x80066\x81.70`)));
+	perf.push(new PointEvent(187.3, generateString(`        BritFrim        \x80066\x810.0`)));
+	perf.push(new PointEvent(187.89, generateString(`        BritFrHm        \x80066\x8106.`)));
+	perf.push(new PointEvent(187.95, generateString(`        BritFrHr        \x80066\x81061`)));
+	perf.fresh();
+	demoPerfs["PhoenixA"] = perf;
+};
 {
 	// Ninety Hipty
 	let perf = new TimedEvents();
