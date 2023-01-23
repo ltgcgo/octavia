@@ -139,11 +139,14 @@ getGsEfxDesc = function (arr, param, value) {
 	};
 };
 
+let mt32DefProg = [68, 48, 95, 78, 41, 3, 110, 122, 0];
+
 export {
 	gsRevType,
 	gsChoType,
 	gsDelType,
 	gsParts,
 	getGsEfx,
-	getGsEfxDesc
+	getGsEfxDesc,
+	mt32DefProg
 };
