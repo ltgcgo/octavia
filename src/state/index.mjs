@@ -1962,6 +1962,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// MT-32 reset all params
 			upThis.switchMode("mt32", true);
 			upThis.#modeKaraoke = false;
+			upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
 			console.info("MIDI reset: MT-32");
 		}).add([22, 18, 0], (msg, track, id) => {
 			// MT-32 Part Patch Setup (temp)
@@ -2178,6 +2179,16 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			upThis.#letterDisp = text.padStart(20, " ");
 			upThis.#letterExpire = Date.now() + 3200;
+		}).add([22, 18, 82], (msg, track) => {
+			// MT-32 alt reset?
+			let partBase = upThis.chRedir(0, track, true);
+			for (let part = 0; part < 16; part ++) {
+				upThis.#ua.ano(partBase + part);
+				if (part && part < 10) {
+					upThis.#prg[partBase + part] = mt32DefProg[part - 1];
+				};
+			};
+			console.info(`MT-32 alt reset complete.`);
 		});
 		// KORG NS5R SysEx section
 		this.#seAi.add([66, 0], (msg, track) => {
