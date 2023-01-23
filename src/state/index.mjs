@@ -103,7 +103,9 @@ let sysExSplitter = function (seq) {
 			//seqArr[seqArr.length - 1].push(e);
 		};
 	});
-	//console.info(seqArr);
+	if (self.debugMode) {
+		console.info(seqArr);
+	};
 	return seqArr;
 };
 let showTrue = function (data, prefix = "", suffix = "", length = 2) {
@@ -2116,8 +2118,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([22, 18, 8], (msg, track, id) => {
 			// MT-32 Timbre Memory Write
 			upThis.switchMode("mt32");
-			msg.subarray(2, 16).forEach((e, i) => {
-				upThis.#cmTimbre[(msg[0] >> 1) * allocated.cmt + i] = e;
+			let offset = ((msg[0] & 1) << 7) + msg[1];
+			msg.subarray(2).forEach((e, i) => {
+				let ri = offset + i;
+				if (ri < allocated.cmt) {
+					//console.debug(`MT-32 timbre written to slot ${msg[0] >> 1}.`);
+					upThis.#cmTimbre[(msg[0] >> 1) * allocated.cmt + ri] = e;
+				};
 			});
 		}).add([22, 18, 16], (msg, track, id) => {
 			// MT-32 System Setup
