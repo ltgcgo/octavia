@@ -428,7 +428,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									if (nrpnIdx > -1) {
 										this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
 									};
-									console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
+									self.debugMode && console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
 								};
 							} else {
 								//console.debug(`CH${part + 1} drum NRPN ${msb} commit`);
@@ -437,7 +437,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Commit supported RPN values
 							let rpnIndex = useRpnMap[this.#cc[chOffset + ccToPos[100]]];
 							if (this.#cc[chOffset + ccToPos[101]] == 0 && rpnIndex != undefined) {
-								console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + ccToPos[100]]} commit: ${det.data[1]}`);
+								self.debugMode && console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + ccToPos[100]]} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
 							};
