@@ -6,6 +6,9 @@ Octavia will never become a reality without help from the following people.
 * **GFHK-SDGM**
 * **JayB**
 
+### Contributors
+* **GFHK-SDGM** for the fake PSR screen.
+
 ### Reference providers
 * **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
 * **DearHoney** (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro, YAMAHA MU100, YAMAHA MU1000)

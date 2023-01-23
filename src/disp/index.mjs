@@ -1752,7 +1752,7 @@ let PsrDisplay = class extends RootDisplay {
 			for (let i = 0; i < 8; i++) {
 				ctx.fillStyle = sevenSegFont[e][i] ? activePixel : inactivePixel;
 				ctx.fill(path[i]);
-				
+
 			}
 		});
 		ctx.resetTransform();
@@ -1796,7 +1796,7 @@ let PsrDisplay = class extends RootDisplay {
 			this.#ch = maxCh - 15 + (this.#ch & 15);
 		};
 		let chOff = this.#ch * ccToPos.length;
-		
+
 		// Fill with white
 		ctx.fillStyle = this.#backlight;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -1805,13 +1805,13 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.textAlign = "left";
 		ctx.font = '22px "Arial Web"';
 		ctx.fillText("C4", 548, 399);
-		
+
 		ctx.strokeStyle = "#000c";
 		ctx.stroke(upThis.bracket);
 		ctx.stroke(upThis.staffLines);
 		ctx.fill(upThis.clefs);
 		ctx.stroke(upThis.keyboard);
-		
+
 		// Beat indicator
 		let downbeatStar = new Path2D("m 160.263,824.43605 c 0.939,1.039 1.482,2.434 1.482,3.833 0,1.402 -0.543,2.796 -1.482,3.834 1.038,-0.944 2.43,-1.483 3.837,-1.483 1.398,0 2.791,0.539 3.828,1.483 -0.948,-1.038 -1.482,-2.432 -1.482,-3.834 0,-1.399 0.534,-2.794 1.482,-3.833 -1.037,0.945 -2.43,1.483 -3.828,1.483 -1.407,0 -2.799,-0.538 -3.837,-1.483");
 		let downbeatHand = new Path2D("m 166.418,820.55105 c 0.13,0 0.253,-0.054 0.351,-0.143 0.089,-0.094 0.143,-0.223 0.143,-0.351 v -1.969 l 1.847,-6.897 c 0.706,-2.627 0.966,-5.371 0.78,-8.09 l -0.184,-2.644 1.188,-2.055 h -5.175 l -1.268,3.499 -1.278,-3.499 h -5.171 l 1.185,2.055 -0.185,2.644 c -0.185,2.719 0.076,5.463 0.782,8.09 l 1.847,6.897 v 1.969 c 0,0.128 0.054,0.257 0.145,0.351 0.089,0.089 0.218,0.143 0.348,0.143 h 0.214 c 0.423,0 0.841,-0.11 1.213,-0.321 0.364,-0.204 0.68,-0.509 0.9,-0.871 0.213,0.362 0.527,0.667 0.89,0.871 0.373,0.211 0.79,0.321 1.208,0.321 h 0.22 m -0.22,-1.304 c 0,0.111 -0.034,0.217 -0.095,0.303 -0.069,0.085 -0.164,0.147 -0.268,0.178 -0.103,0.024 -0.22,0.016 -0.317,-0.027 -0.315,-0.132 -0.588,-0.357 -0.78,-0.645 -0.185,-0.283 -0.289,-0.626 -0.289,-0.968 v -6.306 c 0.262,0.159 0.562,0.23 0.865,0.213 0.308,-0.023 0.595,-0.138 0.836,-0.329 0.233,-0.192 0.406,-0.454 0.488,-0.748 l 0.007,-0.017 c 0.379,-1.35 0.631,-2.734 0.747,-4.134 0.496,-0.497 0.797,-1.176 0.839,-1.876 0.046,-0.701 -0.172,-1.411 -0.591,-1.967 l -0.625,0.356 c 0.371,0.453 0.556,1.058 0.501,1.64 -0.054,0.584 -0.349,1.143 -0.801,1.517 -0.112,1.448 -0.365,2.889 -0.756,4.288 -0.055,0.178 -0.165,0.336 -0.323,0.436 -0.15,0.099 -0.343,0.145 -0.522,0.119 -0.184,-0.026 -0.356,-0.115 -0.472,-0.257 -0.124,-0.136 -0.193,-0.319 -0.193,-0.503 v -7.524 l 1.413,-3.887 h 3.453 l -0.687,1.18 0.199,2.865 c 0.186,2.636 -0.068,5.301 -0.756,7.853 l -1.873,6.989 z m -4.143,-1.251 -1.873,-6.989 c -0.681,-2.552 -0.94,-5.217 -0.755,-7.853 l 0.198,-2.865 -0.68,-1.18 h 3.446 l 1.412,3.887 v 7.524 c 0,0.184 -0.066,0.367 -0.185,0.503 -0.124,0.142 -0.295,0.231 -0.472,0.257 -0.185,0.026 -0.372,-0.02 -0.529,-0.119 -0.151,-0.1 -0.267,-0.258 -0.315,-0.436 -0.4,-1.399 -0.652,-2.84 -0.756,-4.288 -0.453,-0.374 -0.747,-0.933 -0.803,-1.517 -0.059,-0.582 0.125,-1.187 0.495,-1.64 l -0.618,-0.356 c -0.424,0.556 -0.637,1.266 -0.597,1.967 0.049,0.7 0.349,1.379 0.838,1.876 0.122,1.4 0.371,2.784 0.753,4.134 v 0.017 c 0.084,0.294 0.262,0.556 0.497,0.748 0.233,0.191 0.527,0.306 0.83,0.329 0.299,0.017 0.608,-0.054 0.862,-0.213 v 6.306 c 0,0.342 -0.095,0.685 -0.288,0.968 -0.184,0.288 -0.459,0.513 -0.774,0.645 -0.103,0.043 -0.212,0.051 -0.316,0.027 -0.104,-0.031 -0.199,-0.093 -0.268,-0.178 -0.069,-0.086 -0.102,-0.192 -0.102,-0.303 v -1.251");
@@ -1836,7 +1836,7 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.setTransform(3.2, 0, 0, -3.2, 455, 2855);
 		ctx.fill(downbeatStar);
 		ctx.resetTransform();
-		
+
 		// Keyboard display
 		let a = [
 			[228, 0],
@@ -1890,7 +1890,7 @@ let PsrDisplay = class extends RootDisplay {
 		arrowRight = new Path2D("M1080 349 L1065 369 L1065 329 Z"),
 		arrowLeftFlag = false,
 		arrowRightFlag = false;
-		
+
 		// Reset C7
 		ctx.fillStyle = inactivePixel;
 		ctx.fillRect(1036, 355, 14, 21);
@@ -1940,15 +1940,15 @@ let PsrDisplay = class extends RootDisplay {
 			ctx.fillRect(1036, 355, 14, 21);
 			arrowRightFlag = true;
 		}
-		
+
 		// Render the arrows
 		ctx.fillStyle = arrowLeftFlag ? activePixel : inactivePixel;
 		ctx.fill(arrowLeft);
 		ctx.fillStyle = arrowRightFlag ? activePixel : inactivePixel;
 		ctx.fill(arrowRight);
-		
+
 		this.#render7seg(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
-		
+
 		// Measure / tempo view
 		ctx.font = '23px "Arial Web"';
 		ctx.fillStyle = tempoView ? inactivePixel : activePixel;
@@ -1961,7 +1961,7 @@ let PsrDisplay = class extends RootDisplay {
 		else {
 			this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
 		}
-		
+
 		if (timeNow <= sum.letter.expire) {
 			let letterDisp = sum.letter.text.trim().padEnd(8, " ");
 			this.#renderDotMatrix(letterDisp.slice(0, 8), ctx, 454, 32);

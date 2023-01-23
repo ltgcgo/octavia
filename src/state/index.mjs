@@ -103,6 +103,9 @@ let sysExSplitter = function (seq) {
 			//seqArr[seqArr.length - 1].push(e);
 		};
 	});
+	if (!seqArr.length) {
+		seqArr.push(seq.subarray(0));
+	};
 	if (self.debugMode) {
 		console.info(seqArr);
 	};
@@ -422,7 +425,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
 									this.#cc[chOffset + ccToPos[71 + toCc]] = det.data[1];
-									console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
+									self.debugMode && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
 								} else {
 									let nrpnIdx = useNormNrpn.indexOf(lsb);
 									if (nrpnIdx > -1) {
