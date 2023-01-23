@@ -2,7 +2,7 @@
 🎻 The multi-standard MIDI state-tracking library.
 
 ## Supported standard/devices
-_See the [MIDI Implementation Chart](docs/IMPLEMENTATION.md)_
+_See the [MIDI Implementation Chart](docs/implementation.md) and [Supported SysEx instructions](docs/sysex.md)_
 * Roland MT-32
 * KORG AG-10
 * ~~YAMAHA TG~~
