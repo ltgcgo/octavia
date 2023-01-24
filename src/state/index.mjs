@@ -1244,12 +1244,17 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([76, 6, 0], (msg) => {
 			// XG Letter Display
 			let offset = msg[0];
-			upThis.#letterDisp = " ".repeat(offset);
-			upThis.#letterExpire = Date.now() + 3200;
-			msg.subarray(1).forEach(function (e) {
-				upThis.#letterDisp += String.fromCharCode(e);
-			});
-			upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
+			if (offset < 64) {
+				upThis.#letterDisp = " ".repeat(offset);
+				upThis.#letterExpire = Date.now() + 3200;
+				msg.subarray(1).forEach(function (e) {
+					upThis.#letterDisp += String.fromCharCode(e);
+				});
+				upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
+			} else {
+				// Expire all existing letter display
+				upThis.#letterExpire = Date.now();
+			};
 		}).add([76, 7, 0], (msg) => {
 			// XG Bitmap Display
 			let offset = msg[0];

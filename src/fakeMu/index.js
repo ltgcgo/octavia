@@ -290,6 +290,46 @@ self.performance = currentPerformance;
 	demoPerfs["PhoenixA"] = perf;
 };
 {
+	// PhoenixB
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateString(`        BritFrHr        \x80066\x81061`)));
+	perf.push(new PointEvent(0, generateSwitch(11, 0, 0)));
+	perf.push(new PointEvent(2.02, {type: 15, track: 0, data: [67, 16, 76, 6, 0, 64]}));
+	perf.push(new PointEvent(38.19, generateSwitch(9)));
+	perf.push(new PointEvent(40.05, generateSwitch(16, 0, 1)));
+	perf.push(new PointEvent(40.67, generateSwitch(34, 0, 3)));
+	perf.push(new PointEvent(44.61, generateSwitch(17, 0, 1)));
+	perf.push(new PointEvent(47.59, generateSwitch(32, 0, 3)));
+	perf.push(new PointEvent(53.64, generateSwitch(18)));
+	perf.push(new PointEvent(54.89, generateSwitch(34)));
+	perf.push(new PointEvent(56.01, generateSwitch(49)));
+	perf.push(new PointEvent(58.47, generateSwitch(9, 0, 0)));
+	perf.push(new PointEvent(61.79, generateSwitch(0)));
+	perf.push(new PointEvent(71.54, generateSwitch(1)));
+	perf.push(new PointEvent(78.46, generateSwitch(16, 0, 3)));
+	perf.push(new PointEvent(80.33, generateSwitch(0, 0, 0)));
+	perf.push(new PointEvent(83.43, generateSwitch(0, 0, 3)));
+	perf.push(new PointEvent(84.86, generateSwitch(0, 0, 0)));
+	perf.push(new PointEvent(87.83, generateSwitch(0, 0, 1)));
+	perf.push(new PointEvent(89.29, generateSwitch(1, 0, 3)));
+	perf.push(new PointEvent(93.61, generateSwitch(1, 0, 0)));
+	perf.push(new PointEvent(98.21, generateSwitch(16, 0, 3)));
+	perf.push(new PointEvent(102.93, generateSwitch(17, 0, 1)));
+	perf.push(new PointEvent(107.45, generateSwitch(16, 0, 3)));
+	perf.push(new PointEvent(107.78, generateSwitch(17, 0, 1)));
+	perf.push(new PointEvent(110.97, generateSwitch(32, 0, 3)));
+	perf.push(new PointEvent(111.98, generateSwitch(16, 0, 1)));
+	perf.push(new PointEvent(113.27, generateSwitch(34, 0, 3)));
+	perf.push(new PointEvent(114.18, generateSwitch(16, 0, 1)));
+	perf.push(new PointEvent(115.75, generateSwitch(17, 0, 3)));
+	perf.push(new PointEvent(123.01, generateSwitch(5, 0, 0)));
+	perf.push(new PointEvent(124.53, generateSwitch(7, 0, 0)));
+	perf.push(new PointEvent(126.06, generateSwitch(20, 1, 1)));
+	perf.push(new PointEvent(126.78, generateSwitch(32, 0, 3)));
+	perf.fresh();
+	demoPerfs["PhoenixB"] = perf;
+};
+{
 	// Ninety Hipty
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(0.5, generateSwitch(1, 0, 0)));
