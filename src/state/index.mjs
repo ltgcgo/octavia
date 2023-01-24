@@ -107,7 +107,7 @@ let sysExSplitter = function (seq) {
 		seqArr.push(seq.subarray(0));
 	};
 	if (self.debugMode) {
-		console.info(seqArr);
+		//console.info(seqArr);
 	};
 	return seqArr;
 };
@@ -1432,6 +1432,55 @@ let OctaviaDevice = class extends CustomEventSource {
 			// XG drum setup 3
 		}).add([76, 51], (msg) => {
 			// XG drum setup 4
+		});
+		// MU1000/2000 EPROM write
+		this.#seXg.add([89, 0], (msg, track, id) => {
+			// EPROM trail write
+			if (upThis.eprom) {
+				let length = msg[0];
+				let addr = (msg[1] << 14) + (msg[2] << 7) + msg[3] + (upThis.eprom.offset || 0);
+				self.debugMode && console.debug(`MU1000 EPROM trail to 0x${addr.toString(16).padStart(6, "0")}, ${length} bytes.`);
+				let target = upThis.eprom.data;
+				msg.subarray(4).forEach((e, i) => {
+					// Overlay decoding
+					let secId = i >> 3, secIdx = i & 7;
+					if (secIdx == 7) {
+						for (let bi = 0; bi < 7; bi ++) {
+							target[addr + 7 * secId + bi] += ((e >> (6 - bi)) & 1) << 7;
+						};
+					} else {
+						target[addr + 7 * secId + secIdx] = e;
+					};
+				});
+			};
+		}).add([89, 1], (msg, track, id) => {
+			// EPROM base pointer jump
+			let addr = (msg[0] << 21) + (msg[1] << 14) + (msg[2] << 7) + msg[3];
+			self.debugMode && console.debug(`MU1000 EPROM jump to 0x${addr.toString(16).padStart(6, "0")}.`);
+			if (upThis.eprom) {
+				upThis.eprom.offset = addr;
+			};
+		}).add([89, 2], (msg, track, id) => {
+			// EPROM bulk write
+			// The first byte always seem to be zero
+			if (upThis.eprom) {
+				let addr = (msg[0] << 21) + (msg[1] << 14) + (msg[2] << 7) + msg[3] + (upThis.eprom.offset || 0);
+				self.debugMode && console.debug(`MU1000 EPROM write to 0x${addr.toString(16).padStart(6, "0")}.`);
+				let target = upThis.eprom.data;
+				msg.subarray(4).forEach((e, i) => {
+					// Overlay decoding
+					let secId = i >> 3, secIdx = i & 7;
+					if (secIdx == 7) {
+						for (let bi = 0; bi < 7; bi ++) {
+							target[addr + 7 * secId + bi] += ((e >> (6 - bi)) & 1) << 7;
+						};
+					} else {
+						target[addr + 7 * secId + secIdx] = e;
+					};
+				});
+			};
+		}).add([89, 3], (msg, track, id) => {
+			// Unknown instruction
 		});
 		// XG drum setup would be blank for now
 		// GS SysEx section
