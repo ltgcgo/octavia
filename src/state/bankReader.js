@@ -429,12 +429,16 @@ let VoiceBank = class {
 		this.init();
 		let upThis = this;
 		type.forEach(async function (e, i) {
-			await fetch(`./data/bank/${e}.tsv`).then(function (response) {
-				//console.debug(`Parsing voice map "${e}".`);
-				return response.text();
-			}).then((text) => {
-				upThis.load(text, false, e);
-			});
+			try {
+				await fetch(`./data/bank/${e}.tsv`).then(function (response) {
+					//console.debug(`Parsing voice map "${e}".`);
+					return response.text();
+				}).then((text) => {
+					upThis.load(text, false, e);
+				});
+			} catch (err) {
+				console.error(`Failed loading "${e}.tsv".`);
+			};
 		});
 	};
 	constructor(...args) {
