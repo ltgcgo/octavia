@@ -3,7 +3,7 @@
 import {OctaviaDevice} from "../../src/state/index.mjs";
 
 let fakeEprom = {
-	data: new Uint8Array(4194304), // 4 MiB of EPROM space
+	data: new Uint8Array(4194304), // 4 MiB of EPROM space for MU2000, 2 MiB for MU1000
 	offset: 0
 };
 let octavia = new OctaviaDevice();

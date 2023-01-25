@@ -27,7 +27,7 @@ Harp	1e001e000f000f800da00ce00c700c100c900d100cb00d300c600c600cc00dc0
 Helicptr	ffe0ffe0040104010fff17ff27f927e14f804f807f807f003e0012007f807f80
 Hrpschrd	fffefffe9ffebffe9ffebffe9ff89fe0bfc09f80bf809f00bf009e00fe00fc00
 Ice Rain	f7fff7ffebbdebbbed57dd6fdeffdeffbfffbfffaa55ea55ea55e001e0011ffe
-Kalimba	00000000000000007ffc4aa45ff44aa44aa44aa440047ffc7ffc7ffc00000000
+Kalimba	0000000000007ffc4aa45ff44aa44aa44aa440047ffc7ffc7ffc000000000000
 Koto	0000000000002800ffffaa05ffffa285ffffa085ffffffffffff400240020000
 NewAgePd	ffffdfffdd57ad57dd57dfffffff8001ffffffffea55ea55ea55e001e0011ffe
 NylonGtr	000038007c007d85ffc5ffc0ffc7f3fff3fff3ffffc7ffc0ffc57d857c003800
@@ -36,6 +36,7 @@ OvrDrvGt	300078007dc0ffc0ff04e10ae3fde3fee3ffe109e100e500cf80d98070002000
 PanFlute	000015543ffe3ffe155415541554155c157c15f417d01f401d00140010000000
 Piccolo	00000000000000000000000005505aae7ffe7ffe000000000000000000000000
 Recorder	0000000000000000000000007405fffffeafffff740500000000000000000000
+Scotland	@Bagpipe
 Seashore	ffffbff3e4f9c07d803d9b3991b3b1bffbfffbffebdffbfffbfffbffaaaa5155
 Shakhchi	0000000000000000004007ffffff76dfffffffff083f00000000000000000000
 Shamisen	000000007800fc00840484048404c7ffc7ff840a840a840afc00780000000000
@@ -45,10 +46,9 @@ SprnoSax	000000000000000002f905535fffffffffff5fff02a300010000000000000000
 SquareLd	000000000fffffff9d57ffffffff08010fff0fff0a950a950a950801080107fe
 Standard	000ee01f700018e400e400e4738437c477c47fe47c647fe47fe457c457ca5391
 Strings1	08081c1c0808080808081c1c3d3d3a3a36360c0c1c1c3e3e7e7ebebe3e3e1c1c
-Swt Alto	0000000000000000000e001e303efffecfd630260016000e0000000000000000
 SynVoice	2108739c739c739c739c739c5294739c210821085294def6def7ffffffffffff
 Taiko	10001038104438827c827c447cba7cc67cfe7cfefefefefe00fe0cfe0cfe0c7c
-TangoAcd	0000000002800aa02fe83ff87ffcbffabffabffabffabffabffa7abc28282008
+TangoAcd	000002800aa02fe83ff87ffcbffabffabffabffabffabffa7abc282820080000
 Telphone	0000000000001ff03ff838383ab8028407c00fe41ef01c741c701ef41ff01ffc
 Timpani	381c4422824182414422ba5dd66bfe7f7c3e7c3e7c3e381c7c3e542ad66b9249
 TnklBell	10001038104438827c827c447cba7cc67cfe7cfefefefefe00fe0cfe0cfe0c7c
@@ -58,13 +58,16 @@ Tuba	00000061006100230027003f3fff7fffffffd5ffab3faba7d5637fc33f810001
 Tweet	0c001f000f8007c007c007e083f063fe31fe18c00c800f801f00118021e040f0
 Violin	30007b007b84ffc4efc0f1fefffef1c0efc4ffc47b807b0030000000060107ff
 Whistle	028007c007c00fe00fe01ef01c7018301c701ef00fe00fe005c005c003800380
+Acou.Gtr	@NylonGtr
 Agogo	@TnklBell
 Anal.Str	@Strings1
 Atmosphr	@Ice Rain
 Bari.Sax	@Alto Sax
+BasnOboe	@Bassoon
 Bass&Ld	@SquareLd
 BigOrgan	@DrawOrgn
 Big Strs	@Strings1
+Birds	@Tweet
 BirdTwit	@Tweet
 BowedPad	@NewAgePd
 BrasBand	@Trombone
@@ -77,10 +80,12 @@ Cello	@Violin
 CelloEns	@Strings1
 CharanLd	@SquareLd
 Chiff Ld	@SquareLd
+Choir	@SynVoice
 ChoirAah	@SynVoice
 ChoirPad	@NewAgePd
 ChrchOrg	@DrawOrgn
 Chrunchr	@OvrDrvGt
+ClassGtr	@NylonGtr
 CleanGtr	@OvrDrvGt
 ClickOrg	@DrawOrgn
 Contrbas	@Violin
@@ -89,6 +94,7 @@ Digi.Saw	@SquareLd
 Dist.Gtr	@OvrDrvGt
 Dulcimer	@Glocken
 Echoes	@Ice Rain
+El.Piano	@ElPiano1
 ElonMusk	@Tweet
 EuroPipe	@DrawOrgn
 Fiddle	@Violin
@@ -99,12 +105,15 @@ Glocken	@Glocken
 Goblins	@Ice Rain
 GtrHarmo	@OvrDrvGt
 Halo Pad	@NewAgePd
+HammrPno	@EGrndPno
 HardTine	@EGrndPno
+HarpGlis	@Harp
 HnkyTonk	@GrandPno
 Jazz Gtr	@OvrDrvGt
 JoyStick	@OvrDrvGt
 Killer B	@DrawOrgn
 MagicFlu	@Flute
+Marcato	@Strings1
 Marimba	@Glocken
 Mega Syn	@SquareLd
 MelodTom	@Taiko
@@ -113,19 +122,25 @@ MonoLead	@SquareLd
 MusicBox	@Glocken
 MutedGtr	@OvrDrvGt
 MutedTrp	@Trumpet
+New Tine	@ElPiano2
 Oboe	@Eng.Horn
 Orch.Hit	@Strings1
 PercOrgn	@DrawOrgn
+Piano	@GrandPno
 PickBass	@Aco.Bass
 Pizz.Str	@Violin
+Pizzcato	@Violin
 PolySyPd	@NewAgePd
+Positive	@DrawOrgn
 ReedOrgn	@DrawOrgn
 RevCymbl	@TnklBell
 RockOn!!	@OvrDrvGt
 RockOrgn	@DrawOrgn
 Saw Lead	@SquareLd
+Santur	@Glocken
 Sci-Fi	@Ice Rain
 SforzBrs	@Trombone
+Slow Str	@Strings1
 SlpBass1	@Aco.Bass
 SlpBass2	@Aco.Bass
 Solo Syn	@SquareLd
@@ -141,15 +156,20 @@ SynBass2	@Aco.Bass
 Syn.Str1	@Strings1
 Syn.Str2	@Strings1
 SweepPad	@NewAgePd
+Swt Oboe	@Eng.Horn
 SynBras1	@Trombone
 SynBras2	@Trumpet
 Syn Drum	@Taiko
+Tango	@TangoAcd
 TenorSax	@Alto Sax
 Transfms	@NewAgePd
 Trem.Str	@Violin
+TrumpEns	@Trombone
+Tubular	@Glocken
 TubulBel	@Glocken
 Vibrafon	@Glocken
 Viola	@Violin
+VoiceDoo	@SynVoice
 VoiceOoh	@SynVoice
 Voice Ld	@SquareLd
 Warm Pad	@NewAgePd
