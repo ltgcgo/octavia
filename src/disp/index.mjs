@@ -448,7 +448,7 @@ let MuDisplay = class extends RootDisplay {
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
 				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-					useBm = this.sysBm.getBm(`plg_${standard}`);
+					useBm = this.sysBm.getBm(`ext_${standard}`);
 				};
 				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
 					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
@@ -1516,7 +1516,7 @@ let QyDisplay = class extends RootDisplay {
 					let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
 					useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
 					if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-						useBm = this.sysBm.getBm(`plg_${standard}`);
+						useBm = this.sysBm.getBm(`ext_${standard}`);
 					};
 					if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
 						useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
