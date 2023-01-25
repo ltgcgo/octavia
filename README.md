@@ -17,12 +17,12 @@ _See the [MIDI Implementation Chart](docs/implementation.md) and [Supported SysE
 * Roland GS
 * KORG 05R/W (no SysEx)
 * KORG X5DR
-* KORG NS5R, KORG NX5R, KORG N5
+* KORG NS5R, KORG NX5R, KORG N1R
 * KAWAI GMega
 * KAWAI GMega LX
 * AKAI SG01k
 * CASIO GZ-50M
-* ~~ALESIS NanoSynth~~
+* ~~ALESIS NanoSynth (no SysEx)~~
 
 ## Features
 * Developed with Firefox and an open Web in mind.
