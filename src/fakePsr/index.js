@@ -37,6 +37,17 @@ let generateSwitch = function (ch = 0, min, max) {
 		data
 	};
 };
+let generateString = function (text) {
+	let data = [67, 16, 76, 6, 0, 0];
+	for (let c = 0; c < text.length; c ++) {
+		data.push(text.charCodeAt(c));
+	};
+	return {
+		type: 15,
+		track: 0,
+		data
+	};
+};
 
 // Standard switching
 let stSwitch = $a("b.mode");
@@ -95,7 +106,7 @@ stDemo.forEach(function (e, i, a) {
 });
 
 // Backlight color switching
-let backlightColor = "white";
+let backlightColor = "#b7bfaf64";
 let blSwitch = $a("b.backlight");
 blSwitch.to = function (i) {
 	blSwitch.forEach(function (e) {
@@ -107,7 +118,7 @@ blSwitch.to = function (i) {
 };
 blSwitch.forEach(function (e, i) {
 	e.addEventListener("click", function () {
-		// backlightColor;
+		backlightColor = e.title;
 		blSwitch.to(i);
 	});
 });
@@ -408,9 +419,176 @@ self.performance = currentPerformance;
 	demoPerfs["haruyoko"] = perf;
 };
 {
+	// PhoenixA
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateString(`     YAMAHA      TONE GENERATOR `)));
+	perf.push(new PointEvent(0, generateSwitch(0)));
+	perf.push(new PointEvent(2.52, generateString(`     YAMAHA      TONE GENERATOR `)));
+	perf.push(new PointEvent(5.04, generateString(`      YAMAHA      TONE GENERATOR`)));
+	perf.push(new PointEvent(5.21, generateString(`       YAMAHA      TONE GENERATO`)));
+	perf.push(new PointEvent(5.37, generateString(`        YAMAHA      TONE GENERAT`)));
+	perf.push(new PointEvent(5.54, generateString(`         YAMAHA      TONE GENERA`)));
+	perf.push(new PointEvent(5.71, generateString(`          YAMAHA      TONE GENER`)));
+	perf.push(new PointEvent(5.87, generateString(`           YAMAH       TONE GENE`)));
+	perf.push(new PointEvent(6.04, generateString(`            YAMA        TONE GEN`)));
+	perf.push(new PointEvent(6.21, generateString(`             YAM         TONE GE`)));
+	perf.push(new PointEvent(6.38, generateString(`              YA          TONE G`)));
+	perf.push(new PointEvent(6.54, generateString(`               Y           TONE `)));
+	perf.push(new PointEvent(6.71, generateString(`                            TONE`)));
+	perf.push(new PointEvent(6.88, generateString(`                             TON`)));
+	perf.push(new PointEvent(7.04, generateString(`                              TO`)));
+	perf.push(new PointEvent(7.21, generateString(`                               T`)));
+	perf.push(new PointEvent(7.38, generateString(`                                `)));
+	perf.push(new PointEvent(7.52, generateString(`        MU1000                  `)));
+	perf.push(new PointEvent(8.14, generateString(`                                `)));
+	perf.push(new PointEvent(8.76, generateString(`        MU1000                  `)));
+	perf.push(new PointEvent(9.38, generateString(`                                `)));
+	perf.push(new PointEvent(10.08, generateString(`        MU1000                  `)));
+	perf.push(new PointEvent(10.49, generateString(`        DU1000                  `)));
+	perf.push(new PointEvent(10.92, generateString(`        Db1000           0      `)));
+	perf.push(new PointEvent(11.33, generateString(`        Dbl000           06     `)));
+	perf.push(new PointEvent(11.75, generateString(`        DblC00           066    `)));
+	perf.push(new PointEvent(12.17, generateString(`        DblCo0           066    `)));
+	perf.push(new PointEvent(12.59, generateString(`        DblCon           066 0  `)));
+	perf.push(new PointEvent(13.01, generateString(`        DblConG          066 00 `)));
+	perf.push(new PointEvent(13.42, generateString(`        DblConGr         066 001`)));
+	perf.push(new PointEvent(27.98, generateSwitch(4)));
+	perf.push(new PointEvent(43.85, generateSwitch(10)));
+	perf.push(new PointEvent(63.33, generateSwitch(19)));
+	perf.push(new PointEvent(103.31, generateSwitch(34)));
+	perf.push(new PointEvent(109.52, generateSwitch(35)));
+	perf.push(new PointEvent(114.32, generateSwitch(32)));
+	perf.push(new PointEvent(119.36, generateSwitch(33)));
+	perf.push(new PointEvent(123.68, generateSwitch(36)));
+	perf.push(new PointEvent(128.91, generateSwitch(41)));
+	perf.push(new PointEvent(140.83, generateSwitch(45)));
+	perf.push(new PointEvent(153.29, generateSwitch(42)));
+	perf.push(new PointEvent(176.74, generateSwitch(2)));
+	perf.push(new PointEvent(178.27, generateString(`        WindChim.        SFX 070`)));
+	perf.push(new PointEvent(178.92, generateString(`        WindChim .       SFX 070`)));
+	perf.push(new PointEvent(179.56, generateString(`        WindChim  .      SFX 070`)));
+	perf.push(new PointEvent(180.21, generateString(`        WindChim   .     SFX 070`)));
+	perf.push(new PointEvent(180.85, generateString(`        WindChim    .    SFX 070`)));
+	perf.push(new PointEvent(181.5, generateString(`        WindChim     .   SFX 070`)));
+	perf.push(new PointEvent(182.14, generateString(`        WindChim      .  SFX 070`)));
+	perf.push(new PointEvent(182.79, generateString(`        WindChim       . SFX 070`)));
+	perf.push(new PointEvent(183.43, generateString(`        WindChim        .SFX 070`)));
+	perf.push(new PointEvent(184.08, generateString(`        BindChim         .FX 070`)));
+	perf.push(new PointEvent(184.72, generateString(`        BrndChim         0.X 070`)));
+	perf.push(new PointEvent(185.36, generateString(`        BrtdChim         06. 070`)));
+	perf.push(new PointEvent(186.01, generateString(`        BrtFChim         066.070`)));
+	perf.push(new PointEvent(186.66, generateString(`        BrtFrhim         066 .70`)));
+	perf.push(new PointEvent(187.3, generateString(`        BrtFrHim         066 0.0`)));
+	perf.push(new PointEvent(187.89, generateString(`        BrtFrHrm         066 06.`)));
+	perf.push(new PointEvent(187.95, generateString(`        BrtFrHrn         066 061`)));
+	perf.fresh();
+	demoPerfs["PhoenixA"] = perf;
+};
+{
+	// PhoenixB
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateString(`        BrtFrHrn         066 061`)));
+	perf.push(new PointEvent(0, generateSwitch(11)));
+	perf.push(new PointEvent(2.02, {type: 15, track: 0, data: [67, 16, 76, 6, 0, 64]}));
+	perf.push(new PointEvent(38.19, generateSwitch(9)));
+	perf.push(new PointEvent(40.05, generateSwitch(16)));
+	perf.push(new PointEvent(40.67, generateSwitch(34)));
+	perf.push(new PointEvent(44.61, generateSwitch(17)));
+	perf.push(new PointEvent(47.59, generateSwitch(32)));
+	perf.push(new PointEvent(53.64, generateSwitch(18)));
+	perf.push(new PointEvent(54.89, generateSwitch(32)));
+	perf.push(new PointEvent(56.01, generateSwitch(49)));
+	perf.push(new PointEvent(58.47, generateSwitch(9)));
+	perf.push(new PointEvent(61.79, generateSwitch(0)));
+	perf.push(new PointEvent(71.54, generateSwitch(1)));
+	perf.push(new PointEvent(78.46, generateSwitch(16)));
+	perf.push(new PointEvent(80.33, generateSwitch(0)));
+	perf.push(new PointEvent(83.43, generateSwitch(0)));
+	perf.push(new PointEvent(84.86, generateSwitch(0)));
+	perf.push(new PointEvent(87.83, generateSwitch(0)));
+	perf.push(new PointEvent(89.29, generateSwitch(1)));
+	perf.push(new PointEvent(93.61, generateSwitch(1)));
+	perf.push(new PointEvent(98.21, generateSwitch(16)));
+	perf.push(new PointEvent(102.93, generateSwitch(17)));
+	perf.push(new PointEvent(107.45, generateSwitch(16)));
+	perf.push(new PointEvent(107.78, generateSwitch(17)));
+	perf.push(new PointEvent(110.97, generateSwitch(32)));
+	perf.push(new PointEvent(111.98, generateSwitch(16)));
+	perf.push(new PointEvent(113.27, generateSwitch(34)));
+	perf.push(new PointEvent(114.18, generateSwitch(16)));
+	perf.push(new PointEvent(115.75, generateSwitch(17)));
+	perf.push(new PointEvent(123.01, generateSwitch(5)));
+	perf.push(new PointEvent(124.53, generateSwitch(7)));
+	perf.push(new PointEvent(126.06, generateSwitch(20)));
+	perf.push(new PointEvent(126.78, generateSwitch(32)));
+	perf.fresh();
+	demoPerfs["PhoenixB"] = perf;
+};
+{
+	// Ninety Hipty
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0.5, generateSwitch(1)));
+	perf.push(new PointEvent(19.7, generateSwitch(11)));
+	perf.push(new PointEvent(28.5, generateSwitch(12)));
+	perf.push(new PointEvent(37.4, generateSwitch(4)));
+	perf.push(new PointEvent(45.8, generateSwitch(2)));
+	perf.push(new PointEvent(50.6, generateSwitch(3)));
+	perf.push(new PointEvent(54.9, generateSwitch(4)));
+	perf.push(new PointEvent(74.4, generateSwitch(0)));
+	perf.push(new PointEvent(76.85, generateSwitch(9)));
+	perf.push(new PointEvent(81.75, generateSwitch(10)));
+	perf.push(new PointEvent(86.6, generateSwitch(25)));
+	perf.push(new PointEvent(96.7, generateSwitch(13)));
+	perf.push(new PointEvent(106.2, generateSwitch(22)));
+	perf.push(new PointEvent(111.25, generateSwitch(23)));
+	perf.push(new PointEvent(116.1, generateSwitch(17)));
+	perf.push(new PointEvent(121, generateSwitch(13)));
+	perf.push(new PointEvent(127.9, generateSwitch(8)));
+	perf.push(new PointEvent(138, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["ninety_hipty"] = perf;
+};
+{
 	// The PF Theatre
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(0, generateSwitch(0)));
 	perf.fresh();
 	demoPerfs["02THEATR"] = perf;
+};
+{
+	// Is it realy love?
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(1.8, generateSwitch(24)));
+	perf.push(new PointEvent(7.6, generateSwitch(29)));
+	perf.push(new PointEvent(10.53, generateSwitch(0)));
+	perf.push(new PointEvent(20.9, generateSwitch(22)));
+	perf.push(new PointEvent(28.47, generateSwitch(23)));
+	perf.push(new PointEvent(31.1, generateSwitch(3)));
+	perf.push(new PointEvent(38.88, generateSwitch(17)));
+	perf.push(new PointEvent(41.02, generateSwitch(5)));
+	perf.push(new PointEvent(48.59, generateSwitch(17)));
+	perf.push(new PointEvent(50.9, generateSwitch(0)));
+	perf.push(new PointEvent(70.7, generateSwitch(1)));
+	perf.push(new PointEvent(78.2, generateSwitch(17)));
+	perf.push(new PointEvent(80.79, generateSwitch(2)));
+	perf.push(new PointEvent(88.65, generateSwitch(1)));
+	perf.push(new PointEvent(90.02, generateSwitch(2)));
+	perf.push(new PointEvent(91.11, generateSwitch(1)));
+	perf.push(new PointEvent(92.43, generateSwitch(2)));
+	perf.push(new PointEvent(93.18, generateSwitch(0)));
+	perf.push(new PointEvent(112.9, generateSwitch(1)));
+	perf.push(new PointEvent(119, generateSwitch(17)));
+	perf.push(new PointEvent(122.64, generateSwitch(2)));
+	perf.push(new PointEvent(130.12, generateSwitch(15)));
+	perf.push(new PointEvent(132.73, generateSwitch(0)));
+	perf.push(new PointEvent(152.54, generateSwitch(1)));
+	perf.push(new PointEvent(158.66, generateSwitch(17)));
+	perf.push(new PointEvent(162.39, generateSwitch(2)));
+	perf.push(new PointEvent(166.24, generateSwitch(14)));
+	perf.push(new PointEvent(172.26, generateSwitch(8)));
+	perf.push(new PointEvent(182.23, generateSwitch(8)));
+	perf.push(new PointEvent(191.81, generateSwitch(23)));
+	perf.push(new PointEvent(193, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["R-love"] = perf;
 };
