@@ -1702,10 +1702,15 @@ let PsrDisplay = class extends RootDisplay {
 	#nkdb = new Uint8Array(61);
 	// #osdb = new Uint8Array(22);
 	#nsdb = new Uint8Array(22);
+	#bmdb = new Uint8Array(256);
+	#bmst = 0;
+	#bmex = 0;
 	#ch = 0;
 	#backlight = "#b7bfaf64";
 	// xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv");
+	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
+	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	clefs = new Path2D("M110 163.5c0 -3.9 3.2 -7.1 7.1 -7.1s7.1 3.2 7.1 7.1s-3.2 7.1 -7.1 7.1s-7.1 -3.2 -7.1 -7.1zM110 128.5c0 -3.9 3.2 -7.1 7.1 -7.1s7.1 3.2 7.1 7.1s-3.2 7.1 -7.1 7.1s-7.1 -3.2 -7.1 -7.1zM64.5 109.2c24.1 0 41 12.3 41 35.1c0 36.8 -36.8 58 -72.2 72.9c-0.4 0.4 -0.8 0.6 -1.3 0.6c-1 0 -1.8 -0.8 -1.8 -1.8c0 -0.4 0.1 -0.8 0.6 -1.3c28.3 -16.5 57.7 -37.1 57.7 -69c0 -16.8 -8.8 -32.9 -23.9 -32.9c-10.4 0 -18.1 7.6 -21.6 17.6c1.5 -0.7 3.1 -1.1 4.8 -1.1c7.7 0 14 6.3 14 14c0 8.1 -6.2 14.8 -14 14.8c-8.4 0 -15.7 -6.6 -15.7 -14.8c0 -18.6 14.3 -34.2 32.5 -34.2z M408.6 181.3c0.6 0 1.3 -0.1 1.8 -0.1c21.7 0 35.8 17.9 35.8 36.5c0 10.6 -4.6 21.6 -15 29.4c-3.1 2.4 -6.6 3.9 -10.2 5c0.4 4.9 0.7 9.8 0.7 14.7c0 2.7 -0.1 5.5 -0.3 8.1c-1 16.8 -12.6 31.9 -29.1 31.9c-15.1 0 -27.3 -12.3 -27.3 -27.6c0 -8.1 7.4 -14.4 15.7 -14.4c7.6 0 13.3 6.6 13.3 14.4c0 7.3 -6 13.3 -13.3 13.3 c-1.5 0 -2.9 -0.3 -4.3 -0.8c3.6 5.5 9.5 9.1 16.4 9.1c13.4 0 22 -12.9 22.8 -26.7c0.1 -2.5 0.3 -5.2 0.3 -7.7c0 -4.3 -0.1 -8.5 -0.6 -12.9c-4.1 0.7 -8.1 1.1 -12.5 1.1c-26.3 0 -46.6 -24.1 -46.6 -52.4c0 -24.8 18.3 -42.8 34.7 -61.7c-2.7 -8.7 -5.2 -17.5 -6.3 -26.6c-0.8 -7.3 -1 -14.6 -1 -21.8c0 -16.1 7.7 -31.4 20.9 -40.9c0.4 -0.3 1 -0.4 1.4 -0.4c0.6 0 1 0 1.4 0.4 c9.9 11.8 18.6 34.3 18.6 50.1c0 20 -12 35.7 -25.2 51c2.9 9.5 5.5 19.3 7.8 29zM420.5 246.4c9.5 -3.4 15.8 -13.3 15.8 -23c0 -12.6 -9.2 -25.1 -24.2 -26.6c3.4 16.2 6.4 32.3 8.4 49.6zM366.4 214.1c0 18.9 18.1 34.6 37 34.6c3.9 0 7.7 -0.3 11.5 -0.8c-2 -17.8 -5.2 -34.3 -8.8 -51c-11.1 1.1 -17.4 8.5 -17.4 16.7 c0 6.2 3.5 12.7 11.3 17.2c0.7 0.7 1 1.4 1 2.1c0 1.5 -1.4 3.1 -3.1 3.1c-0.4 0 -0.8 -0.1 -1.3 -0.3c-11.2 -6 -16.4 -16.1 -16.4 -25.9c0 -12.3 8.1 -24.4 22.4 -27.6c-2 -8.1 -4.1 -16.4 -6.4 -24.5c-15 16.9 -29.8 34 -29.8 56.4zM413.1 71.7c-13.9 6.7 -22.7 20.9 -22.7 36.3c0 10.4 2.5 18.6 5 27.2 c11.2 -13.6 20.4 -27.7 20.4 -45.4c0 -7.7 -0.6 -11.1 -2.8 -18.1z");
 	keyboard = new Path2D("M224 318 L380 318 L380 380 L224 380 Z M246 350 L246 380 M268 350 L268 380 M291 318 L291 380 M313 350 L313 380 M335 350 L335 380 M358 350 L358 380 M235 318 L235 350 L254 350 L254 318 M260 318 L260 350 L279 350 L279 318 M301 318 L301 350 L320 350 L320 318 M326 318 L326 350 L345 350 L345 318 M350 318 L350 350 L370 350 L370 318 M387 318 L543 318 L543 380 L387 380 Z M409 350 L409 380 M431 350 L431 380 M454 318 L454 380 M476 350 L476 380 M498 350 L498 380 M521 350 L521 380 M398 318 L398 350 L417 350 L417 318 M423 318 L423 350 L442 350 L442 318 M464 318 L464 350 L483 350 L483 318 M489 318 L489 350 L508 350 L508 318 M513 318 L513 350 L533 350 L533 318 M550 318 L706 318 L706 380 L550 380 Z M572 350 L572 380 M594 350 L594 380 M617 318 L617 380 M639 350 L639 380 M661 350 L661 380 M684 350 L684 380 M561 318 L561 350 L580 350 L580 318 M586 318 L586 350 L605 350 L605 318 M627 318 L627 350 L646 350 L646 318 M652 318 L652 350 L671 350 L671 318 M676 318 L676 350 L696 350 L696 318 M713 318 L869 318 L869 380 L713 380 Z M735 350 L735 380 M757 350 L757 380 M780 318 L780 380 M802 350 L802 380 M824 350 L824 380 M847 350 L847 380 M724 318 L724 350 L743 350 L743 318 M749 318 L749 350 L768 350 L768 318 M790 318 L790 350 L809 350 L809 318 M815 318 L815 350 L834 350 L834 318 M839 318 L839 350 L859 350 L859 318 M876 318 L1032 318 L1032 380 L876 380 Z M898 350 L898 380 M920 350 L920 380 M943 318 L943 380 M965 350 L965 380 M987 350 L987 380 M1010 350 L1010 380 M887 318 L887 350 L906 350 L906 318 M912 318 L912 350 L931 350 L931 318 M953 318 L953 350 L972 350 L972 318 M978 318 L978 350 L997 350 L997 318 M1002 318 L1002 350 L1022 350 L1022 318 M1032 318 L1055 318 L1055 380 L1032 380");
 	bracket = new Path2D("M83 23 L49 23 L49 86 L83 86 M264 23 L297 23 L297 86 L264 86");
@@ -1717,6 +1722,14 @@ let PsrDisplay = class extends RootDisplay {
 	noteHead = new Path2D("M19.8 -12.4c5 0 9.8 2.6 9.8 8.2c0 6.5 -5 10.9 -9.3 13.4c-3.2 1.9 -6.8 3.2 -10.5 3.2c-5 0 -9.8 -2.6 -9.8 -8.2c0 -6.5 5 -10.9 9.3 -13.4c3.2 -1.9 6.8 -3.2 10.5 -3.2 z");
 	constructor() {
 		super();
+		let upThis = this;
+		this.addEventListener("mode", function (ev) {
+			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
+				upThis.#bmdb[i] = e;
+			});
+			upThis.#bmst = 2;
+			upThis.#bmex = Date.now() + 1600;
+		});
 		this.addEventListener("channelactive", (ev) => {
 			this.#ch = ev.data;
 		});
@@ -1967,8 +1980,8 @@ let PsrDisplay = class extends RootDisplay {
 		// Higher octaves
 		for (let i = 85; i < 128; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				this.#nsdb[14 + noteHeadPos[i % 12]] = 1;
-				if (Math.floor(i / 12) == 7) {
+				this.#nsdb[15 + noteHeadPos[(i - 1) % 12]] = 1;
+				if (Math.floor((i - 1) / 12) == 7) {
 					topOctaveFlag1 = true;
 				}
 				else {
@@ -2020,6 +2033,49 @@ let PsrDisplay = class extends RootDisplay {
 				this.#renderDotMatrix(upThis.songTitle || "Unknown", ctx, 454, 32);
 			}
 		}
+		// Fetch voice bitmap
+		// Commit to bitmap screen
+		let useBm;
+		if (timeNow <= sum.bitmap.expire) {
+		// Use provided bitmap
+			useBm = sum.bitmap.bitmap;
+		}
+		else {
+			// Use stored pic
+			useBm = this.#bmdb.slice();
+			if (timeNow >= this.#bmex) {
+				this.#bmst = 0;
+				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
+				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
+				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
+					useBm = this.sysBm.getBm(`plg_${standard}`);
+				};
+				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
+					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
+				};
+				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 126) {
+					useBm = this.sysBm.getBm("cat_smpl");
+				};
+				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 64) {
+					useBm = this.sysBm.getBm("cat_sfx");
+				};
+				if (!useBm) {
+					useBm = this.sysBm.getBm("no_abm");
+				};
+			} else {
+				if (this.#bmst == 2) {
+					useBm.forEach((e, i, a) => {
+						let crit = Math.floor((this.#bmex - timeNow) / 400);
+						a[i] = crit % 2 == e;
+					});
+				};
+			};
+		}
+		useBm.width = useBm.length / 16;
+		useBm?.render((e, x, y) => {
+			ctx.fillStyle = e ? activePixel : inactivePixel;
+			ctx.fillRect(224 + x * 6, 261 + y * 3, 5, 2);
+		});
 		// Commit to display accordingly.
 		/*
 		let keyboardData = new Uint8Array([228, 238.5, 250.3, 263.5, 272.6, 295, 304.5, 317.3, 330, 339.5, 354, 361.8]);
