@@ -49,7 +49,7 @@ let VoiceBank = class {
 			case "gs": {
 				if (msb == 0 && lsb < 5) {
 					args[2] = 0;
-				} else if (msb > 125 && lsb < 2) {
+				} else if (msb > 125 && lsb < 5) {
 					// Temporary fix for C/M bank under SC-55 mode
 					args[2] = msb;
 					args[0] = 0;
