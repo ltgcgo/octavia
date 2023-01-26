@@ -2001,7 +2001,7 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillStyle = topOctaveFlag2 ? activePixel : inactivePixel;
 		ctx.fillText("15va+", 877, 40);
 		// Temporary channel number display
-		this.#render7seg(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
+		this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
 		// Measure / tempo view
 		ctx.font = '23px "Arial Web"';
 		ctx.fillStyle = tempoView ? inactivePixel : activePixel;

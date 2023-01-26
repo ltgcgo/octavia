@@ -71,5 +71,5 @@ Octavia will never become a reality without help from the following people.
 * 9: Yamaha - It's an AmaZing MU World!! (XG, MU100) _dump: LÉ, fix: JayB, audio: DearHoney, soft: ValleyBell_
 * Α: Yamaha - The Musithm (XG, MU50) _dump: LÉ, fix: JayB, audio: Pixel Refresh, soft: ValleyBell_
 * Β: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle: Epilogue (MT-32)
-* Γ: Yamaha - EP Ballade (XG, PLG-150DX) _Recorded by AlcanTAK_
+* Γ: 長栄克巳 - EP Ballade (XG, PLG-150DX) _Recorded by AlcanTAK_
 * Δ: 向谷実 - The Soul of DX (XG, PLG-150DX) _Recorded by atamaitai kurakura_
