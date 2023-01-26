@@ -301,7 +301,7 @@ self.performance = currentPerformance;
 	perf.push(new PointEvent(44.61, generateSwitch(17, 0, 1)));
 	perf.push(new PointEvent(47.59, generateSwitch(32, 0, 3)));
 	perf.push(new PointEvent(53.64, generateSwitch(18)));
-	perf.push(new PointEvent(54.89, generateSwitch(34)));
+	perf.push(new PointEvent(54.89, generateSwitch(32)));
 	perf.push(new PointEvent(56.01, generateSwitch(49)));
 	perf.push(new PointEvent(58.47, generateSwitch(9, 0, 0)));
 	perf.push(new PointEvent(61.79, generateSwitch(0)));
