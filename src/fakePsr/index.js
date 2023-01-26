@@ -106,7 +106,7 @@ stDemo.forEach(function (e, i, a) {
 });
 
 // Backlight color switching
-let backlightColor = "white";
+let backlightColor = "#b7bfaf64";
 let blSwitch = $a("b.backlight");
 blSwitch.to = function (i) {
 	blSwitch.forEach(function (e) {
@@ -118,7 +118,7 @@ blSwitch.to = function (i) {
 };
 blSwitch.forEach(function (e, i) {
 	e.addEventListener("click", function () {
-		// backlightColor;
+		backlightColor = e.title;
 		blSwitch.to(i);
 	});
 });
