@@ -114,6 +114,7 @@ let sysExSplitter = function (seq) {
 let showTrue = function (data, prefix = "", suffix = "", length = 2) {
 	return data ? `${prefix}${data.toString().padStart(length, "0")}${suffix}` : "";
 };
+let decodeByteStr = function (bytes) {};
 
 const allocated = {
 	ch: 128, // channels
