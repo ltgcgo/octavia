@@ -1,5 +1,14 @@
 # Octavia
-🎻 The multi-standard MIDI state-tracking library.
+🎻 The multi-standard MIDI state-tracking library, brought to you by Lightingale Community.
+
+## Why Octavia over others?
+* Developed with Firefox and an open Web in mind.
+* Behaves like a real MIDI module, doing the heavy-lifting, letting you focus on your goal.
+* Supports 8 ports, 128 channels, 512-voice polyphony maximum. More than you'll ever need.
+* Built-in support of several standards, multiple plug-in cards, and tons of devices.
+* Available in JS (browser and Deno) and Rust (not yet).
+* No modification required to run in Tor Browser, Bromite and LibreWolf.
+* Wide support of bank mapping and bitmaps via [`midi-db`](https://github.com/ltgcgo/midi-db).
 
 ## Supported standard/devices
 _See the [MIDI Implementation Chart](docs/implementation.md) and [Supported SysEx instructions](docs/sysex.md)_
@@ -23,14 +32,6 @@ _See the [MIDI Implementation Chart](docs/implementation.md) and [Supported SysE
 * AKAI SG01k
 * CASIO GZ-50M
 * ~~ALESIS NanoSynth (no SysEx)~~
-
-## Features
-* Developed with Firefox and an open Web in mind.
-* 8 ports, 128 channels, 512-voice polyphony.
-* Supports multiple standards.
-* Available in JS (browser and Deno) and Go (not yet).
-* No modification required to run in Tor Browser.
-* Wide support of bank mapping via [`midi-db`](https://github.com/ltgcgo/midi-db)
 
 ## API & more
 Please read the [documentation](docs/README.md).
