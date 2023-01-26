@@ -28,14 +28,22 @@ let VoiceBank = class {
 		let args = Array.from(arguments);
 		switch (mode) {
 			case "xg": {
-				if (msb == 32 || msb == 33) {
-					args[2] += 4; // PLG-150AP + PLG150VL redirection
+				if (msb == 32) {
+					args[2] += 4; // PLG-150AP redirection
+				} else if (msb == 33 || msb == 35 || msb == 36) {
+					args[2] += 5; // PLG-150VL/DX/AN redirection
+				} else if (msb == 79) {
+					args[0] = 95; // PLG-150DR + PLG-150PC redirection
 				} else if (msb == 80) {
 					args[0] = 96; // PLG-150PF + PLG-150AP redirection
 				} else if (msb == 81) {
 					args[0] = 97; // PLG-150VL redirection
 				} else if (msb == 82) {
 					args[0] = 98; // PLG-100SG redirection
+				} else if (msb == 83) {
+					args[0] = 99; // PLG-100DX redirection
+				} else if (msb == 84) {
+					args[0] = 100; // PLG-100AN redirection
 				};
 			};
 			case "gs": {
@@ -111,6 +119,10 @@ let VoiceBank = class {
 				sect = "ySFX";
 				break;
 			};
+			case 67: {
+				sect = "DX:S";
+				break;
+			};
 			case 80:
 			case 81:
 			case 82:
@@ -123,6 +135,10 @@ let VoiceBank = class {
 			case 90:
 			case 91: {
 				sect = `Cmb${"UABC"[args[0] - 88]}`;
+				break;
+			};
+			case 95: {
+				sect = `${["DR", "PC"][args[2]]}-d`;
 				break;
 			};
 			case 96: {
@@ -141,6 +157,22 @@ let VoiceBank = class {
 			};
 			case 98: {
 				sect = "SG-a";
+				break;
+			};
+			case 99: {
+				sect = `DX`;
+				if (args[2] > 63) {
+					baseShift = 63;
+				};
+				useLsb = true;
+				break;
+			};
+			case 100: {
+				sect = `AN`;
+				if (args[2] > 63) {
+					baseShift = 63;
+				};
+				useLsb = true;
 				break;
 			};
 			case 121: {
@@ -324,8 +356,17 @@ let VoiceBank = class {
 				standard = "XG";
 				break;
 			};
+			case 67:
+			case 99: {
+				standard = "DX"; // PLG-150DX
+				break;
+			};
 			case 81: {
 				standard = "RW";
+				break;
+			};
+			case 95: {
+				standard = ["DR", "PC"][args[2]]; // PLG-150DR/PC
 				break;
 			};
 			case 96: {
@@ -338,6 +379,10 @@ let VoiceBank = class {
 			};
 			case 98: {
 				standard = "SG"; // PLG-100SG
+				break;
+			};
+			case 100: {
+				standard = "AN"; // PLG-150AN
 				break;
 			};
 			case 120: {
@@ -429,12 +474,16 @@ let VoiceBank = class {
 		this.init();
 		let upThis = this;
 		type.forEach(async function (e, i) {
-			await fetch(`./data/bank/${e}.tsv`).then(function (response) {
-				//console.debug(`Parsing voice map "${e}".`);
-				return response.text();
-			}).then((text) => {
-				upThis.load(text, false, e);
-			});
+			try {
+				await fetch(`./data/bank/${e}.tsv`).then(function (response) {
+					//console.debug(`Parsing voice map "${e}".`);
+					return response.text();
+				}).then((text) => {
+					upThis.load(text, false, e);
+				});
+			} catch (err) {
+				console.error(`Failed loading "${e}.tsv".`);
+			};
 		});
 	};
 	constructor(...args) {

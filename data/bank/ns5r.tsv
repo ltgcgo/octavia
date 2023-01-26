@@ -149,7 +149,7 @@ MSB	PRG	LSB	NME
 056	019	000	ChrchOrg
 056	020	000	Positive
 056	021	000	Acordion
-056	022	000	Hrmonica
+056	022	000	Harmnica
 056	023	000	Tango
 056	024	000	ClassGtr
 056	025	000	Acou.Gtr
@@ -236,7 +236,7 @@ MSB	PRG	LSB	NME
 056	106	000	Shamisen
 056	107	000	Koto
 056	108	000	Kalimba
-056	109	000	Bagpipe
+056	109	000	Scotland
 056	110	000	Fiddle
 056	111	000	Shanai
 056	112	000	MetalBel

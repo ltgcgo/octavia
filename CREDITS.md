@@ -61,12 +61,15 @@ Octavia will never become a reality without help from the following people.
 * Z: 大平勇 - A Phoenix to the 21st Century (Part A, Music Factory) (XG) _Recorded by DearHoney_
 * 0: 大平勇 - A Phoenix to the 21st Century (Part B, Invitation) (XG) _Recorded by DearHoney_
 * 1: Yamaha - Ninety Hipty (XG, MU90) _ROM: JayB, analyze: LÉ, dump: LÉ, fix: JayB, audio: BEXY'S PC, soft: ValleyBell_
-* 2: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle (MT-32)
+* 2: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle: Introduction (MT-32)
 * 3: Idecs Music Software - The PF Theatre (XG, PLG-150PF) _Recorded by DearHoney_
 * 4: Idecs Music Software - The Secret Place (GS, SC-8850) _Recorded by Romantique Tp_
 * 5: 久光浩, 本郷久恵 - Space Flight (GS, SC-8850) _Recorded by Romantique Tp_
 * 6: 森尾隆 - Is It Really Love? (XG, MU2000) _Recorded by KR. Palto47_
 * 7: JayB - Corgi (X5DR + NS5R) _Recorded by JayB_
-* 8: Yamaha - Out of the Muse (XG, MU80) _descramble: LÉ, dump: LÉ, fix: JayB, audio: kora kuma, soft: ValleyBell_
-* 9: Yamaha - It's an AmaZing MU World!! (XG, MU100) _descramble: LÉ, dump: LÉ, fix: JayB, audio: DearHoney, soft: ValleyBell_
-* Α: Yamaha - The Musithm (XG, MU50) _descramble: LÉ, dump: LÉ, fix: JayB, audio: Pixel Refresh, soft: ValleyBell_
+* 8: Yamaha - Out of the Muse (XG, MU80) _dump: LÉ, fix: JayB, audio: kora kuma, soft: ValleyBell_
+* 9: Yamaha - It's an AmaZing MU World!! (XG, MU100) _dump: LÉ, fix: JayB, audio: DearHoney, soft: ValleyBell_
+* Α: Yamaha - The Musithm (XG, MU50) _dump: LÉ, fix: JayB, audio: Pixel Refresh, soft: ValleyBell_
+* Β: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle: Epilogue (MT-32)
+* Γ: Yamaha - EP Ballade (XG, PLG-150DX) _Recorded by AlcanTAK_
+* Δ: 向谷実 - The Soul of DX (XG, PLG-150DX) _Recorded by atamaitai kurakura_
