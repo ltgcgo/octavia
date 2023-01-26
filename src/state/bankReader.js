@@ -47,8 +47,12 @@ let VoiceBank = class {
 				};
 			};
 			case "gs": {
-				if ((msb == 0) && lsb < 5) {
+				if (msb == 0 && lsb < 5) {
 					args[2] = 0;
+				} else if (msb > 125 && lsb < 2) {
+					// Temporary fix for C/M bank under SC-55 mode
+					args[2] = msb;
+					args[0] = 0;
 				};
 				break;
 			};
