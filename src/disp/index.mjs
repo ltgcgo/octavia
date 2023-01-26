@@ -1698,9 +1698,9 @@ let QyDisplay = class extends RootDisplay {
 };
 
 let PsrDisplay = class extends RootDisplay {
-	#okdb = new Uint8Array(61);
+	// #okdb = new Uint8Array(61);
 	#nkdb = new Uint8Array(61);
-	#osdb = new Uint8Array(22);
+	// #osdb = new Uint8Array(22);
 	#nsdb = new Uint8Array(22);
 	#ch = 0;
 	#backlight = "#b7bfaf64";
@@ -1942,13 +1942,50 @@ let PsrDisplay = class extends RootDisplay {
 		// Staff display
 		let noteHeadPos = new Uint8Array([0, 0, 1, 2, 2, 3, 3, 4, 5, 5, 6, 6]);
 		let isBlackKey = new Uint8Array([0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0]);
+		let bottomOctaveFlag1 = false,
+		bottomOctaveFlag2 = false,
+		topOctaveFlag1 = false,
+		topOctaveFlag2 = false;
 		// Main range
 		for (let i = 48; i < 85; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				note = i % 12;
-				this.#nsdb[(Math.floor(i / 12) - 4) * 7 + noteHeadPos[note]] = 1;
+				this.#nsdb[(Math.floor(i / 12) - 4) * 7 + noteHeadPos[i % 12]] = 1;
 			}
 		}
+		// Lower octaves
+		for (let i = 0; i < 48; i++) {
+			if (sum.chKeyPr[this.#ch]?.has(i)) {
+				this.#nsdb[noteHeadPos[i % 12]] = 1;
+				if (Math.floor(i / 12) == 3) {
+					bottomOctaveFlag1 = true;
+				}
+				else {
+					bottomOctaveFlag2 = true;
+				}
+			}
+		}
+		// Higher octaves
+		for (let i = 85; i < 128; i++) {
+			if (sum.chKeyPr[this.#ch]?.has(i)) {
+				this.#nsdb[14 + noteHeadPos[i % 12]] = 1;
+				if (Math.floor(i / 12) == 7) {
+					topOctaveFlag1 = true;
+				}
+				else {
+					topOctaveFlag2 = true;
+				}
+			}
+		}
+		// Octave marks
+		ctx.font = '24px "Arial Web"';
+		ctx.fillStyle = bottomOctaveFlag1 ? activePixel : inactivePixel;
+		ctx.fillText("8va", 280, 208);
+		ctx.fillStyle = topOctaveFlag1 ? activePixel : inactivePixel;
+		ctx.fillText("8va", 900, 70);
+		ctx.fillStyle = bottomOctaveFlag2 ? activePixel : inactivePixel;
+		ctx.fillText("15va+", 253, 244);
+		ctx.fillStyle = topOctaveFlag2 ? activePixel : inactivePixel;
+		ctx.fillText("15va+", 877, 40);
 		// Temporary channel number display
 		this.#render7seg(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
 		// Measure / tempo view
@@ -2009,6 +2046,7 @@ let PsrDisplay = class extends RootDisplay {
 			ctx.resetTransform();
 		});
 		// Commit to old display buffer.
+		/*
 		this.#nkdb.forEach((e, i) => {
 			if (this.#okdb[i] != e) {
 				this.#okdb[i] = e;
@@ -2019,6 +2057,7 @@ let PsrDisplay = class extends RootDisplay {
 				this.#osdb[i] = e;
 			};
 		});
+		*/
 	}
 }
 
