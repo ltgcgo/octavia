@@ -416,7 +416,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("KEY", 801, 254);
 		ctx.fillText("PAN", 583, 254);
 		// Show parts
-		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
+		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
 			e0.forEach(function (e1, i1) {
 				let partX = i1 % 5,
@@ -659,7 +659,7 @@ let ScDisplay = class extends RootDisplay {
 		this.#pmdb.forEach((e, i, a) => {a[i] = 0});
 		// Assemble text
 		let paramText = "";
-		paramText += `${"ABCD"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
+		paramText += `${"ABCDEFGH"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
 		paramText += sum.chContr[chOff + ccToPos[7]].toString().padStart(3, " ");
 		paramText += sum.chContr[chOff + ccToPos[91]].toString().padStart(3, " ");
 		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
@@ -970,7 +970,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		// Determine the used font
 		let targetFont = trueMode ? this.trueFont : this.xgFont;
 		// Show current channel
-		targetFont.getStr(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+		targetFont.getStr(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
 			let secX = i0 * 6 + 1;
 			e0.forEach((e1, i1) => {
 				let charX = i1 % 5,
