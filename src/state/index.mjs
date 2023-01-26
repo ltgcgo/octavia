@@ -90,6 +90,9 @@ ccAccepted.forEach((e, i) => {
 	ccToPos[e] = i;
 });
 
+let getDebugState = function () {
+	return !!self.Bun || self.debugMode || false; // If run on Bun.js, output all possible logs
+};
 let sysExSplitter = function (seq) {
 	let seqArr = [];
 	let seqStart = 0;
@@ -106,7 +109,7 @@ let sysExSplitter = function (seq) {
 	if (!seqArr.length) {
 		seqArr.push(seq.subarray(0));
 	};
-	if (self.debugMode) {
+	if (getDebugState()) {
 		//console.info(seqArr);
 	};
 	return seqArr;
@@ -114,7 +117,6 @@ let sysExSplitter = function (seq) {
 let showTrue = function (data, prefix = "", suffix = "", length = 2) {
 	return data ? `${prefix}${data.toString().padStart(length, "0")}${suffix}` : "";
 };
-let decodeByteStr = function (bytes) {};
 
 const allocated = {
 	ch: 128, // channels
@@ -361,7 +363,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				switch (det.data[0]) {
 					case 0: {
 						// Detect mode via bank MSB
-						if (self.debugMode) {
+						if (getDebugState()) {
 							console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
 						};
 						if (this.#mode == 0) {
@@ -426,13 +428,13 @@ let OctaviaDevice = class extends CustomEventSource {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
 									this.#cc[chOffset + ccToPos[71 + toCc]] = det.data[1];
-									self.debugMode && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
+									getDebugState() && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
 								} else {
 									let nrpnIdx = useNormNrpn.indexOf(lsb);
 									if (nrpnIdx > -1) {
 										this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
 									};
-									self.debugMode && console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
+									getDebugState() && console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
 								};
 							} else {
 								//console.debug(`CH${part + 1} drum NRPN ${msb} commit`);
@@ -441,7 +443,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Commit supported RPN values
 							let rpnIndex = useRpnMap[this.#cc[chOffset + ccToPos[100]]];
 							if (this.#cc[chOffset + ccToPos[101]] == 0 && rpnIndex != undefined) {
-								self.debugMode && console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + ccToPos[100]]} commit: ${det.data[1]}`);
+								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + ccToPos[100]]} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
 							};
@@ -480,7 +482,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#chActive[part] = 1;
 			this.#prg[part] = det.data;
 			this.#bnCustom[part] = 0;
-			if (self.debugMode) {
+			if (getDebugState()) {
 				console.debug(`T:${det.track} C:${part} P:${det.data}`);
 			};
 		},
@@ -536,7 +538,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (useReply) {
 				det.reply = "meta";
 				return det;
-			} else if (self.debugMode) {
+			} else if (getDebugState()) {
 				console.debug(det);
 			};
 		}
@@ -1415,7 +1417,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				upThis.#metaTexts[0] += `${getSgKana(vocal)}`;
 				upThis.#convertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
-				if (self.debugMode) {
+				if (getDebugState()) {
 					console.debug(`${dPref}vocals: ${vocal}`);
 				};
 			} else {
@@ -1440,7 +1442,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (upThis.eprom) {
 				let length = msg[0];
 				let addr = (msg[1] << 14) + (msg[2] << 7) + msg[3] + (upThis.eprom.offset || 0);
-				self.debugMode && console.debug(`MU1000 EPROM trail to 0x${addr.toString(16).padStart(6, "0")}, ${length} bytes.`);
+				getDebugState() && console.debug(`MU1000 EPROM trail to 0x${addr.toString(16).padStart(6, "0")}, ${length} bytes.`);
 				let target = upThis.eprom.data;
 				msg.subarray(4).forEach((e, i) => {
 					// Overlay decoding
@@ -1457,7 +1459,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([89, 1], (msg, track, id) => {
 			// EPROM base pointer jump
 			let addr = (msg[0] << 21) + (msg[1] << 14) + (msg[2] << 7) + msg[3];
-			self.debugMode && console.debug(`MU1000 EPROM jump to 0x${addr.toString(16).padStart(6, "0")}.`);
+			getDebugState() && console.debug(`MU1000 EPROM jump to 0x${addr.toString(16).padStart(6, "0")}.`);
 			if (upThis.eprom) {
 				upThis.eprom.offset = addr;
 			};
@@ -1466,7 +1468,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// The first byte always seem to be zero
 			if (upThis.eprom) {
 				let addr = (msg[0] << 21) + (msg[1] << 14) + (msg[2] << 7) + msg[3] + (upThis.eprom.offset || 0);
-				self.debugMode && console.debug(`MU1000 EPROM write to 0x${addr.toString(16).padStart(6, "0")}.`);
+				getDebugState() && console.debug(`MU1000 EPROM write to 0x${addr.toString(16).padStart(6, "0")}.`);
 				let target = upThis.eprom.data;
 				msg.subarray(4).forEach((e, i) => {
 					// Overlay decoding
