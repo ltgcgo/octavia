@@ -33,10 +33,12 @@ Octavia will never become a reality without help from the following people.
 * **MIDIMan** for checking bitmaps against YAMAHA MU2000.
 
 ## Demo Credits
-* A: JayB - KANDI8 (XG, QY100) _Recorded by JayB_
-* B: JayB - Straight to the Horizon (XG, QY100) _Recorded by JayB_
-* C: Stephen Kay - Around the World (X5D) _Recorded by DearHoney_
-* D: 堀越昭宏 - 2000 Fever (NS5R) _Recorded by DearHoney_
+| ID | Author | Title | Standard | Audio On | Audio By | Extra |
+| -- | -------- | ------ | ----- | -------- | -------- | ----- |
+| A | JayB | KANDI8 | XG | QY100 | JayB | |
+| B | JayB | Straight to the Horizon | XG | QY100 | JayB | |
+| C | Stephen Kay | Around the World | X5D | X5DR | DearHoney | |
+| D | 堀越昭宏 | 2000 Fever | NS5R | NS5R | DearHoney | |
 * E: John Lehmkuhl - MissionMan (NS5R) _Recorded by DearHoney_
 * F: Sam Sketty - Ambient (XG) _Recorded by NiceChord on MU80_
 * G: David J. Reading - Galactic Invasion (XG)
