@@ -130,7 +130,7 @@ let dispCanvas = $e("#bmDisp"),
 dispCtx = dispCanvas.getContext("2d");
 dispCanvas.addEventListener("wheel", function (ev) {
 	if (ev.deltaY > 0) {
-		if (minCh < 48) {
+		if (minCh < 112) {
 			minCh ++;
 		};
 	} else {
@@ -141,7 +141,7 @@ dispCanvas.addEventListener("wheel", function (ev) {
 });
 dispCanvas.addEventListener("mouseup", function (ev) {
 	if (ev.layerY > 47) {
-		if (minCh < 48) {
+		if (minCh < 112) {
 			minCh = (1 + (minCh >> 4)) << 4;
 		};
 	} else if (ev.layerY < 47) {

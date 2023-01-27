@@ -16,9 +16,11 @@ import {
 
 let demoBlobs = {};
 let demoPerfs = {};
+let demoInfo = {};
 let demoModes = [];
 demoModes[9] = "gm";
 let currentPerformance;
+let currentAnimation;
 let useMidiBus = false;
 
 // Generate Octavia channel switch SysEx
@@ -88,6 +90,7 @@ stDemo.forEach(function (e, i, a) {
 		};
 		currentPerformance = demoPerfs[e.title];
 		currentPerformance?.resetIndex();
+		currentAnimation = demoInfo[e.title];
 		audioPlayer.currentTime = 0;
 		visualizer.reset();
 		visualizer.loadFile(demoBlobs[e.title].midi);
@@ -208,6 +211,9 @@ let renderThread = setInterval(function () {
 				visualizer.sendCmd(e.data);
 			});
 		};
+		if (currentAnimation && !visualizer.demoInfo) {
+			visualizer.demoInfo = currentAnimation;
+		};
 		visualizer.render(curTime, dispCtx);
 		lastTime = curTime;
 	};
@@ -221,6 +227,20 @@ getBridge().addEventListener("message", function (ev) {
 
 self.visualizer = visualizer;
 self.performance = currentPerformance;
+
+// Hardcoded animation reference
+{
+	let mu80Ani = {class: "mubasic", fps: 10, size: 16};
+	let mu1kAni = {class: "munativ", fps: 8, size: 32};
+	demoInfo["ninety_hipty"] = mu80Ani;
+	demoInfo["OutOfTheMuse"] = mu80Ani;
+	demoInfo["MU100DEMO"] = mu80Ani;
+	demoInfo["TheMusithm"] = mu80Ani;
+	demoInfo["MU128DEMO"] = mu80Ani;
+	demoInfo["PhoenixA"] = mu1kAni;
+	demoInfo["PhoenixB"] = mu1kAni;
+	demoInfo["R-love"] = mu1kAni;
+};
 
 // Hardcoded performance
 {
@@ -389,4 +409,61 @@ self.performance = currentPerformance;
 	perf.push(new PointEvent(193, generateSwitch(0, 0, 0)));
 	perf.fresh();
 	demoPerfs["R-love"] = perf;
+};
+{
+	// MU128 demo
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateSwitch(0, 0, 0)));
+	perf.push(new PointEvent(1.6, generateSwitch(0, 0, 3)));
+	perf.push(new PointEvent(40.02, generateSwitch(48, 3, 3)));
+	perf.push(new PointEvent(41.68, generateSwitch(49)));
+	perf.push(new PointEvent(43.07, generateSwitch(50)));
+	perf.push(new PointEvent(44.65, generateSwitch(51)));
+	perf.push(new PointEvent(46.2, generateSwitch(52)));
+	perf.push(new PointEvent(47.74, generateSwitch(53)));
+	perf.push(new PointEvent(49.29, generateSwitch(54)));
+	perf.push(new PointEvent(50.83, generateSwitch(55)));
+	perf.push(new PointEvent(52.38, generateSwitch(56)));
+	perf.push(new PointEvent(53.92, generateSwitch(58)));
+	perf.push(new PointEvent(55.47, generateSwitch(59)));
+	perf.push(new PointEvent(57.02, generateSwitch(48)));
+	perf.push(new PointEvent(69.56, generateSwitch(8, 0, 0)));
+	perf.push(new PointEvent(70.54, generateSwitch(9)));
+	perf.push(new PointEvent(71.52, generateSwitch(10)));
+	perf.push(new PointEvent(72.5, generateSwitch(11)));
+	perf.push(new PointEvent(73.48, generateSwitch(12)));
+	perf.push(new PointEvent(74.46, generateSwitch(13)));
+	perf.push(new PointEvent(75.44, generateSwitch(14)));
+	perf.push(new PointEvent(76.42, generateSwitch(15)));
+	perf.push(new PointEvent(77.4, generateSwitch(8)));
+	perf.push(new PointEvent(81.18, generateSwitch(0)));
+	perf.push(new PointEvent(82.15, generateSwitch(1)));
+	perf.push(new PointEvent(83.12, generateSwitch(2)));
+	perf.push(new PointEvent(84.09, generateSwitch(3)));
+	perf.push(new PointEvent(85.06, generateSwitch(4)));
+	perf.push(new PointEvent(86.03, generateSwitch(5)));
+	perf.push(new PointEvent(87.0, generateSwitch(6)));
+	perf.push(new PointEvent(87.97, generateSwitch(7)));
+	perf.push(new PointEvent(88.94, generateSwitch(0)));
+	perf.push(new PointEvent(96.66, generateSwitch(16, 1, 1)));
+	perf.push(new PointEvent(98.15, generateSwitch(17)));
+	perf.push(new PointEvent(99.63, generateSwitch(18)));
+	perf.push(new PointEvent(101.12, generateSwitch(19)));
+	perf.push(new PointEvent(102.6, generateSwitch(20)));
+	perf.push(new PointEvent(104.09, generateSwitch(21)));
+	perf.push(new PointEvent(105.57, generateSwitch(22)));
+	perf.push(new PointEvent(107.06, generateSwitch(23)));
+	perf.push(new PointEvent(108.54, generateSwitch(24)));
+	perf.push(new PointEvent(110.03, generateSwitch(25)));
+	perf.push(new PointEvent(111.51, generateSwitch(26)));
+	perf.push(new PointEvent(112.99, generateSwitch(27)));
+	perf.push(new PointEvent(114.48, generateSwitch(28)));
+	perf.push(new PointEvent(115.97, generateSwitch(29)));
+	perf.push(new PointEvent(117.45, generateSwitch(30)));
+	perf.push(new PointEvent(118.94, generateSwitch(31)));
+	perf.push(new PointEvent(120.42, generateSwitch(16)));
+	perf.push(new PointEvent(122.34, generateSwitch(5, 0, 1)));
+	perf.push(new PointEvent(158.26, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["MU128DEMO"] = perf;
 };
