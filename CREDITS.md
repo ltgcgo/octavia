@@ -5,6 +5,9 @@ Octavia will never become a reality without help from the following people.
 * **Eastern_Digital**
 * **GFHK-SDGM**
 * **JayB**
+* **MJG0117**
+* **now_its_dark**
+* **ValleyBell**
 
 ### Contributors
 * **GFHK-SDGM** for the fake PSR screen.
@@ -27,10 +30,11 @@ Octavia will never become a reality without help from the following people.
 * **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
 * **GFHK-SDGM** for helping collecting bitmaps.
 * **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI, and the upcoming Cambiare).
-* ~~**Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).~~
-* **アルゴ算法堂** for providing AKAI SG01k voice map.
-* **youngmonkey** for [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
 * **MIDIMan** for checking bitmaps against YAMAHA MU2000.
+* **ValleyBell** for providing base map of PLG-150AN and PLG-150DX.
+* ~~**Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).~~
+* **youngmonkey** for [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
+* **アルゴ算法堂** for providing AKAI SG01k voice map.
 
 ## Demo Credits
 | ID | Author | Title | Standard | Audio On | Audio By | Extra |

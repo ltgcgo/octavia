@@ -1,149 +1,38 @@
 ## Supported SysEx instructions
+* ✓: Supported
+* -: Partially supported
+* ✕: Not supported
+* ?: Unknown
+* (blank): N/A
+
 ### Mutual instructions
-#### System reset
-* General MIDI: yes
-* General MIDI 2: yes
-* Roland MT-32: yes
-* Yamaha XG: yes
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: N/A
-* KORG X5D: N/A
-* KORG NS5R: N/A
-* KAWAI GMega: yes
-* KAWAI GMega LX: yes
-* AKAI SG-01k: yes
-* CASIO GZ-50M: N/A
+|                 | GM | GM2 | MT-32 | XG | GS | 05R/W | X5D | NS5R | GMega | GMega LX | SG-01 | GZ-50M |
+| --------------- | -- | --- | ----- | -- | -- | ----- | --- | ---- | ----- | -------- | ----- | ------ |
+| System reset    | ✓  | ✓   | ✓     | ✓  | ✓  |       |     |      | ✓     | ✓        | ✓     |        |
+| Master setup    | ✓  | ✓   | ✓     | ✓  | ✓  | ?     | ?   | ✓    | ✓     | ✓        |       |        |
+| Reverb setup    |    | ✕   |       | ✓  | ✓  |       |     |      | ✓     | ✓        | ✓     | ✓      |
+| Chorus setup    |    | ✕   |       | ✓  | ✓  |       |     |      | ✓     | ✓        | ✓     | ✓      |
+| Variation setup |    | ?   |       | ✓  | ✓  |       |     |      |       |          |       |        |
+| Part setup      |    | ?   |       | ✓  | ✓  |       |     | ✓    | ✓     | ✓        |       |        |
+| Equalizer       |    |     |       | ✓  | ✓  |       |     |      |       |          |       |        |
+| EFX / insertion |    |     |       | ✕  | ✓  |       |     | ✕    |       |          |       |        |
+| Bitmap display¹ |    |     |       | ✓  | ✓  |       |     | ✕    |       |          |       |        |
+| Text display²   |    |     | ✓     | ✓  | ✓  |       |     | ✕    |       |          |       |        |
+| Drum setup      |    | ?   | ✕     | ✕  | ✕  |       |     | ✕    | ✕     | ✕        |       |        |
 
-#### Master setup
-* General MIDI: yes
-* General MIDI 2: N/A
-* Roland MT-32: no
-* Yamaha XG: yes
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: unknown
-* KORG X5D: unknown
-* KORG NS5R: unknown
-* KAWAI GMega: yes
-* KAWAI GMega LX: yes
-* AKAI SG-01k: N/A
-* CASIO GZ-50M: N/A
-
-#### Reverb/chorus setup
-* General MIDI: N/A
-* General MIDI 2: no
-* Roland MT-32: N/A
-* Yamaha XG: yes
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: unknown
-* KORG X5D: no
-* KORG NS5R: no
-* KAWAI GMega: yes
-* KAWAI GMega LX: yes
-* AKAI SG-01k: yes
-* CASIO GZ-50M: yes
-
-#### EQ
-* General MIDI: N/A
-* General MIDI 2: N/A
-* Roland MT-32: N/A
-* Yamaha XG: yes
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: N/A
-* KORG X5D: N/A
-* KORG NS5R: N/A
-* KAWAI GMega: N/A
-* KAWAI GMega LX: N/A
-* AKAI SG-01k: N/A
-* CASIO GZ-50M: N/A
-
-#### Insertion effects/EFX
-* General MIDI: N/A
-* General MIDI 2: N/A
-* Roland MT-32: N/A
-* Yamaha XG: no
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: N/A
-* KORG X5D: N/A
-* KORG NS5R: no
-* KAWAI GMega: N/A
-* KAWAI GMega LX: N/A
-* AKAI SG-01k: N/A
-* CASIO GZ-50M: N/A
-
-#### Bitmap display/Frame draw
-* General MIDI: N/A
-* General MIDI 2: N/A
-* Roland MT-32: N/A
-* Yamaha XG: yes
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: N/A
-* KORG X5D: N/A
-* KORG NS5R: no
-* KAWAI GMega: N/A
-* KAWAI GMega LX: N/A
-* AKAI SG-01k: N/A
-* CASIO GZ-50M: N/A
-
-#### Letter display/Text insert
-* General MIDI: N/A
-* General MIDI 2: N/A
-* Roland MT-32: yes
-* Yamaha XG: yes
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: N/A
-* KORG X5D: N/A
-* KORG NS5R: no
-* KAWAI GMega: N/A
-* KAWAI GMega LX: N/A
-* AKAI SG-01k: N/A
-* CASIO GZ-50M: N/A
-
-#### Part setup
-* General MIDI: N/A
-* General MIDI 2: N/A
-* Roland MT-32: no
-* Yamaha XG: yes
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: N/A
-* KORG X5D: N/A
-* KORG NS5R: yes
-* KAWAI GMega: yes
-* KAWAI GMega LX: yes
-* AKAI SG-01k: N/A
-* CASIO GZ-50M: N/A
-
-#### Drum setup
-* General MIDI: N/A
-* General MIDI 2: N/A
-* Roland MT-32: N/A
-* Yamaha XG: yes
-* Roland GS: yes
-* KORG AG-10: N/A
-* KORG 05R/W: N/A
-* KORG X5D: N/A
-* KORG NS5R: N/A
-* KAWAI GMega: N/A
-* KAWAI GMega LX: N/A
-* AKAI SG-01k: N/A
-* CASIO GZ-50M: N/A
+* 1: Support in GS is called "frame draw", and with multi-page support.
+* 2: Called "letter display" in XG, and "text insert" in GS.
 
 ### Device-specific instructions
 #### Roland MT-32
-* ~~Temporary Patch Setup~~
+* Temporary Patch Setup
 * ~~Temporary Drum Setup~~
-* ~~Temporary Timbre Setup~~
-* ~~Device Patch Setup~~
-* ~~Device Timbre Setup~~
+* Temporary Timbre Setup
+* Device Patch Setup
+* Device Timbre Setup
 * Patch Memory Write
 * Timbre Memory Write
+* System
 
 #### Yamaha MU1000
 * ~~A/D Part Setup~~
