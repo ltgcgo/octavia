@@ -137,6 +137,8 @@ $e("#openMidi").addEventListener("click", async function () {
 		stDemo.to(-1);
 		visualizer.reset();
 		visualizer.loadFile(file);
+		currentPerformance = undefined;
+		currentAnimation = undefined;
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -413,6 +415,8 @@ self.performance = currentPerformance;
 {
 	// MU128 demo
 	let perf = new TimedEvents();
+	// Disable native RS
+	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 0, 0, 14, 0]})); 
 	perf.push(new PointEvent(0, generateSwitch(0, 0, 0)));
 	perf.push(new PointEvent(1.6, generateSwitch(0, 0, 3)));
 	perf.push(new PointEvent(40.02, generateSwitch(48, 3, 3)));

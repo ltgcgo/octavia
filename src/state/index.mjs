@@ -165,6 +165,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	#convertLastSyllable = 0;
 	#letterDisp = "";
 	#letterExpire = 0;
+	#selectPort = 0;
+	#receiveRS = true; // Receive remote switch
 	#modeKaraoke = false;
 	#receiveTree;
 	// Temporary EFX storage
@@ -784,6 +786,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#bitmapPage = 0;
 		this.#bitmap.fill(0);
 		this.#modeKaraoke = false;
+		this.#selectPort = 0;
+		this.#receiveRS = true;
 		// Reset MIDI receive channel
 		this.#chReceive.forEach(function (e, i, a) {
 			a[i] = i;
@@ -1375,27 +1379,78 @@ let OctaviaDevice = class extends CustomEventSource {
 				let ri = offset + i;
 				if (ri == 8) {
 					console.debug(`MU1000 set LCD contrast to ${e}.`);
-				} else if (ri > 9 && ri < 15) {
+				} else if (ri > 9 && ri < 16) {
 					// Octavia custom SysEx
 					[() => {
 						upThis.dispatchEvent("channelactive", e);
 					}, () => {
 						if (e < 8) {
 							upThis.dispatchEvent("channelmin", (e << 4));
+							console.info(`Octavia System: Minimum CH${(e << 4) + 1}`);
 						} else {
 							upThis.dispatchEvent("channelreset");
+							console.info(`Octavia System: Clear channel ranges`);
 						};
 					}, () => {
 						if (e < 8) {
 							upThis.dispatchEvent("channelmax", (e << 4) + 15);
+							console.info(`Octavia System: Maximum CH${(e << 4) + 16}`);
 						} else {
 							upThis.dispatchEvent("channelreset");
+							console.info(`Octavia System: Clear channel ranges`);
 						};
 					}, () => {
 						upThis.dispatchEvent("channelreset");
+						console.info(`Octavia System: Clear channel ranges`);
+					}, () => {
+						upThis.#receiveRS = !!e;
+						console.info(`Octavia System: RS receiving ${["dis", "en"][e]}abled.`);
 					}][ri - 10]();
 				};
 			});
+		}).add([73, 10, 0], (msg, track) => {
+			// MU1000 remote switch
+			// But in practice... They are channel switching commands.
+			let cmd = msg[0];
+			let dPref = `MU1000 RS${upThis.#receiveRS ? "" : " (ignored)"}: `;
+			if (cmd < 16) {
+				switch (cmd) {
+					case 2: {
+						// Show all 64 channels
+						let e = upThis.chRedir(0, track, true);
+						if (upThis.#receiveRS) {
+							upThis.dispatchEvent("channelmin", e);
+							upThis.dispatchEvent("channelmax", e + 63);
+						};
+						console.info(`${dPref}Show CH1~64`);
+						break;
+					};
+					case 3: {
+						// Show 32 channels
+						let e = upThis.chRedir(msg[1] << 5, track, true);
+						upThis.#receiveRS && upThis.dispatchEvent("channelmin", e);
+						upThis.#receiveRS && upThis.dispatchEvent("channelmax", e + 31);
+						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}`);
+						break;
+					};
+					default: {
+						console.debug(`${dPref}unknown switch ${cmd} invoked.`);
+					};
+				};
+			} else if (cmd < 32) {
+				if (upThis.#receiveRS) {
+					let e = upThis.chRedir(cmd - 16 + (upThis.#selectPort << 4), track, true);
+					upThis.dispatchEvent("channelactive", e);
+				};
+			} else if (cmd < 36) {
+				let e = upThis.chRedir((cmd - 32) << 4, track, true);
+				if (upThis.#receiveRS) {
+					upThis.dispatchEvent("channelmin", e);
+					upThis.dispatchEvent("channelmax", e + 15);
+					upThis.#selectPort = cmd - 32;
+				};
+				console.info(`${dPref}Show CH${e + 1}~CH${e + 16}`);
+			};
 		}).add([93, 3], (msg, track) => {
 			// PLG-100SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
