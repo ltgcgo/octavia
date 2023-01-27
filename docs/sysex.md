@@ -41,10 +41,24 @@
 * System
 
 #### Yamaha PLG-100SG
-* (Sing PhoneSEQ)
+* ~~Master Setup~~
+* ~~Part Setup~~
+* PhoneSEQ Setup
+* ~~Lyrics Information Setup~~
+
+#### Yamaha PLG-150DX
+* ~~Master Setup~~
+* ~~Part Setup~~
+* ~~DX Voice Param~~
+* ~~DX Voice Additional Param~~
+
+#### Yamaha PLG-150VL
+* ~~Master Setup~~
+* ~~Current Voice Parameters~~
+* Part Setup
 
 #### Roland SC-88
-* Single/dual mode
+* Single/dual Mode
 
 #### KORG X5D
 * All Program Dump
