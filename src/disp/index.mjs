@@ -209,6 +209,7 @@ let MuDisplay = class extends RootDisplay {
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
+	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
 	constructor() {
 		super();
 		let upThis = this;
@@ -250,6 +251,9 @@ let MuDisplay = class extends RootDisplay {
 		super.reset();
 		this.#minCh = 0;
 		this.#maxCh = 0;
+		if (this.demoInfo) {
+			delete this.demoInfo;
+		};
 	};
 	render(time, ctx) {
 		let sum = super.render(time);
@@ -440,6 +444,15 @@ let MuDisplay = class extends RootDisplay {
 		if (timeNow <= sum.bitmap.expire) {
 			// Use provided bitmap
 			useBm = sum.bitmap.bitmap;
+		} else if (this.demoInfo && time > 0) {
+			let sequence = this.demoInfo.class || "boot";
+			let stepTime = this.demoInfo.fps || 2;
+			let stepSize = this.demoInfo.size || 4;
+			let stepId = `${sequence}_${Math.floor(time * stepTime % stepSize)}`;
+			useBm = this.aniBm?.getBm(stepId) || this.sysBm?.getBm(stepId) || this.sysBm?.getBm("no_abm");
+			if (!useBm) {
+				useBm = this.#bmdb.slice();
+			};
 		} else {
 			// Use stored pic
 			useBm = this.#bmdb.slice();
@@ -2001,7 +2014,7 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillStyle = topOctaveFlag2 ? activePixel : inactivePixel;
 		ctx.fillText("15va+", 877, 40);
 		// Temporary channel number display
-		this.#render7seg(`${"ABCD"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
+		this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
 		// Measure / tempo view
 		ctx.font = '23px "Arial Web"';
 		ctx.fillStyle = tempoView ? inactivePixel : activePixel;
@@ -2059,7 +2072,7 @@ let PsrDisplay = class extends RootDisplay {
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
 				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-					useBm = this.sysBm.getBm(`plg_${standard}`);
+					useBm = this.sysBm.getBm(`ext_${standard}`);
 				};
 				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
 					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)

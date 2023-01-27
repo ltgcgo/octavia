@@ -5,6 +5,9 @@ Octavia will never become a reality without help from the following people.
 * **Eastern_Digital**
 * **GFHK-SDGM**
 * **JayB**
+* **MJG0117**
+* **now_its_dark**
+* **ValleyBell**
 
 ### Contributors
 * **GFHK-SDGM** for the fake PSR screen.
@@ -27,49 +30,53 @@ Octavia will never become a reality without help from the following people.
 * **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
 * **GFHK-SDGM** for helping collecting bitmaps.
 * **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI, and the upcoming Cambiare).
-* ~~**Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).~~
-* **アルゴ算法堂** for providing AKAI SG01k voice map.
-* **youngmonkey** for [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
 * **MIDIMan** for checking bitmaps against YAMAHA MU2000.
+* **ValleyBell** for providing base map of PLG-150AN and PLG-150DX.
+* ~~**Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).~~
+* **youngmonkey** for [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
+* **アルゴ算法堂** for providing AKAI SG01k voice map.
 
 ## Demo Credits
-* A: JayB - KANDI8 (XG, QY100) _Recorded by JayB_
-* B: JayB - Straight to the Horizon (XG, QY100) _Recorded by JayB_
-* C: Stephen Kay - Around the World (X5D) _Recorded by DearHoney_
-* D: 堀越昭宏 - 2000 Fever (NS5R) _Recorded by DearHoney_
-* E: John Lehmkuhl - MissionMan (NS5R) _Recorded by DearHoney_
-* F: Sam Sketty - Ambient (XG) _Recorded by NiceChord on MU80_
-* G: David J. Reading - Galactic Invasion (XG)
-* H: Sam Sketty - Low Down (XG) _Recorded by Ham Seung-woo on MU90_
-* I: John Campbell - Star Games (GS, SC-55) _Recorded by DearHoney on SC-88 Pro_
-* J: David Yackley - One Stop (GM)
-* K: 大田川恭子 (Team-khy) - Orchestra (GS, SC-88 Pro) _Recorded by DearHoney_
-* L: 大田川恭子 - Midnight Chaser (GS, SC-88) _Recorded by DearHoney_
-* M: Michael Z. Land - Introduction (MT-32)
-* N: Idecs Music Software - Japanese (GS, SC-88 Pro) _Recorded by DearHoney_
-* O: Adrian Scott - Leya's Song (GS, SC-55) _Recorded by DearHoney_
-* P: 久光浩 - 韋駄天 (GS, SC-88) _Recorded by DearHoney_
-* Q: David J. Reading - Cybergate (XG) _Recorded by JayB on QY70_
-* R: KORG - Mad Robot (05R/W) _Recorded by DearHoney_
-* S: KORG - Clasitario (AG-10) _Recorded by DearHoney_
-* T: David J. Reading - Greg's Mantra (XG) _Recorded by JayB on QY70_
-* U: KORG - The Far East (KROSS 2) _Recorded by PianoManChuck_
-* V: KAWAI - 君がいるだけで (KAWAI GMega) _Recorded by DearHoney, might be replaced due to copyright concerns_
-* W: KAWAI - Do-Re-Mi (KAWAI GMega) _Recorded by DearHoney, might be replaced due to copyright concerns_
-* X: 松任谷由実 - 春よ、来い (XG, PLG-100SG) _Recorded by superdeadite_
-* Y: Unknown - VLjazzy (XG, PLG-150VL) _Recorded by DearHoney_
-* Z: 大平勇 - A Phoenix to the 21st Century (Part A, Music Factory) (XG) _Recorded by DearHoney_
-* 0: 大平勇 - A Phoenix to the 21st Century (Part B, Invitation) (XG) _Recorded by DearHoney_
-* 1: Yamaha - Ninety Hipty (XG, MU90) _ROM: JayB, analyze: LÉ, dump: LÉ, fix: JayB, audio: BEXY'S PC, soft: ValleyBell_
-* 2: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle: Introduction (MT-32)
-* 3: Idecs Music Software - The PF Theatre (XG, PLG-150PF) _Recorded by DearHoney_
-* 4: Idecs Music Software - The Secret Place (GS, SC-8850) _Recorded by Romantique Tp_
-* 5: 久光浩, 本郷久恵 - Space Flight (GS, SC-8850) _Recorded by Romantique Tp_
-* 6: 森尾隆 - Is It Really Love? (XG, MU2000) _Recorded by KR. Palto47_
-* 7: JayB - Corgi (X5DR + NS5R) _Recorded by JayB_
-* 8: Yamaha - Out of the Muse (XG, MU80) _dump: LÉ, fix: JayB, audio: kora kuma, soft: ValleyBell_
-* 9: Yamaha - It's an AmaZing MU World!! (XG, MU100) _dump: LÉ, fix: JayB, audio: DearHoney, soft: ValleyBell_
-* Α: Yamaha - The Musithm (XG, MU50) _dump: LÉ, fix: JayB, audio: Pixel Refresh, soft: ValleyBell_
-* Β: Clint Bajakian, Peter McConnel, Michael Z. Land - Day of the Tentacle: Epilogue (MT-32)
-* Γ: Yamaha - EP Ballade (XG, PLG-150DX) _Recorded by AlcanTAK_
-* Δ: 向谷実 - The Soul of DX (XG, PLG-150DX) _Recorded by atamaitai kurakura_
+| ID | Author | Title | Standard | Audio On | Audio By | Extra |
+| -- | -------- | ------ | ----- | -------- | -------- | ----- |
+| A | JayB | KANDI8 | XG | QY100 | JayB | |
+| B | JayB | Straight to the Horizon | XG | QY100 | JayB | |
+| C | Stephen Kay | Around the World | X5D | X5DR | DearHoney | |
+| D | 堀越昭宏 | 2000 Fever | NS5R | NS5R | DearHoney | |
+| E | John Lehmkuhl | MissionMan | NS5R | NS5R | DearHoney | |
+| F | Sam Sketty | Ambient | XG | MU80 | NiceChord | |
+| G | David J. Reading | Galactic Invasion | XG | S-YXG50 WDM | Lumière Élevé | |
+| H | Sam Sketty | Low Down | XG | MU90 | Ham Seung-woo | |
+| I | John Campbell | Star Games | GS (SC-55) | SC-88 Pro | DearHoney | |
+| J | David Yackley | One Stop | GM | FluidSynth, ColomboGMGS2 | Lumière Élevé | |
+| K | 大田川恭子 (Team-khy) | Orchestra | GS | SC-88 Pro | DearHoney | |
+| L | 大田川恭子 | Midnight Chaser | GS | SC-88 | Recorded by DearHoney | |
+| M | Michael Z. Land | Monkey Island 2: LeChuck's Revenge: Introduction | MT-32 | MUNT | Lumière Élevé | |
+| N | Idecs Music Software | Japanese | GS | SC-88 Pro | DearHoney | |
+| O | Adrian Scott | Leya's Song | GS | SC-55 | DearHoney | |
+| P | 久光浩 | 韋駄天 | GS | SC-88 | DearHoney |
+| Q | David J. Reading | Cybergate | XG | QY70 | JayB | |
+| R | KORG | Mad Robot | 05R/W | 05R/W | DearHoney | |
+| S | KORG | Clasitario | AG-10 | AG-10 | DearHoney | |
+| T | David J. Reading | Greg's Mantra | XG | QY70 | JayB | |
+| U | KORG | The Far East | KROSS 2 | KROSS 2 | PianoManChuck | |
+| V | KAWAI | 君がいるだけで | GMega | GMega | DearHoney | Might be replaced due to copyright concerns |
+| W | KAWAI | Do-Re-Mi | GMega | GMega | DearHoney | Might be replaced due to copyright concerns |
+| X | 松任谷由実, Yamaha | 春よ、来い | XG | MU2000, PLG-100SG | superdeadite | |
+| Y | Unknown | VLjazzy | XG | MU1000, PLG-150VL | DearHoney | |
+| Z | 大平勇 | A Phoenix to the 21st Century (Part A, Music Factory) | XG | MU1000 | DearHoney | |
+| 0 | 大平勇 | A Phoenix to the 21st Century (Part B, Invitation) | XG | MU1000 | DearHoney | |
+| 1 | Yamaha | Ninety Hipty | XG | MU90 | BEXY'S PC | ROM: JayB<br/>Analyze: JayB & Lumière Élevé<br/>Dump: Lumière Élevé<br/>Fix: JayB<br/>Software: ValleyBell |
+| 2 | Clint Bajakian, Peter McConnel, Michael Z. Land | Day of the Tentacle: Introduction | MT-32 | MUNT | Lumière Élevé | |
+| 3 | Idecs Music Software | The PF Theatre | XG | MU1000, PLG-150PF | DearHoney | |
+| 4 | Idecs Music Software | The Secret Place | GS | SC-8850 | Romantique Tp | |
+| 5 | 久光浩, 本郷久恵 | Space Flight | GS | SC-8850 | Romantique Tp | |
+| 6 | 森尾隆 | Is It Really Love? | XG | MU2000 | KR. Palto47 | |
+| 7 | JayB | Corgi | X5D & NS5R | X5DR & NS5R | JayB | |
+| 8 | Yamaha | Out of the Muse | XG | MU80 | kora kuma | Dump: Lumière Élevé<br/>Fix: JayB<br/>Software: ValleyBell |
+| 9 | Yamaha | It's an AmaZing MU World!! | XG | MU100 | DearHoney | Dump: Lumière Élevé<br/>Fix: JayB<br/>Software: ValleyBell |
+| Α | Yamaha | The Musithm | XG | MU50 | Pixel Refresh | Dump: Lumière Élevé<br/>Fix: JayB<br/>Software: ValleyBell |
+| Β | Clint Bajakian, Peter McConnel, Michael Z. Land | Day of the Tentacle: Epilogue | MT-32 | MUNT | Lumière Élevé | |
+| Γ | 長栄克巳 | EP Ballade | XG | MU2000, PLG-150DX | AlcanTAK | |
+| Δ | 向谷実 | The Soul of DX | XG | MU100, PLG-150DX | atamaitai kurakura | |
+| Ε | Paul Lawley, Graham Lee, 小川恭範 | MU128 Demo | XG | MU128 | yanorei32 | Dump: Lumière Élevé<br/>Fix: JayB<br/>Software: ValleyBell |
