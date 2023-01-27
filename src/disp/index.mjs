@@ -209,6 +209,7 @@ let MuDisplay = class extends RootDisplay {
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
+	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
 	constructor() {
 		super();
 		let upThis = this;
@@ -250,6 +251,9 @@ let MuDisplay = class extends RootDisplay {
 		super.reset();
 		this.#minCh = 0;
 		this.#maxCh = 0;
+		if (this.demoInfo) {
+			delete this.demoInfo;
+		};
 	};
 	render(time, ctx) {
 		let sum = super.render(time);
@@ -440,6 +444,15 @@ let MuDisplay = class extends RootDisplay {
 		if (timeNow <= sum.bitmap.expire) {
 			// Use provided bitmap
 			useBm = sum.bitmap.bitmap;
+		} else if (this.demoInfo && time > 0) {
+			let sequence = this.demoInfo.class || "boot";
+			let stepTime = this.demoInfo.fps || 2;
+			let stepSize = this.demoInfo.size || 4;
+			let stepId = `${sequence}_${Math.floor(time * stepTime % stepSize)}`;
+			useBm = this.aniBm?.getBm(stepId) || this.sysBm?.getBm(stepId) || this.sysBm?.getBm("no_abm");
+			if (!useBm) {
+				useBm = this.#bmdb.slice();
+			};
 		} else {
 			// Use stored pic
 			useBm = this.#bmdb.slice();

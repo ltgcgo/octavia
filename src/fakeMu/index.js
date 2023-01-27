@@ -16,9 +16,11 @@ import {
 
 let demoBlobs = {};
 let demoPerfs = {};
+let demoInfo = {};
 let demoModes = [];
 demoModes[9] = "gm";
 let currentPerformance;
+let currentAnimation;
 let useMidiBus = false;
 
 // Generate Octavia channel switch SysEx
@@ -88,6 +90,7 @@ stDemo.forEach(function (e, i, a) {
 		};
 		currentPerformance = demoPerfs[e.title];
 		currentPerformance?.resetIndex();
+		currentAnimation = demoInfo[e.title];
 		audioPlayer.currentTime = 0;
 		visualizer.reset();
 		visualizer.loadFile(demoBlobs[e.title].midi);
@@ -208,6 +211,9 @@ let renderThread = setInterval(function () {
 				visualizer.sendCmd(e.data);
 			});
 		};
+		if (currentAnimation && !visualizer.demoInfo) {
+			visualizer.demoInfo = currentAnimation;
+		};
 		visualizer.render(curTime, dispCtx);
 		lastTime = curTime;
 	};
@@ -221,6 +227,20 @@ getBridge().addEventListener("message", function (ev) {
 
 self.visualizer = visualizer;
 self.performance = currentPerformance;
+
+// Hardcoded animation reference
+{
+	let mu80Ani = {class: "mubasic", fps: 10, size: 16};
+	let mu1kAni = {class: "munativ", fps: 8, size: 32};
+	demoInfo["ninety_hipty"] = mu80Ani;
+	demoInfo["OutOfTheMuse"] = mu80Ani;
+	demoInfo["MU100DEMO"] = mu80Ani;
+	demoInfo["TheMusithm"] = mu80Ani;
+	demoInfo["MU128DEMO"] = mu80Ani;
+	demoInfo["PhoenixA"] = mu1kAni;
+	demoInfo["PhoenixB"] = mu1kAni;
+	demoInfo["R-love"] = mu1kAni;
+};
 
 // Hardcoded performance
 {
