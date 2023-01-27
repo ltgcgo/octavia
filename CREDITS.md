@@ -80,3 +80,5 @@ Octavia will never become a reality without help from the following people.
 | Γ | 長栄克巳 | EP Ballade | XG | MU2000, PLG-150DX | AlcanTAK | |
 | Δ | 向谷実 | The Soul of DX | XG | MU100, PLG-150DX | atamaitai kurakura | |
 | Ε | Paul Lawley, Graham Lee, 小川恭範 | MU128 Demo | XG | MU128 | yanorei32 | Dump: Lumière Élevé<br/>Fix: JayB<br/>Software: ValleyBell |
+| Ζ | 森尾隆 | Old Tek | XG | PLG-150AN | MasterJace | |
+| Η | 森尾隆 | R&B | XG | PLG-150AN | MasterJace | |

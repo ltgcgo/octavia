@@ -12,7 +12,8 @@ import {
 	xgLfoFreq,
 	getSgKana,
 	getXgRevTime,
-	getXgDelayOffset
+	getXgDelayOffset,
+	getVlCtrlSrc
 } from "./xgValues.js";
 import {
 	gsRevType,
@@ -1016,6 +1017,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		// Sequencer specific meta event
 		// No refactoring needed.
+		this.#metaSeq.default = function (seq) {
+			console.warn(`Unrecognized sequencer-specific byte sequence: ${seq}`);
+		};
 		this.#metaSeq.add([67, 0, 1], function (msg, track) {
 			//console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
 			upThis.#trkAsReq[track] = msg[0] + 1;
@@ -1291,6 +1295,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			dPref = `XG CH${part + 1} `,
 			errMsg = `Unknown XG part address ${id}.`;
 			msg.subarray(2).forEach((e, i) => {
+				// There is a bug here, but I don't have time right now
 				if (id < 1) {
 					console.debug(errMsg);
 				} else if (id < 41) {
@@ -1365,6 +1370,53 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(errMsg);
 				};
 			});
+		}).add([76, 9], (msg, track) => {
+			// PLG-150VL Part Setup
+			let part = upThis.chRedir(msg[0], track, true),
+			id = msg[1];
+			let dPref = `PLG-150VL CH${part + 1} `;
+			msg.subarray(2).forEach((e, i) => {
+				let ri = i + id;
+				switch (ri) {
+					case 1: {
+						console.info(`${dPref}breath mode: ${["system", "breath", "velocity", "touch EG"][e]}`);
+						break;
+					};
+					case 0:
+					case 27:
+					case 28: {
+						break;
+					};
+					default: {
+						if (ri < 27) {
+							let pType = [
+								"pressure",
+								"embouchure",
+								"tonguing",
+								"scream",
+								"breath noise",
+								"growl",
+								"throat formant",
+								"harmonic enhancer",
+								"damping",
+								"absorption",
+								"amplification",
+								"brightness"
+							][(ri - 3) >> 1];
+							if (ri & 1) {
+								if (ri < 23) {
+									console.debug(`${dPref}${pType} control source: ${getVlCtrlSrc(e)}`);
+								} else {
+									// These actually belong to 0x57, not 0x4c
+									console.debug(`${dPref}${pType} scale break point: ${e}`);
+								};
+							} else {
+								console.debug(`${dPref}${pType} depth: ${e - 64}`);
+							};
+						};
+					};
+				};
+			});
 		}).add([76, 10], (msg) => {
 			// XG HPF cutoff at 76, 10, nn, 32
 			// Won't implement for now
@@ -1372,6 +1424,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			// XG A/D part, won't implement for now
 		}).add([76, 17, 0, 0], (msg) => {
 			// XG A/D mono/stereo mode, won't implement for now
+		}).add([76, 112], (msg) => {
+			// XG plugin board generic
+			console.debug(`XG enable PLG-1${["50VL", "00SG", "50DX"][msg[0]]} for CH${msg[2] + 1}.`);
 		}).add([73, 0, 0], (msg, track) => {
 			// MU1000/2000 System
 			let offset = msg[0];
@@ -1478,9 +1533,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};
-		}).add([112], (msg) => {
-			// XG plugin board generic
-			console.debug(`XG plugin PLG1-${["00VL", "00SG", "00DX"][msg[0]]} enabled for channel ${msg[2] + 1}.`);
 		});
 		this.#seXg.add([76, 48], (msg) => {
 			// XG drum setup 1

@@ -23,7 +23,7 @@ _See the [MIDI Implementation Chart](docs/implementation.md) and [Supported SysE
 * YAMAHA PLG-150DR/PC (no SysEx)
 * YAMAHA PLG-150DX (no SysEx)
 * YAMAHA PLG-150PF (no SysEx)
-* YAMAHA PLG-150VL (no SysEx)
+* YAMAHA PLG-150VL
 * YAMAHA PLG-100SG
 * Roland GS
 * KORG 05R/W (no SysEx)
