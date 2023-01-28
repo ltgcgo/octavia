@@ -1715,6 +1715,7 @@ let PsrDisplay = class extends RootDisplay {
 	#nkdb = new Uint8Array(61);
 	// #osdb = new Uint8Array(22);
 	#nsdb = new Uint8Array(22);
+	#nadb = new Uint8Array(15);
 	#bmdb = new Uint8Array(256);
 	#bmst = 0;
 	#bmex = 0;
@@ -1735,6 +1736,8 @@ let PsrDisplay = class extends RootDisplay {
 	noteHead = new Path2D("M19.8 -12.4c5 0 9.8 2.6 9.8 8.2c0 6.5 -5 10.9 -9.3 13.4c-3.2 1.9 -6.8 3.2 -10.5 3.2c-5 0 -9.8 -2.6 -9.8 -8.2c0 -6.5 5 -10.9 9.3 -13.4c3.2 -1.9 6.8 -3.2 10.5 -3.2 z");
 	sideIndicator1 = new Path2D("m 379.0355,823.51955 h -2.213 c -0.229,0 -0.436,-0.096 -0.587,-0.243 -0.162,-0.163 -0.243,-0.377 -0.243,-0.591 v -8.298 c 0,-0.229 0.092,-0.439 0.243,-0.586 0.162,-0.163 0.376,-0.244 0.587,-0.244 h 2.213 v -2.767 h -3.597 c -0.354,0 -0.708,0.136 -0.978,0.406 -0.251,0.251 -0.402,0.594 -0.402,0.977 v 12.726 c 0,0.356 0.133,0.709 0.402,0.98 0.251,0.251 0.598,0.406 0.978,0.406 h 3.597 v -2.766");
 	sideIndicator2 = new Path2D("m 379.0085,813.83755 h -2.21 c -0.144,0 -0.285,0.054 -0.391,0.159 -0.1,0.105 -0.163,0.242 -0.159,0.395 0,0 0,8.281 -0.004,8.281 0,0.142 0.055,0.284 0.163,0.39 0.103,0.103 0.239,0.162 0.391,0.162 h 2.21 v -9.387");
+	sharpSign = new Path2D("M216 -312c0 -10 -8 -19 -18 -19s-19 9 -19 19v145l-83 -31v-158c0 -10 -9 -19 -19 -19s-18 9 -18 19v145l-32 -12c-2 -1 -5 -1 -7 -1c-11 0 -20 9 -20 20v60c0 8 5 16 13 19l46 16v160l-32 -11c-2 -1 -5 -1 -7 -1c-11 0 -20 9 -20 20v60c0 8 5 15 13 18l46 17v158 c0 10 8 19 18 19s19 -9 19 -19v-145l83 31v158c0 10 9 19 19 19s18 -9 18 -19v-145l32 12c2 1 5 1 7 1c11 0 20 -9 20 -20v-60c0 -8 -5 -16 -13 -19l-46 -16v-160l32 11c2 1 5 1 7 1c11 0 20 -9 20 -20v-60c0 -8 -5 -15 -13 -18l-46 -17v-158zM96 65v-160l83 30v160z");
+	flatSign = new Path2D("M27 41l-1 -66v-11c0 -22 1 -44 4 -66c45 38 93 80 93 139c0 33 -14 67 -43 67c-31 0 -52 -30 -53 -63zM-15 -138l-12 595c8 5 18 8 27 8s19 -3 27 -8l-7 -345c25 21 58 34 91 34c52 0 89 -48 89 -102c0 -80 -86 -117 -147 -169c-15 -13 -24 -38 -45 -38 c-13 0 -23 11 -23 25z");
 	constructor() {
 		super();
 		let upThis = this;
@@ -1841,6 +1844,7 @@ let PsrDisplay = class extends RootDisplay {
 		// Clear out the current working display buffer.
 		this.#nkdb.forEach((e, i, a) => {a[i] = 0});
 		this.#nsdb.forEach((e, i, a) => {a[i] = 0});
+		this.#nadb.forEach((e, i, a) => {a[i] = 0});
 		// Fill with white
 		ctx.fillStyle = backlightColor;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -1974,8 +1978,9 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillStyle = arrowRightFlag ? activePixel : inactivePixel;
 		ctx.fill(arrowRight);
 		// Staff display
-		let noteHeadPos = new Uint8Array([0, 0, 1, 2, 2, 3, 3, 4, 5, 5, 6, 6]);
-		let isBlackKey = new Uint8Array([0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0]);
+		let noteHeadPos = new Uint8Array([0, 0, 1, 2, 2, 3, 3, 4, 5, 5, 6, 6, 7]);
+		let isBlackKey = new Uint8Array([0, 1, 0, 2, 0, 0, 1, 0, 2, 0, 2, 0]);
+		let nadbIndex = new Uint8Array([0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 2, 0]);
 		let bottomOctaveFlag1 = false,
 		bottomOctaveFlag2 = false,
 		topOctaveFlag1 = false,
@@ -1984,6 +1989,14 @@ let PsrDisplay = class extends RootDisplay {
 		for (let i = 48; i < 85; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
 				this.#nsdb[(Math.floor(i / 12) - 4) * 7 + noteHeadPos[i % 12]] = 1;
+				if (isBlackKey[i % 12]) {
+					if (isBlackKey[i % 12] == 1) {
+						this.#nadb[(Math.floor(i / 12) - 4) * 2 + nadbIndex[i % 12]] = 1;
+					}
+					else {
+						this.#nadb[(Math.floor(i / 12) - 4) * 3 + nadbIndex[i % 12] + 6] = 1;
+					}
+				}
 			}
 		}
 		// Lower octaves
@@ -1996,17 +2009,33 @@ let PsrDisplay = class extends RootDisplay {
 				else {
 					bottomOctaveFlag2 = true;
 				}
+				if (isBlackKey[i % 12]) {
+					if (isBlackKey[i % 12] == 1) {
+						this.#nadb[nadbIndex[i % 12]] = 1;
+					}
+					else {
+						this.#nadb[nadbIndex[i % 12] + 6] = 1;
+					}
+				}
 			}
 		}
 		// Higher octaves
 		for (let i = 85; i < 128; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				this.#nsdb[15 + noteHeadPos[(i - 1) % 12]] = 1;
+				this.#nsdb[14 + noteHeadPos[(i - 1) % 12 + 1]] = 1;
 				if (Math.floor((i - 1) / 12) == 7) {
 					topOctaveFlag1 = true;
 				}
 				else {
 					topOctaveFlag2 = true;
+				}
+				if (isBlackKey[i % 12]) {
+					if (isBlackKey[i % 12] == 1) {
+						this.#nadb[4 + nadbIndex[i % 12]] = 1;
+					}
+					else {
+						this.#nadb[12 + nadbIndex[i % 12]] = 1;
+					}
 				}
 			}
 		}
@@ -2015,7 +2044,7 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillStyle = bottomOctaveFlag1 ? activePixel : inactivePixel;
 		ctx.fillText("8va", 280, 208);
 		ctx.fillStyle = topOctaveFlag1 ? activePixel : inactivePixel;
-		ctx.fillText("8va", 900, 70);
+		ctx.fillText("8va", 876, 70);
 		ctx.fillStyle = bottomOctaveFlag2 ? activePixel : inactivePixel;
 		ctx.fillText("15va+", 253, 244);
 		ctx.fillStyle = topOctaveFlag2 ? activePixel : inactivePixel;
@@ -2115,6 +2144,11 @@ let PsrDisplay = class extends RootDisplay {
 			ctx.fillStyle = e ? activePixel : inactivePixel;
 			ctx.fillRect(224 + x * 6, 261 + y * 3, 5, 2);
 		});
+		ctx.fillStyle = inactivePixel;
+		ctx.font = '18px "Arial Web"';
+		ctx.fillText("ACMP", 430, 275);
+		ctx.fillText("ON", 430, 295);
+		ctx.fill(new Path2D("M482 296 L482 312 L462 304 Z"));
 		// Commit to display accordingly.
 		/*
 		let keyboardData = new Uint8Array([228, 238.5, 250.3, 263.5, 272.6, 295, 304.5, 317.3, 330, 339.5, 354, 361.8]);
@@ -2139,6 +2173,25 @@ let PsrDisplay = class extends RootDisplay {
 			ctx.fillStyle = [inactivePixel, activePixel][e];
 			ctx.fill(upThis.noteHead);
 			ctx.resetTransform();
+		});
+		// Accidentals
+		let sharpPosX = new Uint16Array([82, 158, 488, 596, 740, 848]);
+		let sharpPosY = new Uint16Array([200, 146, 290, 236, 164, 110]);
+		let flatPosX = new Uint16Array([130, 230, 306, 560, 668, 704, 812, 920, 956]);
+		let flatPosY = new Uint16Array([164, 110, 92, 254, 200, 182, 128, 74, 56]);
+		this.#nadb.forEach((e, i) => {
+			if (i < 6) {
+				ctx.setTransform(0.03, 0, 0, -0.03, sharpPosX[i], sharpPosY[i]);
+				ctx.fillStyle = [inactivePixel, activePixel][e];
+				ctx.fill(upThis.sharpSign);
+				ctx.resetTransform();
+			}
+			else {
+				ctx.setTransform(0.03, 0, 0, -0.03, flatPosX[i - 6], flatPosY[i - 6]);
+				ctx.fillStyle = [inactivePixel, activePixel][e];
+				ctx.fill(upThis.flatSign);
+				ctx.resetTransform();
+			}
 		});
 		// Commit to old display buffer.
 		/*

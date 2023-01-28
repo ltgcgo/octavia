@@ -194,6 +194,8 @@ $e("#openMidi").addEventListener("click", async function () {
 		visualizer.reset();
 		visualizer.loadFile(file);
 		demoId = 0;
+		currentPerformance = undefined;
+		currentAnimation = undefined;
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -333,16 +335,20 @@ self.performance = currentPerformance;
 	perf.push(new PointEvent(5.7, generateSwitch(12)));
 	perf.push(new PointEvent(20, generateSwitch(1)));
 	perf.push(new PointEvent(89, generateSwitch(0)));
-	perf.push(new PointEvent(117, generateSwitch(6)));
+	perf.push(new PointEvent(117, generateSwitch(12)));
 	perf.fresh();
 	demoPerfs["KANDI8"] = perf;
 };
 {
 	// Straight to the Horizon
 	let perf = new TimedEvents();
-	perf.push(new PointEvent(7, generateSwitch(6)));
+	perf.push(new PointEvent(3.5, generateSwitch(13)));
+	perf.push(new PointEvent(7.5, generateSwitch(6)));
 	perf.push(new PointEvent(22, generateSwitch(5)));
 	perf.push(new PointEvent(80, generateSwitch(1)));
+	perf.push(new PointEvent(106, generateSwitch(0)));
+	perf.push(new PointEvent(148.5, generateSwitch(1)));
+	perf.push(new PointEvent(177, generateSwitch(5)));
 	perf.fresh();
 	demoPerfs["HORIZON"] = perf;
 };
@@ -411,7 +417,7 @@ self.performance = currentPerformance;
 	perf.push(new PointEvent(40, generateSwitch(3)));
 	perf.push(new PointEvent(42, generateSwitch(0)));
 	perf.push(new PointEvent(46, generateSwitch(7)));
-	perf.push(new PointEvent(47, generateSwitch(4)));
+	perf.push(new PointEvent(47.8, generateSwitch(4)));
 	perf.push(new PointEvent(62.5, generateSwitch(11)));
 	perf.push(new PointEvent(77.5, generateSwitch(2)));
 	perf.push(new PointEvent(90, generateSwitch(11)));
@@ -423,9 +429,11 @@ self.performance = currentPerformance;
 	perf.push(new PointEvent(154.5, generateSwitch(12)));
 	perf.push(new PointEvent(168, generateSwitch(11)));
 	perf.push(new PointEvent(188, generateSwitch(3)));
-	perf.push(new PointEvent(201, generateSwitch(11)));
+	perf.push(new PointEvent(210.5, generateSwitch(12)));
+	perf.push(new PointEvent(224, generateSwitch(11)));
 	perf.push(new PointEvent(237, generateSwitch(1)));
-	perf.push(new PointEvent(244, generateSwitch(3)));
+	perf.push(new PointEvent(244, generateSwitch(5)));
+	perf.push(new PointEvent(253.5, generateSwitch(12)));
 	perf.fresh();
 	demoPerfs["10DOREMI"] = perf;
 };
@@ -614,6 +622,8 @@ self.performance = currentPerformance;
 {
 	// MU128 demo
 	let perf = new TimedEvents();
+	// Disable native RS
+	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 0, 0, 14, 0]})); 
 	perf.push(new PointEvent(0, generateSwitch(0)));
 	perf.push(new PointEvent(1.6, generateSwitch(0)));
 	perf.push(new PointEvent(40.02, generateSwitch(48)));
