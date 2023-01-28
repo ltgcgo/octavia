@@ -80,6 +80,8 @@ ccAccepted = [
 ], // 96, 97, 120 to 127 all have special functions
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
+const korgDrums = [0, 16, 25, 40, 32, 64, 26, 48];
+
 let modeMap = {};
 modeIdx.forEach((e, i) => {
 	modeMap[e] = i;
@@ -2012,7 +2014,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#prg[part] = e - 101;
 					upThis.#cc[chOff + ccToPos[0]] = 56;
 				} else {
-					upThis.#prg[part] = [0, 16, 25, 40, 32, 64, 26, 48, ][e - 229] || 0;
+					upThis.#prg[part] = korgDrums[e - 229] || 0;
 					upThis.#cc[chOff + ccToPos[0]] = 62;
 				};
 			}, () => {
@@ -2114,14 +2116,21 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 104], (msg, track) => {
 			// X5D extended multi setup
 			upThis.switchMode("x5d", true);
-			korgFilter(msg, function (e, i) {
+			console.debug(msg);
+			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
 					let part = upThis.chRedir(Math.floor(i / 12), track, true),
 					chOff = part * allocated.cc;
 					switch (i % 12) {
 						case 0: {
 							// Program change
-							upThis.#prg[part] = e;
+							if (e < 128) {
+								upThis.#cc[chOff + ccToPos[0]] = 82;
+								upThis.#prg[part] = e;
+							} else {
+								upThis.#cc[chOff + ccToPos[0]] = 62;
+								upThis.#prg[part] = korgDrums[e - 128];
+							};
 							if (e > 0) {
 								upThis.#chActive[part] = 1;
 							};
@@ -2159,7 +2168,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						case 10: {
 							// Control filter
-							upThis.#cc[chOff] = (e & 3) ? 82 : 56;
+							//upThis.#cc[chOff] = (e & 3) ? 82 : 56;
 							break;
 						};
 						case 11: {
