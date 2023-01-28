@@ -60,7 +60,12 @@ let korgFilter = function (korgArr, iterator) {
 };
 
 let x5dSendLevel = function (sendParam) {
-	return Math.floor(sendParam * 14.2);
+	let res = Math.floor(sendParam * 14.2);
+	if (res < 128) {
+		return res;
+	} else {
+		return 0;
+	};
 };
 
 export {
