@@ -196,6 +196,9 @@ let RootDisplay = class extends CustomEventSource {
 		this.#midiState.addEventListener("channelreset", function (ev) {
 			upThis.dispatchEvent("channelreset");
 		});
+		this.#midiState.addEventListener("screen", function (ev) {
+			upThis.dispatchEvent("screen", ev.data);
+		});
 		this.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;

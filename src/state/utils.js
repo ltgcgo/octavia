@@ -49,7 +49,7 @@ let korgFilter = function (korgArr, iterator) {
 		e = korgArr[pointer];
 		e += unmasked;
 		if (pointer % 8 != 0) {
-			iterator(e, realData, korgArr, pointer);
+			iterator(e, realData, korgArr);
 			//console.debug(`Unmasked: ${dataMask} >> ${shifts} = ${e}`);
 			realData ++;
 		} else {

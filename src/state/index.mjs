@@ -2749,6 +2749,17 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 125], (msg) => {
 			// Backlight
 			upThis.dispatchEvent("backlight", ["green", "orange", "red", false, "yellow", "blue", "purple"][msg[0]] || "white");
+		}).add([66, 127], (msg) => {
+			// NS5R screen dump
+			let screenBuffer = new Uint8Array(5760);
+			korgFilter(msg, (e, i, a) => {
+				if (i < 720) {
+					for (let bi = 0; bi < 8; bi ++) {
+						screenBuffer[i * 8 + bi] = (e >> (7 - bi)) & 1;
+					};
+				};
+			});
+			upThis.dispatchEvent("screen", {type: "ns5r", data: screenBuffer});
 		}).add([76], (msg, track, id) => {
 			// N1R to NS5R redirector
 			upThis.#seAi.run([66, ...msg], track, id);
