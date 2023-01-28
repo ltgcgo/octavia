@@ -42,11 +42,19 @@ let gsChecksum = function (sequence) {
 
 // Why KORG adds a byte every seven bytes is a mistery to me.
 let korgFilter = function (korgArr, iterator) {
-	let realData = 0;
+	let realData = 0, dataMask = 0;
 	for (let pointer = 0; pointer < korgArr.length; pointer ++) {
+		let shifts = pointer % 8 - 1,
+		unmasked = (((dataMask >> shifts) & 1) << 7),
+		e = korgArr[pointer];
+		e += unmasked;
 		if (pointer % 8 != 0) {
-			iterator(korgArr[pointer], realData, korgArr);
+			iterator(e, realData, korgArr, pointer);
+			//console.debug(`Unmasked: ${dataMask} >> ${shifts} = ${e}`);
 			realData ++;
+		} else {
+			dataMask = korgArr[pointer];
+			//console.debug(`Overlay mask: ${dataMask}`);
 		};
 	};
 };
