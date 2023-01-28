@@ -1720,8 +1720,8 @@ let PsrDisplay = class extends RootDisplay {
 	#bmst = 0;
 	#bmex = 0;
 	#ch = 0;
-	// xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
-	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv");
+	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
@@ -1802,12 +1802,21 @@ let PsrDisplay = class extends RootDisplay {
 		});
 		ctx.resetTransform();
 	};
-	#renderDotMatrix(str, ctx, offsetX, offsetY, scaleX = 8, scaleY = 8, skew = -0.15) {
+	#renderDotMatrix(str, ctx, trueMode = false, offsetX, offsetY, scaleX = 8, scaleY = 8, skew = -0.15) {
 		let upThis = this;
-		str = str.slice(0, 8)
-		str = str.padEnd(8, " ");
+		let timeNow = Date.now();
 		ctx.setTransform(1, 0, skew, 1, 0, 0);
-		upThis.xgFont.getStr(str).forEach((e, i) => {
+		// Determine the used font
+		let targetFont = trueMode ? upThis.trueFont : upThis.xgFont;
+		let rollX = 0;
+		if (str.length > 8) {
+			rollX = Math.floor(timeNow / 125) % (2 + str.length);
+			// rollX = 0;
+			str = `${str}  ${str.slice(0, 8)}`
+			str = str.slice(rollX, rollX + 8);
+		};
+		str = str.padEnd(8, " ");
+		targetFont.getStr(str).forEach((e, i) => {
 			e.render((e, x, y) => {
 				ctx.fillStyle = e ? activePixel : inactivePixel;
 				ctx.fillRect(offsetX + (x + 6 * i) * scaleX, offsetY + y * scaleY, scaleX - 1, scaleY - 1);
@@ -1815,7 +1824,7 @@ let PsrDisplay = class extends RootDisplay {
 		});
 		ctx.resetTransform();
 	}
-	render(time, ctx, backlightColor = "#b7bfaf64", mixerView, tempoView, id = 0) {
+	render(time, ctx, backlightColor = "#b7bfaf64", mixerView, tempoView, id = 0, trueMode = false) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
@@ -1880,26 +1889,11 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fill(upThis.downbeatStar);
 		ctx.resetTransform();
 		// Keyboard display
-		let a = [
-			[228, 0],
-			[238.5, 1],
-			[250.3 , 0],
-			[263.5, 1],
-			[272.6, 0],
-			[295, 0],
-			[304.5, 1],
-			[317.3, 0],
-			[330, 1],
-			[339.5, 0],
-			[354, 1],
-			[361.8, 0]
-		];
 		// Reset the arrows
 		let arrowLeft = new Path2D("M199 349 L214 329 L214 369 Z"),
 		arrowRight = new Path2D("M1080 349 L1065 369 L1065 329 Z"),
 		arrowLeftFlag = false,
 		arrowRightFlag = false;
-		/*
 		let note;
 		// Main range
 		for (let i = 36; i < 97; i++) {
@@ -1921,56 +1915,6 @@ let PsrDisplay = class extends RootDisplay {
 				if (note == 0) note = 12;
 				this.#nkdb[i + 48] = 1;
 			}
-		}
-		*/
-		// Reset C7
-		ctx.fillStyle = inactivePixel;
-		ctx.fillRect(1036, 355, 14, 21);
-		let octave, note;
-		// Main range
-		for (let i = 36; i < 96; i++) {
-			octave = Math.floor(i / 12);
-			note = i % 12;
-			ctx.fillStyle = sum.chKeyPr[this.#ch]?.has(i) ? activePixel : inactivePixel;
-			a[note][1] ? ctx.fillRect(a[note][0] + 163 * (octave - 3), 321, 12, 26) : ctx.fillRect(a[note][0] + 163 * (octave - 3), 355, 14, 21);
-		}
-		// Lower octaves
-		for (let i = 0; i < 36; i++) {
-			octave = Math.floor(i / 12);
-			note = i % 12;
-			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				ctx.fillStyle = activePixel;
-				a[note][1] ? ctx.fillRect(a[note][0], 321, 12, 26) : ctx.fillRect(a[note][0], 355, 14, 21);
-				arrowLeftFlag = true;
-			}
-		}
-		// Higher octaves
-		for (let i = 97; i < 128; i++) {
-			if (i == 108 || i == 120) continue;
-			octave = Math.floor(i / 12);
-			note = i % 12;
-			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				ctx.fillStyle = activePixel;
-				a[note][1] ? ctx.fillRect(a[note][0] + 163 * 4, 321, 12, 26) : ctx.fillRect(a[note][0] + 163 * 4, 355, 14, 21);
-				arrowRightFlag = true;
-			}
-		}
-		// deal with C7 (96)
-		if (sum.chKeyPr[this.#ch]?.has(96)) {
-			ctx.fillStyle = activePixel;
-			ctx.fillRect(1036, 355, 14, 21);
-		}
-		// deal with C8 (108)
-		if (sum.chKeyPr[this.#ch]?.has(108)) {
-			ctx.fillStyle = activePixel;
-			ctx.fillRect(1036, 355, 14, 21);
-			arrowRightFlag = true;
-		}
-		// deal with C9 (120)
-		if (sum.chKeyPr[this.#ch]?.has(120)) {
-			ctx.fillStyle = activePixel;
-			ctx.fillRect(1036, 355, 14, 21);
-			arrowRightFlag = true;
 		}
 		// Render the arrows
 		ctx.fillStyle = arrowLeftFlag ? activePixel : inactivePixel;
@@ -2048,7 +1992,7 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillStyle = bottomOctaveFlag2 ? activePixel : inactivePixel;
 		ctx.fillText("15va+", 253, 244);
 		ctx.fillStyle = topOctaveFlag2 ? activePixel : inactivePixel;
-		ctx.fillText("15va+", 877, 40);
+		ctx.fillText("15va+", 874, 40);
 		// Temporary channel number display
 		this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
 		// Measure / tempo view
@@ -2064,8 +2008,8 @@ let PsrDisplay = class extends RootDisplay {
 			this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
 		}
 		if (timeNow <= sum.letter.expire) {
-			let letterDisp = sum.letter.text.trim().padEnd(8, " ");
-			this.#renderDotMatrix(letterDisp.slice(0, 8), ctx, 454, 32);
+			let letterDisp = sum.letter.text.trim();
+			this.#renderDotMatrix(letterDisp, ctx, trueMode, 454, 32);
 			if (mixerView) {
 				this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
 			}
@@ -2076,11 +2020,15 @@ let PsrDisplay = class extends RootDisplay {
 		else {
 			if (mixerView) {
 				this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
-				this.#renderDotMatrix(upThis.getChVoice(this.#ch).name, ctx, 454, 32);
+				this.#renderDotMatrix(upThis.getChVoice(this.#ch).name, ctx, trueMode, 454, 32);
 			}
 			else {
 				this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
-				this.#renderDotMatrix(upThis.songTitle || "Unknown", ctx, 454, 32);
+				let sngTtl = upThis.songTitle;
+				while (sngTtl.indexOf("  ") > -1) {
+					sngTtl = sngTtl.replaceAll("  ", " ");
+				};
+				this.#renderDotMatrix(sngTtl || "Unknown", ctx, trueMode, 454, 32);
 			}
 		}
 		// Side indicator
@@ -2150,8 +2098,7 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillText("ON", 430, 295);
 		ctx.fill(new Path2D("M482 296 L482 312 L462 304 Z"));
 		// Commit to display accordingly.
-		/*
-		let keyboardData = new Uint8Array([228, 238.5, 250.3, 263.5, 272.6, 295, 304.5, 317.3, 330, 339.5, 354, 361.8]);
+		let keyboardData = new Uint16Array([228, 238.5, 250.3, 263.5, 272.6, 295, 304.5, 317.3, 330, 339.5, 354, 361.8]);
 		this.#nkdb.forEach((e, i) => {
 			ctx.fillStyle = [inactivePixel, activePixel][e];
 			let octave = Math.floor(i / 12), note = i % 12;
@@ -2162,7 +2109,6 @@ let PsrDisplay = class extends RootDisplay {
 				ctx.fillRect(1036, 355, 14, 21);
 			}
 		});
-		*/
 		this.#nsdb.forEach((e, i) => {
 			if (i < 7) {
 				ctx.setTransform(1, 0, 0, 1, 100 + 36 * i, 200 - 18 * i);

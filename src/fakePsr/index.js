@@ -299,7 +299,7 @@ let renderThread = setInterval(function () {
 		if (currentAnimation && !visualizer.demoInfo) {
 			visualizer.demoInfo = currentAnimation;
 		};
-		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId);
+		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId, location.hash?.length > 1);
 		lastTime = curTime;
 	};
 }, 20);
@@ -618,6 +618,35 @@ self.performance = currentPerformance;
 	perf.push(new PointEvent(193, generateSwitch(0)));
 	perf.fresh();
 	demoPerfs["R-love"] = perf;
+};
+{
+	// The Musithm
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(2.5, generateSwitch(14)));
+	perf.push(new PointEvent(3.5, generateSwitch(3)));
+	perf.push(new PointEvent(30.5, generateSwitch(4)));
+	perf.push(new PointEvent(37.5, generateSwitch(3)));
+	perf.push(new PointEvent(78, generateSwitch(15)));
+	perf.fresh();
+	demoPerfs["TheMusithm"] = perf;
+};
+{
+	// EP Ballade
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateSwitch(1)));
+	perf.push(new PointEvent(5, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["12EP"] = perf;
+};
+{
+	// The Soul of DX
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0, generateSwitch(0)));
+	perf.push(new PointEvent(34, generateSwitch(13)));
+	perf.push(new PointEvent(62.5, generateSwitch(0)));
+	perf.push(new PointEvent(164, generateSwitch(13)));
+	perf.fresh();
+	demoPerfs["12SOULDX"] = perf;
 };
 {
 	// MU128 demo
