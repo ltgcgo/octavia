@@ -1904,16 +1904,15 @@ let PsrDisplay = class extends RootDisplay {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
 				arrowLeftFlag = true;
 				note = i % 12;
-				this.#nkdb[i] = 1;
+				this.#nkdb[note] = 1;
 			}
 		}
 		// Higher octaves
 		for (let i = 97; i < 128; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
 				arrowRightFlag = true;
-				note = i % 12;
-				if (note == 0) note = 12;
-				this.#nkdb[i + 48] = 1;
+				note = (i - 1) % 12 + 1;
+				this.#nkdb[note + 48] = 1;
 			}
 		}
 		// Render the arrows
