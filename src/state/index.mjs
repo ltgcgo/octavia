@@ -1995,8 +1995,56 @@ let OctaviaDevice = class extends CustomEventSource {
 			gsMiscSec(msg, upThis.chRedir(15, track, true));
 		});
 		// KORG X5DR SysEx section
-		this.#seAi.add([54, 76, 0], (msg, track) => {
-			// program dump
+		this.#seAi.add([54, 65], (msg, track) => {
+			// X5D multi parameters (part setup)
+			upThis.switchMode("x5d");
+			let key = (msg[1] << 7) + msg[0],
+			e = (msg[3] << 7) + msg[2],
+			part = upThis.chRedir(key & 15, track, true),
+			chOff = allocated.cc * part;
+			[() => {
+				// Program change
+				if (e < 1) {
+				} else if (e < 101) {
+					upThis.#prg[part] = e - 1;
+					upThis.#cc[chOff + ccToPos[0]] = 82;
+				} else if (e < 229) {
+					upThis.#prg[part] = e - 101;
+					upThis.#cc[chOff + ccToPos[0]] = 56;
+				} else {
+					upThis.#prg[part] = [0, 16, 25, 40, 32, 64, 26, 48, ][e - 229] || 0;
+					upThis.#cc[chOff + ccToPos[0]] = 62;
+				};
+			}, () => {
+				// Volume
+				upThis.#cc[chOff + ccToPos[7]] = e;
+			}, () => {
+				// Panpot
+				if (e < 31) {
+					upThis.#cc[chOff + ccToPos[10]] = Math.round((e - 15) * 4.2 + 64);
+				};
+			}, () => {
+				// Chorus
+				upThis.#cc[chOff + ccToPos[93]] = x5dSendLevel(e);
+			}, () => {
+				// Reverb
+				upThis.#cc[chOff + ccToPos[91]] = x5dSendLevel(e);
+			}, () => {
+				// Coarse tune
+				upThis.#rpn[part * allocated.rpn + 3] = (e > 8191 ? e - 16320 : 64 + e);
+			}, () => {
+				// Fine tune
+				upThis.#rpn[part * allocated.rpn + 1] = (e > 8191 ? e - 16320 : 64 + e);
+			}, () => {
+				// PB range
+				if (e > 0) {
+					upThis.#rpn[part * allocated.rpn] = e;
+				};
+			}, () => {
+				// program change filter
+			}][key >> 4]();
+		}).add([54, 76, 0], (msg, track) => {
+			// X5D program dump
 			upThis.switchMode("x5d", true);
 			let name = "", msb = 82, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
@@ -2030,7 +2078,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			upThis.userBank.load(voiceMap);
 		}).add([54, 77, 0], (msg, track) => {
-			// combi dump
+			// X5D combi dump
 			upThis.switchMode("x5d", true);
 			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
@@ -2059,8 +2107,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				lsb: 0
 			});
 			upThis.userBank.load(voiceMap);
+		}).add([54, 78], (msg, track) => {
+			// X5D mode switch
+			upThis.switchMode("x5d", true);
+			console.debug(`X5D mode switch: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]}`);
 		}).add([54, 104], (msg, track) => {
-			// extended multi setup
+			// X5D extended multi setup
 			upThis.switchMode("x5d", true);
 			korgFilter(msg, function (e, i) {
 				if (i < 192) {
@@ -2082,12 +2134,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						case 2: {
 							// Coarse tune
-							upThis.#rpn[part * allocated.rpn + 3] = (e > 127 ? 256 - e : 64 + e);
+							upThis.#rpn[part * allocated.rpn + 3] = (e > 127 ? e - 192 : 64 + e);
 							break;
 						};
 						case 3: {
 							// Fine tune
-							upThis.#rpn[part * allocated.rpn + 1] = (e > 127 ? 256 - e : 64 + e);
+							upThis.#rpn[part * allocated.rpn + 1] = (e > 127 ? e - 192 : 64 + e);
 							break;
 						};
 						case 4: {
