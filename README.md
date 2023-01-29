@@ -13,9 +13,9 @@
 * Wide support of bank mapping and bitmaps via [`midi-db`](https://github.com/ltgcgo/midi-db).
 
 ## Support
-Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](docs/target.md) for more information.
+Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](docs/support/target.md) for more information.
 
-To have a general idea of how MIDI is implemented, refer to the [MIDI Implementation Chart](docs/implementation.md) and [Supported SysEx instructions](docs/sysex.md).
+To have a general idea of how MIDI is implemented, refer to the [MIDI Implementation Chart](docs/support/implementation.md) and [Supported SysEx instructions](docs/support/sysex.md).
 
 ## API & more
 Please read the [documentation](docs/README.md).

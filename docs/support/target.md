@@ -42,8 +42,8 @@ For specific SysEx support range, refer to [Supported SysEx Instructions](./syse
 | CM-32LN | M    | -      |
 | CM-64   | M    | -      |
 | CM-500  | M    | -      |
-| LAPC-I  | M    | ✓      |
-| LAPC-N  | M    | ✓      |
+| LAPC-I  | M    | -      |
+| LAPC-N  | M    | -      |
 | RA-50   | M    | -      |
 | E-20    | M    | -      |
 
