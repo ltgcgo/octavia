@@ -1,4 +1,4 @@
-## Supported SysEx instructions
+## Supported SysEx Instructions
 * ✓: Supported
 * -: Partially supported
 * ✕: Not supported
