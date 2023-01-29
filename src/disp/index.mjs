@@ -1072,6 +1072,9 @@ let Ns5rDisplay = class extends RootDisplay {
 				for (let c = Math.floor(e / showReduction); c >= 0; c --) {
 					let pixX = (i % 32) * 4 + 12,
 					pixY = (i > 31 ? 32 : 39) - c;
+					if (trueMode) {
+						pixX ++;
+					};
 					this.#nmdb[pixY * 144 + pixX] = 1;
 					this.#nmdb[pixY * 144 + pixX + 1] = 1;
 					this.#nmdb[pixY * 144 + pixX + 2] = 1;
@@ -1122,8 +1125,8 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#renderParamBox(20 + xShift, sum.chContr[chOff + ccToPos[7]]);
 				this.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
 				this.#renderCompass(53 + (+trueMode) + xShift, 7, sum.chContr[chOff + ccToPos[10]]);
-				this.#renderParamBox(62 + 2 * (+trueMode) + xShift, sum.chContr[chOff + ccToPos[91]]);
-				this.#renderParamBox(75 + 2 * (+trueMode) + xShift, sum.chContr[chOff + ccToPos[93]]);
+				this.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[91]]);
+				this.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[93]]);
 				if (!trueMode) {
 					this.#renderParamBox(88, sum.chContr[chOff + ccToPos[74]]);
 				};

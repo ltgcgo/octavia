@@ -2112,7 +2112,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 78], (msg, track) => {
 			// X5D mode switch
 			upThis.switchMode("x5d", true);
-			console.debug(`X5D mode switch: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]}`);
+			console.debug(`X5D mode switch requested: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]} mode.`);
 		}).add([54, 104], (msg, track) => {
 			// X5D extended multi setup
 			upThis.switchMode("x5d", true);
