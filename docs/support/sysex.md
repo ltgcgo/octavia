@@ -1,3 +1,4 @@
+# SysEx Instructions
 ## Supported SysEx Instructions
 * ✓: Supported
 * -: Partially supported
