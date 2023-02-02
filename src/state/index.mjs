@@ -223,15 +223,15 @@ let OctaviaDevice = class extends CustomEventSource {
 		nOff: (part, note) => {
 			// Note off
 			let rawNote = part * 128 + note;
-			let polyIdx = this.#poly.indexOf(rawNote);
+			let polyIdx = this.#poly.lastIndexOf(rawNote);
 			if (polyIdx > -1) {
-				if (this.#cc[allocated.cc * part + ccToPos[64]] < 64) {
+				if (this.#cc[allocated.cc * part + ccToPos[64]] > 63) {
+					// Held by cc64
+					this.#polyState[polyIdx] = 4;
+				} else {
 					this.#poly[polyIdx] = 0;
 					this.#velo[rawNote] = 0;
 					this.#polyState[polyIdx] = 0;
-				} else {
-					// Held by cc64
-					this.#polyState[polyIdx] = 4;
 				};
 			};
 		},
@@ -239,7 +239,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Note on
 			let rawNote = part * 128 + note;
 			let place = 0;
-			while (this.#polyState[place] > 0) {
+			while (this.#polyState[place] > 0 && this.#poly[place] != rawNote) {
+				// If just by judging whether a polyphonic voice is occupied,
+				// "multi" mode is considered active.
+				// If "rawNote" is also taken into consideration,
+				// this will be "single" mode instead.
 				// 0: idle
 				// 1: attack
 				// 2: decay
