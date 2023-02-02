@@ -157,7 +157,7 @@
 		<tr>
 			<td>64</td>
 			<td>✓</td>
-			<td>Sustain (Hold)<br/><i>Store only</i></td>
+			<td>Sustain (Hold)</td>
 		</tr>
 		<tr>
 			<td>65</td>
