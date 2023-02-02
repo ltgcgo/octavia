@@ -150,6 +150,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#velo = new Uint8ClampedArray(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
 	#poly = new Uint16Array(allocated.pl); // 512 polyphony allowed
+	#polyState = new Uint8Array(allocated.pl); // State of each active voice.
 	#pitch = new Int16Array(allocated.ch); // Pitch for channels, from -8192 to 8191
 	#rawStrength = new Uint8Array(allocated.ch);
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
@@ -219,6 +220,18 @@ let OctaviaDevice = class extends CustomEventSource {
 	#metaSeq;
 	// Universal actions
 	#ua = {
+		nOff: (part, note, velo) => {
+			// Note off
+		},
+		nOn: (part, note, velo) => {
+			// Note on
+		},
+		nAt: (part, note, velo) => {
+			// Note/polyphonic aftertouch
+		},
+		cAt: (part, velo) => {
+			// Channel aftertouch
+		},
 		ano: (part) => {
 			// All notes off
 			// Current implementation uses the static velocity register
@@ -250,16 +263,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Set channel active
 			this.#chActive[part] = 1;
 			let rawNote = part * 128 + det.data[0];
-			if (det.data[1] > 0) {
+			let velocity = det.data[1];
+			if (velocity > 0) {
 				let place = 0;
 				while (this.#poly[place] > 0) {
 					place ++;
 				};
 				if (place < this.#poly.length) {
 					this.#poly[place] = rawNote;
-					this.#velo[rawNote] = det.data[1];
-					if (this.#rawStrength[part] < det.data[1]) {
-						this.#rawStrength[part] = det.data[1];
+					this.#velo[rawNote] = velocity;
+					if (this.#rawStrength[part] < velocity) {
+						this.#rawStrength[part] = velocity;
 						//console.info(`${part}: ${det.data[1]}`);
 					};
 				} else {
