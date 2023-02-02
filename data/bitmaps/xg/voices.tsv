@@ -59,7 +59,10 @@ Tweet	0c001f000f8007c007c007e083f063fe31fe18c00c800f801f00118021e040f0
 Violin	30007b007b84ffc4efc0f1fefffef1c0efc4ffc47b807b0030000000060107ff
 Whistle	028007c007c00fe00fe01ef01c7018301c701ef00fe00fe005c005c003800380
 Acou.Gtr	@NylonGtr
+Acou.Tom	@Taiko
 Agogo	@TnklBell
+AirChor.	@SquareLd
+Anal.Pad	@Strings1
 Anal.Str	@Strings1
 Atmosphr	@Ice Rain
 Bari.Sax	@Alto Sax
@@ -70,11 +73,13 @@ Big Strs	@Strings1
 Birds	@Tweet
 BirdTwit	@Tweet
 BowedPad	@NewAgePd
+BowGlass	@NewAgePd
 BrasBand	@Trombone
 BrasSect	@Trombone
 BrsSwell	@Trombone
 Bright	@Ice Rain
 BritePno	@GrandPno
+BX3 Orgn	@DrawOrgn
 CaliopLd	@SquareLd
 Cello	@Violin
 CelloEns	@Strings1
@@ -84,23 +89,28 @@ Choir	@SynVoice
 ChoirAah	@SynVoice
 ChoirPad	@NewAgePd
 ChrchOrg	@DrawOrgn
+ChrchPpe	@DrawOrgn
 Chrunchr	@OvrDrvGt
 ClassGtr	@NylonGtr
 CleanGtr	@OvrDrvGt
 ClickOrg	@DrawOrgn
 Contrbas	@Violin
 Crystal	@Ice Rain
+DeepBass	@Aco.Bass
+Digi.Pno	@ElPiano1
 Digi.Saw	@SquareLd
 Dist.Gtr	@OvrDrvGt
 Dulcimer	@Glocken
 Echoes	@Ice Rain
-El.Piano	@ElPiano1
 ElonMusk	@Tweet
 EuroPipe	@DrawOrgn
+Fantasia	@NewAgePd
 Fiddle	@Violin
 Fifth Ld	@SquareLd
 FngrBass	@Aco.Bass
 Fretless	@Aco.Bass
+FullOrgn	@DrawOrgn
+GhostPad	@NewAgePd
 Glocken	@Glocken
 Goblins	@Ice Rain
 GtrHarmo	@OvrDrvGt
@@ -110,6 +120,7 @@ HardTine	@EGrndPno
 HarpGlis	@Harp
 HnkyTonk	@GrandPno
 Jazz Gtr	@OvrDrvGt
+Jazzy Ba	@Aco.Bass
 JoyStick	@OvrDrvGt
 Killer B	@DrawOrgn
 MagicFlu	@Flute
@@ -117,12 +128,15 @@ Marcato	@Strings1
 Marimba	@Glocken
 Mega Syn	@SquareLd
 MelodTom	@Taiko
+MetalBel	@TnklBell
 MetalPad	@NewAgePd
 MonoLead	@SquareLd
+Musette	@Acordion
 MusicBox	@Glocken
 MutedGtr	@OvrDrvGt
 MutedTrp	@Trumpet
 New Tine	@ElPiano2
+NoizChif	@BrthNoiz
 Oboe	@Eng.Horn
 Orch.Hit	@Strings1
 PercOrgn	@DrawOrgn
@@ -134,6 +148,7 @@ PolySyPd	@NewAgePd
 Positive	@DrawOrgn
 ReedOrgn	@DrawOrgn
 RevCymbl	@TnklBell
+Rezzo4th	@SquareLd
 RockOn!!	@OvrDrvGt
 RockOrgn	@DrawOrgn
 Saw Lead	@SquareLd
@@ -151,15 +166,17 @@ St. Horn	@FrchHorn
 SteelDrm	@TnklBell
 SteelGtr	@NylonGtr
 Strings2	@Strings1
-SynBass1	@Aco.Bass
-SynBass2	@Aco.Bass
-Syn.Str1	@Strings1
-Syn.Str2	@Strings1
 SweepPad	@NewAgePd
 Swt Oboe	@Eng.Horn
+Syn Drum	@Taiko
+Syn. Str	@Strings1
+Syn.Str1	@Strings1
+Syn.Str2	@Strings1
+SynBass1	@Aco.Bass
+SynBass2	@Aco.Bass
 SynBras1	@Trombone
 SynBras2	@Trumpet
-Syn Drum	@Taiko
+SynthTom	@Taiko
 Tango	@TangoAcd
 TenorSax	@Alto Sax
 Transfms	@NewAgePd

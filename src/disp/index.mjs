@@ -60,7 +60,7 @@ let TuiDisplay = class extends RootDisplay {
 		};
 		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} ${curPoly.toString().padStart(3, "0")}:${this.#maxPoly.toString().padStart(3, "0")}/512 TSig:${sum.tSig[0]}/${sum.tSig[1]} Bar:${(sum.noteBar + 1).toString().padStart(3, "0")}/${Math.floor(sum.noteBeat) + 1} Tempo:${Math.floor(cramTempo)}.${Math.floor(cramTempo % 1 * 100).toString().padStart(2, "0")} Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
 		fields[1] = `Mode:${modeNames[sum.mode]} Title:${sum.title || "N/A"}`;
-		fields[2] = "Ch:VoiceNme#St VEM RCDB PP PiBd Pan : Note";
+		fields[2] = "Ch:VoiceNme#St VEM RCDB PPHS PiBd Pan : Note";
 		let line = 3, maxCh = 0;
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
@@ -68,7 +68,7 @@ let TuiDisplay = class extends RootDisplay {
 				let chOffset = i * ccToPos.length;
 				if (line < fields.length - 5 && i >= (self.minCh || 0)) {
 					let voiceName = upThis.getChVoice(i);
-					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]} ${sum.chContr[chOffset + ccToPos[65]] > 63 ? "O" : "X"}${map[sum.chContr[chOffset + ccToPos[5]] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
+					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]} ${sum.chContr[chOffset + ccToPos[65]] > 63 ? "O" : "X"}${map[sum.chContr[chOffset + ccToPos[5]] >> 1]}${"XO"[sum.chContr[chOffset + ccToPos[64]] >> 6]}${"XO"[sum.chContr[chOffset + ccToPos[66]] >> 6]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
 						if (e1 > 0) {
 							fields[line] += ` <span style="opacity:${Math.round(e1 / 1.27) / 100}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
@@ -347,7 +347,7 @@ let MuDisplay = class extends RootDisplay {
 				let voiceName = (upThis.getChVoice(this.#ch).name).slice(0, 8).padEnd(8, " ");
 				let bnkSel = (sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0");
 				if (upThis.getMode() == "xg") {
-					if ([80, 81, 82, 83, 96, 97, 98, 99].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
+					if ([80, 81, 82, 83, 84, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
 						bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
 						showLsb = true;
 					};
@@ -863,6 +863,8 @@ let ScDisplay = class extends RootDisplay {
 let Ns5rDisplay = class extends RootDisplay {
 	#omdb = new Uint8Array(5760); // Full display
 	#nmdb = new Uint8Array(5760); // Full display, but on commit
+	#dumpData;
+	#dumpExpire = 0;
 	#mode = "?";
 	#strength = new Uint8Array(64);
 	#ch = 0;
@@ -888,6 +890,13 @@ let Ns5rDisplay = class extends RootDisplay {
 			}[ev.data] || bgWhite;
 			this.#mode = ev.data;
 			this.#refreshed = true;
+		});
+		this.addEventListener("screen", (ev) => {
+			console.debug(ev);
+			if (ev.data.type == "ns5r") {
+				this.#dumpData = ev.data.data;
+				this.#dumpExpire = Date.now() + 1600;
+			};
 		});
 	};
 	setCh(ch) {
@@ -977,169 +986,178 @@ let Ns5rDisplay = class extends RootDisplay {
 			this.#ch = maxCh - 15 + (this.#ch & 15);
 		};
 		let chOff = this.#ch * ccToPos.length;
-		// Clear out the current working display buffer.
-		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
-		// Screen buffer write begin.
-		// Determine the used font
-		let targetFont = trueMode ? this.trueFont : this.xgFont;
-		// Show current channel
-		targetFont.getStr(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
-			let secX = i0 * 6 + 1;
-			e0.forEach((e1, i1) => {
-				let charX = i1 % 5,
-				charY = Math.floor(i1 / 5);
-				this.#nmdb[charY * 144 + secX + charX] = e1;
+		if (timeNow < this.#dumpExpire) {
+			this.#dumpData?.forEach((e, i) => {
+				this.#nmdb[i] = e;
 			});
-		});
-		// Show current pitch shift
-		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
-		targetFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
-			let secX = i0 * 6 + 1;
-			e0.forEach((e1, i1) => {
-				let charX = i1 % 5,
-				charY = Math.floor(i1 / 5) + 8;
-				this.#nmdb[charY * 144 + secX + charX] = e1;
+		} else {
+			// Clear out the current working display buffer.
+			this.#nmdb.forEach((e, i, a) => {a[i] = 0});
+			// Screen buffer write begin.
+			// Determine the used font
+			let targetFont = trueMode ? this.trueFont : this.xgFont;
+			// Show current channel
+			targetFont.getStr(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+				let secX = i0 * 6 + 1;
+				e0.forEach((e1, i1) => {
+					let charX = i1 % 5,
+					charY = Math.floor(i1 / 5);
+					this.#nmdb[charY * 144 + secX + charX] = e1;
+				});
 			});
-		});
-		// Render bank background
-		let bankFetched = upThis.getChVoice(this.#ch), bankInfo = bankFetched.sect;
-		for (let bankSect = 0; bankSect < 225; bankSect ++) {
-			let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
-			this.#nmdb[pixY * 144 + pixX] = 1;
-		};
-		targetFont.getStr(bankInfo).forEach((e0, i0) => {
-			let secX = i0 * 6 + 1;
-			e0.forEach((e1, i1) => {
-				let charX = i1 % 5,
-				charY = Math.floor(i1 / 5) + 16;
-				if (e1) {
-					this.#nmdb[charY * 144 + secX + charX] = 0;
-				};
+			// Show current pitch shift
+			let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
+			targetFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+				let secX = i0 * 6 + 1;
+				e0.forEach((e1, i1) => {
+					let charX = i1 % 5,
+					charY = Math.floor(i1 / 5) + 8;
+					this.#nmdb[charY * 144 + secX + charX] = e1;
+				});
 			});
-		});
-		// Render program info
-		let bankName = (bankFetched.name).slice(0, 10).padEnd(10, " ");
-		targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
-			let secX = i0 * 6 + 25;
-			e0.forEach((e1, i1) => {
-				let charX = i1 % 5,
-				charY = Math.floor(i1 / 5) + 16;
-				this.#nmdb[charY * 144 + secX + charX] = e1;
-			});
-		});
-		// Render current channel
-		targetFont.getStr(`${this.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
-			let secX = i0 * 6;
-			e0.forEach((e1, i1) => {
-				let charX = i1 % 5,
-				charY = Math.floor(i1 / 5) + 32;
-				this.#nmdb[charY * 144 + secX + charX] = e1;
-			});
-		});
-		// Strength calculation
-		sum.velo.forEach((e, i) => {
-			if (e >= this.#strength[i]) {
-				let diff = e - this.#strength[i];
-				this.#strength[i] += Math.ceil(diff * 0.8);
-			} else {
-				let diff = this.#strength[i] - e;
-				this.#strength[i] -= Math.ceil(diff / 10);
-			};
-		});
-		// Render channel strength
-		let showReduction = 22;
-		if (maxCh > 31) {
-			showReduction = 43;
-		};
-		this.#strength.forEach((e, i) => {
-			if (maxCh < 32 && i > 31) {
-				return;
-			};
-			for (let c = Math.floor(e / showReduction); c >= 0; c --) {
-				let pixX = (i % 32) * 4 + 12,
-				pixY = (i > 31 ? 32 : 39) - c;
+			// Render bank background
+			let bankFetched = upThis.getChVoice(this.#ch), bankInfo = bankFetched.sect;
+			for (let bankSect = 0; bankSect < 225; bankSect ++) {
+				let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
 				this.#nmdb[pixY * 144 + pixX] = 1;
-				this.#nmdb[pixY * 144 + pixX + 1] = 1;
-				this.#nmdb[pixY * 144 + pixX + 2] = 1;
 			};
-		});
-		// Render effect types
-		targetFont.getStr(trueMode ? "Fx A:001Rev/Cho" : "FxA:001Rev/Cho").forEach((e0, i0) => {
-			let lineChars = trueMode ? 8 : 7;
-			let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
-			secY = Math.floor(i0 / lineChars) * 8;
-			e0.forEach((e1, i1) => {
-				let charX = i1 % 5,
-				charY = Math.floor(i1 / 5) + secY;
-				this.#nmdb[charY * 144 + secX + charX] = e1;
+			targetFont.getStr(bankInfo).forEach((e0, i0) => {
+				let secX = i0 * 6 + 1;
+				e0.forEach((e1, i1) => {
+					let charX = i1 % 5,
+					charY = Math.floor(i1 / 5) + 16;
+					if (e1) {
+						this.#nmdb[charY * 144 + secX + charX] = 0;
+					};
+				});
 			});
-		});
-		// Render letter displays
-		if (timeNow < sum.letter.expire) {
-			let xShift = 19 + (+trueMode) * 3;
-			// White bounding box
-			for (let i = 0; i < 2000; i ++) {
-				let x = i % 100, y = Math.floor(i / 100);
-				// Top and bottom borders
-				if (
-					(y == 0 && x < 99) ||
-					(y == 18) ||
-					(y == 19 && x > 0)
-				) {
-					this.#nmdb[y * 144 + x + xShift] = 1;
+			// Render program info
+			let bankName = (bankFetched.name).slice(0, 10).padEnd(10, " ");
+			targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
+				let secX = i0 * 6 + 25;
+				e0.forEach((e1, i1) => {
+					let charX = i1 % 5,
+					charY = Math.floor(i1 / 5) + 16;
+					this.#nmdb[charY * 144 + secX + charX] = e1;
+				});
+			});
+			// Render current channel
+			targetFont.getStr(`${this.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
+				let secX = i0 * 6;
+				e0.forEach((e1, i1) => {
+					let charX = i1 % 5,
+					charY = Math.floor(i1 / 5) + 32;
+					this.#nmdb[charY * 144 + secX + charX] = e1;
+				});
+			});
+			// Strength calculation
+			sum.velo.forEach((e, i) => {
+				if (e >= this.#strength[i]) {
+					let diff = e - this.#strength[i];
+					this.#strength[i] += Math.ceil(diff * 0.8);
+				} else {
+					let diff = this.#strength[i] - e;
+					this.#strength[i] -= Math.ceil(diff / 10);
 				};
-				if (y > 0 && y < 18) {
-					this.#nmdb[y * 144 + x + xShift] = +(x < 1 || x > 97);
-				};
+			});
+			// Render channel strength
+			let showReduction = 22;
+			if (maxCh > 31) {
+				showReduction = 43;
 			};
-			// Actual text
-			targetFont.getStr(sum.letter.text).forEach((e0, i0) => {
-				let secX = (i0 % 16) * 6 + xShift + 2,
-				secY = Math.floor(i0 / 16) * 8 + 2;
+			this.#strength.forEach((e, i) => {
+				if (maxCh < 32 && i > 31) {
+					return;
+				};
+				for (let c = Math.floor(e / showReduction); c >= 0; c --) {
+					let pixX = (i % 32) * 4 + 12,
+					pixY = (i > 31 ? 32 : 39) - c;
+					if (trueMode) {
+						pixX ++;
+					};
+					this.#nmdb[pixY * 144 + pixX] = 1;
+					this.#nmdb[pixY * 144 + pixX + 1] = 1;
+					this.#nmdb[pixY * 144 + pixX + 2] = 1;
+				};
+			});
+			// Render effect types
+			targetFont.getStr(trueMode ? "Fx A:001Rev/Cho" : "FxA:001Rev/Cho").forEach((e0, i0) => {
+				let lineChars = trueMode ? 8 : 7;
+				let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
+				secY = Math.floor(i0 / lineChars) * 8;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + secY;
 					this.#nmdb[charY * 144 + secX + charX] = e1;
 				});
 			});
-		} else {
-			// Render params only when it's not covered
-			let xShift = trueMode ? 2 : 0;
-			this.#renderParamBox(20 + xShift, sum.chContr[chOff + ccToPos[7]]);
-			this.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
-			this.#renderCompass(53 + (+trueMode) + xShift, 7, sum.chContr[chOff + ccToPos[10]]);
-			this.#renderParamBox(62 + 2 * (+trueMode) + xShift, sum.chContr[chOff + ccToPos[91]]);
-			this.#renderParamBox(75 + 2 * (+trueMode) + xShift, sum.chContr[chOff + ccToPos[93]]);
-			if (!trueMode) {
-				this.#renderParamBox(88, sum.chContr[chOff + ccToPos[74]]);
-			};
-		};
-		// Render bitmap displays
-		if (timeNow < sum.bitmap.expire) {
-			// White bounding box
-			for (let i = 0; i < 777; i ++) {
-				let x = i % 37, y = Math.floor(i / 37);
-				let realX = x + 77 + (+trueMode), realY = y + 19;
-				// Top and bottom borders
-				if (
-					(y == 0 && x < 36) ||
-					(y == 19) ||
-					(y == 20 && x > 0)
-				) {
-					this.#nmdb[realY * 144 + realX] = 1;
+			// Render letter displays
+			if (timeNow < sum.letter.expire) {
+				let xShift = 19 + (+trueMode) * 3;
+				// White bounding box
+				for (let i = 0; i < 2000; i ++) {
+					let x = i % 100, y = Math.floor(i / 100);
+					// Top and bottom borders
+					if (
+						(y == 0 && x < 99) ||
+						(y == 18) ||
+						(y == 19 && x > 0)
+					) {
+						this.#nmdb[y * 144 + x + xShift] = 1;
+					};
+					if (y > 0 && y < 18) {
+						this.#nmdb[y * 144 + x + xShift] = +(x < 1 || x > 97);
+					};
 				};
-				if (y > 0 && y < 19) {
-					this.#nmdb[realY * 144 + realX] = +(x < 1 || x > 34);
+				// Actual text
+				targetFont.getStr(sum.letter.text).forEach((e0, i0) => {
+					let secX = (i0 % 16) * 6 + xShift + 2,
+					secY = Math.floor(i0 / 16) * 8 + 2;
+					e0.forEach((e1, i1) => {
+						let charX = i1 % 5,
+						charY = Math.floor(i1 / 5) + secY;
+						this.#nmdb[charY * 144 + secX + charX] = e1;
+					});
+				});
+			} else {
+				// Render params only when it's not covered
+				let xShift = trueMode ? 2 : 0;
+				this.#renderParamBox(20 + xShift, sum.chContr[chOff + ccToPos[7]]);
+				this.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
+				this.#renderCompass(53 + (+trueMode) + xShift, 7, sum.chContr[chOff + ccToPos[10]]);
+				this.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[91]]);
+				this.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[93]]);
+				if (!trueMode) {
+					this.#renderParamBox(88, sum.chContr[chOff + ccToPos[74]]);
 				};
 			};
-			// Actual bitmap
-			let colUnit = (sum.bitmap.bitmap.length == 512) ? 1 : 2;
-			for (let i = 0; i < 512; i += colUnit) {
-				let x = i & 31, y = i >> 5;
-				let realX = x + 79 + (+trueMode), realY = y + 21;
-				this.#nmdb[realY * 144 + realX] = sum.bitmap.bitmap[i / colUnit];
-				if (colUnit == 2) {
-					this.#nmdb[realY * 144 + realX + 1] = sum.bitmap.bitmap[i / colUnit];
+			// Render bitmap displays
+			if (timeNow < sum.bitmap.expire) {
+				// White bounding box
+				for (let i = 0; i < 777; i ++) {
+					let x = i % 37, y = Math.floor(i / 37);
+					let realX = x + 77 + (+trueMode), realY = y + 19;
+					// Top and bottom borders
+					if (
+						(y == 0 && x < 36) ||
+						(y == 19) ||
+						(y == 20 && x > 0)
+					) {
+						this.#nmdb[realY * 144 + realX] = 1;
+					};
+					if (y > 0 && y < 19) {
+						this.#nmdb[realY * 144 + realX] = +(x < 1 || x > 34);
+					};
+				};
+				// Actual bitmap
+				let colUnit = (sum.bitmap.bitmap.length == 512) ? 1 : 2;
+				for (let i = 0; i < 512; i += colUnit) {
+					let x = i & 31, y = i >> 5;
+					let realX = x + 79 + (+trueMode), realY = y + 21;
+					this.#nmdb[realY * 144 + realX] = sum.bitmap.bitmap[i / colUnit];
+					if (colUnit == 2) {
+						this.#nmdb[realY * 144 + realX + 1] = sum.bitmap.bitmap[i / colUnit];
+					};
 				};
 			};
 		};
