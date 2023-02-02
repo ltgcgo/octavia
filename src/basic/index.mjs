@@ -71,6 +71,9 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		return beat;
 	};
+	get device() {
+		return this.#midiState;
+	};
 	getTimeSig() {
 		return [this.#noteNomin, this.#noteDenom];
 	};

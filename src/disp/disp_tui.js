@@ -36,6 +36,9 @@ let TuiDisplay = class extends RootDisplay {
 	#maxPoly = 0;
 	constructor() {
 		super();
+		this.device.config = {
+			disableCc64: true
+		};
 		this.addEventListener("reset", () => {
 			this.#maxPoly = 0;
 		});
