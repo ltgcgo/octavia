@@ -82,3 +82,4 @@ Octavia will never become a reality without help from the following people.
 | Ε | Paul Lawley, Graham Lee, 小川恭範 | MU128 Demo | XG | MU128 | yanorei32 | Dump: Lumière Élevé<br/>Fix: JayB<br/>Software: ValleyBell |
 | Ζ | 森尾隆 | Old Techno | XG | PLG-150AN | MasterJace | |
 | Η | 森尾隆 | Rhythm&Blues | XG | PLG-150AN | MasterJace | |
+| Θ | TôBach | MIDI Massacre | GS | Microsoft GS Wavetable | TôBach | |
