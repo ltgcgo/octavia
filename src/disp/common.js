@@ -11,19 +11,10 @@ hexMap = "0123456789ABCDEF",
 map = "0123456789_aAbBcCdDeEfFgGhHiIjJ-kKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ",
 waveMap = ["-", "~", "+", "|"];
 
-const bgOrange = "#ffaa2264",
-bgGreen = "#aaff2264",
-bgWhite = "#b3d8de64",
-bgRed = "#ff798664";
-
 export {
 	noteNames,
 	noteRegion,
 	hexMap,
 	map,
-	waveMap,
-	bgOrange,
-	bgGreen,
-	bgWhite,
-	bgRed
+	waveMap
 };
