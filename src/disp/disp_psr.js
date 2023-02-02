@@ -5,6 +5,7 @@ import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
 import {
 	inactivePixel,
+	mediumPixel,
 	activePixel
 } from "./colour.js";
 
@@ -38,9 +39,6 @@ let PsrDisplay = class extends RootDisplay {
 	flatSign = new Path2D("M27 41l-1 -66v-11c0 -22 1 -44 4 -66c45 38 93 80 93 139c0 33 -14 67 -43 67c-31 0 -52 -30 -53 -63zM-15 -138l-12 595c8 5 18 8 27 8s19 -3 27 -8l-7 -345c25 21 58 34 91 34c52 0 89 -48 89 -102c0 -80 -86 -117 -147 -169c-15 -13 -24 -38 -45 -38 c-13 0 -23 11 -23 25z");
 	constructor() {
 		super();
-		this.device.config = {
-			disableCc64: true
-		};
 		let upThis = this;
 		this.addEventListener("mode", function (ev) {
 			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
@@ -198,24 +196,31 @@ let PsrDisplay = class extends RootDisplay {
 		let note;
 		// Main range
 		for (let i = 36; i < 97; i++) {
-			this.#nkdb[i - 36] = sum.chKeyPr[this.#ch]?.has(i);
-		}
+			let pixel = 0,
+			partInfo = sum.chKeyPr[this.#ch];
+			if (partInfo?.has(i)) {
+				pixel = partInfo.get(i).s < 4 ? 2 : 1;
+			};
+			this.#nkdb[i - 36] = pixel;
+		};
 		// Lower octaves
 		for (let i = 0; i < 36; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
 				arrowLeftFlag = true;
 				note = i % 12;
-				this.#nkdb[note] = 1;
-			}
-		}
+				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+				this.#nkdb[note] = Math.max(this.#nkdb[note], pixel);
+			};
+		};
 		// Higher octaves
 		for (let i = 97; i < 128; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
 				arrowRightFlag = true;
 				note = (i - 1) % 12 + 1;
-				this.#nkdb[note + 48] = 1;
-			}
-		}
+				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+				this.#nkdb[note + 48] = Math.max(this.#nkdb[note], pixel);
+			};
+		};
 		// Render the arrows
 		ctx.fillStyle = arrowLeftFlag ? activePixel : inactivePixel;
 		ctx.fill(arrowLeft);
@@ -232,7 +237,8 @@ let PsrDisplay = class extends RootDisplay {
 		// Main range
 		for (let i = 48; i < 85; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				this.#nsdb[(Math.floor(i / 12) - 4) * 7 + noteHeadPos[i % 12]] = 1;
+				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+				this.#nsdb[(Math.floor(i / 12) - 4) * 7 + noteHeadPos[i % 12]] = pixel;
 				if (isBlackKey[i % 12]) {
 					if (isBlackKey[i % 12] == 1) {
 						this.#nadb[(Math.floor(i / 12) - 4) * 2 + nadbIndex[i % 12]] = 1;
@@ -246,7 +252,8 @@ let PsrDisplay = class extends RootDisplay {
 		// Lower octaves
 		for (let i = 0; i < 48; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				this.#nsdb[noteHeadPos[i % 12]] = 1;
+				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+				this.#nsdb[noteHeadPos[i % 12]] = Math.max(this.#nsdb[noteHeadPos[i % 12]], pixel);
 				if (Math.floor(i / 12) == 3) {
 					bottomOctaveFlag1 = true;
 				}
@@ -266,7 +273,8 @@ let PsrDisplay = class extends RootDisplay {
 		// Higher octaves
 		for (let i = 85; i < 128; i++) {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				this.#nsdb[14 + noteHeadPos[(i - 1) % 12 + 1]] = 1;
+				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+				this.#nsdb[14 + noteHeadPos[(i - 1) % 12 + 1]] = Math.max(this.#nsdb[14 + noteHeadPos[(i - 1) % 12 + 1]], pixel);
 				if (Math.floor((i - 1) / 12) == 7) {
 					topOctaveFlag1 = true;
 				}
@@ -400,7 +408,7 @@ let PsrDisplay = class extends RootDisplay {
 		// Commit to display accordingly.
 		let keyboardData = new Uint16Array([228, 238.5, 250.3, 263.5, 272.6, 295, 304.5, 317.3, 330, 339.5, 354, 361.8]);
 		this.#nkdb.forEach((e, i) => {
-			ctx.fillStyle = [inactivePixel, activePixel][e];
+			ctx.fillStyle = [inactivePixel, mediumPixel, activePixel][e];
 			let octave = Math.floor(i / 12), note = i % 12;
 			if (i != 60) {
 				isBlackKey[note] ? ctx.fillRect(keyboardData[note] + 163 * octave, 321, 12, 26) : ctx.fillRect(keyboardData[note] + 163 * octave, 355, 14, 21);
@@ -416,7 +424,7 @@ let PsrDisplay = class extends RootDisplay {
 			else {
 				ctx.setTransform(1, 0, 0, 1, 538 + 36 * (i - 7), 290 - 18 * (i - 7));
 			}
-			ctx.fillStyle = [inactivePixel, activePixel][e];
+			ctx.fillStyle = [inactivePixel, mediumPixel, activePixel][e];
 			ctx.fill(upThis.noteHead);
 			ctx.resetTransform();
 		});
