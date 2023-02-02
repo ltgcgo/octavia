@@ -220,17 +220,71 @@ let OctaviaDevice = class extends CustomEventSource {
 	#metaSeq;
 	// Universal actions
 	#ua = {
-		nOff: (part, note, velo) => {
+		nOff: (part, note) => {
 			// Note off
+			let rawNote = part * 128 + note;
+			let polyIdx = this.#poly.indexOf(rawNote);
+			if (polyIdx > -1) {
+				if (this.#cc[allocated.cc * part + ccToPos[64]] < 64) {
+					this.#poly[polyIdx] = 0;
+					this.#velo[rawNote] = 0;
+					this.#polyState[polyIdx] = 0;
+				} else {
+					// Held by cc64
+					this.#polyState[polyIdx] = 4;
+				};
+			};
 		},
 		nOn: (part, note, velo) => {
 			// Note on
+			let rawNote = part * 128 + note;
+			let place = 0;
+			while (this.#polyState[place] > 0) {
+				// 0: idle
+				// 1: attack
+				// 2: decay
+				// 3: sustain
+				// 4: hold
+				// 5: sostenuto sustain
+				// 6: sostenuto hold
+				// 7: release
+				place ++;
+			};
+			if (place < allocated.pl) {
+				this.#poly[place] = rawNote;
+				this.#velo[rawNote] = velo;
+				this.#polyState[place] = 3;
+				if (this.#rawStrength[part] < velo) {
+					this.#rawStrength[part] = velo;
+				};
+				//console.debug(place);
+			} else {
+				console.error("Polyphony exceeded.");
+			};
 		},
 		nAt: (part, note, velo) => {
 			// Note/polyphonic aftertouch
 		},
 		cAt: (part, velo) => {
 			// Channel aftertouch
+		},
+		hoOf: (part) => {
+			// Scan and turn off all notes held by cc64
+			this.#polyState.forEach((e, i) => {
+				if (e == 4) {
+					// Held by cc64
+					let rawNote = this.#poly[i];
+					let channel = rawNote >> 7;
+					if (part == channel) {
+						this.#polyState[i] = 0;
+						this.#poly[i] = 0;
+						this.#velo[rawNote] = 0;
+					};
+				};
+			});
+		},
+		soOf: (part) => {
+			// Scan and turn off all notes held by cc66
 		},
 		ano: (part) => {
 			// All notes off
@@ -250,41 +304,20 @@ let OctaviaDevice = class extends CustomEventSource {
 		8: function (det) {
 			let part = det.channel;
 			// Note off, velocity should be ignored.
-			let rawNote = part * 128 + det.data[0];
-			let polyIdx = this.#poly.indexOf(rawNote);
-			if (polyIdx > -1) {
-				this.#poly[polyIdx] = 0;
-				this.#velo[rawNote] = 0;
-			};
+			let rawNote = det.data[0];
+			this.#ua.nOff(part, rawNote);
 		},
 		9: function (det) {
 			let part = det.channel;
 			// Note on, but should be off if velocity is 0.
 			// Set channel active
 			this.#chActive[part] = 1;
-			let rawNote = part * 128 + det.data[0];
+			let rawNote = det.data[0];
 			let velocity = det.data[1];
 			if (velocity > 0) {
-				let place = 0;
-				while (this.#poly[place] > 0) {
-					place ++;
-				};
-				if (place < this.#poly.length) {
-					this.#poly[place] = rawNote;
-					this.#velo[rawNote] = velocity;
-					if (this.#rawStrength[part] < velocity) {
-						this.#rawStrength[part] = velocity;
-						//console.info(`${part}: ${det.data[1]}`);
-					};
-				} else {
-					console.error("Polyphony exceeded.");
-				};
+				this.#ua.nOn(part, rawNote, velocity);
 			} else {
-				let polyIdx = this.#poly.indexOf(rawNote);
-				if (polyIdx > -1) {
-					this.#poly[polyIdx] = 0;
-					this.#velo[rawNote] = 0;
-				};
+				this.#ua.nOff(part, rawNote);
 			};
 		},
 		10: function (det) {
@@ -479,6 +512,17 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else {
 							//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
 						};
+						break;
+					};
+					case 64: {
+						// cc64: hold
+						if (det.data[1] < 64) {
+							this.#ua.hoOf(part);
+						};
+						break;
+					};
+					case 66: {
+						// cc66: sostenuto
 						break;
 					};
 					case 98:
