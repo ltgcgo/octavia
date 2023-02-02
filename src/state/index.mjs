@@ -225,7 +225,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let rawNote = part * 128 + note;
 			let polyIdx = this.#poly.lastIndexOf(rawNote);
 			if (polyIdx > -1) {
-				if (this.#cc[allocated.cc * part + ccToPos[64]] > 63) {
+				if (this.#cc[allocated.cc * part + ccToPos[64]] > 63 && !this.config?.disableCc64) {
 					// Held by cc64
 					this.#polyState[polyIdx] = 4;
 				} else {
