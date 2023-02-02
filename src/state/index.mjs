@@ -2690,11 +2690,11 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case (p == 11): {
-						msb = e;
+						msb = e & 127;
 						break;
 					};
 					case (p == 12): {
-						lsb = e;
+						lsb = e & 127;
 						break;
 					};
 					case (p == 13): {
@@ -2709,6 +2709,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				msb: 80,
 				lsb: 0
 			});
+			console.debug(voiceMap);
 			upThis.userBank.load(voiceMap);
 		}).add([66, 55], (msg, track) => {
 			// All combination dump
