@@ -287,6 +287,16 @@ let getSgKana = function (seq) {
 	return target;
 };
 
+let getVlCtrlSrc = function (ctrlNo) {
+	if (!ctrlNo) {
+		return "off";
+	} else if (ctrlNo < 96) {
+		return `cc${ctrlNo}`;
+	} else {
+		return ["aftertouch", "velocity", "pitch bend"][ctrlNo - 96];
+	};
+};
+
 export {
 	xgEffType,
 	xgPartMode,
@@ -296,5 +306,6 @@ export {
 	xgLfoFreq,
 	getSgKana,
 	getXgRevTime,
-	getXgDelayOffset
+	getXgDelayOffset,
+	getVlCtrlSrc
 };

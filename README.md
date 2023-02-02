@@ -12,31 +12,13 @@
 * No modification required to run in Tor Browser, Bromite and LibreWolf.
 * Wide support of bank mapping and bitmaps via [`midi-db`](https://github.com/ltgcgo/midi-db).
 
-## Supported standard/devices
-_See the [MIDI Implementation Chart](docs/implementation.md) and [Supported SysEx instructions](docs/sysex.md)_
-* Roland MT-32
-* KORG AG-10
-* YAMAHA TG (no SysEx)
-* YAMAHA XG
-* YAMAHA PLG-150AN (no SysEx)
-* YAMAHA PLG-150AP (no SysEx)
-* YAMAHA PLG-150DR/PC (no SysEx)
-* YAMAHA PLG-150DX (no SysEx)
-* YAMAHA PLG-150PF (no SysEx)
-* YAMAHA PLG-150VL (no SysEx)
-* YAMAHA PLG-100SG
-* Roland GS
-* KORG 05R/W (no SysEx)
-* KORG X5DR
-* KORG NS5R, KORG NX5R, KORG N1R
-* KAWAI GMega
-* KAWAI GMega LX
-* AKAI SG01k
-* CASIO GZ-50M
-* ~~ALESIS NanoSynth (no SysEx)~~
+## Support
+Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](docs/support/target.md) for more information.
+
+To have a general idea of how MIDI is implemented, refer to the [MIDI Implementation Chart](docs/support/implementation.md) and [Supported SysEx instructions](docs/support/sysex.md).
 
 ## API & more
-Please read the [documentation](docs/README.md).
+Please read the [documentation](docs/index.md).
 
 ## Examples
 Please check out the `/examples/` directory.
