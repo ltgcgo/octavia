@@ -213,6 +213,11 @@ let VoiceBank = class {
 		if (sect.length < 4) {
 			sect += `${(useLsb ? lsb : msb) - baseShift}`.padStart(4 - sect.length, "0");
 		};
+		// Hijack XG MU2000 sampler
+		if (mode == "xg" && msb == 16) {
+			bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
+			ending = " ";
+		};
 		// Bank read
 		while (!(bankName?.length >= 0)) {
 			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
@@ -235,10 +240,7 @@ let VoiceBank = class {
 								ending = "!";
 							};
 						} else if (msb < 64) {
-							if (mode == "xg" && msb == 16) {
-									bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
-									ending = " ";
-							} else if (args[0] == 0) {
+							if (args[0] == 0) {
 								args[2] = 0;
 								ending = "^";
 							} else {

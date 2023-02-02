@@ -400,6 +400,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Mono mode
 					this.#mono[part] = 1;
 					this.#ua.ano(part);
+					console.debug(`CH${part + 1} is now in mono mode.`);
 					return;
 					break;
 				};
@@ -407,6 +408,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Poly mode
 					this.#mono[part] = 0;
 					this.#ua.ano(part);
+					console.debug(`CH${part + 1} is now in poly mode.`);
 					return;
 					break;
 				};
@@ -527,6 +529,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case 66: {
 						// cc66: sostenuto
+						console.debug(`Sostenuto pedal: ${det.data[1]}`);
 						break;
 					};
 					case 98:
