@@ -239,6 +239,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Note on
 			let rawNote = part * 128 + note;
 			let place = 0;
+			if (this.#mono[part]) {
+				// Shut all previous notes off in mono mode
+				this.#ua.ano(part);
+			};
 			while (this.#polyState[place] > 0 && this.#poly[place] != rawNote) {
 				// If just by judging whether a polyphonic voice is occupied,
 				// "multi" mode is considered active.
@@ -294,11 +298,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			// All notes off
 			// Current implementation uses the static velocity register
 			this.#poly.forEach((e, i, a) => {
-				let ch = e >> 7;
+				let ch = e >> 7, no = e & 127;
 				if (e == 0 && this.#velo[0] == 0) {
 				} else if (ch == part) {
-					this.#velo[e] = 0;
-					a[i] = 0;
+					this.#ua.nOff(ch, no);
 				};
 			});
 		}
@@ -400,7 +403,6 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Mono mode
 					this.#mono[part] = 1;
 					this.#ua.ano(part);
-					console.debug(`CH${part + 1} is now in mono mode.`);
 					return;
 					break;
 				};
@@ -408,7 +410,6 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Poly mode
 					this.#mono[part] = 0;
 					this.#ua.ano(part);
-					console.debug(`CH${part + 1} is now in poly mode.`);
 					return;
 					break;
 				};
