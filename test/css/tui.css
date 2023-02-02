@@ -43,5 +43,5 @@ span.letter {
 }
 
 .state-hold {
-	color: red;
+	text-decoration: line-through;
 }
