@@ -36,9 +36,6 @@ let TuiDisplay = class extends RootDisplay {
 	#maxPoly = 0;
 	constructor() {
 		super();
-		this.device.config = {
-			disableCc64: true
-		};
 		this.addEventListener("reset", () => {
 			this.#maxPoly = 0;
 		});
@@ -65,8 +62,8 @@ let TuiDisplay = class extends RootDisplay {
 					let voiceName = upThis.getChVoice(i);
 					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]} ${sum.chContr[chOffset + ccToPos[65]] > 63 ? "O" : "X"}${map[sum.chContr[chOffset + ccToPos[5]] >> 1]}${"XO"[sum.chContr[chOffset + ccToPos[64]] >> 6]}${"XO"[sum.chContr[chOffset + ccToPos[66]] >> 6]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
-						if (e1 > 0) {
-							fields[line] += ` <span style="opacity:${Math.round(e1 / 1.27) / 100}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
+						if (e1.v > 0) {
+							fields[line] += ` <span style="opacity:${Math.round(e1.v / 1.27) / 100}" class="${{4: "state-hold"}[e1.s] || ""}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
 						};
 					});
 					line ++;

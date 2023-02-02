@@ -251,7 +251,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				// 0: idle
 				// 1: attack
 				// 2: decay
-				// 3: sustain
+				// 3: sustain (active)
 				// 4: hold
 				// 5: sostenuto sustain
 				// 6: sostenuto hold
@@ -726,11 +726,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Return all pressed keys with velocity in a channel
 		let notes = new Map();
 		let upThis = this;
-		this.#poly.forEach(function (e) {
+		upThis.#poly.forEach(function (e, i) {
 			let realCh = Math.floor(e / 128),
 			realNote = e % 128;
 			if (channel == realCh && upThis.#velo[e] > 0) {
-				notes.set(realNote, upThis.#velo[e]);
+				notes.set(realNote, {
+					v: upThis.#velo[e], // Short for velocity
+					s: upThis.#polyState[i] // Short for state
+				});
 			};
 		});
 		return notes;

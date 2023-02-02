@@ -40,4 +40,8 @@ span.letter {
 	color: #fff;
 	white-space: pre-wrap;
 	display: inline-block;
-};
+}
+
+.state-hold {
+	color: red;
+}
