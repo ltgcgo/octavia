@@ -10,17 +10,88 @@ import {
 	SimpleMidiEventEmitter
 } from "../bridge/index.mjs";
 
+let globalAudioCtx;
+let getGAC = function () {
+	if (!globalAudioCtx) {
+		globalAudioCtx = new AudioContext();
+	};
+};
+let switchList = function (list, index) {
+	list?.forEach((e, i) => {
+		if (i == index) {
+			e.classList.on("active");
+		} else {
+			e.classList.off("active");
+		};
+	});
+};
+
 let inPortMap = {};
+
+let activeIn, activeInPort = 0, activeOut, activeOutPort = 0;
+
+let midiInBox = $e("#midi-in-list"), midiOutBox = $e("#midi-out-list");
+let midiInSw = $e(".actor-port-in"), midiOutSw = $e(".actor-port-out");
+let midiInSel = $a(".selector-port-in"), midiOutSel = $a(".selector-port-out");
+let portInList = [], portOutList = [];
+
+let refreshPortIn = function () {
+	while (portInList > 0) {
+		portInList.pop().remove();
+	};
+	midiAccess.inputs.forEach((port, id) => {
+		let midin = document.createElement("li");
+		midin.innerText = port.name;
+		midin.id = `mw-in-${id}`;
+		midin.setAttribute("mw-port-id", id);
+		midin.addEventListener("click", inputSel);
+		midiInBox.appendChild(midin);
+		portInList.push(midin);
+	});
+};
 
 let inputConv = function (ev) {
 	midiLine.postMessage(toJson(ev.data, inPortMap[ev.target.id]));
 };
-let inputConn = function () {
-	let inputPort = midiAccess.inputs.get(this.getAttribute("mw-port-id"));
-	inPortMap[inputPort.id] = 0;
-	inputPort.open();
-	inputPort.addEventListener("midimessage", inputConv);
+let inputSel = function () {
+	activeIn = midiAccess.inputs.get(this.getAttribute("mw-port-id"));
+	midiInSw.innerText = activeIn.connection == "closed" ? "Closed" : "Opened";
+	if (inPortMap[activeIn.id] || activeIn.connection == "open") {
+		switchList(midiInSel, inPortMap[activeIn.id]);
+	};
+	portInList.forEach((e) => {
+		let elId = e.getAttribute("mw-port-id");
+		if (elId == activeIn.id) {
+			e.classList.on("active");
+		} else {
+			e.classList.off("active");
+		};
+	});
 };
+midiInSw.addEventListener("click", function () {
+	if (activeIn.connection == "closed") {
+		activeIn.open();
+		inPortMap[activeIn.id] = activeInPort;
+		activeIn.addEventListener("midimessage", inputConv);
+		midiLine.postMessage({
+			type: 255,
+			meta: 32,
+			track: 240 + activeInPort,
+			data: activeInPort
+		});
+		midiInSw.innerText = "Opened";
+	} else {
+		activeIn.close();
+		activeIn.removeEventListener("midimessage", inputConv);
+		midiInSw.innerText = "Closed";
+	};
+});
+midiInSel.forEach((e, i) => {
+	e.addEventListener("click", function () {
+		activeInPort = i;
+		switchList(midiInSel, i);
+	});
+});
 
 (async function () {
 	self.midiAccess = await navigator.requestMIDIAccess({"sysex": true, "software": true});
@@ -28,18 +99,10 @@ let inputConn = function () {
 	self.toJson = toJson;
 	self.MEE = SimpleMidiEventEmitter;
 	self.inBridge = getBridge();
-	let midiInBox = $e("#midi-in-list"), midiOutBox = $e("#midi-out-list");
 	midiAccess.addEventListener("statechange", (ev) => {
 		console.debug(ev.port);
 	});
-	midiAccess.inputs.forEach((port, id) => {
-		let midin = document.createElement("li");
-		midin.innerText = port.name;
-		midin.id = `mw-in-${id}`;
-		midin.setAttribute("mw-port-id", id);
-		midin.addEventListener("click", inputConn);
-		midiInBox.appendChild(midin);
-	});
+	refreshPortIn();
 	midiAccess.outputs.forEach((port, id) => {
 		let midout = document.createElement("li");
 		midout.innerText = port.name;
