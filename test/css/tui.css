@@ -6,11 +6,6 @@ p {
 	margin: 0.2em;
 }
 
-div {
-	margin: 0.8em;
-	cursor: default;
-}
-
 b[class], b[id^=open] {
 	cursor: pointer;
 }
@@ -24,6 +19,11 @@ li[id^=mw-in-], li[id^=mw-out-] {
 }
 li.active {
 	text-decoration: underline;
+}
+
+div.section {
+	margin: 0.8em;
+	cursor: default;
 }
 
 div#display {
