@@ -182,6 +182,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
 	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
+	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	chRedir(part, track, noConquer) {
 		if (this.#trkAsReq[track]) {
 			// Allow part assigning via meta
@@ -834,6 +835,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	init(type = 0) {
 		// Type 0 is full reset
+		// Type 1 is almost-full reset
 		// Full reset, except the loaded banks
 		this.dispatchEvent("mode", "?");
 		this.#mode = 0;
@@ -866,8 +868,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		this.buildRchTree();
 		// Reset channel redirection
-		this.#trkRedir.fill(0);
-		this.#trkAsReq.fill(0);
+		if (type == 0) {
+			this.#trkRedir.fill(0);
+			this.#trkAsReq.fill(0);
+		};
 		// Channel 10 to drum set
 		this.#cc[allocated.cc * 9] = drumMsb[0];
 		this.#cc[allocated.cc * 25] = drumMsb[0];
@@ -929,6 +933,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (drumMsb.indexOf(this.#cc[ch * allocated.cc]) > -1) {
 						this.#cc[ch * allocated.cc] = drumMsb[idx];
 					};
+					this.initOnReset && this.#ua.ano(ch);
+				};
+				if (this.initOnReset) {
+					this.init(1);
 				};
 				switch (idx) {
 					case modeMap.mt32: {
