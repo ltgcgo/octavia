@@ -6,13 +6,21 @@ p {
 	margin: 0.2em;
 }
 
+div {
+	margin: 0.8em;
+}
+
 b[class], b[id^=open] {
-	cursor: default;
+	cursor: pointer;
 }
 b.active {
 	outline: 2px solid;
 	padding: 0 2px;
 }
+
+li[id^=mw-in-], li[id^=mw-out-] {
+	cursor: pointer;
+};
 
 div#display {
 	font-size: 16px;
@@ -44,4 +52,7 @@ span.letter {
 
 .state-hold {
 	text-decoration: line-through;
+}
+.state-active {
+	color: green;
 }
