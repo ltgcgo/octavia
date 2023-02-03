@@ -68,6 +68,7 @@ stDemo.forEach(function (e, i, a) {
 			tuiVis.switchMode(demoModes[i]);
 		};
 		stDemo.to(i);
+		tuiVis.device.initOnReset = false;
 	});
 });
 
@@ -102,6 +103,7 @@ $e("#openMidi").addEventListener("click", async function () {
 		stDemo.to(-1);
 		tuiVis.reset();
 		tuiVis.loadFile(file);
+		tuiVis.device.initOnReset = false;
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -123,6 +125,7 @@ midwIndicator.addEventListener("click", function () {
 	tuiVis.reset();
 	useMidiBus = true;
 	midwIndicator.classList.on("active");
+	tuiVis.device.initOnReset = true;
 });
 
 // Get the canvas
@@ -185,6 +188,7 @@ getBridge().addEventListener("message", function (ev) {
 	if (useMidiBus) {
 		tuiVis.sendCmd(ev.data);
 	};
+	//console.debug(ev.data);
 });
 
 addEventListener("resize", function () {

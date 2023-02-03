@@ -75,7 +75,7 @@ midiInSw.addEventListener("click", function () {
 		activeIn.addEventListener("midimessage", inputConv);
 		midiLine.postMessage({
 			type: 255,
-			meta: 32,
+			meta: 33,
 			track: 240 + activeInPort,
 			data: activeInPort
 		});
