@@ -10,6 +10,84 @@
 </head>
 <body>
 	<p>
+		<div>
+			MIDI In:
+			<b class="selector-port-in active">1</b>
+			<b class="selector-port-in">2</b>
+			<b class="selector-port-in">3</b>
+			<b class="selector-port-in">4</b>
+			<b class="selector-port-in">5</b>
+			<b class="selector-port-in">6</b>
+			<b class="selector-port-in">7</b>
+			<b class="selector-port-in">8</b>
+			<b class="actor-port-in">CLOSED</b>
+		</div>
+		<div>
+			<ul id="midi-in-list"></ul>
+		</div>
+	</p>
+	<p>
+		<div>
+			MIDI Out:
+			<b class="selector-port-out active">1</b>
+			<b class="selector-port-out">2</b>
+			<b class="selector-port-out">3</b>
+			<b class="selector-port-out">4</b>
+			<b class="selector-port-out">5</b>
+			<b class="selector-port-out">6</b>
+			<b class="selector-port-out">7</b>
+			<b class="selector-port-out">8</b>
+			<b class="actor-port-out">CLOSED</b>
+		</div>
+		<div>
+			<ul id="midi-out-list"></ul>
+		</div>
+	</p>
+	<p>
+		Translation settings:
+		<div>
+			NRPN/CC:
+			<b class="conf-nrpncc" title="nc-t">THRU</b>,
+			<b class="conf-nrpncc" title="nc-n">NRPN</b>,
+			<b class="conf-nrpncc active" title="nc-c">CC</b>.
+			PLG base bank polyfill:
+			<b class="conf-plg" title="plg-an">AN</b>
+			<b class="conf-plg" title="plg-ap">AP</b>
+			<b class="conf-plg" title="plg-dr">DR</b>
+			<b class="conf-plg" title="plg-dx">DX</b>
+			<b class="conf-plg" title="plg-pc">PC</b>
+			<b class="conf-plg" title="plg-pf">PF</b>
+			<b class="conf-plg" title="plg-vl">VL</b>
+			<b class="conf-plg" title="plg-sg">SG</b>.
+		</div>
+		<div>
+			Target:
+			<b class="conf-mode active" title="?">Thru</b>,
+			<b class="conf-mode" title="gm">GM</b>,
+			<b class="conf-mode" title="gs">GS</b>,
+			<b class="conf-mode" title="xg">XG</b>,
+			<b class="conf-mode" title="g2">GM2</b>,
+			<b class="conf-mode" title="mt32">MT-32</b>,
+			<b class="conf-mode" title="ns5r">NS5R</b>,
+			<b class="conf-mode" title="ag10">AG-10</b>,
+			<b class="conf-mode" title="05rw">05R/W</b>,
+			<b class="conf-mode" title="x5d">X5D</b>,
+			<b class="conf-mode" title="k11">GMega</b>,
+			<b class="conf-mode" title="sg">SG</b>.
+		</div>
+		<div>
+			Model:
+			<b class="conf-model-xg active" title="xg-t">XG thru</b>,
+			<b class="conf-model-xg" title="mu-b">MU Basic</b>,
+			<b class="conf-model-xg" title="mu-n">MU Native</b>;
+			<b class="conf-model-gs active" title="gs-t">GS thru</b>,
+			<b class="conf-model-gs" title="sc55">SC-55</b>,
+			<b class="conf-model-gs" title="sc88">SC-88</b>,
+			<b class="conf-model-gs" title="sc88p">SC-88 Pro</b>,
+			<b class="conf-model-gs" title="sc8850">SC-8850</b>.
+		</div>
+	</p>
+	<p>
 		Open <b id="openMidi">MIDI</b>. <b id="midiStop" class="active">Stop</b>, <b id="midiStart">play</b>.
 	</p>
 	<script src="js/demoMw.js"></script>
