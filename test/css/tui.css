@@ -8,6 +8,7 @@ p {
 
 div {
 	margin: 0.8em;
+	cursor: default;
 }
 
 b[class], b[id^=open] {
@@ -20,7 +21,10 @@ b.active {
 
 li[id^=mw-in-], li[id^=mw-out-] {
 	cursor: pointer;
-};
+}
+li.active {
+	text-decoration: underline;
+}
 
 div#display {
 	font-size: 16px;
