@@ -1672,8 +1672,23 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Unknown instruction
 		});
 		// XG drum setup would be blank for now
+		// TG300 SysEx section, the parent of XG
+		this.#seXg.add([39, 48], (msg, track, id) => {
+			// TG100 pool
+		}).add([43, 0, 0], (msg, track, id) => {
+			// TG300 master setup
+		}).add([43, 1, 0], (msg, track, id) => {
+			// TG300 effect (R C V) setup
+		}).add([43, 2], (msg, track, id) => {
+			// TG300 part setup
+		}).add([43, 7, 0], (msg, track, id) => {
+			// TG300 display letter
+		}).add([43, 7, 1], (msg, track, id) => {
+			// TG300 display bitmap
+		});
+		// TG drum setup would also be blank
 		// GS SysEx section
-		this.#seGs.add([66, 18, 0, 0, 127], (msg) => {
+		this.#seGs.add([66, 18, 0, 0, 127], (msg, track, id) => {
 			// GS mode set
 			upThis.switchMode("gs", true);
 			upThis.#cc[allocated.cc * 9] = 120;
@@ -1684,7 +1699,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.fill(0);
 			console.info(`GS system to ${["single", "dual"][msg[0]]} mode.`);
-		}).add([66, 18, 64, 0], (msg) => {
+		}).add([66, 18, 64, 0], (msg, track, id) => {
 			switch (msg[0]) {
 				case 127: {
 					// Roland GS reset
