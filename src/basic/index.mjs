@@ -123,16 +123,6 @@ let RootDisplay = class extends CustomEventSource {
 				delete reply.reply;
 			};
 		});
-		// Mimic strength variation
-		let writeStrength = this.#midiState.getStrength();
-		writeStrength.forEach(function (e, i) {
-			let diff = e - upThis.#mimicStrength[i];
-			if (diff >= 0) {
-				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * upThis.smoothingAtk));
-			} else {
-				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * upThis.smoothingDcy));
-			};
-		});
 		if (metaReplies?.length > 0) {
 			this.dispatchEvent("meta", metaReplies);
 		};
@@ -142,6 +132,21 @@ let RootDisplay = class extends CustomEventSource {
 		let chPitch = upThis.#midiState.getPitch(); // All pitch bends
 		let chContr = upThis.#midiState.getCcAll(); // All CC values
 		let chProgr = upThis.#midiState.getProgram();
+		// Mimic strength variation
+		let writeStrength = this.#midiState.getStrength();
+		writeStrength.forEach(function (e, i) {
+			let diff = e - upThis.#mimicStrength[i];
+			let chOff = ccToPos.length * i;
+			if (diff >= 0) {
+				// cc73 = 0, atkPower = 8
+				// cc73 = 127, atkPower = 0.125
+				let atkPower = 8 * (0.125 ** (chContr[chOff + ccToPos[73]] / 64));
+				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothingAtk ** atkPower)));
+			} else {
+				let rlsPower = 8 * (0.125 ** (chContr[chOff + ccToPos[72]] / 64));
+				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothingDcy ** rlsPower)));
+			};
+		});
 		let curPoly = 0;
 		chInUse.forEach(function (e, i) {
 			if (e) {
