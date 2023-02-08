@@ -1152,7 +1152,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					msg.subarray(1).forEach((e, i) => {
 						let addr = i + msg[0];
-						[
+						([
 							writeTune, writeTune, writeTune, writeTune,
 							(e) => {
 								// XG master volume
@@ -1160,7 +1160,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							},
 							(e) => {/* XG master attenuator */},
 							(e) => {/* XG master coarse tune */}
-						][addr](e, i);
+						][addr] || (() => {}))(e, i);
 					});
 					if (msg[0] < 4) {
 						// Commit master tune
@@ -1677,14 +1677,156 @@ let OctaviaDevice = class extends CustomEventSource {
 			// TG100 pool
 		}).add([43, 0, 0], (msg, track, id) => {
 			// TG300 master setup
+			let mTune = [0, 0, 0, 0];
+			let writeTune = (e, i) => {
+				// GS master fine tune
+				mTune[i] = e;
+			};
+			msg.subarray(1).forEach((e, i) => {
+				let addr = i + msg[0];
+				([
+					writeTune,
+					writeTune,
+					writeTune,
+					writeTune,
+					() => {
+						this.#masterVol = e * 129 / 16383 * 100;
+					},
+					() => {
+						return e - 64;
+					},
+					() => {
+						return e || 128;
+					},
+					() => {
+						return e;
+					},
+					() => {
+						return e;
+					},
+					() => {
+						console.debug(`TG300 variation on cc${e}.`);
+					}
+				] || (() => {}))[addr](e, addr);
+			});
+			if (msg[0] < 4) {
+				// Commit master tune
+				let rTune = 0;
+				mTune.forEach((e) => {
+					rTune = rTune << 4;
+					rTune += e;
+				});
+				rTune -= 1024;
+			};
 		}).add([43, 1, 0], (msg, track, id) => {
 			// TG300 effect (R C V) setup
 		}).add([43, 2], (msg, track, id) => {
 			// TG300 part setup
+			let part = upThis.chRedir(msg[0], track, true);
+			let offset = msg[1];
+			let chOff = allocated.cc * part;
+			let dPref = `TG300 CH${part + 1} `;
+			msg.subarray(2).forEach((e, i) => {
+				if (i < 5) {
+					([() => {
+						// element reserve
+					}, () => {
+						upThis.#cc[chOff + ccToPos[0]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[32]] = e;
+					}, () => {
+						upThis.#prg[part] = e;
+					}, () => {
+						let ch = upThis.chRedir(e, track, true);
+						upThis.#chReceive[part] = ch; // Rx CH
+						if (part != ch) {
+							upThis.buildRchTree();
+							console.info(`${dPref}receives from CH${ch + 1}`);
+						};
+					}][i + offset] || (() => {}))(e, i + offset);
+				} else if (i < 21) {} else if (i < 47) {
+					([() => {
+						upThis.#mono[part] = +!e;
+					}, () => {
+						// same key on assign
+					}, () => {
+						// part mode
+					}, () => {
+						// coarse tune
+						upThis.#rpn[allocated.rpn * part + 3] = e;
+					}, () => {
+						// absolute detune
+					}, () => {
+						upThis.#cc[chOff + ccToPos[7]] = e;
+					}, false
+					, false
+					, () => {
+						upThis.#cc[chOff + ccToPos[10]] = e || 128;
+					}, false
+					, false
+					, () => {
+						console.debug(`${dPref} AC1 at cc${e}`);
+					}, () => {
+						console.debug(`${dPref} AC2 at cc${e}`);
+					}, () => {
+						upThis.#cc[chOff + ccToPos[11]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[93]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[91]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[94]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[76]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[77]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[74]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[71]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[73]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[75]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[72]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[78]] = e;
+					}][i + offset - 21] || (() => {}))(e, i + offset);
+				} else if (i < 95) {} else {
+					([() => {
+						upThis.#cc[chOff + ccToPos[65]] = e;
+					}, () => {
+						upThis.#cc[chOff + ccToPos[5]] = e;
+					}][i + offset - 95] || (() => {}))(e, i + offset);
+				};
+			});
 		}).add([43, 7, 0], (msg, track, id) => {
 			// TG300 display letter
+			// Same as XG letter display
+			upThis.#letterDisp = " ".repeat(offset);
+			upThis.#letterExpire = Date.now() + 3200;
+			msg.subarray(1).forEach(function (e) {
+				upThis.#letterDisp += String.fromCharCode(e);
+			});
+			upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
 		}).add([43, 7, 1], (msg, track, id) => {
 			// TG300 display bitmap
+			// Same as XG bitmap display
+			upThis.#bitmapExpire = Date.now() + 3200;
+			upThis.#bitmap.fill(0); // Init
+			msg.forEach(function (e, i) {
+				let ln = Math.floor(i / 16), co = i % 16;
+				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
+				pt -= co * 5;
+				if (ln == 2) {
+					threshold = 2;
+				};
+				while (bi < threshold) {
+					upThis.#bitmap[pt + bi] = (e >> (6 - bi)) & 1;
+					bi ++;
+				};
+			});
 		});
 		// TG drum setup would also be blank
 		// GS SysEx section
