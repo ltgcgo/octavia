@@ -138,12 +138,12 @@ let RootDisplay = class extends CustomEventSource {
 			let diff = e - upThis.#mimicStrength[i];
 			let chOff = ccToPos.length * i;
 			if (diff >= 0) {
-				// cc73 = 0, atkPower = 8
-				// cc73 = 127, atkPower = 0.125
-				let atkPower = 8 * (0.125 ** (chContr[chOff + ccToPos[73]] / 64));
+				// cc73 = 0, atkPower = 4
+				// cc73 = 127, atkPower = 0.25
+				let atkPower = 4 * (0.25 ** (chContr[chOff + ccToPos[73]] / 64));
 				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothingAtk ** atkPower)));
 			} else {
-				let rlsPower = 8 * (0.125 ** (chContr[chOff + ccToPos[72]] / 64));
+				let rlsPower = 4 * (0.25 ** (chContr[chOff + ccToPos[72]] / 64));
 				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothingDcy ** rlsPower)));
 			};
 		});
