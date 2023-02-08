@@ -18,14 +18,13 @@ let Ns5rDisplay = class extends RootDisplay {
 	#dumpData;
 	#dumpExpire = 0;
 	#mode = "?";
-	#strength = new Uint8Array(64);
 	#ch = 0;
 	#backlight;
 	#refreshed = true;
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv");
 	constructor() {
-		super();
+		super(0.1, 0.9);
 		this.#backlight = bgWhite;
 		this.addEventListener("mode", (ev) => {
 			this.#backlight = {
@@ -202,22 +201,12 @@ let Ns5rDisplay = class extends RootDisplay {
 					this.#nmdb[charY * 144 + secX + charX] = e1;
 				});
 			});
-			// Strength calculation
-			sum.velo.forEach((e, i) => {
-				if (e >= this.#strength[i]) {
-					let diff = e - this.#strength[i];
-					this.#strength[i] += Math.ceil(diff * 0.8);
-				} else {
-					let diff = this.#strength[i] - e;
-					this.#strength[i] -= Math.ceil(diff / 10);
-				};
-			});
 			// Render channel strength
 			let showReduction = 22;
 			if (maxCh > 31) {
 				showReduction = 43;
 			};
-			this.#strength.forEach((e, i) => {
+			sum.strength.forEach((e, i) => {
 				if (maxCh < 32 && i > 31) {
 					return;
 				};

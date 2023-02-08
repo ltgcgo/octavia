@@ -21,12 +21,11 @@ let ScDisplay = class extends RootDisplay {
 	#tmdb = new Uint8Array(665); // Text display
 	#pmdb = new Uint8Array(735); // Param display
 	#bmdb = new Uint8Array(256); // Bitmap display
-	#strength = new Uint8Array(64);
 	#linger = new Uint8Array(64);
 	#ch = 0;
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv");
 	constructor() {
-		super();
+		super(0, 0.875);
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -205,12 +204,6 @@ let ScDisplay = class extends RootDisplay {
 		rendPos = 0;
 		// Strength calculation
 		sum.velo.forEach(function (e, i) {
-			if (e >= upThis.#strength[i]) {
-				upThis.#strength[i] = e;
-			} else {
-				let diff = upThis.#strength[i] - e;
-				upThis.#strength[i] -= diff / 8;
-			};
 			if (e >= upThis.#linger[i]) {
 				upThis.#linger[i] = e;
 			} else {
@@ -228,7 +221,7 @@ let ScDisplay = class extends RootDisplay {
 			let rendPos = 0;
 			for (let c = minCh; c <= maxCh; c ++) {
 				let rendPart = rendPos >> 4;
-				let strSmooth = this.#strength[c] >> (4 + rendMode),
+				let strSmooth = sum.strength[c] >> (4 + rendMode),
 				lingered = this.#linger[c] >> (4 + rendMode);
 				if (rendMode == 2) {
 					let offY = 4 * (3 - rendPart);

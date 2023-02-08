@@ -1769,6 +1769,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						console.debug(`${dPref} AC2 at cc${e}`);
 					}, () => {
+						// Dry level
 						upThis.#cc[chOff + ccToPos[11]] = e;
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e;
