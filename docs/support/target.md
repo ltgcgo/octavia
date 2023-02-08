@@ -71,7 +71,7 @@ For specific SysEx support range, refer to [Supported SysEx Instructions](./syse
 | TG77   | M    | -      |
 | TG100  | M    | -      |
 | TG500  | M    | -      |
-| TG300  | M    | -      |
+| TG300  | M    | ✓      |
 
 #### Yamaha XG
 | Target      | Type | Status |

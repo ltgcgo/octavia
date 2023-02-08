@@ -13,7 +13,6 @@ let QyDisplay = class extends RootDisplay {
 	#omdb = new Uint8Array(8192); // Full display
 	#nmdb = new Uint8Array(8192); // Full display, but on commit
 	#mode = "?";
-	#strength = new Uint8Array(64);
 	#ch = 0;
 	#refreshed = true;
 	#backlight = bgWhite;
