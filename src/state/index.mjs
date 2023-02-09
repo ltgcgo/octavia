@@ -442,6 +442,8 @@ let OctaviaDevice = class extends CustomEventSource {
 								this.switchMode("x5d");
 							} else if (det.data[1] == 63) {
 								this.switchMode("krs");
+							} else if (det.data[1] == 64 || det.data[1] == 127) {
+								this.switchMode("xg");
 							};
 						} else if (this.#mode == modeMap.gs) {
 							if (det.data[1] < 56) {
@@ -460,6 +462,8 @@ let OctaviaDevice = class extends CustomEventSource {
 									this.switchMode("gs", true);
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
+							} else if (det.data[1] == 64 || det.data[1] == 127) {
+								this.switchMode("xg", true);
 							};
 						} else if (this.#mode == modeMap.x5d) {
 							if (det.data[1] > 0 && det.data[1] < 8) {
