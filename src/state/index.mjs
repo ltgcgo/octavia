@@ -229,10 +229,22 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (this.#cc[allocated.cc * part + ccToPos[64]] > 63 && !this.config?.disableCc64) {
 					// Held by cc64
 					this.#polyState[polyIdx] = 4;
+					this.dispatchEvent("note", {
+						part,
+						note,
+						velo: this.#velo[rawNote],
+						state: 4
+					});
 				} else {
 					this.#poly[polyIdx] = 0;
 					this.#velo[rawNote] = 0;
 					this.#polyState[polyIdx] = 0;
+					this.dispatchEvent("note", {
+						part,
+						note,
+						velo: 0,
+						state: 0
+					});
 				};
 			};
 		},
@@ -266,6 +278,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (this.#rawStrength[part] < velo) {
 					this.#rawStrength[part] = velo;
 				};
+				this.dispatchEvent("note", {
+					part,
+					note,
+					velo,
+					state: 3
+				});
 				//console.debug(place);
 			} else {
 				console.error("Polyphony exceeded.");
@@ -288,6 +306,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						this.#polyState[i] = 0;
 						this.#poly[i] = 0;
 						this.#velo[rawNote] = 0;
+						this.dispatchEvent("note", {
+							part,
+							note: rawNote & 127,
+							velo: 0,
+							state: 0
+						});
 					};
 				};
 			});
@@ -336,6 +360,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			let polyIdx = this.#poly.indexOf(rawNote);
 			if (polyIdx > -1) {
 				this.#velo[rawNote] = data[1];
+				this.dispatchEvent("note", {
+					part,
+					note: det.data[0],
+					velo: det.data[1],
+					state: 3
+				});
 			};
 		},
 		11: function (det) {
@@ -570,6 +600,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				let realCh = e >> 7;
 				if (part == realCh) {
 					upThis.#velo[e] = det.data;
+					this.dispatchEvent("note", {
+						part,
+						note: e & 127,
+						velo: det.data,
+						state: 3
+					});
 				};
 			});
 		},
@@ -577,6 +613,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = det.channel;
 			// Pitch bending
 			this.#pitch[part] = det.data[1] * 128 + det.data[0] - 8192;
+			this.dispatchEvent("pitch", {
+				part
+			});
 		},
 		15: function (det) {
 			// SysEx
