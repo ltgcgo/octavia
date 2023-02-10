@@ -450,6 +450,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.warn(`cc${det.data[0]} is not accepted.`);
 			} else {
 				// Stored CC messages
+				this.#cc[chOffset + ccToPos[det.data[0]]] = det.data[1];
 				switch (det.data[0]) {
 					case 0: {
 						// Detect mode via bank MSB
@@ -511,7 +512,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								};
 							};
 						};
-						this.dispatchEvent("voicechange", {
+						this.dispatchEvent("voice", {
 							part
 						});
 						break;
@@ -526,7 +527,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								if (toCc > -1) {
 									this.#cc[chOffset + ccToPos[71 + toCc]] = det.data[1];
 									getDebugState() && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
-									this.dispatchEvent("controlchange", {
+									this.dispatchEvent("cc", {
 										part,
 										cc: 71 + toCc,
 										data: det.data[1]
@@ -553,7 +554,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case 32: {
-						this.dispatchEvent("voicechange", {
+						this.dispatchEvent("voice", {
 							part
 						});
 						break;
@@ -593,8 +594,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 				};
-				this.#cc[chOffset + ccToPos[det.data[0]]] = det.data[1];
-				this.dispatchEvent("controlchange", {
+				this.dispatchEvent("cc", {
 					part,
 					cc: det.data[0],
 					data: det.data[1]
@@ -610,7 +610,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (getDebugState()) {
 				console.debug(`T:${det.track} C:${part} P:${det.data}`);
 			};
-			this.dispatchEvent("voicechange", {
+			this.dispatchEvent("voice", {
 				part
 			});
 		},
@@ -636,7 +636,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Pitch bending
 			this.#pitch[part] = det.data[1] * 128 + det.data[0] - 8192;
 			this.dispatchEvent("pitch", {
-				part
+				part,
+				pitch: this.getPitchShift(part)
 			});
 		},
 		15: function (det) {

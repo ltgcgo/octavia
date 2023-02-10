@@ -26,7 +26,11 @@ let CustomEventSource = class {
 		eventObj.data = data;
 		if (this.#eventListeners[type]?.length > 0) {
 			this.#eventListeners[type].forEach(function (e) {
-				e?.call(upThis, eventObj);
+				try {
+					e?.call(upThis, eventObj);
+				} catch (err) {
+					console.error(err);
+				};
 			});
 		};
 		if (this[`on${type}`]) {
