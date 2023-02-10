@@ -511,6 +511,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								};
 							};
 						};
+						this.dispatchEvent("voicechange", {
+							part
+						});
 						break;
 					};
 					case 6: {
@@ -523,6 +526,11 @@ let OctaviaDevice = class extends CustomEventSource {
 								if (toCc > -1) {
 									this.#cc[chOffset + ccToPos[71 + toCc]] = det.data[1];
 									getDebugState() && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
+									this.dispatchEvent("controlchange", {
+										part,
+										cc: 71 + toCc,
+										data: det.data[1]
+									});
 								} else {
 									let nrpnIdx = useNormNrpn.indexOf(lsb);
 									if (nrpnIdx > -1) {
@@ -542,6 +550,12 @@ let OctaviaDevice = class extends CustomEventSource {
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
 							};
 						};
+						break;
+					};
+					case 32: {
+						this.dispatchEvent("voicechange", {
+							part
+						});
 						break;
 					};
 					case 38: {
@@ -580,6 +594,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 				this.#cc[chOffset + ccToPos[det.data[0]]] = det.data[1];
+				this.dispatchEvent("controlchange", {
+					part,
+					cc: det.data[0],
+					data: det.data[1]
+				});
 			};
 		},
 		12: function (det) {
@@ -591,6 +610,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (getDebugState()) {
 				console.debug(`T:${det.track} C:${part} P:${det.data}`);
 			};
+			this.dispatchEvent("voicechange", {
+				part
+			});
 		},
 		13: function (det) {
 			// Channel aftertouch
