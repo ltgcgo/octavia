@@ -145,7 +145,7 @@ let ScDisplay = class extends RootDisplay {
 		paramText += `${"ABCDEFGH"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
 		paramText += sum.chContr[chOff + ccToPos[7]].toString().padStart(3, " ");
 		paramText += sum.chContr[chOff + ccToPos[91]].toString().padStart(3, " ");
-		let cPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
+		let cPit = this.device.getPitchShift(this.#ch);
 		if (cPit < 0) {
 			paramText += "-";
 		} else {

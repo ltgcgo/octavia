@@ -600,7 +600,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				let realCh = e >> 7;
 				if (part == realCh) {
 					upThis.#velo[e] = det.data;
-					this.dispatchEvent("note", {
+					upThis.dispatchEvent("note", {
 						part,
 						note: e & 127,
 						velo: det.data,
@@ -875,6 +875,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		return voice;
+	};
+	getPitchShift(part) {
+		let rpnOff = part * allocated.rpn;
+		return this.#pitch[part] / 8192 * this.#rpn[rpnOff] + (sum.rpn[rpnOff + 3] - 64);
 	};
 	init(type = 0) {
 		// Type 0 is full reset
