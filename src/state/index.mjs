@@ -1038,6 +1038,35 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#metaTexts.unshift(`Kara.Ver: ${data.slice(2)}`);
 					break;
 				};
+				case "XF": {
+					// XG File Data section
+					let dataArr = data.slice(2).split(":");
+					switch (dataArr[0]) {
+						case "hd": {
+							dataArr.slice(1).forEach((e, i) => {
+								e && this.#metaTexts.unshift(`${[
+									"SongDate", "SnRegion", "SongCat.", "SongBeat",
+									"SongInst", "Sn.Vocal", "SongCmp.", "SongLrc.",
+									"SongArr.", "SongPerf", "SongPrg.", "SongType"
+								][i]}: ${e}`);
+							});
+							break;
+						};
+						case "ln": {
+							dataArr.slice(1).forEach((e, i) => {
+								e && this.#metaTexts.unshift(`${[
+									"Kar.Lang", "Kar.Name", "Kar.Cmp.", "Kar.Lrc.",
+									"kar.Arr.", "Kar.Perf", "Kar.Prg."
+								][i]}: ${e}`);
+							});
+							break;
+						};
+						default: {
+							this.#metaTexts.unshift(`XGF_Data: ${data}`);
+						};
+					};
+					break;
+				};
 				default: {
 					if (this.#modeKaraoke) {
 						if (data[0] == "\\") {
