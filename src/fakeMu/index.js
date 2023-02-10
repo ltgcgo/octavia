@@ -2,7 +2,7 @@
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
-import {MuDisplay} from "../disp/index.mjs";
+import MuDisplay from "../disp/disp_mu.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 import {
 	getBridge

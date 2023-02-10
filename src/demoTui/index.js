@@ -2,7 +2,7 @@
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
-import {TuiDisplay} from "../disp/index.mjs";
+import TuiDisplay from "../disp/disp_tui.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 import {
 	getBridge
