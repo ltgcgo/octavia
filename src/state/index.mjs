@@ -1044,17 +1044,17 @@ let OctaviaDevice = class extends CustomEventSource {
 					switch (dataArr[0]) {
 						case "hd": {
 							dataArr.slice(1).forEach((e, i) => {
-								e && this.#metaTexts.unshift(`${[
+								e.length && this.#metaTexts.unshift(`${[
 									"SongDate", "SnRegion", "SongCat.", "SongBeat",
 									"SongInst", "Sn.Vocal", "SongCmp.", "SongLrc.",
-									"SongArr.", "SongPerf", "SongPrg.", "SongType"
+									"SongArr.", "SongPerf", "SongPrg.", "SongTags"
 								][i]}: ${e}`);
 							});
 							break;
 						};
 						case "ln": {
 							dataArr.slice(1).forEach((e, i) => {
-								e && this.#metaTexts.unshift(`${[
+								e.length && this.#metaTexts.unshift(`${[
 									"Kar.Lang", "Kar.Name", "Kar.Cmp.", "Kar.Lrc.",
 									"kar.Arr.", "Kar.Perf", "Kar.Prg."
 								][i]}: ${e}`);

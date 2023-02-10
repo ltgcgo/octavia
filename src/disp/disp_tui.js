@@ -1,5 +1,6 @@
 "use strict";
 
+import {OctaviaDevice} from "../state/index.mjs";
 import {textedPanning, textedPitchBend} from "./texted.js";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 
@@ -35,7 +36,7 @@ let velToLuma = function (velo) {
 let TuiDisplay = class extends RootDisplay {
 	#maxPoly = 0;
 	constructor() {
-		super();
+		super(new OctaviaDevice);
 		this.addEventListener("reset", () => {
 			this.#maxPoly = 0;
 		});

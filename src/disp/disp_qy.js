@@ -1,5 +1,6 @@
 "use strict";
 
+import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
 
@@ -28,7 +29,7 @@ let QyDisplay = class extends RootDisplay {
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	constructor() {
-		super(0, 0.95);
+		super(new OctaviaDevice(), 0, 0.95);
 		let upThis = this;
 		this.addEventListener("mode", function (ev) {
 			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
@@ -354,7 +355,9 @@ let QyDisplay = class extends RootDisplay {
 					};
 				};
 			};
-			useBm.width = useBm.length / 16;
+			if (useBm) {
+				useBm.width = useBm.length / 16;
+			};
 			useBm?.render((e, x, y) => {
 				if (useBm.width < 32) {
 					upThis.#nmdb[6217 + 2 * x + y * 128] = e;

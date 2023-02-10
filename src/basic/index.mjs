@@ -9,7 +9,7 @@ import {customInterpreter} from "../state/utils.js";
 MidiParser.customInterpreter = customInterpreter;
 
 let RootDisplay = class extends CustomEventSource {
-	#midiState = new OctaviaDevice();
+	device;
 	#midiPool;
 	#titleName = "";
 	#metaRun = [];
@@ -29,7 +29,7 @@ let RootDisplay = class extends CustomEventSource {
 		// Clearing all MIDI instructions up
 		this.#midiPool?.resetIndex();
 		// And set all controllers to blank
-		this.#midiState.init();
+		this.device.init();
 		// Clear titleName
 		this.#titleName = "";
 		// Timing info reset;
@@ -44,16 +44,16 @@ let RootDisplay = class extends CustomEventSource {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
 	};
 	switchMode(modeName, forced = false) {
-		this.#midiState.switchMode(modeName, forced);
+		this.device.switchMode(modeName, forced);
 	};
 	getMode() {
-		return this.#midiState.getMode();
+		return this.device.getMode();
 	};
 	getVoice() {
-		return this.#midiState.getVoice(...arguments);
+		return this.device.getVoice(...arguments);
 	};
 	getChVoice(ch) {
-		return this.#midiState.getChVoice(ch);
+		return this.device.getChVoice(ch);
 	};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;
@@ -71,9 +71,6 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		return beat;
 	};
-	get device() {
-		return this.#midiState;
-	};
 	getTimeSig() {
 		return [this.#noteNomin, this.#noteDenom];
 	};
@@ -81,7 +78,7 @@ let RootDisplay = class extends CustomEventSource {
 		return this.#noteTempo;
 	};
 	sendCmd(raw) {
-		this.#midiState.runJson(raw);
+		this.device.runJson(raw);
 	};
 	render(time) {
 		if (time > this.#noteTime) {
@@ -92,7 +89,7 @@ let RootDisplay = class extends CustomEventSource {
 		let upThis = this;
 		let metaReplies = [];
 		// Reset strength for a new frame
-		upThis.#midiState.newStrength();
+		upThis.device.newStrength();
 		events.forEach(function (e) {
 			let raw = e.data;
 			if (raw.type == 9) {
@@ -112,7 +109,7 @@ let RootDisplay = class extends CustomEventSource {
 					extraPoly ++;
 				};
 			};
-			let reply = upThis.#midiState.runJson(raw);
+			let reply = upThis.device.runJson(raw);
 			switch (reply?.reply) {
 				case "meta": {
 					metaReplies.push(reply);
@@ -127,13 +124,13 @@ let RootDisplay = class extends CustomEventSource {
 			this.dispatchEvent("meta", metaReplies);
 		};
 		// Pass params to actual displays
-		let chInUse = this.#midiState.getActive(); // Active channels
+		let chInUse = this.device.getActive(); // Active channels
 		let chKeyPr = []; // Pressed keys and their pressure
-		let chPitch = upThis.#midiState.getPitch(); // All pitch bends
-		let chContr = upThis.#midiState.getCcAll(); // All CC values
-		let chProgr = upThis.#midiState.getProgram();
+		let chPitch = upThis.device.getPitch(); // All pitch bends
+		let chContr = upThis.device.getCcAll(); // All CC values
+		let chProgr = upThis.device.getProgram();
 		// Mimic strength variation
-		let writeStrength = this.#midiState.getStrength();
+		let writeStrength = this.device.getStrength();
 		writeStrength.forEach(function (e, i) {
 			let diff = e - upThis.#mimicStrength[i];
 			let chOff = ccToPos.length * i;
@@ -150,7 +147,7 @@ let RootDisplay = class extends CustomEventSource {
 		let curPoly = 0;
 		chInUse.forEach(function (e, i) {
 			if (e) {
-				chKeyPr[i] = upThis.#midiState.getVel(i);
+				chKeyPr[i] = upThis.device.getVel(i);
 				curPoly += chKeyPr[i].size;
 			};
 		});
@@ -164,14 +161,14 @@ let RootDisplay = class extends CustomEventSource {
 			chContr,
 			eventCount: events.length,
 			title: this.#titleName,
-			bitmap: this.#midiState.getBitmap(),
-			letter: this.#midiState.getLetter(),
-			texts: this.#midiState.getTexts(),
-			master: this.#midiState.getMaster(),
-			mode: this.#midiState.getMode(),
+			bitmap: this.device.getBitmap(),
+			letter: this.device.getLetter(),
+			texts: this.device.getTexts(),
+			master: this.device.getMaster(),
+			mode: this.device.getMode(),
 			strength: this.#mimicStrength.slice(),
 			velo: writeStrength,
-			rpn: this.#midiState.getRpn(),
+			rpn: this.device.getRpn(),
 			tSig: this.getTimeSig(),
 			tempo: this.getTempo(),
 			noteBar: this.noteBar,
@@ -179,32 +176,33 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		return repObj;
 	};
-	constructor(atk = 0.5, dcy = 0.5) {
+	constructor(device, atk = 0.5, dcy = 0.5) {
 		super();
 		let upThis = this;
 		this.smoothingAtk = atk;
 		this.smoothingDcy = dcy;
+		this.device = device;
 		this.addEventListener("meta", function (raw) {
 			raw?.data?.forEach(function (e) {
 				(upThis.#metaRun[e.meta] || console.debug).call(upThis, e.meta, e.data);
 			});
 		});
-		this.#midiState.addEventListener("mode", function (ev) {
+		this.device.addEventListener("mode", function (ev) {
 			upThis.dispatchEvent("mode", ev.data);
 		});
-		this.#midiState.addEventListener("channelactive", function (ev) {
+		this.device.addEventListener("channelactive", function (ev) {
 			upThis.dispatchEvent("channelactive", ev.data);
 		});
-		this.#midiState.addEventListener("channelmin", function (ev) {
+		this.device.addEventListener("channelmin", function (ev) {
 			upThis.dispatchEvent("channelmin", ev.data);
 		});
-		this.#midiState.addEventListener("channelmax", function (ev) {
+		this.device.addEventListener("channelmax", function (ev) {
 			upThis.dispatchEvent("channelmax", ev.data);
 		});
-		this.#midiState.addEventListener("channelreset", function (ev) {
+		this.device.addEventListener("channelreset", function (ev) {
 			upThis.dispatchEvent("channelreset");
 		});
-		this.#midiState.addEventListener("screen", function (ev) {
+		this.device.addEventListener("screen", function (ev) {
 			upThis.dispatchEvent("screen", ev.data);
 		});
 		this.#metaRun[3] = function (type, data) {
