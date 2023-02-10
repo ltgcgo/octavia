@@ -1,5 +1,6 @@
 "use strict";
 
+import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
 
@@ -24,7 +25,7 @@ let Ns5rDisplay = class extends RootDisplay {
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv");
 	constructor() {
-		super(0.1, 0.9);
+		super(new OctaviaDevice(), 0.1, 0.9);
 		this.#backlight = bgWhite;
 		this.addEventListener("mode", (ev) => {
 			this.#backlight = {

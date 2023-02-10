@@ -1,5 +1,6 @@
 "use strict";
 
+import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
@@ -74,7 +75,7 @@ let MuDisplay = class extends RootDisplay {
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
 	constructor() {
-		super();
+		super(new OctaviaDevice());
 		let upThis = this;
 		this.addEventListener("mode", function (ev) {
 			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
@@ -351,7 +352,7 @@ let MuDisplay = class extends RootDisplay {
 			let pX = i % 16;
 			let pY = Math.floor(i / 16);
 			ctx.fillStyle = inactivePixel;
-			if (useBm[i]) {
+			if (useBm && useBm[i]) {
 				ctx.fillStyle = activePixel;
 			};
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);

@@ -1,5 +1,6 @@
 "use strict";
 
+import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
@@ -38,7 +39,7 @@ let PsrDisplay = class extends RootDisplay {
 	sharpSign = new Path2D("M216 -312c0 -10 -8 -19 -18 -19s-19 9 -19 19v145l-83 -31v-158c0 -10 -9 -19 -19 -19s-18 9 -18 19v145l-32 -12c-2 -1 -5 -1 -7 -1c-11 0 -20 9 -20 20v60c0 8 5 16 13 19l46 16v160l-32 -11c-2 -1 -5 -1 -7 -1c-11 0 -20 9 -20 20v60c0 8 5 15 13 18l46 17v158 c0 10 8 19 18 19s19 -9 19 -19v-145l83 31v158c0 10 9 19 19 19s18 -9 18 -19v-145l32 12c2 1 5 1 7 1c11 0 20 -9 20 -20v-60c0 -8 -5 -16 -13 -19l-46 -16v-160l32 11c2 1 5 1 7 1c11 0 20 -9 20 -20v-60c0 -8 -5 -15 -13 -18l-46 -17v-158zM96 65v-160l83 30v160z");
 	flatSign = new Path2D("M27 41l-1 -66v-11c0 -22 1 -44 4 -66c45 38 93 80 93 139c0 33 -14 67 -43 67c-31 0 -52 -30 -53 -63zM-15 -138l-12 595c8 5 18 8 27 8s19 -3 27 -8l-7 -345c25 21 58 34 91 34c52 0 89 -48 89 -102c0 -80 -86 -117 -147 -169c-15 -13 -24 -38 -45 -38 c-13 0 -23 11 -23 25z");
 	constructor() {
-		super();
+		super(new OctaviaDevice());
 		let upThis = this;
 		this.addEventListener("mode", function (ev) {
 			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
@@ -395,7 +396,9 @@ let PsrDisplay = class extends RootDisplay {
 				};
 			};
 		}
-		useBm.width = useBm.length / 16;
+		if (useBm) {
+			useBm.width = useBm.length / 16;
+		};
 		useBm?.render((e, x, y) => {
 			ctx.fillStyle = e ? activePixel : inactivePixel;
 			ctx.fillRect(224 + x * 6, 261 + y * 3, 5, 2);

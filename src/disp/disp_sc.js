@@ -1,5 +1,6 @@
 "use strict";
 
+import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
@@ -25,7 +26,7 @@ let ScDisplay = class extends RootDisplay {
 	#ch = 0;
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv");
 	constructor() {
-		super(0, 0.875);
+		super(new OctaviaDevice(), 0, 0.875);
 	};
 	setCh(ch) {
 		this.#ch = ch;
