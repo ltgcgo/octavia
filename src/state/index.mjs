@@ -878,7 +878,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getPitchShift(part) {
 		let rpnOff = part * allocated.rpn;
-		return this.#pitch[part] / 8192 * this.#rpn[rpnOff] + (sum.rpn[rpnOff + 3] - 64);
+		return this.#pitch[part] / 8192 * this.#rpn[rpnOff] + (this.#rpn[rpnOff + 3] - 64) + ((this.#rpn[rpnOff + 1] << 7) + this.#rpn[rpnOff + 2] - 8192) / 8192;
 	};
 	init(type = 0) {
 		// Type 0 is full reset

@@ -284,7 +284,7 @@ let QyDisplay = class extends RootDisplay {
 			});
 			// Transpose render
 			{
-				let tPit = (sum.chPitch[this.#ch] / 8192 * sum.rpn[this.#ch * 6] + (sum.rpn[this.#ch * 6 + 3] - 64));
+				let tPit = upThis.device.getPitchShift(upThis.#ch);
 				let tStr = tPit < 0 ? "-" : "+";
 				tStr += `${Math.round(Math.abs(tPit))}`.padStart(2, "0");
 				upThis.xgFont.getStr(tStr).forEach((e, i) => {
