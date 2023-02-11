@@ -206,7 +206,7 @@ let ScDisplay = class extends RootDisplay {
 		// Strength calculation
 		sum.velo.forEach(function (e, i) {
 			if (e >= upThis.#linger[i]) {
-				upThis.#linger[i] = e;
+				upThis.#linger[i] = ((e >> 4) << 4) + 15;
 			} else {
 				let val = upThis.#linger[i] - 2;
 				if (val < 0) {
