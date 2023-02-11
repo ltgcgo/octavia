@@ -182,7 +182,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 121: {
-				sect = "GM-";
+				sect = `GM-${args[2] ? "" : "a"}`;
 				useLsb = true;
 				break;
 			};
@@ -398,7 +398,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 121: {
-				standard = "G2";
+				standard = args[2] ? "G2" : "GM";
 				break;
 			};
 			case 122: {

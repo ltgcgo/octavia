@@ -2,7 +2,7 @@
 
 import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
-import {MxFont40, MxBm256} from "../basic/mxReader.js";
+import {MxFont40} from "../basic/mxReader.js";
 
 import {
 	bgOrange,

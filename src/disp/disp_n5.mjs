@@ -2,7 +2,7 @@
 
 import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
-import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
+import {MxFont40, MxBmDef} from "../basic/mxReader.js";
 
 import {
 	bgGreen,
@@ -24,6 +24,7 @@ let Ns5rDisplay = class extends RootDisplay {
 	#refreshed = true;
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv");
+	element = new MxBmDef("./data/bitmaps/korg/element.tsv");
 	constructor() {
 		super(new OctaviaDevice(), 0.1, 0.9);
 		this.#backlight = bgWhite;
@@ -88,26 +89,59 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 		};
 	};
-	#renderCompass(startX, startY, value) {
+	#renderLine(srcX, srcY, diffX, diffY) {
+		//console.debug(diffX, diffY);
+		srcX = (srcX < 0 ? Math.ceil : Math.floor)(srcX);
+		srcY = (srcY < 0 ? Math.ceil : Math.floor)(srcY);
+		diffX = Math.round(diffX);
+		diffY = Math.round(diffY);
+		if (Math.abs(diffX) < Math.abs(diffY)) {
+			let theta = diffX / diffY;
+			if (diffY < 0) {
+				for (let p = 0; p >= diffY; p --) {
+					this.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = 1;
+				};
+			} else {
+				for (let p = 0; p <= diffY; p ++) {
+					this.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = 1;
+				};
+			};
+		} else {
+			let theta = diffY / diffX;
+			if (diffX < 0) {
+				for (let p = 0; p >= diffX; p --) {
+					this.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = 1;
+				};
+			} else {
+				for (let p = 0; p <= diffX; p ++) {
+					this.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = 1;
+				};
+			};
+		};
+	};
+	#renderCompass(startX, startY, value, hideCircle) {
 		let radius = 7, circleStep = 40;
-		for (let c = 0; c < circleStep; c ++) {
-			let angle = Math.PI * c * 2 / circleStep;
-			let intX = radius * Math.sin(angle),
-			drawX = Math.sign(intX) * Math.round(Math.abs(intX));
-			let intY = radius * Math.cos(angle),
-			drawY = Math.sign(intY) * Math.round(Math.abs(intY));
-			this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
+		if (!hideCircle) {
+			for (let c = 0; c < circleStep; c ++) {
+				let angle = Math.PI * c * 2 / circleStep;
+				let intX = radius * Math.sin(angle),
+				drawX = Math.sign(intX) * Math.round(Math.abs(intX));
+				let intY = radius * Math.cos(angle),
+				drawY = Math.sign(intY) * Math.round(Math.abs(intY));
+				this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
+			};
 		};
 		if (value < 128) {
 			let normAngle = Math.floor(value / 9.85) * 22.5;
 			//let normAngle = Math.floor(value * 2.126);
-			let lineStep = 5, angle = Math.PI * (315 - normAngle) / 180;
+			let lineStep = hideCircle ? 4 : 5, angle = Math.PI * (315 - normAngle) / 180;
 			let deltaX = Math.sin(angle), deltaY = Math.cos(angle);
-			for (let c = 0; c <= lineStep; c ++) {
+			/* for (let c = 0; c <= lineStep; c ++) {
 				let drawX = Math.round(c * deltaX),
 				drawY = Math.round(c * deltaY);
 				this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
-			};
+			}; */
+			this.#renderLine(startX, startY, deltaX * lineStep, deltaY * lineStep);
 		} else {
 			this.#nmdb[(startY) * 144 + startX] = 1;
 		};
@@ -266,7 +300,20 @@ let Ns5rDisplay = class extends RootDisplay {
 				let xShift = trueMode ? 2 : 0;
 				this.#renderParamBox(20 + xShift, sum.chContr[chOff + ccToPos[7]]);
 				this.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
-				this.#renderCompass(53 + (+trueMode) + xShift, 7, sum.chContr[chOff + ccToPos[10]]);
+				if (trueMode) {
+					if (sum.chContr[chOff + ccToPos[10]] < 128) {
+						this.element.getBm("PanBase")?.render((e, x, y) => {
+							this.#nmdb[y * 144 + x + 48] = e;
+						});
+						this.#renderCompass(55, 6, sum.chContr[chOff + ccToPos[10]], true);
+					} else {
+						this.element.getBm("PanRndm")?.render((e, x, y) => {
+							this.#nmdb[y * 144 + x + 48] = e;
+						});
+					};
+				} else {
+					this.#renderCompass(53, 7, sum.chContr[chOff + ccToPos[10]]);
+				};
 				this.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[91]]);
 				this.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[93]]);
 				if (!trueMode) {
