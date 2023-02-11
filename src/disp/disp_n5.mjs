@@ -119,22 +119,20 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 		};
 	};
-	#renderCompass(startX, startY, value, hideCircle) {
+	#renderCompass(startX, startY, value) {
 		let radius = 7, circleStep = 40;
-		if (!hideCircle) {
-			for (let c = 0; c < circleStep; c ++) {
-				let angle = Math.PI * c * 2 / circleStep;
-				let intX = radius * Math.sin(angle),
-				drawX = Math.sign(intX) * Math.round(Math.abs(intX));
-				let intY = radius * Math.cos(angle),
-				drawY = Math.sign(intY) * Math.round(Math.abs(intY));
-				this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
-			};
+		for (let c = 0; c < circleStep; c ++) {
+			let angle = Math.PI * c * 2 / circleStep;
+			let intX = radius * Math.sin(angle),
+			drawX = Math.sign(intX) * Math.round(Math.abs(intX));
+			let intY = radius * Math.cos(angle),
+			drawY = Math.sign(intY) * Math.round(Math.abs(intY));
+			this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
 		};
 		if (value < 128) {
-			let normAngle = hideCircle ? Math.floor(value / 18.15) * 45 : Math.floor(value / 9.85) * 22.5;
+			let normAngle = Math.floor(value / 9.85) * 22.5;
 			//let normAngle = Math.floor(value * 2.126);
-			let lineStep = hideCircle ? 4 : 5, angle = Math.PI * (315 - normAngle) / 180;
+			let lineStep = 5, angle = Math.PI * (315 - normAngle) / 180;
 			let deltaX = Math.sin(angle), deltaY = Math.cos(angle);
 			/* for (let c = 0; c <= lineStep; c ++) {
 				let drawX = Math.round(c * deltaX),
@@ -310,10 +308,9 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
 				if (trueMode) {
 					if (sum.chContr[chOff + ccToPos[10]] < 128) {
-						this.element.getBm("PanBase")?.render((e, x, y) => {
+						this.element.getBm(`Pan_${Math.floor(sum.chContr[chOff + ccToPos[10]] / 9.85)}`)?.render((e, x, y) => {
 							this.#nmdb[y * 144 + x + 48] = e;
 						});
-						this.#renderCompass(55, 6, sum.chContr[chOff + ccToPos[10]], true);
 					} else {
 						this.element.getBm("PanRndm")?.render((e, x, y) => {
 							this.#nmdb[y * 144 + x + 48] = e;
