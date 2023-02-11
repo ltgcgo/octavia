@@ -132,7 +132,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 		};
 		if (value < 128) {
-			let normAngle = Math.floor(value / 9.85) * 22.5;
+			let normAngle = hideCircle ? Math.floor(value / 18.15) * 45 : Math.floor(value / 9.85) * 22.5;
 			//let normAngle = Math.floor(value * 2.126);
 			let lineStep = hideCircle ? 4 : 5, angle = Math.PI * (315 - normAngle) / 180;
 			let deltaX = Math.sin(angle), deltaY = Math.cos(angle);
@@ -219,7 +219,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 			// Render program info
 			let bankName = (bankFetched.name).slice(0, 10).padEnd(10, " ");
-			targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")} ${bankName}`).forEach((e0, i0) => {
+			targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 25;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
@@ -227,6 +227,14 @@ let Ns5rDisplay = class extends RootDisplay {
 					this.#nmdb[charY * 144 + secX + charX] = e1;
 				});
 			});
+			targetFont.getStr(bankName).forEach((e0, i0) => {
+				let secX = i0 * 6 + 53;
+				e0.forEach((e1, i1) => {
+					let charX = i1 % 5,
+					charY = Math.floor(i1 / 5) + 16;
+					this.#nmdb[charY * 144 + secX + charX] = e1;
+				});
+			})
 			// Render current channel
 			targetFont.getStr(`${this.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
 				let secX = i0 * 6;
