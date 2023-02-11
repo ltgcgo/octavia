@@ -1,5 +1,7 @@
 # Octavia
-🎻 The multi-standard MIDI state-tracking library, brought to you by Lightingale Community.
+🎻 Event-driven multi-standard MIDI state-tracking library. Working with MIDI should be simple, while faithful and professional.
+
+Made with ❤️ by Lightingale Community.
 
 Visit [our GitHub repo](https://github.com/ltgcgo/octavia/) for more info, or see the [demo in action](https://ltgcgo.github.io/octavia/test/).
 
