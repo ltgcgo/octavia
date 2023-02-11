@@ -139,6 +139,10 @@ let OctaviaDevice = class extends CustomEventSource {
 	NOTE_SUSTAIN = 3;
 	NOTE_HELD = 4;
 	NOTE_RELEASE = 5;
+	NOTE_SOSTENUTO_ATTACK = 8;
+	NOTE_SOSTENUTO_DECAY = 9;
+	NOTE_SOSTENUTO_SUSTAIN = 10;
+	NOTE_SOSTENUTO_HELD = 11;
 	CH_MELODIC = 0;
 	CH_DRUMS = 1;
 	CH_DRUM1 = 2;
@@ -243,7 +247,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let rawNote = part * 128 + note;
 			let polyIdx = this.#poly.lastIndexOf(rawNote);
 			if (polyIdx > -1) {
-				if (this.#cc[allocated.cc * part + ccToPos[64]] > 63 && !this.config?.disableCc64) {
+				if (this.#cc[allocated.cc * part + ccToPos[64]] > 63) {
 					// Held by cc64
 					this.#polyState[polyIdx] = this.NOTE_HELD;
 					this.dispatchEvent("note", {
@@ -251,6 +255,15 @@ let OctaviaDevice = class extends CustomEventSource {
 						note,
 						velo: this.#velo[rawNote],
 						state: this.NOTE_HELD
+					});
+				} else if (this.#cc[allocated.cc * part + ccToPos[66]] > 63 && this.#polyState[polyIdx] == this.NOTE_SOSTENUTO_SUSTAIN) {
+					// Held by cc66
+					this.#polyState[polyIdx] = this.NOTE_SOSTENUTO_HELD;
+					this.dispatchEvent("note", {
+						part,
+						note,
+						velo: this.#velo[rawNote],
+						state: this.NOTE_SOSTENUTO_HELD
 					});
 				} else {
 					this.#poly[polyIdx] = 0;
@@ -315,7 +328,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		hoOf: (part) => {
 			// Scan and turn off all notes held by cc64
 			this.#polyState.forEach((e, i) => {
-				if (e == 4) {
+				if (e == this.NOTE_HELD) {
 					// Held by cc64
 					let rawNote = this.#poly[i];
 					let channel = rawNote >> 7;
@@ -333,8 +346,56 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 		},
+		soOn: (part) => {
+			// Scan and convert all unoccupied active notes to be managed by sostenuto
+			this.#polyState.forEach((e, i) => {
+				let emitEvent;
+				switch (e) {
+					case this.NOTE_ATTACK: {
+						emitEvent = this.NOTE_SOSTENUTO_ATTACK;
+						break;
+					};
+					case this.NOTE_DECAY: {
+						emitEvent = this.NOTE_SOSTENUTO_DECAY;
+						break;
+					};
+					case this.NOTE_SUSTAIN: {
+						emitEvent = this.NOTE_SOSTENUTO_SUSTAIN;
+						break;
+					};
+				};
+				if (emitEvent) {
+					this.#polyState[i] = emitEvent;
+					let rawNote = this.#poly[i];
+					this.dispatchEvent("note", {
+						part,
+						note: rawNote & 127,
+						velo: this.#velo[rawNote],
+						state: emitEvent
+					});
+				};
+			});
+		},
 		soOf: (part) => {
 			// Scan and turn off all notes held by cc66
+			this.#polyState.forEach((e, i) => {
+				if (e == this.NOTE_SOSTENUTO_HELD) {
+					// Held by cc66
+					let rawNote = this.#poly[i];
+					let channel = rawNote >> 7;
+					if (part == channel) {
+						this.#polyState[i] = this.NOTE_IDLE;
+						this.#poly[i] = 0;
+						this.#velo[rawNote] = 0;
+						this.dispatchEvent("note", {
+							part,
+							note: rawNote & 127,
+							velo: 0,
+							state: this.NOTE_IDLE
+						});
+					};
+				};
+			});
 		},
 		ano: (part) => {
 			// All notes off
@@ -596,7 +657,13 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case 66: {
 						// cc66: sostenuto
-						console.debug(`Sostenuto pedal: ${det.data[1]}`);
+						if (det.data[1] >> 6) {
+							// Sostenuto on
+							this.#ua.soOn(part);
+						} else {
+							// Sostenuto off
+							this.#ua.soOf(part);
+						};
 						break;
 					};
 					case 98:
