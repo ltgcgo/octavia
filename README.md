@@ -35,5 +35,5 @@ You can help with Octavia's development, by doing any of the following, or more.
 * Write anything utilizing Octavia's API.
 * Report any bugs you find.
 * Submit feature requests.
-* Support the developers financially.
+* Give the developers some donation as a reward.
 * Spread the word about Octavia.

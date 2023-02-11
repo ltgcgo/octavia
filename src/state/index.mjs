@@ -3060,7 +3060,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				msb: 80,
 				lsb: 0
 			});
-			console.debug(voiceMap);
+			//console.debug(voiceMap);
 			upThis.userBank.load(voiceMap);
 		}).add([66, 55], (msg, track) => {
 			// All combination dump
