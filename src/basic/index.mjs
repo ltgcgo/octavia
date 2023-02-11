@@ -13,7 +13,8 @@ let RootDisplay = class extends CustomEventSource {
 	#midiPool;
 	#titleName = "";
 	#metaRun = [];
-	#mimicStrength = new Uint8ClampedArray(64);
+	#mimicStrength = new Uint8ClampedArray(128);
+	#beforeStrength = new Uint8ClampedArray(128);
 	// Used to provide tempo, tSig and bar information
 	#noteBInt = 0.5;
 	#noteTempo = 120;
@@ -89,6 +90,9 @@ let RootDisplay = class extends CustomEventSource {
 		let upThis = this;
 		let metaReplies = [];
 		// Reset strength for a new frame
+		this.device.getStrength().forEach((e, i) => {
+			this.#beforeStrength[i] = e;
+		});
 		upThis.device.newStrength();
 		events.forEach(function (e) {
 			let raw = e.data;
@@ -132,7 +136,7 @@ let RootDisplay = class extends CustomEventSource {
 		// Mimic strength variation
 		let writeStrength = this.device.getStrength();
 		writeStrength.forEach(function (e, i) {
-			let diff = e - upThis.#mimicStrength[i];
+			let diff = Math.max(e, upThis.#beforeStrength[i]) - upThis.#mimicStrength[i];
 			let chOff = ccToPos.length * i;
 			if (diff >= 0) {
 				// cc73 = 0, atkPower = 4
