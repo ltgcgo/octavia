@@ -21,9 +21,9 @@
 | Text display²   |    |     | ✓     | ✓  | ✓  |       |     | ✕    |       |          |       |        |
 | Drum setup      |    | ?   | ✕     | ✕  | ✕  | ✕     | ✕   | ✕    | ✕     | ✕        |       |        |
 
-* 1: Support in GS is called "frame draw", and with multi-page support.
-* 2: Called "letter display" in XG, and "text insert" in GS.
-* 3: GS only has "delay" effect occupying the space of variation setup.
+1. Support in GS is called "frame draw", and with multi-page support.
+2. Called "letter display" in XG, and "text insert" in GS.
+3. GS only has "delay" effect occupying the space of variation setup.
 
 ### Device-specific instructions
 #### Roland MT-32

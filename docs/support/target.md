@@ -14,7 +14,7 @@ For specific SysEx support range, refer to [Supported SysEx Instructions](./syse
 | Roland | MT-32     | S    | ✓    | ✓     |
 | Roland | GS        | S    | ✓    | ✓     |
 | YAMAHA | TG        | L    | ✓    | ✓     |
-| YAMAHA | XG        | S    | ✓    | ✓     |
+| YAMAHA | XG¹       | S    | ✓    | ✓     |
 | YAMAHA | PLG-150AN | P    | ✓    | ✕     |
 | YAMAHA | PLG-150AP | P    | ✓    | ✕     |
 | YAMAHA | PLG-150DR | P    | ✓    | ✓     |
@@ -32,6 +32,8 @@ For specific SysEx support range, refer to [Supported SysEx Instructions](./syse
 | AKAI   | SG01k     | M    | ✓    | ✓     |
 | CASIO  | GZ-50M    | M    | ✓    | ✓     |
 | ALESIS | NanoSynth | M    | ✕    | ✕     |
+
+1. Octavia implements XG level 3.0 or later, and XG version 2.0 or later.
 
 ### Specific targets
 #### Roland MT-32

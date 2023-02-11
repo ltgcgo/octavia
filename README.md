@@ -18,11 +18,20 @@ Octavia offers support to a wide range of targets, most of them being either GM-
 
 To have a general idea of how MIDI is implemented, refer to the [MIDI Implementation Chart](docs/support/implementation.md) and [Supported SysEx instructions](docs/support/sysex.md).
 
+## Credits
+Please read [CREDITS.md](CREDITS.md).
+
 ## API & more
 Please read the [documentation](docs/README.md).
 
 ## Examples
 Please check out the `/examples/` directory.
 
-## Credits
-Please read [CREDITS.md](CREDITS.md).
+## Contribute
+You can help with Octavia's development, by doing any of the following, or more...
+* Test Octavia, whether under production environment or not.
+* Write anything utilizing Octavia's API.
+* Report any bugs you find.
+* Submit feature requests.
+* Support the developers financially.
+* Spread the word about Octavia.
