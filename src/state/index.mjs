@@ -132,6 +132,23 @@ const allocated = {
 };
 
 let OctaviaDevice = class extends CustomEventSource {
+	// Constants
+	NOTE_IDLE = 0;
+	NOTE_ATTACK = 1;
+	NOTE_DECAY = 2;
+	NOTE_SUSTAIN = 3;
+	NOTE_HELD = 4;
+	NOTE_RELEASE = 5;
+	CH_MELODIC = 0;
+	CH_DRUMS = 1;
+	CH_DRUM1 = 2;
+	CH_DRUM2 = 3;
+	CH_DRUM3 = 4;
+	CH_DRUM4 = 5;
+	CH_DRUM5 = 6;
+	CH_DRUM6 = 7;
+	CH_DRUM7 = 8;
+	CH_DRUM8 = 9;
 	// Values
 	#mode = 0;
 	#bitmapPage = 0;
@@ -228,22 +245,22 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (polyIdx > -1) {
 				if (this.#cc[allocated.cc * part + ccToPos[64]] > 63 && !this.config?.disableCc64) {
 					// Held by cc64
-					this.#polyState[polyIdx] = 4;
+					this.#polyState[polyIdx] = this.NOTE_HELD;
 					this.dispatchEvent("note", {
 						part,
 						note,
 						velo: this.#velo[rawNote],
-						state: 4
+						state: this.NOTE_HELD
 					});
 				} else {
 					this.#poly[polyIdx] = 0;
 					this.#velo[rawNote] = 0;
-					this.#polyState[polyIdx] = 0;
+					this.#polyState[polyIdx] = this.NOTE_IDLE;
 					this.dispatchEvent("note", {
 						part,
 						note,
 						velo: 0,
-						state: 0
+						state: this.NOTE_IDLE
 					});
 				};
 			};
@@ -266,15 +283,15 @@ let OctaviaDevice = class extends CustomEventSource {
 				// 2: decay
 				// 3: sustain (active)
 				// 4: hold
-				// 5: sostenuto sustain
-				// 6: sostenuto hold
-				// 7: release
+				// 5: release
+				// 6: sostenuto sustain
+				// 7: sostenuto hold
 				place ++;
 			};
 			if (place < allocated.pl) {
 				this.#poly[place] = rawNote;
 				this.#velo[rawNote] = velo;
-				this.#polyState[place] = 3;
+				this.#polyState[place] = this.NOTE_SUSTAIN;
 				if (this.#rawStrength[part] < velo) {
 					this.#rawStrength[part] = velo;
 				};
@@ -282,7 +299,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					part,
 					note,
 					velo,
-					state: 3
+					state: this.NOTE_SUSTAIN
 				});
 				//console.debug(place);
 			} else {
@@ -303,14 +320,14 @@ let OctaviaDevice = class extends CustomEventSource {
 					let rawNote = this.#poly[i];
 					let channel = rawNote >> 7;
 					if (part == channel) {
-						this.#polyState[i] = 0;
+						this.#polyState[i] = this.NOTE_IDLE;
 						this.#poly[i] = 0;
 						this.#velo[rawNote] = 0;
 						this.dispatchEvent("note", {
 							part,
 							note: rawNote & 127,
 							velo: 0,
-							state: 0
+							state: this.NOTE_IDLE
 						});
 					};
 				};
@@ -364,7 +381,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					part,
 					note: det.data[0],
 					velo: det.data[1],
-					state: 3
+					state: this.NOTE_SUSTAIN
 				});
 			};
 		},
@@ -450,7 +467,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.warn(`cc${det.data[0]} is not accepted.`);
 			} else {
 				// Stored CC messages
-				this.#cc[chOffset + ccToPos[det.data[0]]] = det.data[1];
 				switch (det.data[0]) {
 					case 0: {
 						// Detect mode via bank MSB
@@ -460,7 +476,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (this.#mode == 0) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset] > 119) {
+								if (this.#cc[chOffset + ccToPos[0]] > 119) {
 									det.data[1] = this.#cc[chOffset];
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -479,7 +495,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (this.#mode == modeMap.gs) {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset] > 119) {
+								if (this.#cc[chOffset + ccToPos[0]] > 119) {
 									det.data[1] = this.#cc[chOffset];
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -488,7 +504,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (this.#mode == modeMap.gm) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset] > 119) {
+								if (this.#cc[chOffset + ccToPos[0]] > 119) {
 									det.data[1] = 120;
 									this.switchMode("gs", true);
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -594,6 +610,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 				};
+				this.#cc[chOffset + ccToPos[det.data[0]]] = det.data[1];
 				this.dispatchEvent("cc", {
 					part,
 					cc: det.data[0],
@@ -626,7 +643,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						part,
 						note: e & 127,
 						velo: det.data,
-						state: 3
+						state: this.NOTE_SUSTAIN
 					});
 				};
 			});
