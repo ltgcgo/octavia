@@ -135,8 +135,9 @@ let RootDisplay = class extends CustomEventSource {
 		let chProgr = upThis.device.getProgram();
 		// Mimic strength variation
 		let writeStrength = this.device.getStrength();
-		writeStrength.forEach(function (e, i) {
-			let diff = Math.max(e, upThis.#beforeStrength[i]) - upThis.#mimicStrength[i];
+		writeStrength.forEach(function (e, i, a) {
+			a[i] = Math.max(upThis.#beforeStrength[i], e);
+			let diff = a[i] - upThis.#mimicStrength[i];
 			let chOff = ccToPos.length * i;
 			if (diff >= 0) {
 				// cc73 = 0, atkPower = 4
