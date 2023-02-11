@@ -145,9 +145,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
-	#cc = new Uint8ClampedArray(allocated.ch * allocated.cc); // 64 channels, 128 controllers
-	#prg = new Uint8ClampedArray(allocated.ch);
-	#velo = new Uint8ClampedArray(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
+	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
+	#prg = new Uint8Array(allocated.ch);
+	#velo = new Uint8Array(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
 	#poly = new Uint16Array(allocated.pl); // 512 polyphony allowed
 	#polyState = new Uint8Array(allocated.pl); // State of each active voice.

@@ -141,7 +141,7 @@ let RootDisplay = class extends CustomEventSource {
 				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothingAtk ** atkPower)));
 			} else {
 				let rlsPower = 4 * (0.25 ** (chContr[chOff + ccToPos[72]] / 64));
-				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothingDcy ** rlsPower)));
+				upThis.#mimicStrength[i] += Math.floor(diff - (diff * (upThis.smoothingDcy ** rlsPower)));
 			};
 		});
 		let curPoly = 0;
