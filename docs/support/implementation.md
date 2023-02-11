@@ -167,12 +167,12 @@
 		<tr>
 			<td>66</td>
 			<td>✓</td>
-			<td>Sostenuto<br/><i>Store only</i></td>
+			<td>Sostenuto</td>
 		</tr>
 		<tr>
 			<td>67</td>
 			<td>✓</td>
-			<td>Soft Pedal</td>
+			<td>Soft Pedal<br/><i>Store only</i></td>
 		</tr>
 		<tr>
 			<td>68</td>
