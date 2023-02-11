@@ -1,5 +1,7 @@
 # Octavia
-🎻 Event-driven multi-standard MIDI state-tracking library, brought to you by Lightingale Community.
+🎻 Event-driven multi-standard MIDI state-tracking library. Working with MIDI should be simple, while faithful and professional.
+
+Made with ❤️ by Lightingale Community.
 
 ## Why Octavia over others?
 * Free, libre and open-source, under GNU LGPL v3.0.
