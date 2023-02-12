@@ -24,7 +24,7 @@ let currentAnimation;
 let useMidiBus = false;
 
 // Generate Octavia channel switch SysEx
-let generateSwitch = function (ch = 0, min, max) {
+self.generateSwitch = function (ch = 0, min, max) {
 	let data = [67, 16, 73, 0, 0, 10, ch];
 	if (min?.constructor == Number) {
 		data.push(min);
@@ -38,7 +38,7 @@ let generateSwitch = function (ch = 0, min, max) {
 		data
 	};
 };
-let generateString = function (text) {
+self.generateString = function (text) {
 	let data = [67, 16, 76, 6, 0, 0];
 	for (let c = 0; c < text.length; c ++) {
 		data.push(text.charCodeAt(c));
