@@ -9,8 +9,7 @@ import {
 	bgOrange,
 	bgWhite,
 	bgRed,
-	inactivePixel,
-	activePixel
+	lcdCache
 } from "./colour.js";
 
 let Ns5rDisplay = class extends RootDisplay {
@@ -402,7 +401,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				ctx.fillRect(6 * pixX + 1, 12 + 6 * pixY, 6, 6);
 			};
 			if (drawPixMode || hasDifference) {
-				ctx.fillStyle = ["#0000001a", "#0000009f"][e];
+				ctx.fillStyle = lcdCache.black[e + 3];
 				if (drawPixMode) {
 					ctx.fillStyle = ctx.fillStyle.slice(0, 7);
 				};

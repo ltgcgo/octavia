@@ -6,8 +6,7 @@ import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
 
 import {
 	bgWhite,
-	inactivePixel,
-	activePixel
+	lcdCache
 } from "./colour.js";
 
 let QyDisplay = class extends RootDisplay {
@@ -499,7 +498,7 @@ let QyDisplay = class extends RootDisplay {
 				ctx.fillRect(6 * pixX + 7, 7 + 8 * pixY, 6, 8);
 			};
 			if (drawPixMode || hasDifference) {
-				ctx.fillStyle = ["#0000001a", "#0000009f"][e];
+				ctx.fillStyle = lcdCache.black[e + 3];
 				if (drawPixMode) {
 					ctx.fillStyle = ctx.fillStyle.slice(0, 7);
 				};
