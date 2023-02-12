@@ -1,7 +1,7 @@
 "use strict";
 
 let bgOrange = "#ffaa2264",
-bgGreen = "#aaff2264",
+bgGreen = "#c1ff0a64",
 bgWhite = "#b3d8de64",
 bgRed = "#ff798664";
 
