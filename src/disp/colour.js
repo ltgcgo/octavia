@@ -4,7 +4,8 @@ let backlight = {
 	red: "#ff7986",
 	orange: "#fca022",
 	green: "#c1ff0a",
-	white: "#b7e5e3"
+	white: "#b7e5e3",
+	blue: "#2280ff"
 },
 lcdPixel = {
 	black: "#000000",
