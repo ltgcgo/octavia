@@ -5,7 +5,7 @@ import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
 import {
-	bgGreen,
+	backlight,
 	inactivePixel,
 	activePixel
 } from "./colour.js";
@@ -125,7 +125,7 @@ let MuDisplay = class extends RootDisplay {
 		let timeNow = Date.now();
 		// Fill with green
 		//ctx.fillStyle = "#af2";
-		ctx.fillStyle = bgGreen;
+		ctx.fillStyle = `${backlight.grYellow}64`;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		// Main matrix display
 		this.#mmdb.forEach((e, i, a) => {a[i] = 0});

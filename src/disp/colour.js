@@ -3,6 +3,7 @@
 let backlight = {
 	red: "#ff7986",
 	orange: "#fca022",
+	grYellow: "#c9e10a",
 	green: "#c1ff0a",
 	white: "#b7e5e3",
 	blue: "#2280ff"
