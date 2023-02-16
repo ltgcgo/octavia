@@ -1,6 +1,6 @@
-/
-/test/
-/test/demoTui.htm
+/index.htm
+/test/index.htm
+/test/tui.htm
 /test/fakeMu.htm
 /test/fakeSc.htm
 /test/fakeNs5r.htm
