@@ -1,4 +1,4 @@
 *.map
 *.swp
 dist/*.js
-ghp/map.txt
+ghp/sitemap.xml
