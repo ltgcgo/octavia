@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Build and deploy to GitHub Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -34,12 +34,13 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Setup Deno
         uses: denoland/setup-deno@v1.1.1
-      - name: Build Octavia Files
+      - name: Build Octavia files
         run: "./shx build"
-      - name: Upload artifact
+      - name: Generate simple sitemap
+        run: "./shx sitemap"
+      - name: Upload bundled artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload entire repository
           path: 'ghp'
       - name: Deploy to GitHub Pages
         id: deployment
