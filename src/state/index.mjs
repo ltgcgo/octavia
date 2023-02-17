@@ -113,7 +113,7 @@ let sysExSplitter = function (seq) {
 		seqArr.push(seq.subarray(0));
 	};
 	if (getDebugState()) {
-		//console.info(seqArr);
+		console.debug(seqArr);
 	};
 	return seqArr;
 };
@@ -710,7 +710,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						part,
 						note: e & 127,
 						velo: det.data,
-						state: this.NOTE_SUSTAIN
+						state: upThis.NOTE_SUSTAIN
 					});
 				};
 			});
@@ -757,11 +757,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#metaChannel = 0;
 			};
 			let useReply = passedMeta.indexOf(det.meta) > -1;
+			if (getDebugState()) {
+				console.debug(det);
+			};
 			if (useReply) {
 				det.reply = "meta";
 				return det;
-			} else if (getDebugState()) {
-				console.debug(det);
 			};
 		}
 	};
@@ -854,6 +855,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		arr[ccToPos[32]] = arr[ccToPos[32]] || this.#subLsb;
 		return arr;
 	};
+	getCcCh(channel, cc) {
+		if (ccAccepted.indexOf(cc) < 0) {
+			throw(new Error("CC number not accepted"));
+		};
+		return this.#cc[allocated.cc * channel + ccToPos[cc]];
+	};
 	getCcAll() {
 		// Return all CC registers
 		let arr = this.#cc.slice();
@@ -922,6 +929,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getStrength() {
 		// 0 to 255
+		// Should later become 0 to 65535
 		let str = [], upThis = this;
 		this.getRawStrength().forEach(function (e, i) {
 			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * upThis.#masterVol / 803288);
