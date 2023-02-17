@@ -76,7 +76,7 @@ let Cambiare = class Cambiare extends RootDisplay {
 		fontTop = metrics.actualBoundingBoxAscent;
 		// Information section
 		context.fillStyle = "#fff";
-		context.fillText(`${sum.eventCount.toString().padStart(3, "0")} ${(sum.curPoly + sum.extraPoly).toString().padStart(3, "0")}/512 ${sum.tSig[0].toString().padStart(2, " ")}/${sum.tSig[1].toString().padEnd(2, " ")} ${sum.tSig[0].toString().padStart(2, " ")}/${sum.tSig[1].toString().padEnd(2, " ")} ${(sum.noteBar + 1).toString().padStart(3, " ")}-${Math.floor(sum.noteBeat + 1).toString().padEnd(2, " ")} ${Math.floor(sum.tempo).toString().padStart(3, " ")}.${Math.floor(sum.tempo * 100 % 100).toString().padStart(2, "0")}bpm ${Math.floor(sum.master.volume).toString().padStart(3, " ")}.${Math.floor(sum.master.volume * 100 % 100).toString().padStart(2, "0")}%`, upThis.fontPadding + fontLeft, fontTop + upThis.fontPadding);
+		context.fillText(`${sum.eventCount.toString().padStart(3, "0")} ${(sum.curPoly + sum.extraPoly).toString().padStart(3, "0")}/512 ${sum.tSig[0].toString().padStart(2, " ")}/${sum.tSig[1].toString().padEnd(2, " ")} ${(sum.noteBar + 1).toString().padStart(3, " ")}-${Math.floor(sum.noteBeat + 1).toString().padEnd(2, " ")} ${Math.floor(sum.tempo).toString().padStart(3, " ")}.${Math.floor(sum.tempo * 100 % 100).toString().padStart(2, "0")}bpm ${Math.floor(sum.master.volume).toString().padStart(3, " ")}.${Math.floor(sum.master.volume * 100 % 100).toString().padStart(2, "0")}%`, upThis.fontPadding + fontLeft, fontTop + upThis.fontPadding);
 		// Key press section
 		// Use available states
 		sum.chKeyPr.forEach((e, part) => {
