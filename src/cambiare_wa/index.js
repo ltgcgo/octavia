@@ -167,14 +167,14 @@ document.addEventListener("keydown", function (ev) {
 	let scamKey = (+ev.shiftKey << 3) + (+ev.ctrlKey << 2) + (+ev.altKey << 1) + +ev.metaKey;
 	switch (scamKey) {
 		case 0: {
-			switch (ev.keyCode) {
-				case 13: {
+			switch (ev.key) {
+				case "Enter": {
 					// Enter or exit fullscreen
 					canvFull();
 					ev.preventDefault();
 					break;
 				};
-				case 32: {
+				case " ": {
 					// Play or pause
 					if (audioPlayer.paused) {
 						audioPlayer.play();
@@ -184,35 +184,35 @@ document.addEventListener("keydown", function (ev) {
 					ev.preventDefault();
 					break;
 				};
-				case 37: {
+				case "ArrowLeft": {
 					audioPlayer.currentTime -= 1;
 					break;
 				};
-				case 39: {
+				case "ArrowRight": {
 					audioPlayer.currentTime += 1;
 					break;
 				};
-				case 49:
-				case 50:
-				case 51:
-				case 52:
-				case 53:
-				case 54:
-				case 55:
-				case 56: {
+				case "1":
+				case "2":
+				case "3":
+				case "4":
+				case "5":
+				case "6":
+				case "7":
+				case "8": {
 					// Switch start port
-					visualizer.startPort = ev.keyCode - 49;
+					visualizer.startPort = "12345678".indexOf(ev.key);
 					break;
 				};
-				case 57: {
+				case "j": {
 					visualizer.mode = 0;
 					break;
 				};
-				case 48: {
+				case "k": {
 					visualizer.mode = 1;
 					break;
 				};
-				case 173: {
+				case "l": {
 					visualizer.mode = 2;
 					break;
 				};
