@@ -154,12 +154,11 @@ dispCanv.addEventListener("contextmenu", (ev) => {
 let winResize = function (ev) {
 	let tabHeight = document.children[0].clientHeight,
 	tabWidth = document.children[0].clientWidth;
-	targetWidth = Math.floor(tabWidth * devicePixelRatio / 10) * 10,
-	targetHeight = Math.floor((tabHeight - dispCanv.offsetTop) * devicePixelRatio / 10) * 10;
+	targetWidth = Math.floor(tabWidth / 10) * 10,
+	targetHeight = Math.floor(tabHeight / 10) * 10;
 	dispCanv.style.position = `absolute`;
-	dispCanv.style.top = `132px`;
-	dispCanv.style.left = `${(tabWidth - targetWidth) >> 1}px`;
-	visualizer.resizeCanvas(targetWidth, targetHeight);
+	dispCanv.style.top = `160px`;
+	visualizer.resizeCanvas(targetWidth, Math.min(targetHeight, targetWidth));
 };
 addEventListener("resize", winResize);
 winResize();
