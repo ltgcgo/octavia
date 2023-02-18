@@ -158,7 +158,7 @@ let winResize = function (ev) {
 	targetHeight = Math.floor(tabHeight / 10) * 10;
 	dispCanv.style.position = `absolute`;
 	dispCanv.style.top = `160px`;
-	visualizer.resizeCanvas(targetWidth, Math.min(targetHeight, targetWidth));
+	visualizer.resizeCanvas(Math.max(targetWidth, 960), Math.max(540, Math.min(targetHeight, targetWidth)));
 };
 addEventListener("resize", winResize);
 winResize();
