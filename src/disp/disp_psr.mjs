@@ -242,10 +242,10 @@ let PsrDisplay = class extends RootDisplay {
 				this.#nsdb[(Math.floor(i / 12) - 4) * 7 + noteHeadPos[i % 12]] = pixel;
 				if (isBlackKey[i % 12]) {
 					if (isBlackKey[i % 12] == 1) {
-						this.#nadb[(Math.floor(i / 12) - 4) * 2 + nadbIndex[i % 12]] = 1;
+						this.#nadb[(Math.floor(i / 12) - 4) * 2 + nadbIndex[i % 12]] = pixel;
 					}
 					else {
-						this.#nadb[(Math.floor(i / 12) - 4) * 3 + nadbIndex[i % 12] + 6] = 1;
+						this.#nadb[(Math.floor(i / 12) - 4) * 3 + nadbIndex[i % 12] + 6] = pixel;
 					}
 				}
 			}
@@ -263,10 +263,10 @@ let PsrDisplay = class extends RootDisplay {
 				}
 				if (isBlackKey[i % 12]) {
 					if (isBlackKey[i % 12] == 1) {
-						this.#nadb[nadbIndex[i % 12]] = 1;
+						this.#nadb[nadbIndex[i % 12]] = Math.max(this.#nadb[nadbIndex[i % 12]], pixel);
 					}
 					else {
-						this.#nadb[nadbIndex[i % 12] + 6] = 1;
+						this.#nadb[nadbIndex[i % 12] + 6] = Math.max(this.#nadb[nadbIndex[i % 12] + 6], pixel);
 					}
 				}
 			}
@@ -284,10 +284,10 @@ let PsrDisplay = class extends RootDisplay {
 				}
 				if (isBlackKey[i % 12]) {
 					if (isBlackKey[i % 12] == 1) {
-						this.#nadb[4 + nadbIndex[i % 12]] = 1;
+						this.#nadb[4 + nadbIndex[i % 12]] = Math.max(this.#nadb[4 + nadbIndex[i % 12]], pixel);
 					}
 					else {
-						this.#nadb[12 + nadbIndex[i % 12]] = 1;
+						this.#nadb[12 + nadbIndex[i % 12]] = Math.max(this.#nadb[12 + nadbIndex[i % 12]], pixel);
 					}
 				}
 			}
@@ -439,13 +439,13 @@ let PsrDisplay = class extends RootDisplay {
 		this.#nadb.forEach((e, i) => {
 			if (i < 6) {
 				ctx.setTransform(0.03, 0, 0, -0.03, sharpPosX[i], sharpPosY[i]);
-				ctx.fillStyle = [inactivePixel, activePixel][e];
+				ctx.fillStyle = [inactivePixel, mediumPixel, activePixel][e];
 				ctx.fill(upThis.sharpSign);
 				ctx.resetTransform();
 			}
 			else {
 				ctx.setTransform(0.03, 0, 0, -0.03, flatPosX[i - 6], flatPosY[i - 6]);
-				ctx.fillStyle = [inactivePixel, activePixel][e];
+				ctx.fillStyle = [inactivePixel, mediumPixel, activePixel][e];
 				ctx.fill(upThis.flatSign);
 				ctx.resetTransform();
 			}
