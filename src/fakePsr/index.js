@@ -620,6 +620,33 @@ self.performance = currentPerformance;
 	demoPerfs["R-love"] = perf;
 };
 {
+	// MU80 demo
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(1.6, generateSwitch(19)));
+	perf.push(new PointEvent(18.92, generateSwitch(3)));
+	perf.push(new PointEvent(27.29, generateSwitch(2)));
+	perf.push(new PointEvent(31.47, generateSwitch(9)));
+	perf.push(new PointEvent(33.49, generateSwitch(10)));
+	perf.push(new PointEvent(35.52, generateSwitch(19)));
+	perf.push(new PointEvent(37.62, generateSwitch(1)));
+	perf.push(new PointEvent(39.73, generateSwitch(3)));
+	perf.push(new PointEvent(41.83, generateSwitch(6)));
+	perf.push(new PointEvent(43.93, generateSwitch(18)));
+	perf.push(new PointEvent(46.03, generateSwitch(19)));
+	perf.push(new PointEvent(48.13, generateSwitch(21)));
+	perf.push(new PointEvent(50.23, generateSwitch(24)));
+	perf.push(new PointEvent(52.34, generateSwitch(3)));
+	perf.push(new PointEvent(57.76, generateSwitch(4)));
+	perf.push(new PointEvent(61.12, generateSwitch(3)));
+	perf.push(new PointEvent(64.11, generateSwitch(4)));
+	perf.push(new PointEvent(69.84, generateSwitch(6)));
+	perf.push(new PointEvent(87.48, generateSwitch(4)));
+	perf.push(new PointEvent(117.12, generateSwitch(23)));
+	perf.push(new PointEvent(125, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["OutOfTheMuse"] = perf;
+};
+{
 	// The Musithm
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(2.5, generateSwitch(14)));
