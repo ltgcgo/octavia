@@ -31,23 +31,39 @@ let normParamPaint = function (sup, offsetX, ctx) {
 };
 let startA = Math.PI * 255 / 180;
 let endA = Math.PI * 285 / 180;
-let efxParamPaint = function (sup, offsetX, ctx) {
+let efxParamPaint = function (sup, offsetX, ctx, useWB, wbArr) {
 	let paramW = mprWidth * 4 - 1;
 	let paramH = mprHeight * 1.5 - 1;
 	let sub = sup >> 4;
 	for (let i = 0; i < 8; i ++) {
-		if (sub >= 0) {
-			ctx.strokeStyle = activePixel;
+		if (useWB) {
+			if (wbArr[i]) {
+				ctx.strokeStyle = activePixel;
+			} else {
+				ctx.strokeStyle = inactivePixel;
+			};
 		} else {
-			ctx.strokeStyle = inactivePixel;
+			if (sub >= 0) {
+				ctx.strokeStyle = activePixel;
+			} else {
+				ctx.strokeStyle = inactivePixel;
+			};
+			sub --;
 		};
-		sub --;
 		let invI = 7 - i;
 		ctx.beginPath();
 		ctx.arc(offsetX, 256, (9 - invI) * mprWidth, startA, endA);
 		ctx.lineWidth = paramH;
 		ctx.stroke();
 	};
+};
+
+Math.sum = function (...args) {
+	let sum = 0;
+	args.forEach((e) => {
+		sum += e;
+	});
+	return sum;
 };
 
 CanvasRenderingContext2D.prototype.radial = function (centreX, centreY, angle, startR, stopR) {
@@ -69,6 +85,8 @@ let MuDisplay = class extends RootDisplay {
 	#ch = 0;
 	#minCh = 0;
 	#maxCh = 0;
+	inWB = false;
+	#waveBuffer = new Uint8Array(8);
 	#panStrokes = new Uint8Array(7);
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
@@ -103,6 +121,8 @@ let MuDisplay = class extends RootDisplay {
 		this.addEventListener("channelreset", () => {
 			this.#minCh = 0;
 			this.#maxCh = 0;
+			this.#waveBuffer.fill(0);
+			this.demoInfo = false;
 		});
 	};
 	setCh(ch) {
@@ -357,13 +377,21 @@ let MuDisplay = class extends RootDisplay {
 			};
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
 		};
+		// Move waveBuffer
+		let useWB = time && this.demoInfo;
+		if (useWB && Math.floor(time * 25) & 1) {
+			for (let i = 6; i >= 0; i --) {
+				this.#waveBuffer[i + 1] = this.#waveBuffer[i];
+			};
+			this.#waveBuffer[0] = +(sum.velo[this.#ch] > 159);
+		};
 		// Show param
 		normParamPaint(sum.chContr[chOff + ccToPos[7]], 404, ctx); // vol
 		normParamPaint(sum.chContr[chOff + ccToPos[11]], 452, ctx); // exp
 		normParamPaint(sum.chContr[chOff + ccToPos[74]], 500, ctx); // bri
-		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 648, ctx); // rev
-		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 696, ctx); // cho
-		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 744, ctx); // var
+		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 648, ctx, useWB, this.#waveBuffer); // rev
+		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 696, ctx, useWB, this.#waveBuffer); // cho
+		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 744, ctx, useWB, this.#waveBuffer); // var
 		// Show pan
 		ctx.beginPath();
 		ctx.arc(582, 216, 34, 2.356194490192345, 7.068583470577034);
