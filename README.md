@@ -3,6 +3,8 @@
 
 Made with ❤️ by Lightingale Community.
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/fa5aeaf4ba4c9b2d50e2/maintainability)](https://codeclimate.com/github/ltgcgo/octavia/maintainability)
+
 ## Why Octavia over others?
 * Free, libre and open-source, under GNU LGPL v3.0.
 * Behaves like a real MIDI module, doing most of the heavy-lifting for you.
