@@ -4,12 +4,12 @@ let arrowGen = function (charArr, value, border, unit) {
 	let boundLow = border - (unit >> 1), boundHi = border + (unit >> 1);
 	if (value > border) {
 		for (let c = 0; value > border; c ++) {
-			result[c] = (value < boundHi) ? "=" : ">";
+			charArr[c] = (value < boundHi) ? "=" : ">";
 			value -= unit;
 		};
 	} else if (value < border) {
-		for (let c = charArr.length; value < border; c --) {
-			result[c] = (value >= boundLow) ? "=" : "<";
+		for (let c = charArr.length - 1; value < border; c --) {
+			charArr[c] = (value >= boundLow) ? "=" : "<";
 			value += unit;
 		};
 	};
