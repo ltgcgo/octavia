@@ -15,7 +15,8 @@ Octavia will never become a reality without help from the following people.
 ### Reference providers
 * **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
 * **DearHoney** (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro, YAMAHA MU100, YAMAHA MU1000)
-* **Ham Seung-woo** (YAMAHA MU90)
+* **DistWave** (YAMAHA MU80)
+* ~~**Ham Seung-woo** (YAMAHA MU90)~~
 * **NiceChord** (YAMAHA MU80, Roland SC-55 mk. II)
 * **Lupinzar** _DarkWolf, garoux.net_ (YAMAHA MU80, Roland SC-55 mk. II)
 
@@ -46,7 +47,7 @@ Octavia will never become a reality without help from the following people.
 | E | John Lehmkuhl | MissionMan | NS5R | NS5R | DearHoney | |
 | F | Sam Sketty | Ambient | XG | MU80 | NiceChord | |
 | G | David J. Reading | Galactic Invasion | XG | S-YXG50 WDM | Lumière Élevé | |
-| H | Sam Sketty | Low Down | XG | MU90 | Ham Seung-woo | |
+| H | Sam Sketty | Low Down | XG | MU90 | DistWave | |
 | I | John Campbell | Star Games | GS (SC-55) | SC-88 Pro | DearHoney | |
 | J | David Yackley | One Stop | GM | FluidSynth, ColomboGMGS2 | Lumière Élevé | |
 | K | 大田川恭子 (Team-khy) | Orchestra | GS | SC-88 Pro | DearHoney | |
