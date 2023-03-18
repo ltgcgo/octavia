@@ -84,3 +84,5 @@ Octavia will never become a reality without help from the following people.
 | Η | 森尾隆 | Rhythm&Blues | XG | PLG-150AN | MasterJace | |
 | Θ | TôBach | MIDI Massacre | GS | Microsoft GS Wavetable | TôBach | |
 | Ι | JayB | Dream of Light | XG | QY100 | JayB | _The original song is unfinished_ |
+| Κ | Sam Sketty | Smokin' | XG | MU80 | DarkWolf | |
+| Λ | Sam Sketty | Cop Out | XG | MU80 | DistWave | |

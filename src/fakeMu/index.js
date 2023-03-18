@@ -413,7 +413,7 @@ self.performance = currentPerformance;
 	demoPerfs["R-love"] = perf;
 };
 {
-	// MU80 demo
+	// MU80 demo, Out of the Muse
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(1.6, generateSwitch(19, 0, 1)));
 	perf.push(new PointEvent(18.92, generateSwitch(3, 0, 0)));
@@ -438,6 +438,33 @@ self.performance = currentPerformance;
 	perf.push(new PointEvent(125, generateSwitch(0)));
 	perf.fresh();
 	demoPerfs["OutOfTheMuse"] = perf;
+};
+{
+	// MU100 demo, It's an AmaZing MU World!!
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(3.28, generateSwitch(1)));
+	perf.push(new PointEvent(6.22, generateSwitch(5)));
+	perf.push(new PointEvent(7.93, generateSwitch(6)));
+	perf.push(new PointEvent(10.92, generateSwitch(5)));
+	perf.push(new PointEvent(13.98, generateSwitch(6)));
+	perf.push(new PointEvent(17.31, generateSwitch(5)));
+	perf.push(new PointEvent(18.64, generateSwitch(6)));
+	perf.push(new PointEvent(23.93, generateSwitch(11)));
+	perf.push(new PointEvent(24.41, generateSwitch(2)));
+	perf.push(new PointEvent(24.89, generateSwitch(9)));
+	perf.push(new PointEvent(25.37, generateSwitch(10)));
+	perf.push(new PointEvent(25.89, generateSwitch(3)));
+	perf.push(new PointEvent(41.84, generateSwitch(15)));
+	perf.push(new PointEvent(43.93, generateSwitch(14)));
+	perf.push(new PointEvent(46.02, generateSwitch(15)));
+	perf.push(new PointEvent(50.25, generateSwitch(16)));
+	perf.push(new PointEvent(54.46, generateSwitch(15)));
+	perf.push(new PointEvent(58.37, generateSwitch(16)));
+	perf.push(new PointEvent(62.34, generateSwitch(15)));
+	perf.push(new PointEvent(66.58, generateSwitch(16)));
+	perf.push(new PointEvent(70.41, generateSwitch(15)));
+	perf.fresh();
+	demoPerfs["MU100DEMO"] = perf;
 };
 {
 	// MU128 demo
