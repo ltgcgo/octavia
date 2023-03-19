@@ -29,6 +29,12 @@ MSB	LSB	Name
 14	00	XG Karaoke 1
 14	01	XG Karaoke 2
 14	02	XG Karaoke 3
+18	00	KG Hall 1
+18	01	KG Hall 2
+18	02	KG Hall 3
+18	03	KG Room 1
+18	04	KG Room 2
+18	05	KG Stage
 20	00	GS Through
 21	00	GS Stereo EQ
 21	01	GS Spectrum
@@ -86,6 +92,80 @@ MSB	LSB	Name
 24	05	GS Bass Multi
 24	06	GS Rhodes Multi
 25	00	GS Keyboard Multi
+28	00	GS Room 1
+28	01	GS Room 2
+28	02	GS Room 3
+28	03	GS Hall 1
+28	04	GS Hall 2
+28	05	GS Plate
+28	06	GS Reverb Delay
+28	07	GS Panning Delay
+28	10	GS Chorus 1
+28	11	GS Chorus 2
+28	12	GS Chorus 3
+28	13	GS Chorus 4
+28	14	GS Feedback Chorus
+28	15	GS Flanger
+28	16	GS Short Delay
+28	17	GS Feedback Short Delay
+28	20	GS Delay 1
+28	21	GS Delay 2
+28	22	GS Delay 3
+28	23	GS Delay 4
+28	24	GS Pan Delay 1
+28	25	GS Pan Delay 2
+28	26	GS Pan Delay 3
+28	27	GS Pan Delay 4
+28	28	GS Delay to Reverb
+28	29	GS Pan Repeat
+2c	00	AI Through
+2c	01	AI Hall
+2c	02	AI Ensemble Hall
+2c	03	AI Concert Hall
+2c	04	AI Room
+2c	05	AI Room Large
+2c	06	AI Stage
+2c	07	AI Wet Plate
+2c	08	AI Dry Plate
+2c	09	AI Spring
+2c	0a	AI Early Reflection 1
+2c	0b	AI Early Reflection 2
+2c	0c	AI Early Reflection 3
+2c	0d	AI Stereo Delay
+2c	0e	AI Cross Delay
+2c	0f	AI Dual Delay
+2c	10	AI Tap Delay 1
+2c	11	AI Tap Delay 2
+2c	12	AI Tap Delay 3
+2c	13	AI Chorus 1
+2c	14	AI Chorus 2
+2c	15	AI Quad Chorus
+2c	16	AI Cross Chorus
+2c	17	AI Harmonic Chorus
+2c	18	AI Symphony Ensemble
+2c	19	AI Flanger 1
+2c	1a	AI Flanger 2
+2c	1b	AI Cross Flanger
+2c	1c	AI Exciter
+2c	1d	AI Enhancer
+2c	1e	AI Distortion
+2c	1f	AI Overdrive
+2c	20	AI Phaser
+2c	21	AI Phaser 2
+2c	22	AI Rotary
+2c	23	AI Auto Pan
+2c	24	AI Tremelo
+2c	25	AI 3-band EQ
+2c	26	AI Chorus+Delay
+2c	27	AI Flanger+Delay
+2c	28	AI Delay/Hall
+2c	29	AI Delay/Room
+2c	2a	AI Delay/Chorus
+2c	2b	AI Delay/Flanger
+2c	2c	AI Delay/Distortion
+2c	2d	AI Delay/Overdrive
+2c	2e	AI Delay/Phaser
+2c	2f	AI Delay/Rotary
 31	00	GS Chorus/Delay
 31	01	GS Flanger/Delay
 31	02	GS Chorus/Flanger
