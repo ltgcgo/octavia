@@ -19,7 +19,7 @@ let normParamPaint = function (sup, offsetX, ctx) {
 	let paramH = mprHeight * 1.5 - 1;
 	let sub = sup >> 4;
 	for (let i = 0; i < 8; i ++) {
-		if (sub >= 0) {
+		if (sub > 0 || sub == 0 && i != 0) {
 			ctx.fillStyle = activePixel;
 		} else {
 			ctx.fillStyle = inactivePixel;
@@ -43,7 +43,7 @@ let efxParamPaint = function (sup, offsetX, ctx, useWB, wbArr) {
 				ctx.strokeStyle = inactivePixel;
 			};
 		} else {
-			if (sub >= 0) {
+			if (sub > 0 || sub == 0 && i != 0) {
 				ctx.strokeStyle = activePixel;
 			} else {
 				ctx.strokeStyle = inactivePixel;
