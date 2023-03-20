@@ -29,7 +29,7 @@ stSwitch.to = function (i) {
 stSwitch.forEach(function (e, i, a) {
 	stSwitchMode[i] = e.title;
 	e.addEventListener("click", function () {
-		tuiVis.switchMode(e.title, true);
+		visualizer.switchMode(e.title, true);
 		stSwitch.to(i);
 	});
 });
@@ -57,29 +57,29 @@ stDemo.forEach(function (e, i, a) {
 		};
 		textDisplay.innerHTML = `Demo ${e.innerText.toUpperCase()} ready.${"<br/>".repeat(23)}`;
 		audioPlayer.currentTime = 0;
-		tuiVis.reset();
-		tuiVis.loadFile(demoBlobs[e.title].midi);
+		visualizer.reset();
+		visualizer.loadFile(demoBlobs[e.title].midi);
 		if (audioBlob) {
 			URL.revokeObjectURL(audioBlob);
 		};
 		audioBlob = demoBlobs[e.title].wave;
 		audioPlayer.src = URL.createObjectURL(audioBlob);
 		if (demoModes[i]?.length > 0) {
-			tuiVis.switchMode(demoModes[i]);
+			visualizer.switchMode(demoModes[i]);
 		};
 		stDemo.to(i);
-		tuiVis.device.initOnReset = false;
+		visualizer.device.initOnReset = false;
 	});
 });
 
 // Start the visualizers
-self.tuiVis = new TuiDisplay();
-tuiVis.addEventListener("reset", function (e) {
+self.visualizer = new TuiDisplay();
+visualizer.addEventListener("reset", function (e) {
 	minCh = 0;
 });
 
 // Listen to mode switches
-tuiVis.addEventListener("mode", function (ev) {
+visualizer.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
 });
 
@@ -98,12 +98,12 @@ $e("#openMidi").addEventListener("click", async function () {
 	};
 	if (ext == "syx") {
 		// Load SysEx blobs
-		tuiVis.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+		visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
 	} else {
 		stDemo.to(-1);
-		tuiVis.reset();
-		tuiVis.loadFile(file);
-		tuiVis.device.initOnReset = false;
+		visualizer.reset();
+		visualizer.loadFile(file);
+		visualizer.device.initOnReset = false;
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -122,10 +122,10 @@ midwIndicator.addEventListener("click", function () {
 	};
 	audioBlob = null;
 	audioPlayer.src = "";
-	tuiVis.reset();
+	visualizer.reset();
 	useMidiBus = true;
 	midwIndicator.classList.on("active");
-	tuiVis.device.initOnReset = true;
+	visualizer.device.initOnReset = true;
 });
 
 // Get the canvas
@@ -163,14 +163,14 @@ let textDisplay = $e("#display");
 dispCanvas.style.left = `${textDisplay.offsetLeft + textDisplay.offsetWidth - dispCanvas.offsetWidth}px`;
 dispCanvas.style.top = `${textDisplay.offsetTop}px`;
 audioPlayer.onended = function () {
-	tuiVis.reset();
+	visualizer.reset();
 };
 (async function () {
-	tuiVis.reset();
+	visualizer.reset();
 	let midiBlob = await (await fetch("./demo/KANDI8.mid")).blob();
 	demoBlobs.KANDI8 = {};
 	demoBlobs.KANDI8.midi = midiBlob;
-	tuiVis.loadFile(midiBlob);
+	visualizer.loadFile(midiBlob);
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
@@ -181,12 +181,12 @@ audioPlayer.onended = function () {
 })();
 let renderThread = setInterval(function () {
 	if (!audioPlayer.paused || useMidiBus) {
-		textDisplay.innerHTML = tuiVis.render(audioPlayer.currentTime - (self.audioDelay || 0), dispCtx);
+		textDisplay.innerHTML = visualizer.render(audioPlayer.currentTime - (self.audioDelay || 0), dispCtx);
 	};
 }, 20);
 getBridge().addEventListener("message", function (ev) {
 	if (useMidiBus) {
-		tuiVis.sendCmd(ev.data);
+		visualizer.sendCmd(ev.data);
 	};
 	//console.debug(ev.data);
 });
