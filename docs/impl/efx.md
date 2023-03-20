@@ -1,6 +1,10 @@
 # Audio Effects
 ## Audio effects
-Octavia supports tracking a range of audio effects applied on supported targets.
+Octavia supports tracking a range of audio effects applied on supported targets. For maximum compatibility, Octavia has seven available slots reserved for effect sends, which correspond to reverb, chorus, variation and four insertions in order.
+
+Each slot isn't dedicated to what that slot is primarily used for, but rather allocated and controlled by the CC registers they are assigned to by default (cc91, cc93, cc94, cc16-19). For example, the variation slot (cc94) is taken away by delay effects when in GS mode, while the reverb and chorus slot could be taken away by any effect desired in X5DR or NS5R mode.
+
+Due to varied setups, each effect also isn't just bound to the CC registers they are assigned to. They can also listen on other CC registers, or even multiple if they wish.
 
 ## Comparison table
 ### Singular effect
@@ -15,12 +19,12 @@ Octavia supports tracking a range of audio effects applied on supported targets.
 | Echo | | | |
 | Cross Delay | Panning Delay | Delay (3-tap, 4-tap, <br>mod, 3D, trem.c.) | Delay (cross, dual, tap 1-3) |
 | Early Reflection <br>(1, 2) | | | Early Reflection <br>(1-3) |
-| Gate (forward, reverse) | | Gate (forward, reverse, <br>sweep 1-2) |
-| White Room | | |
-| Tunnel | | |
-| Canyon | | |
-| Basement | | |
-| Karaoke (1, 2, 3) | | |
+| Gate (forward, reverse) | | Gate (forward, reverse, <br>sweep 1-2) | |
+| White Room | | | |
+| Tunnel | | | |
+| Canyon | | | |
+| Basement | | | |
+| Karaoke (1, 2, 3) | | | |
 | | | | Spring |
 #### Chorus
 | Yamaha XG | GS Chorus | GS Insertion | KORG AI² |

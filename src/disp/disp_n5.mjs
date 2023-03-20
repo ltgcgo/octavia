@@ -262,7 +262,8 @@ let Ns5rDisplay = class extends RootDisplay {
 				};
 			});
 			// Render effect types
-			targetFont.getStr(trueMode ? "Fx A:001Rev/Cho" : "FxA:001Rev/Cho").forEach((e0, i0) => {
+			let efxShow = this.device.aiEfxName.slice(0, 7 + +trueMode) || "Rev/Cho";
+			targetFont.getStr(trueMode ? `Fx A:001${efxShow}` : `FxA:001${efxShow}`).forEach((e0, i0) => {
 				let lineChars = trueMode ? 8 : 7;
 				let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
 				secY = Math.floor(i0 / lineChars) * 8;

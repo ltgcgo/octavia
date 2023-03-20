@@ -23,4 +23,4 @@ Here lies documentation of the Octavia project.
 * [`basic.mjs`: the basis for visualizers](basic/README.md)
 * [`bridge.mjs`: the basis for middleware](bridge/README.md)
 * [`disp.mjs`: ready-made example visualizers](disp/README.md)
-* [`middle.mjs`: ready-made middleware with real-time translation capabilities](middle/README.md
+* [`middle.mjs`: ready-made middleware with real-time translation capabilities](middle/README.md)

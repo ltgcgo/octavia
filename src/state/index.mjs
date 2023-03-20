@@ -129,6 +129,7 @@ const allocated = {
 	tr: 256, // tracks
 	cmt: 14, // C/M timbre storage size
 	rpn: 6,
+	efx: 7
 };
 
 let OctaviaDevice = class extends CustomEventSource {
@@ -182,6 +183,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
+	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
@@ -204,6 +206,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
+	aiEfxName = "";
 	chRedir(part, track, noConquer) {
 		if (this.#trkAsReq[track]) {
 			// Allow part assigning via meta
@@ -995,6 +998,19 @@ let OctaviaDevice = class extends CustomEventSource {
 		let rpnOff = part * allocated.rpn;
 		return this.#pitch[part] / 8192 * this.#rpn[rpnOff] + (this.#rpn[rpnOff + 3] - 64) + ((this.#rpn[rpnOff + 1] << 7) + this.#rpn[rpnOff + 2] - 8192) / 8192;
 	};
+	getEffectType(slot = 0) {
+		let index = 3 * slot + 1;
+		return this.#efxBase.subarray(index, index + 2);
+	};
+	setEffectTypeRaw(slot = 0, isLsb, value) {
+		let efxbOff = 3 * slot;
+		this.#efxBase[efxbOff] = 1;
+		this.#efxBase[efxbOff + 1 + +isLsb] = value;
+	};
+	setEffectType(slot = 0, msb, lsb) {
+		this.setEffectTypeRaw(slot, false, msb);
+		this.setEffectTypeRaw(slot, true, lsb);
+	};
 	init(type = 0) {
 		// Type 0 is full reset
 		// Type 1 is almost-full reset
@@ -1039,14 +1055,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#cc[allocated.cc * 25] = drumMsb[0];
 		this.#cc[allocated.cc * 41] = drumMsb[0];
 		this.#cc[allocated.cc * 57] = drumMsb[0];
-		// Reset effect storage
-		this.#gsEfxSto.fill(0);
 		// Reset MT-32 user patch and timbre storage
 		this.#cmPatch.fill(0);
 		this.#cmTimbre.fill(0);
 		this.#cmTPatch.fill(0);
 		this.#cmTTimbre.fill(0);
 		this.#bnCustom.fill(0);
+		// Reset EFX base registers
+		this.#efxBase.fill(0);
+		// Reset AI EFX display name
+		this.aiEfxName = "";
 		// Reset MT-32 user bank
 		this.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
 		for (let ch = 0; ch < allocated.ch; ch ++) {
@@ -1100,6 +1118,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (this.initOnReset && forced) {
 					//this.init(1);
 				};
+				// Bank defaults
 				switch (idx) {
 					case modeMap.mt32: {
 						mt32DefProg.forEach((e, i) => {
@@ -1110,6 +1129,28 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						});
 						break;
+					};
+				};
+				// EFX defaults
+				let efxDefault;
+				switch (idx) {
+					case modeMap.gs: {
+						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0, 0, 0, 0, 0, 0, 0];
+						break;
+					};
+					case modeMap.x5d:
+					case modeMap.ns5r: {
+						efxDefault = [44, 1, 44, 19, 44, 0, 44, 0, 0, 0, 0, 0, 0, 0];
+						break;
+					};
+					default: {
+						efxDefault = [1, 0, 65, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+					};
+				};
+				for (let i = 0; i < allocated.efx; i ++) {
+					if (!this.#efxBase[3 * i]) {
+						this.#efxBase[3 * i + 1] = efxDefault[2 * i];
+						this.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
 					};
 				};
 				this.dispatchEvent("mode", mode);
@@ -1372,8 +1413,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				dPref += "reverb ";
 				msg.subarray(1).forEach((e, i) => {
 					([(e) => {
+						upThis.setEffectTypeRaw(0, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
 					}, (e) => {
+						upThis.setEffectTypeRaw(0, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
 					}, (e) => {
 						console.debug(`${dPref}time: ${getXgRevTime(e)}s`);
@@ -1418,8 +1461,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				dPref += "chorus ";
 				msg.subarray(1).forEach((e, i) => {
 					([(e) => {
+						upThis.setEffectTypeRaw(1, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
 					}, (e) => {
+						upThis.setEffectTypeRaw(1, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
 					}, (e) => {
 						console.debug(`${dPref}LFO: ${xgLfoFreq[e]}Hz`);
@@ -1461,9 +1506,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else if (msg[0] < 86) {
 				// XG variation section 1
 				dPref += "variation ";
-				if (msg[0] == 64) {
-					console.info(`${dPref}type: ${xgEffType[msg[1]]}${msg[2] > 0 ? " " + (msg[2] + 1) : ""}`);
-				};
+				msg.subarray(1).forEach((e, i) => {
+					([(e) => {
+						upThis.setEffectTypeRaw(2, false, e);
+						console.info(`${dPref}main type: ${xgEffType[e]}`);
+					}, (e) => {
+						upThis.setEffectTypeRaw(2, true, e);
+						console.debug(`${dPref}sub type: ${e + 1}`);
+					}][msg[0] - 64 + i] || function () {
+						//console.warn(`Unknown XG variation address: ${msg[0]}.`);
+					})(e);
+				});
 			} else if (msg[0] < 97) {
 				// XG variation section 2
 				dPref += "variation ";
@@ -1521,7 +1574,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([76, 3], (msg) => {
 			// XG insertion effects
-			// Won't implement for now
+			let varSlot = msg[0], offset = msg[1];
+			let dPref = `XG Insertion ${msg[0] + 1} `;
+			msg.subarray(2).forEach((e, i) => {
+				([(e) => {
+					upThis.setEffectTypeRaw(3 + varSlot, false, e);
+					console.info(`${dPref}main type: ${xgEffType[e]}`);
+				}, (e) => {
+					upThis.setEffectTypeRaw(3 + varSlot, true, e);
+					console.debug(`${dPref}sub type: ${e + 1}`);
+				}][offset + i] || function () {
+					//console.warn(`Unknown XG variation address: ${msg[0]}.`);
+				})(e);
+			});
 		}).add([76, 6, 0], (msg) => {
 			// XG Letter Display
 			let offset = msg[0];
@@ -2095,6 +2160,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let dPref = `GS ${(offset + i) > 55 ? "chorus" : "reverb"} `;
 					([() => {
 						console.info(`${dPref}type: ${gsRevType[e]}`);
+						upThis.setEffectType(0, 40, e);
 					}, () => {// character
 					}, () => {// pre-LPF
 					}, () => {// level
@@ -2104,6 +2170,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						console.debug(`${dPref}predelay: ${e}ms`);
 					}, () => {
 						console.info(`${dPref}type: ${gsChoType[e]}`);
+						upThis.setEffectType(1, 40, 16 + e);
 					}, () => {// pre-LPF
 					}, () => {// level
 					}, () => {// feedback
@@ -2124,6 +2191,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let dPref = `GS delay `;
 					([() => {
 						console.info(`${dPref}type: ${gsDelType[e]}`);
+						upThis.setEffectType(2, 40, 32 + e);
 					}, () => {// pre-LPF
 					}, () => {// time C
 					}, () => {// time L
@@ -2160,17 +2228,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			// GS EFX
 			let dPref = `GS EFX `;
 			let prefDesc = function (e, i) {
-				let desc = getGsEfxDesc(upThis.#gsEfxSto, i, e);
+				let desc = getGsEfxDesc(upThis.#efxBase.subarray(10, 12), i, e);
 				if (desc) {
-					console.debug(`${dPref}${getGsEfx(upThis.#gsEfxSto)} ${desc}`);
+					console.debug(`${dPref}${getGsEfx(upThis.#efxBase.subarray(10, 12))} ${desc}`);
 				};
 			};
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
-					upThis.#gsEfxSto[0] = e;
+					upThis.setEffectTypeRaw(3, false, 32 + e);
 				}, () => {
-					upThis.#gsEfxSto[1] = e;
-					console.info(`${dPref}type: ${getGsEfx(upThis.#gsEfxSto)}`);
+					upThis.setEffectTypeRaw(3, true, e);
+					console.info(`${dPref}type: ${getGsEfx(upThis.#efxBase.subarray(10, 12))}`);
 				}, false,
 				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
 				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
@@ -2539,10 +2607,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			// X5D mode switch
 			upThis.switchMode("x5d", true);
 			console.debug(`X5D mode switch requested: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]} mode.`);
+		}).add([54, 85], (msg, track) => {
+			// X5D effect dump
+			upThis.switchMode("x5d", true);
+			korgFilter(msg, (e, i) => {
+				if (i > 0 && i < 3) {
+					upThis.setEffectType(i - 1, 44, e);
+				};
+			});
 		}).add([54, 104], (msg, track) => {
 			// X5D extended multi setup
 			upThis.switchMode("x5d", true);
-			console.debug(msg);
 			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
 					let part = upThis.chRedir(Math.floor(i / 12), track, true),
@@ -2918,7 +2993,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (c < 3) {
 					// MSB, LSB, PRG
 					[() => {
-						upThis.#cc[chOff + ccToPos[0]] = e;
+						upThis.#cc[chOff + ccToPos[0]] = e || 121;
 					}, () => {
 						upThis.#cc[chOff + ccToPos[32]] = e;
 					}, () => {
@@ -2992,9 +3067,22 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Mehh I'll fill this up when I have time
 		}).add([66, 52], (msg, track) => {
 			// Currect effect dump
-			// Still no docs, sigh...
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
+			let efxName = "";
+			korgFilter(msg, (e, i) => {
+				if (i < 8) {
+					if (e > 31) {
+						efxName += String.fromCharCode(e);
+					};
+					if (i == 7) {
+						upThis.aiEfxName = efxName;
+					};
+				} else if (i < 10) {
+					// AI effect ID
+					upThis.setEffectType(i - 8, 44, e);
+				};
+			});
 		}).add([66, 53], (msg, track) => {
 			// Current multi dump
 			upThis.switchMode("ns5r", true);
@@ -3009,7 +3097,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						switch (i % 92) {
 							case 0: {
 								// MSB Bank
-								upThis.#cc[chOff + ccToPos[0]] = e;
+								upThis.#cc[chOff + ccToPos[0]] = e || 121;
 								break;
 							};
 							case 1: {
