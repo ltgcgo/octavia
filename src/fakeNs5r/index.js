@@ -7,6 +7,7 @@ import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs
 import {
 	getBridge
 } from "../bridge/index.mjs";
+import {sysexBitmap} from "../state/emitGlobal.js";
 
 let demoBlobs = {};
 let demoModes = [];
@@ -67,6 +68,7 @@ stDemo.forEach(function (e, i, a) {
 });
 
 // Start the visualizers
+self.sysexBitmap = sysexBitmap;
 self.visualizer = new Ns5rDisplay();
 visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
