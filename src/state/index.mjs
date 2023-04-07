@@ -1604,6 +1604,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([76, 7, 0], (msg) => {
 			// XG Bitmap Display
 			let offset = msg[0];
+			upThis.#bitmapPage = 0;
 			upThis.#bitmapExpire = Date.now() + 3200;
 			upThis.#bitmap.fill(0); // Init
 			let workArr = msg.subarray(1);
@@ -2070,6 +2071,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([43, 7, 1], (msg, track, id) => {
 			// TG300 display bitmap
 			// Same as XG bitmap display
+			upThis.#bitmapPage = 0;
 			upThis.#bitmapExpire = Date.now() + 3200;
 			upThis.#bitmap.fill(0); // Init
 			msg.forEach(function (e, i) {
@@ -2292,6 +2294,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				default: {
 					if (msg[0] < 11) {
 						// GS display bitmap
+						if (upThis.#bitmapPage > 9) {
+							upThis.#bitmapPage = 0;
+						};
 						upThis.#bitmapExpire = Date.now() + 3200;
 						if (!upThis.#bitmapStore[msg[0] - 1]?.length) {
 							upThis.#bitmapStore[msg[0] - 1] = new Uint8Array(256);
@@ -3064,7 +3069,36 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([66, 18, 8, 0], (msg, track) => {
 			// Display (letter and bitmap)
-			// Mehh I'll fill this up when I have time
+			let offset = msg[0];
+			if (offset < 32) {
+				// Letter display
+				upThis.#letterDisp = " ".repeat(offset);
+				upThis.#letterExpire = Date.now() + 3200;
+				msg.subarray(1, 33).forEach(function (e) {
+					upThis.#letterDisp += String.fromCharCode(e);
+				});
+				upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
+			} else {
+				// Bitmap display
+				let bitOffset = offset - 32;
+				upThis.#bitmapExpire = Date.now() + 3200;
+				upThis.#bitmapPage = 10; // Use bitmap 11 that holds 512 pixels
+				upThis.#bitmap.fill(0); // Init
+				let workArr = msg.subarray(1);
+				let lastCol = 4;
+				workArr.forEach(function (e, i) {
+					let ri = i + bitOffset;
+					let tx = ri >> 4, ty = ri & 15;
+					if (ri < 80) {
+						let dummy = tx < lastCol ? e : e >> 3, shifted = 0, perspective = tx < lastCol ? 6 : 3;
+						while (dummy > 0) {
+							upThis.#bitmap[ty * 32 + tx * 7 + (perspective - shifted)] = dummy & 1;
+							dummy = dummy >> 1;
+							shifted ++;
+						};
+					};
+				});
+			};
 		}).add([66, 52], (msg, track) => {
 			// Currect effect dump
 			upThis.switchMode("ns5r", true);
