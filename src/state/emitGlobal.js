@@ -19,6 +19,9 @@ let sysexBitmap = function (frameData, type = "xg", frameId = 0, noCopy) {
 	workWidth = 16, workBit = 7;
 	switch (type) {
 		case "xg": {
+			if (frameData.length > 256) {
+				throw(new Error(`Bitmap too large: ${frameData.length} > 256`));
+			};
 			targetBuffer = new Uint8Array(56);
 			targetBuffer.set(sysexHead[type], 0);
 			targetBuffer[55] = 247;
@@ -27,6 +30,9 @@ let sysexBitmap = function (frameData, type = "xg", frameId = 0, noCopy) {
 			break;
 		};
 		case "gs": {
+			if (frameData.length > 256) {
+				throw(new Error(`Bitmap too large: ${frameData.length} > 256`));
+			};
 			targetBuffer = new Uint8Array(74);
 			targetBuffer.set(sysexHead[type], 0);
 			targetBuffer[73] = 247;
@@ -36,6 +42,9 @@ let sysexBitmap = function (frameData, type = "xg", frameId = 0, noCopy) {
 			break;
 		};
 		case "ns5r": {
+			if (frameData.length > 512) {
+				throw(new Error(`Bitmap too large: ${frameData.length} > 512`));
+			};
 			targetBuffer = new Uint8Array(89);
 			targetBuffer.set(sysexHead[type], 0);
 			targetBuffer[88] = 247;
@@ -60,7 +69,7 @@ let sysexBitmap = function (frameData, type = "xg", frameId = 0, noCopy) {
 	targetFrame.forEach((e, i) => {
 		let canvasX = i % workWidth, canvasY = Math.floor(i / workWidth);
 		let pointer = Math.floor(canvasX / workBit) * canvasHeight + canvasY, shifter = workBit - canvasX % workBit - 1;
-		targetBuffer[startOffset + pointer] ^= e << shifter;
+		targetBuffer[startOffset + pointer] ^= (e ? 1 : 0) << shifter;
 	});
 	if (type == "gs") {
 		targetBuffer[72] = gsChecksum(targetBuffer.subarray(5, 72));
