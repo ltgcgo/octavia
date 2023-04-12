@@ -1025,11 +1025,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#letterExpire = Date.now() + 3200;
 		upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
 		if (invalidCp) {
-			Array.from(invalidCp).sort((a, b) => {
-				return a - b;
-			}).forEach((e) => {
-				console.warn(`${source}${source ? " " : ""}invalid code point: 0x${e.toString(16)}`);
+			invalidCp = Array.from(invalidCp);
+			invalidCp.forEach((e, i, a) => {
+				a[i] = e.toString(16).padStart(2, "0");
 			});
+			console.warn(`${source}${source ? " " : ""}invalid code point${invalidCp.length > 1 ? "s" : ""}: 0x${invalidCp.join(", 0x")}`);
+
 		};
 	};
 	init(type = 0) {
