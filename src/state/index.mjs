@@ -935,7 +935,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Should later become 0 to 65535
 		let str = [], upThis = this;
 		this.getRawStrength().forEach(function (e, i) {
-			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * upThis.#masterVol / 803288);
+			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * Math.max(
+				upThis.#cc[i * allocated.cc + ccToPos[11]],
+				Math.ceil(upThis.#cc[i * allocated.cc + ccToPos[91]] * 0.5),
+				Math.ceil(upThis.#cc[i * allocated.cc + ccToPos[92]] * 0.75),
+				Math.ceil(upThis.#cc[i * allocated.cc + ccToPos[94]] * 0.9)
+			) * upThis.#masterVol / 803288);
 		});
 		return str;
 	};
