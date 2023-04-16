@@ -88,3 +88,5 @@ Octavia will never become a reality without help from the following people.
 | Κ | Sam Sketty | Smokin' | XG | MU80 | DarkWolf | |
 | Λ | Sam Sketty | Cop Out | XG | MU80 | DistWave | |
 | Μ | Music Brains | Wah Guitar Demo | GS | SC-88 Pro | DearHoney | |
+| Ν | Yamaha | QY70 Demo No. 3 | XG | QY70 | JayB | |
+| Ξ | Yamaha | R&B/Pop | XG | QY100 | JayB | Official QY100 demo |
