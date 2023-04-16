@@ -78,6 +78,7 @@ ccAccepted = [
 	12, 13, // General-purpose effect controllers
 	16, 17, 18, 19 // General-purpose sound controllers
 ], // 96, 97, 120 to 127 all have special functions
+aceCandidates = [12, 13, 16, 17, 18, 19],
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
 const korgDrums = [0, 16, 25, 40, 32, 64, 26, 48];
@@ -129,6 +130,7 @@ const allocated = {
 	tr: 256, // tracks
 	cmt: 14, // C/M timbre storage size
 	rpn: 6,
+	ace: 8, // active custom effect
 	efx: 7
 };
 
@@ -169,6 +171,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
 	#chType = new Uint8Array(allocated.ch); // Types of channels
 	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
+	#ace = new Uint8Array(allocated.ace); // 4 active custom effects
 	#prg = new Uint8Array(allocated.ch);
 	#velo = new Uint8Array(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
@@ -531,6 +534,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (ccToPos[det.data[0]] == undefined) {
 				console.warn(`cc${det.data[0]} is not accepted.`);
 			} else {
+				// ACE allocation
+				if (aceCandidates.indexOf(det.data[0]) > -1) {
+					this.allocateAce(det.data[0]);
+				};
 				// Stored CC messages
 				switch (det.data[0]) {
 					case 0: {
@@ -1095,6 +1102,45 @@ let OctaviaDevice = class extends CustomEventSource {
 
 		};
 	};
+	allocateAce(cc) {
+		// Allocate active custom effect
+		// Off, cc1~cc95, CAT, velo, PB
+		if (!cc || cc > 95) {
+			console.warn(`cc${cc} cannot be allocated as an active custom effect.`);
+			return;
+		};
+		let continueScan = true, pointer = 0;
+		while (continueScan && pointer < allocated.ace) {
+			if (this.#ace[pointer] == cc) {
+				continueScan = false;
+			} else if (!this.#ace[pointer]) {
+				continueScan = false;
+				this.#ace[pointer] = cc;
+				console.info(`Allocated cc${cc} to ACE slot ${pointer}.`);
+			};
+			pointer ++;
+		};
+		if (pointer >= allocated.ace) {
+			console.warn(`ACE slots are full.`);
+		};
+	};
+	getAce() {
+		return this.#ace;
+	};
+	getChAce(part, aceSlot) {
+		// Get channel ACE value
+		if (aceSlot < 0 || aceSlot >= allocated.ace) {
+			throw(new RangeError(`No such ACE slot`));
+		};
+		let cc = this.#ace[aceSlot];
+		if (!cc) {
+			return 0;
+		} else if (ccAccepted.indexOf(cc) >= 0) {
+			return this.#cc[part * allocated.cc + ccToPos[cc]];
+		} else {
+			throw(new Error(`Invalid ACE source: ${cc}`));
+		};
+	};
 	init(type = 0) {
 		// Type 0 is full reset
 		// Type 1 is almost-full reset
@@ -1106,6 +1152,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#metaChannel = 0;
 		this.#chActive.fill(0);
 		this.#cc.fill(0);
+		this.#ace.fill(0);
 		this.#prg.fill(0);
 		this.#velo.fill(0);
 		this.#poly.fill(0);

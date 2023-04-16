@@ -179,7 +179,8 @@ let RootDisplay = class extends CustomEventSource {
 			tSig: this.getTimeSig(),
 			tempo: this.getTempo(),
 			noteBar: this.noteBar,
-			noteBeat: this.noteBeat
+			noteBeat: this.noteBeat,
+			ace: this.device.getAce()
 		};
 		return repObj;
 	};
