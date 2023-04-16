@@ -132,7 +132,8 @@ let RootDisplay = class extends CustomEventSource {
 		let chKeyPr = []; // Pressed keys and their pressure
 		let chPitch = upThis.device.getPitch(); // All pitch bends
 		let chContr = upThis.device.getCcAll(); // All CC values
-		let chProgr = upThis.device.getProgram();
+		let chProgr = upThis.device.getProgram(); // All program values
+		let chType = upThis.device.getChType(); // All channel types
 		// Mimic strength variation
 		let writeStrength = this.device.getStrength();
 		writeStrength.forEach(function (e, i, a) {
@@ -164,6 +165,7 @@ let RootDisplay = class extends CustomEventSource {
 			chPitch,
 			chProgr,
 			chContr,
+			chType,
 			eventCount: events.length,
 			title: this.#titleName,
 			bitmap: this.device.getBitmap(),

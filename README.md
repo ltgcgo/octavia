@@ -22,6 +22,11 @@ Octavia offers support to a wide range of targets, most of them being either GM-
 
 To have a general idea of how MIDI is implemented, refer to the [MIDI Implementation Chart](docs/support/implementation.md) and [Supported SysEx instructions](docs/support/sysex.md).
 
+## Dev talks
+We're now hosting a new place to handle development talks! If you don't have a GitHub account, or just prefers to report bugs or give suggestions in IMs, feel free to join with links below!
+
+* Telegram: [Click to join](https://t.me/+0I30mcOPTSQ0ZGIx)
+
 ## Credits
 Please read [CREDITS.md](CREDITS.md).
 

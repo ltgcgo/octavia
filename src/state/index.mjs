@@ -167,6 +167,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
+	#chType = new Uint8Array(allocated.ch); // Types of channels
 	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
 	#prg = new Uint8Array(allocated.ch);
 	#velo = new Uint8Array(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
@@ -540,7 +541,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (this.#mode == 0) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset + ccToPos[0]] > 119) {
+								if (this.#chType[part] > 0) {
 									det.data[1] = this.#cc[chOffset];
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -559,7 +560,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (this.#mode == modeMap.gs) {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset + ccToPos[0]] > 119) {
+								if (this.#chType[part] > 0) {
 									det.data[1] = this.#cc[chOffset];
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -568,7 +569,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (this.#mode == modeMap.gm) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset + ccToPos[0]] > 119) {
+								if (this.#chType[part] > 0) {
 									det.data[1] = 120;
 									this.switchMode("gs", true);
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -590,6 +591,47 @@ let OctaviaDevice = class extends CustomEventSource {
 								if (agCount > 14) {
 									this.switchMode("ag10", true);
 								};
+							};
+						};
+						switch (this.#mode) {
+							case modeMap.xg: {
+								if ([126, 127].indexOf(det.data[1]) > -1) {
+									if (this.#chType[part] == 0) {
+										this.setChType(part, 1);
+										console.debug(`CH${part + 1} set to drums.`);
+									};
+								};
+								break;
+							};
+							case modeMap["05rw"]:
+							case modeMap.x5d:
+							case modeMap.ns5r: {
+								if ([61, 62, 126, 127].indexOf(det.data[1]) > -1) {
+									if (this.#chType[part] == 0) {
+										this.setChType(part, 1);
+										console.debug(`CH${part + 1} set to drums.`);
+									};
+								} else {
+									if (this.#chType[part] > 0) {
+										this.setChType(part, 0);
+										console.debug(`CH${part + 1} set to melodic.`);
+									};
+								};
+								break;
+							};
+							case modeMap.g2: {
+								if (det.data[1] == 120) {
+									if (this.#chType[part] == 0) {
+										this.setChType(part, 1);
+										console.debug(`CH${part + 1} set to drums.`);
+									};
+								} else {
+									if (this.#chType[part] > 0) {
+										this.setChType(part, 0);
+										console.debug(`CH${part + 1} set to melodic.`);
+									};
+								};
+								break;
 							};
 						};
 						this.dispatchEvent("voice", {
@@ -874,6 +916,15 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		return arr;
 	};
+	getChType() {
+		return this.#chType;
+	};
+	setChType(part, type) {
+		this.#chType[part] = type;
+		if (type > 0) {
+			this.#cc[part * allocated.cc + ccToPos[0]] = drumMsb[this.#mode];
+		};
+	};
 	getPitch() {
 		return this.#pitch;
 	};
@@ -937,9 +988,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.getRawStrength().forEach(function (e, i) {
 			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * Math.max(
 				upThis.#cc[i * allocated.cc + ccToPos[11]],
-				Math.ceil(upThis.#cc[i * allocated.cc + ccToPos[91]] * 0.5),
-				Math.ceil(upThis.#cc[i * allocated.cc + ccToPos[92]] * 0.75),
-				Math.ceil(upThis.#cc[i * allocated.cc + ccToPos[94]] * 0.9)
+				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[91]] * 0.5),
+				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[92]] * 0.65),
+				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[94]] * 0.8)
 			) * upThis.#masterVol / 803288);
 		});
 		return str;
@@ -1082,6 +1133,17 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#cc[allocated.cc * 25] = drumMsb[0];
 		this.#cc[allocated.cc * 41] = drumMsb[0];
 		this.#cc[allocated.cc * 57] = drumMsb[0];
+		// Channel types
+		this.#chType.fill(this.CH_MELODIC);
+		this.#chType[9] = this.CH_DRUM1;
+		this.#chType[25] = this.CH_DRUM2;
+		this.#chType[41] = this.CH_DRUMS;
+		this.#chType[41] = this.CH_DRUMS;
+		this.#chType[57] = this.CH_DRUMS;
+		this.#chType[73] = this.CH_DRUM5;
+		this.#chType[89] = this.CH_DRUM6;
+		this.#chType[105] = this.CH_DRUMS;
+		this.#chType[121] = this.CH_DRUMS;
 		// Reset MT-32 user patch and timbre storage
 		this.#cmPatch.fill(0);
 		this.#cmTimbre.fill(0);
@@ -1132,12 +1194,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		let idx = modeIdx.indexOf(mode);
 		if (idx > -1) {
 			if (this.#mode == 0 || forced) {
+				let oldMode = this.#mode;
 				this.#mode = idx;
 				this.#bitmapPage = 0; // Restore page
 				this.#subMsb = substList[0][idx];
 				this.#subLsb = substList[1][idx];
 				for (let ch = 0; ch < allocated.ch; ch ++) {
-					if (drumMsb.indexOf(this.#cc[ch * allocated.cc]) > -1) {
+					if (this.#chType[ch] > 0 && this.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
+						// Switch drum MSBs.
 						this.#cc[ch * allocated.cc] = drumMsb[idx];
 					};
 					//this.initOnReset && forced && this.#ua.ano(ch);
@@ -1676,7 +1740,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// same note key on assign?
 					}, () => {
-						upThis.#cc[chOff + ccToPos[0]] = e > 1 ? 127 : 0;
+						upThis.setChType(part, e);
 						console.debug(`${dPref}type: ${xgPartMode[e]}`);
 					}, () => {
 						// coarse tune
@@ -2369,7 +2433,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, false // assign mode
 					, () => {
 						// drum map
-						upThis.#cc[chOff + ccToPos[0]] = e ? 120 : 0;
+						upThis.setChType(part, e ? e + 1 : 0);
 						console.debug(`${dPref}type: ${e ? "drum " : "melodic"}${e ? e : ""}`);
 					}, () => {
 						// coarse tune
@@ -2519,12 +2583,15 @@ let OctaviaDevice = class extends CustomEventSource {
 				// Program change
 				if (e < 1) {
 				} else if (e < 101) {
+					upThis.setChType(part, 0);
 					upThis.#prg[part] = e - 1;
 					upThis.#cc[chOff + ccToPos[0]] = 82;
 				} else if (e < 229) {
+					upThis.setChType(part, 0);
 					upThis.#prg[part] = e - 101;
 					upThis.#cc[chOff + ccToPos[0]] = 56;
 				} else {
+					upThis.setChType(part, 1);
 					upThis.#prg[part] = korgDrums[e - 229] || 0;
 					upThis.#cc[chOff + ccToPos[0]] = 62;
 				};
@@ -2643,9 +2710,11 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 0: {
 							// Program change
 							if (e < 128) {
+								upThis.setChType(part, 0);
 								upThis.#cc[chOff + ccToPos[0]] = 82;
 								upThis.#prg[part] = e;
 							} else {
+								upThis.setChType(part, 1);
 								upThis.#cc[chOff + ccToPos[0]] = 62;
 								upThis.#prg[part] = korgDrums[e - 128];
 							};
@@ -3029,6 +3098,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						upThis.#mono[part] = +!e;
 					}, () => {
+						upThis.setChType(part, e);
 						console.debug(`${dPref}type: ${xgPartMode[e]}`);
 					}, () => {
 						upThis.#rpn[allocated.rpn * part + 3] = e;
@@ -3360,11 +3430,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			([() => {
 				if (e < 128) {
 					// Melodic voice
+					upThis.setChType(part, 0);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#prg[part] = e;
 				} else {
 					// Drum kit
-					upThis.#cc[chOff + ccToPos[0]] = 122;
+					upThis.setChType(part, 1);
 					upThis.#prg[part] = e - 128;
 				};
 			}, () => {
@@ -3419,16 +3490,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			[() => {
 				if (e < 128) {
 					// Melodic voice
+					upThis.setChType(part, 0);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#cc[chOff + ccToPos[32]] = 0;
 					upThis.#prg[part] = e;
 				} else if (e < 160) {
 					// Melodic voice
+					upThis.setChType(part, 0);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#cc[chOff + ccToPos[32]] = 7;
 					upThis.#prg[part] = e - 100;
 				} else {
 					// Drum kit
+					upThis.setChType(part, 1);
 					upThis.#cc[chOff + ccToPos[0]] = 122;
 					upThis.#cc[chOff + ccToPos[32]] = 0;
 					upThis.#prg[part] = e - 160;

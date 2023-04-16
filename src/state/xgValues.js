@@ -56,11 +56,15 @@ const xgEffType = [
 ]);
 let xgPartMode = [
 	"melodic",
-	"drum",
+	"drums",
 	"drum set 1",
 	"drum set 2",
 	"drum set 3",
-	"drum set 4"
+	"drum set 4",
+	"drum set 5",
+	"drum set 6",
+	"drum set 7",
+	"drum set 8"
 ];
 let xgDelOffset = [
 	17.1, 18.6, 20.2, 21.8, 23.3,
