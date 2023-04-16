@@ -1881,6 +1881,9 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (ri & 1) {
 								if (ri < 23) {
 									console.debug(`${dPref}${pType} control source: ${getVlCtrlSrc(e)}`);
+									if (e && e < 96) {
+										upThis.allocateAce(e);
+									};
 								} else {
 									// These actually belong to 0x57, not 0x4c
 									console.debug(`${dPref}${pType} scale break point: ${e}`);
@@ -2389,10 +2392,16 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(`${dPref}to delay: ${toDecibel(e)}dB`);
 				}, false, () => {
 					console.debug(`${dPref}1 source: ${e}`);
+					if (e && e < 96) {
+						upThis.allocateAce(e);
+					};
 				}, () => {
 					console.debug(`${dPref}1 depth: ${e - 64}`);
 				}, () => {
 					console.debug(`${dPref}2 source: ${e}`);
+					if (e && e < 96) {
+						upThis.allocateAce(e);
+					};
 				}, () => {
 					console.debug(`${dPref}2 depth: ${e - 64}`);
 				}, () => {
