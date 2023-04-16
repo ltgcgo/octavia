@@ -598,7 +598,12 @@ let OctaviaDevice = class extends CustomEventSource {
 								if ([126, 127].indexOf(det.data[1]) > -1) {
 									if (this.#chType[part] == 0) {
 										this.setChType(part, 1);
-										console.debug(`CH${part + 1} set to drums.`);
+										console.debug(`CH${part + 1} set to drums by MSB.`);
+									};
+								} else {
+									if (this.#chType[part] > 0) {
+										this.setChType(part, 0);
+										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
 								break;
@@ -609,12 +614,12 @@ let OctaviaDevice = class extends CustomEventSource {
 								if ([61, 62, 126, 127].indexOf(det.data[1]) > -1) {
 									if (this.#chType[part] == 0) {
 										this.setChType(part, 1);
-										console.debug(`CH${part + 1} set to drums.`);
+										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
 									if (this.#chType[part] > 0) {
 										this.setChType(part, 0);
-										console.debug(`CH${part + 1} set to melodic.`);
+										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
 								break;
@@ -623,12 +628,12 @@ let OctaviaDevice = class extends CustomEventSource {
 								if (det.data[1] == 120) {
 									if (this.#chType[part] == 0) {
 										this.setChType(part, 1);
-										console.debug(`CH${part + 1} set to drums.`);
+										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
 									if (this.#chType[part] > 0) {
 										this.setChType(part, 0);
-										console.debug(`CH${part + 1} set to melodic.`);
+										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
 								break;
@@ -920,6 +925,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		return this.#chType;
 	};
 	setChType(part, type) {
+		type &= 15;
 		this.#chType[part] = type;
 		if (type > 0) {
 			this.#cc[part * allocated.cc + ccToPos[0]] = drumMsb[this.#mode];
@@ -1741,7 +1747,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						// same note key on assign?
 					}, () => {
 						upThis.setChType(part, e);
-						console.debug(`${dPref}type: ${xgPartMode[e]}`);
+						console.debug(`${dPref}type: ${xgPartMode[e] || e}`);
 					}, () => {
 						// coarse tune
 						upThis.#rpn[allocated.rpn * part + 3] = e;

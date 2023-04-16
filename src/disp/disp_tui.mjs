@@ -53,7 +53,7 @@ let TuiDisplay = class extends RootDisplay {
 		};
 		fields[0] = `${sum.eventCount.toString().padStart(3, "0")} ${curPoly.toString().padStart(3, "0")}:${this.#maxPoly.toString().padStart(3, "0")}/512 TSig:${sum.tSig[0]}/${sum.tSig[1]} Bar:${(sum.noteBar + 1).toString().padStart(3, "0")}/${Math.floor(sum.noteBeat) + 1} Tempo:${Math.floor(cramTempo)}.${Math.floor(cramTempo % 1 * 100).toString().padStart(2, "0")} Vol:${Math.floor(sum.master.volume)}.${Math.round(sum.master.volume % 1 * 100).toString().padStart(2, "0")}%`;
 		fields[1] = `Mode:${modeNames[sum.mode]} Title:${sum.title || "N/A"}`;
-		fields[2] = "Ch:VoiceNme#St T VEM RCDBPR12 PiBd Pan : Note";
+		fields[2] = "Ch:VoiceNme#St T VEM RCDBRP12 PiBd Pan : Note";
 		let line = 3, maxCh = 0;
 		sum.chInUse.forEach(function (e, i) {
 			if (e) {
@@ -61,7 +61,7 @@ let TuiDisplay = class extends RootDisplay {
 				let chOffset = i * ccToPos.length;
 				if (line < fields.length - 5 && i >= (self.minCh || 0)) {
 					let voiceName = upThis.getChVoice(i);
-					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${sum.chType[i]} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]}${(sum.chContr[chOffset + ccToPos[65]] >> 6) ? map[sum.chContr[chOffset + ccToPos[5]] >> 1] : " "}${map[sum.chContr[chOffset + ccToPos[71]] >> 1]}${map[sum.chContr[chOffset + ccToPos[12]] >> 1]}${map[sum.chContr[chOffset + ccToPos[13]] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
+					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${sum.chType[i]} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]}${map[sum.chContr[chOffset + ccToPos[71]] >> 1]}${(sum.chContr[chOffset + ccToPos[65]] >> 6) ? map[sum.chContr[chOffset + ccToPos[5]] >> 1] : " "}${map[sum.chContr[chOffset + ccToPos[12]] >> 1]}${map[sum.chContr[chOffset + ccToPos[13]] >> 1]} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
 						if (e1.v > 0) {
 							fields[line] += ` <span style="opacity:${Math.round(e1.v / 1.27) / 100}" class="${{4: "state-hold"}[e1.s] || ""}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
