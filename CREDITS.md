@@ -2,15 +2,25 @@
 Octavia will never become a reality without help from the following people.
 
 ### Software Testers
+* **AWE_asikwus**
+* **dj.tuBIG/MaliceX**
 * **Eastern_Digital**
 * **GFHK-SDGM**
 * **JayB**
+* **MIDIMan**
 * **MJG0117**
 * **now_its_dark**
 * **ValleyBell**
+* **VideoJames**
 
 ### Contributors
+#### Code base
 * **GFHK-SDGM** for the fake PSR screen.
+
+#### Implementation
+* **JayB**
+* **MJG0117**
+* **AWE_asikwus**
 
 ### Reference providers
 * **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
@@ -18,7 +28,9 @@ Octavia will never become a reality without help from the following people.
 * **DistWave** (YAMAHA MU80)
 * ~~**Ham Seung-woo** (YAMAHA MU90)~~
 * **NiceChord** (YAMAHA MU80, Roland SC-55 mk. II)
+* **now_its_dark** (MU2000)
 * **Lupinzar** _DarkWolf, garoux.net_ (YAMAHA MU80, Roland SC-55 mk. II)
+* **ValleyBell** (SC-88 VL)
 
 ### Hardware Testers
 * **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
