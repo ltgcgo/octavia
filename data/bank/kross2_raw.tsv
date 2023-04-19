@@ -1,0 +1,1153 @@
+MSB	PRG	LSB	NME
+063	000	000	Kross Grand Piano 1
+063	000	001	Kross Grand Piano 2
+063	000	002	Stereo Grand Piano
+063	000	003	Bright Grand Piano 1
+063	000	004	Bright Grand Piano 2
+063	000	005	Rock Grand Piano
+063	000	006	Stage Grand Piano 1
+063	000	007	Stage Grand Piano 2
+063	000	008	Vivid Grand Piano
+063	000	009	Warm Grand Piano
+063	000	010	Dark Grand Piano
+063	000	011	Pop Grand Piano
+063	000	012	Reverb Grand Piano
+063	000	013	Stereo A.Piano
+063	000	014	Bright A.Piano
+063	000	015	Chorus A.Piano
+063	000	016	Upright Piano 1
+063	000	017	Upright Piano 2
+063	000	018	Upright Piano 3
+063	000	019	Bar Room Piano
+063	000	020	Monaural A.Piano
+063	000	021	Bright Mono Piano
+063	000	022	Dark Mono Piano
+063	000	023	Bright Mono Grand
+063	000	024	Dark Mono Grand
+063	000	025	Comp Mono Grand
+063	000	026	Hammer Mono Piano
+063	000	027	Detuned Piano
+063	000	028	Honkey Tonky
+063	000	029	Old Story Grand
+063	000	030	Very Old Grand
+063	000	031	Fortepiano
+063	000	032	SG-1D Piano 1
+063	000	033	SG-1D Piano 2
+063	000	034	M1 Piano
+063	000	035	Electric Grand 1
+063	000	036	Electric Grand 2
+063	000	037	Chorus E.Grand 1
+063	000	038	Chorus E.Grand 2
+063	000	039	Dual Piano
+063	000	040	Chillout Piano
+063	000	041	Sad Piano
+063	000	042	Damper Piano
+063	000	043	Piano Dub Wheel
+063	000	044	Lo FS Piano Wheel
+063	000	045	Piano + FM E.Piano
+063	000	046	Alone Piano
+063	000	047	Piano+Dyno E.Piano
+063	000	048	Romance Piano
+063	000	049	Sparkling Piano
+063	000	050	A.Piano + Strings
+063	000	051	A.Piano+Orch Pad 1
+063	000	052	A.Piano+Orch Pad 2
+063	000	053	Grand Piano+Strings
+063	000	054	Grand Pf+Orch Pad1
+063	000	055	Grand Pf+Orch Pad2
+063	000	056	Grand Pf+Small Str.
+063	000	057	Grand Pf+Str.Pad 1
+063	000	058	Grand Pf+Str.Pad 2
+063	000	059	A.Piano + Synth Pad
+063	000	060	90's Piano
+063	000	061	Celesta
+063	000	062	Toy Piano
+063	000	063	Romance ToyPiano
+063	000	064	E.P.Suit R&B SW1/2
+063	000	065	E.P.Suit R&B Phaser
+063	000	066	E.P.Suit Preamp
+063	000	067	E.P.Suit Dist. SW2
+063	000	068	E.P.Suit Dist&Phaser
+063	000	069	E.P.Suit 1984
+063	000	070	E.P.Suit Classic Bell
+063	000	071	E.P.Suit Mark I Line
+063	000	072	E.P.Suit Mark I Silver
+063	000	073	E.P.Suit Tremolo
+063	000	074	E.P.Suit Cho&U-Vibe
+063	000	075	EP Suit U-Vibe&Echo
+063	000	076	E.P.Suit BiPhase MW
+063	000	077	E.P.Suit Phaser 1
+063	000	078	E.P.Suit Phaser 2
+063	000	079	E.P.Suit Preamp&Wah
+063	000	080	E.P.Suit WahWah
+063	000	081	E.P.Suit BPM Delay
+063	000	082	E.P.Suit Mark V
+063	000	083	E.P.Suit Hard
+063	000	084	E.P.Dyno Studio
+063	000	085	E.P.Dyno EQ/Chorus
+063	000	086	E.P.Dyno Chorus
+063	000	087	EP Dyno Exciter/Cho
+063	000	088	E.P.Reed Wah Wheel
+063	000	089	E.P.Reed Mellow
+063	000	090	E.P.Reed Tremolo
+063	000	091	E.P.Reed Overdrive
+063	000	092	E.P.Reed Rockin'
+063	000	093	E.P.Reed Chorus
+063	000	094	E.P.Reed Phaser
+063	000	095	SuitPure E.P.+Pad
+063	000	096	SuitBright E.P.+Pad 1
+063	000	097	SuitBright E.P.+Pad 2
+063	000	098	SuitHard+FM E.Piano
+063	000	099	FM E.Piano Deluxe 1
+063	000	100	FM E.Piano Deluxe 2
+063	000	101	FM E.Piano Classic 1
+063	000	102	FM E.Piano Classic 2
+063	000	103	FM E.Piano Classic 3
+063	000	104	FM E.Piano + Strings
+063	000	105	FM E.P. + E.P.Pad 1
+063	000	106	FM E.P. + E.P.Pad 2
+063	000	107	FM E.Piano+Syn Pad
+063	000	108	FM Suitcase E.P.
+063	000	109	Chorus FM+Suit E.P.
+063	000	110	FM E.P. + Dyno E.P.
+063	000	111	Pad E.Piano 1
+063	000	112	Pad E.Piano 2
+063	000	113	Pad E.Piano 3
+063	000	114	Hybrid Phaser E.P.
+063	000	115	E.P.Pad + Synth
+063	000	116	Super Grand
+063	000	117	Phantom E.Piano
+063	000	118	Tablet E.Piano SW2
+063	000	119	Tablet E.Harpsi SW2
+063	000	120	Clavi AC Bright
+063	000	121	Clavi AC Mellow
+063	000	122	Clavi AC Distortion
+063	000	123	Clavi AC Velo Wah
+063	000	124	Clavi AD Bright
+063	000	125	Clavi AD Mellow
+063	000	126	Clavi AD Distortion
+063	000	127	Clavi AD Velo Wah
+063	001	000	Clavi BC Bright
+063	001	001	Clavi BC Mellow
+063	001	002	Clavi BC Distortion
+063	001	003	Clavi BC Velo Wah
+063	001	004	Clavi BD Bright
+063	001	005	Clavi BD Mellow
+063	001	006	Clavi BD Distortion
+063	001	007	Clavi BD Velo Wah
+063	001	008	Clavi Touch Wah
+063	001	009	Higher Ground Clavi
+063	001	010	Superstition Clavi
+063	001	011	Kid Charlmagne Clavi
+063	001	012	Trampled Under Clavi
+063	001	013	Clavi Phaser SW1
+063	001	014	WS Clavi VeloSwitch
+063	001	015	Pure Clavichord
+063	001	016	Harpsicord Single
+063	001	017	Harpsicord Double 1
+063	001	018	Harpsicord Double 2
+063	001	019	E.Organ Jazz Perc.1
+063	001	020	E.Organ Jazz Perc.2
+063	001	021	E.Organ Jazz Perc.3
+063	001	022	E.Organ CX3 Perc.
+063	001	023	E.Organ Mondo Perc.
+063	001	024	E.Organ 88 Perc.
+063	001	025	E.Organ Entertainer
+063	001	026	E.Organ 888
+063	001	027	E.Organ Warm OD
+063	001	028	E.Organ Bossa
+063	001	029	E.Organ Love Songs
+063	001	030	E.Organ Gospel
+063	001	031	E.Organ Comp.
+063	001	032	E.Org Drawbars 1 MW
+063	001	033	E.Org Drawbars 2 MW
+063	001	034	E.Organ Manual Comp.
+063	001	035	E.Org Vibrato/Chorus
+063	001	036	E.Organ 800000048
+063	001	037	E.Organ 880000048
+063	001	038	E.Organ WarmGospel
+063	001	039	E.Organ Tremolo
+063	001	040	E.Organ Full->Soft
+063	001	041	E.Organ BX3 Full
+063	001	042	E.Organ Rock Full
+063	001	043	E.Organ Vintage
+063	001	044	E.Organ Church
+063	001	045	E.Organ Ballad
+063	001	046	E.Organ Blues/Slow
+063	001	047	E.Organ Blues/Fast
+063	001	048	E.Organ Rock OD
+063	001	049	E.Organ Rock Prec.
+063	001	050	E.Organ Master Rock
+063	001	051	E.Organ Gospel Perc.
+063	001	052	M1 Organ
+063	001	053	E.Organ Vox Full
+063	001	054	E.Organ VoxTabs SW2
+063	001	055	E.Organ 60's Sound
+063	001	056	E.Organ FarPro 1
+063	001	057	E.Organ FarPro 2
+063	001	058	E.Organ Combo
+063	001	059	FollowYou/Me Organ
+063	001	060	SineWheel Organ
+063	001	061	VS Church Organ
+063	001	062	DWGS Pop Organ
+063	001	063	DWGS Church Organ
+063	001	064	SineWheel 16'
+063	001	065	SineWheel 5+1/3'
+063	001	066	SineWheel 8'
+063	001	067	SineWheel 4'
+063	001	068	SineWheel 2+2/3'
+063	001	069	SineWheel 2'
+063	001	070	SineWheel 1+3/5'
+063	001	071	SineWheel 1+1/3'
+063	001	072	SineWheel 1'/Perc.
+063	001	073	Pipe Organ Medium
+063	001	074	Pipe Organ Full 1
+063	001	075	Pipe Organ Full 2
+063	001	076	Pipe Organ Mixture
+063	001	077	Pipe Organ Positive
+063	001	078	Pipe Positive/Mixture
+063	001	079	Pipe Organ Reed
+063	001	080	Street Organ
+063	001	081	Accordion 8'+8'
+063	001	082	Accordion 8'+4'
+063	001	083	Accordion Stylish 1
+063	001	084	Accordion Stylish 2
+063	001	085	Musette + Principal
+063	001	086	Bandoneon
+063	001	087	Fisa 1
+063	001	088	Fisa 2
+063	001	089	Fisa 3
+063	001	090	Pump/Reed Organ
+063	001	091	Key Flute
+063	001	092	Ensemble Bells
+063	001	093	Puffle Bells
+063	001	094	Breathy Bells
+063	001	095	Heaven Bells
+063	001	096	Soft Ensemble Bells
+063	001	097	DWGS Bells 1
+063	001	098	DWGS Bells 2
+063	001	099	Tinkle Bells
+063	001	100	Magic Bells
+063	001	101	Lo FS Bells
+063	001	102	Delayed Bells
+063	001	103	Pure Satin Bells
+063	001	104	FM Metal Bells
+063	001	105	FM Glass Bells 1
+063	001	106	FM Glass Bells 2
+063	001	107	FM Tubular Bells
+063	001	108	FM Bells
+063	001	109	Krystal Bells
+063	001	110	Cathedral Bells
+063	001	111	Tubular Bells
+063	001	112	Toy Hand Bells
+063	001	113	Music Box
+063	001	114	Plated Bells
+063	001	115	Glockenspiel
+063	001	116	Vibraphone
+063	001	117	Steel Tongue Drum
+063	001	118	Steel Drum
+063	001	119	Gamelan
+063	001	120	Sarna Bell
+063	001	121	Kalimba
+063	001	122	Xylophone
+063	001	123	Marimba
+063	001	124	MondoRimba
+063	001	125	Skull Mallets
+063	001	126	Tribal Mallets
+063	001	127	Log Drum
+063	002	000	Angklung
+063	002	001	Stereo Strings 1
+063	002	002	Stereo Strings 2
+063	002	003	Lush Strings 1
+063	002	004	Lush Strings 2
+063	002	005	Bright Strings
+063	002	006	Arco Stereo Strings
+063	002	007	Legato Strings 1
+063	002	008	Legato Strings 2
+063	002	009	Symphonic Strings
+063	002	010	Slow Strings
+063	002	011	Platinum Strings
+063	002	012	Camera Strings
+063	002	013	Few Bows Strings
+063	002	014	Intimate Strings
+063	002	015	Arco Pop Strings
+063	002	016	Pop Strings
+063	002	017	Octave Strings
+063	002	018	Maestoso Strings
+063	002	019	Pizz Ensemble SW2
+063	002	020	Pizz/Str.Quartet SW1
+063	002	021	Str.Quartet/Pizz SW1
+063	002	022	Violin 1 SW1
+063	002	023	Violin 2 SW1
+063	002	024	Viola 1 SW1
+063	002	025	Viola 2 SW1
+063	002	026	Cello 1 SW1
+063	002	027	Cello 2 SW1
+063	002	028	Contrabass 1 SW1
+063	002	029	Contrabass 2 SW1
+063	002	030	New Age Strings
+063	002	031	Synth String Pad
+063	002	032	Pure Analog Pad
+063	002	033	Super Analog Pad
+063	002	034	Analog Strings
+063	002	035	Ana-2-Real Strings
+063	002	036	Hybrid String Pad
+063	002	037	Progressive Ana Str.
+063	002	038	Mello MK II Strings
+063	002	039	Mello 400S Strings
+063	002	040	C-Berlin Strings 1
+063	002	041	C-Berlin Strings 2
+063	002	042	Tape Str.Oct.Mixed
+063	002	043	Tape Strings Dual
+063	002	044	Tronical Strings
+063	002	045	Aaah Voices Stereo
+063	002	046	Aah Voises Dynamic
+063	002	047	Oooh Voices Stereo
+063	002	048	Ooh L&R Airy Voices
+063	002	049	Ooh Voices Light
+063	002	050	Light Choir
+063	002	051	Choir Of Angels
+063	002	052	Classical Choir
+063	002	053	Backing Vocals
+063	002	054	Twilight Choir
+063	002	055	Cathedral Choir
+063	002	056	Splash Choir
+063	002	057	Soundtrack Choir
+063	002	058	Mixed Registers
+063	002	059	Professional Choir
+063	002	060	Morphing Voices
+063	002	061	Infinite Choir
+063	002	062	Take Voice
+063	002	063	V.Switch Vocals
+063	002	064	Mello Style Choir
+063	002	065	Mello 8Voice Choir
+063	002	066	Mello Classic Choir
+063	002	067	Mello Stereo Choir
+063	002	068	Vocoder Machine 1
+063	002	069	Vocoder Machine 2
+063	002	070	Vocoder Ah
+063	002	071	Fresh Vox
+063	002	072	Full Vox
+063	002	073	Arctic Voices
+063	002	074	Tranquil SW2
+063	002	075	Voice Doo
+063	002	076	Voxology
+063	002	077	Velo Voxster
+063	002	078	Open Brass
+063	002	079	Sharp Brass
+063	002	080	Tight Brass
+063	002	081	Big Brass
+063	002	082	Session Brass
+063	002	083	Expressive Brass
+063	002	084	Brass Section
+063	002	085	Trumpets X-fade
+063	002	086	Warm Brass
+063	002	087	Film Brass
+063	002	088	Sforzando Brass
+063	002	089	Octave Brass 1
+063	002	090	Octave Brass 2
+063	002	091	Trombone Ensemble
+063	002	092	Tp/Tb Muted
+063	002	093	Tp/Tb Muted Oct
+063	002	094	French Horn Ens
+063	002	095	Horns & Ensemble
+063	002	096	Brass Ens & Tubas
+063	002	097	Orchestral Brass
+063	002	098	Sforzando Orchestra
+063	002	099	T.O.P Section
+063	002	100	Brass & Reed
+063	002	101	Brass&Saxophones
+063	002	102	Brass&Octave Sax
+063	002	103	Trumpets Dynamic
+063	002	104	Trumpets Octave
+063	002	105	Trombones 4-Way
+063	002	106	Trumpet Sensitive
+063	002	107	Trumpet Overblown
+063	002	108	Trumpet Muted
+063	002	109	Flugelhorn
+063	002	110	Trombone
+063	002	111	Trombone Muted
+063	002	112	French Horn
+063	002	113	Tuba
+063	002	114	Flute Vibrato
+063	002	115	Silver Flute
+063	002	116	Attack Flute
+063	002	117	Voice  Flute
+063	002	118	Piccolo Flute
+063	002	119	Mello MK II Flutes
+063	002	120	Clarinet
+063	002	121	Double Reed Family
+063	002	122	Oboe
+063	002	123	English Horn
+063	002	124	Bassoon
+063	002	125	Sax Ensemble
+063	002	126	Soprano Sax
+063	002	127	Alto Sax Soft
+063	003	000	Alto Sax Hard
+063	003	001	Tenor Sax Soft
+063	003	002	Tenor Sax Hard
+063	003	003	Baritone Sax
+063	003	004	Harmonica
+063	003	005	Recorder
+063	003	006	Shakuhachi
+063	003	007	ZEN Priest Split
+063	003	008	Spit Bottle
+063	003	009	Memory Lead SW2
+063	003	010	DW8000 Lead 1
+063	003	011	Espress Lead
+063	003	012	Sweet MG Lead
+063	003	013	Fat Saw Lead
+063	003	014	Glide Lead
+063	003	015	PWM Lead
+063	003	016	DW8000 Lead 2
+063	003	017	Lucky Man Lead
+063	003	018	Old Square Lead SW1
+063	003	019	Bright Square Lead
+063	003	020	Unison Square Lead
+063	003	021	Simple Square Lead
+063	003	022	Simple Pulse Lead
+063	003	023	Sine Lead
+063	003	024	InfinityLead MW&SW
+063	003	025	Rude Lead
+063	003	026	Wailing Lead
+063	003	027	Cold Water Lead
+063	003	028	BIG Lead
+063	003	029	Rapper's D'light Lead
+063	003	030	The Executor Lead
+063	003	031	Anthem Lead
+063	003	032	Bigroom Lead
+063	003	033	Unison Saw Lead
+063	003	034	Dist EDM Lead
+063	003	035	EDM Voice Lead
+063	003	036	Progressive Lead
+063	003	037	Hip Hop Lead
+063	003	038	Deep Soul Lead SW2
+063	003	039	Simple 5th Saw Lead
+063	003	040	Vintage Lead
+063	003	041	Cheap Lead Wheel
+063	003	042	Reso Lead
+063	003	043	Operator Lead
+063	003	044	Tom Sawyer Bs/Lead
+063	003	045	Bass & Lead Boys
+063	003	046	Fat Sync Lead
+063	003	047	MS2K FastSync Lead
+063	003	048	Deep 5th EDM Lead
+063	003	049	Eletrik Piano Lead
+063	003	050	Tropical Lead 1
+063	003	051	Tropical Lead 2
+063	003	052	Noisy Stabber Neo
+063	003	053	Unison Power Synth
+063	003	054	Bold Anthem Synth
+063	003	055	Transer Synth
+063	003	056	Anthem Trans MW
+063	003	057	Fast Unison Synth
+063	003	058	Leader of Trance
+063	003	059	Velo Twang
+063	003	060	Rat Chords
+063	003	061	Bold Octaves
+063	003	062	Power Pad
+063	003	063	Velo Power Pad
+063	003	064	Unison Pad
+063	003	065	Old  Poly Synth 1
+063	003	066	Old  Poly Synth 2
+063	003	067	Saw Ensemble Synth
+063	003	068	Chip Tune Synth
+063	003	069	Disco Synth Pad
+063	003	070	Jump SynBrass
+063	003	071	Final SynBrass
+063	003	072	Synth Fanfare
+063	003	073	Saw Synth Brass
+063	003	074	HyperComped Chords
+063	003	075	Gargle Synth
+063	003	076	Olive Anthem Chords
+063	003	077	Sugar Smash Pad
+063	003	078	Cannon Poly Synth
+063	003	079	Cannon Synth E.P.
+063	003	080	Ripper Anthem Synth
+063	003	081	Different Ways Poly
+063	003	082	Huge Planet Syn SW1
+063	003	083	Vintage Saw Synth
+063	003	084	Detuned Poly Synth
+063	003	085	Later Progressive Ld
+063	003	086	Follow You Lead
+063	003	087	Tricky MODDetune Ld
+063	003	088	Oxygen Lead
+063	003	089	80's Square Poly
+063	003	090	Gliding Square Lead
+063	003	091	Pop Synth Pad
+063	003	092	Future Pad
+063	003	093	Rezbo Pad
+063	003	094	CheapCool 80's Poly
+063	003	095	Shynth Ex Clavi
+063	003	096	Mean Rez Clavi
+063	003	097	EDM Chordplay 1
+063	003	098	EDM Chordplay 2
+063	003	099	Futur Chordal
+063	003	100	Fuzz Felt
+063	003	101	Pro Sync
+063	003	102	EP Annihilation SW2
+063	003	103	Sine Pad
+063	003	104	Swirl Sine Pad
+063	003	105	Synth Filter Pad
+063	003	106	Search Pad
+063	003	107	Dark Brass Pad
+063	003	108	Sine On Pad
+063	003	109	Prayer Pad
+063	003	110	Tinklin Pad
+063	003	111	Squ Voice Pad
+063	003	112	Square Pad SW1
+063	003	113	5th Pad SW1/2
+063	003	114	String Res Pad
+063	003	115	Flashy AnaHarpy
+063	003	116	Angelic Choir
+063	003	117	The Pad
+063	003	118	The E.P.Pads
+063	003	119	Attacky Pad
+063	003	120	Poppin' Pad
+063	003	121	Africa Brass
+063	003	122	80 Pad SW2/PW/MW
+063	003	123	Soft SynBrass
+063	003	124	Progressive SynBrs
+063	003	125	Matrix Crispy
+063	003	126	Chronologie
+063	003	127	Aero Pad
+063	004	000	Bad Dream Waltzer
+063	004	001	Alexa Pad
+063	004	002	Solaris Pad
+063	004	003	The X Pad
+063	004	004	Swish Pad
+063	004	005	Sweet Pad
+063	004	006	Givin' Pop
+063	004	007	Cosmic Synth
+063	004	008	Syn Sweeper
+063	004	009	Fine HPF Sweep
+063	004	010	Rez Down
+063	004	011	Mirrored
+063	004	012	Wave Pad
+063	004	013	Meditator
+063	004	014	Chant
+063	004	015	1984 Split
+063	004	016	Surprising Pad
+063	004	017	Pods in the Pad
+063	004	018	Dolphin Pad
+063	004	019	Shimmer Sparkle Pad
+063	004	020	Steelish Pad
+063	004	021	Widescreen Pad
+063	004	022	Flying
+063	004	023	Aqua Phonics
+063	004	024	Flare Pad
+063	004	025	Palawan Pad
+063	004	026	Moon Cycles
+063	004	027	Swirl Pad
+063	004	028	New Voyage
+063	004	029	Great Wall
+063	004	030	Off Beat Dark Pad
+063	004	031	Off Beat Bright Pad
+063	004	032	Pump Pad
+063	004	033	ClayPot-VoxTriplets
+063	004	034	Chilly Pulsar Love
+063	004	035	U-Vibe Pad
+063	004	036	Butterfly Pad
+063	004	037	Vox Pulse
+063	004	038	BPM Flashlight Pad
+063	004	039	eMoTiOn
+063	004	040	Loco Motiv
+063	004	041	Atmospheric Pulse
+063	004	042	Rhythm Lead
+063	004	043	LFO 5th Wave
+063	004	044	ToneWheel Motion
+063	004	045	Minimal Seq
+063	004	046	8BIT Land
+063	004	047	Dancing Voice
+063	004	048	Spectral Wave Dance
+063	004	049	Kross Wave Motion
+063	004	050	Wave Sequencer
+063	004	051	Bell Wave Seq
+063	004	052	Pad & Bell Wave Seq
+063	004	053	LFO Run Pad SW1
+063	004	054	Nylon Guitar 1
+063	004	055	Nylon Guitar 2
+063	004	056	Flamenco Guitar
+063	004	057	Nylon Gtr.Studio
+063	004	058	Nylon Guitar&Strings
+063	004	059	A.Guitar Large Body
+063	004	060	A.Guitar+Noise SW1
+063	004	061	A.Gtr.Dynamic Pick
+063	004	062	A.Guitar Finger
+063	004	063	Sitar Guitar
+063	004	064	Acoustish
+063	004	065	A.Guitar 12 String
+063	004	066	E.Guitar+Twin
+063	004	067	E.Guitar Dynamic 1
+063	004	068	E.Guitar Dynamic 2
+063	004	069	E.Guitar Funky
+063	004	070	E.Guitar Delay
+063	004	071	E.Guitar Crunch
+063	004	072	E.Guitar Chorus
+063	004	073	E.Guitar VolumeSwell
+063	004	074	E.Guitar Tremolo
+063	004	075	E.Guitar Semi Dist.
+063	004	076	E.Guitar Rotary FX
+063	004	077	E.Gtr.Tweed Phaser
+063	004	078	E.Guitar U-Vibe
+063	004	079	E.Guitar Auto Wah
+063	004	080	E.Gtr.Screaming Tube
+063	004	081	E.Guitar Filthy
+063	004	082	E.Guitar Mute Dist.
+063	004	083	E.Guitar Wet Dist.
+063	004	084	E.Guitar PowerChord
+063	004	085	E.Gtuitar Vox Wah
+063	004	086	E.Guitar Jazz
+063	004	087	E.Guitar Pedal Steel
+063	004	088	Psyco Guitar
+063	004	089	Electronica Guitar
+063	004	090	Ukulele
+063	004	091	Banjo
+063	004	092	Mandolin
+063	004	093	Santur
+063	004	094	Sitar & Tambura
+063	004	095	Koto Velo.Bend
+063	004	096	Harp 1
+063	004	097	Harp 2
+063	004	098	E.Bass Finger 1
+063	004	099	E.Bass Finger 2
+063	004	100	E.Bass Finger 3
+063	004	101	E.Bass Finger 4
+063	004	102	E.Bass Pick 1
+063	004	103	E.Bass Pick 2
+063	004	104	E.Bass Pick 3
+063	004	105	E.Bass Pick 4
+063	004	106	E.Bass Pick Bed
+063	004	107	E.Bass Saturated
+063	004	108	E.Bass Thumb 1
+063	004	109	E.Bass Thumb 2
+063	004	110	E.Bass Fretless 1
+063	004	111	E.Bass Fretless 2
+063	004	112	E.Bass Fretless Oct
+063	004	113	Acoustic Bass1 SW2
+063	004	114	Acoustic Bass2 SW2
+063	004	115	Acoustic Bass3 SW2
+063	004	116	Acoustic Bass Old
+063	004	117	Kick Bass/Decay
+063	004	118	Decayed Bass
+063	004	119	THAT SubBass Kick
+063	004	120	Kick Bass/Gate
+063	004	121	Deep KIK SubSynth
+063	004	122	Sine Bass SW1
+063	004	123	Deep Triangle Bass
+063	004	124	Dark R&B Bass
+063	004	125	Digi Bass
+063	004	126	Boost Synth Bass
+063	004	127	Tight Bass SW2
+063	005	000	Saw Bass
+063	005	001	800DV Saw Bass
+063	005	002	Solid Bass
+063	005	003	Octave Bass
+063	005	004	Analog Funk Bass
+063	005	005	Octave MG Bass
+063	005	006	Greasy Synth Bass
+063	005	007	VeloBark Bass
+063	005	008	Acid Syn Bass
+063	005	009	Square Bass
+063	005	010	Popin' Squ Bass
+063	005	011	800DV Square Bass
+063	005	012	Growler Bass
+063	005	013	Euro 8va Seq Bass
+063	005	014	Hard Square Bass
+063	005	015	Detuned Euro Bass
+063	005	016	Vintage 80's Bass
+063	005	017	Snappy 5ths Bass
+063	005	018	Dub Tempest Bs
+063	005	019	Dub PsyClone Bs
+063	005	020	Ducking Bass
+063	005	021	DS Hold Bass SW2
+063	005	022	Bs Pulse Mod Wheel
+063	005	023	Wobble Nation Bass
+063	005	024	Bs Pulse Triplet MW
+063	005	025	Nasty Bass
+063	005	026	Widow Bass
+063	005	027	Octa Quak Bass
+063	005	028	Ruff'Blade Bass
+063	005	029	Hard Synth Bass
+063	005	030	Hard Sync Bass
+063	005	031	Organ Bass
+063	005	032	Housey Bass
+063	005	033	Rock Kit 1
+063	005	034	Rock Kit 1 Mono
+063	005	035	Rock Kit 2
+063	005	036	Jazz Kit
+063	005	037	Jazz Kit Mono
+063	005	038	Jazz/Brush Kit
+063	005	039	Wild Kit
+063	005	040	Power Kit 1
+063	005	041	Power Kit 2
+063	005	042	Basic Kit 1
+063	005	043	Basic Kit 2
+063	005	044	Jazzy Hop Kit
+063	005	045	Urban Hip Hop Kit
+063	005	046	Hip Hop Kit 1
+063	005	047	Hip Hop Kit 2
+063	005	048	Trapper Kit
+063	005	049	Electronic R&B Kit
+063	005	050	Nu R&B Kit
+063	005	051	R&B Kit
+063	005	052	Breakbeat Kit
+063	005	053	Drum'n'Bass Kit
+063	005	054	Breaks Kit
+063	005	055	Bigroom Kit
+063	005	056	Nu EDM Kit
+063	005	057	Dubstep Kit
+063	005	058	Moombahton Kit
+063	005	059	Tropical Kit
+063	005	060	Trance Kit
+063	005	061	House Kit
+063	005	062	Tekno Klub Kit
+063	005	063	Minimal Kit
+063	005	064	Nica/Glitch Kit
+063	005	065	Analog Kit
+063	005	066	Mad Analog Kit
+063	005	067	Tricki Kit
+063	005	068	Human Beat Box Kit
+063	005	069	Percussion Kit
+063	005	070	Orch&Ethno Kit
+063	005	071	Nippon Kit
+063	005	072	BD&SD Catalog 1
+063	005	073	BD&SD Catalog 2
+063	005	074	Cymbal Catalog
+063	005	075	Saw Pizz
+063	005	076	Short Square Arp
+063	005	077	Bit Chip SW1/2
+063	005	078	ChipTriangle SW/MW
+063	005	079	ChipSquare SW/MW
+063	005	080	ChipPulse 1 SW/MW
+063	005	081	ChipPulse 2 SW/MW
+063	005	082	Analog Bell/Harp
+063	005	083	Square/Pulse Syn
+063	005	084	Comp E.P. SW1/2
+063	005	085	Organ Perc.Shot
+063	005	086	Synth Mallets 5th
+063	005	087	Metallic Hitter
+063	005	088	Tropical Pizz
+063	005	089	Tropical Mallet
+063	005	090	Horn Chord Hits
+063	005	091	Disco Strings Hit
+063	005	092	Chord Set 1 SW2
+063	005	093	Chord Set 2 SW1
+063	005	094	HipHop Hits
+063	005	095	Trapper Hit
+063	005	096	Pizz Hit
+063	005	097	Power Band Hit
+063	005	098	Impact Band Hit
+063	005	099	Drama Hit Wheel
+063	005	100	Monster Hit Wheel
+063	005	101	Chipper Hit
+063	005	102	Helium Voice
+063	005	103	Yahi Voice
+063	005	104	Nippon Set (C#2-A5)
+063	005	105	Shamisen Gaisya
+063	005	106	Soul of Tsugaru
+063	005	107	Shakuhachi Mondou
+063	005	108	KOTO Furyu
+063	005	109	Miyabi Hit (E3,D6,D7)
+063	005	110	Ring Mod Riser
+063	005	111	Siren SFX Wheel
+063	005	112	Monster
+063	005	113	Crypt-on
+063	005	114	Stereo Flange Sweep
+063	005	115	Sonic Blast
+063	005	116	Soundscapes
+063	005	117	Steam Sweeps
+063	005	118	Android
+063	005	119	New North Wind
+063	005	120	Outside Elements
+063	005	121	Lore of the Jungle
+063	005	122	Mega Drum Hit
+063	005	123	Gong
+063	005	124	Vocoder Vel Choir
+063	005	125	SqrSaw Vocoder
+063	005	126	Mic & Reverb
+063	005	127	Mic & Doubled
+063	010	000	Piano&Strings 1
+063	010	001	EDM Piano
+063	010	002	#Alone#R'n'B ??
+063	010	003	Piano&Choir
+063	010	004	For the 2nd Time...
+063	010	005	Soundtrack Piano
+063	010	006	Piano&Strings 2
+063	010	007	Starlight
+063	010	008	Dub Chillstep SW1/2
+063	010	009	Famous Piano
+063	010	010	Piano Balladeer
+063	010	011	Epic Layered Piano
+063	010	012	Romance Piano
+063	010	013	80's Layererd
+063	010	014	Layered E.Grand
+063	010	015	Bellissima
+063	010	016	Toy GrandPiano SW2
+063	010	017	Natural Mix
+063	010	018	Apologized Keys
+063	010	019	Ambi VIBE Piano
+063	010	020	Chariots
+063	010	021	Modern Piano Player
+063	010	022	Piano Pad
+063	010	023	Heaven Pad
+063	010	024	Deeper Piano Pad
+063	010	025	Piano & Vox
+063	010	026	Piano E.Stomp
+063	010	027	Synthy Shuffle
+063	010	028	Conquest Earth
+063	010	029	Piano & ResoPad
+063	010	030	Metalic Hop
+063	010	031	Don't Wanna
+063	010	032	Piano Trio
+063	010	033	The First Time...
+063	010	034	Fanatical GRAND
+063	010	035	Western Bar SW1/2
+063	010	036	Dance Dance SW2
+063	010	037	Hip On da Beat
+063	010	038	Riders Storm
+063	010	039	Chillhouse E.P.1
+063	010	040	Adam's E.Piano MW
+063	010	041	1/4 Rock E.P.
+063	010	042	Reed E.P.Session
+063	010	043	Tea Time E.P.
+063	010	044	Reggae Pub
+063	010	045	Bell Tine E.Piano
+063	010	046	Bell Tine E.P.
+063	010	047	Super E.Piano
+063	010	048	Reed E.P.Time
+063	010	049	Chillhouse E.P.2
+063	010	050	Rotary Keys
+063	010	051	E.Piano&Strings
+063	010	052	Suit E.P.& Pad
+063	010	053	Double E.P.& Pad
+063	010	054	Gentle E.P.Pad
+063	010	055	High Key E.Piano
+063	010	056	E.P. Mallets
+063	010	057	E-Peez
+063	010	058	E. P. Bella
+063	010	059	Dusty E.P.Pad
+063	010	060	Velo-Tinkle E.P.
+063	010	061	Tiney E.Piano
+063	010	062	Nylon E.P.
+063	010	063	Steely Keys
+063	010	064	DS8 Celeste
+063	010	065	E.P.& Passing Pad
+063	010	066	Wah Clavi Jam SW1
+063	010	067	Funk Clavi Jam
+063	010	068	Bass/Clavi Mix
+063	010	069	Cuttin' Clavi
+063	010	070	The Mondo Nine
+063	010	071	Brit Rock Groove
+063	010	072	Easy Livin'' Split
+063	010	073	Blues Rock Organ
+063	010	074	It's Your Turn!
+063	010	075	Retro Jz Organ Split
+063	010	076	Organ Split Quartet
+063	010	077	Je t'aime Organ
+063	010	078	Perc.Organ
+063	010	079	Forever...Legend
+063	010	080	Swimming Drawbars
+063	010	081	TUBE DRIVE SCREAM
+063	010	082	Rock Organ
+063	010	083	Ballade of Pale
+063	010	084	Gospel Organ
+063	010	085	VOX on Fire
+063	010	086	Hymn for Him
+063	010	087	Horror Organ/Choir
+063	010	088	Pipe Organ 1
+063	010	089	Pipe Organ 2
+063	010	090	Holy Pipes
+063	010	091	Danza Club Split
+063	010	092	Heaven Toy Pad
+063	010	093	Time For Bed
+063	010	094	Childs Play
+063	010	095	Tinkle Bell Pad
+063	010	096	Airy Bell
+063	010	097	White Bells
+063	010	098	Bellorganic
+063	010	099	Enchanted Bell
+063	010	100	Horologe Shop
+063	010	101	Legend Bells
+063	010	102	Tine&Bells
+063	010	103	Royal Bells
+063	010	104	Izza Bell
+063	010	105	Sunset Bellish
+063	010	106	Gamelan Ensemble
+063	010	107	Ice on the Pond
+063	010	108	Pad & Log Drums
+063	010	109	Mallet Dance
+063	010	110	Velo Log Chiffs
+063	010	111	Epic Strings
+063	010	112	Cinema Strings
+063	010	113	Section Strings
+063	010	114	Large String Ens
+063	010	115	Dynamic Strings
+063	010	116	Strings & Strings
+063	010	117	Octave Strings
+063	010	118	Smooth Strings
+063	010	119	New Set of Strings
+063	010	120	Chiff Strings
+063	010	121	Into Battle
+063	010	122	Camera Strings
+063	010	123	Small String Ens
+063	010	124	Medium String Ens
+063	010	125	Strings&Violin Split
+063	010	126	Golden Strings
+063	010	127	Silky Strings
+063	011	000	Fawlty Quartet SW1
+063	011	001	The Orchestra
+063	011	002	Dyno Orchestra
+063	011	003	Parade Orchestra
+063	011	004	Piano & Dyno Orch
+063	011	005	Orchestra mp
+063	011	006	New Strings & Horns
+063	011	007	Strings&Woodwinds
+063	011	008	Rhythm & Bows
+063	011	009	Avant Chamber
+063	011	010	Orchestrator
+063	011	011	Chamber Ensemble
+063	011	012	Deep Island
+063	011	013	Spirited Harp
+063	011	014	Infinity
+063	011	015	Softly Sings
+063	011	016	Room Of Trons
+063	011	017	Velocity Voices
+063	011	018	Heavenly Voices
+063	011	019	Orbiting Voice Pad
+063	011	020	Pro Brass Ensemble
+063	011	021	Epic Brass
+063	011	022	Shining Trumpets!
+063	011	023	Orchestral Brasses
+063	011	024	Brass Family
+063	011	025	French Horn Ens
+063	011	026	Chicago Hybrid Brass
+063	011	027	007 Dyn Brass
+063	011	028	Velo Sax/Brass
+063	011	029	Horn Section
+063	011	030	Sax & Brass
+063	011	031	Funky Brass Section
+063	011	032	TS+TP+TB Trio
+063	011	033	Muted Section
+063	011	034	Soft Sax Family
+063	011	035	Hard Sax Family
+063	011	036	Wind Ensemble
+063	011	037	Orchestral Winds
+063	011	038	Series of 5th Winds
+063	011	039	All Clarinets
+063	011	040	Heavy Duty Unison
+063	011	041	Unisaws
+063	011	042	MegaBell Anthem Pad
+063	011	043	6 Operators Brass
+063	011	044	Killer Saw Synth
+063	011	045	Buzz-A-Log
+063	011	046	RAW Anthem Synth
+063	011	047	Big Analogue
+063	011	048	Let's Talk SW2
+063	011	049	DuB Fill
+063	011	050	Big Analog
+063	011	051	Key Flute Dub
+063	011	052	Mellow Tron Split
+063	011	053	Bossa Flute
+063	011	054	Fusion Split
+063	011	055	Princess
+063	011	056	Dry Dreams
+063	011	057	French Horn Solo
+063	011	058	Sweet Blues
+063	011	059	The Oboe Song
+063	011	060	20th Chamber
+063	011	061	Dandy Guitar
+063	011	062	Mod Wheel Wah Gtr
+063	011	063	Pad & Dist.Guitar
+063	011	064	Fretless Bass Solo
+063	011	065	BassBell Player
+063	011	066	Enigmatic Cello
+063	011	067	Piccolo&Xylo Split
+063	011	068	Strings&T.Sax Split
+063	011	069	Organ & Brass
+063	011	070	E.Piano & Organ
+063	011	071	R'n'B Rain
+063	011	072	Disco Time !!
+063	011	073	Disco Nation
+063	011	074	L<->R FInger EDM
+063	011	075	Splitlet Waves
+063	011	076	ProgressiveSplit SW1
+063	011	077	Chillin Pad & Lead
+063	011	078	Tough Sync Split
+063	011	079	Chill in Deep
+063	011	080	PanaTonic Split
+063	011	081	EWI Split
+063	011	082	Stylo Lead
+063	011	083	We Love DW8000
+063	011	084	Reso Trip Breaks
+063	011	085	Tom-Saw-Ear
+063	011	086	Street Smarts
+063	011	087	Pad Leader
+063	011	088	Lead'n Lady
+063	011	089	It's the Final...
+063	011	090	Total Eclipse
+063	011	091	Moose
+063	011	092	Wobble Boost
+063	011	093	Euro Club
+063	011	094	L/C/R Synth
+063	011	095	Pulsator Split
+063	011	096	Gated Community
+063	011	097	Charge the Future
+063	011	098	Live Rocker
+063	011	099	Enjoy the Science
+063	011	100	Happy Step Split
+063	011	101	Piano & Solo-5th Ld
+063	011	102	Party People SW1/2
+063	011	103	Liquid Pad
+063	011	104	Peace of Mind
+063	011	105	Common Man SW2
+063	011	106	PsychDelian
+063	011	107	Unrequited Love
+063	011	108	After The Ice Storm
+063	011	109	Surf  Voice Pad
+063	011	110	FM Pirates Joke
+063	011	111	Glory Pad
+063	011	112	Sleepless Sun SW1
+063	011	113	Majesty Pad
+063	011	114	In The U-Vibe
+063	011	115	Multi Connection
+063	011	116	New Landscape
+063	011	117	Hallo Yello
+063	011	118	Dream Pad
+063	011	119	WAR
+063	011	120	BIG Pad
+063	011	121	Follower Pad
+063	011	122	New Age
+063	011	123	Cosmic Voice SW1
+063	011	124	Portamento Pad
+063	011	125	Sunset Pad
+063	011	126	Winter Pad
+063	011	127	Footage Pad
+063	012	000	Operation
+063	012	001	The Soft Morning
+063	012	002	Warm Fire Pad
+063	012	003	Calm Pad
+063	012	004	Loose Particle
+063	012	005	Simple Pad
+063	012	006	Glisten Pad
+063	012	007	WAVE Dancing
+063	012	008	Infected WAVE
+063	012	009	Quiet WAVE
+063	012	010	Rhythm Pad
+063	012	011	Elve's Passage
+063	012	012	Rain Gate
+063	012	013	Reed Rhythm
+063	012	014	Angel's Ladder
+063	012	015	Huge Pad SW1/2
+063	012	016	Tempo Pad
+063	012	017	Kids From Space
+063	012	018	Echopolis
+063	012	019	Cool
+063	012	020	Granularized
+063	012	021	The Circle of 5ths
+063	012	022	Modular Obsession
+063	012	023	Operators
+063	012	024	VeloMorph BellPad
+063	012	025	Shrimpaddles
+063	012	026	Shandygaff
+063	012	027	Wrecked in Time
+063	012	028	Planet Pad
+063	012	029	Analog Band
+063	012	030	Strike in Motion
+063	012	031	Reverse of Medal
+063	012	032	Running Sled
+063	012	033	S&H Atmospad
+063	012	034	Guitar & Zen Voices
+063	012	035	New Guitar & Pad
+063	012	036	A.Guitar & Pad 1
+063	012	037	A.Guitar & Pad 2
+063	012	038	Guitar Sings
+063	012	039	Christmas
+063	012	040	Guitarz
+063	012	041	Forest Guitar
+063	012	042	12 String Electric
+063	012	043	Super Guitar
+063	012	044	Wide Guitars
+063	012	045	Chime Gtr.Pad
+063	012	046	Autumn Guitar
+063	012	047	Fractal Guitar
+063	012	048	Dance Rock Synth
+063	012	049	Dream Lines
+063	012	050	Rocking!
+063	012	051	Killer Guitar
+063	012	052	NIPPON Sunrise
+063	012	053	Koto World SW2
+063	012	054	Ethno World
+063	012	055	Jungle Mystery
+063	012	056	Mother Earth
+063	012	057	Ethno Ocean
+063	012	058	Night in Rio
+063	012	059	Land of Rising Sun
+063	012	060	Bass & Piano
+063	012	061	New Bass & Piano
+063	012	062	Ballad Bs & Pf SW2
+063	012	063	Swing Boutique
+063	012	064	Time to WORK IT
+063	012	065	Dream Trance Legend
+063	012	066	Bass & Piano Pad
+063	012	067	Radio
+063	012	068	Happy Split
+063	012	069	Hip Trip
+063	012	070	Bass & E.P.
+063	012	071	Lover's Nite
+063	012	072	Bass & Wurly
+063	012	073	OD Bass & E.P.
+063	012	074	Run Town
+063	012	075	Warm Bass & E.P.
+063	012	076	Slow Crawl
+063	012	077	Velo-Drawbar Split
+063	012	078	Organ Beats
+063	012	079	Organized House
+063	012	080	Erectro Party part 1
+063	012	081	Erectro Party part 2
+063	012	082	Simple EDM SW1/2
+063	012	083	X-Limit
+063	012	084	Ninjya Trap
+063	012	085	Sakura Blizzard
+063	012	086	Pulsing Split
+063	012	087	Happy Rain
+063	012	088	Ac.Bass & A.Sax
+063	012	089	Abstract in Hop
+063	012	090	Lonely Moon
+063	012	091	Holding Heart
+063	012	092	Looking for Clues
+063	012	093	Chemicals SW1/2
+063	012	094	Jazz Bass & Guitar
+063	012	095	Jazzy Guitar
+063	012	096	Ambi Acoustik Split
+063	012	097	Guitar Brothers
+063	012	098	Marooned
+063	012	099	Black Eye Please
+063	012	100	Bass & Vibe
+063	012	101	Triple Tech
+063	012	102	Magic Split
+063	012	103	VIP Room
+063	012	104	Spit Split
+063	012	105	Akronite Split
+063	012	106	Tribal Konfrence SW
+063	012	107	DnB Anthem
+063	012	108	The Beast Split SW2
+063	012	109	Soft Razor
+063	012	110	80's Pop Split
+063	012	111	Club Nite Forever
+063	012	112	Hypno Groove
+063	012	113	Electro Bass Arp
+063	012	114	Datsjustugly
+063	012	115	EDM Ghost Arp
+063	012	116	Wobble Wobble
+063	012	117	Wobble Working
+063	012	118	Dubby the Tyrant
+063	012	119	Noisy Factory
+063	012	120	GlitchStep Split
+063	012	121	Vocoder Delay MW
+063	012	122	PitchMod Voice FX
+063	012	123	Hyperspace
+063	012	124	Invasion
+063	012	125	Space Ship
+063	012	126	Horror Film
+063	012	127	Asian Dreamscape

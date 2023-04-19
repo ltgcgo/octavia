@@ -907,7 +907,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	getCc(channel) {
 		// Return channel CC registers
 		let start = channel * allocated.cc;
-		let arr = this.#cc.slice(start, start + allocated.cc);
+		let arr = this.#cc.subarray(start, start + allocated.cc);
 		arr[ccToPos[0]] = arr[ccToPos[0]] || this.#subMsb;
 		arr[ccToPos[32]] = arr[ccToPos[32]] || this.#subLsb;
 		return arr;
