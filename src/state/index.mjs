@@ -1255,7 +1255,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				for (let ch = 0; ch < allocated.ch; ch ++) {
 					if (this.#chType[ch] > 0 && this.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
 						// Switch drum MSBs.
-						//this.#cc[ch * allocated.cc] = drumMsb[idx];
+						this.#cc[ch * allocated.cc] = drumMsb[idx];
 					};
 					//this.initOnReset && forced && this.#ua.ano(ch);
 				};
