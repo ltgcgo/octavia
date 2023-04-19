@@ -216,7 +216,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Allow part assigning via meta
 			let metaChosen = (this.#trkAsReq[track] - 1) * 16 + part;
 			return metaChosen;
-		} else if ([modeMap.gs, modeMap.ns5r].indexOf(this.#mode) > -1) {
+		} else if ([2, 3].indexOf(this.#subLsb) > -1) {
 			// Do not conquer channels if requested.
 			if (noConquer == 1) {
 				return part;
