@@ -70,6 +70,7 @@ rpnCap = [
 ],
 useNormNrpn = [36, 37],
 useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65],
+drumNotes = [12, 83],
 ccAccepted = [
 	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,
 	38, 64, 65, 66, 67, 68, 69, 70, 71,
@@ -131,6 +132,9 @@ const allocated = {
 	cmt: 14, // C/M timbre storage size
 	rpn: 6,
 	ace: 8, // active custom effect
+	drm: 8, // Drum setup slots
+	dpn: useDrumNrpn.length, // Drum setup params
+	dnc: 72, // note 83 to 12
 	efx: 7
 };
 
@@ -182,6 +186,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
+	#drum = new Uint8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
@@ -1159,6 +1164,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#rawStrength.fill(0);
 		this.#pitch.fill(0);
 		this.#nrpn.fill(0);
+		this.#drum.fill(0);
 		this.#masterVol = 100;
 		this.#metaTexts = [];
 		this.#noteLength = 500;
