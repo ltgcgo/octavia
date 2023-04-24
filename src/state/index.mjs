@@ -1032,12 +1032,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Should later become 0 to 65535
 		let str = [], upThis = this;
 		this.getRawStrength().forEach(function (e, i) {
-			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * Math.max(
-				upThis.#cc[i * allocated.cc + ccToPos[128]], // dry level
-				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[91]] * 0.5), // reverb
-				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[93]] * 0.65), // chorus
-				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[94]] * 0.8) // variation or delay
-			) * upThis.#masterVol / 803288);
+			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * upThis.#masterVol / 803288);
 		});
 		return str;
 	};
