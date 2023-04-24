@@ -638,7 +638,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							case modeMap.g2: {
 								if (det.data[1] == 120) {
 									if (this.#chType[part] == 0) {
-										this.setChType(part, this.CH_DRUM2);
+										this.setChType(part, this.CH_DRUMS);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
@@ -696,7 +696,9 @@ let OctaviaDevice = class extends CustomEventSource {
 									let targetSlot = this.#chType[part] - 2;
 									if (targetSlot < 0) {
 										console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[this.#chType[part]]}.`);
-									} else {};
+									} else {
+										this.#drum[(targetSlot * allocated.dpn + msb) * allocated.dnc + lsb] = det.data[1] - 64;
+									};
 								};
 								getDebugState() && console.debug(`CH${part + 1} (${xgPartMode[this.#chType[part]]}) drum NRPN ${msb} commit`);
 							};
@@ -2519,7 +2521,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, false // assign mode
 					, () => {
 						// drum map
-						upThis.setChType(part, e ? (e << 1) : 0, modeMap.gs);
+						upThis.setChType(part, e << 1, modeMap.gs);
 						console.debug(`${dPref}type: ${e ? "drum " : "melodic"}${e ? e : ""}`);
 					}, () => {
 						// coarse tune
