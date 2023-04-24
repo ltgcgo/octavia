@@ -70,7 +70,6 @@ rpnCap = [
 ],
 useNormNrpn = [36, 37],
 useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65],
-drumNotes = [12, 83],
 ccAccepted = [
 	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,
 	38, 64, 65, 66, 67, 68, 69, 70, 71,
@@ -134,7 +133,7 @@ const allocated = {
 	ace: 8, // active custom effect
 	drm: 8, // Drum setup slots
 	dpn: useDrumNrpn.length, // Drum setup params
-	dnc: 72, // note 83 to 12
+	dnc: 128, // note 0 to 127
 	efx: 7
 };
 
@@ -609,12 +608,12 @@ let OctaviaDevice = class extends CustomEventSource {
 							case modeMap.xg: {
 								if ([126, 127].indexOf(det.data[1]) > -1) {
 									if (this.#chType[part] == 0) {
-										this.setChType(part, 1);
+										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
 									if (this.#chType[part] > 0) {
-										this.setChType(part, 0);
+										this.setChType(part, this.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
@@ -625,12 +624,12 @@ let OctaviaDevice = class extends CustomEventSource {
 							case modeMap.ns5r: {
 								if ([61, 62, 126, 127].indexOf(det.data[1]) > -1) {
 									if (this.#chType[part] == 0) {
-										this.setChType(part, 1);
+										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
 									if (this.#chType[part] > 0) {
-										this.setChType(part, 0);
+										this.setChType(part, this.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
@@ -639,12 +638,12 @@ let OctaviaDevice = class extends CustomEventSource {
 							case modeMap.g2: {
 								if (det.data[1] == 120) {
 									if (this.#chType[part] == 0) {
-										this.setChType(part, 1);
+										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
 									if (this.#chType[part] > 0) {
-										this.setChType(part, 0);
+										this.setChType(part, this.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
@@ -659,6 +658,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					case 6: {
 						// Show RPN and NRPN
 						if (this.#dataCommit) {
+							// Commit supported NRPN values
+							if ([modeMap.xg, modeMap.gs, modeMap.ns5r].indexOf(this.#mode) < 0) {
+								console.warn(`NRPN commits are not available under "${modeIdx[this.#mode]}" mode, even when they are supported in Octavia.`);
+							};
 							let msb = this.#cc[chOffset + ccToPos[99]],
 							lsb = this.#cc[chOffset + ccToPos[98]];
 							if (msb == 1) {
@@ -675,11 +678,27 @@ let OctaviaDevice = class extends CustomEventSource {
 									let nrpnIdx = useNormNrpn.indexOf(lsb);
 									if (nrpnIdx > -1) {
 										this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
+									} else {
+										console.warn(`NRPN 0x01${lsb.toString(16).padStart(2, "0")} is not supported.`);
 									};
 									getDebugState() && console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
 								};
 							} else {
-								//console.debug(`CH${part + 1} drum NRPN ${msb} commit`);
+								let nrpnIdx = useDrumNrpn.indexOf(msb);
+								if (nrpnIdx < 0) {
+									let dPref = `NRPN 0x${msb.toString(16).padStart(2, "0")}${lsb.toString(16).padStart(2, "0")} `;
+									if (msb == 127) {
+										console.warn(`${dPref}is not necessary. Consider removing it.`);
+									} else {
+										console.warn(`${dPref}is not supported.`);
+									};
+								} else {
+									let targetSlot = this.#chType[part] - 2;
+									if (targetSlot < 0) {
+										console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[this.#chType[part]]}.`);
+									} else {};
+								};
+								getDebugState() && console.debug(`CH${part + 1} (${xgPartMode[this.#chType[part]]}) drum NRPN ${msb} commit`);
 							};
 						} else {
 							// Commit supported RPN values
@@ -1195,12 +1214,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Channel types
 		this.#chType.fill(this.CH_MELODIC);
 		this.#chType[9] = this.CH_DRUM1;
-		this.#chType[25] = this.CH_DRUM2;
-		this.#chType[41] = this.CH_DRUMS;
+		this.#chType[25] = this.CH_DRUM3;
 		this.#chType[41] = this.CH_DRUMS;
 		this.#chType[57] = this.CH_DRUMS;
 		this.#chType[73] = this.CH_DRUM5;
-		this.#chType[89] = this.CH_DRUM6;
+		this.#chType[89] = this.CH_DRUM7;
 		this.#chType[105] = this.CH_DRUMS;
 		this.#chType[121] = this.CH_DRUMS;
 		// Reset MT-32 user patch and timbre storage
@@ -2501,7 +2519,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, false // assign mode
 					, () => {
 						// drum map
-						upThis.setChType(part, e ? e + 1 : 0, modeMap.gs);
+						upThis.setChType(part, e ? (e << 1) : 0, modeMap.gs);
 						console.debug(`${dPref}type: ${e ? "drum " : "melodic"}${e ? e : ""}`);
 					}, () => {
 						// coarse tune
@@ -2651,15 +2669,15 @@ let OctaviaDevice = class extends CustomEventSource {
 				// Program change
 				if (e < 1) {
 				} else if (e < 101) {
-					upThis.setChType(part, 0, modeMap.x5d);
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 					upThis.#prg[part] = e - 1;
 					upThis.#cc[chOff + ccToPos[0]] = 82;
 				} else if (e < 229) {
-					upThis.setChType(part, 0, modeMap.x5d);
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 					upThis.#prg[part] = e - 101;
 					upThis.#cc[chOff + ccToPos[0]] = 56;
 				} else {
-					upThis.setChType(part, 1, modeMap.x5d);
+					upThis.setChType(part, upThis.CH_DRUMS, modeMap.x5d);
 					upThis.#prg[part] = korgDrums[e - 229] || 0;
 					upThis.#cc[chOff + ccToPos[0]] = 62;
 				};
@@ -2778,11 +2796,11 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 0: {
 							// Program change
 							if (e < 128) {
-								upThis.setChType(part, 0, modeMap.x5d);
+								upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 								upThis.#cc[chOff + ccToPos[0]] = 82;
 								upThis.#prg[part] = e;
 							} else {
-								upThis.setChType(part, 1, modeMap.x5d);
+								upThis.setChType(part, upThis.CH_DRUMS, modeMap.x5d);
 								upThis.#cc[chOff + ccToPos[0]] = 62;
 								upThis.#prg[part] = korgDrums[e - 128];
 							};
@@ -3141,7 +3159,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = part * allocated.cc;
 			let offset = msg[1];
-			let dPref = `NS5R CH${part + 1}`;
+			let dPref = `NS5R CH${part + 1} `;
 			msg.subarray(2).forEach((e, i) => {
 				let c = offset + i;
 				if (c < 3) {
@@ -3498,12 +3516,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			([() => {
 				if (e < 128) {
 					// Melodic voice
-					upThis.setChType(part, 0, modeMap.k11);
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.k11);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#prg[part] = e;
 				} else {
 					// Drum kit
-					upThis.setChType(part, 1, modeMap.k11);
+					upThis.setChType(part, upThis.CH_DRUMS, modeMap.k11);
 					upThis.#prg[part] = e - 128;
 				};
 			}, () => {
@@ -3558,19 +3576,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			[() => {
 				if (e < 128) {
 					// Melodic voice
-					upThis.setChType(part, 0, modeMap.k11);
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.k11);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#cc[chOff + ccToPos[32]] = 0;
 					upThis.#prg[part] = e;
 				} else if (e < 160) {
 					// Melodic voice
-					upThis.setChType(part, 0, modeMap.k11);
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.k11);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#cc[chOff + ccToPos[32]] = 7;
 					upThis.#prg[part] = e - 100;
 				} else {
 					// Drum kit
-					upThis.setChType(part, 1, modeMap.k11);
+					upThis.setChType(part, upThis.CH_DRUMS, modeMap.k11);
 					upThis.#cc[chOff + ccToPos[0]] = 122;
 					upThis.#cc[chOff + ccToPos[32]] = 0;
 					upThis.#prg[part] = e - 160;
