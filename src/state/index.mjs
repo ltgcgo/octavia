@@ -93,6 +93,12 @@ let ccToPos = {
 ccAccepted.forEach((e, i) => {
 	ccToPos[e] = i;
 });
+let dnToPos = {
+	length: useDrumNrpn.length
+};
+useDrumNrpn.forEach((e, i) => {
+	dnToPos[e] = i;
+});
 
 let getDebugState = function () {
 	return !!self.Bun || self.debugMode || false; // If run on Bun.js, output all possible logs
@@ -697,7 +703,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									if (targetSlot < 0) {
 										console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[this.#chType[part]]}.`);
 									} else {
-										this.#drum[(targetSlot * allocated.dpn + msb) * allocated.dnc + lsb] = det.data[1] - 64;
+										this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1] - 64;
 									};
 								};
 								getDebugState() && console.debug(`CH${part + 1} (${xgPartMode[this.#chType[part]]}) drum NRPN ${msb} commit`);
@@ -3700,5 +3706,6 @@ let OctaviaDevice = class extends CustomEventSource {
 export {
 	OctaviaDevice,
 	allocated,
-	ccToPos
+	ccToPos,
+	dnToPos
 };
