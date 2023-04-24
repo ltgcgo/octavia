@@ -75,6 +75,7 @@ ccAccepted = [
 	38, 64, 65, 66, 67, 68, 69, 70, 71,
 	72, 73, 74, 75, 76, 77, 78, 84, 91,
 	92, 93, 94, 95, 98, 99, 100, 101,
+	128, // Dry level (internal register for Octavia)
 	12, 13, // General-purpose effect controllers
 	16, 17, 18, 19 // General-purpose sound controllers
 ], // 96, 97, 120 to 127 all have special functions
@@ -1031,11 +1032,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Should later become 0 to 65535
 		let str = [], upThis = this;
 		this.getRawStrength().forEach(function (e, i) {
-			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * Math.max(
-				upThis.#cc[i * allocated.cc + ccToPos[11]],
-				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[91]] * 0.5),
-				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[92]] * 0.65),
-				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[94]] * 0.8)
+			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * Math.max(
+				upThis.#cc[i * allocated.cc + ccToPos[128]], // dry level
+				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[91]] * 0.5), // reverb
+				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[93]] * 0.65), // chorus
+				Math.floor(upThis.#cc[i * allocated.cc + ccToPos[94]] * 0.8) // variation or delay
 			) * upThis.#masterVol / 803288);
 		});
 		return str;
@@ -1835,7 +1836,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, false, false, () => {
 						upThis.#cc[chOff + ccToPos[10]] = e || 128; // pan
 					}, false, false, () => {
-						upThis.#cc[chOff + ccToPos[11]] = e; // dry level or expression
+						upThis.#cc[chOff + ccToPos[128]] = e; // dry level
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e; // chorus
 					}, () => {
@@ -2201,7 +2202,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						console.debug(`${dPref} AC2 at cc${e}`);
 					}, () => {
 						// Dry level
-						upThis.#cc[chOff + ccToPos[11]] = e;
+						upThis.#cc[chOff + ccToPos[128]] = e;
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e;
 					}, () => {
