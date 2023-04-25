@@ -1541,6 +1541,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		// XG SysEx section
 		this.#seXg.add([76, 0, 0], (msg) => {
 			switch (msg[0]) {
+				case 125: {
+					// XG drum reset
+					console.info(`XG drum setup reset: ${msg}`);
+					break;
+				};
 				case 126: {
 					// Yamaha XG reset
 					upThis.switchMode("xg", true);
@@ -3120,6 +3125,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case 125: {// drum reset
+					console.info(`NS5R drum setup reset: ${msg}`);
 					break;
 				};
 				default: {
