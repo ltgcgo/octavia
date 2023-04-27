@@ -79,6 +79,11 @@ visualizer.addEventListener("reset", function (e) {
 // Listen to mode switches
 visualizer.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
+	let textArr = Array.from(`Sys:${{"k11":"GMega"}[ev.data]||ev.data.toUpperCase()}`);
+	textArr.forEach((e, i, a) => {
+		a[i] = e.charCodeAt(0);
+	});
+	visualizer.device.setLetterDisplay(textArr);
 });
 visualizer.addEventListener("meta", function (ev) {
 	if (!title) {
@@ -88,14 +93,14 @@ visualizer.addEventListener("meta", function (ev) {
 			};
 		});
 		if (title) {
-			let textCmd = [67, 16, 76, 6, 0, 0];
+			let textCmd = [];
 			Array.from(title).forEach(function (e) {
 				let charCode = e.charCodeAt(0);
 				if (charCode < 128) {
 					textCmd.push(charCode);
 				};
 			});
-			visualizer.sendCmd({type: 15, track: 0, data: textCmd});
+			visualizer.device.setLetterDisplay(textCmd);
 		};
 	};
 });
