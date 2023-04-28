@@ -1,7 +1,7 @@
 "use strict";
 
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
-import {OctaviaDevice, ccToPos} from "../state/index.mjs";
+import {ccToPos, dnToPos} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {customInterpreter} from "../state/utils.js";
@@ -256,5 +256,6 @@ let RootDisplay = class extends CustomEventSource {
 
 export {
 	RootDisplay,
-	ccToPos
+	ccToPos,
+	dnToPos
 };

@@ -5,8 +5,8 @@ prepend=" "
 append=" "
 format="iife"
 ext="js"
-if [ -e "src/${1:-default}/prefix.js" ] ; then
-	inject="--inject:src/${1:-default}/prefix.js"
+if [ -e "src/${1:-default}/buildOpt.txt" ] ; then
+	inject="$(cat src/${1:-default}/buildOpt.txt)"
 fi
 if [ -e "src/${1:-default}/prefix.js" ] ; then
 	prepend="--prepend:src/${1:-default}/prefix.js"
