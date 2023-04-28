@@ -8,8 +8,8 @@ import {
 	TimedEvents
 } from "../../libs/lightfelt@ltgcgo/ext/timedEvents.js";
 
-// Compatibility for Firefox 52 ESR
 {
+	// Compatibility for Windows XP (FF 52 ESR, GC 59)
 	let fileReadAs = function (blob, target) {
 		let reader = new FileReader();
 		return new Promise((success, failure) => {
@@ -39,8 +39,11 @@ import {
 			};
 		});
 	};
-	Blob.prototype.arrayBuffer = function () {
-		return fileReadAs(this, "arrayBuffer");
+	Blob.prototype.arrayBuffer = Blob.prototype.arrayBuffer || function () {
+		return fileReadAs(this, "buffer");
+	};
+	Blob.prototype.text = Blob.prototype.text || function () {
+		return fileReadAs(this, "text");
 	};
 };
 
