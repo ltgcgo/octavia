@@ -8,6 +8,42 @@ import {
 	TimedEvents
 } from "../../libs/lightfelt@ltgcgo/ext/timedEvents.js";
 
+// Compatibility for Firefox 52 ESR
+{
+	let fileReadAs = function (blob, target) {
+		let reader = new FileReader();
+		return new Promise((success, failure) => {
+			reader.addEventListener("abort", () => {
+				failure(new Error("Blob read aborted"));
+			});
+			reader.addEventListener("error", (ev) => {
+				failure(reader.error || ev.data || new Error("Blob read error"));
+			});
+			reader.addEventListener("load", () => {
+				success(reader.result);
+			});
+			switch (target.toLowerCase()) {
+				case "arraybuffer":
+				case "buffer": {
+					reader.readAsArrayBuffer(blob);
+					break;
+				};
+				case "string":
+				case "text": {
+					reader.readAsText(blob);
+					break;
+				};
+				default: {
+					failure(new Error(`Unknown target ${target}`));
+				};
+			};
+		});
+	};
+	Blob.prototype.arrayBuffer = function () {
+		return fileReadAs(this, "arrayBuffer");
+	};
+};
+
 let rawToPool = function (midiJson) {
 	//console.debug(midiJson);
 	let list = new TimedEvents();
