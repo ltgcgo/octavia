@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <head>
 	<meta http-equiv="200" charset="utf-8" />
-	<title>Octavia MU Screen</title>
-	<meta name="HandheldFriendly" content="true" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-	<meta name="application-name" content="Octavia MU Screen" />
-	<meta name="author" content="Lumière Élevé" />
-	<meta name="description" content="Mimicked Yamaha MU screen, powered by Octavia's MIDI processing engine." />
-	<meta name="og:title" content="Octavia MU Screen" />
-	<meta name="og:description" content="Mimicked Yamaha MU screen, powered by Octavia's MIDI processing engine." />
-	<meta name="og:image" content="https://gh.ltgc.cc/octavia/test/img/previewMu.webp" />
+	<title>Octavia PSR Screen</title>
+	<meta content="true" name="HandheldFriendly" />
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<meta name="application-name" content="Octavia PSR Screen" />
+	<meta name="author" content="GFHK-SDGM" />
+	<meta name="description" content="Mimicked Yamaha PSR screen, powered by Octavia's MIDI processing engine." />
+	<meta name="og:title" content="Octavia PSR Screen" />
+	<meta name="og:description" content="Mimicked Yamaha PSR screen, powered by Octavia's MIDI processing engine." />
+	<meta name="og:image" content="https://gh.ltgc.cc/octavia/test/img/previewPsr.webp" />
 	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:title" content="Octavia MU Screen" />
-	<meta name="twitter:description" content="Mimicked Yamaha MU screen, powered by Octavia's MIDI processing engine." />
-	<meta name="twitter:image" content="https://gh.ltgc.cc/octavia/test/img/previewMu.webp" />
-	<meta name="keywords" content="Octavia,Lightingale,MIDI,General MIDI,GM,visualizer,Yamaha,Roland,Korg,Kawai,Akai,Casio,XG,GS,MT-32,05R/W,X5,X5D,X5DR,NS5R,GMega,K11,Yamaha MU,MU50,MU80,MU90,MU100,MU128,MU500,MU1000,MU2000" />
+	<meta name="twitter:title" content="Octavia PSR Screen" />
+	<meta name="twitter:description" content="Mimicked Yamaha PSR screen, powered by Octavia's MIDI processing engine." />
+	<meta name="twitter:image" content="https://gh.ltgc.cc/octavia/test/img/previewPsr.webp" />
+	<meta name="keywords" content="Octavia,Lightingale,MIDI,General MIDI,GM,visualizer,Yamaha,Roland,Korg,Kawai,Akai,Casio,XG,GS,MT-32,05R/W,X5,X5D,X5DR,NS5R,GMega,K11,Yamaha PSR" />
 	<link rel="stylesheet" href="css/water.min.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/tui.css" />
@@ -36,6 +36,19 @@
 		<b class="mode" title="k11">GMega</b>,
 		<b class="mode" title="sg">SG</b>,
 		<b class="mode" title="krs">KROSS</b>.
+	</p>
+	<p>
+		Backlight color
+		<b class="backlight active" title="#b7bfaf64">White</b>,
+		<b class="backlight" title="#aaff2264">Green</b>,
+		<b class="backlight" title="#ffaa2264">Orange</b>,
+		<b class="backlight" title="#ff798664">Red</b>,
+		<b class="backlight" title="#b3d8de64">Light blue</b>,
+		<b class="backlight" title="#2280ff64">Blue</b>.
+	</p>
+	<p>
+		Automatic channel switching
+		<b class="channelSwitching active" title="Automatic channel switching">ON</b>
 	</p>
 	<p>
 		<audio id="audioPlayer" controls></audio> Demo
@@ -90,9 +103,9 @@
 		<b class="demo" title="QY70D_3">ν</b>
 		<b class="demo" title="QY100D_2">ξ</b>
 	</p>
-	<canvas id="ymhMu" width="840" height="256"></canvas>
-	<p>Switch active channels by scrolling the mouse wheel, or clicking the horizontal edges of the fake screen. Choose and click on the demos to enjoy.</p>
+	<canvas id="ymhPsr" width="1110" height="400"></canvas>
+	<p>Switch active channels by scrolling the mouse wheel, or clicking the horizontal edges of the fake screen. Choose and click on the demos to enjoy. Click on the top of the fake screen will get you switched between song information view, voice view and rhythm view of the top section.</p>
 	<p>Octavia will handle MIDI standard detection most of the time, but if it cannot detect one of the supported standards, you can select the correct standard manually too.</p>
 	<p>While handling state tracking and automatic channel assignment, Octavia does neither handle MIDI synthesizing nor embed a synthesizer currently. If you want to play a certain MIDI track, you must provide both the MIDI file and the synced pre-rendered audio file.</p>
-	<script src="js/fakeMu_xp.js"></script>
+	<script src="js/xp_fakePsr.js"></script>
 </body>

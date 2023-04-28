@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <head>
 	<meta http-equiv="200" charset="utf-8" />
-	<title>Octavia SC Screen</title>
-	<meta content="true" name="HandheldFriendly" />
-	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
-	<meta name="application-name" content="Octavia SC Screen" />
+	<title>Octavia MU Screen</title>
+	<meta name="HandheldFriendly" content="true" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<meta name="application-name" content="Octavia MU Screen" />
 	<meta name="author" content="Lumière Élevé" />
-	<meta name="description" content="Mimicked Roland SoundCanvas SC screen, powered by Octavia's MIDI processing engine." />
-	<meta name="og:title" content="Octavia SC Screen" />
-	<meta name="og:description" content="Mimicked Roland SoundCanvas SC screen, powered by Octavia's MIDI processing engine." />
-	<meta name="og:image" content="https://gh.ltgc.cc/octavia/test/img/previewSc.webp" />
+	<meta name="description" content="Mimicked Yamaha MU screen, powered by Octavia's MIDI processing engine." />
+	<meta name="og:title" content="Octavia MU Screen" />
+	<meta name="og:description" content="Mimicked Yamaha MU screen, powered by Octavia's MIDI processing engine." />
+	<meta name="og:image" content="https://gh.ltgc.cc/octavia/test/img/previewMu.webp" />
 	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:title" content="Octavia SC Screen" />
-	<meta name="twitter:description" content="Mimicked Roland SoundCanvas SC screen, powered by Octavia's MIDI processing engine." />
-	<meta name="twitter:image" content="https://gh.ltgc.cc/octavia/test/img/previewSc.webp" />
-	<meta name="keywords" content="Octavia,Lightingale,MIDI,General MIDI,GM,visualizer,Yamaha,Roland,Korg,Kawai,Akai,Casio,XG,GS,MT-32,05R/W,X5,X5D,X5DR,NS5R,GMega,K11,Roland SoundCanvas,SC-55,SC-155,SC-88,SC-88VL,SC-88 Pro,SC-8850,SC-8820" />
+	<meta name="twitter:title" content="Octavia MU Screen" />
+	<meta name="twitter:description" content="Mimicked Yamaha MU screen, powered by Octavia's MIDI processing engine." />
+	<meta name="twitter:image" content="https://gh.ltgc.cc/octavia/test/img/previewMu.webp" />
+	<meta name="keywords" content="Octavia,Lightingale,MIDI,General MIDI,GM,visualizer,Yamaha,Roland,Korg,Kawai,Akai,Casio,XG,GS,MT-32,05R/W,X5,X5D,X5DR,NS5R,GMega,K11,Yamaha MU,MU50,MU80,MU90,MU100,MU128,MU500,MU1000,MU2000" />
 	<link rel="stylesheet" href="css/water.min.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/tui.css" />
@@ -90,9 +90,9 @@
 		<b class="demo" title="QY70D_3">ν</b>
 		<b class="demo" title="QY100D_2">ξ</b>
 	</p>
-	<canvas id="rlndSc" width="840" height="310"></canvas>
+	<canvas id="ymhMu" width="840" height="256"></canvas>
 	<p>Switch active channels by scrolling the mouse wheel, or clicking the horizontal edges of the fake screen. Choose and click on the demos to enjoy.</p>
 	<p>Octavia will handle MIDI standard detection most of the time, but if it cannot detect one of the supported standards, you can select the correct standard manually too.</p>
 	<p>While handling state tracking and automatic channel assignment, Octavia does neither handle MIDI synthesizing nor embed a synthesizer currently. If you want to play a certain MIDI track, you must provide both the MIDI file and the synced pre-rendered audio file.</p>
-	<script src="js/fakeSc_xp.js"></script>
+	<script src="js/xp_fakeMu.js"></script>
 </body>

@@ -1,1 +1,0 @@
-../../dist/basic_xp.mjs
