@@ -1,0 +1,1 @@
+../../dist/fakeSc_xp.js

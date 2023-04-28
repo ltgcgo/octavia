@@ -1,0 +1,1 @@
+../compat/inject.js
