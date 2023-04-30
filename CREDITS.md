@@ -102,3 +102,4 @@ Octavia will never become a reality without help from the following people.
 | Μ | Music Brains | Wah Guitar Demo | GS | SC-88 Pro | DearHoney | |
 | Ν | Yamaha | QY70 Demo No. 3 | XG | QY70 | JayB | |
 | Ξ | Yamaha | R&B/Pop | XG | QY100 | JayB | Official QY100 demo |
+| Ο | 久石譲, POODLE Straight | 空から降ってきた少女 | GS | SC-88 VL | ValleyBell | Made for SC-55 mk. II |

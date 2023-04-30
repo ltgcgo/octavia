@@ -40,6 +40,7 @@
 	};
 };
 {
+	// A working replaceAll implementation
 	String.prototype.replaceAll = String.prototype.replaceAll || function (source, target) {
 		let antiLoop = 0, maxSafe = 16;
 		let indexFinder = this, indexes = [];
@@ -57,4 +58,7 @@
 		};
 		return indexes.join(target) || "";
 	};
+};
+{
+	// Dummy BroadcastChannel
 };

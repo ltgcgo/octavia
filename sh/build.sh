@@ -4,6 +4,7 @@ mkdir -p dist
 # Remove the dev files
 rm -rv dist/*.js
 rm -rv dist/*.map
+rm -rv dist/*.mjs
 # Using esbuild to build all JS files
 #esbuild --bundle src/index.js --outfile=dist/index.js --minify --sourcemap
 #esbuild --bundle src/index.js --target=es6 --outfile=dist/index.es6.js --minify --sourcemap
