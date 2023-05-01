@@ -1,5 +1,7 @@
 "use strict";
 
+import {} from "../../libs/snowy@ltgcgo/bc.js";
+
 // Compatibility for Windows XP (FF 52 ESR, GC 59)
 {
 	// Direct blob reads
@@ -58,7 +60,22 @@
 		};
 		return indexes.join(target) || "";
 	};
-};
-{
-	// Dummy BroadcastChannel
+	String.prototype.padStart = String.prototype.padStart || function (length, filler) {
+		if (filler) {
+			let result = this;
+			while (result.length < length) {
+				result = `${filler}${result}`;
+			};
+			return result;
+		};
+	};
+	String.prototype.padEnd = String.prototype.padEnd || function (length, filler) {
+		if (filler) {
+			let result = this;
+			while (result.length < length) {
+				result += filler;
+			};
+			return result;
+		};
+	};
 };
