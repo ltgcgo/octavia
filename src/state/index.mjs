@@ -219,7 +219,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross", "s90es"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
@@ -3747,9 +3747,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = allocated.cc * part,
 			offset = msg[1];
+			let dPref = `S90 ES bulk CH${part < 16 ? part + 1 : "U" + (part - 95)} `;
+			console.debug(dPref, msg);
+			if (msg[0] > 15) {
+				return;
+			};
 			upThis.#chActive[part] = 1;
-			let dPref = `S90 ES bulk CH${part + 1} `;
-			console.info(dPref);
 			msg.subarray(2).forEach((e, i) => {
 				([() => {
 					upThis.#cc[chOff + ccToPos[0]] = e;
@@ -3757,6 +3760,39 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cc[chOff + ccToPos[32]] = e;
 				}, () => {
 					upThis.#prg[part] = e;
+				}, () => {
+					let ch = upThis.chRedir(e, track, true);
+					upThis.#chReceive[part] = ch; // Rx CH
+					if (part != ch) {
+						upThis.buildRchTree();
+						console.info(`${dPref}receives from CH${ch + 1}`);
+					};
+				}, () => {
+					upThis.#mono[part] = e ? 0 : 1;
+				}, false, false, false, false, false, false, false, false, () => {
+					upThis.#cc[chOff + ccToPos[7]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[10]] = e;
+				}, false, false, false, () => {
+					upThis.#cc[chOff + ccToPos[91]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[93]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[94]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[128]] = e;
+				}, () => {
+					// note shift, RPN
+				}, () => {
+					upThis.#cc[chOff + ccToPos[74]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[71]] = e;
+				}, false, () => {
+					upThis.#cc[chOff + ccToPos[65]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[5]] = e;
+				}, () => {
+					// portamento mode: fingered, fulltime
 				}][offset + i] || (() => {}))();
 			});
 		});

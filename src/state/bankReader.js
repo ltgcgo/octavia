@@ -3,17 +3,6 @@
 import {ccToPos} from "../state/index.mjs";
 
 const sgCrit = ["MSB", "PRG", "LSB"];
-const modeIdx = [
-	"??",
-	"GM",
-	"GS",
-	"XG",
-	"MT",
-	"AI",
-	"AG",
-	"XD",
-	"RW"
-];
 
 let halfHex = function (n) {
 	let segA = Math.floor(n / 10), segB = n % 10;
@@ -375,6 +364,8 @@ let VoiceBank = class {
 					standard = "KR";
 				} else if (args[2] < 25) {
 					standard = "ES";
+				} else {
+					standard = "DS";
 				};
 				break;
 			};
