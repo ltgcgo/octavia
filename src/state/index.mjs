@@ -1508,14 +1508,26 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		});
 		// Binary match should be avoided in favour of a circular structure
-		this.#seUnr = new BinaryMatch();
-		this.#seUr = new BinaryMatch();
-		this.#seXg = new BinaryMatch();
-		this.#seGs = new BinaryMatch();
-		this.#seAi = new BinaryMatch();
-		this.#seKg = new BinaryMatch();
-		this.#seSg = new BinaryMatch();
-		this.#seCs = new BinaryMatch();
+		this.#seUnr = new BinaryMatch("universal non-realtime");
+		this.#seUr = new BinaryMatch("universal realtime");
+		this.#seXg = new BinaryMatch("Yamaha");
+		this.#seGs = new BinaryMatch("Roland");
+		this.#seAi = new BinaryMatch("Korg");
+		this.#seKg = new BinaryMatch("Kawai");
+		this.#seSg = new BinaryMatch("Akai");
+		this.#seCs = new BinaryMatch("Casio");
+		// Notifies unrecognized SysEx strings with their vendors
+		let syxDefaultErr = function (msg) {
+			console.info(`Unrecognized SysEx in "${this.name}" set.`, msg);
+		};
+		this.#seUnr.default = syxDefaultErr;
+		this.#seUr.default = syxDefaultErr;
+		this.#seXg.default = syxDefaultErr;
+		this.#seGs.default = syxDefaultErr;
+		this.#seAi.default = syxDefaultErr;
+		this.#seKg.default = syxDefaultErr;
+		this.#seSg.default = syxDefaultErr;
+		this.#seCs.default = syxDefaultErr;
 		// The new SysEx engine only defines actions when absolutely needed.
 		// Mode reset section
 		this.#seUnr.add([9], (msg) => {
