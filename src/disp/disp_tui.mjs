@@ -22,9 +22,10 @@ const modeNames = {
 	"x5d": "Korg X5D",
 	"05rw": "Korg05RW",
 	"ns5r": "KorgNS5R",
-	"krs": "KorgKros",
 	"k11": "KawaiK11",
-	"sg": "AkaiPrSG"
+	"sg": "AkaiPrSG",
+	"krs": "KorgKros",
+	"s90es": "YmhS90ES"
 };
 
 // Velocity to brightness

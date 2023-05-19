@@ -35,14 +35,15 @@ const modeIdx = [
 	"?",
 	"gm", "gs", "xg", "g2",
 	"mt32", "ns5r",
-	"ag10", "x5d", "05rw", "krs",
-	"k11", "sg"
+	"ag10", "x5d", "05rw",
+	"k11", "sg",
+	"krs", "s90es"
 ];
 const substList = [
-	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 63, 0, 0],
-	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0,  0, 0]
+	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 63, 0, 0, 63],
+	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0,  0, 0, 0]
 ];
-const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 122];
+const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 122, 127];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -3713,6 +3714,51 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seCs.add([9], (msg, track, id) => {
 			// CASIO GZ-50M cc91 effect type set
 			console.debug(`GZ set effect: ${["stage reverb", "hall reverb", "room reverb", "chorus", "tremelo", "phaser", "rotary speaker", "enhancer", "flanger", "EQ"][msg[0]] || "off"}`);
+		});
+		// Yamaha S90 ES or Motif ES
+		this.#seXg.add([127, 0], (msg, track, id) => {
+			// Motif ES to S90 ES redirector]
+			upThis.#seAi.run([127, 1, ...msg], track, id);
+		}).add([127, 1, 0, 0, 14], (msg, track, id) => {
+			// S90 ES bulk dump header
+			upThis.switchMode("s90es");
+			let dPref = "S90 ES bulk header ";
+			let addrSet = [];
+			addrSet[95] = (msg, track, id) => {
+				console.debug(`${dPref}multi edit buffer: ${msg[1]}`);
+			};
+			(addrSet[msg[0]] || (() => {
+				console.info(`Unrecognized ${dPref}ID: ${msg[0]}.`);
+			}))(msg.subarray(1));
+		}).add([127, 1, 0, 0, 15], (msg, track, id) => {
+			// S90 ES bulk dump footer
+			upThis.switchMode("s90es");
+			let dPref = "S90 ES bulk footer ";
+			let addrSet = [];
+			addrSet[95] = (msg, track, id) => {
+				console.debug(`${dPref}multi edit buffer: ${msg[1]}`);
+			};
+			(addrSet[msg[0]] || (() => {
+				console.info(`Unrecognized ${dPref}ID: ${msg[0]}.`);
+			}))(msg.subarray(1));
+		}).add([127, 1, 0, 58, 55], (msg, track, id) => {
+			// S90 ES bulk part setup (?)
+			upThis.switchMode("s90es");
+			let part = upThis.chRedir(msg[0], track, true),
+			chOff = allocated.cc * part,
+			offset = msg[1];
+			upThis.#chActive[part] = 1;
+			let dPref = `S90 ES bulk CH${part + 1} `;
+			console.info(dPref);
+			msg.subarray(2).forEach((e, i) => {
+				([() => {
+					upThis.#cc[chOff + ccToPos[0]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[32]] = e;
+				}, () => {
+					upThis.#prg[part] = e;
+				}][offset + i] || (() => {}))();
+			});
 		});
 	};
 };

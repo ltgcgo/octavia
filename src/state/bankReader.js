@@ -64,6 +64,16 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case "s90es": {
+				if (lsb < 8) {
+					args[2] += 17;
+				} else if (lsb < 32) {
+					args[2] += 13;
+				} else {
+					args[2] = (args[2] >> 3) + 19;
+				};
+				break;
+			};
 		};
 		let ending = " ", sect = `M`, useLsb = false, baseShift = 0;
 		// Section test
@@ -218,6 +228,8 @@ let VoiceBank = class {
 			bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
 			ending = " ";
 		};
+		// Internal ID
+		let iid = [args[0], args[1], args[2]];
 		// Bank read
 		while (!(bankName?.length >= 0)) {
 			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
@@ -239,7 +251,7 @@ let VoiceBank = class {
 								args[0] = 0;
 								ending = "!";
 							};
-						} else if (msb < 64) {
+						} else if (msb < 63) {
 							if (args[0] == 0) {
 								args[2] = 0;
 								ending = "^";
@@ -308,6 +320,8 @@ let VoiceBank = class {
 				};
 			};
 		};
+		// End ID
+		let eid = [args[0], args[1], args[2]];
 		if ((mode == "gs" || mode == "ns5r") && ending == "^") {
 			ending = " ";
 		};
@@ -357,7 +371,12 @@ let VoiceBank = class {
 				break;
 			};
 			case 63: {
-				standard = "KR";
+				if (args[2] < 17) {
+					standard = "KR";
+				} else if (args[2] < 25) {
+					standard = "ES";
+				};
+				break;
 			};
 			case 64:
 			case 126: {
@@ -421,6 +440,8 @@ let VoiceBank = class {
 		};
 		return {
 			name: bankName || `${halfHex(msb || 0)} ${halfHex(prg || 0)} ${halfHex(lsb || 0)}`,
+			iid,
+			eid,
 			ending,
 			sect,
 			standard
