@@ -5,16 +5,16 @@
   I bear no responsibility for you running this script. You have been warned.
 */
 
-Uint8Array.prototype.same = function (arr) {
+let same = function (origin, arr) {
 	let same = true;
 	arr.forEach((e, i) => {
-		same = same && this[i] == e;
+		same = same && origin[i] == e;
 	});
 	return same;
 };
-Uint8Array.prototype.readInt = function () {
+let readInt = function (arr) {
 	let sum = 0;
-	this.forEach((e) => {
+	arr.forEach((e) => {
 		sum *= 256;
 		sum += e;
 	});
@@ -44,9 +44,9 @@ while (resume) {
 		};
 	}, () => {
 		// Read offsets of each section
-		if (rwin.subarray(0, 4).same(nullHead)) {
+		if (same(rwin.subarray(0, 4), nullHead)) {
 			sections.forEach((e, i, a) => {
-				let length = s7eBlob.subarray(e.start + 4, e.start + 8).readInt();
+				let length = readInt(s7eBlob.subarray(e.start + 4, e.start + 8));
 				e.length = length;
 				console.error(e);
 			});
@@ -54,7 +54,7 @@ while (resume) {
 			mode = 2;
 		} else {
 			let type = utf8Dec.decode(rwin.subarray(0, 4)),
-			start = rwin.subarray(4, 8).readInt();
+			start = readInt(rwin.subarray(4, 8));
 			//console.error(`Section ${type} begins at ${start}.`);
 			sections.push({type, start});
 			ptr += 8;

@@ -38,7 +38,8 @@ let Ns5rDisplay = class extends RootDisplay {
 				"05rw": bgGreen,
 				"k11": bgGreen,
 				"gmlx": bgGreen,
-				"sg01": bgRed
+				"sg01": bgRed,
+				"s90es": bgGreen
 			}[ev.data] || bgWhite;
 			this.#mode = ev.data;
 			this.#refreshed = true;

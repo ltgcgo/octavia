@@ -3,6 +3,7 @@
 import {BinaryMatch} from "../../libs/lightfelt@ltgcgo/ext/binMatch.js";
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
 import {VoiceBank} from	"./bankReader.js";
+import {bankDecoder} from "./bankDecoder.js";
 import {
 	xgEffType,
 	xgPartMode,
@@ -1374,10 +1375,19 @@ let OctaviaDevice = class extends CustomEventSource {
 		format = format.toLowerCase();
 		switch (format) {
 			case "s7e": {
+				this.userBank.clearRange({msb: 63, lsb: [21, 22]});
+				this.userBank.clearRange({msb: 63, lsb: [24, 27]});
 				break;
 			};
 			default: {
 				throw(new Error(`Unknown bank format ${format}`));
+			};
+		};
+		switch (format) {
+			case "s7e": {
+				bankDecoder.context = this;
+				this.userBank.load(await bankDecoder.read(format, blob));
+				break;
 			};
 		};
 	};

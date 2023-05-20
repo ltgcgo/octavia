@@ -108,7 +108,7 @@ visualizer.addEventListener("meta", function (ev) {
 // Open the files
 let midwIndicator = $e("#openMidw");
 let audioBlob;
-const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
+const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	useMidiBus = false;
@@ -118,15 +118,24 @@ $e("#openMidi").addEventListener("click", async function () {
 	if (fileSplit > -1) {
 		ext = file.name.slice(fileSplit + 1).toLowerCase();
 	};
-	if (ext == "syx") {
-		// Load SysEx blobs
-		visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
-	} else {
-		stDemo.to(-1);
-		visualizer.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 105, 110, 103, 32, 77, 73, 68, 73, 32, 102, 105, 108, 101]});
-		visualizer.reset();
-		visualizer.loadFile(file);
-		visualizer.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 77, 73, 68, 73, 32, 102, 105, 108, 101, 32, 108, 111, 97, 100, 101, 100]});
+	switch (ext) {
+		case "syx": {
+			// Load SysEx blobs
+			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+			break;
+		};
+		case "s7e": {
+			// Load sound banks
+			visualizer.device.loadBank(ext, file);
+			break;
+		};
+		default: {
+			// Load MIDI files
+			stDemo.to(-1);
+			visualizer.reset();
+			visualizer.loadFile(file);
+			visualizer.device.initOnReset = false;
+		};
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {

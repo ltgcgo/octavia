@@ -116,9 +116,15 @@ let VoiceBank = class {
 				break;
 			};
 			case 63: {
-				let kLsb = args[2];
-				sect = (kLsb < 10) ? "kP:" : "kC:";
-				sect += kLsb % 10;
+				if (args[2] < 17) {
+					let kLsb = args[2];
+					sect = (kLsb < 10) ? "kP:" : "kC:";
+					sect += kLsb % 10;
+				} else if (args[2] < 28) {
+					sect = ["Pre1", "Pre2", "Pre3", "Pre4", "Usr1", "Usr2", "DrmP", "DrmU", "Plg1", "Plg2", "Plg3"][args[2] - 17];
+				} else {
+					sect = `Ds`;
+				};
 				break;
 			};
 			case 64: {
