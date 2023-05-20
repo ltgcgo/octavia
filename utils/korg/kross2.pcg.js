@@ -1,7 +1,7 @@
 /*
 
 Just a simple KORG KROSS 2 PCG file to bank mapping converter.
-I bear no risk for you running this piece of software. You have been warned.
+I bear no responsibility for you running this piece of software. You have been warned.
 
 License: WTFPL
 

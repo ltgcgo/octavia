@@ -13,6 +13,7 @@ let VoiceBank = class {
 	#bankInfo;
 	strictMode = false;
 	get(msb = 0, prg = 0, lsb = 0, mode) {
+		let sid = [msb, prg, lsb];
 		let bankName;
 		let args = Array.from(arguments);
 		switch (mode) {
@@ -362,7 +363,7 @@ let VoiceBank = class {
 			case 63: {
 				if (args[2] < 17) {
 					standard = "KR";
-				} else if (args[2] < 25) {
+				} else if (args[2] < 28) {
 					standard = "ES";
 				} else {
 					standard = "DS";
@@ -433,6 +434,7 @@ let VoiceBank = class {
 			name: bankName || `${halfHex(msb || 0)} ${halfHex(prg || 0)} ${halfHex(lsb || 0)}`,
 			iid,
 			eid,
+			sid,
 			ending,
 			sect,
 			standard

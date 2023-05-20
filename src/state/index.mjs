@@ -1370,6 +1370,17 @@ let OctaviaDevice = class extends CustomEventSource {
 	runRaw(midiArr) {
 		// Translate raw byte stream into JSON MIDI event
 	};
+	async loadBank(format, blob) {
+		format = format.toLowerCase();
+		switch (format) {
+			case "s7e": {
+				break;
+			};
+			default: {
+				throw(new Error(`Unknown bank format ${format}`));
+			};
+		};
+	};
 	constructor() {
 		super();
 		let upThis = this;
