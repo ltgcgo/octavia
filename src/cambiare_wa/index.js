@@ -7,6 +7,7 @@ import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs
 import {
 	getBridge
 } from "../bridge/index.mjs";
+import {SheetData} from "../basic/sheetLoad.js";
 
 let demoBlobs = {};
 let demoPerfs = {};
@@ -37,39 +38,72 @@ stSwitch.forEach(function (e, i, a) {
 });
 
 // Standard demo switching
-let stDemo = $a("b.demo");
-stDemo.to = function (i) {
-	stDemo.forEach(function (e) {
-		e.classList.off("active");
-	});
-	if (i > -1) {
-		stDemo[i].classList.on("active");
+let demoPool = new SheetData();
+let stList = $e("span#demo-list"), stDemo = [];
+const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
+let getBlobFrom = async function (filename) {
+	let i = 0;
+	while (i < srcPaths.length) {
+		let e = srcPaths[i];
+		let response = await fetch(`${e}${filename}`);
+		if (response.status < 400) {
+			return response;
+		};
+		i ++;
 	};
+	console.error(`Loading of data ${filename} failed.`);
 };
-stDemo.forEach(function (e, i, a) {
-	e.addEventListener("click", async function () {
-		audioPlayer.pause();
-		if (!demoBlobs[e.title]?.midi) {
-			demoBlobs[e.title] = {};
-			audioPlayer.src = "about:blank";
-			demoBlobs[e.title].midi = await (await fetch(`./demo/${e.title}.mid`)).blob();
-			demoBlobs[e.title].wave = await (await fetch(`./demo/${e.title}.opus`)).blob();
+getBlobFrom(`list.tsv`).then(async (response) => {
+	await demoPool.load(await response.text());
+	//console.info(demoPool.data);
+	demoPool.data.forEach((e, i) => {
+		if (i) {
+			let space = document.createElement("span");
+			space.innerHTML = " ";
+			stList.appendChild(space);
+		} else {
+			stList.innerText = "";
 		};
-		currentPerformance = demoPerfs[e.title];
-		currentPerformance?.resetIndex();
-		currentAnimation = demoInfo[e.title];
-		audioPlayer.currentTime = 0;
-		visualizer.reset();
-		visualizer.loadFile(demoBlobs[e.title].midi);
-		if (audioBlob) {
-			URL.revokeObjectURL(audioBlob);
+		let demoChoice = document.createElement("b");
+		demoChoice.innerText = e.text;
+		demoChoice.title = e.file;
+		demoChoice.classList.on("demo");
+		stDemo.push(demoChoice);
+		stList.appendChild(demoChoice);
+	});
+	stDemo.to = function (i) {
+		stDemo.forEach(function (e) {
+			e.classList.off("active");
+		});
+		if (i > -1) {
+			stDemo[i].classList.on("active");
 		};
-		audioBlob = demoBlobs[e.title].wave;
-		audioPlayer.src = URL.createObjectURL(audioBlob);
-		if (demoModes[i]?.length > 0) {
-			visualizer.switchMode(demoModes[i]);
-		};
-		stDemo.to(i);
+	};
+	stDemo.forEach(function (e, i, a) {
+		e.addEventListener("click", async function () {
+			audioPlayer.pause();
+			if (!demoBlobs[e.title]?.midi) {
+				demoBlobs[e.title] = {};
+				audioPlayer.src = "about:blank";
+				demoBlobs[e.title].midi = await (await getBlobFrom(`${e.title}.mid`)).blob();
+				demoBlobs[e.title].wave = await (await getBlobFrom(`${e.title}.opus`)).blob();
+			};
+			currentPerformance = demoPerfs[e.title];
+			currentPerformance?.resetIndex();
+			currentAnimation = demoInfo[e.title];
+			audioPlayer.currentTime = 0;
+			visualizer.reset();
+			visualizer.loadFile(demoBlobs[e.title].midi);
+			if (audioBlob) {
+				URL.revokeObjectURL(audioBlob);
+			};
+			audioBlob = demoBlobs[e.title].wave;
+			audioPlayer.src = URL.createObjectURL(audioBlob);
+			if (demoModes[i]?.length > 0) {
+				visualizer.switchMode(demoModes[i]);
+			};
+			stDemo.to(i);
+		});
 	});
 });
 

@@ -50,6 +50,8 @@ Octavia will never become a reality without help from the following people.
 * **アルゴ算法堂** for providing AKAI SG01k voice map.
 
 ## Demo Credits
+Octavia will now dynamically load additional demos if available. [See the credits here](https://github.com/ltgcgo/midi-demo-data/blob/main/collection/octavia/list.tsv)!
+
 | ID | Author | Title | Standard | Audio On | Audio By | Extra |
 | -- | -------- | ------ | ----- | -------- | -------- | ----- |
 | A | JayB | KANDI8 | XG | QY100 | JayB | |
