@@ -1,0 +1,52 @@
+id	text	file	artist	title	standard	audio	renderer	extra
+0	a	KANDI8	JayB	Kandi8	XG	QY100	JayB	
+1	b	HORIZON	JayB	Straight to the Horizon	XG	QY100	JayB	
+2	c	Stephen Kay - Around the World	Stephen Kay	Around the World	X5D	X5DR	DearHoney	
+3	d	KORG - 2000 Fever	堀越昭宏	2000 Fever	NS5R	NS5R	DearHoney	
+4	e	KORG - MissionMan	John Lehmkuhl	MissionMan	NS5R	NS5R	DearHoney	
+5	f	Sam Sketty - Ambient	Sam Sketty	Ambient	XG	MU80	NiceChord	
+6	g	David Reading - Galactic Invasion	David J. Reading	Galactic Invasion	XG	S-YXG50 WDM	Lumière Élevé	
+7	h	Sam Sketty - Low Down	Sam Sketty	Low Down	XG	MU80	DistWave	
+8	I	StarGame	John Campbell	Star Games	GS	SC-88 Pro	DearHoney	Made for SC-55
+9	j	onestop	David Yackley	One Stop	GM	FluidSynth, ColomboGMGS2	Lumière Élevé	
+10	k	21Ochstr	大田川恭子	Orchestra	GS	SC-88 Pro	DearHoney	
+11	l	Y4002_07	大田川恭子	Midnight Chaser	GS	SC-88	DearHoney	
+12	m	TSoMI2_MI_1	Michael Z. Land	Monkey Island 2: LeChuck’s Revenge: Introduction	MT-32	MUNT	Lumière Élevé	
+13	n	25Japan	Idecs Music Software	Japanese	GS	SC-88 Pro	DearHoney	
+14	o	LEYA	Adrian Scott	Leya’s Song	GS	SC-55	DearHoney	
+15	p	Y4002_06	久光浩	韋駄天	GS	SC-88	DearHoney	
+16	q	Cybergate	David J. Reading	Cybergate	XG	QY70	JayB	
+17	r	05RWDEMO	KORG	Mad Robot	05R/W	05R/W	DearHoney	
+18	s	AGDEMO3	KORG	Clasitario	AG-10	AG-11	DearHoney	
+19	t	Greg's Mantra	David J. Reading	Greg’s Mantra	XG	QY70	JayB	
+20	u	TheFarEast	KORG	The Far East	KROSS 2	KROSS 2	JayB	
+21	v	01KIMIGA	KAWAI	君がいるだけで	GMega	GMega	DearHoney	Might be replaced due to copyright concerns
+22	w	10DOREMI	KAWAI	Do-Re-Mi	GMega	GMega	DearHoney	Might be replaced due to copyright concerns
+23	x	haruyoko	松任谷由実, Yamaha	春よ、来い	XG, PLG-SG	MU2000, PLG-100SG	superdeadite	
+24	y	VLjazzy	Yamaha	VLjazzy	XG, PLG-VL	MU1000, PLG-150VL	DearHoney	
+25	z	PhoenixA	大平勇/氏家克典	A Phoenix to the 21st Century (Part A, Music Factory)	XG	MU1000	DearHoney	
+26	0	PhoenixB	大平勇/布施毅	A Phoenix to the 21st Century (Part B, Invitation)	XG	MU1000	DearHoney	
+27	1	ninety_hipty	Yamaha	Ninety Hipty	XG	MU90	BEXY’S PC	
+28	2	MM2_DotT	Clint Bajakian, Peter McConnel, Michael Z. Land	Day of the Tentacle: Introduction	MT-32	MUNT	Lumière Élevé	
+29	3	02THEATR	Idecs Music Software	The PF Theatre	XG, PLG-PF	MU1000, PLG-150PF	DearHoney	
+30	4	01JAZZ	Idecs Music Software	The Secret Place	GS	SC-8850	Romantique Tp	
+31	5	05ORCHE	久光浩, 本郷久恵	Space Flight	GS	SC-8850	Romantique Tp	
+32	6	R-love	森尾隆	Is It Really Love?	XG	MU2000	KR. Palto47	
+33	7	JayB - Corgi (Full Version)	JayB	Corgi	X5D, NS5R	X5D, NS5R	JayB	
+34	8	OutOfTheMuse	Yamaha	Out of the Muse	XG	MU80	kora kuma	
+35	9	MU100DEMO	Yamaha	It’s an AmaZing MU World!!	XG	MU100	DearHoney	
+36	α	TheMusithm	Yamaha	The Musithm	XG	MU50	Pixel Refresh	
+37	β	MM2_Ep_Scumm	Clint Bajakian, Peter McConnel, Michael Z. Land	Day of the Tentacle: Epilogue	MT-32	MUNT	Lumière Élevé	
+38	γ	12EP	長栄克巳	EP Ballade	XG, PLG-DX	MU2000, PLG-150DX	AlcanTAK	
+39	δ	12SOULDX	向谷実	The Soul of DX	XG, PLG-DX	MU2000, PLG-150DX	atamaitai kurakura	
+40	ε	MU128DEMO	Paul Lawley, Graham Lee, 小川恭範	MU128 Demo	XG	MU128	yanorei32	
+41	ζ	Old_Tek	森尾隆	Old Techno	XG, PLG-AN	MU2000, PLG-150AN	MasterJace	
+42	η	RnB	森尾隆	Rhythm&Blues	XG, PLG-AN	MU2000, PLG-150AN	MasterJace	
+43	θ	MIDI Massacre	TôBach	MIDI Massacre	GS	Microsoft GS Wavetable	TôBach	
+44	ι	DREAMOFL	JayB	Dream of Light	XG	QY100	JayB	The original song is unfinished
+45	κ	Sam Sketty - Smokin	Sam Sketty	Smokin’	XG	MU80	DarkWolf	
+46	λ	Sam Sketty - Cop Out	Sam Sketty	Cop Out	XG	MU80	DistWave	
+47	μ	13Wah_G	Music Brains	Wah Guitar Demo	GS	SC-88 Pro	DearHoney	
+48	ν	QY70D_3	Yamaha	QY70 Demo No. 3	XG	QY70	JayB	
+49	ξ	QY100D_2	Yamaha	R&B/Pop	XG	QY100	JayB	Official QY100 demo
+50	ο	SORAKARA	POODLE Straight	空から降ってきた少女	GS	SC-88 VL	ValleyBell	Made for SC-55 mk. II
