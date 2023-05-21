@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<head>
+	<meta http-equiv="200" charset="utf-8" />
+	<title>Octavia QY Screen</title>
+	<meta content="true" name="HandheldFriendly" />
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<meta name="application-name" content="Octavia QY Screen" />
+	<meta name="author" content="Lumière Élevé" />
+	<meta name="description" content="Mimicked Yamaha QY screen, powered by Octavia's MIDI processing engine." />
+	<meta name="og:title" content="Octavia QY Screen" />
+	<meta name="og:description" content="Mimicked Yamaha QY screen, powered by Octavia's MIDI processing engine." />
+	<meta name="og:image" content="https://gh.ltgc.cc/octavia/test/img/previewQy.webp" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="Octavia QY Screen" />
+	<meta name="twitter:description" content="Mimicked Yamaha QY screen, powered by Octavia's MIDI processing engine." />
+	<meta name="twitter:image" content="https://gh.ltgc.cc/octavia/test/img/previewQy.webp" />
+	<meta name="keywords" content="Octavia,Lightingale,MIDI,General MIDI,GM,visualizer,Yamaha,Roland,Korg,Kawai,Akai,Casio,XG,GS,MT-32,05R/W,X5,X5D,X5DR,NS5R,GMega,K11,Yamaha QY,QY70,QY100" />
+	<link rel="stylesheet" href="css/water.min.css" />
+	<link rel="stylesheet" href="css/fonts.css" />
+	<link rel="stylesheet" href="css/tui.css" />
+	<script>self.SNOWY_PATH = "./js/snowy.js"</script>
+</head>
+<body>
+	<p>
+		Open <b id="openMidi">MIDI</b>,
+		<b id="openAudio">audio</b>,
+		<b id="openMidw">line</b>.
+		<b class="mode" title="gm">GM</b>,
+		<b class="mode" title="gs">GS</b>,
+		<b class="mode" title="xg">XG</b>,
+		<b class="mode" title="g2">GM2</b>,
+		<b class="mode" title="mt32">MT-32</b>,
+		<b class="mode" title="ns5r">NS5R</b>,
+		<b class="mode" title="ag10">AG-10</b>,
+		<b class="mode" title="05rw">05R/W</b>,
+		<b class="mode" title="x5d">X5D</b>,
+		<b class="mode" title="k11">GMega</b>,
+		<b class="mode" title="sg">SG</b>,
+		<b class="mode" title="krs">KROSS</b>.
+	</p>
+	<p>
+		<audio id="audioPlayer" controls></audio> Demo
+		<b class="demo active" title="KANDI8">a</b>
+		<b class="demo" title="HORIZON">b</b>
+		<b class="demo" title="Stephen Kay - Around the World">c</b>
+		<b class="demo" title="KORG - 2000 Fever">d</b>
+		<b class="demo" title="KORG - MissionMan">e</b>
+		<b class="demo" title="Sam Sketty - Ambient">f</b>
+		<b class="demo" title="David Reading - Galactic Invasion">g</b>
+		<b class="demo" title="Sam Sketty - Low Down">h</b>
+		<b class="demo" title="StarGame">i</b>
+		<b class="demo" title="onestop">j</b>
+		<b class="demo" title="21Ochstr">k</b>
+		<b class="demo" title="Y4002_07">l</b>
+		<b class="demo" title="TSoMI2_MI_1">m</b>
+		<b class="demo" title="25Japan">n</b>
+		<b class="demo" title="LEYA">o</b>
+		<b class="demo" title="Y4002_06">p</b>
+		<b class="demo" title="Cybergate">q</b>
+		<b class="demo" title="05RWDEMO">r</b>
+		<b class="demo" title="AGDEMO3">s</b>
+		<b class="demo" title="Greg's Mantra">t</b>
+		<b class="demo" title="TheFarEast">u</b>
+		<b class="demo" title="01KIMIGA">v</b>
+		<b class="demo" title="10DOREMI">w</b>
+		<b class="demo" title="haruyoko">x</b>
+		<b class="demo" title="VLjazzy">y</b>
+		<b class="demo" title="PhoenixA">z</b>
+		<b class="demo" title="PhoenixB">0</b>
+		<b class="demo" title="ninety_hipty">1</b>
+		<b class="demo" title="MM2_DotT">2</b>
+		<b class="demo" title="02THEATR">3</b>
+		<b class="demo" title="01JAZZ">4</b>
+		<b class="demo" title="05ORCHE">5</b>
+		<b class="demo" title="R-love">6</b>
+		<b class="demo" title="JayB - Corgi (Full Version)">7</b>
+		<b class="demo" title="OutOfTheMuse">8</b>
+		<b class="demo" title="MU100DEMO">9</b>
+		<b class="demo" title="TheMusithm">α</b>
+		<b class="demo" title="MM2_Ep_Scumm">β</b>
+		<b class="demo" title="12EP">γ</b>
+		<b class="demo" title="12SOULDX">δ</b>
+		<b class="demo" title="MU128DEMO">ε</b>
+		<b class="demo" title="Old_Tek">ζ</b>
+		<b class="demo" title="RnB">η</b>
+		<b class="demo" title="MIDI Massacre">θ</b>
+		<b class="demo" title="DREAMOFL">ι</b>
+		<b class="demo" title="Sam Sketty - Smokin">κ</b>
+		<b class="demo" title="Sam Sketty - Cop Out">λ</b>
+		<b class="demo" title="13Wah_G">μ</b>
+		<b class="demo" title="QY70D_3">ν</b>
+		<b class="demo" title="QY100D_2">ξ</b>
+	</p>
+	<canvas id="qyScreen" width="781" height="525"></canvas>
+	<p>Switch active channels by scrolling the mouse wheel, or clicking the horizontal edges of the fake screen. Choose and click on the demos to enjoy. Click on the top of the fake screen will get you switched between default view and mixer view.</p>
+	<p>Octavia will handle MIDI standard detection most of the time, but if it cannot detect one of the supported standards, you can select the correct standard manually too.</p>
+	<p>While handling state tracking and automatic channel assignment, Octavia does neither handle MIDI synthesizing nor embed a synthesizer currently. If you want to play a certain MIDI track, you must provide both the MIDI file and the synced pre-rendered audio file.</p>
+	<script src="js/xp_fakeQy.js"></script>
+</body>

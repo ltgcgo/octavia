@@ -1,0 +1,18 @@
+@font-face {
+	font-family: "Noto Sans Mono Web";
+	src: url("../font/NotoSansMono-VF.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Arial Web";
+	font-weight: 400;
+	src: url("../font/arial.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Arial Web";
+	font-weight: 700;
+	src: url("../font/arialbd.woff2") format("woff2");
+}
+
+body {
+	font-family: "Noto Sans Mono", "Noto Sans Mono Web", mono;
+}

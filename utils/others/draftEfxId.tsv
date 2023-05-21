@@ -1,0 +1,246 @@
+MSB	LSB	Name
+00	00	No Effect
+01	00	XG Hall 1
+01	01	XG Hall 2
+01	06	XG Hall Medium
+01	07	XG Hall Large
+02	00	XG Room 1
+02	01	XG Room 2
+02	02	XG Room 3
+02	05	XG Room Small
+02	06	XG Room Medium
+02	07	XG Room Large
+03	00	XG Stage 1
+03	01	XG Stage 2
+04	00	XG Plate
+04	07	XG GM Plate
+05	00	XG Delay LCR
+06	00	XG Delay LR
+07	00	XG Echo
+08	00	XG Cross Delay
+09	00	XG Early Reflection 1
+09	01	XG Early Reflection 2
+0a	00	XG Gate
+0b	00	XG Reverse Gate
+10	00	XG White Room
+11	00	XG Tunnel
+12	00	XG Canyon
+13	00	XG Basement
+14	00	XG Karaoke 1
+14	01	XG Karaoke 2
+14	02	XG Karaoke 3
+18	00	KG Hall 1
+18	01	KG Hall 2
+18	02	KG Hall 3
+18	03	KG Room 1
+18	04	KG Room 2
+18	05	KG Stage
+20	00	GS Through
+21	00	GS Stereo EQ
+21	01	GS Spectrum
+21	02	GS Enhancer
+21	03	GS Humanizer
+21	10	GS Overdrive
+21	11	GS Distortion
+21	20	GS Phaser
+21	21	GS Auto Wah
+21	22	GS Rotary
+21	23	GS Stereo Flanger
+21	24	GS Step Flanger
+21	25	GS Tremelo
+21	26	GS Auto Pan
+21	30	GS Compressor
+21	31	GS Limiter
+21	40	GS Hexa Chorus
+21	41	GS Tremelo Chorus
+21	42	GS Stereo Chorus
+21	43	GS Space Delay
+21	44	GS 3D Chorus
+21	50	GS Stereo Delay
+21	51	GS Mod Delay
+21	52	GS 3-tap Delay
+21	53	GS 4-tap Delay
+21	54	GS Tremelo Control Delay
+21	55	GS Reverb
+21	56	GS Gate
+21	57	GS 3D Delay
+21	60	GS 2 Pitch Shifter
+21	61	GS Feedback Pitch Shifter
+21	70	GS 3D Auto
+21	71	GS 3D Manual
+21	72	GS Lo-Fi
+21	73	GS Lo-Fi 2
+22	00	GS Overdrive+Chorus
+22	01	GS Overdrive+Flanger
+22	02	GS Overdrive+Delay
+22	03	GS Distortion+Chorus
+22	04	GS Distortion+Flanger
+22	05	GS Distortion+Delay
+22	06	GS Enhancer+Chorus
+22	07	GS Enhancer+Flanger
+22	08	GS Enhancer+Delay
+22	09	GS Chorus+Delay
+22	0a	GS Flanger+Delay
+22	0b	GS Chorus+Flanger
+22	0c	GS Rotary Multi Alt
+23	00	GS Rotary Multi
+24	00	GS Guitar Multi
+24	01	GS Guitar Multi 2
+24	02	GS Guitar Multi 3
+24	03	GS Clean Guitar Multi
+24	04	GS Clean Guitar Multi 2
+24	05	GS Bass Multi
+24	06	GS Rhodes Multi
+25	00	GS Keyboard Multi
+28	00	GS Room 1
+28	01	GS Room 2
+28	02	GS Room 3
+28	03	GS Hall 1
+28	04	GS Hall 2
+28	05	GS Plate
+28	06	GS Reverb Delay
+28	07	GS Panning Delay
+28	10	GS Chorus 1
+28	11	GS Chorus 2
+28	12	GS Chorus 3
+28	13	GS Chorus 4
+28	14	GS Feedback Chorus
+28	15	GS Flanger
+28	16	GS Short Delay
+28	17	GS Feedback Short Delay
+28	20	GS Delay 1
+28	21	GS Delay 2
+28	22	GS Delay 3
+28	23	GS Delay 4
+28	24	GS Pan Delay 1
+28	25	GS Pan Delay 2
+28	26	GS Pan Delay 3
+28	27	GS Pan Delay 4
+28	28	GS Delay to Reverb
+28	29	GS Pan Repeat
+2c	00	AI Through
+2c	01	AI Hall
+2c	02	AI Ensemble Hall
+2c	03	AI Concert Hall
+2c	04	AI Room
+2c	05	AI Room Large
+2c	06	AI Stage
+2c	07	AI Wet Plate
+2c	08	AI Dry Plate
+2c	09	AI Spring
+2c	0a	AI Early Reflection 1
+2c	0b	AI Early Reflection 2
+2c	0c	AI Early Reflection 3
+2c	0d	AI Stereo Delay
+2c	0e	AI Cross Delay
+2c	0f	AI Dual Delay
+2c	10	AI Tap Delay 1
+2c	11	AI Tap Delay 2
+2c	12	AI Tap Delay 3
+2c	13	AI Chorus 1
+2c	14	AI Chorus 2
+2c	15	AI Quad Chorus
+2c	16	AI Cross Chorus
+2c	17	AI Harmonic Chorus
+2c	18	AI Symphony Ensemble
+2c	19	AI Flanger 1
+2c	1a	AI Flanger 2
+2c	1b	AI Cross Flanger
+2c	1c	AI Exciter
+2c	1d	AI Enhancer
+2c	1e	AI Distortion
+2c	1f	AI Overdrive
+2c	20	AI Phaser
+2c	21	AI Phaser 2
+2c	22	AI Rotary
+2c	23	AI Auto Pan
+2c	24	AI Tremelo
+2c	25	AI 3-band EQ
+2c	26	AI Chorus+Delay
+2c	27	AI Flanger+Delay
+2c	28	AI Delay/Hall
+2c	29	AI Delay/Room
+2c	2a	AI Delay/Chorus
+2c	2b	AI Delay/Flanger
+2c	2c	AI Delay/Distortion
+2c	2d	AI Delay/Overdrive
+2c	2e	AI Delay/Phaser
+2c	2f	AI Delay/Rotary
+31	00	GS Chorus/Delay
+31	01	GS Flanger/Delay
+31	02	GS Chorus/Flanger
+31	03	GS Double Overdrive
+31	04	GS Overdrive/Rotary
+31	05	GS Overdrive/Phaser
+31	06	GS Overdrive/Auto Wah
+31	07	GS Phaser/Rotary
+31	08	GS Phaser/Auto Wah
+40	00	XG Through
+41	00	XG Chorus 1
+41	01	XG Chorus 2
+41	02	XG Chorus 3
+41	03	XG GM Chorus 1
+41	04	XG GM Chorus 2
+41	05	XG GM Chorus 3
+41	06	XG GM Chorus 4
+41	07	XG Feedback Chorus
+41	08	XG Chorus 4
+42	00	XG Celeste 1
+42	01	XG Celeste 2
+42	02	XG Celeste 3
+42	03	XG Celeste 4
+43	00	XG Flanger 1
+43	01	XG Flanger 2
+43	07	XG GM Flanger
+43	08	XG Flanger 3
+44	00	XG Symphonic
+45	00	XG Rotary
+45	01	XG Distortion+Rotary
+45	02	XG Overdrive+Rotary
+45	03	XG Amp Sim+Rotary
+46	00	XG Tremelo
+47	00	XG Auto Pan
+48	00	XG Phaser 1
+48	08	XG Phaser 2
+49	00	XG Distortion
+49	01	XG Compressor+Distortion
+49	08	XG Stereo Distortion
+4a	00	XG Overdrive
+4a	08	XG Stereo Overdrive
+4b	00	XG Amp Simulator
+4b	08	XG Stereo Amp Sim
+4c	00	XG 3-band EQ
+4d	00	XG 2-band EQ
+4e	00	XG Auto Wah
+4e	01	XG Auto Wah+Distortion
+4e	02	XG Auto Wah+Overdrive
+50	00	XG Pitch Shifter
+50	01	XG Pitch Shifter 2
+51	00	XG Enhancer
+52	00	XG Wah 1
+52	01	XG Wah+Distortion
+52	02	XG Wah+Overdrive
+52	08	XG Wah 2
+53	00	XG Compressor
+54	00	XG Noise Gate
+55	00	XG Voice Cancel
+56	00	XG 2-way Rotary
+56	01	XG 2-way Rotary+Distortion
+56	02	XG 2-way Rotary+Overdrive
+56	03	XG 2-way Rotary+Amp Sim
+57	00	XG Ensemble Detune
+58	00	XG Ambience
+5d	00	XG Talking Mod
+5e	00	XG Lo-Fi
+5f	00	XG Delay+Distortion
+5f	01	XG Delay+Overdrive
+60	00	XG Comp+Dist+Delay
+60	01	XG Comp+OvrDrv+Delay
+61	00	XG Wah+Dist+Delay
+61	01	XG Wah+OvrDrv+Delay
+62	00	XG Vintage Hard Dist
+62	01	XG Vintage Hard Dist+Delay
+62	02	XG Vintage Soft Dist
+62	03	XG Vintage Soft Dist+Delay
+63	00	XG Dual Rotary 1
+63	01	XG Dual Rotary 2

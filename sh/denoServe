@@ -1,0 +1,4 @@
+#!/bin/bash
+args=( "$@" )
+deno run --allow-net --allow-read deno/std/http/file_server.js ${args[@]}
+exit

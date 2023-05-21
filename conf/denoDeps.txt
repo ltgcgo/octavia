@@ -1,0 +1,4 @@
+dir esbuild
+esbuild/mod.js https://deno.land/x/esbuild/mod.js
+dir std/http
+std/http/file_server.js https://deno.land/std/http/file_server.ts

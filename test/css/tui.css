@@ -1,0 +1,62 @@
+body {
+	min-width: 768px;
+}
+
+p {
+	margin: 0.2em;
+}
+
+b[class], b[id^=open] {
+	cursor: pointer;
+}
+b.active {
+	outline: 2px solid;
+	padding: 0 2px;
+}
+
+li[id^=mw-in-], li[id^=mw-out-] {
+	cursor: pointer;
+}
+li.active {
+	text-decoration: underline;
+}
+
+div.section {
+	margin: 0.8em;
+	cursor: default;
+}
+
+div#display {
+	font-size: 16px;
+	cursor: default;
+	white-space: pre-wrap;
+}
+canvas#ymhMu {
+	background: #af2;
+}
+canvas#rlndSc {
+	background: #fa0;
+}
+
+@media (prefers-color-scheme: dark){
+	span.letter {
+		background: #dbdbdb !important;
+		color: #202b38 !important;
+	}
+	canvas#bmDisp {
+		filter: invert(100%);
+	}
+}
+span.letter {
+	background: #363636;
+	color: #fff;
+	white-space: pre-wrap;
+	display: inline-block;
+}
+
+.state-hold {
+	text-decoration: line-through;
+}
+.state-active {
+	color: green;
+}
