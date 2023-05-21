@@ -202,7 +202,9 @@ visualizer.addEventListener("mode", function (ev) {
 		x5d: [88, 53, 68],
 		k11: [71, 77, 101, 103, 97],
 		sg: [83, 71],
-		krs: [75, 82, 79, 83, 83]
+		krs: [75, 82, 79, 83, 83],
+		s90es: [83, 57, 48, 32, 69, 83],
+		motif: [77, 111, 116, 105, 102, 32, 69, 83]
 	};
 	visualizer.sendCmd({type: 15, track: 0, data: textCmd.concat(modeText[visualizer.getMode()])});
 });
