@@ -97,7 +97,11 @@ let BinaryMatch = function (name = "") {
 	this.run = function (prefix, ...additional) {
 		let idx = this.point(prefix);
 		if (idx > -1) {
-			this.pool[idx].data(prefix.slice(this.pool[idx].length), ...additional);
+			if (prefix.subarray) {
+				this.pool[idx].data(prefix.subarray(this.pool[idx].length), ...additional);
+			} else {
+				this.pool[idx].data(prefix.slice(this.pool[idx].length), ...additional);
+			};
 		} else {
 			this.default(prefix, ...additional);
 		};

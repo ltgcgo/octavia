@@ -25,7 +25,8 @@ const modeNames = {
 	"k11": "KawaiK11",
 	"sg": "AkaiPrSG",
 	"krs": "KorgKros",
-	"s90es": "YmhS90ES"
+	"s90es": "YmhS90ES",
+	"motif": "YmhMotif"
 };
 
 // Velocity to brightness

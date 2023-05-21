@@ -38,11 +38,11 @@ const modeIdx = [
 	"mt32", "ns5r",
 	"ag10", "x5d", "05rw",
 	"k11", "sg",
-	"krs", "s90es"
+	"krs", "s90es", "motif"
 ];
 const substList = [
-	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 63, 0, 0, 63],
-	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0,  0, 0, 0]
+	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 0, 0, 63, 63, 63],
+	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0, 0, 0,  0,  0]
 ];
 const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 122, 127];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
@@ -469,7 +469,25 @@ let OctaviaDevice = class extends CustomEventSource {
 		11: function (det) {
 			let part = det.channel;
 			// CC event, directly assign values to the register.
-			this.#chActive[part] = 1;
+			if ([0, 32].indexOf(det.data[0]) > -1) {
+				(() => {
+					switch(this.#mode) {
+						case modeMap.s90es:
+						case modeMap.motif: {
+							if (det.data[0] == 0) {
+								([0, 63].indexOf(det.data[1]) > -1) && (this.#chActive[part] = 1);
+								break;
+							};
+							det.data[1] && (this.#chActive[part] = 1);
+							break;
+						};
+						default: {
+							this.#chActive[part] = 1;
+							break;
+						};
+					};
+				})();
+			};
 			let chOffset = part * allocated.cc;
 			// Non-store CC messages
 			switch (det.data[0]) {
@@ -723,6 +741,13 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case 32: {
+						switch (this.#mode) {
+							case modeMap.s90es:
+							case modeMap.motif: {
+								this.#chType[part] = +([32, 40].indexOf(det.data[1]) > -1) << 1;
+								break;
+							};
+						};
 						this.dispatchEvent("voice", {
 							part
 						});
@@ -780,7 +805,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		12: function (det) {
 			let part = det.channel;
 			// Program change
-			this.#chActive[part] = 1;
+			switch (this.#mode) {
+				case modeMap.s90es:
+				case modeMap.motif: {
+					det.data && (this.#chActive[part] = 1);
+					break;
+				};
+				default: {
+					this.#chActive[part] = 1;
+				};
+			};
 			this.#prg[part] = det.data;
 			this.#bnCustom[part] = 0;
 			if (getDebugState()) {
@@ -3738,12 +3772,26 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		// Yamaha S90 ES or Motif ES
 		this.#seXg.add([127, 0], (msg, track, id) => {
-			// Motif ES to S90 ES redirector]
-			upThis.#seAi.run([127, 1, ...msg], track, id);
+			// Motif ES to S90 ES redirector
+			upThis.switchMode("motif");
+			let newMsg = new Uint8Array([127, 1, ...msg]);
+			upThis.#seXg.run(newMsg, track, id);
+		}).add([127, 1, 0, 0], (msg, track, id) => {
+			// S90 ES System
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES system ",
+			offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				([() => {
+					upThis.#masterVol = e * 12900 / 16383;
+				}][offset + i] || (() => {
+					console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
+				}))();
+			});
 		}).add([127, 1, 0, 0, 14], (msg, track, id) => {
 			// S90 ES bulk dump header
 			upThis.switchMode("s90es");
-			let dPref = "S90 ES bulk header ";
+			let dPref = "S90/Motif ES bulk header ";
 			let addrSet = [];
 			addrSet[95] = (msg, track, id) => {
 				console.debug(`${dPref}multi edit buffer: ${msg[1]}`);
@@ -3754,7 +3802,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([127, 1, 0, 0, 15], (msg, track, id) => {
 			// S90 ES bulk dump footer
 			upThis.switchMode("s90es");
-			let dPref = "S90 ES bulk footer ";
+			let dPref = "S90/Motif ES bulk footer ";
 			let addrSet = [];
 			addrSet[95] = (msg, track, id) => {
 				console.debug(`${dPref}multi edit buffer: ${msg[1]}`);
@@ -3768,18 +3816,20 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = allocated.cc * part,
 			offset = msg[1];
-			let dPref = `S90 ES bulk CH${part < 16 ? part + 1 : "U" + (part - 95)} `;
+			let dPref = `S90/Motif ES bulk CH${part < 16 ? part + 1 : "U" + (part - 95)} `;
 			console.debug(dPref, msg);
 			if (msg[0] > 15) {
 				return;
 			};
-			upThis.#chActive[part] = 1;
 			msg.subarray(2).forEach((e, i) => {
 				([() => {
 					upThis.#cc[chOff + ccToPos[0]] = e;
 				}, () => {
+					e && (upThis.#chActive[part] = 1);
 					upThis.#cc[chOff + ccToPos[32]] = e;
+					upThis.#chType[part] = +([32, 40].indexOf(e) > -1) << 1;
 				}, () => {
+					e && (upThis.#chActive[part] = 1);
 					upThis.#prg[part] = e;
 				}, () => {
 					let ch = upThis.chRedir(e, track, true);
@@ -3815,6 +3865,27 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					// portamento mode: fingered, fulltime
 				}][offset + i] || (() => {}))();
+			});
+		}).add([127, 1, 54, 16], (msg, track, id) => {
+			// S90 ES EQ config
+			upThis.switchMode("s90es");
+			let offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				let eqPart = i >> 2;
+				let dPref = `S90/Motif ES EQ${eqPart + 1} `;
+				([() => {
+					let eqGain = e - 64;
+					//console.debug(`${dPref}gain: ${eqGain}dB`);
+				}, () => {
+					let eqFreq = xgNormFreq[e];
+					//console.debug(`${dPref}freq: ${eqFreq}Hz`);
+				}, () => {
+					let eqQFac = e / 10;
+					//console.debug(`${dPref}Q: ${eqQFac}`);
+				}, () => {
+					let eqType = e; // shelf, peak
+					//console.debug(`${dPref}type: ${["shelf", "peak"][eqTypes]}`);
+				},][(offset + i) & 3] || (() => {}))();
 			});
 		});
 	};

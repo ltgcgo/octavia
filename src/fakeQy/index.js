@@ -149,6 +149,7 @@ let dispCanv = $e("#qyScreen");
 let dispCtx = dispCanv.getContext("2d");
 let mixerView = false;
 dispCanv.addEventListener("wheel", function (ev) {
+	ev.preventDefault();
 	let ch = visualizer.getCh();
 	if (ev.deltaY > 0) {
 		visualizer.setCh(ch + 1);

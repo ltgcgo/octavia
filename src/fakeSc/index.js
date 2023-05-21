@@ -165,6 +165,7 @@ midwIndicator.addEventListener("click", function () {
 let dispCanv = $e("#rlndSc");
 let dispCtx = dispCanv.getContext("2d");
 dispCanv.addEventListener("wheel", function (ev) {
+	ev.preventDefault();
 	let ch = visualizer.getCh();
 	if (ev.deltaY > 0) {
 		visualizer.setCh(ch + 1);

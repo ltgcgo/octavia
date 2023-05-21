@@ -142,6 +142,7 @@ midwIndicator.addEventListener("click", function () {
 let dispCanvas = $e("#bmDisp"),
 dispCtx = dispCanvas.getContext("2d");
 dispCanvas.addEventListener("wheel", function (ev) {
+	ev.preventDefault();
 	if (ev.deltaY > 0) {
 		if (minCh < 112) {
 			minCh ++;

@@ -64,6 +64,16 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case "motif": {
+				if (lsb < 8) {
+					args[2] += 28;
+				} else if (lsb < 32) {
+					args[2] += 13;
+				} else {
+					args[2] = (args[2] >> 3) + 19;
+				};
+				break;
+			};
 		};
 		let ending = " ", sect = `M`, useLsb = false, baseShift = 0;
 		// Section test
@@ -120,8 +130,8 @@ let VoiceBank = class {
 					let kLsb = args[2];
 					sect = (kLsb < 10) ? "kP:" : "kC:";
 					sect += kLsb % 10;
-				} else if (args[2] < 28) {
-					sect = ["Pre1", "Pre2", "Pre3", "Pre4", "Usr1", "Usr2", "DrmP", "DrmU", "Plg1", "Plg2", "Plg3"][args[2] - 17];
+				} else if (args[2] < 34) {
+					sect = ["Pre1", "Pre2", "Pre3", "Pre4", "Usr1", "Usr2", "DrmP", "DrmU", "Plg1", "Plg2", "Plg3", "Pre1", "Pre2", "Pre3", "Pre4", "Pre5", "Pre6"][args[2] - 17];
 				} else {
 					sect = `Ds`;
 				};
@@ -369,7 +379,7 @@ let VoiceBank = class {
 			case 63: {
 				if (args[2] < 17) {
 					standard = "KR";
-				} else if (args[2] < 28) {
+				} else if (args[2] < 34) {
 					standard = "ES";
 				} else {
 					standard = "DS";
