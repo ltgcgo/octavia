@@ -24,7 +24,7 @@ let ScDisplay = class extends RootDisplay {
 	#bmdb = new Uint8Array(256); // Bitmap display
 	#linger = new Uint8Array(64);
 	#ch = 0;
-	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv");
+	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	constructor() {
 		super(new OctaviaDevice(), 0, 0.875);
 	};

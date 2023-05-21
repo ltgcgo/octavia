@@ -79,7 +79,11 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 	stDemo.forEach(function (e, i, a) {
 		e.addEventListener("click", async function () {
 			audioPlayer.pause();
-			visualizer.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, e.innerText.toUpperCase().charCodeAt(0)]});
+			let demoId = e.innerText.charCodeAt(0);
+			if (demoId <= 122 && demoId > 96) {
+				demoId -= 32;
+			};
+			visualizer.device.setLetterDisplay([76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, demoId]);
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
 				audioPlayer.src = "about:blank";
@@ -97,7 +101,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			if (demoModes[i]?.length > 0) {
 				visualizer.switchMode(demoModes[i]);
 			};
-			visualizer.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, e.innerText.toUpperCase().charCodeAt(0)]});
+			visualizer.device.setLetterDisplay([76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, demoId]);
 			stDemo.to(i);
 		});
 	});
