@@ -86,6 +86,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 	stDemo.forEach(function (e, i, a) {
 		e.addEventListener("click", async function () {
 			audioPlayer.pause();
+			visualizer.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
 				audioPlayer.src = "about:blank";
