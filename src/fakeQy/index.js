@@ -249,7 +249,7 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
-		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId);
+		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId, location.hash == "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);

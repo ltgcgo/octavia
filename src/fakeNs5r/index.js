@@ -227,7 +227,7 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
-		visualizer.render(curTime, dispCtx, location.hash?.length > 1);
+		visualizer.render(curTime, dispCtx, location.hash == "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);
