@@ -21,6 +21,7 @@ let QyDisplay = class extends RootDisplay {
 	#bmdb = new Uint8Array(256);
 	songTitle = "";
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	qyFont = new MxFont40("./data/bitmaps/xg/qyTrue.tsv", "./data/bitmaps/xg/font.tsv");
 	sqrFont = new MxFont40("./data/bitmaps/xg/qySqr.tsv");
 	qy35Font = new MxFont40("./data/bitmaps/xg/qyCh35.tsv");
 	qy55Font = new MxFont40("./data/bitmaps/xg/qyCh55.tsv");
@@ -80,6 +81,15 @@ let QyDisplay = class extends RootDisplay {
 			this.#nmdb[offset + x + y * 128] = +curBit;
 		};
 	};
+	#renderNeedle(cx, cy, value = 64) {
+		if (value < 128) {
+			this.qyRsrc.getBm(`Pan_${(Math.floor((value + 4) / 9).toString(16))}`)?.render((e, x, y) => {
+				if (e) {
+					this.#nmdb[cx + x + (y + cy) * 128 - 259] = 1;
+				};
+			});
+		};
+	};
 	#getCat(channel, msb, prg) {
 		let voiceInfo = this.getChVoice(channel);
 		let category;
@@ -106,10 +116,11 @@ let QyDisplay = class extends RootDisplay {
 		};
 		return category;
 	};
-	render(time, ctx, mixerView, id = 0) {
+	render(time, ctx, mixerView, id = 0, trueMode = false) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
+		let usedFont = trueMode ? this.qyFont : this.xgFont;
 		// Channel test
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
@@ -183,7 +194,7 @@ let QyDisplay = class extends RootDisplay {
 			upThis.#renderFill(29, 24, 1, 40);
 			// Bank info
 			let voiceInfo = upThis.getChVoice(this.#ch);
-			upThis.xgFont.getStr(`${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || sum.chContr[chOff] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
+			usedFont.getStr(`${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || sum.chContr[chOff] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
 				e.render((e, x, y) => {
 						upThis.#nmdb[55 + x + i * 6 + y * 128] = e;
 				});
@@ -195,7 +206,7 @@ let QyDisplay = class extends RootDisplay {
 					upThis.#nmdb[37 + x + y * 128] = e;
 				});
 			} else {
-				upThis.xgFont.getStr(curCat).forEach((e, i) => {
+				usedFont.getStr(curCat).forEach((e, i) => {
 					e.render((e, x, y) => {
 						upThis.#nmdb[37 + x + i * 6 + y * 128] = e;
 					});
@@ -210,7 +221,7 @@ let QyDisplay = class extends RootDisplay {
 				};
 			});
 			// Carve out the text on that pill
-			upThis.xgFont.getStr("SONG").forEach((e, i) => {
+			usedFont.getStr("SONG").forEach((e, i) => {
 				e.render((e, x, y) => {
 					if (e) {
 						upThis.#nmdb[5 + x + i * 6 + y * 128] = 0;
@@ -223,7 +234,7 @@ let QyDisplay = class extends RootDisplay {
 			upThis.#renderFill(35, 7, 13, 9);
 			upThis.#renderBox(100, 6, 28, 11); // Bar box
 			if (sum.letter.expire < timeNow) {
-				upThis.xgFont.getStr(`${id + 1}`.padStart(2, "0")).forEach((e, i) => {
+				usedFont.getStr(`${id + 1}`.padStart(2, "0")).forEach((e, i) => {
 					e.render((e, x, y) => {
 						if (e) {
 							upThis.#nmdb[1060 + x + i * 6 + y * 128] = 0;
@@ -231,7 +242,7 @@ let QyDisplay = class extends RootDisplay {
 					});
 				});
 				if (upThis.songTitle.length < 9) {
-					upThis.xgFont.getStr(upThis.songTitle || "Unknown").forEach((e, i) => {
+					usedFont.getStr(upThis.songTitle || "Unknown").forEach((e, i) => {
 						e.render((e, x, y) => {
 							upThis.#nmdb[1073 + x + i * 6 + y * 128] = e;
 						});
@@ -242,7 +253,7 @@ let QyDisplay = class extends RootDisplay {
 						sngTtl = sngTtl.replaceAll("  ", " ");
 					};
 					let rollX = Math.floor(time * 25) % (6 * (10 + sngTtl.length)) - 47;
-					upThis.xgFont.getStr(`${sngTtl}  ${sngTtl.slice(0, 8)}`).forEach((e, i) => {
+					usedFont.getStr(`${sngTtl}  ${sngTtl.slice(0, 8)}`).forEach((e, i) => {
 						e.render((e, x, y) => {
 							let area = x + i * 6;
 							let tX = rollX;
@@ -272,7 +283,7 @@ let QyDisplay = class extends RootDisplay {
 				});
 			});
 			// tSig render
-			upThis.xgFont.getStr(`${sum.tSig[0].toString().padStart(2, " ")}/${sum.tSig[1].toString().padEnd(2, " ")}`).forEach((e, i) => {
+			usedFont.getStr(`${sum.tSig[0].toString().padStart(2, " ")}/${sum.tSig[1].toString().padEnd(2, " ")}`).forEach((e, i) => {
 				e.render((e, x, y) => {
 					upThis.#nmdb[3072 + x + i * 6 + y * 128] = e;
 				});
@@ -286,14 +297,14 @@ let QyDisplay = class extends RootDisplay {
 				let tPit = upThis.device.getPitchShift(upThis.#ch);
 				let tStr = tPit < 0 ? "-" : "+";
 				tStr += `${Math.round(Math.abs(tPit))}`.padStart(2, "0");
-				upThis.xgFont.getStr(tStr).forEach((e, i) => {
+				usedFont.getStr(tStr).forEach((e, i) => {
 					e.render((e, x, y) => {
 						upThis.#nmdb[3127 + x + i * 6 + y * 128] = e;
 					});
 				});
 			};
 			// Jump render
-			upThis.xgFont.getStr("001").forEach((e, i) => {
+			usedFont.getStr("001").forEach((e, i) => {
 				e.render((e, x, y) => {
 					upThis.#nmdb[3181 + x + i * 6 + y * 128] = e;
 				});
@@ -306,12 +317,12 @@ let QyDisplay = class extends RootDisplay {
 			// Bank info
 			{
 				let voiceName = upThis.getChVoice(this.#ch);
-				upThis.xgFont.getStr(`${sum.chContr[chOff + ccToPos[0]].toString().padStart(3, "0")} ${sum.chProgr[this.#ch].toString().padStart(3, "0")} ${sum.chContr[chOff + ccToPos[32]].toString().padStart(3, "0")}`).forEach((e, i) => {
+				usedFont.getStr(`${sum.chContr[chOff + ccToPos[0]].toString().padStart(3, "0")} ${sum.chProgr[this.#ch].toString().padStart(3, "0")} ${sum.chContr[chOff + ccToPos[32]].toString().padStart(3, "0")}`).forEach((e, i) => {
 					e.render((e, x, y) => {
 						upThis.#nmdb[6145 + 6 * i + x + y * 128] = e;
 					});
 				});;
-				upThis.xgFont.getStr(`${voiceName.standard}:${voiceName.name.slice(0, 8)}`).forEach((e, i) => {
+				usedFont.getStr(`${voiceName.standard}:${voiceName.name.slice(0, 8)}`).forEach((e, i) => {
 					e.render((e, x, y) => {
 						upThis.#nmdb[7169 + 6 * i + x + y * 128] = e;
 					});
@@ -440,14 +451,16 @@ let QyDisplay = class extends RootDisplay {
 					upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
 						upThis.#nmdb[4255 + tch * 12 + x + y * 128] = e;
 					});
+					upThis.#renderNeedle(tch * 12 + 35, 36, sum.chContr[rch * ccToPos.length + ccToPos[10]]);
 					let volSlid = 15 - (sum.chContr[rch * ccToPos.length + ccToPos[7]] >> 3);
 					upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
 						upThis.#nmdb[5535 + tch * 12 + x + (volSlid + y) * 128] = e;
 					});
 					upThis.#renderFill(32 + tch * 12, 46 + volSlid, 8, 1);
 					// Category render
+					let chType = upThis.device.getChType()[rch];
 					let curCat = upThis.#getCat(rch, sum.chContr[rch * ccToPos.length], sum.chProgr[rch]),
-					curCatBm = upThis.qyRsrc.getBm(`Vox_${curCat}`);
+					curCatBm = upThis.qyRsrc.getBm(`Vox_${[`${curCat}`, "dr", "ds1", "ds2", "ds3", "ds4", "ds5", "ds6", "ds7", "ds8"][chType]}`);
 					if (curCatBm) {
 						curCatBm.render((e, x, y) => {
 							if (e) {
@@ -455,7 +468,7 @@ let QyDisplay = class extends RootDisplay {
 							};
 						});
 					} else {
-						upThis.xgFont.getStr(curCat).forEach((e, i) => {
+						usedFont.getStr(curCat).forEach((e, i) => {
 							e.render((e, x, y) => {
 								if (e) {
 									upThis.#nmdb[3103 + tch * 12 + x + i * 6 + y * 128] = textTarget;
@@ -471,7 +484,7 @@ let QyDisplay = class extends RootDisplay {
 			upThis.qyRsrc.getBm("TxtDisp")?.render((e, x, y) => {
 				upThis.#nmdb[(mixerView ? 655 : 1036) + x + y * 128] = e;
 			});
-			upThis.xgFont.getStr(sum.letter.text).forEach((e, i) => {
+			usedFont.getStr(sum.letter.text).forEach((e, i) => {
 				let ri = (i % 16) * 6, ry = i >> 4;
 				e.render((e, x, y) => {
 					upThis.#nmdb[(mixerView ? 1686 : 2067) + ri + x + (y + ry * 8) * 128] = e;
