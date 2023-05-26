@@ -744,7 +744,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						switch (this.#mode) {
 							case modeMap.s90es:
 							case modeMap.motif: {
-								this.#chType[part] = +([32, 40].indexOf(det.data[1]) > -1) << 1;
+								this.setChType(part, ([32, 40].indexOf(det.data[1]) > -1) ? this.CH_DRUMS : this.CH_MELODIC, this.#mode, true);
 								break;
 							};
 						};
@@ -1000,10 +1000,10 @@ let OctaviaDevice = class extends CustomEventSource {
 	getChType() {
 		return this.#chType;
 	};
-	setChType(part, type, mode = this.#mode) {
+	setChType(part, type, mode = this.#mode, disableMsbSet = false) {
 		type &= 15;
 		this.#chType[part] = type;
-		if (type > 0) {
+		if (type > 0 && !disableMsbSet) {
 			this.#cc[part * allocated.cc + ccToPos[0]] = drumMsb[mode];
 		};
 	};
@@ -3827,7 +3827,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					e && (upThis.#chActive[part] = 1);
 					upThis.#cc[chOff + ccToPos[32]] = e;
-					upThis.#chType[part] = +([32, 40].indexOf(e) > -1) << 1;
+					upThis.#chType[part] = this.setChType(part, ([32, 40].indexOf(e) > -1) ? this.CH_DRUMS : this.CH_MELODIC, this.#mode, true);
 				}, () => {
 					e && (upThis.#chActive[part] = 1);
 					upThis.#prg[part] = e;
