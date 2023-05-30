@@ -18,27 +18,52 @@ let VoiceBank = class {
 		let args = Array.from(arguments);
 		switch (mode) {
 			case "xg": {
-				if (msb == 32) {
-					args[2] += 4; // PLG-150AP redirection
-				} else if (msb == 33 || msb == 35 || msb == 36) {
-					args[2] += 5; // PLG-150VL/DX/AN redirection
-				} else if (msb == 79) {
-					args[0] = 95; // PLG-150DR + PLG-150PC redirection
-				} else if (msb == 80) {
-					args[0] = 96; // PLG-150PF + PLG-150AP redirection
-				} else if (msb == 81) {
-					args[0] = 97; // PLG-150VL redirection
-				} else if (msb == 82) {
-					args[0] = 98; // PLG-100SG redirection
-				} else if (msb == 83) {
-					args[0] = 99; // PLG-100DX redirection
-				} else if (msb == 84) {
-					args[0] = 100; // PLG-100AN redirection
-				};
-				if (lsb == 126) {
-					args[2] = 125; // MU100 Native
-				} else if (lsb == 127) {
-					args[2] = 0; // MU Basic
+				switch (msb) {
+					case 0: {
+						if (lsb == 126) {
+							args[2] = 125; // MU100 Native
+						} else if (lsb == 127) {
+							args[2] = 0; // MU Basic
+						};
+						break;
+					};
+					case 32: {
+						args[2] += 4; // PLG-150AP redirection
+						break;
+					};
+					case 33:
+					case 35:
+					case 36: {
+						args[2] += 5; // PLG-150VL/DX/AN redirection
+						break;
+					};
+					case 79:
+					case 80:
+					case 81:
+					case 82:
+					case 83:
+					case 84: {
+						// 79: PLG-150DR + PLG-150PC redirection
+						// 80: PLG-150PF + PLG-150AP redirection
+						// 81: PLG-150VL redirection
+						// 82: PLG-100SG redirection
+						// 83: PLG-100DX redirection
+						// 84: PLG-100AN redirection
+						args[0] += 16;
+						if (lsb == 126) {
+							args[2] = 0; // MU100 Native restore
+						};
+						break;
+					};
+					case 48:
+					case 64:
+					case 126:
+					case 127: {
+						if (lsb == 126) {
+							args[2] = 0; // MU100 Native restore
+						};
+						break;
+					};
 				};
 				break;
 			};
@@ -80,7 +105,7 @@ let VoiceBank = class {
 				break;
 			};
 		};
-		let ending = " ", sect = `M`, useLsb = false, baseShift = 0;
+		let ending = " ", sect = `M`, useLsb = 0, baseShift = 0;
 		// Section test
 		switch (args[0]) {
 			case 0: {
@@ -100,7 +125,7 @@ let VoiceBank = class {
 					sect = "GM-a";
 				} else {
 					sect = "y";
-					useLsb = true;
+					useLsb = 3;
 				};
 				break;
 			};
@@ -114,7 +139,7 @@ let VoiceBank = class {
 			};
 			case 48: {
 				sect = `yM${(args[2] >> 3).toString().padStart(2, "0")}`;
-				useLsb = true;
+				useLsb = 1;
 				break;
 			};
 			case 56: {
@@ -173,12 +198,12 @@ let VoiceBank = class {
 				if (args[2] > 63) {
 					baseShift = 63;
 				};
-				useLsb = true;
+				useLsb = 3;
 				break;
 			};
 			case 97: {
 				sect = "VL:";
-				useLsb = true;
+				useLsb = 3;
 				baseShift = 112;
 				break;
 			};
@@ -191,7 +216,7 @@ let VoiceBank = class {
 				if (args[2] > 63) {
 					baseShift = 63;
 				};
-				useLsb = true;
+				useLsb = 3;
 				break;
 			};
 			case 100: {
@@ -199,12 +224,12 @@ let VoiceBank = class {
 				if (args[2] > 63) {
 					baseShift = 63;
 				};
-				useLsb = true;
+				useLsb = 3;
 				break;
 			};
 			case 121: {
 				sect = `GM-${args[2] ? "" : "a"}`;
-				useLsb = true;
+				useLsb = 3;
 				break;
 			};
 			case 122: {
@@ -232,7 +257,7 @@ let VoiceBank = class {
 			};
 		};
 		if (sect.length < 4) {
-			sect += `${(useLsb ? lsb : msb) - baseShift}`.padStart(4 - sect.length, "0");
+			sect += `${[msb, lsb, args[0], args[1]][useLsb] - baseShift}`.padStart(4 - sect.length, "0");
 		};
 		// Hijack XG MU2000 sampler
 		if (mode == "xg" && msb == 16) {

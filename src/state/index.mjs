@@ -2009,12 +2009,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([73, 0, 0], (msg, track) => {
 			// MU1000/2000 System
 			let offset = msg[0];
+			let dPref = `MU1000 System: `;
 			msg.subarray(1).forEach((e, i) => {
 				let ri = offset + i;
 				if (ri == 8) {
-					console.debug(`MU1000 set LCD contrast to ${e}.`);
-				} else if (ri > 9 && ri < 16) {
-					// Octavia custom SysEx, starts from 10
+					console.debug(`${dPref}LCD contrast set to ${e}.`);
+				} else if (ri == 18) {
+					upThis.#subLsb = e ? 126 : 0;
+					console.debug(`${dPref}bank defaults to ${e ? "MU100 Native" : "MU Basic"}.`);
+				} else if (ri >= 64 && ri < 69) {
+					// Octavia custom SysEx, starts from 64 (10 before)
 					[() => {
 						upThis.dispatchEvent("channelactive", e);
 					}, () => {
@@ -2039,7 +2043,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						upThis.#receiveRS = !!e;
 						console.info(`Octavia System: RS receiving ${["dis", "en"][e]}abled.`);
-					}][ri - 10]();
+					}][ri - 64]();
 				};
 			});
 		}).add([73, 10, 0], (msg, track) => {

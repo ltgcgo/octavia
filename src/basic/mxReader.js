@@ -27,9 +27,10 @@ Uint8Array.prototype.render = function (receiveFunc) {
 
 let MxFont40 = class {
 	#fonts = [];
-	async load(text, allowOverwrite = false) {
+	async load(text, allowOverwrite = false, source = "(internal)") {
 		let upThis = this;
 		let loadCount = 0, allCount = 0;
+		console.debug(`Font "${source || "(internal)"}": loading started.`);
 		text.split("\n").forEach(function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
@@ -54,19 +55,22 @@ let MxFont40 = class {
 				loadCount ++;
 			};
 		});
-		console.debug(`Font "${"(internal)"}": ${allCount} total, ${loadCount} loaded.`);
+		console.debug(`Font "${source || "(internal)"}": ${allCount} total, ${loadCount} loaded.`);
 	};
 	async loadFile(fileSrc, allowOverwrite = false) {
 		let upThis = this;
 		console.debug(`Requested font file from "${fileSrc}".`);
-		await upThis.load(await (await fetch(fileSrc)).text(), allowOverwrite);
+		await upThis.load(await (await fetch(fileSrc)).text(), allowOverwrite, fileSrc);
 		shiftLoading = false;
 	};
 	constructor(...fileSrc) {
 		shiftLoading = true;
-		fileSrc.forEach(async (e) => {
-			await this.loadFile(e);
-		});
+		(async () => {
+			// Loading order is now enforced
+			for (let i = 0; i < fileSrc.length; i ++) {
+				await this.loadFile(fileSrc[i]);
+			};
+		})();
 	};
 	getCP(codePoint) {
 		return this.#fonts[codePoint];
