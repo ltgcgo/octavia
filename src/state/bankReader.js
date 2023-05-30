@@ -257,7 +257,7 @@ let VoiceBank = class {
 			};
 		};
 		if (sect.length < 4) {
-			sect += `${[msb, lsb, args[0], args[1]][useLsb] - baseShift}`.padStart(4 - sect.length, "0");
+			sect += `${[msb, lsb, args[0], args[2]][useLsb] - baseShift}`.padStart(4 - sect.length, "0");
 		};
 		// Hijack XG MU2000 sampler
 		if (mode == "xg" && msb == 16) {
