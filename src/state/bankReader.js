@@ -35,6 +35,11 @@ let VoiceBank = class {
 				} else if (msb == 84) {
 					args[0] = 100; // PLG-100AN redirection
 				};
+				if (lsb == 126) {
+					args[2] = 125; // MU100 Native
+				} else if (lsb == 127) {
+					args[2] = 0; // MU Basic
+				};
 				break;
 			};
 			case "gs": {
@@ -346,7 +351,7 @@ let VoiceBank = class {
 					standard = "GM";
 				} else if (args[2] == 5 || args[2] == 7) {
 					standard = "KG";
-				} else if (args[2] < 120) {
+				} else if (args[2] < 126) {
 					standard = "XG";
 				} else if (args[2] == 127) {
 					standard = "MT";

@@ -2014,7 +2014,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (ri == 8) {
 					console.debug(`MU1000 set LCD contrast to ${e}.`);
 				} else if (ri > 9 && ri < 16) {
-					// Octavia custom SysEx
+					// Octavia custom SysEx, starts from 10
 					[() => {
 						upThis.dispatchEvent("channelactive", e);
 					}, () => {
