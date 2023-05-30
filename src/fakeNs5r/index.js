@@ -112,7 +112,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 
 // Start the visualizers
 self.sysexBitmap = sysexBitmap;
-self.visualizer = new Ns5rDisplay();
+self.visualizer = new Ns5rDisplay({useBlur: true});
 visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 });

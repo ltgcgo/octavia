@@ -403,12 +403,18 @@ let Ns5rDisplay = class extends RootDisplay {
 		};
 		// Transitional
 		this.#nmdb.forEach((e, i) => {
-			let diff = e - this.#dmdb[i],
-			cap = 48;
-			if (Math.abs(diff) > cap) {
-				this.#dmdb[i] += Math.sign(diff) * cap;
-			} else if (diff != 0) {
-				this.#dmdb[i] = e;
+			if (this.useBlur) {
+				let diff = e - this.#dmdb[i],
+				cap = 48;
+				if (Math.abs(diff) > cap) {
+					this.#dmdb[i] += Math.sign(diff) * cap;
+				} else if (diff != 0) {
+					this.#dmdb[i] = e;
+				};
+			} else {
+				if (this.#dmdb[i] != e) {
+					this.#dmdb[i] = e;
+				};
 			};
 		});
 		// Commit to display accordingly.
