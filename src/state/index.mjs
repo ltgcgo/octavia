@@ -997,6 +997,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		return arr;
 	};
+	getChSource() {
+		return this.#chReceive;
+	};
 	getChType() {
 		return this.#chType;
 	};

@@ -109,7 +109,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 
 let title = "";
 // Start the visualizers
-self.visualizer = new ScDisplay();
+self.visualizer = new ScDisplay({useBlur: true});
 visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 	title = "";

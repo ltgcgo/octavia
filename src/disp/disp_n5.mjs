@@ -431,8 +431,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				} else if (e <= this.#pixelOff) {
 					ctx.fillStyle = lcdCache.black[3];
 				} else {
-					let colour = `${lcdPixel.black}${(Math.ceil(e * lcdPixel.range / 255) + lcdPixel.inactive).toString(16)}`;
-					ctx.fillStyle = colour;
+					ctx.fillStyle = `${lcdPixel.black}${(Math.ceil(e * lcdPixel.range / 255) + lcdPixel.inactive).toString(16)}`;
 				};
 				if (drawPixMode) {
 					ctx.fillStyle = ctx.fillStyle.slice(0, 7);

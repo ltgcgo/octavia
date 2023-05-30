@@ -21,16 +21,27 @@ mspHeightY = 10,
 pdsX = cmpWidth * (17 + 2),
 pdsY = cmpWidth * (7 + 3) + 1;
 let ScDisplay = class extends RootDisplay {
+	// Opportunistic updates
+	// 0 ~ 664: Text display
+	// 665 ~ 1399: Param display
+	// 1400 ~ 1656: Bitmap display
+	#pixelLit = 255;
+	#pixelOff = 0;
+	#nmdb = new Uint8Array(1656);
+	#dmdb = new Uint8Array(1656);
+	#omdb = new Uint8Array(1656);
 	#tmdb = new Uint8Array(665); // Text display
 	#pmdb = new Uint8Array(735); // Param display
 	#bmdb = new Uint8Array(256); // Bitmap display
-	#pixelLit = 255;
-	#pixelOff = 0;
 	#linger = new Uint8Array(64);
 	#ch = 0;
+	#lastBg = 0;
+	#countBg = 0;
+	useBlur = false;
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
-	constructor() {
+	constructor(conf) {
 		super(new OctaviaDevice(), 0, 0.875);
+		this.useBlur = !!conf?.useBlur;
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -42,10 +53,64 @@ let ScDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
+		let fullRefresh = false;
+		upThis.#nmdb.fill(0);
 		// Fill with orange
-		//ctx.fillStyle = "#af2";
-		ctx.fillStyle = bgOrange;
-		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		if (upThis.#countBg < 4 && timeNow - upThis.#lastBg >= 4000) {
+			ctx.fillStyle = bgOrange.slice(0, 7);
+			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			upThis.#lastBg = timeNow;
+			// Show text
+			ctx.fillStyle = "#000";
+			ctx.textAlign = "left";
+			ctx.font = '16px "Arial Web"';
+			ctx.fillText("PART", 21, 20);
+			ctx.fillText("INSTRUMENT", 154, 20);
+			ctx.fillText("LEVEL", 21, 91);
+			ctx.fillText("PAN", 154, 91);
+			ctx.fillText("REVERB", 21, 162);
+			ctx.fillText("CHORUS", 154, 162);
+			ctx.fillText("KEY SHIFT", 21, 233);
+			ctx.fillText("MIDI CH", 154, 233);
+			ctx.textAlign = "center";
+			for (let c = 1; c <= 16; c ++) {
+				ctx.fillText(`${c}`.padStart(2, "0"), 308 + cmpHeightX * c, 300);
+			};
+			ctx.lineWidth = 1;
+			ctx.strokeStyle = "#000";
+			let circle = 2 * Math.PI;
+			for (let c = 0; c < 16; c ++) {
+				let d = c % 8;
+				ctx.beginPath();
+				if (!d) {
+					ctx.ellipse(
+						316,
+						(15 - c) * 12 + 100,
+						4, 4,
+						0, 0, circle
+					);
+					ctx.fill();
+				} else if (d == 4) {
+					ctx.ellipse(
+						316,
+						(15 - c) * 12 + 100,
+						3, 3,
+						0, 0, circle
+					);
+					ctx.fill();
+				} else {
+					ctx.ellipse(
+						316,
+						(15 - c) * 12 + 100,
+						2, 2,
+						0, 0, circle
+					);
+					ctx.stroke();
+				};
+			};
+			fullRefresh = true;
+			upThis.#countBg ++;
+		};
 		// Universal offset
 		let pdaX = 22,
 		pdaY = 24;
@@ -72,7 +137,6 @@ let ScDisplay = class extends RootDisplay {
 		};
 		let chOff = this.#ch * ccToPos.length;
 		// Text matrix display
-		this.#tmdb.forEach((e, i, a) => {a[i] = 0});
 		let infoTxt, isTextNull = sum.letter.text.trim();
 		while (isTextNull.indexOf("  ") > -1) {
 			isTextNull = isTextNull.replaceAll("  ", " ");
@@ -111,7 +175,7 @@ let ScDisplay = class extends RootDisplay {
 					let pX = i0 * 6 + i1 % 5 + xShift,
 					pY = Math.floor(i1 / 5);
 					if (pX >= 0 && pX < 95) {
-						upThis.#tmdb[pY * 95 + pX] = e1;
+						upThis.#nmdb[pY * 95 + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 					};
 				});
 			});
@@ -123,33 +187,16 @@ let ScDisplay = class extends RootDisplay {
 				e0.forEach(function (e1, i1) {
 					let pX = i0 * 6 + i1 % 5,
 					pY = Math.floor(i1 / 5);
-					upThis.#tmdb[pY * 95 + pX] = e1;
+					upThis.#nmdb[pY * 95 + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 				});
 			});
 		};
-		// Commit to text matrix display
-		this.#tmdb.forEach(function (e, i) {
-			ctx.fillStyle = inactivePixel;
-			if (e) {
-				ctx.fillStyle = activePixel;
-			};
-			let pixelX = i % 95,
-			pixelY = Math.floor(i / 95);
-			ctx.fillRect(
-				pdaX + 133 + pixelX * cmpWidth,
-				pdaY + pixelY * cmpWidth,
-				mspWidth,
-				mspWidth
-			);
-		});
-		// Param display
-		this.#pmdb.forEach((e, i, a) => {a[i] = 0});
 		// Assemble text
 		let paramText = "";
-		paramText += `${"ABCDEFGH"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`;
+		paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}${(upThis.#ch % 16 + 1).toString().padStart(2, "0")}`;
 		paramText += sum.chContr[chOff + ccToPos[7]].toString().padStart(3, " ");
 		paramText += sum.chContr[chOff + ccToPos[91]].toString().padStart(3, " ");
-		let cPit = this.device.getPitchShift(this.#ch);
+		let cPit = upThis.device.getPitchShift(upThis.#ch);
 		if (cPit < 0) {
 			paramText += "-";
 		} else {
@@ -170,41 +217,18 @@ let ScDisplay = class extends RootDisplay {
 			paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
 		};
 		paramText += sum.chContr[chOff + ccToPos[93]].toString().padStart(3, " ");
-		paramText += (sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]]).toString().padStart(3, "0");
+		paramText += (upThis.device.getChSource()[upThis.#ch] + 1).toString().padStart(3, "0");
 		// Render fonts
-		this.xgFont.getStr(paramText).forEach(function (e0, i0) {
+		upThis.xgFont.getStr(paramText).forEach(function (e0, i0) {
 			e0.forEach(function (e1, i1) {
 				let pX = Math.floor(i0 / 3) * 90 + i0 * 5 + i1 % 5,
 				pY = Math.floor(i1 / 5);
 				if (pY < 7) {
-					upThis.#pmdb[pY * 15 + pX] = e1;
+					upThis.#nmdb[pY * 15 + pX + 665] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 				};
 			});
 		});
-		// Commit to param display
-		this.#pmdb.forEach(function (e, i) {
-			ctx.fillStyle = inactivePixel;
-			if (e) {
-				ctx.fillStyle = activePixel;
-			};
-			let regionX = i > 419 ? 1 : 0,
-			regionY = 0,
-			pixelX = i % 15 + Math.floor(i % 15 / 5),
-			pixelY = Math.floor((i % 105) / 15);
-			if (!regionX) {
-				regionY = Math.floor(i / 105);
-			} else {
-				regionY = Math.floor((i - 315) / 105);
-			};
-			ctx.fillRect(
-				pdaX + pdsX * regionX + pixelX * cmpWidth,
-				pdaY + pdsY * regionY + pixelY * cmpWidth,
-				mspWidth,
-				mspWidth
-			);
-		});
 		// Bitmap display
-		this.#bmdb.forEach((e, i, a) => {a[i] = 0});
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
 		// Strength calculation
@@ -219,9 +243,13 @@ let ScDisplay = class extends RootDisplay {
 				upThis.#linger[i] = val;
 			};
 		});
-		let useBm = this.#bmdb;
+		let useBm = upThis.#nmdb.subarray(1400, 1656);
 		if (timeNow <= sum.bitmap.expire) {
-			useBm = sum.bitmap.bitmap;
+			sum.bitmap.bitmap.forEach((e, i) => {
+				if (e) {
+					useBm[i] = upThis.#pixelLit;
+				};
+			});
 		} else {
 			let rendPos = 0;
 			for (let c = minCh; c <= maxCh; c ++) {
@@ -231,101 +259,97 @@ let ScDisplay = class extends RootDisplay {
 				if (rendMode == 2) {
 					let offY = 4 * (3 - rendPart);
 					for (let d = 3 - strSmooth; d < 4; d ++) {
-						this.#bmdb[rendPos % 16 + (d + offY) * 16] = 1;
+						useBm[rendPos % 16 + (d + offY) * 16] = upThis.#pixelLit;
 					};
 				} else if (rendMode == 1) {
 					let offY = 8 * (1 - rendPart);
 					for (let d = 7 - strSmooth; d < 8; d ++) {
-						this.#bmdb[rendPos % 16 + (d + offY) * 16] = 1;
+						useBm[rendPos % 16 + (d + offY) * 16] = upThis.#pixelLit;
 					};
-					this.#bmdb[rendPos % 16 + (7 - lingered + offY) * 16] = 1;
+					useBm[rendPos % 16 + (7 - lingered + offY) * 16] = upThis.#pixelLit;
 				} else {
 					for (let d = 15 - strSmooth; d < 16; d ++) {
-						this.#bmdb[rendPos % 16 + d * 16] = 1;
+						useBm[rendPos % 16 + d * 16] = upThis.#pixelLit;
 					};
-					this.#bmdb[rendPos + (15 - lingered) * 16] = 1;
+					useBm[rendPos + (15 - lingered) * 16] = upThis.#pixelLit;
 				};
 				rendPos ++;
 			};
 		};
-		// Commit to bitmap display
-		useBm.forEach(function (e, i) {
-			ctx.fillStyle = inactivePixel;
-			if (e) {
-				ctx.fillStyle = activePixel;
+		// Guide the drawn matrix
+		upThis.#nmdb.forEach((e, i) => {
+			if (upThis.#dmdb[i] != e) {
+				if (upThis.useBlur) {
+					let diff = e - upThis.#dmdb[i],
+					cap = 48;
+					if (Math.abs(diff) > cap) {
+						upThis.#dmdb[i] += Math.sign(diff) * cap;
+					} else {
+						upThis.#dmdb[i] = e;
+					};
+				} else {
+					upThis.#dmdb[i] = e;
+				};
 			};
-			let pixelX = i % 16,
-			pixelY = Math.floor(i / 16);
-			ctx.fillRect(
-				pdaX + 302 + pixelX * cmpHeightX,
-				pdaY + 71 + pixelY * cmpHeightY,
-				mspHeightX,
-				mspHeightY
-			);
 		});
-		// Show text
-		ctx.fillStyle = "#000c";
-		ctx.textAlign = "left";
-		ctx.font = '16px "Arial Web"';
-		ctx.fillText("PART", 21, 20);
-		ctx.fillText("INSTRUMENT", 154, 20);
-		ctx.fillText("LEVEL", 21, 91);
-		ctx.fillText("PAN", 154, 91);
-		ctx.fillText("REVERB", 21, 162);
-		ctx.fillText("CHORUS", 154, 162);
-		ctx.fillText("KEY SHIFT", 21, 233);
-		ctx.fillText("BANK", 154, 233);
-		ctx.textAlign = "right";
-		ctx.fillText("SB", 274, 233);
-		ctx.textAlign = "center";
-		for (let c = 1; c <= 16; c ++) {
-			ctx.fillText(`${c}`.padStart(2, "0"), 308 + cmpHeightX * c, 300);
-		};
-		ctx.lineWidth = 1;
-		ctx.strokeStyle = "#000c";
-		let circle = 2 * Math.PI;
-		for (let c = 0; c < 16; c ++) {
-			let d = c % 8;
-			ctx.beginPath();
-			if (!d) {
-				ctx.ellipse(
-					316,
-					(15 - c) * 12 + 100,
-					4, 4,
-					0, 0, circle
-				);
-				ctx.fill();
-			} else if (d == 4) {
-				ctx.ellipse(
-					316,
-					(15 - c) * 12 + 100,
-					3, 3,
-					0, 0, circle
-				);
-				ctx.fill();
-			} else {
-				ctx.ellipse(
-					316,
-					(15 - c) * 12 + 100,
-					2, 2,
-					0, 0, circle
-				);
-				ctx.stroke();
+		// Do the actual drawing
+		upThis.#dmdb.forEach((e, oi) => {
+			if (fullRefresh || upThis.#omdb[oi] != e) {
+				let startX, startY, width = mspWidth, height = mspWidth;
+				// Position the pixels
+				if (oi < 665) {
+					// Generic text display
+					let i = oi;
+					let pixelX = i % 95,
+					pixelY = Math.floor(i / 95);
+					startX = pdaX + 133 + pixelX * cmpWidth,
+					startY = pdaY + pixelY * cmpWidth;
+				} else if (oi < 1400) {
+					// Param display
+					let i = oi - 665;
+					let regionX = i > 419 ? 1 : 0,
+					regionY = 0,
+					pixelX = i % 15 + Math.floor(i % 15 / 5),
+					pixelY = Math.floor((i % 105) / 15);
+					if (!regionX) {
+						regionY = Math.floor(i / 105);
+					} else {
+						regionY = Math.floor((i - 315) / 105);
+					};
+					startX = pdaX + pdsX * regionX + pixelX * cmpWidth;
+					startY = pdaY + pdsY * regionY + pixelY * cmpWidth;
+				} else {
+					// Bitmap display
+					let i = oi - 1400;
+					let pixelX = i % 16,
+					pixelY = Math.floor(i / 16);
+					startX = pdaX + 302 + pixelX * cmpHeightX;
+					startY = pdaY + 71 + pixelY * cmpHeightY;
+					width = mspHeightX;
+					height = mspHeightY;
+				};
+				// Clear the updated pixels
+				ctx.fillStyle = bgOrange.slice(0, 7);
+				ctx.fillRect(startX, startY, width, height);
+				// Paint the updated pixels
+				if (e <= upThis.#pixelOff) {
+					ctx.fillStyle = lcdCache.black[3];
+				} else if (e >= upThis.#pixelLit) {
+					ctx.fillStyle = lcdCache.black[4];
+				} else {
+					let colour = `${lcdPixel.black}${(Math.ceil(e * lcdPixel.range / 255) + lcdPixel.inactive).toString(16)}`;
+					ctx.fillStyle = colour;
+				};
+				ctx.fillRect(startX, startY, width, height);
+				self.pixelUpdates = (self.pixelUpdates || 0) + 1;
 			};
-		};
-		if (sum.chContr[chOff + ccToPos[0]]) {
-			ctx.fillStyle = activePixel;
-		} else {
-			ctx.fillStyle = inactivePixel;
-		};
-		ctx.fillText("M", 236, 233);
-		if (sum.chContr[chOff + ccToPos[0]]) {
-			ctx.fillStyle = inactivePixel;
-		} else {
-			ctx.fillStyle = activePixel;
-		};
-		ctx.fillText("L", 248, 233);
-		self.pixelUpdates = (self.pixelUpdates || 0) + 1;
+		});
+		// Store the historical draws
+		upThis.#dmdb.forEach((e, i) => {
+			if (upThis.#omdb[i] != e) {
+				upThis.#omdb[i] = e;
+			};
+		});
 	};
 };
 
