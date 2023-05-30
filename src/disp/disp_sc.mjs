@@ -180,8 +180,37 @@ let ScDisplay = class extends RootDisplay {
 				});
 			});
 		} else {
-			infoTxt = `${sum.chProgr[this.#ch] + 1}`.padStart(3, "0");
-			infoTxt += " ";
+			infoTxt = `${sum.chProgr[upThis.#ch] + 1}`.padStart(3, "0");
+			switch (sum.chContr[chOff + ccToPos[0]]) {
+				case 0: {
+					switch (sum.chContr[chOff + ccToPos[32]]) {
+						case 0:
+						case 125:
+						case 126:
+						case 127: {
+							infoTxt += " ";
+							break;
+						};
+						default: {
+							infoTxt += upThis.device.getMode() == "gs" ? " " : "+";
+						};
+					};
+					break;
+				};
+				case 56:
+				case 61:
+				case 62:
+				case 120:
+				case 122:
+				case 126:
+				case 127: {
+					infoTxt += " ";
+					break;
+				};
+				default: {
+					infoTxt += "+";
+				};
+			};
 			infoTxt += (upThis.getChVoice(this.#ch).name).slice(0, 12).padEnd(12, " ");
 			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
