@@ -7,7 +7,9 @@ import {MxFont40} from "../basic/mxReader.js";
 import {
 	bgOrange,
 	inactivePixel,
-	activePixel
+	activePixel,
+	lcdPixel,
+	lcdCache
 } from "./colour.js";
 
 let cmpWidth = 7,
@@ -22,6 +24,8 @@ let ScDisplay = class extends RootDisplay {
 	#tmdb = new Uint8Array(665); // Text display
 	#pmdb = new Uint8Array(735); // Param display
 	#bmdb = new Uint8Array(256); // Bitmap display
+	#pixelLit = 255;
+	#pixelOff = 0;
 	#linger = new Uint8Array(64);
 	#ch = 0;
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
@@ -321,6 +325,7 @@ let ScDisplay = class extends RootDisplay {
 			ctx.fillStyle = activePixel;
 		};
 		ctx.fillText("L", 248, 233);
+		self.pixelUpdates = (self.pixelUpdates || 0) + 1;
 	};
 };
 
