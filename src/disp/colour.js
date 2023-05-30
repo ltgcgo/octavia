@@ -11,7 +11,11 @@ let backlight = {
 lcdPixel = {
 	black: "#000000",
 	blue: "#0516bb",
-	purple: "#48009a"
+	purple: "#48009a",
+	inactive: 0x16,
+	medium: 0x3b,
+	active: 0xaa,
+	range: 0x94
 };
 
 // Generate caches for easier implementation
