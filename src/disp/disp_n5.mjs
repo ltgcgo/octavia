@@ -25,10 +25,11 @@ let Ns5rDisplay = class extends RootDisplay {
 	#pixelLit = 255;
 	#pixelOff = 0;
 	#refreshed = true;
+	useBlur = false; // Pixel blur will only activate if this is enabled
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	element = new MxBmDef("./data/bitmaps/korg/element.tsv");
-	constructor() {
+	constructor(conf = {}) {
 		super(new OctaviaDevice(), 0.1, 0.9);
 		this.#backlight = bgWhite;
 		this.addEventListener("mode", (ev) => {
@@ -56,6 +57,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#dumpExpire = Date.now() + 1600;
 			};
 		});
+		this.useBlur = !!conf?.useBlur;
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -405,7 +407,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			cap = 48;
 			if (Math.abs(diff) > cap) {
 				this.#dmdb[i] += Math.sign(diff) * cap;
-			} else {
+			} else if (diff != 0) {
 				this.#dmdb[i] = e;
 			};
 		});
@@ -430,7 +432,6 @@ let Ns5rDisplay = class extends RootDisplay {
 					ctx.fillStyle = ctx.fillStyle.slice(0, 7);
 				};
 				ctx.fillRect(6 * pixX + 1, 12 + 6 * pixY, 5.5, 5.5);
-				self.pixelUpdates = (self.pixelUpdates || 0) + 1;
 			};
 		});
 		// Commit to old display buffer.
