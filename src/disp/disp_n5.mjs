@@ -259,8 +259,16 @@ let Ns5rDisplay = class extends RootDisplay {
 					return;
 				};
 				for (let c = Math.floor(e / showReduction); c >= 0; c --) {
-					let pixX = (i % 32) * 4 + 12,
-					pixY = (i > 31 ? 32 : 39) - c;
+					let pixX = (i % 32) * 4 + 12, pixY = 0;
+					if (maxCh < 64) {
+						pixY = (i > 31 ? 32 : 39) - c;
+					} else {
+						let shifter = i % 64;
+						pixY = (i > 63 ? 31 : 39) - c - (shifter > 31 ? 2 : 0);
+						if (shifter > 31) {
+							pixX ++;
+						};
+					};
 					if (trueMode) {
 						pixX ++;
 					};
