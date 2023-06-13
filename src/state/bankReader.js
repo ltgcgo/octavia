@@ -50,6 +50,13 @@ let VoiceBank = class {
 						// 83: PLG-100DX redirection
 						// 84: PLG-100AN redirection
 						args[0] += 16;
+					};
+					case 95:
+					case 96:
+					case 97:
+					case 98:
+					case 99:
+					case 100: {
 						if (lsb == 126) {
 							args[2] = 0; // MU100 Native restore
 						};
