@@ -251,24 +251,19 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 			// Render channel strength
 			let showReduction = 22;
-			if (maxCh > 31) {
+			if (maxCh > 63) {
 				showReduction = 43;
 			};
-			sum.strength.forEach((e, i) => {
+			for (let i = sum.strength.length - 1; i >= 0; i --) {
+				let e = sum.strength[i];
 				if (maxCh < 32 && i > 31) {
-					return;
+					continue;
+				};
+				if (maxCh < 64 && i > 63) {
+					continue;
 				};
 				for (let c = Math.floor(e / showReduction); c >= 0; c --) {
-					let pixX = (i % 32) * 4 + 12, pixY = 0;
-					if (maxCh < 64) {
-						pixY = (i > 31 ? 32 : 39) - c;
-					} else {
-						let shifter = i % 64;
-						pixY = (i > 63 ? 31 : 39) - c - (shifter > 31 ? 2 : 0);
-						if (shifter > 31) {
-							pixX ++;
-						};
-					};
+					let pixX = (i % 32) * 4 + 12 + ((i >> 5) & 1), pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
 					if (trueMode) {
 						pixX ++;
 					};
@@ -276,7 +271,7 @@ let Ns5rDisplay = class extends RootDisplay {
 					this.#nmdb[pixY * 144 + pixX + 1] = this.#pixelLit;
 					this.#nmdb[pixY * 144 + pixX + 2] = this.#pixelLit;
 				};
-			});
+			};
 			// Render effect types
 			let efxShow = this.device.aiEfxName.slice(0, 7 + +trueMode) || "Rev/Cho";
 			targetFont.getStr(trueMode ? `Fx A:001${efxShow}` : `FxA:001${efxShow}`).forEach((e0, i0) => {
