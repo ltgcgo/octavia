@@ -19,7 +19,7 @@ let normParamPaint = function (sup, offsetX, ctx) {
 	let paramH = mprHeight * 1.5 - 1;
 	let sub = sup >> 4;
 	for (let i = 0; i < 8; i ++) {
-		if (sub > 0 || (sub == 0 && i != 0)) {
+		if (sup > 0 && sub >= 0) {
 			ctx.fillStyle = activePixel;
 		} else {
 			ctx.fillStyle = inactivePixel;
@@ -43,7 +43,7 @@ let efxParamPaint = function (sup, offsetX, ctx, useWB, wbArr) {
 				ctx.strokeStyle = inactivePixel;
 			};
 		} else {
-			if (sub > 0 || (sub == 0 && i != 0)) {
+			if (sup > 0 && sub >= 0) {
 				ctx.strokeStyle = activePixel;
 			} else {
 				ctx.strokeStyle = inactivePixel;
@@ -230,8 +230,12 @@ let MuDisplay = class extends RootDisplay {
 			if (rendMode < 2) {
 				let voiceName = (upThis.getChVoice(this.#ch).name).slice(0, 8).padEnd(8, " ");
 				let bnkSel = (sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0");
+				if ([63].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
+					bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
+					showLsb = true;
+				};
 				if (upThis.getMode() == "xg") {
-					if ([48, 63, 80, 81, 82, 83, 84, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
+					if ([48, 80, 81, 82, 83, 84, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
 						bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
 						showLsb = true;
 					};
