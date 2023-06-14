@@ -231,7 +231,7 @@ let MuDisplay = class extends RootDisplay {
 				let voiceName = (upThis.getChVoice(this.#ch).name).slice(0, 8).padEnd(8, " ");
 				let bnkSel = (sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0");
 				if (upThis.getMode() == "xg") {
-					if ([80, 81, 82, 83, 84, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
+					if ([48, 63, 80, 81, 82, 83, 84, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
 						bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
 						showLsb = true;
 					};
@@ -344,8 +344,14 @@ let MuDisplay = class extends RootDisplay {
 				this.#bmst = 0;
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
 				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
-				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
+				if (sum.chType[this.#ch]) {
+					useBm = this.sysBm.getBm(`cat_drm`);
+				} else if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 					useBm = this.sysBm.getBm(`ext_${standard}`);
+				} else if (["mu", "es"]. indexOf(standard) > -1) {
+					useBm = this.sysBm.getBm(`boot_3`);
+				} else if (standard == "kr") {
+					useBm = this.sysBm.getBm(`st_korg`);
 				};
 				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
 					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
