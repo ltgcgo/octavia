@@ -17,14 +17,14 @@ For specific SysEx support range, refer to [Supported SysEx Instructions](./syse
 | YAMAHA | XG¹       | S    | ✓    | ✓     |
 | YAMAHA | PLG-150AN | P    | ✓    | ✕     |
 | YAMAHA | PLG-150AP | P    | ✓    | ✕     |
-| YAMAHA | PLG-150DR | P    | ✓    | ✓     |
+| YAMAHA | PLG-150DR | P    | ✓    | ✕     |
 | YAMAHA | PLG-150DX | P    | ✓    | ✕     |
 | YAMAHA | PLG-150PC | P    | ✓    | ✕     |
 | YAMAHA | PLG-150PF | P    | ✓    | ✕     |
 | YAMAHA | PLG-150VL | P    | ✓    | ✓     |
 | YAMAHA | PLG-100SG | P    | ✓    | ✓     |
 | KORG   | AG-10     | M    | ✓    | ✓     |
-| KORG   | 05R/W     | L    | ✓    | ✕     |
+| KORG   | 05R/W     | L    | ✓    | ✓     |
 | KORG   | X5DR      | L    | ✓    | ✓     |
 | KORG   | NS5R/NX5R | L    | ✓    | ✓     |
 | KAWAI  | GMega     | L    | ✓    | ✓     |

@@ -3573,6 +3573,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#subLsb = e ? 4 : 0;
 				console.info("MIDI reset: GMega/K11");
 			}, () => {
+				upThis.setEffectType(0, 24, e);
 				console.debug(`${dPref}reverb type: ${e}`);
 			}, () => {
 				console.debug(`${dPref}reverb time: ${e}`);
