@@ -371,17 +371,17 @@
 			<td></td>
 		</tr>
 		<tr>
-			<td>YAMAHA PLG-150VL</td>
-			<td>✕</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>YAMAHA TG</td>
-			<td>✕</td>
-			<td></td>
-		</tr>
-		<tr>
 			<td>YAMAHA PLG-100SG</td>
+			<td>✓</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>YAMAHA PLG-150VL</td>
+			<td>✓</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>YAMAHA TG300</td>
 			<td>✓</td>
 			<td></td>
 		</tr>
@@ -412,7 +412,7 @@
 		</tr>
 		<tr>
 			<td>KORG 05R/W</td>
-			<td>✕</td>
+			<td>✓</td>
 			<td></td>
 		</tr>
 		<tr>
