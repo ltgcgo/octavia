@@ -1,0 +1,38 @@
+body {
+	font-family: "PT Sans Narrow";
+}
+
+.is-full-height {
+	min-height: 100vh;
+}
+
+.container {
+	padding: 16px;
+	font-size: 20px;
+	cursor: default;
+}
+.column-option {
+	max-width: max-content;
+	height: max-content;
+	border: 2px solid #0000;
+	border-radius: 4px;
+	padding: 0.6rem;
+	margin: 0.15rem;
+}
+.column-option[active='true']{
+	border-color: #0008;
+}
+.column-button {
+	background: #0000;
+	transition: background 0.2s;
+}
+.column-button:hover {
+	background: #0001;
+}
+.column-button[disabled='true'] {
+	opacity: 0.5;
+}
+
+.cambiare {
+	margin: 0 auto;
+}

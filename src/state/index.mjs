@@ -618,17 +618,6 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (this.#mode == modeMap.x5d) {
 							if (det.data[1] > 0 && det.data[1] < 8) {
 								this.switchMode("05rw", true);
-							} else if (det.data[1] == 56) {
-								let agCount = 0;
-								for (let c = 0; c < 16; c ++) {
-									let d = this.#cc[allocated.cc * c];
-									if (d == 56 || d == 62) {
-										agCount ++;
-									};
-								};
-								if (agCount > 14) {
-									this.switchMode("ag10", true);
-								};
 							};
 						};
 						switch (this.#mode) {
