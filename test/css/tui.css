@@ -1,5 +1,6 @@
 body {
 	min-width: 768px;
+	font-family: "Noto Sans Mono", "Noto Sans Mono Web", mono;
 }
 
 p {

@@ -1,0 +1,20 @@
+div.cambiare {
+	font-family: "PT Sans Narrow";
+	width: 100vw;
+	height: 100vh;
+	display: grid;
+	align-items: center;
+	justify-content: center;
+	background: #000;
+}
+
+div.cambiare > div.cambiare-container {
+	overflow: hidden;
+}
+
+div.cambiare div.cambiare-canvas {
+	background: #222;
+	width: 1920px;
+	height: 1080px;
+	transform-origin: 0 0;
+}

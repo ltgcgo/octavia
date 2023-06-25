@@ -8,10 +8,58 @@
 	<meta name="author" content="Lumière Élevé" />
 	<meta name="description" content="The best MIDI visualizer ever existed." />
 	<meta name="keywords" content="Octavia,Lightingale,MIDI,General MIDI,GM,visualizer,Yamaha,Roland,Korg,Kawai,Akai,Casio,XG,GS,05R/W,X5,X5D,X5DR,NS5R,GMega,K11" />
-	<link rel="stylesheet" href="css/bulma.min.css" />
+	<link rel="stylesheet" href="css/bulma.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
 	<link rel="stylesheet" href="css/cambiare.css" />
+	<link rel="stylesheet" href="css/cambiare_demo.css" />
 	<style>::selection{background: transparent}</style>
+	<script defer src="./js/cambiare_demo.js"></script>
 </head>
 <body>
+	<div class="container is-full-height" x-data="{}">
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<div class="column column-option"><b>Open from</b></div>
+			<div class="column column-option column-button" @click="gOpenSmf()" :active="$store.play=='smf'?'true':'false'" title="Open MIDI files, SysEx blobs or bank files.">MIDI</div>
+			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='file'?'true':'false'" title="Open synchronized audio tracks.">audio</div>
+			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='mic'?'true':'false'" title="Open audio capture.">capture</div>
+			<div class="column column-option column-button" @click="gOpenLni()" :active="$store.play=='lni'?'true':'false'" title="Reset and receive raw MIDI inputs from middleware.">line in</div>
+			<div class="column column-option column-button" @click="gOpenLno()" :active="$store.play=='lno'?'true':'false'" title="Reset and receive MIDI events emitted from middleware.">line out</div>
+			<div class="column"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['kross','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
+			<div class="column column-option"><b>Set mode to</b></div>
+			<template x-for="mode in modes">
+				<div class="column column-option column-button" @click="gMode(mode[0])" x-text="mode[1]" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
+			</template>
+			<div class="column"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4}}">
+			<div class="column column-option"><b>Display mode</b></div>
+			<template x-for="range in ranges">
+				<div class="column column-option column-button" @click="gRange(range[0])" x-text="range[1]" :active="($store.showRange||'port1')==range[0]?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>Starting port</b></div>
+			<template x-for="port in ports">
+				<div class="column column-option column-button" @click="gPort(port)" x-text="letters[port]" :active="($store.startPort||0)==port?'true':'false'"></div>
+			</template>
+			<div class="column"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<div class="column column-option"><b>Audio</b></div>
+			<div class="column column-option">Play</div>
+			<div class="column column-option" x-text="formatTime($store.audioProgress||0)"></div>
+			<div class="column"><progress class="progress is-success" :value="$store.audioProgress||'0'" :max="$store.audioDuration||1"></progress></div>
+			<div class="column column-option" x-text="formatTime($store.audioDuration||0)"></div>
+			<div class="column is-one-fifth"><progress class="progress is-info" :value="$store.audioVolume||'0'" max="1"></progress></div>
+			<div class="column column-option" x-text="`${Math.round($store.audioVolume||0 * 100)}%`"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<div class="column column-option"><b>Demo</b></div>
+			<template x-for="demo in $store.demo">
+				<div class="column column-option column-button" @click="gDemo(demo)" x-text="demo.text" :title="`${demo.artist} - ${demo.title} (${demo.standard}, ${demo.audio})`" :active="($store.activeDemo||-1)==demo.id?'true':'false'"></div>
+			</template>
+			<div class="column"></div>
+		</div>
+	</div>
+	<div class="cambiare"></div>
 </body>
