@@ -35,8 +35,7 @@ import {
 const modeIdx = [
 	"?",
 	"gm", "gs", "xg", "g2",
-	"mt32", "ns5r",
-	"ag10", "x5d", "05rw",
+	"mt32", "ns5r", "x5d", "05rw",
 	"k11", "sg",
 	"krs", "s90es", "motif"
 ];
@@ -2016,7 +2015,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						if (e < 8) {
 							upThis.dispatchEvent("channelmin", (e << 4));
-							console.info(`Octavia System: Minimum CH${(e << 4) + 1}`);
+							console.debug(`Octavia System: Minimum CH${(e << 4) + 1}`);
 						} else {
 							upThis.dispatchEvent("channelreset");
 							console.info(`Octavia System: Clear channel ranges`);
@@ -2024,7 +2023,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						if (e < 8) {
 							upThis.dispatchEvent("channelmax", (e << 4) + 15);
-							console.info(`Octavia System: Maximum CH${(e << 4) + 16}`);
+							console.debug(`Octavia System: Maximum CH${(e << 4) + 16}`);
 						} else {
 							upThis.dispatchEvent("channelreset");
 							console.info(`Octavia System: Clear channel ranges`);
