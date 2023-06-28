@@ -35,7 +35,7 @@ import {
 const modeIdx = [
 	"?",
 	"gm", "gs", "xg", "g2",
-	"mt32", "ns5r", "x5d", "05rw",
+	"mt32", "ns5r", "x5d", "05rw", "sd",
 	"k11", "sg",
 	"krs", "s90es", "motif"
 ];
@@ -3883,6 +3883,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					//console.debug(`${dPref}type: ${["shelf", "peak"][eqTypes]}`);
 				},][(offset + i) & 3] || (() => {}))();
 			});
+		});
+		this.#seGs.add([0, 72, 18, 0, 0, 0, 0], (msg, track, id) => {
+			upThis.switchMode("sd", true);
+			console.info(`MIDI reset: SD`);
 		});
 	};
 };
