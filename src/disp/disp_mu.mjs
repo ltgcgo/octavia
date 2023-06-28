@@ -336,7 +336,10 @@ let MuDisplay = class extends RootDisplay {
 			let sequence = this.demoInfo.class || "boot";
 			let stepTime = this.demoInfo.fps || 2;
 			let stepSize = this.demoInfo.size || 4;
-			let stepId = `${sequence}_${Math.floor(time * stepTime % stepSize)}`;
+			let stepOffset = this.demoInfo.offset || 0;
+			let stepFrame = Math.floor((time * stepTime + stepOffset) % stepSize);
+			let stepId = `${sequence}_${stepFrame}`;
+			//console.debug(stepId);
 			useBm = this.aniBm?.getBm(stepId) || this.sysBm?.getBm(stepId) || this.sysBm?.getBm("no_abm");
 			if (!useBm) {
 				useBm = this.#bmdb.slice();

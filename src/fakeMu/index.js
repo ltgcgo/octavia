@@ -276,15 +276,15 @@ self.performance = currentPerformance;
 
 // Hardcoded animation reference
 {
-	let mu80Ani = {class: "mubasic", fps: 10, size: 16};
-	let mu1kAni = {class: "munativ", fps: 8, size: 32};
+	let mu80Ani = {class: "mubasic", fps: 10, size: 16, offset: 0};
+	let mu1kAni = {class: "munativ", fps: 8, size: 32, offset: 0};
 	demoInfo["ninety_hipty"] = mu80Ani;
 	demoInfo["OutOfTheMuse"] = mu80Ani;
 	demoInfo["MU100DEMO"] = mu80Ani;
 	demoInfo["TheMusithm"] = mu80Ani;
 	demoInfo["MU128DEMO"] = mu80Ani;
 	demoInfo["PhoenixA"] = mu1kAni;
-	demoInfo["PhoenixB"] = mu1kAni;
+	demoInfo["PhoenixB"] = {class: "munativ", fps: 8, size: 32, offset: 6};
 	demoInfo["R-love"] = mu1kAni;
 };
 
@@ -293,7 +293,8 @@ self.performance = currentPerformance;
 	// PhoenixA
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(0, generateString(`     YAMAHA      TONE GENERATOR `)));
-	perf.push(new PointEvent(0, generateSwitch(0, 0, 0)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
+	perf.push(new PointEvent(0.8, generateSwitch(0, 0, 0)));
 	perf.push(new PointEvent(2.52, generateString(`     YAMAHA      TONE GENERATOR `)));
 	perf.push(new PointEvent(5.04, generateString(`      YAMAHA      TONE GENERATOR`)));
 	perf.push(new PointEvent(5.21, generateString(`       YAMAHA      TONE GENERATO`)));
@@ -359,7 +360,9 @@ self.performance = currentPerformance;
 	// PhoenixB
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(0, generateString(`        BrtFrHrn         066 061`)));
-	perf.push(new PointEvent(0, generateSwitch(11, 0, 0)));
+	perf.push(new PointEvent(0, generateSwitch(2, 0, 0)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
+	perf.push(new PointEvent(1, generateSwitch(11, 0, 0)));
 	perf.push(new PointEvent(2.02, {type: 15, track: 0, data: [67, 16, 76, 6, 0, 64]}));
 	perf.push(new PointEvent(38.19, generateSwitch(9)));
 	perf.push(new PointEvent(40.05, generateSwitch(16, 0, 1)));
@@ -486,6 +489,7 @@ self.performance = currentPerformance;
 {
 	// MU100 demo, It's an AmaZing MU World!!
 	let perf = new TimedEvents();
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
 	perf.push(new PointEvent(3.28, generateSwitch(1)));
 	perf.push(new PointEvent(6.22, generateSwitch(5)));
 	perf.push(new PointEvent(7.93, generateSwitch(6)));
@@ -543,6 +547,7 @@ self.performance = currentPerformance;
 	// Disable native RS
 	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 0, 0, 68, 0]}));
 	perf.push(new PointEvent(0, generateSwitch(0, 0, 0)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
 	perf.push(new PointEvent(1.6, generateSwitch(0, 0, 3)));
 	perf.push(new PointEvent(40.02, generateSwitch(48, 3, 3)));
 	perf.push(new PointEvent(41.68, generateSwitch(49)));
