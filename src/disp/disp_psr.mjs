@@ -20,8 +20,11 @@ let PsrDisplay = class extends RootDisplay {
 	#bmst = 0;
 	#bmex = 0;
 	#ch = 0;
+	#lastRefreshTime = 0;
+	#letterShift = 0;
+	#letterCoolDown = 0;
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
-	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv");
+	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
@@ -91,6 +94,10 @@ let PsrDisplay = class extends RootDisplay {
 			B: new Uint8Array([0, 1, 1, 1, 1, 1, 0, 0]),
 			C: new Uint8Array([0, 0, 1, 1, 1, 0, 0, 1]),
 			D: new Uint8Array([0, 1, 0, 1, 1, 1, 1, 0]),
+			E: new Uint8Array([0, 1, 1, 1, 1, 0, 0, 1]),
+			F: new Uint8Array([0, 1, 1, 1, 0, 0, 0, 1]),
+			G: new Uint8Array([0, 0, 1, 1, 1, 1, 0, 1]),
+			H: new Uint8Array([0, 1, 1, 1, 0, 1, 1, 0]),
 			"-": new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0])
 		};
 		Array.from(str).forEach((e, i) => {
@@ -107,22 +114,38 @@ let PsrDisplay = class extends RootDisplay {
 		let timeNow = Date.now();
 		ctx.setTransform(1, 0, skew, 1, 0, 0);
 		// Determine the used font
-		let targetFont = trueMode ? upThis.trueFont : upThis.xgFont;
-		let rollX = 0;
+		let usedFont = trueMode ? upThis.trueFont : upThis.xgFont;
+		let longString = false;
+		let originalLength = str.length;
 		if (str.length > 8) {
-			rollX = Math.floor(timeNow / 125) % (2 + str.length);
-			// rollX = 0;
-			str = `${str}  ${str.slice(0, 8)}`
-			str = str.slice(rollX, rollX + 8);
-		};
-		str = str.padEnd(8, " ");
-		targetFont.getStr(str).forEach((e, i) => {
+			longString = true;
+			str = `${str}  ${str.slice(0, 8)}`;
+			str = str.slice(upThis.#letterShift, upThis.#letterShift + 8);
+		} else {
+			str = str.padEnd(8, " ");
+		}
+		usedFont.getStr(str).forEach((e, i) => {
 			e.render((e, x, y) => {
 				ctx.fillStyle = e ? activePixel : inactivePixel;
 				ctx.fillRect(offsetX + (x + 6 * i) * scaleX, offsetY + y * scaleY, scaleX - 1, scaleY - 1);
 			});
 		});
 		ctx.resetTransform();
+		if (longString && Math.floor(timeNow / 60) != upThis.#lastRefreshTime) {
+			if (upThis.#letterCoolDown > 0) {
+				upThis.#letterCoolDown--;
+			} else if (upThis.#letterShift > originalLength + 1) {
+				upThis.#letterShift = 0;
+				upThis.#letterCoolDown = 8;
+			} else {
+				upThis.#letterShift++;
+				upThis.#letterCoolDown = 1;
+			}
+		} else if (!longString) {
+			upThis.#letterShift = 0;
+			upThis.#letterCoolDown = 0;
+		}
+		upThis.#lastRefreshTime = Math.floor(timeNow / 60);
 	}
 	render(time, ctx, backlightColor = "#b7bfaf64", mixerView, tempoView, id = 0, trueMode = false) {
 		let sum = super.render(time);
@@ -303,7 +326,8 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillStyle = topOctaveFlag2 ? activePixel : inactivePixel;
 		ctx.fillText("15va+", 874, 40);
 		// Temporary channel number display
-		this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
+		// this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
+		this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 25, 260, 0.1, 0.1);
 		// Measure / tempo view
 		ctx.font = '23px "Arial Web"';
 		ctx.fillStyle = tempoView ? inactivePixel : activePixel;
@@ -360,7 +384,10 @@ let PsrDisplay = class extends RootDisplay {
 			let sequence = this.demoInfo.class || "boot";
 			let stepTime = this.demoInfo.fps || 2;
 			let stepSize = this.demoInfo.size || 4;
-			let stepId = `${sequence}_${Math.floor(time * stepTime % stepSize)}`;
+			let stepOffset = this.demoInfo.offset || 0;
+			let stepFrame = Math.floor((time * stepTime + stepOffset) % stepSize);
+			let stepId = `${sequence}_${stepFrame}`;
+			//console.debug(stepId);
 			useBm = this.aniBm?.getBm(stepId) || this.sysBm?.getBm(stepId) || this.sysBm?.getBm("no_abm");
 			if (!useBm) {
 				useBm = this.#bmdb.slice();
@@ -403,11 +430,32 @@ let PsrDisplay = class extends RootDisplay {
 			ctx.fillStyle = e ? activePixel : inactivePixel;
 			ctx.fillRect(224 + x * 6, 261 + y * 3, 5, 2);
 		});
+		// Chord display
 		ctx.fillStyle = inactivePixel;
 		ctx.font = '18px "Arial Web"';
 		ctx.fillText("ACMP", 430, 275);
 		ctx.fillText("ON", 430, 295);
 		ctx.fill(new Path2D("M482 296 L482 312 L462 304 Z"));
+		this.#render7seg(" ", ctx, 32, 300, 0.25, 0.25);
+		ctx.font = 'bold 53px "Arial Web"';
+		ctx.fillText("m", 82, 375);
+		ctx.fillText("M", 130, 375);
+		ctx.font = '40px "Arial Web"';
+		ctx.fillText("7", 175, 375);
+		ctx.font = '30px "Arial Web"';
+		// ctx.fillText("♯", 82, 328);
+		// ctx.fillText("♭", 105, 328);
+		ctx.fillText("♯", 88, 328);
+		ctx.fillText("♭", 113, 328);
+		// ctx.fillText("6", 175, 328);
+		ctx.fillText("6", 185, 328);
+		// ctx.fillText("dim", 123, 328);
+		ctx.fillText("dim", 132, 328);
+		ctx.font = '25px "Arial Web"';
+		ctx.fillText("♭  5", 105, 277);
+		ctx.fillText("sus4", 157, 300);
+		ctx.fillText("aug", 82, 300);
+		ctx.fillText("(9)", 157, 277);
 		// Commit to display accordingly.
 		let keyboardData = new Uint16Array([228, 238.5, 250.3, 263.5, 272.6, 295, 304.5, 317.3, 330, 339.5, 354, 361.8]);
 		this.#nkdb.forEach((e, i) => {
