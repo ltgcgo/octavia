@@ -35,6 +35,11 @@ stSwitch.forEach(function (e, i, a) {
 	});
 });
 
+let resizer = function () {
+	dispCanvas.style.left = `${textDisplay.offsetLeft + textDisplay.offsetWidth - dispCanvas.offsetWidth}px`;
+	dispCanvas.style.top = `${textDisplay.offsetTop}px`;
+};
+
 // Standard demo switching
 let demoPool = new SheetData();
 let stList = $e("span#demo-list"), stDemo = [];
@@ -104,6 +109,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			visualizer.device.initOnReset = false;
 		});
 	});
+	resizer();
 });
 
 // Start the visualizers
@@ -236,7 +242,5 @@ getBridge().addEventListener("message", function (ev) {
 	//console.debug(ev.data);
 });
 
-addEventListener("resize", function () {
-	dispCanvas.style.left = `${textDisplay.offsetLeft + textDisplay.offsetWidth - dispCanvas.offsetWidth}px`;
-	dispCanvas.style.top = `${textDisplay.offsetTop}px`;
-});
+addEventListener("resize", resizer);
+resizer();

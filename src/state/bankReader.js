@@ -85,6 +85,16 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case "sd": {
+				if (msb == 96) {
+					args[0] = 121;
+				} else if (msb > 96 && msb < 100) {
+					args[2] |= 16;
+				} else if (msb == 104) {
+					args[0] = 120;
+				};
+				break;
+			};
 			case "sg": {
 				if (msb == 8 && lsb == 0) {
 					args[2] = 5;
@@ -430,7 +440,7 @@ let VoiceBank = class {
 			};
 			case 67:
 			case 99: {
-				standard = "DX"; // PLG-150DX
+				standard = args[2] >> 4 == 1 ? "SD" : "DX"; // PLG-150DX
 				break;
 			};
 			case 81: {
@@ -446,15 +456,22 @@ let VoiceBank = class {
 				break;
 			};
 			case 97: {
-				standard = "VL"; // PLG-150VL / SONDIUS-XG
+				standard = args[2] >> 4 == 1 ? "SD" : "VL"; // PLG-150VL / SONDIUS-XG
 				break;
 			};
 			case 98: {
-				standard = "SG"; // PLG-100SG
+				standard = args[2] >> 4 == 1 ? "SD" : "SG"; // PLG-100SG
 				break;
 			};
 			case 100: {
 				standard = "AN"; // PLG-150AN
+				break;
+			};
+			case 104:
+			case 105:
+			case 106:
+			case 107: {
+				standard = "SD"; // Roland StudioCanvas
 				break;
 			};
 			case 120: {

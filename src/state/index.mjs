@@ -40,10 +40,10 @@ const modeIdx = [
 	"krs", "s90es", "motif"
 ];
 const substList = [
-	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 0, 0, 63, 63, 63],
+	[0, 0, 0, 0, 121, 0,   0, 82, 81, 96, 0, 0, 63, 63, 63],
 	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0, 0, 0,  0,  0]
 ];
-const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 122, 127];
+const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 104, 120, 122, 122, 127];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -219,7 +219,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross", "s90es"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross", "s90es"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
@@ -650,6 +650,20 @@ let OctaviaDevice = class extends CustomEventSource {
 								};
 								break;
 							};
+							case modeMap.sd: {
+								if ([104, 105, 106, 107].indexOf(det.data[1]) > -1) {
+									if (this.#chType[part] == 0) {
+										this.setChType(part, this.CH_DRUM2);
+										console.debug(`CH${part + 1} set to drums by MSB.`);
+									};
+								} else {
+									if (this.#chType[part] > 0) {
+										this.setChType(part, this.CH_MELODIC);
+										console.debug(`CH${part + 1} set to melodic by MSB.`);
+									};
+								};
+								break;
+							};
 							case modeMap.g2: {
 								if (det.data[1] == 120) {
 									if (this.#chType[part] == 0) {
@@ -894,7 +908,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// GS: [66, CmdId, HH, MM, LL, ...DD, Checksum]
 			if (msg[0] < 16) {
 				this.#seGs.run(msg, track, id);
-				console.warn(`Unknown device SysEx!`);
+				//console.warn(`Unknown device SysEx!`);
 			} else {
 				let sentCs = msg[msg.length - 1];
 				let calcCs = gsChecksum(msg.subarray(2, msg.length - 1));
