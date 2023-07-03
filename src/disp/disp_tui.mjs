@@ -18,6 +18,7 @@ const modeNames = {
 	"xg": "YamahaXG",
 	"gs": "RolandGS",
 	"mt32": "RlndMT32",
+	"sd": "RolandSD",
 	"ag10": "KorgAG10",
 	"x5d": "Korg X5D",
 	"05rw": "Korg05RW",
