@@ -27,7 +27,7 @@ let demoId = 0;
 
 // Generate Octavia channel switch SysEx
 let generateSwitch = function (ch = 0, min, max) {
-	let data = [67, 16, 73, 0, 0, 10, ch];
+	let data = [67, 16, 73, 0, 0, 64, ch];
 	if (min?.constructor == Number) {
 		data.push(min);
 		if (max.constructor == Number) {
@@ -195,9 +195,9 @@ visualizer.addEventListener("mode", function (ev) {
 		gs: [71, 83],
 		xg: [88, 71],
 		g2: [71, 77, 50],
+		sd: [83, 68],
 		mt32: [77, 84, 45, 51, 50],
 		ns5r: [78, 83, 53, 82],
-		ag10: [65, 71, 45, 49, 48],
 		"05rw": [48, 53, 82, 47, 87],
 		x5d: [88, 53, 68],
 		k11: [71, 77, 101, 103, 97],
@@ -344,7 +344,7 @@ let renderThread = setInterval(function () {
 		if (currentAnimation && !visualizer.demoInfo) {
 			visualizer.demoInfo = currentAnimation;
 		};
-		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId, location.hash?.length > 1);
+		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId, location.hash == "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);
@@ -360,15 +360,15 @@ self.performance = currentPerformance;
 
 // Hardcoded animation reference
 {
-	let mu80Ani = {class: "mubasic", fps: 10, size: 16};
-	let mu1kAni = {class: "munativ", fps: 8, size: 32};
+	let mu80Ani = {class: "mubasic", fps: 10, size: 16, offset: 0};
+	let mu1kAni = {class: "munativ", fps: 8, size: 32, offset: 0};
 	demoInfo["ninety_hipty"] = mu80Ani;
 	demoInfo["OutOfTheMuse"] = mu80Ani;
 	demoInfo["MU100DEMO"] = mu80Ani;
 	demoInfo["TheMusithm"] = mu80Ani;
 	demoInfo["MU128DEMO"] = mu80Ani;
 	demoInfo["PhoenixA"] = mu1kAni;
-	demoInfo["PhoenixB"] = mu1kAni;
+	demoInfo["PhoenixB"] = {class: "munativ", fps: 8, size: 32, offset: 6};
 	demoInfo["R-love"] = mu1kAni;
 };
 
@@ -494,7 +494,8 @@ self.performance = currentPerformance;
 	// PhoenixA
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(0, generateString(`     YAMAHA      TONE GENERATOR `)));
-	perf.push(new PointEvent(0, generateSwitch(0)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
+	perf.push(new PointEvent(0.8, generateSwitch(0)));
 	perf.push(new PointEvent(2.52, generateString(`     YAMAHA      TONE GENERATOR `)));
 	perf.push(new PointEvent(5.04, generateString(`      YAMAHA      TONE GENERATOR`)));
 	perf.push(new PointEvent(5.21, generateString(`       YAMAHA      TONE GENERATO`)));
@@ -560,7 +561,9 @@ self.performance = currentPerformance;
 	// PhoenixB
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(0, generateString(`        BrtFrHrn         066 061`)));
-	perf.push(new PointEvent(0, generateSwitch(11)));
+	perf.push(new PointEvent(0, generateSwitch(2)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
+	perf.push(new PointEvent(1, generateSwitch(11)));
 	perf.push(new PointEvent(2.02, {type: 15, track: 0, data: [67, 16, 76, 6, 0, 64]}));
 	perf.push(new PointEvent(38.19, generateSwitch(9)));
 	perf.push(new PointEvent(40.05, generateSwitch(16)));
@@ -665,6 +668,88 @@ self.performance = currentPerformance;
 	demoPerfs["R-love"] = perf;
 };
 {
+	// MU80 demo, Out of the Muse
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(1.6, generateSwitch(19)));
+	perf.push(new PointEvent(18.92, generateSwitch(3)));
+	perf.push(new PointEvent(27.29, generateSwitch(2)));
+	perf.push(new PointEvent(31.47, generateSwitch(9)));
+	perf.push(new PointEvent(33.49, generateSwitch(10)));
+	perf.push(new PointEvent(35.52, generateSwitch(19)));
+	perf.push(new PointEvent(37.62, generateSwitch(1)));
+	perf.push(new PointEvent(39.73, generateSwitch(3)));
+	perf.push(new PointEvent(41.83, generateSwitch(6)));
+	perf.push(new PointEvent(43.93, generateSwitch(18)));
+	perf.push(new PointEvent(46.03, generateSwitch(19)));
+	perf.push(new PointEvent(48.13, generateSwitch(21)));
+	perf.push(new PointEvent(50.23, generateSwitch(24)));
+	perf.push(new PointEvent(52.34, generateSwitch(3)));
+	perf.push(new PointEvent(57.76, generateSwitch(4)));
+	perf.push(new PointEvent(61.12, generateSwitch(3)));
+	perf.push(new PointEvent(64.11, generateSwitch(4)));
+	perf.push(new PointEvent(69.84, generateSwitch(6)));
+	perf.push(new PointEvent(87.48, generateSwitch(4)));
+	perf.push(new PointEvent(117.12, generateSwitch(23)));
+	perf.push(new PointEvent(125, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["OutOfTheMuse"] = perf;
+};
+{
+	// MU100 demo, It's an AmaZing MU World!!
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
+	perf.push(new PointEvent(3.28, generateSwitch(1)));
+	perf.push(new PointEvent(6.22, generateSwitch(5)));
+	perf.push(new PointEvent(7.93, generateSwitch(6)));
+	perf.push(new PointEvent(10.92, generateSwitch(5)));
+	perf.push(new PointEvent(13.98, generateSwitch(6)));
+	perf.push(new PointEvent(17.31, generateSwitch(5)));
+	perf.push(new PointEvent(18.64, generateSwitch(6)));
+	perf.push(new PointEvent(23.93, generateSwitch(11)));
+	perf.push(new PointEvent(24.41, generateSwitch(2)));
+	perf.push(new PointEvent(24.89, generateSwitch(9)));
+	perf.push(new PointEvent(25.37, generateSwitch(10)));
+	perf.push(new PointEvent(25.89, generateSwitch(3)));
+	perf.push(new PointEvent(27.87, generateSwitch(1)));
+	perf.push(new PointEvent(29.85, generateSwitch(3)));
+	perf.push(new PointEvent(31.83, generateSwitch(2)));
+	perf.push(new PointEvent(33.81, generateSwitch(9)));
+	perf.push(new PointEvent(35.79, generateSwitch(10)));
+	perf.push(new PointEvent(37.75, generateSwitch(9)));
+	perf.push(new PointEvent(39.73, generateSwitch(25)));
+	perf.push(new PointEvent(41.84, generateSwitch(15)));
+	perf.push(new PointEvent(43.93, generateSwitch(14)));
+	perf.push(new PointEvent(46.02, generateSwitch(15)));
+	perf.push(new PointEvent(50.25, generateSwitch(16)));
+	perf.push(new PointEvent(54.46, generateSwitch(15)));
+	perf.push(new PointEvent(58.37, generateSwitch(16)));
+	perf.push(new PointEvent(62.34, generateSwitch(15)));
+	perf.push(new PointEvent(66.58, generateSwitch(16)));
+	perf.push(new PointEvent(70.41, generateSwitch(15)));
+	perf.push(new PointEvent(74.64, generateSwitch(25)));
+	perf.push(new PointEvent(77.96, generateSwitch(14)));
+	perf.push(new PointEvent(79.97, generateSwitch(25)));
+	perf.push(new PointEvent(80.47, generateSwitch(10)));
+	perf.push(new PointEvent(80.97, generateSwitch(9)));
+	perf.push(new PointEvent(81.48, generateSwitch(14)));
+	perf.push(new PointEvent(81.98, generateSwitch(17)));
+	perf.push(new PointEvent(85.99, generateSwitch(18)));
+	perf.push(new PointEvent(88.03, generateSwitch(19)));
+	perf.push(new PointEvent(91.49, generateSwitch(20)));
+	perf.push(new PointEvent(93.15, generateSwitch(21)));
+	perf.push(new PointEvent(95.98, generateSwitch(22)));
+	perf.push(new PointEvent(99.99, generateSwitch(24)));
+	perf.push(new PointEvent(103.91, generateSwitch(22)));
+	perf.push(new PointEvent(107.97, generateSwitch(24)));
+	perf.push(new PointEvent(112.04, generateSwitch(22)));
+	perf.push(new PointEvent(116.05, generateSwitch(24)));
+	perf.push(new PointEvent(120.07, generateSwitch(22)));
+	perf.push(new PointEvent(127.1, generateSwitch(9)));
+	perf.push(new PointEvent(130, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["MU100DEMO"] = perf;
+};
+{
 	// The Musithm
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(2.5, generateSwitch(14)));
@@ -697,8 +782,9 @@ self.performance = currentPerformance;
 	// MU128 demo
 	let perf = new TimedEvents();
 	// Disable native RS
-	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 0, 0, 14, 0]}));
+	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 0, 0, 68, 0]}));
 	perf.push(new PointEvent(0, generateSwitch(0)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
 	perf.push(new PointEvent(1.6, generateSwitch(0)));
 	perf.push(new PointEvent(40.02, generateSwitch(48)));
 	perf.push(new PointEvent(41.68, generateSwitch(49)));
