@@ -2,22 +2,35 @@
 Octavia will never become a reality without help from the following people.
 
 ### Software Testers
+* **AWE_asikwus**
+* **dj.tuBIG/MaliceX**
 * **Eastern_Digital**
 * **GFHK-SDGM**
 * **JayB**
+* **MIDIMan**
 * **MJG0117**
 * **now_its_dark**
 * **ValleyBell**
+* **VideoJames**
 
 ### Contributors
+#### Code base
 * **GFHK-SDGM** for the fake PSR screen.
+
+#### Implementation
+* **JayB**
+* **MJG0117**
+* **AWE_asikwus**
 
 ### Reference providers
 * **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
 * **DearHoney** (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro, YAMAHA MU100, YAMAHA MU1000)
-* **Ham Seung-woo** (YAMAHA MU90)
+* **DistWave** (YAMAHA MU80)
+* ~~**Ham Seung-woo** (YAMAHA MU90)~~
 * **NiceChord** (YAMAHA MU80, Roland SC-55 mk. II)
+* **now_its_dark** (MU2000)
 * **Lupinzar** _DarkWolf, garoux.net_ (YAMAHA MU80, Roland SC-55 mk. II)
+* **ValleyBell** (SC-88 VL)
 
 ### Hardware Testers
 * **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
@@ -37,6 +50,8 @@ Octavia will never become a reality without help from the following people.
 * **アルゴ算法堂** for providing AKAI SG01k voice map.
 
 ## Demo Credits
+Octavia will now dynamically load additional demos if available. [See the credits here](https://github.com/ltgcgo/midi-demo-data/blob/main/collection/octavia/list.tsv)!
+
 | ID | Author | Title | Standard | Audio On | Audio By | Extra |
 | -- | -------- | ------ | ----- | -------- | -------- | ----- |
 | A | JayB | KANDI8 | XG | QY100 | JayB | |
@@ -46,7 +61,7 @@ Octavia will never become a reality without help from the following people.
 | E | John Lehmkuhl | MissionMan | NS5R | NS5R | DearHoney | |
 | F | Sam Sketty | Ambient | XG | MU80 | NiceChord | |
 | G | David J. Reading | Galactic Invasion | XG | S-YXG50 WDM | Lumière Élevé | |
-| H | Sam Sketty | Low Down | XG | MU90 | Ham Seung-woo | |
+| H | Sam Sketty | Low Down | XG | MU90 | DistWave | |
 | I | John Campbell | Star Games | GS (SC-55) | SC-88 Pro | DearHoney | |
 | J | David Yackley | One Stop | GM | FluidSynth, ColomboGMGS2 | Lumière Élevé | |
 | K | 大田川恭子 (Team-khy) | Orchestra | GS | SC-88 Pro | DearHoney | |
@@ -84,3 +99,9 @@ Octavia will never become a reality without help from the following people.
 | Η | 森尾隆 | Rhythm&Blues | XG | PLG-150AN | MasterJace | |
 | Θ | TôBach | MIDI Massacre | GS | Microsoft GS Wavetable | TôBach | |
 | Ι | JayB | Dream of Light | XG | QY100 | JayB | _The original song is unfinished_ |
+| Κ | Sam Sketty | Smokin' | XG | MU80 | DarkWolf | |
+| Λ | Sam Sketty | Cop Out | XG | MU80 | DistWave | |
+| Μ | Music Brains | Wah Guitar Demo | GS | SC-88 Pro | DearHoney | |
+| Ν | Yamaha | QY70 Demo No. 3 | XG | QY70 | JayB | |
+| Ξ | Yamaha | R&B/Pop | XG | QY100 | JayB | Official QY100 demo |
+| Ο | 久石譲, POODLE Straight | 空から降ってきた少女 | GS | SC-88 VL | ValleyBell | Made for SC-55 mk. II |

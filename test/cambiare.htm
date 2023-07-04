@@ -1,85 +1,65 @@
 <!DOCTYPE html>
 <head>
 	<meta http-equiv="200" charset="utf-8" />
-	<title>Octavia Cambiare (alpha)</title>
+	<title>Octavia Cambiare (beta)</title>
 	<meta content="true" name="HandheldFriendly" />
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<meta name="application-name" content="Octavia Cambiare" />
 	<meta name="author" content="Lumière Élevé" />
 	<meta name="description" content="The best MIDI visualizer ever existed." />
 	<meta name="keywords" content="Octavia,Lightingale,MIDI,General MIDI,GM,visualizer,Yamaha,Roland,Korg,Kawai,Akai,Casio,XG,GS,05R/W,X5,X5D,X5DR,NS5R,GMega,K11" />
-	<link rel="stylesheet" href="css/water.min.css" />
+	<link rel="stylesheet" href="css/bulma.css" />
 	<link rel="stylesheet" href="css/fonts.css" />
-	<link rel="stylesheet" href="css/tui.css" />
+	<link rel="stylesheet" href="css/cambiare.css" />
+	<link rel="stylesheet" href="css/cambiare_demo.css" />
 	<style>::selection{background: transparent}</style>
+	<script defer src="./js/cambiare_demo.js"></script>
 </head>
 <body>
-	<p>
-		Open <b id="openMidi">MIDI</b>,
-		<b id="openAudio">audio</b>,
-		<b id="openMidw">line</b>.
-		<b class="mode" title="gm">GM</b>,
-		<b class="mode" title="gs">GS</b>,
-		<b class="mode" title="xg">XG</b>,
-		<b class="mode" title="g2">GM2</b>,
-		<b class="mode" title="mt32">MT-32</b>,
-		<b class="mode" title="ns5r">NS5R</b>,
-		<b class="mode" title="ag10">AG-10</b>,
-		<b class="mode" title="05rw">05R/W</b>,
-		<b class="mode" title="x5d">X5D</b>,
-		<b class="mode" title="k11">GMega</b>,
-		<b class="mode" title="sg">SG</b>,
-		<b class="mode" title="krs">KROSS</b>.
-	</p>
-	<p>
-		<audio id="audioPlayer" controls></audio> Demo
-		<b class="demo active" title="KANDI8">a</b>
-		<b class="demo" title="HORIZON">b</b>
-		<b class="demo" title="Stephen Kay - Around the World">c</b>
-		<b class="demo" title="KORG - 2000 Fever">d</b>
-		<b class="demo" title="KORG - MissionMan">e</b>
-		<b class="demo" title="Sam Sketty - Ambient">f</b>
-		<b class="demo" title="David Reading - Galactic Invasion">g</b>
-		<b class="demo" title="Sam Sketty - Low Down">h</b>
-		<b class="demo" title="StarGame">i</b>
-		<b class="demo" title="onestop">j</b>
-		<b class="demo" title="21Ochstr">k</b>
-		<b class="demo" title="Y4002_07">l</b>
-		<b class="demo" title="TSoMI2_MI_1">m</b>
-		<b class="demo" title="25Japan">n</b>
-		<b class="demo" title="LEYA">o</b>
-		<b class="demo" title="Y4002_06">p</b>
-		<b class="demo" title="Cybergate">q</b>
-		<b class="demo" title="05RWDEMO">r</b>
-		<b class="demo" title="AGDEMO3">s</b>
-		<b class="demo" title="Greg's Mantra">t</b>
-		<b class="demo" title="TheFarEast">u</b>
-		<b class="demo" title="01KIMIGA">v</b>
-		<b class="demo" title="10DOREMI">w</b>
-		<b class="demo" title="haruyoko">x</b>
-		<b class="demo" title="VLjazzy">y</b>
-		<b class="demo" title="PhoenixA">z</b>
-		<b class="demo" title="PhoenixB">0</b>
-		<b class="demo" title="ninety_hipty">1</b>
-		<b class="demo" title="MM2_DotT">2</b>
-		<b class="demo" title="02THEATR">3</b>
-		<b class="demo" title="01JAZZ">4</b>
-		<b class="demo" title="05ORCHE">5</b>
-		<b class="demo" title="R-love">6</b>
-		<b class="demo" title="JayB - Corgi (Full Version)">7</b>
-		<b class="demo" title="OutOfTheMuse">8</b>
-		<b class="demo" title="MU100DEMO">9</b>
-		<b class="demo" title="TheMusithm">α</b>
-		<b class="demo" title="MM2_Ep_Scumm">β</b>
-		<b class="demo" title="12EP">γ</b>
-		<b class="demo" title="12SOULDX">δ</b>
-		<b class="demo" title="MU128DEMO">ε</b>
-		<b class="demo" title="Old_Tek">ζ</b>
-		<b class="demo" title="RnB">η</b>
-		<b class="demo" title="MIDI Massacre">θ</b>
-		<b class="demo" title="DREAMOFL">ι</b>
-	</p>
-	<p><s>Start port: A B C D E F G H, show 16 32 64 channels.</s></p>
-	<canvas style="background: #000; transform: translate(-50%, 0); left: 50%; max-width: 100%;" id="cambiare-stage" width="300" height="300" />
-	<script src="js/cambiare_wa.js"></script>
+	<div class="container" x-data="{}">
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<div class="column column-option"><b>Open from</b></div>
+			<div class="column column-option column-button" @click="gOpenSmf()" :active="$store.play=='smf'?'true':'false'" title="Open MIDI files, SysEx blobs or bank files.">MIDI</div>
+			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='file'?'true':'false'" title="Open synchronized audio tracks.">audio</div>
+			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='mic'?'true':'false'" title="Open audio capture.">capture</div>
+			<div class="column column-option column-button" @click="gOpenLni()" :active="$store.play=='lni'?'true':'false'" title="Reset and receive raw MIDI inputs from middleware.">line in</div>
+			<div class="column column-option column-button" @click="gOpenLno()" :active="$store.play=='lno'?'true':'false'" title="Reset and receive MIDI events emitted from middleware.">line out</div>
+			<div class="column"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['kross','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
+			<div class="column column-option"><b>Set mode to</b></div>
+			<template x-for="mode in modes">
+				<div class="column column-option column-button" @click="gMode(mode[0])" x-text="mode[1]" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
+			</template>
+			<div class="column"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4}}">
+			<div class="column column-option"><b>Display mode</b></div>
+			<template x-for="range in ranges">
+				<div class="column column-option column-button" @click="gRange(range[0])" x-text="range[1]" :active="($store.showRange||'port1')==range[0]?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>Starting port</b></div>
+			<template x-for="port in ports">
+				<div class="column column-option column-button" @click="gPort(port)" x-text="letters[port]" :active="($store.startPort||0)==port?'true':'false'"></div>
+			</template>
+			<div class="column"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<div class="column column-option"><b>Audio</b></div>
+			<div class="column column-option">Play</div>
+			<div class="column column-option" x-text="formatTime($store.audioProgress||0)"></div>
+			<div class="column"><progress class="progress is-success" :value="$store.audioProgress||'0'" :max="$store.audioDuration||1"></progress></div>
+			<div class="column column-option" x-text="formatTime($store.audioDuration||0)"></div>
+			<div class="column is-one-fifth"><progress class="progress is-info" :value="$store.audioVolume||'0'" max="1"></progress></div>
+			<div class="column column-option" x-text="`${Math.round($store.audioVolume||0 * 100)}%`"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<div class="column column-option"><b>Demo</b></div>
+			<template x-for="demo in $store.demo">
+				<div class="column column-option column-button" @click="gDemo(demo)" x-text="demo.text" :title="`${demo.artist} - ${demo.title} (${demo.standard}, ${demo.audio})`" :active="($store.activeDemo||-1)==demo.id?'true':'false'"></div>
+			</template>
+			<div class="column"></div>
+		</div>
+	</div>
+	<div class="cambiare"></div>
 </body>

@@ -27,14 +27,20 @@ Uint8Array.prototype.render = function (receiveFunc) {
 
 let MxFont40 = class {
 	#fonts = [];
-	async loadFile(fileSrc) {
+	async load(text, allowOverwrite = false, source = "(internal)") {
 		let upThis = this;
-		console.debug(`Requested font file from "${fileSrc}".`);
-		(await (await fetch(fileSrc)).text()).split("\n").forEach(async function (e, i) {
+		let loadCount = 0, allCount = 0;
+		console.debug(`Font "${source || "(internal)"}": loading started.`);
+		text.split("\n").forEach(function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
+				let codePoint = parseInt(arr[0], 16);
+				allCount ++;
+				if (upThis.#fonts[codePoint] && !allowOverwrite) {
+					return;
+				};
 				let bm = new Uint8Array(40);
-				Array.from(arr[1]).forEach(function (e, i) {
+				Array.from(arr[1]).forEach(async function (e, i) {
 					let verOff = i % 2 ? 4 : 0,
 					horOff = Math.floor(i / 2),
 					proxy = parseInt(e, 16), dp = 3;
@@ -45,14 +51,26 @@ let MxFont40 = class {
 						dp --;
 					};
 				});
-				upThis.#fonts[parseInt(arr[0], 16)] = bm;
+				upThis.#fonts[codePoint] = bm;
+				loadCount ++;
 			};
 		});
+		console.debug(`Font "${source || "(internal)"}": ${allCount} total, ${loadCount} loaded.`);
+	};
+	async loadFile(fileSrc, allowOverwrite = false) {
+		let upThis = this;
+		console.debug(`Requested font file from "${fileSrc}".`);
+		await upThis.load(await (await fetch(fileSrc)).text(), allowOverwrite, fileSrc);
 		shiftLoading = false;
 	};
-	constructor(fileSrc) {
+	constructor(...fileSrc) {
 		shiftLoading = true;
-		this.loadFile(fileSrc);
+		(async () => {
+			// Loading order is now enforced
+			for (let i = 0; i < fileSrc.length; i ++) {
+				await this.loadFile(fileSrc[i]);
+			};
+		})();
 	};
 	getCP(codePoint) {
 		return this.#fonts[codePoint];

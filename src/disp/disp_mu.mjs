@@ -19,7 +19,7 @@ let normParamPaint = function (sup, offsetX, ctx) {
 	let paramH = mprHeight * 1.5 - 1;
 	let sub = sup >> 4;
 	for (let i = 0; i < 8; i ++) {
-		if (sub >= 0) {
+		if (sup > 0 && sub >= 0) {
 			ctx.fillStyle = activePixel;
 		} else {
 			ctx.fillStyle = inactivePixel;
@@ -31,23 +31,39 @@ let normParamPaint = function (sup, offsetX, ctx) {
 };
 let startA = Math.PI * 255 / 180;
 let endA = Math.PI * 285 / 180;
-let efxParamPaint = function (sup, offsetX, ctx) {
+let efxParamPaint = function (sup, offsetX, ctx, useWB, wbArr) {
 	let paramW = mprWidth * 4 - 1;
 	let paramH = mprHeight * 1.5 - 1;
 	let sub = sup >> 4;
 	for (let i = 0; i < 8; i ++) {
-		if (sub >= 0) {
-			ctx.strokeStyle = activePixel;
+		if (useWB) {
+			if (wbArr[i]) {
+				ctx.strokeStyle = activePixel;
+			} else {
+				ctx.strokeStyle = inactivePixel;
+			};
 		} else {
-			ctx.strokeStyle = inactivePixel;
+			if (sup > 0 && sub >= 0) {
+				ctx.strokeStyle = activePixel;
+			} else {
+				ctx.strokeStyle = inactivePixel;
+			};
+			sub --;
 		};
-		sub --;
 		let invI = 7 - i;
 		ctx.beginPath();
 		ctx.arc(offsetX, 256, (9 - invI) * mprWidth, startA, endA);
 		ctx.lineWidth = paramH;
 		ctx.stroke();
 	};
+};
+
+Math.sum = function (...args) {
+	let sum = 0;
+	args.forEach((e) => {
+		sum += e;
+	});
+	return sum;
 };
 
 CanvasRenderingContext2D.prototype.radial = function (centreX, centreY, angle, startR, stopR) {
@@ -69,6 +85,8 @@ let MuDisplay = class extends RootDisplay {
 	#ch = 0;
 	#minCh = 0;
 	#maxCh = 0;
+	inWB = false;
+	#waveBuffer = new Uint8Array(8);
 	#panStrokes = new Uint8Array(7);
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
@@ -103,6 +121,8 @@ let MuDisplay = class extends RootDisplay {
 		this.addEventListener("channelreset", () => {
 			this.#minCh = 0;
 			this.#maxCh = 0;
+			this.#waveBuffer.fill(0);
+			this.demoInfo = false;
 		});
 	};
 	setCh(ch) {
@@ -210,8 +230,12 @@ let MuDisplay = class extends RootDisplay {
 			if (rendMode < 2) {
 				let voiceName = (upThis.getChVoice(this.#ch).name).slice(0, 8).padEnd(8, " ");
 				let bnkSel = (sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0");
+				if ([63].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
+					bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
+					showLsb = true;
+				};
 				if (upThis.getMode() == "xg") {
-					if ([80, 81, 82, 83, 84, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
+					if ([48, 80, 81, 82, 83, 84, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
 						bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
 						showLsb = true;
 					};
@@ -312,7 +336,10 @@ let MuDisplay = class extends RootDisplay {
 			let sequence = this.demoInfo.class || "boot";
 			let stepTime = this.demoInfo.fps || 2;
 			let stepSize = this.demoInfo.size || 4;
-			let stepId = `${sequence}_${Math.floor(time * stepTime % stepSize)}`;
+			let stepOffset = this.demoInfo.offset || 0;
+			let stepFrame = Math.floor((time * stepTime + stepOffset) % stepSize);
+			let stepId = `${sequence}_${stepFrame}`;
+			//console.debug(stepId);
 			useBm = this.aniBm?.getBm(stepId) || this.sysBm?.getBm(stepId) || this.sysBm?.getBm("no_abm");
 			if (!useBm) {
 				useBm = this.#bmdb.slice();
@@ -324,8 +351,14 @@ let MuDisplay = class extends RootDisplay {
 				this.#bmst = 0;
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
 				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
-				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
+				if (sum.chType[this.#ch]) {
+					useBm = this.sysBm.getBm(`cat_drm`);
+				} else if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 					useBm = this.sysBm.getBm(`ext_${standard}`);
+				} else if (["mu", "es"]. indexOf(standard) > -1) {
+					useBm = this.sysBm.getBm(`boot_3`);
+				} else if (standard == "kr") {
+					useBm = this.sysBm.getBm(`st_korg`);
 				};
 				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
 					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
@@ -357,13 +390,21 @@ let MuDisplay = class extends RootDisplay {
 			};
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
 		};
+		// Move waveBuffer
+		let useWB = time && this.demoInfo;
+		if (useWB && Math.floor(time * 25) & 1) {
+			for (let i = 6; i >= 0; i --) {
+				this.#waveBuffer[i + 1] = this.#waveBuffer[i];
+			};
+			this.#waveBuffer[0] = +(sum.velo[this.#ch] > 159);
+		};
 		// Show param
 		normParamPaint(sum.chContr[chOff + ccToPos[7]], 404, ctx); // vol
 		normParamPaint(sum.chContr[chOff + ccToPos[11]], 452, ctx); // exp
 		normParamPaint(sum.chContr[chOff + ccToPos[74]], 500, ctx); // bri
-		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 648, ctx); // rev
-		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 696, ctx); // cho
-		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 744, ctx); // var
+		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 648, ctx, useWB, this.#waveBuffer); // rev
+		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 696, ctx, useWB, this.#waveBuffer); // cho
+		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 744, ctx, useWB, this.#waveBuffer); // var
 		// Show pan
 		ctx.beginPath();
 		ctx.arc(582, 216, 34, 2.356194490192345, 7.068583470577034);

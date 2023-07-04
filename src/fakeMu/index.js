@@ -7,6 +7,7 @@ import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs
 import {
 	getBridge
 } from "../bridge/index.mjs";
+import {SheetData} from "../basic/sheetLoad.js";
 
 import {
 	PointEvent,
@@ -25,7 +26,7 @@ let useMidiBus = false;
 
 // Generate Octavia channel switch SysEx
 self.generateSwitch = function (ch = 0, min, max) {
-	let data = [67, 16, 73, 0, 0, 10, ch];
+	let data = [67, 16, 73, 0, 0, 64, ch];
 	if (min?.constructor == Number) {
 		data.push(min);
 		if (max.constructor == Number) {
@@ -70,39 +71,72 @@ stSwitch.forEach(function (e, i, a) {
 });
 
 // Standard demo switching
-let stDemo = $a("b.demo");
-stDemo.to = function (i) {
-	stDemo.forEach(function (e) {
-		e.classList.off("active");
-	});
-	if (i > -1) {
-		stDemo[i].classList.on("active");
+let demoPool = new SheetData();
+let stList = $e("span#demo-list"), stDemo = [];
+const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
+let getBlobFrom = async function (filename) {
+	let i = 0;
+	while (i < srcPaths.length) {
+		let e = srcPaths[i];
+		let response = await fetch(`${e}${filename}`);
+		if (response.status < 400) {
+			return response;
+		};
+		i ++;
 	};
+	console.error(`Loading of data ${filename} failed.`);
 };
-stDemo.forEach(function (e, i, a) {
-	e.addEventListener("click", async function () {
-		audioPlayer.pause();
-		if (!demoBlobs[e.title]?.midi) {
-			demoBlobs[e.title] = {};
-			audioPlayer.src = "about:blank";
-			demoBlobs[e.title].midi = await (await fetch(`./demo/${e.title}.mid`)).blob();
-			demoBlobs[e.title].wave = await (await fetch(`./demo/${e.title}.opus`)).blob();
+getBlobFrom(`list.tsv`).then(async (response) => {
+	await demoPool.load(await response.text());
+	//console.info(demoPool.data);
+	demoPool.data.forEach((e, i) => {
+		if (i) {
+			let space = document.createElement("span");
+			space.innerHTML = " ";
+			stList.appendChild(space);
+		} else {
+			stList.innerText = "";
 		};
-		currentPerformance = demoPerfs[e.title];
-		currentPerformance?.resetIndex();
-		currentAnimation = demoInfo[e.title];
-		audioPlayer.currentTime = 0;
-		visualizer.reset();
-		visualizer.loadFile(demoBlobs[e.title].midi);
-		if (audioBlob) {
-			URL.revokeObjectURL(audioBlob);
+		let demoChoice = document.createElement("b");
+		demoChoice.innerText = e.text;
+		demoChoice.title = e.file;
+		demoChoice.classList.on("demo");
+		stDemo.push(demoChoice);
+		stList.appendChild(demoChoice);
+	});
+	stDemo.to = function (i) {
+		stDemo.forEach(function (e) {
+			e.classList.off("active");
+		});
+		if (i > -1) {
+			stDemo[i].classList.on("active");
 		};
-		audioBlob = demoBlobs[e.title].wave;
-		audioPlayer.src = URL.createObjectURL(audioBlob);
-		if (demoModes[i]?.length > 0) {
-			visualizer.switchMode(demoModes[i]);
-		};
-		stDemo.to(i);
+	};
+	stDemo.forEach(function (e, i, a) {
+		e.addEventListener("click", async function () {
+			audioPlayer.pause();
+			if (!demoBlobs[e.title]?.midi) {
+				demoBlobs[e.title] = {};
+				audioPlayer.src = "about:blank";
+				demoBlobs[e.title].midi = await (await getBlobFrom(`${e.title}.mid`)).blob();
+				demoBlobs[e.title].wave = await (await getBlobFrom(`${e.title}.opus`)).blob();
+			};
+			currentPerformance = demoPerfs[e.title];
+			currentPerformance?.resetIndex();
+			currentAnimation = demoInfo[e.title];
+			audioPlayer.currentTime = 0;
+			visualizer.reset();
+			visualizer.loadFile(demoBlobs[e.title].midi);
+			if (audioBlob) {
+				URL.revokeObjectURL(audioBlob);
+			};
+			audioBlob = demoBlobs[e.title].wave;
+			audioPlayer.src = URL.createObjectURL(audioBlob);
+			if (demoModes[i]?.length > 0) {
+				visualizer.switchMode(demoModes[i]);
+			};
+			stDemo.to(i);
+		});
 	});
 });
 
@@ -120,7 +154,7 @@ visualizer.addEventListener("mode", function (ev) {
 // Open the files
 let midwIndicator = $e("#openMidw");
 let audioBlob;
-const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
+const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	useMidiBus = false;
@@ -130,15 +164,24 @@ $e("#openMidi").addEventListener("click", async function () {
 	if (fileSplit > -1) {
 		ext = file.name.slice(fileSplit + 1).toLowerCase();
 	};
-	if (ext == "syx") {
-		// Load SysEx blobs
-		visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
-	} else {
-		stDemo.to(-1);
-		visualizer.reset();
-		visualizer.loadFile(file);
-		currentPerformance = undefined;
-		currentAnimation = undefined;
+	switch (ext) {
+		case "syx": {
+			// Load SysEx blobs
+			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+			break;
+		};
+		case "s7e": {
+			// Load sound banks
+			visualizer.device.loadBank(ext, file);
+			break;
+		};
+		default: {
+			// Load MIDI files
+			stDemo.to(-1);
+			visualizer.reset();
+			visualizer.loadFile(file);
+			visualizer.device.initOnReset = false;
+		};
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -166,6 +209,7 @@ midwIndicator.addEventListener("click", function () {
 let dispCanv = $e("#ymhMu");
 let dispCtx = dispCanv.getContext("2d");
 dispCanv.addEventListener("wheel", function (ev) {
+	ev.preventDefault();
 	let ch = visualizer.getCh();
 	if (ev.deltaY > 0) {
 		visualizer.setCh(ch + 1);
@@ -232,15 +276,15 @@ self.performance = currentPerformance;
 
 // Hardcoded animation reference
 {
-	let mu80Ani = {class: "mubasic", fps: 10, size: 16};
-	let mu1kAni = {class: "munativ", fps: 8, size: 32};
+	let mu80Ani = {class: "mubasic", fps: 10, size: 16, offset: 0};
+	let mu1kAni = {class: "munativ", fps: 8, size: 32, offset: 0};
 	demoInfo["ninety_hipty"] = mu80Ani;
 	demoInfo["OutOfTheMuse"] = mu80Ani;
 	demoInfo["MU100DEMO"] = mu80Ani;
 	demoInfo["TheMusithm"] = mu80Ani;
 	demoInfo["MU128DEMO"] = mu80Ani;
 	demoInfo["PhoenixA"] = mu1kAni;
-	demoInfo["PhoenixB"] = mu1kAni;
+	demoInfo["PhoenixB"] = {class: "munativ", fps: 8, size: 32, offset: 6};
 	demoInfo["R-love"] = mu1kAni;
 };
 
@@ -249,7 +293,8 @@ self.performance = currentPerformance;
 	// PhoenixA
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(0, generateString(`     YAMAHA      TONE GENERATOR `)));
-	perf.push(new PointEvent(0, generateSwitch(0, 0, 0)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
+	perf.push(new PointEvent(0.8, generateSwitch(0, 0, 0)));
 	perf.push(new PointEvent(2.52, generateString(`     YAMAHA      TONE GENERATOR `)));
 	perf.push(new PointEvent(5.04, generateString(`      YAMAHA      TONE GENERATOR`)));
 	perf.push(new PointEvent(5.21, generateString(`       YAMAHA      TONE GENERATO`)));
@@ -315,7 +360,9 @@ self.performance = currentPerformance;
 	// PhoenixB
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(0, generateString(`        BrtFrHrn         066 061`)));
-	perf.push(new PointEvent(0, generateSwitch(11, 0, 0)));
+	perf.push(new PointEvent(0, generateSwitch(2, 0, 0)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
+	perf.push(new PointEvent(1, generateSwitch(11, 0, 0)));
 	perf.push(new PointEvent(2.02, {type: 15, track: 0, data: [67, 16, 76, 6, 0, 64]}));
 	perf.push(new PointEvent(38.19, generateSwitch(9)));
 	perf.push(new PointEvent(40.05, generateSwitch(16, 0, 1)));
@@ -413,7 +460,7 @@ self.performance = currentPerformance;
 	demoPerfs["R-love"] = perf;
 };
 {
-	// MU80 demo
+	// MU80 demo, Out of the Muse
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(1.6, generateSwitch(19, 0, 1)));
 	perf.push(new PointEvent(18.92, generateSwitch(3, 0, 0)));
@@ -440,11 +487,67 @@ self.performance = currentPerformance;
 	demoPerfs["OutOfTheMuse"] = perf;
 };
 {
+	// MU100 demo, It's an AmaZing MU World!!
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
+	perf.push(new PointEvent(3.28, generateSwitch(1)));
+	perf.push(new PointEvent(6.22, generateSwitch(5)));
+	perf.push(new PointEvent(7.93, generateSwitch(6)));
+	perf.push(new PointEvent(10.92, generateSwitch(5)));
+	perf.push(new PointEvent(13.98, generateSwitch(6)));
+	perf.push(new PointEvent(17.31, generateSwitch(5)));
+	perf.push(new PointEvent(18.64, generateSwitch(6)));
+	perf.push(new PointEvent(23.93, generateSwitch(11)));
+	perf.push(new PointEvent(24.41, generateSwitch(2)));
+	perf.push(new PointEvent(24.89, generateSwitch(9)));
+	perf.push(new PointEvent(25.37, generateSwitch(10)));
+	perf.push(new PointEvent(25.89, generateSwitch(3)));
+	perf.push(new PointEvent(27.87, generateSwitch(1)));
+	perf.push(new PointEvent(29.85, generateSwitch(3)));
+	perf.push(new PointEvent(31.83, generateSwitch(2)));
+	perf.push(new PointEvent(33.81, generateSwitch(9)));
+	perf.push(new PointEvent(35.79, generateSwitch(10)));
+	perf.push(new PointEvent(37.75, generateSwitch(9)));
+	perf.push(new PointEvent(39.73, generateSwitch(25)));
+	perf.push(new PointEvent(41.84, generateSwitch(15)));
+	perf.push(new PointEvent(43.93, generateSwitch(14)));
+	perf.push(new PointEvent(46.02, generateSwitch(15)));
+	perf.push(new PointEvent(50.25, generateSwitch(16)));
+	perf.push(new PointEvent(54.46, generateSwitch(15)));
+	perf.push(new PointEvent(58.37, generateSwitch(16)));
+	perf.push(new PointEvent(62.34, generateSwitch(15)));
+	perf.push(new PointEvent(66.58, generateSwitch(16)));
+	perf.push(new PointEvent(70.41, generateSwitch(15)));
+	perf.push(new PointEvent(74.64, generateSwitch(25)));
+	perf.push(new PointEvent(77.96, generateSwitch(14)));
+	perf.push(new PointEvent(79.97, generateSwitch(25)));
+	perf.push(new PointEvent(80.47, generateSwitch(10)));
+	perf.push(new PointEvent(80.97, generateSwitch(9)));
+	perf.push(new PointEvent(81.48, generateSwitch(14)));
+	perf.push(new PointEvent(81.98, generateSwitch(17)));
+	perf.push(new PointEvent(85.99, generateSwitch(18)));
+	perf.push(new PointEvent(88.03, generateSwitch(19)));
+	perf.push(new PointEvent(91.49, generateSwitch(20)));
+	perf.push(new PointEvent(93.15, generateSwitch(21)));
+	perf.push(new PointEvent(95.98, generateSwitch(22)));
+	perf.push(new PointEvent(99.99, generateSwitch(24)));
+	perf.push(new PointEvent(103.91, generateSwitch(22)));
+	perf.push(new PointEvent(107.97, generateSwitch(24)));
+	perf.push(new PointEvent(112.04, generateSwitch(22)));
+	perf.push(new PointEvent(116.05, generateSwitch(24)));
+	perf.push(new PointEvent(120.07, generateSwitch(22)));
+	perf.push(new PointEvent(127.1, generateSwitch(9)));
+	perf.push(new PointEvent(130, generateSwitch(0)));
+	perf.fresh();
+	demoPerfs["MU100DEMO"] = perf;
+};
+{
 	// MU128 demo
 	let perf = new TimedEvents();
 	// Disable native RS
-	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 0, 0, 14, 0]}));
+	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 0, 0, 68, 0]}));
 	perf.push(new PointEvent(0, generateSwitch(0, 0, 0)));
+	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
 	perf.push(new PointEvent(1.6, generateSwitch(0, 0, 3)));
 	perf.push(new PointEvent(40.02, generateSwitch(48, 3, 3)));
 	perf.push(new PointEvent(41.68, generateSwitch(49)));

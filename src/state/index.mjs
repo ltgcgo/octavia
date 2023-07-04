@@ -3,6 +3,7 @@
 import {BinaryMatch} from "../../libs/lightfelt@ltgcgo/ext/binMatch.js";
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
 import {VoiceBank} from	"./bankReader.js";
+import {bankDecoder} from "./bankDecoder.js";
 import {
 	xgEffType,
 	xgPartMode,
@@ -34,15 +35,15 @@ import {
 const modeIdx = [
 	"?",
 	"gm", "gs", "xg", "g2",
-	"mt32", "ns5r",
-	"ag10", "x5d", "05rw", "krs",
-	"k11", "sg"
+	"mt32", "ns5r", "x5d", "05rw", "sd",
+	"k11", "sg",
+	"krs", "s90es", "motif"
 ];
 const substList = [
-	[0, 0, 0, 0, 121, 0,   0, 56, 82, 81, 63, 0, 0],
-	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0,  0, 0]
+	[0, 0, 0, 0, 121, 0,   0, 82, 81, 96, 0, 0, 63, 63, 63],
+	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0, 0, 0,  0,  0]
 ];
-const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 62, 120, 122, 122];
+const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 104, 120, 122, 122, 127];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -75,9 +76,11 @@ ccAccepted = [
 	38, 64, 65, 66, 67, 68, 69, 70, 71,
 	72, 73, 74, 75, 76, 77, 78, 84, 91,
 	92, 93, 94, 95, 98, 99, 100, 101,
+	128, // Dry level (internal register for Octavia)
 	12, 13, // General-purpose effect controllers
 	16, 17, 18, 19 // General-purpose sound controllers
 ], // 96, 97, 120 to 127 all have special functions
+aceCandidates = [12, 13, 16, 17, 18, 19],
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
 const korgDrums = [0, 16, 25, 40, 32, 64, 26, 48];
@@ -91,6 +94,12 @@ let ccToPos = {
 };
 ccAccepted.forEach((e, i) => {
 	ccToPos[e] = i;
+});
+let dnToPos = {
+	length: useDrumNrpn.length
+};
+useDrumNrpn.forEach((e, i) => {
+	dnToPos[e] = i;
 });
 
 let getDebugState = function () {
@@ -129,6 +138,11 @@ const allocated = {
 	tr: 256, // tracks
 	cmt: 14, // C/M timbre storage size
 	rpn: 6,
+	ace: 8, // active custom effect
+	drm: 8, // Drum setup slots
+	dpn: useDrumNrpn.length, // Drum setup params
+	dnc: 128, // note 0 to 127
+	efx: 7
 };
 
 let OctaviaDevice = class extends CustomEventSource {
@@ -166,7 +180,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
+	#chType = new Uint8Array(allocated.ch); // Types of channels
 	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
+	#ace = new Uint8Array(allocated.ace); // 4 active custom effects
 	#prg = new Uint8Array(allocated.ch);
 	#velo = new Uint8Array(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
@@ -177,11 +193,13 @@ let OctaviaDevice = class extends CustomEventSource {
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
+	#drum = new Uint8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
+	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
@@ -201,15 +219,16 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross", "s90es"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
+	aiEfxName = "";
 	chRedir(part, track, noConquer) {
 		if (this.#trkAsReq[track]) {
 			// Allow part assigning via meta
 			let metaChosen = (this.#trkAsReq[track] - 1) * 16 + part;
 			return metaChosen;
-		} else if ([modeMap.gs, modeMap.ns5r].indexOf(this.#mode) > -1) {
+		} else if ([2, 3].indexOf(this.#subLsb) > -1) {
 			// Do not conquer channels if requested.
 			if (noConquer == 1) {
 				return part;
@@ -449,7 +468,25 @@ let OctaviaDevice = class extends CustomEventSource {
 		11: function (det) {
 			let part = det.channel;
 			// CC event, directly assign values to the register.
-			this.#chActive[part] = 1;
+			if ([0, 32].indexOf(det.data[0]) > -1) {
+				(() => {
+					switch(this.#mode) {
+						case modeMap.s90es:
+						case modeMap.motif: {
+							if (det.data[0] == 0) {
+								([0, 63].indexOf(det.data[1]) > -1) && (this.#chActive[part] = 1);
+								break;
+							};
+							det.data[1] && (this.#chActive[part] = 1);
+							break;
+						};
+						default: {
+							this.#chActive[part] = 1;
+							break;
+						};
+					};
+				})();
+			};
 			let chOffset = part * allocated.cc;
 			// Non-store CC messages
 			switch (det.data[0]) {
@@ -527,6 +564,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (ccToPos[det.data[0]] == undefined) {
 				console.warn(`cc${det.data[0]} is not accepted.`);
 			} else {
+				// ACE allocation
+				if (aceCandidates.indexOf(det.data[0]) > -1) {
+					this.allocateAce(det.data[0]);
+				};
 				// Stored CC messages
 				switch (det.data[0]) {
 					case 0: {
@@ -537,7 +578,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (this.#mode == 0) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset + ccToPos[0]] > 119) {
+								if (this.#chType[part] > 0) {
 									det.data[1] = this.#cc[chOffset];
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -556,7 +597,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (this.#mode == modeMap.gs) {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset + ccToPos[0]] > 119) {
+								if (this.#chType[part] > 0) {
 									det.data[1] = this.#cc[chOffset];
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -565,7 +606,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (this.#mode == modeMap.gm) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
-								if (this.#cc[chOffset + ccToPos[0]] > 119) {
+								if (this.#chType[part] > 0) {
 									det.data[1] = 120;
 									this.switchMode("gs", true);
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -576,17 +617,66 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (this.#mode == modeMap.x5d) {
 							if (det.data[1] > 0 && det.data[1] < 8) {
 								this.switchMode("05rw", true);
-							} else if (det.data[1] == 56) {
-								let agCount = 0;
-								for (let c = 0; c < 16; c ++) {
-									let d = this.#cc[allocated.cc * c];
-									if (d == 56 || d == 62) {
-										agCount ++;
+							};
+						};
+						switch (this.#mode) {
+							case modeMap.xg: {
+								if ([126, 127].indexOf(det.data[1]) > -1) {
+									if (this.#chType[part] == 0) {
+										this.setChType(part, this.CH_DRUM2);
+										console.debug(`CH${part + 1} set to drums by MSB.`);
+									};
+								} else {
+									if (this.#chType[part] > 0) {
+										this.setChType(part, this.CH_MELODIC);
+										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
-								if (agCount > 14) {
-									this.switchMode("ag10", true);
+								break;
+							};
+							case modeMap["05rw"]:
+							case modeMap.x5d:
+							case modeMap.ns5r: {
+								if ([61, 62, 126, 127].indexOf(det.data[1]) > -1) {
+									if (this.#chType[part] == 0) {
+										this.setChType(part, this.CH_DRUM2);
+										console.debug(`CH${part + 1} set to drums by MSB.`);
+									};
+								} else {
+									if (this.#chType[part] > 0) {
+										this.setChType(part, this.CH_MELODIC);
+										console.debug(`CH${part + 1} set to melodic by MSB.`);
+									};
 								};
+								break;
+							};
+							case modeMap.sd: {
+								if ([104, 105, 106, 107].indexOf(det.data[1]) > -1) {
+									if (this.#chType[part] == 0) {
+										this.setChType(part, this.CH_DRUM2);
+										console.debug(`CH${part + 1} set to drums by MSB.`);
+									};
+								} else {
+									if (this.#chType[part] > 0) {
+										this.setChType(part, this.CH_MELODIC);
+										console.debug(`CH${part + 1} set to melodic by MSB.`);
+									};
+								};
+								break;
+							};
+							case modeMap.g2: {
+								if (det.data[1] == 120) {
+									if (this.#chType[part] == 0) {
+										this.setChType(part, this.CH_DRUMS);
+										console.debug(`CH${part + 1} set to drums by MSB.`);
+									};
+								} else {
+									if (this.#chType[part] > 0) {
+										this.setChType(part, this.CH_MELODIC);
+										console.debug(`CH${part + 1} set to melodic by MSB.`);
+									};
+								};
+								break;
 							};
 						};
 						this.dispatchEvent("voice", {
@@ -597,6 +687,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					case 6: {
 						// Show RPN and NRPN
 						if (this.#dataCommit) {
+							// Commit supported NRPN values
+							if ([modeMap.xg, modeMap.gs, modeMap.ns5r].indexOf(this.#mode) < 0) {
+								console.warn(`NRPN commits are not available under "${modeIdx[this.#mode]}" mode, even when they are supported in Octavia.`);
+							};
 							let msb = this.#cc[chOffset + ccToPos[99]],
 							lsb = this.#cc[chOffset + ccToPos[98]];
 							if (msb == 1) {
@@ -613,11 +707,29 @@ let OctaviaDevice = class extends CustomEventSource {
 									let nrpnIdx = useNormNrpn.indexOf(lsb);
 									if (nrpnIdx > -1) {
 										this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
+									} else {
+										console.warn(`NRPN 0x01${lsb.toString(16).padStart(2, "0")} is not supported.`);
 									};
 									getDebugState() && console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
 								};
 							} else {
-								//console.debug(`CH${part + 1} drum NRPN ${msb} commit`);
+								let nrpnIdx = useDrumNrpn.indexOf(msb);
+								if (nrpnIdx < 0) {
+									let dPref = `NRPN 0x${msb.toString(16).padStart(2, "0")}${lsb.toString(16).padStart(2, "0")} `;
+									if (msb == 127) {
+										console.warn(`${dPref}is not necessary. Consider removing it.`);
+									} else {
+										console.warn(`${dPref}is not supported.`);
+									};
+								} else {
+									let targetSlot = this.#chType[part] - 2;
+									if (targetSlot < 0) {
+										console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[this.#chType[part]]}.`);
+									} else {
+										this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1] - 64;
+									};
+								};
+								getDebugState() && console.debug(`CH${part + 1} (${xgPartMode[this.#chType[part]]}) drum NRPN ${msb} commit`);
 							};
 						} else {
 							// Commit supported RPN values
@@ -631,6 +743,13 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case 32: {
+						switch (this.#mode) {
+							case modeMap.s90es:
+							case modeMap.motif: {
+								this.setChType(part, ([32, 40].indexOf(det.data[1]) > -1) ? this.CH_DRUMS : this.CH_MELODIC, this.#mode, true);
+								break;
+							};
+						};
 						this.dispatchEvent("voice", {
 							part
 						});
@@ -688,7 +807,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		12: function (det) {
 			let part = det.channel;
 			// Program change
-			this.#chActive[part] = 1;
+			switch (this.#mode) {
+				case modeMap.s90es:
+				case modeMap.motif: {
+					det.data && (this.#chActive[part] = 1);
+					break;
+				};
+				default: {
+					this.#chActive[part] = 1;
+				};
+			};
 			this.#prg[part] = det.data;
 			this.#bnCustom[part] = 0;
 			if (getDebugState()) {
@@ -780,7 +908,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// GS: [66, CmdId, HH, MM, LL, ...DD, Checksum]
 			if (msg[0] < 16) {
 				this.#seGs.run(msg, track, id);
-				console.warn(`Unknown device SysEx!`);
+				//console.warn(`Unknown device SysEx!`);
 			} else {
 				let sentCs = msg[msg.length - 1];
 				let calcCs = gsChecksum(msg.subarray(2, msg.length - 1));
@@ -850,7 +978,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	getCc(channel) {
 		// Return channel CC registers
 		let start = channel * allocated.cc;
-		let arr = this.#cc.slice(start, start + allocated.cc);
+		let arr = this.#cc.subarray(start, start + allocated.cc);
 		arr[ccToPos[0]] = arr[ccToPos[0]] || this.#subMsb;
 		arr[ccToPos[32]] = arr[ccToPos[32]] || this.#subLsb;
 		return arr;
@@ -870,6 +998,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			arr[chOff + ccToPos[32]] = arr[chOff + ccToPos[32]] || this.#subLsb;
 		};
 		return arr;
+	};
+	getChSource() {
+		return this.#chReceive;
+	};
+	getChType() {
+		return this.#chType;
+	};
+	setChType(part, type, mode = this.#mode, disableMsbSet = false) {
+		type &= 15;
+		this.#chType[part] = type;
+		if (type > 0 && !disableMsbSet) {
+			this.#cc[part * allocated.cc + ccToPos[0]] = drumMsb[mode];
+		};
 	};
 	getPitch() {
 		return this.#pitch;
@@ -995,6 +1136,80 @@ let OctaviaDevice = class extends CustomEventSource {
 		let rpnOff = part * allocated.rpn;
 		return this.#pitch[part] / 8192 * this.#rpn[rpnOff] + (this.#rpn[rpnOff + 3] - 64) + ((this.#rpn[rpnOff + 1] << 7) + this.#rpn[rpnOff + 2] - 8192) / 8192;
 	};
+	getEffectType(slot = 0) {
+		let index = 3 * slot + 1;
+		return this.#efxBase.subarray(index, index + 2);
+	};
+	setEffectTypeRaw(slot = 0, isLsb, value) {
+		let efxbOff = 3 * slot;
+		this.#efxBase[efxbOff] = 1;
+		this.#efxBase[efxbOff + 1 + +isLsb] = value;
+	};
+	setEffectType(slot = 0, msb, lsb) {
+		this.setEffectTypeRaw(slot, false, msb);
+		this.setEffectTypeRaw(slot, true, lsb);
+	};
+	setLetterDisplay(data, source, offset = 0, delay = 3200) {
+		let upThis = this,
+		invalidCp;
+		upThis.#letterDisp = " ".repeat(offset);
+		data.forEach((e) => {
+			upThis.#letterDisp += String.fromCharCode(e > 31 ? e : 32);
+			if (e < 32) {
+				invalidCp = invalidCp || new Set();
+				invalidCp.add(e);
+			};
+		});
+		upThis.#letterExpire = Date.now() + 3200;
+		upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
+		if (invalidCp) {
+			invalidCp = Array.from(invalidCp);
+			invalidCp.forEach((e, i, a) => {
+				a[i] = e.toString(16).padStart(2, "0");
+			});
+			console.warn(`${source}${source ? " " : ""}invalid code point${invalidCp.length > 1 ? "s" : ""}: 0x${invalidCp.join(", 0x")}`);
+
+		};
+	};
+	allocateAce(cc) {
+		// Allocate active custom effect
+		// Off, cc1~cc95, CAT, velo, PB
+		if (!cc || cc > 95) {
+			console.warn(`cc${cc} cannot be allocated as an active custom effect.`);
+			return;
+		};
+		let continueScan = true, pointer = 0;
+		while (continueScan && pointer < allocated.ace) {
+			if (this.#ace[pointer] == cc) {
+				continueScan = false;
+			} else if (!this.#ace[pointer]) {
+				continueScan = false;
+				this.#ace[pointer] = cc;
+				console.info(`Allocated cc${cc} to ACE slot ${pointer}.`);
+			};
+			pointer ++;
+		};
+		if (pointer >= allocated.ace) {
+			console.warn(`ACE slots are full.`);
+		};
+	};
+	getAce() {
+		return this.#ace;
+	};
+	getChAce(part, aceSlot) {
+		// Get channel ACE value
+		if (aceSlot < 0 || aceSlot >= allocated.ace) {
+			throw(new RangeError(`No such ACE slot`));
+		};
+		let cc = this.#ace[aceSlot];
+		if (!cc) {
+			return 0;
+		} else if (ccAccepted.indexOf(cc) >= 0) {
+			return this.#cc[part * allocated.cc + ccToPos[cc]];
+		} else {
+			throw(new Error(`Invalid ACE source: ${cc}`));
+		};
+	};
 	init(type = 0) {
 		// Type 0 is full reset
 		// Type 1 is almost-full reset
@@ -1006,12 +1221,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#metaChannel = 0;
 		this.#chActive.fill(0);
 		this.#cc.fill(0);
+		this.#ace.fill(0);
 		this.#prg.fill(0);
 		this.#velo.fill(0);
 		this.#poly.fill(0);
 		this.#rawStrength.fill(0);
 		this.#pitch.fill(0);
 		this.#nrpn.fill(0);
+		this.#drum.fill(0);
 		this.#masterVol = 100;
 		this.#metaTexts = [];
 		this.#noteLength = 500;
@@ -1039,14 +1256,26 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#cc[allocated.cc * 25] = drumMsb[0];
 		this.#cc[allocated.cc * 41] = drumMsb[0];
 		this.#cc[allocated.cc * 57] = drumMsb[0];
-		// Reset effect storage
-		this.#gsEfxSto.fill(0);
+		// Channel types
+		this.#chType.fill(this.CH_MELODIC);
+		this.#chType[9] = this.CH_DRUM1;
+		this.#chType[25] = this.CH_DRUM3;
+		this.#chType[41] = this.CH_DRUMS;
+		this.#chType[57] = this.CH_DRUMS;
+		this.#chType[73] = this.CH_DRUM5;
+		this.#chType[89] = this.CH_DRUM7;
+		this.#chType[105] = this.CH_DRUMS;
+		this.#chType[121] = this.CH_DRUMS;
 		// Reset MT-32 user patch and timbre storage
 		this.#cmPatch.fill(0);
 		this.#cmTimbre.fill(0);
 		this.#cmTPatch.fill(0);
 		this.#cmTTimbre.fill(0);
 		this.#bnCustom.fill(0);
+		// Reset EFX base registers
+		this.#efxBase.fill(0);
+		// Reset AI EFX display name
+		this.aiEfxName = "";
 		// Reset MT-32 user bank
 		this.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
 		for (let ch = 0; ch < allocated.ch; ch ++) {
@@ -1087,12 +1316,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		let idx = modeIdx.indexOf(mode);
 		if (idx > -1) {
 			if (this.#mode == 0 || forced) {
+				let oldMode = this.#mode;
 				this.#mode = idx;
 				this.#bitmapPage = 0; // Restore page
 				this.#subMsb = substList[0][idx];
 				this.#subLsb = substList[1][idx];
 				for (let ch = 0; ch < allocated.ch; ch ++) {
-					if (drumMsb.indexOf(this.#cc[ch * allocated.cc]) > -1) {
+					if (this.#chType[ch] > 0 && this.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
+						// Switch drum MSBs.
 						this.#cc[ch * allocated.cc] = drumMsb[idx];
 					};
 					//this.initOnReset && forced && this.#ua.ano(ch);
@@ -1100,6 +1331,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (this.initOnReset && forced) {
 					//this.init(1);
 				};
+				// Bank defaults
 				switch (idx) {
 					case modeMap.mt32: {
 						mt32DefProg.forEach((e, i) => {
@@ -1110,6 +1342,28 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						});
 						break;
+					};
+				};
+				// EFX defaults
+				let efxDefault;
+				switch (idx) {
+					case modeMap.gs: {
+						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0, 0, 0, 0, 0, 0, 0];
+						break;
+					};
+					case modeMap.x5d:
+					case modeMap.ns5r: {
+						efxDefault = [44, 1, 44, 19, 44, 0, 44, 0, 0, 0, 0, 0, 0, 0];
+						break;
+					};
+					default: {
+						efxDefault = [1, 0, 65, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+					};
+				};
+				for (let i = 0; i < allocated.efx; i ++) {
+					if (!this.#efxBase[3 * i]) {
+						this.#efxBase[3 * i + 1] = efxDefault[2 * i];
+						this.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
 					};
 				};
 				this.dispatchEvent("mode", mode);
@@ -1155,6 +1409,26 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	runRaw(midiArr) {
 		// Translate raw byte stream into JSON MIDI event
+	};
+	async loadBank(format, blob) {
+		format = format.toLowerCase();
+		switch (format) {
+			case "s7e": {
+				this.userBank.clearRange({msb: 63, lsb: [21, 22]});
+				this.userBank.clearRange({msb: 63, lsb: [24, 27]});
+				break;
+			};
+			default: {
+				throw(new Error(`Unknown bank format ${format}`));
+			};
+		};
+		switch (format) {
+			case "s7e": {
+				bankDecoder.context = this;
+				this.userBank.load(await bankDecoder.read(format, blob));
+				break;
+			};
+		};
 	};
 	constructor() {
 		super();
@@ -1295,14 +1569,26 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		});
 		// Binary match should be avoided in favour of a circular structure
-		this.#seUnr = new BinaryMatch();
-		this.#seUr = new BinaryMatch();
-		this.#seXg = new BinaryMatch();
-		this.#seGs = new BinaryMatch();
-		this.#seAi = new BinaryMatch();
-		this.#seKg = new BinaryMatch();
-		this.#seSg = new BinaryMatch();
-		this.#seCs = new BinaryMatch();
+		this.#seUnr = new BinaryMatch("universal non-realtime");
+		this.#seUr = new BinaryMatch("universal realtime");
+		this.#seXg = new BinaryMatch("Yamaha");
+		this.#seGs = new BinaryMatch("Roland");
+		this.#seAi = new BinaryMatch("Korg");
+		this.#seKg = new BinaryMatch("Kawai");
+		this.#seSg = new BinaryMatch("Akai");
+		this.#seCs = new BinaryMatch("Casio");
+		// Notifies unrecognized SysEx strings with their vendors
+		let syxDefaultErr = function (msg) {
+			console.info(`Unrecognized SysEx in "${this.name}" set.`, msg);
+		};
+		this.#seUnr.default = syxDefaultErr;
+		this.#seUr.default = syxDefaultErr;
+		this.#seXg.default = syxDefaultErr;
+		this.#seGs.default = syxDefaultErr;
+		this.#seAi.default = syxDefaultErr;
+		this.#seKg.default = syxDefaultErr;
+		this.#seSg.default = syxDefaultErr;
+		this.#seCs.default = syxDefaultErr;
 		// The new SysEx engine only defines actions when absolutely needed.
 		// Mode reset section
 		this.#seUnr.add([9], (msg) => {
@@ -1328,6 +1614,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		// XG SysEx section
 		this.#seXg.add([76, 0, 0], (msg) => {
 			switch (msg[0]) {
+				case 125: {
+					// XG drum reset
+					console.info(`XG drum setup reset: ${msg}`);
+					break;
+				};
 				case 126: {
 					// Yamaha XG reset
 					upThis.switchMode("xg", true);
@@ -1372,8 +1663,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				dPref += "reverb ";
 				msg.subarray(1).forEach((e, i) => {
 					([(e) => {
+						upThis.setEffectTypeRaw(0, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
 					}, (e) => {
+						upThis.setEffectTypeRaw(0, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
 					}, (e) => {
 						console.debug(`${dPref}time: ${getXgRevTime(e)}s`);
@@ -1418,8 +1711,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				dPref += "chorus ";
 				msg.subarray(1).forEach((e, i) => {
 					([(e) => {
+						upThis.setEffectTypeRaw(1, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
 					}, (e) => {
+						upThis.setEffectTypeRaw(1, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
 					}, (e) => {
 						console.debug(`${dPref}LFO: ${xgLfoFreq[e]}Hz`);
@@ -1461,9 +1756,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else if (msg[0] < 86) {
 				// XG variation section 1
 				dPref += "variation ";
-				if (msg[0] == 64) {
-					console.info(`${dPref}type: ${xgEffType[msg[1]]}${msg[2] > 0 ? " " + (msg[2] + 1) : ""}`);
-				};
+				msg.subarray(1).forEach((e, i) => {
+					([(e) => {
+						upThis.setEffectTypeRaw(2, false, e);
+						console.info(`${dPref}main type: ${xgEffType[e]}`);
+					}, (e) => {
+						upThis.setEffectTypeRaw(2, true, e);
+						console.debug(`${dPref}sub type: ${e + 1}`);
+					}][msg[0] - 64 + i] || function () {
+						//console.warn(`Unknown XG variation address: ${msg[0]}.`);
+					})(e);
+				});
 			} else if (msg[0] < 97) {
 				// XG variation section 2
 				dPref += "variation ";
@@ -1521,17 +1824,24 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([76, 3], (msg) => {
 			// XG insertion effects
-			// Won't implement for now
+			let varSlot = msg[0], offset = msg[1];
+			let dPref = `XG Insertion ${msg[0] + 1} `;
+			msg.subarray(2).forEach((e, i) => {
+				([(e) => {
+					upThis.setEffectTypeRaw(3 + varSlot, false, e);
+					console.info(`${dPref}main type: ${xgEffType[e]}`);
+				}, (e) => {
+					upThis.setEffectTypeRaw(3 + varSlot, true, e);
+					console.debug(`${dPref}sub type: ${e + 1}`);
+				}][offset + i] || function () {
+					//console.warn(`Unknown XG variation address: ${msg[0]}.`);
+				})(e);
+			});
 		}).add([76, 6, 0], (msg) => {
 			// XG Letter Display
 			let offset = msg[0];
 			if (offset < 64) {
-				upThis.#letterDisp = " ".repeat(offset);
-				upThis.#letterExpire = Date.now() + 3200;
-				msg.subarray(1).forEach(function (e) {
-					upThis.#letterDisp += String.fromCharCode(e);
-				});
-				upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
+				upThis.setLetterDisplay(msg.subarray(1), "XG letter display", offset);
 			} else {
 				// Expire all existing letter display
 				upThis.#letterExpire = Date.now();
@@ -1539,6 +1849,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([76, 7, 0], (msg) => {
 			// XG Bitmap Display
 			let offset = msg[0];
+			upThis.#bitmapPage = 0;
 			upThis.#bitmapExpire = Date.now() + 3200;
 			upThis.#bitmap.fill(0); // Init
 			let workArr = msg.subarray(1);
@@ -1588,8 +1899,8 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// same note key on assign?
 					}, () => {
-						upThis.#cc[chOff + ccToPos[0]] = e > 1 ? 127 : 0;
-						console.debug(`${dPref}type: ${xgPartMode[e]}`);
+						upThis.setChType(part, e, modeMap.xg);
+						console.debug(`${dPref}type: ${xgPartMode[e] || e}`);
 					}, () => {
 						// coarse tune
 						upThis.#rpn[allocated.rpn * part + 3] = e;
@@ -1598,7 +1909,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, false, false, () => {
 						upThis.#cc[chOff + ccToPos[10]] = e || 128; // pan
 					}, false, false, () => {
-						upThis.#cc[chOff + ccToPos[11]] = e; // dry level or expression
+						upThis.#cc[chOff + ccToPos[128]] = e; // dry level
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e; // chorus
 					}, () => {
@@ -1676,6 +1987,9 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (ri & 1) {
 								if (ri < 23) {
 									console.debug(`${dPref}${pType} control source: ${getVlCtrlSrc(e)}`);
+									if (e && e < 96) {
+										upThis.allocateAce(e);
+									};
 								} else {
 									// These actually belong to 0x57, not 0x4c
 									console.debug(`${dPref}${pType} scale break point: ${e}`);
@@ -1700,18 +2014,22 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([73, 0, 0], (msg, track) => {
 			// MU1000/2000 System
 			let offset = msg[0];
+			let dPref = `MU1000 System: `;
 			msg.subarray(1).forEach((e, i) => {
 				let ri = offset + i;
 				if (ri == 8) {
-					console.debug(`MU1000 set LCD contrast to ${e}.`);
-				} else if (ri > 9 && ri < 16) {
-					// Octavia custom SysEx
+					console.debug(`${dPref}LCD contrast set to ${e}.`);
+				} else if (ri == 18) {
+					upThis.#subLsb = e ? 126 : 0;
+					console.debug(`${dPref}bank defaults to ${e ? "MU100 Native" : "MU Basic"}.`);
+				} else if (ri >= 64 && ri < 69) {
+					// Octavia custom SysEx, starts from 64 (10 before)
 					[() => {
 						upThis.dispatchEvent("channelactive", e);
 					}, () => {
 						if (e < 8) {
 							upThis.dispatchEvent("channelmin", (e << 4));
-							console.info(`Octavia System: Minimum CH${(e << 4) + 1}`);
+							console.debug(`Octavia System: Minimum CH${(e << 4) + 1}`);
 						} else {
 							upThis.dispatchEvent("channelreset");
 							console.info(`Octavia System: Clear channel ranges`);
@@ -1719,7 +2037,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						if (e < 8) {
 							upThis.dispatchEvent("channelmax", (e << 4) + 15);
-							console.info(`Octavia System: Maximum CH${(e << 4) + 16}`);
+							console.debug(`Octavia System: Maximum CH${(e << 4) + 16}`);
 						} else {
 							upThis.dispatchEvent("channelreset");
 							console.info(`Octavia System: Clear channel ranges`);
@@ -1730,7 +2048,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						upThis.#receiveRS = !!e;
 						console.info(`Octavia System: RS receiving ${["dis", "en"][e]}abled.`);
-					}][ri - 10]();
+					}][ri - 64]();
 				};
 			});
 		}).add([73, 10, 0], (msg, track) => {
@@ -1961,7 +2279,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						console.debug(`${dPref} AC2 at cc${e}`);
 					}, () => {
 						// Dry level
-						upThis.#cc[chOff + ccToPos[11]] = e;
+						upThis.#cc[chOff + ccToPos[128]] = e;
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e;
 					}, () => {
@@ -1996,15 +2314,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([43, 7, 0], (msg, track, id) => {
 			// TG300 display letter
 			// Same as XG letter display
-			upThis.#letterDisp = " ".repeat(offset);
-			upThis.#letterExpire = Date.now() + 3200;
-			msg.subarray(1).forEach(function (e) {
-				upThis.#letterDisp += String.fromCharCode(e);
-			});
-			upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
+			let offset = msg[0];
+			upThis.setLetterDisplay(msg.subarray(1), "TG300 letter display", offset);
 		}).add([43, 7, 1], (msg, track, id) => {
 			// TG300 display bitmap
 			// Same as XG bitmap display
+			upThis.#bitmapPage = 0;
 			upThis.#bitmapExpire = Date.now() + 3200;
 			upThis.#bitmap.fill(0); // Init
 			msg.forEach(function (e, i) {
@@ -2095,6 +2410,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let dPref = `GS ${(offset + i) > 55 ? "chorus" : "reverb"} `;
 					([() => {
 						console.info(`${dPref}type: ${gsRevType[e]}`);
+						upThis.setEffectType(0, 40, e);
 					}, () => {// character
 					}, () => {// pre-LPF
 					}, () => {// level
@@ -2104,6 +2420,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						console.debug(`${dPref}predelay: ${e}ms`);
 					}, () => {
 						console.info(`${dPref}type: ${gsChoType[e]}`);
+						upThis.setEffectType(1, 40, 16 + e);
 					}, () => {// pre-LPF
 					}, () => {// level
 					}, () => {// feedback
@@ -2124,6 +2441,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let dPref = `GS delay `;
 					([() => {
 						console.info(`${dPref}type: ${gsDelType[e]}`);
+						upThis.setEffectType(2, 40, 32 + e);
 					}, () => {// pre-LPF
 					}, () => {// time C
 					}, () => {// time L
@@ -2160,17 +2478,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			// GS EFX
 			let dPref = `GS EFX `;
 			let prefDesc = function (e, i) {
-				let desc = getGsEfxDesc(upThis.#gsEfxSto, i, e);
+				let desc = getGsEfxDesc(upThis.#efxBase.subarray(10, 12), i, e);
 				if (desc) {
-					console.debug(`${dPref}${getGsEfx(upThis.#gsEfxSto)} ${desc}`);
+					console.debug(`${dPref}${getGsEfx(upThis.#efxBase.subarray(10, 12))} ${desc}`);
 				};
 			};
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
-					upThis.#gsEfxSto[0] = e;
+					upThis.setEffectTypeRaw(3, false, 32 + e);
 				}, () => {
-					upThis.#gsEfxSto[1] = e;
-					console.info(`${dPref}type: ${getGsEfx(upThis.#gsEfxSto)}`);
+					upThis.setEffectTypeRaw(3, true, e);
+					console.info(`${dPref}type: ${getGsEfx(upThis.#efxBase.subarray(10, 12))}`);
 				}, false,
 				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
 				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
@@ -2184,10 +2502,16 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(`${dPref}to delay: ${toDecibel(e)}dB`);
 				}, false, () => {
 					console.debug(`${dPref}1 source: ${e}`);
+					if (e && e < 96) {
+						upThis.allocateAce(e);
+					};
 				}, () => {
 					console.debug(`${dPref}1 depth: ${e - 64}`);
 				}, () => {
 					console.debug(`${dPref}2 source: ${e}`);
+					if (e && e < 96) {
+						upThis.allocateAce(e);
+					};
 				}, () => {
 					console.debug(`${dPref}2 depth: ${e - 64}`);
 				}, () => {
@@ -2203,14 +2527,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (msg[0]) {
 				case 0: {
 					// GS display letter
-					upThis.#letterExpire = Date.now() + 3200;
 					let offset = msg[1];
-					upThis.#letterDisp = " ".repeat(offset);
-					msg.subarray(2).forEach(function (e) {
-						if (e < 128) {
-							upThis.#letterDisp += String.fromCharCode(e);
-						};
-					});
+					upThis.setLetterDisplay(msg.subarray(2), "GS display text", offset);
 					break;
 				};
 				case 32: {
@@ -2224,6 +2542,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				default: {
 					if (msg[0] < 11) {
 						// GS display bitmap
+						if (upThis.#bitmapPage > 9) {
+							upThis.#bitmapPage = 0;
+						};
 						upThis.#bitmapExpire = Date.now() + 3200;
 						if (!upThis.#bitmapStore[msg[0] - 1]?.length) {
 							upThis.#bitmapStore[msg[0] - 1] = new Uint8Array(256);
@@ -2284,7 +2605,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, false // assign mode
 					, () => {
 						// drum map
-						upThis.#cc[chOff + ccToPos[0]] = e ? 120 : 0;
+						upThis.setChType(part, e << 1, modeMap.gs);
 						console.debug(`${dPref}type: ${e ? "drum " : "melodic"}${e ? e : ""}`);
 					}, () => {
 						// coarse tune
@@ -2434,12 +2755,15 @@ let OctaviaDevice = class extends CustomEventSource {
 				// Program change
 				if (e < 1) {
 				} else if (e < 101) {
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 					upThis.#prg[part] = e - 1;
 					upThis.#cc[chOff + ccToPos[0]] = 82;
 				} else if (e < 229) {
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 					upThis.#prg[part] = e - 101;
 					upThis.#cc[chOff + ccToPos[0]] = 56;
 				} else {
+					upThis.setChType(part, upThis.CH_DRUMS, modeMap.x5d);
 					upThis.#prg[part] = korgDrums[e - 229] || 0;
 					upThis.#cc[chOff + ccToPos[0]] = 62;
 				};
@@ -2539,10 +2863,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			// X5D mode switch
 			upThis.switchMode("x5d", true);
 			console.debug(`X5D mode switch requested: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]} mode.`);
+		}).add([54, 85], (msg, track) => {
+			// X5D effect dump
+			upThis.switchMode("x5d", true);
+			korgFilter(msg, (e, i) => {
+				if (i > 0 && i < 3) {
+					upThis.setEffectType(i - 1, 44, e);
+				};
+			});
 		}).add([54, 104], (msg, track) => {
 			// X5D extended multi setup
 			upThis.switchMode("x5d", true);
-			console.debug(msg);
 			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
 					let part = upThis.chRedir(Math.floor(i / 12), track, true),
@@ -2551,9 +2882,11 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 0: {
 							// Program change
 							if (e < 128) {
+								upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 								upThis.#cc[chOff + ccToPos[0]] = 82;
 								upThis.#prg[part] = e;
 							} else {
+								upThis.setChType(part, upThis.CH_DRUMS, modeMap.x5d);
 								upThis.#cc[chOff + ccToPos[0]] = 62;
 								upThis.#prg[part] = korgDrums[e - 128];
 							};
@@ -2869,6 +3202,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case 125: {// drum reset
+					console.info(`NS5R drum setup reset: ${msg}`);
 					break;
 				};
 				default: {
@@ -2912,13 +3246,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = part * allocated.cc;
 			let offset = msg[1];
-			let dPref = `NS5R CH${part + 1}`;
+			let dPref = `NS5R CH${part + 1} `;
 			msg.subarray(2).forEach((e, i) => {
 				let c = offset + i;
 				if (c < 3) {
 					// MSB, LSB, PRG
 					[() => {
-						upThis.#cc[chOff + ccToPos[0]] = e;
+						upThis.#cc[chOff + ccToPos[0]] = e || 121;
 					}, () => {
 						upThis.#cc[chOff + ccToPos[32]] = e;
 					}, () => {
@@ -2937,6 +3271,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						upThis.#mono[part] = +!e;
 					}, () => {
+						upThis.setChType(part, e, modeMap.ns5r);
 						console.debug(`${dPref}type: ${xgPartMode[e]}`);
 					}, () => {
 						upThis.#rpn[allocated.rpn * part + 3] = e;
@@ -2989,12 +3324,49 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([66, 18, 8, 0], (msg, track) => {
 			// Display (letter and bitmap)
-			// Mehh I'll fill this up when I have time
+			let offset = msg[0];
+			if (offset < 32) {
+				// Letter display
+				upThis.setLetterDisplay(msg.subarray(1, 33), "NS5R letter display");
+			} else {
+				// Bitmap display
+				let bitOffset = offset - 32;
+				upThis.#bitmapExpire = Date.now() + 3200;
+				upThis.#bitmapPage = 10; // Use bitmap 11 that holds 512 pixels
+				upThis.#bitmap.fill(0); // Init
+				let workArr = msg.subarray(1);
+				let lastCol = 4;
+				workArr.forEach(function (e, i) {
+					let ri = i + bitOffset;
+					let tx = ri >> 4, ty = ri & 15;
+					if (ri < 80) {
+						let dummy = tx < lastCol ? e : e >> 3, shifted = 0, perspective = tx < lastCol ? 6 : 3;
+						while (dummy > 0) {
+							upThis.#bitmap[ty * 32 + tx * 7 + (perspective - shifted)] = dummy & 1;
+							dummy = dummy >> 1;
+							shifted ++;
+						};
+					};
+				});
+			};
 		}).add([66, 52], (msg, track) => {
 			// Currect effect dump
-			// Still no docs, sigh...
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
+			let efxName = "";
+			korgFilter(msg, (e, i) => {
+				if (i < 8) {
+					if (e > 31) {
+						efxName += String.fromCharCode(e);
+					};
+					if (i == 7) {
+						upThis.aiEfxName = efxName;
+					};
+				} else if (i < 10) {
+					// AI effect ID
+					upThis.setEffectType(i - 8, 44, e);
+				};
+			});
 		}).add([66, 53], (msg, track) => {
 			// Current multi dump
 			upThis.switchMode("ns5r", true);
@@ -3009,7 +3381,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						switch (i % 92) {
 							case 0: {
 								// MSB Bank
-								upThis.#cc[chOff + ccToPos[0]] = e;
+								upThis.#cc[chOff + ccToPos[0]] = e || 121;
 								break;
 							};
 							case 1: {
@@ -3203,6 +3575,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#subLsb = e ? 4 : 0;
 				console.info("MIDI reset: GMega/K11");
 			}, () => {
+				upThis.setEffectType(0, 24, e);
 				console.debug(`${dPref}reverb type: ${e}`);
 			}, () => {
 				console.debug(`${dPref}reverb time: ${e}`);
@@ -3231,11 +3604,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			([() => {
 				if (e < 128) {
 					// Melodic voice
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.k11);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#prg[part] = e;
 				} else {
 					// Drum kit
-					upThis.#cc[chOff + ccToPos[0]] = 122;
+					upThis.setChType(part, upThis.CH_DRUMS, modeMap.k11);
 					upThis.#prg[part] = e - 128;
 				};
 			}, () => {
@@ -3290,16 +3664,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			[() => {
 				if (e < 128) {
 					// Melodic voice
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.k11);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#cc[chOff + ccToPos[32]] = 0;
 					upThis.#prg[part] = e;
 				} else if (e < 160) {
 					// Melodic voice
+					upThis.setChType(part, upThis.CH_MELODIC, modeMap.k11);
 					upThis.#cc[chOff + ccToPos[0]] = 0;
 					upThis.#cc[chOff + ccToPos[32]] = 7;
 					upThis.#prg[part] = e - 100;
 				} else {
 					// Drum kit
+					upThis.setChType(part, upThis.CH_DRUMS, modeMap.k11);
 					upThis.#cc[chOff + ccToPos[0]] = 122;
 					upThis.#cc[chOff + ccToPos[32]] = 0;
 					upThis.#prg[part] = e - 160;
@@ -3403,11 +3780,134 @@ let OctaviaDevice = class extends CustomEventSource {
 			// CASIO GZ-50M cc91 effect type set
 			console.debug(`GZ set effect: ${["stage reverb", "hall reverb", "room reverb", "chorus", "tremelo", "phaser", "rotary speaker", "enhancer", "flanger", "EQ"][msg[0]] || "off"}`);
 		});
+		// Yamaha S90 ES or Motif ES
+		this.#seXg.add([127, 0], (msg, track, id) => {
+			// Motif ES to S90 ES redirector
+			upThis.switchMode("motif");
+			let newMsg = new Uint8Array([127, 1, ...msg]);
+			upThis.#seXg.run(newMsg, track, id);
+		}).add([127, 1, 0, 0], (msg, track, id) => {
+			// S90 ES System
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES system ",
+			offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				([() => {
+					upThis.#masterVol = e * 12900 / 16383;
+				}][offset + i] || (() => {
+					console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
+				}))();
+			});
+		}).add([127, 1, 0, 0, 14], (msg, track, id) => {
+			// S90 ES bulk dump header
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES bulk header ";
+			let addrSet = [];
+			addrSet[95] = (msg, track, id) => {
+				console.debug(`${dPref}multi edit buffer: ${msg[1]}`);
+			};
+			(addrSet[msg[0]] || (() => {
+				console.info(`Unrecognized ${dPref}ID: ${msg[0]}.`);
+			}))(msg.subarray(1));
+		}).add([127, 1, 0, 0, 15], (msg, track, id) => {
+			// S90 ES bulk dump footer
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES bulk footer ";
+			let addrSet = [];
+			addrSet[95] = (msg, track, id) => {
+				console.debug(`${dPref}multi edit buffer: ${msg[1]}`);
+			};
+			(addrSet[msg[0]] || (() => {
+				console.info(`Unrecognized ${dPref}ID: ${msg[0]}.`);
+			}))(msg.subarray(1));
+		}).add([127, 1, 0, 58, 55], (msg, track, id) => {
+			// S90 ES bulk part setup (?)
+			upThis.switchMode("s90es");
+			let part = upThis.chRedir(msg[0], track, true),
+			chOff = allocated.cc * part,
+			offset = msg[1];
+			let dPref = `S90/Motif ES bulk CH${part < 16 ? part + 1 : "U" + (part - 95)} `;
+			console.debug(dPref, msg);
+			if (msg[0] > 15) {
+				return;
+			};
+			msg.subarray(2).forEach((e, i) => {
+				([() => {
+					upThis.#cc[chOff + ccToPos[0]] = e;
+				}, () => {
+					e && (upThis.#chActive[part] = 1);
+					upThis.#cc[chOff + ccToPos[32]] = e;
+					upThis.#chType[part] = this.setChType(part, ([32, 40].indexOf(e) > -1) ? this.CH_DRUMS : this.CH_MELODIC, this.#mode, true);
+				}, () => {
+					e && (upThis.#chActive[part] = 1);
+					upThis.#prg[part] = e;
+				}, () => {
+					let ch = upThis.chRedir(e, track, true);
+					upThis.#chReceive[part] = ch; // Rx CH
+					if (part != ch) {
+						upThis.buildRchTree();
+						console.info(`${dPref}receives from CH${ch + 1}`);
+					};
+				}, () => {
+					upThis.#mono[part] = e ? 0 : 1;
+				}, false, false, false, false, false, false, false, false, () => {
+					upThis.#cc[chOff + ccToPos[7]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[10]] = e;
+				}, false, false, false, () => {
+					upThis.#cc[chOff + ccToPos[91]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[93]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[94]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[128]] = e;
+				}, () => {
+					// note shift, RPN
+				}, () => {
+					upThis.#cc[chOff + ccToPos[74]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[71]] = e;
+				}, false, () => {
+					upThis.#cc[chOff + ccToPos[65]] = e;
+				}, () => {
+					upThis.#cc[chOff + ccToPos[5]] = e;
+				}, () => {
+					// portamento mode: fingered, fulltime
+				}][offset + i] || (() => {}))();
+			});
+		}).add([127, 1, 54, 16], (msg, track, id) => {
+			// S90 ES EQ config
+			upThis.switchMode("s90es");
+			let offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				let eqPart = i >> 2;
+				let dPref = `S90/Motif ES EQ${eqPart + 1} `;
+				([() => {
+					let eqGain = e - 64;
+					//console.debug(`${dPref}gain: ${eqGain}dB`);
+				}, () => {
+					let eqFreq = xgNormFreq[e];
+					//console.debug(`${dPref}freq: ${eqFreq}Hz`);
+				}, () => {
+					let eqQFac = e / 10;
+					//console.debug(`${dPref}Q: ${eqQFac}`);
+				}, () => {
+					let eqType = e; // shelf, peak
+					//console.debug(`${dPref}type: ${["shelf", "peak"][eqTypes]}`);
+				},][(offset + i) & 3] || (() => {}))();
+			});
+		});
+		this.#seGs.add([0, 72, 18, 0, 0, 0, 0], (msg, track, id) => {
+			upThis.switchMode("sd", true);
+			console.info(`MIDI reset: SD`);
+		});
 	};
 };
 
 export {
 	OctaviaDevice,
 	allocated,
-	ccToPos
+	ccToPos,
+	dnToPos
 };

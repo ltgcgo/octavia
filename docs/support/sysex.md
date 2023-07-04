@@ -16,9 +16,9 @@
 | Variation setup |    | ?   |       | ✓  | ✓  |       |     |      |       |          |       |        |
 | Part setup      |    | ?   |       | ✓  | ✓  | ✓     | ✓   | ✓    | ✓     | ✓        |       |        |
 | Equalizer       |    |     |       | ✓  | ✓  |       |     |      |       |          |       |        |
-| EFX / insertion |    |     |       | ✕  | ✓³ |       |     | ✕    |       |          |       |        |
-| Bitmap display¹ |    |     |       | ✓  | ✓  |       |     | ✕    |       |          |       |        |
-| Text display²   |    |     | ✓     | ✓  | ✓  |       |     | ✕    |       |          |       |        |
+| EFX / insertion |    |     |       | -  | ✓³ |       |     | -    |       |          |       |        |
+| Bitmap display¹ |    |     |       | ✓  | ✓  |       |     | ✓    |       |          |       |        |
+| Text display²   |    |     | ✓     | ✓  | ✓  |       |     | ✓    |       |          |       |        |
 | Drum setup      |    | ?   | ✕     | ✕  | ✕  | ✕     | ✕   | ✕    | ✕     | ✕        |       |        |
 
 1. Support in GS is called "frame draw", and with multi-page support.

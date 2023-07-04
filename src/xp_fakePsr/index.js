@@ -1,0 +1,1 @@
+../fakePsr/index.js

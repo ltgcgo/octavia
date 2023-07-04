@@ -1,0 +1,1 @@
+../fakeSc/index.js

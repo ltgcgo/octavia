@@ -127,10 +127,10 @@ gsEfxDesc = {
 	}]
 },
 getGsEfx = function (arr) {
-	return gsEfx[(arr[0] << 8) + arr[1]] || `0x${arr[0].toString(16).padStart(2, "0")}${arr[1].toString(16).padStart(2, "0")}`;
+	return gsEfx[((arr[0] - 32) << 8) + arr[1]] || `0x${arr[0].toString(16).padStart(2, "0")}${arr[1].toString(16).padStart(2, "0")}`;
 },
 getGsEfxDesc = function (arr, param, value) {
-	let id = (arr[0] << 16) + (arr[1] << 8) + param,
+	let id = ((arr[0] - 32) << 16) + (arr[1] << 8) + param,
 	target = gsEfxDesc[id] || {},
 	desc = target[0];
 	if (desc?.length) {
