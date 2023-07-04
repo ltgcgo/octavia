@@ -9,22 +9,27 @@ import {
 	bgOrange,
 	bgWhite,
 	bgRed,
+	lcdPixel,
 	lcdCache
 } from "./colour.js";
 
 let Ns5rDisplay = class extends RootDisplay {
 	#omdb = new Uint8Array(5760); // Full display
 	#nmdb = new Uint8Array(5760); // Full display, but on commit
+	#dmdb = new Uint8Array(5760); // Full display, but it's actually drawn
 	#dumpData;
 	#dumpExpire = 0;
 	#mode = "?";
 	#ch = 0;
 	#backlight;
+	#pixelLit = 255;
+	#pixelOff = 0;
 	#refreshed = true;
+	useBlur = false; // Pixel blur will only activate if this is enabled
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
-	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv");
+	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	element = new MxBmDef("./data/bitmaps/korg/element.tsv");
-	constructor() {
+	constructor(conf = {}) {
 		super(new OctaviaDevice(), 0.1, 0.9);
 		this.#backlight = bgWhite;
 		this.addEventListener("mode", (ev) => {
@@ -38,7 +43,9 @@ let Ns5rDisplay = class extends RootDisplay {
 				"05rw": bgGreen,
 				"k11": bgGreen,
 				"gmlx": bgGreen,
-				"sg01": bgRed
+				"sg01": bgRed,
+				"s90es": bgGreen,
+				"motif": bgGreen
 			}[ev.data] || bgWhite;
 			this.#mode = ev.data;
 			this.#refreshed = true;
@@ -50,6 +57,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#dumpExpire = Date.now() + 1600;
 			};
 		});
+		this.useBlur = !!conf?.useBlur;
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -66,13 +74,13 @@ let Ns5rDisplay = class extends RootDisplay {
 				(pY == 14 && pX > 0) ||
 				(pY == 13)
 			) {
-				this.#nmdb[pY * 144 + pX + startX] = 1;
+				this.#nmdb[pY * 144 + pX + startX] = this.#pixelLit;
 			} else if (pY > 0 && pY < 13) {
 				if (
 					pX == 0 || pX > 9 ||
 					(pX == 5 && pY > 1 && pY < 12)
 				) {
-					this.#nmdb[pY * 144 + pX + startX] = 1;
+					this.#nmdb[pY * 144 + pX + startX] = this.#pixelLit;
 				};
 			};
 		};
@@ -82,9 +90,9 @@ let Ns5rDisplay = class extends RootDisplay {
 			let pX = c % 7, pY = Math.floor(c / 7),
 			pcY = pY + (9 - convertedValue);
 			if (pY != 1 || pX == 0 || pX == 6) {
-				this.#nmdb[pcY * 144 + pX + startX + 2] = 1;
+				this.#nmdb[pcY * 144 + pX + startX + 2] = this.#pixelLit;
 			} else {
-				this.#nmdb[pcY * 144 + pX + startX + 2] = 0;
+				this.#nmdb[pcY * 144 + pX + startX + 2] = this.#pixelOff;
 			};
 		};
 	};
@@ -98,22 +106,22 @@ let Ns5rDisplay = class extends RootDisplay {
 			let theta = diffX / diffY;
 			if (diffY < 0) {
 				for (let p = 0; p >= diffY; p --) {
-					this.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = 1;
+					this.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = this.#pixelLit;
 				};
 			} else {
 				for (let p = 0; p <= diffY; p ++) {
-					this.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = 1;
+					this.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = this.#pixelLit;
 				};
 			};
 		} else {
 			let theta = diffY / diffX;
 			if (diffX < 0) {
 				for (let p = 0; p >= diffX; p --) {
-					this.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = 1;
+					this.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = this.#pixelLit;
 				};
 			} else {
 				for (let p = 0; p <= diffX; p ++) {
-					this.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = 1;
+					this.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = this.#pixelLit;
 				};
 			};
 		};
@@ -126,7 +134,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			drawX = Math.sign(intX) * Math.round(Math.abs(intX));
 			let intY = radius * Math.cos(angle),
 			drawY = Math.sign(intY) * Math.round(Math.abs(intY));
-			this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
+			this.#nmdb[(drawY + startY) * 144 + drawX + startX] = this.#pixelLit;
 		};
 		if (value < 128) {
 			let normAngle = Math.floor(value / 9.85) * 22.5;
@@ -136,11 +144,11 @@ let Ns5rDisplay = class extends RootDisplay {
 			/* for (let c = 0; c <= lineStep; c ++) {
 				let drawX = Math.round(c * deltaX),
 				drawY = Math.round(c * deltaY);
-				this.#nmdb[(drawY + startY) * 144 + drawX + startX] = 1;
+				this.#nmdb[(drawY + startY) * 144 + drawX + startX] = this.#pixelLit;
 			}; */
 			this.#renderLine(startX, startY, deltaX * lineStep, deltaY * lineStep);
 		} else {
-			this.#nmdb[(startY) * 144 + startX] = 1;
+			this.#nmdb[(startY) * 144 + startX] = this.#pixelLit;
 		};
 	};
 	render(time, ctx, trueMode) {
@@ -171,11 +179,11 @@ let Ns5rDisplay = class extends RootDisplay {
 		let chOff = this.#ch * ccToPos.length;
 		if (timeNow < this.#dumpExpire) {
 			this.#dumpData?.forEach((e, i) => {
-				this.#nmdb[i] = e;
+				this.#nmdb[i] = e ? this.#pixelLit : this.#pixelOff;
 			});
 		} else {
 			// Clear out the current working display buffer.
-			this.#nmdb.forEach((e, i, a) => {a[i] = 0});
+			this.#nmdb.forEach((e, i, a) => {a[i] = this.#pixelOff});
 			// Screen buffer write begin.
 			// Determine the used font
 			let targetFont = trueMode ? this.trueFont : this.xgFont;
@@ -185,7 +193,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5);
-					this.#nmdb[charY * 144 + secX + charX] = e1;
+					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
 				});
 			});
 			// Show current pitch shift
@@ -195,14 +203,14 @@ let Ns5rDisplay = class extends RootDisplay {
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 8;
-					this.#nmdb[charY * 144 + secX + charX] = e1;
+					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
 				});
 			});
 			// Render bank background
 			let bankFetched = upThis.getChVoice(this.#ch), bankInfo = bankFetched.sect;
 			for (let bankSect = 0; bankSect < 225; bankSect ++) {
 				let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
-				this.#nmdb[pixY * 144 + pixX] = 1;
+				this.#nmdb[pixY * 144 + pixX] = this.#pixelLit;
 			};
 			targetFont.getStr(bankInfo).forEach((e0, i0) => {
 				let secX = i0 * 6 + 1;
@@ -210,7 +218,7 @@ let Ns5rDisplay = class extends RootDisplay {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 16;
 					if (e1) {
-						this.#nmdb[charY * 144 + secX + charX] = 0;
+						this.#nmdb[charY * 144 + secX + charX] = this.#pixelOff;
 					};
 				});
 			});
@@ -221,7 +229,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 16;
-					this.#nmdb[charY * 144 + secX + charX] = e1;
+					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
 				});
 			});
 			targetFont.getStr(bankName).forEach((e0, i0) => {
@@ -229,7 +237,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 16;
-					this.#nmdb[charY * 144 + secX + charX] = e1;
+					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
 				});
 			})
 			// Render current channel
@@ -238,38 +246,42 @@ let Ns5rDisplay = class extends RootDisplay {
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 32;
-					this.#nmdb[charY * 144 + secX + charX] = e1;
+					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
 				});
 			});
 			// Render channel strength
 			let showReduction = 22;
-			if (maxCh > 31) {
+			if (maxCh > 63) {
 				showReduction = 43;
 			};
-			sum.strength.forEach((e, i) => {
+			for (let i = sum.strength.length - 1; i >= 0; i --) {
+				let e = sum.strength[i];
 				if (maxCh < 32 && i > 31) {
-					return;
+					continue;
+				};
+				if (maxCh < 64 && i > 63) {
+					continue;
 				};
 				for (let c = Math.floor(e / showReduction); c >= 0; c --) {
-					let pixX = (i % 32) * 4 + 12,
-					pixY = (i > 31 ? 32 : 39) - c;
+					let pixX = (i % 32) * 4 + 12 + ((i >> 5) & 1), pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
 					if (trueMode) {
 						pixX ++;
 					};
-					this.#nmdb[pixY * 144 + pixX] = 1;
-					this.#nmdb[pixY * 144 + pixX + 1] = 1;
-					this.#nmdb[pixY * 144 + pixX + 2] = 1;
+					this.#nmdb[pixY * 144 + pixX] = this.#pixelLit;
+					this.#nmdb[pixY * 144 + pixX + 1] = this.#pixelLit;
+					this.#nmdb[pixY * 144 + pixX + 2] = this.#pixelLit;
 				};
-			});
+			};
 			// Render effect types
-			targetFont.getStr(trueMode ? "Fx A:001Rev/Cho" : "FxA:001Rev/Cho").forEach((e0, i0) => {
+			let efxShow = this.device.aiEfxName.slice(0, 7 + +trueMode) || "Rev/Cho";
+			targetFont.getStr(trueMode ? `Fx A:001${efxShow}` : `FxA:001${efxShow}`).forEach((e0, i0) => {
 				let lineChars = trueMode ? 8 : 7;
 				let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
 				secY = Math.floor(i0 / lineChars) * 8;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + secY;
-					this.#nmdb[charY * 144 + secX + charX] = e1;
+					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
 				});
 			});
 			// Render letter displays
@@ -284,10 +296,10 @@ let Ns5rDisplay = class extends RootDisplay {
 						(y == 18) ||
 						(y == 19 && x > 0)
 					) {
-						this.#nmdb[y * 144 + x + xShift] = 1;
+						this.#nmdb[y * 144 + x + xShift] = this.#pixelLit;
 					};
 					if (y > 0 && y < 18) {
-						this.#nmdb[y * 144 + x + xShift] = +(x < 1 || x > 97);
+						this.#nmdb[y * 144 + x + xShift] = +(x < 1 || x > 97) ? this.#pixelLit : this.#pixelOff;
 					};
 				};
 				// Actual text
@@ -297,7 +309,7 @@ let Ns5rDisplay = class extends RootDisplay {
 					e0.forEach((e1, i1) => {
 						let charX = i1 % 5,
 						charY = Math.floor(i1 / 5) + secY;
-						this.#nmdb[charY * 144 + secX + charX] = e1;
+						this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
 					});
 				});
 			} else {
@@ -308,11 +320,11 @@ let Ns5rDisplay = class extends RootDisplay {
 				if (trueMode) {
 					if (sum.chContr[chOff + ccToPos[10]] < 128) {
 						this.element.getBm(`Pan_${Math.floor(sum.chContr[chOff + ccToPos[10]] / 9.85)}`)?.render((e, x, y) => {
-							this.#nmdb[y * 144 + x + 48] = e;
+							this.#nmdb[y * 144 + x + 48] = e ? this.#pixelLit : this.#pixelOff;
 						});
 					} else {
 						this.element.getBm("PanRndm")?.render((e, x, y) => {
-							this.#nmdb[y * 144 + x + 48] = e;
+							this.#nmdb[y * 144 + x + 48] = e ? this.#pixelLit : this.#pixelOff;
 						});
 					};
 				} else {
@@ -336,10 +348,10 @@ let Ns5rDisplay = class extends RootDisplay {
 						(y == 19) ||
 						(y == 20 && x > 0)
 					) {
-						this.#nmdb[realY * 144 + realX] = 1;
+						this.#nmdb[realY * 144 + realX] = this.#pixelLit;
 					};
 					if (y > 0 && y < 19) {
-						this.#nmdb[realY * 144 + realX] = +(x < 1 || x > 34);
+						this.#nmdb[realY * 144 + realX] = +(x < 1 || x > 34) ? this.#pixelLit : this.#pixelOff;
 					};
 				};
 				// Actual bitmap
@@ -347,9 +359,9 @@ let Ns5rDisplay = class extends RootDisplay {
 				for (let i = 0; i < 512; i += colUnit) {
 					let x = i & 31, y = i >> 5;
 					let realX = x + 79 + (+trueMode), realY = y + 21;
-					this.#nmdb[realY * 144 + realX] = sum.bitmap.bitmap[i / colUnit];
+					this.#nmdb[realY * 144 + realX] = sum.bitmap.bitmap[i / colUnit] ? this.#pixelLit : this.#pixelOff;
 					if (colUnit == 2) {
-						this.#nmdb[realY * 144 + realX + 1] = sum.bitmap.bitmap[i / colUnit];
+						this.#nmdb[realY * 144 + realX + 1] = sum.bitmap.bitmap[i / colUnit] ? this.#pixelLit : this.#pixelOff;
 					};
 				};
 			};
@@ -392,8 +404,24 @@ let Ns5rDisplay = class extends RootDisplay {
 			drawPixMode = true;
 			this.#refreshed = false;
 		};
-		// Commit to display accordingly.
+		// Transitional
 		this.#nmdb.forEach((e, i) => {
+			if (this.useBlur) {
+				let diff = e - this.#dmdb[i],
+				cap = 48;
+				if (Math.abs(diff) > cap) {
+					this.#dmdb[i] += Math.sign(diff) * cap;
+				} else if (diff != 0) {
+					this.#dmdb[i] = e;
+				};
+			} else {
+				if (this.#dmdb[i] != e) {
+					this.#dmdb[i] = e;
+				};
+			};
+		});
+		// Commit to display accordingly.
+		this.#dmdb.forEach((e, i) => {
 			let pixX = i % 144, pixY = Math.floor(i / 144);
 			let hasDifference = this.#omdb[i] != e;
 			if (!drawPixMode && hasDifference) {
@@ -401,7 +429,13 @@ let Ns5rDisplay = class extends RootDisplay {
 				ctx.fillRect(6 * pixX + 1, 12 + 6 * pixY, 6, 6);
 			};
 			if (drawPixMode || hasDifference) {
-				ctx.fillStyle = lcdCache.black[e + 3];
+				if (e >= this.#pixelLit) {
+					ctx.fillStyle = lcdCache.black[4];
+				} else if (e <= this.#pixelOff) {
+					ctx.fillStyle = lcdCache.black[3];
+				} else {
+					ctx.fillStyle = `${lcdPixel.black}${(Math.ceil(e * lcdPixel.range / 255) + lcdPixel.inactive).toString(16)}`;
+				};
 				if (drawPixMode) {
 					ctx.fillStyle = ctx.fillStyle.slice(0, 7);
 				};
@@ -409,7 +443,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 		});
 		// Commit to old display buffer.
-		this.#nmdb.forEach((e, i) => {
+		this.#dmdb.forEach((e, i) => {
 			if (this.#omdb[i] != e) {
 				this.#omdb[i] = e;
 			};

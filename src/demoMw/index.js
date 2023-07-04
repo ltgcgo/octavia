@@ -98,7 +98,6 @@ midiInSel.forEach((e, i) => {
 	self.fromJson = fromJson;
 	self.toJson = toJson;
 	self.MEE = SimpleMidiEventEmitter;
-	self.inBridge = getBridge();
 	midiAccess.addEventListener("statechange", (ev) => {
 		console.debug(ev.port);
 	});

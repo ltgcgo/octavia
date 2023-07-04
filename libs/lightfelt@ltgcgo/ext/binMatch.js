@@ -12,7 +12,8 @@ let compArr = function (a, b) {
 	return result;
 };
 
-let BinaryMatch = function () {
+let BinaryMatch = function (name = "") {
+	this.name = name;
 	this.pool = [];
 	this.point = function (prefix, insert = false) {
 		if (this.pool.length > 0) {
@@ -83,7 +84,7 @@ let BinaryMatch = function () {
 		return this;
 	};
 	this.default = function (info) {
-		console.warn(`No match for "${info}". Default action not defined.`);
+		console.warn(`No match in "${this.name || '(unknown)'}" for "${info}". Default action not defined.`);
 	};
 	this.get = function (prefix) {
 		let idx = this.point(prefix);
@@ -96,7 +97,11 @@ let BinaryMatch = function () {
 	this.run = function (prefix, ...additional) {
 		let idx = this.point(prefix);
 		if (idx > -1) {
-			this.pool[idx].data(prefix.slice(this.pool[idx].length), ...additional);
+			if (prefix.subarray) {
+				this.pool[idx].data(prefix.subarray(this.pool[idx].length), ...additional);
+			} else {
+				this.pool[idx].data(prefix.slice(this.pool[idx].length), ...additional);
+			};
 		} else {
 			this.default(prefix, ...additional);
 		};

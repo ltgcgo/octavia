@@ -3,17 +3,6 @@
 import {ccToPos} from "../state/index.mjs";
 
 const sgCrit = ["MSB", "PRG", "LSB"];
-const modeIdx = [
-	"??",
-	"GM",
-	"GS",
-	"XG",
-	"MT",
-	"AI",
-	"AG",
-	"XD",
-	"RW"
-];
 
 let halfHex = function (n) {
 	let segA = Math.floor(n / 10), segB = n % 10;
@@ -24,26 +13,64 @@ let VoiceBank = class {
 	#bankInfo;
 	strictMode = false;
 	get(msb = 0, prg = 0, lsb = 0, mode) {
+		let sid = [msb, prg, lsb];
 		let bankName;
 		let args = Array.from(arguments);
 		switch (mode) {
 			case "xg": {
-				if (msb == 32) {
-					args[2] += 4; // PLG-150AP redirection
-				} else if (msb == 33 || msb == 35 || msb == 36) {
-					args[2] += 5; // PLG-150VL/DX/AN redirection
-				} else if (msb == 79) {
-					args[0] = 95; // PLG-150DR + PLG-150PC redirection
-				} else if (msb == 80) {
-					args[0] = 96; // PLG-150PF + PLG-150AP redirection
-				} else if (msb == 81) {
-					args[0] = 97; // PLG-150VL redirection
-				} else if (msb == 82) {
-					args[0] = 98; // PLG-100SG redirection
-				} else if (msb == 83) {
-					args[0] = 99; // PLG-100DX redirection
-				} else if (msb == 84) {
-					args[0] = 100; // PLG-100AN redirection
+				switch (msb) {
+					case 0: {
+						if (lsb == 126) {
+							args[2] = 125; // MU100 Native
+						} else if (lsb == 127) {
+							args[2] = 0; // MU Basic
+						};
+						break;
+					};
+					case 32: {
+						args[2] += 4; // PLG-150AP redirection
+						break;
+					};
+					case 33:
+					case 35:
+					case 36: {
+						args[2] += 5; // PLG-150VL/DX/AN redirection
+						break;
+					};
+					case 79:
+					case 80:
+					case 81:
+					case 82:
+					case 83:
+					case 84: {
+						// 79: PLG-150DR + PLG-150PC redirection
+						// 80: PLG-150PF + PLG-150AP redirection
+						// 81: PLG-150VL redirection
+						// 82: PLG-100SG redirection
+						// 83: PLG-100DX redirection
+						// 84: PLG-100AN redirection
+						args[0] += 16;
+					};
+					case 95:
+					case 96:
+					case 97:
+					case 98:
+					case 99:
+					case 100: {
+						if (lsb == 126) {
+							args[2] = 0; // MU100 Native restore
+						};
+						break;
+					};
+					case 48:
+					case 64:
+					case 126:
+					case 127: {
+						if (lsb == 126) {
+							args[2] = 0; // MU100 Native restore
+						};
+						break;
+					};
 				};
 				break;
 			};
@@ -58,14 +85,44 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case "sd": {
+				if (msb == 96) {
+					args[0] = 121;
+				} else if (msb > 96 && msb < 100) {
+					args[2] |= 16;
+				} else if (msb == 104) {
+					args[0] = 120;
+				};
+				break;
+			};
 			case "sg": {
 				if (msb == 8 && lsb == 0) {
 					args[2] = 5;
 				};
 				break;
 			};
+			case "s90es": {
+				if (lsb < 8) {
+					args[2] += 17;
+				} else if (lsb < 32) {
+					args[2] += 13;
+				} else {
+					args[2] = (args[2] >> 3) + 19;
+				};
+				break;
+			};
+			case "motif": {
+				if (lsb < 8) {
+					args[2] += 28;
+				} else if (lsb < 32) {
+					args[2] += 13;
+				} else {
+					args[2] = (args[2] >> 3) + 19;
+				};
+				break;
+			};
 		};
-		let ending = " ", sect = `M`, useLsb = false, baseShift = 0;
+		let ending = " ", sect = `M`, useLsb = 0, baseShift = 0;
 		// Section test
 		switch (args[0]) {
 			case 0: {
@@ -85,7 +142,7 @@ let VoiceBank = class {
 					sect = "GM-a";
 				} else {
 					sect = "y";
-					useLsb = true;
+					useLsb = 3;
 				};
 				break;
 			};
@@ -99,7 +156,7 @@ let VoiceBank = class {
 			};
 			case 48: {
 				sect = `yM${(args[2] >> 3).toString().padStart(2, "0")}`;
-				useLsb = true;
+				useLsb = 1;
 				break;
 			};
 			case 56: {
@@ -116,9 +173,15 @@ let VoiceBank = class {
 				break;
 			};
 			case 63: {
-				let kLsb = args[2];
-				sect = (kLsb < 10) ? "kP:" : "kC:";
-				sect += kLsb % 10;
+				if (args[2] < 17) {
+					let kLsb = args[2];
+					sect = (kLsb < 10) ? "kP:" : "kC:";
+					sect += kLsb % 10;
+				} else if (args[2] < 34) {
+					sect = ["Pre1", "Pre2", "Pre3", "Pre4", "Usr1", "Usr2", "DrmP", "DrmU", "Plg1", "Plg2", "Plg3", "Pre1", "Pre2", "Pre3", "Pre4", "Pre5", "Pre6"][args[2] - 17];
+				} else {
+					sect = `Ds`;
+				};
 				break;
 			};
 			case 64: {
@@ -152,12 +215,12 @@ let VoiceBank = class {
 				if (args[2] > 63) {
 					baseShift = 63;
 				};
-				useLsb = true;
+				useLsb = 3;
 				break;
 			};
 			case 97: {
 				sect = "VL:";
-				useLsb = true;
+				useLsb = 3;
 				baseShift = 112;
 				break;
 			};
@@ -170,7 +233,7 @@ let VoiceBank = class {
 				if (args[2] > 63) {
 					baseShift = 63;
 				};
-				useLsb = true;
+				useLsb = 3;
 				break;
 			};
 			case 100: {
@@ -178,12 +241,12 @@ let VoiceBank = class {
 				if (args[2] > 63) {
 					baseShift = 63;
 				};
-				useLsb = true;
+				useLsb = 3;
 				break;
 			};
 			case 121: {
 				sect = `GM-${args[2] ? "" : "a"}`;
-				useLsb = true;
+				useLsb = 3;
 				break;
 			};
 			case 122: {
@@ -211,13 +274,15 @@ let VoiceBank = class {
 			};
 		};
 		if (sect.length < 4) {
-			sect += `${(useLsb ? lsb : msb) - baseShift}`.padStart(4 - sect.length, "0");
+			sect += `${[msb, lsb, args[0], args[2]][useLsb] - baseShift}`.padStart(4 - sect.length, "0");
 		};
 		// Hijack XG MU2000 sampler
 		if (mode == "xg" && msb == 16) {
 			bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
 			ending = " ";
 		};
+		// Internal ID
+		let iid = [args[0], args[1], args[2]];
 		// Bank read
 		while (!(bankName?.length >= 0)) {
 			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
@@ -239,7 +304,7 @@ let VoiceBank = class {
 								args[0] = 0;
 								ending = "!";
 							};
-						} else if (msb < 64) {
+						} else if (msb < 63) {
 							if (args[0] == 0) {
 								args[2] = 0;
 								ending = "^";
@@ -308,6 +373,8 @@ let VoiceBank = class {
 				};
 			};
 		};
+		// End ID
+		let eid = [args[0], args[1], args[2]];
 		if ((mode == "gs" || mode == "ns5r") && ending == "^") {
 			ending = " ";
 		};
@@ -326,7 +393,7 @@ let VoiceBank = class {
 					standard = "GM";
 				} else if (args[2] == 5 || args[2] == 7) {
 					standard = "KG";
-				} else if (args[2] < 120) {
+				} else if (args[2] < 126) {
 					standard = "XG";
 				} else if (args[2] == 127) {
 					standard = "MT";
@@ -357,7 +424,14 @@ let VoiceBank = class {
 				break;
 			};
 			case 63: {
-				standard = "KR";
+				if (args[2] < 17) {
+					standard = "KR";
+				} else if (args[2] < 34) {
+					standard = "ES";
+				} else {
+					standard = "DS";
+				};
+				break;
 			};
 			case 64:
 			case 126: {
@@ -366,7 +440,7 @@ let VoiceBank = class {
 			};
 			case 67:
 			case 99: {
-				standard = "DX"; // PLG-150DX
+				standard = args[2] >> 4 == 1 ? "SD" : "DX"; // PLG-150DX
 				break;
 			};
 			case 81: {
@@ -382,15 +456,22 @@ let VoiceBank = class {
 				break;
 			};
 			case 97: {
-				standard = "VL"; // PLG-150VL / SONDIUS-XG
+				standard = args[2] >> 4 == 1 ? "SD" : "VL"; // PLG-150VL / SONDIUS-XG
 				break;
 			};
 			case 98: {
-				standard = "SG"; // PLG-100SG
+				standard = args[2] >> 4 == 1 ? "SD" : "SG"; // PLG-100SG
 				break;
 			};
 			case 100: {
 				standard = "AN"; // PLG-150AN
+				break;
+			};
+			case 104:
+			case 105:
+			case 106:
+			case 107: {
+				standard = "SD"; // Roland StudioCanvas
 				break;
 			};
 			case 120: {
@@ -421,6 +502,9 @@ let VoiceBank = class {
 		};
 		return {
 			name: bankName || `${halfHex(msb || 0)} ${halfHex(prg || 0)} ${halfHex(lsb || 0)}`,
+			iid,
+			eid,
+			sid,
 			ending,
 			sect,
 			standard

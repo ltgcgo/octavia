@@ -12,7 +12,13 @@
 	font-weight: 700;
 	src: url("../font/arialbd.woff2") format("woff2");
 }
-
-body {
-	font-family: "Noto Sans Mono", "Noto Sans Mono Web", mono;
+@font-face {
+	font-family: "PT Sans Narrow";
+	font-weight: 400;
+	src: local("PT Sans Narrow"), url("../font/PTSansNarrow.woff2") format("woff2");
+}
+@font-face {
+	font-family: "PT Sans Narrow";
+	font-weight: 700;
+	src: url("../font/PTSansNarrow_b.woff2") format("woff2");
 }

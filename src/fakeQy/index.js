@@ -7,6 +7,7 @@ import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs
 import {
 	getBridge
 } from "../bridge/index.mjs";
+import {SheetData} from "../basic/sheetLoad.js";
 
 let demoBlobs = {};
 let demoModes = [];
@@ -34,37 +35,79 @@ stSwitch.forEach(function (e, i, a) {
 });
 
 // Standard demo switching
-let stDemo = $a("b.demo");
-stDemo.to = function (i) {
-	stDemo.forEach(function (e) {
-		e.classList.off("active");
-	});
-	if (i > -1) {
-		stDemo[i].classList.on("active");
+let demoPool = new SheetData();
+let stList = $e("span#demo-list"), stDemo = [];
+const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
+let getBlobFrom = async function (filename) {
+	let i = 0;
+	while (i < srcPaths.length) {
+		let e = srcPaths[i];
+		let response = await fetch(`${e}${filename}`);
+		if (response.status < 400) {
+			return response;
+		};
+		i ++;
 	};
+	console.error(`Loading of data ${filename} failed.`);
 };
-stDemo.forEach(function (e, i, a) {
-	e.addEventListener("click", async function () {
-		audioPlayer.pause();
-		if (!demoBlobs[e.title]?.midi) {
-			demoBlobs[e.title] = {};
-			audioPlayer.src = "about:blank";
-			demoBlobs[e.title].midi = await (await fetch(`./demo/${e.title}.mid`)).blob();
-			demoBlobs[e.title].wave = await (await fetch(`./demo/${e.title}.opus`)).blob();
+let codepointArray = function (string) {
+	let arr = new Uint16Array(string.length);
+	arr.forEach((e, i, a) => {
+		a[i] = string.charCodeAt(i);
+	});
+	return arr;
+};
+getBlobFrom(`list.tsv`).then(async (response) => {
+	await demoPool.load(await response.text());
+	//console.info(demoPool.data);
+	demoPool.data.forEach((e, i) => {
+		if (i) {
+			let space = document.createElement("span");
+			space.innerHTML = " ";
+			stList.appendChild(space);
+		} else {
+			stList.innerText = "";
 		};
-		audioPlayer.currentTime = 0;
-		visualizer.reset();
-		visualizer.loadFile(demoBlobs[e.title].midi);
-		if (audioBlob) {
-			URL.revokeObjectURL(audioBlob);
+		let demoChoice = document.createElement("b");
+		demoChoice.innerText = e.text;
+		demoChoice.title = e.file;
+		demoChoice.classList.on("demo");
+		stDemo.push(demoChoice);
+		stList.appendChild(demoChoice);
+	});
+	stDemo.to = function (i) {
+		stDemo.forEach(function (e) {
+			e.classList.off("active");
+		});
+		if (i > -1) {
+			stDemo[i].classList.on("active");
 		};
-		audioBlob = demoBlobs[e.title].wave;
-		audioPlayer.src = URL.createObjectURL(audioBlob);
-		if (demoModes[i]?.length > 0) {
-			visualizer.switchMode(demoModes[i]);
-		};
-		stDemo.to(i);
-		demoId = i;
+	};
+	stDemo.forEach(function (e, i, a) {
+		e.addEventListener("click", async function () {
+			audioPlayer.pause();
+			visualizer.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
+			if (!demoBlobs[e.title]?.midi) {
+				demoBlobs[e.title] = {};
+				audioPlayer.src = "about:blank";
+				demoBlobs[e.title].midi = await (await getBlobFrom(`${e.title}.mid`)).blob();
+				demoBlobs[e.title].wave = await (await getBlobFrom(`${e.title}.opus`)).blob();
+			};
+			audioPlayer.currentTime = 0;
+			visualizer.reset();
+			visualizer.loadFile(demoBlobs[e.title].midi);
+			if (audioBlob) {
+				URL.revokeObjectURL(audioBlob);
+			};
+			audioBlob = demoBlobs[e.title].wave;
+			audioPlayer.src = URL.createObjectURL(audioBlob);
+			if (demoModes[i]?.length > 0) {
+				visualizer.switchMode(demoModes[i]);
+			};
+			stDemo.to(i);
+			demoId = i;
+			visualizer.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
+		});
 	});
 });
 
@@ -83,7 +126,7 @@ visualizer.addEventListener("mode", function (ev) {
 // Open the files
 let midwIndicator = $e("#openMidw");
 let audioBlob;
-const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
+const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	useMidiBus = false;
@@ -93,14 +136,24 @@ $e("#openMidi").addEventListener("click", async function () {
 	if (fileSplit > -1) {
 		ext = file.name.slice(fileSplit + 1).toLowerCase();
 	};
-	if (ext == "syx") {
-		// Load SysEx blobs
-		visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
-	} else {
-		stDemo.to(-1);
-		visualizer.reset();
-		visualizer.loadFile(file);
-		demoId = 0;
+	switch (ext) {
+		case "syx": {
+			// Load SysEx blobs
+			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+			break;
+		};
+		case "s7e": {
+			// Load sound banks
+			visualizer.device.loadBank(ext, file);
+			break;
+		};
+		default: {
+			// Load MIDI files
+			stDemo.to(-1);
+			visualizer.reset();
+			visualizer.loadFile(file);
+			visualizer.device.initOnReset = false;
+		};
 	};
 });
 $e("#openAudio").addEventListener("click", async function () {
@@ -139,6 +192,7 @@ let dispCanv = $e("#qyScreen");
 let dispCtx = dispCanv.getContext("2d");
 let mixerView = false;
 dispCanv.addEventListener("wheel", function (ev) {
+	ev.preventDefault();
 	let ch = visualizer.getCh();
 	if (ev.deltaY > 0) {
 		visualizer.setCh(ch + 1);
@@ -195,7 +249,7 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
-		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId);
+		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId, location.hash == "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);

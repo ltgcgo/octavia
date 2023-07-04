@@ -1,7 +1,7 @@
 "use strict";
 
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
-import {OctaviaDevice, ccToPos} from "../state/index.mjs";
+import {ccToPos, dnToPos} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {customInterpreter} from "../state/utils.js";
@@ -132,7 +132,8 @@ let RootDisplay = class extends CustomEventSource {
 		let chKeyPr = []; // Pressed keys and their pressure
 		let chPitch = upThis.device.getPitch(); // All pitch bends
 		let chContr = upThis.device.getCcAll(); // All CC values
-		let chProgr = upThis.device.getProgram();
+		let chProgr = upThis.device.getProgram(); // All program values
+		let chType = upThis.device.getChType(); // All channel types
 		// Mimic strength variation
 		let writeStrength = this.device.getStrength();
 		writeStrength.forEach(function (e, i, a) {
@@ -164,6 +165,7 @@ let RootDisplay = class extends CustomEventSource {
 			chPitch,
 			chProgr,
 			chContr,
+			chType,
 			eventCount: events.length,
 			title: this.#titleName,
 			bitmap: this.device.getBitmap(),
@@ -177,7 +179,8 @@ let RootDisplay = class extends CustomEventSource {
 			tSig: this.getTimeSig(),
 			tempo: this.getTempo(),
 			noteBar: this.noteBar,
-			noteBeat: this.noteBeat
+			noteBeat: this.noteBeat,
+			ace: this.device.getAce()
 		};
 		return repObj;
 	};
@@ -253,5 +256,6 @@ let RootDisplay = class extends CustomEventSource {
 
 export {
 	RootDisplay,
-	ccToPos
+	ccToPos,
+	dnToPos
 };

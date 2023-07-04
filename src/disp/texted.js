@@ -1,36 +1,32 @@
 "use strict";
 
-let textedPitchBend = function (number) {
-	let result = Array.from("----");
-	if (number > 0) {
-		for (let c = 0; number > 0; c ++) {
-			result[c] = (number < 1024) ? "=" : ">";
-			number -= 2048;
+let arrowGen = function (charArr, value, border, unit) {
+	let boundLow = border - (unit >> 1), boundHi = border + (unit >> 1);
+	if (value > border) {
+		for (let c = 0; value > border; c ++) {
+			charArr[c] = (value < boundHi) ? "=" : ">";
+			value -= unit;
 		};
-	} else if (number < 0) {
-		for (let c = 3; number < 0; c --) {
-			result[c] = (number >= -1024) ? "=" : "<";
-			number += 2048;
+	} else if (value < border) {
+		for (let c = charArr.length - 1; value < border; c --) {
+			charArr[c] = (value >= boundLow) ? "=" : "<";
+			value += unit;
 		};
 	};
+};
+
+let textedPitchBend = function (number) {
+	let result = Array.from("----");
+	arrowGen(result, number, 0, 2048);
 	return result.join("");
 };
+
 let textedPanning = function (number) {
 	if (number == 128) {
 		return "<<>>";
 	};
 	let result = Array.from("----");
-	if (number > 64) {
-		for (let c = 0; number > 64; c ++) {
-			result[c] = (number < 72) ? "=" : ">";
-			number -= 16;
-		};
-	} else if (number < 64) {
-		for (let c = 3; number < 64; c --) {
-			result[c] = (number >= 56) ? "=" : "<";
-			number += 16;
-		};
-	};
+	arrowGen(result, number, 64, 16);
 	return result.join("");
 };
 
