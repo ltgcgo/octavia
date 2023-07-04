@@ -218,14 +218,14 @@ audioPlayer.onended = function () {
 };
 (async function () {
 	visualizer.reset();
-	let midiBlob = await (await fetch("./demo/KANDI8.mid")).blob();
+	let midiBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.mid")).blob();
 	demoBlobs.KANDI8 = {};
 	demoBlobs.KANDI8.midi = midiBlob;
 	visualizer.loadFile(midiBlob);
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
-	audioBlob = await (await fetch("./demo/KANDI8.opus")).blob();
+	audioBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 	textDisplay.innerHTML = `${"<br/>".repeat(23)}`;
