@@ -86,12 +86,10 @@ let VoiceBank = class {
 				break;
 			};
 			case "sd": {
-				if (msb == 96) {
-					args[0] = 121;
-				} else if (msb > 96 && msb < 100) {
+				if ((msb >> 1) == 40) {
 					args[2] |= 16;
-				} else if (msb == 104) {
-					args[0] = 120;
+				} else if (msb > 95 && msb < 100) {
+					args[2] |= 16;
 				};
 				break;
 			};
@@ -211,27 +209,37 @@ let VoiceBank = class {
 				break;
 			};
 			case 96: {
-				sect = (args[2] == 106 ? "AP-a" : "PF");
+				sect = args[2] == 106 ? "AP-a" : (args[2] >> 4 == 1 ? "SDg" : "PF");
 				if (args[2] > 63) {
 					baseShift = 63;
+				} else if (args[2] >> 4 == 1) {
+					baseShift = 16;
 				};
 				useLsb = 3;
 				break;
 			};
 			case 97: {
-				sect = "VL:";
+				sect = args[2] >> 4 == 1 ? "SDa" : "VL:";
 				useLsb = 3;
-				baseShift = 112;
+				if (args[2] >> 4 == 1) {
+					baseShift = 16;
+				} else {
+					baseShift = 112;
+				};
 				break;
 			};
 			case 98: {
-				sect = "SG-a";
+				sect = args[2] >> 4 == 1 ? "SDb" : "SG-a";
+				useLsb = 3;
+				baseShift = 16;
 				break;
 			};
 			case 99: {
-				sect = `DX`;
+				sect = args[2] >> 4 == 1 ? "SDc" : `DX`;
 				if (args[2] > 63) {
 					baseShift = 63;
+				} else if (args[2] >> 4 == 1) {
+					baseShift = 16;
 				};
 				useLsb = 3;
 				break;
@@ -240,8 +248,18 @@ let VoiceBank = class {
 				sect = `AN`;
 				if (args[2] > 63) {
 					baseShift = 63;
+				} else if (args[2] >> 4 == 1) {
+					baseShift = 16;
 				};
 				useLsb = 3;
+				break;
+			};
+			case 104:
+			case 105:
+			case 106:
+			case 107: {
+				sect = "SDd";
+				baseShift = 104;
 				break;
 			};
 			case 121: {
@@ -452,7 +470,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 96: {
-				standard = args[2] == 106 ? "AP" : "PF";
+				standard = args[2] == 106 ? "AP" : (args[2] >> 4 == 1 ? "SD" : "PF");
 				break;
 			};
 			case 97: {
