@@ -96,7 +96,7 @@ let MuDisplay = class extends RootDisplay {
 		super(new OctaviaDevice());
 		let upThis = this;
 		this.addEventListener("mode", function (ev) {
-			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
+			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;
@@ -360,8 +360,8 @@ let MuDisplay = class extends RootDisplay {
 				} else if (standard == "kr") {
 					useBm = this.sysBm.getBm(`st_korg`);
 				};
-				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
-					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
+				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56 || sum.chContr[chOff + ccToPos[0]] == 121 || (sum.chContr[chOff + ccToPos[0]] < 100 && sum.chContr[chOff + ccToPos[0]] >= 96))) {
+					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name);
 				};
 				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 126) {
 					useBm = this.sysBm.getBm("cat_smpl");
