@@ -85,6 +85,7 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case "g2":
 			case "sd": {
 				if ((msb >> 1) == 40) {
 					args[2] |= 16;

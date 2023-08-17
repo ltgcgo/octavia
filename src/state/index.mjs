@@ -40,10 +40,10 @@ const modeIdx = [
 	"krs", "s90es", "motif"
 ];
 const substList = [
-	[0, 0, 0, 0, 121, 0,   0, 82, 81, 96, 0, 0, 63, 63, 63],
+	[0, 0, 0, 0, 121, 0,   0, 82, 81, 97, 0, 0, 63, 63, 63],
 	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0, 0, 0,  0,  0]
 ];
-const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 104, 120, 122, 122, 127];
+const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 105, 120, 122, 122, 127];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -907,7 +907,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			// C/M: [22, CmdId]
 			// GS: [66, CmdId, HH, MM, LL, ...DD, Checksum]
 			if (msg[0] < 16) {
-				this.#seGs.run(msg, track, id);
+				if (msg[1] == 72) {
+					let sentCs = msg[msg.length - 1];
+					let calcCs = gsChecksum(msg.subarray(3, msg.length - 1));
+					if (sentCs == calcCs) {
+						this.#seGs.run(msg.subarray(0, msg.length - 1), track, id);
+					} else {
+						console.warn(`Bad SD checksum ${sentCs}. Should be ${calcCs}.`);
+					};
+				} else {
+					this.#seGs.run(msg, track, id);
+				};
 				//console.warn(`Unknown device SysEx!`);
 			} else {
 				let sentCs = msg[msg.length - 1];
@@ -3837,7 +3847,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					e && (upThis.#chActive[part] = 1);
 					upThis.#cc[chOff + ccToPos[32]] = e;
-					upThis.#chType[part] = this.setChType(part, ([32, 40].indexOf(e) > -1) ? this.CH_DRUMS : this.CH_MELODIC, this.#mode, true);
+					upThis.setChType(part, ([32, 40].indexOf(e) > -1) ? upThis.CH_DRUMS : upThis.CH_MELODIC, upThis.#mode, true);
 				}, () => {
 					e && (upThis.#chActive[part] = 1);
 					upThis.#prg[part] = e;
@@ -3898,10 +3908,118 @@ let OctaviaDevice = class extends CustomEventSource {
 				},][(offset + i) & 3] || (() => {}))();
 			});
 		});
+		// SD-90 part setup (part)
 		this.#seGs.add([0, 72, 18, 0, 0, 0, 0], (msg, track, id) => {
+			// SD-90 Native System On
 			upThis.switchMode("sd", true);
 			console.info(`MIDI reset: SD`);
-		});
+		})/*.add([0, 72, 18, 1, 0, 0], (msg, track, id) => {
+			// Master setup
+		}).add([0, 72, 18, 1, 0, 2], (msg, track, id) => {
+			// Master EQ
+		}).add([0, 72, 18, 2, 16, 0], (msg, track, id) => {
+			// Master volume
+		})*/.add([0, 72, 18, 16, 0], (msg, track, id) => {
+			// Part setup (global)
+			let type = msg[0] >> 5, channel = msg[0] & 31;
+			switch (type) {
+				case 0: {
+					// Global effects
+					console.warn(`Unknown SD-90 global effects message:\n%o`, msg);
+					break;
+				};
+				case 1: {
+					// Global part param setup
+					let part = upThis.chRedir(channel, track, true),
+					offset = msg[1], chOff = part * allocated.cc;
+					console.warn(`Unknown SD-90 CH${part + 1} setup param message:\n%o`, msg);
+					msg.subarray(2).forEach((e, i) => {
+						let pointer = offset + i;
+						if (pointer < 37) {
+							([() => {
+								// Receive channel
+							}, () => {
+								// Receive switch
+							}, 0, () => {
+								// Receive port
+							}, () => {
+								// cc0
+							}, () => {
+								// cc32
+							}, () => {
+								// PC#
+							}, () => {
+								// cc7
+							}, () => {
+								// cc10
+							}, () => {
+								// Coarse tune (±48)
+							}, () => {
+								// Fine tune
+							}, () => {
+								// Mono/poly
+							}, () => {
+								// cc68
+							}, () => {
+								// Pitch bend sensitivity
+							}, () => {
+								// cc65
+							}, () => {
+								// cc5 MSB
+							}, () => {
+								// cc5 LSB
+							}, () => {
+								// cc74
+							}, () => {
+								// cc71
+							}, () => {
+								// cc73
+							}, () => {
+								// cc72
+							}, 0, 0, 0, 0, 0, 0, 0, () => {
+								// Dry level
+							}, () => {
+								// cc93
+							}, () => {
+								// cc91
+							}, 0, 0, () => {
+								// cc75
+							}, () => {
+								// cc76
+							}, () => {
+								// cc77
+							}, () => {
+								// cc78
+							}][pointer]||(() => {}))();
+						} else if (pointer < 63) {
+							// Keyboard setup
+						} else if (pointer < 64) {
+							// GM2 set
+							if (upThis.#chType[part]) {
+								// Drums
+							} else {
+								// Melodic
+							};
+						} else {
+							console.warn(`Unknown SD-90 global CH${part + 1} param setup message:\n%o`, msg);
+						};
+					});
+					break;
+				};
+				case 2: {
+					// Global part MIDI setup
+					let part = upThis.chRedir(channel, track, true), offset = msg[1];
+					console.debug(`Unknown SD-90 global CH${part + 1} MIDI setup message:\n%o`, msg.subarray(2));
+					break;
+				};
+				default: {
+					// No one should use this...
+					console.warn(`Unknown SD-90 global part setup message:\n%o`, msg);
+				};
+			};
+		})/*.add([0, 72, 18, 17], (msg, track, id) => {
+			// Part setup (part)
+		})*/;
 	};
 };
 
