@@ -743,6 +743,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case 32: {
+						if (getDebugState()) {
+							console.debug(`${modeIdx[this.#mode]}, CH${part + 1} LSB: ${det.data[1]}`);
+						};
 						switch (this.#mode) {
 							case modeMap.s90es:
 							case modeMap.motif: {
@@ -3925,14 +3928,14 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (type) {
 				case 0: {
 					// Global effects
-					console.warn(`Unknown SD-90 global effects message:\n%o`, msg);
+					console.debug(`Unknown SD-90 global effects message:\n%o`, msg);
 					break;
 				};
 				case 1: {
 					// Global part param setup
 					let part = upThis.chRedir(channel, track, true),
 					offset = msg[1], chOff = part * allocated.cc;
-					console.warn(`Unknown SD-90 CH${part + 1} setup param message:\n%o`, msg);
+					//console.debug(`Unknown SD-90 CH${part + 1} setup param message:\n%o`, msg);
 					msg.subarray(2).forEach((e, i) => {
 						let pointer = offset + i;
 						if (pointer < 37) {
@@ -3944,52 +3947,96 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Receive port
 							}, () => {
 								// cc0
+								upThis.#cc[chOff + ccToPos[0]] = e;
+								switch (e) {
+									case 104:
+									case 105:
+									case 106:
+									case 107:
+									case 120: {
+										if (!upThis.#chType[part]) {
+											upThis.setChType(part, upThis.CH_DRUMS);
+										};
+										break;
+									};
+									default: {
+										if (upThis.#chType[part]) {
+											upThis.setChType(part, upThis.CH_MELODIC);
+										};
+									};
+								};
 							}, () => {
 								// cc32
+								upThis.#cc[chOff + ccToPos[32]] = e;
 							}, () => {
 								// PC#
+								upThis.#prg[part] = e;
 							}, () => {
 								// cc7
+								upThis.#cc[chOff + ccToPos[7]] = e;
 							}, () => {
 								// cc10
+								upThis.#cc[chOff + ccToPos[10]] = e;
 							}, () => {
 								// Coarse tune (±48)
 							}, () => {
 								// Fine tune
 							}, () => {
 								// Mono/poly
+								if (e < 2) {
+									upThis.#mono[part] = e;
+								};
 							}, () => {
 								// cc68
+								if (e < 2) {
+									upThis.#cc[chOff + ccToPos[68]] = e ? 127 : 0;
+								};
 							}, () => {
 								// Pitch bend sensitivity
 							}, () => {
 								// cc65
+								if (e < 2) {
+									upThis.#cc[chOff + ccToPos[65]] = e ? 127 : 0;
+								};
 							}, () => {
 								// cc5 MSB
+								upThis.#cc[chOff + ccToPos[5]] = (e & 15 << 4) | (upThis.#cc[chOff + ccToPos[5]] & 15);
 							}, () => {
 								// cc5 LSB
+								upThis.#cc[chOff + ccToPos[5]] = (e & 15) | ((upThis.#cc[chOff + ccToPos[5]] & 240) >> 4);
 							}, () => {
 								// cc74
+								upThis.#cc[chOff + ccToPos[74]] = e;
 							}, () => {
 								// cc71
+								upThis.#cc[chOff + ccToPos[71]] = e;
 							}, () => {
 								// cc73
+								upThis.#cc[chOff + ccToPos[73]] = e;
 							}, () => {
 								// cc72
+								upThis.#cc[chOff + ccToPos[72]] = e;
 							}, 0, 0, 0, 0, 0, 0, 0, () => {
 								// Dry level
+								upThis.#cc[chOff + ccToPos[128]] = e;
 							}, () => {
 								// cc93
+								upThis.#cc[chOff + ccToPos[93]] = e;
 							}, () => {
 								// cc91
+								upThis.#cc[chOff + ccToPos[91]] = e;
 							}, 0, 0, () => {
 								// cc75
+								upThis.#cc[chOff + ccToPos[75]] = e;
 							}, () => {
 								// cc76
+								upThis.#cc[chOff + ccToPos[76]] = e;
 							}, () => {
 								// cc77
+								upThis.#cc[chOff + ccToPos[77]] = e;
 							}, () => {
 								// cc78
+								upThis.#cc[chOff + ccToPos[78]] = e;
 							}][pointer]||(() => {}))();
 						} else if (pointer < 63) {
 							// Keyboard setup
@@ -3997,11 +4044,13 @@ let OctaviaDevice = class extends CustomEventSource {
 							// GM2 set
 							if (upThis.#chType[part]) {
 								// Drums
+								upThis.#cc[chOff + ccToPos[0]] = 104 | e;
 							} else {
 								// Melodic
+								upThis.#cc[chOff + ccToPos[0]] = 96 | e;
 							};
 						} else {
-							console.warn(`Unknown SD-90 global CH${part + 1} param setup message:\n%o`, msg);
+							console.debug(`Unknown SD-90 global CH${part + 1} param setup message:\n%o`, msg);
 						};
 					});
 					break;
