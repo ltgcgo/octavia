@@ -40,8 +40,9 @@ let TuiDisplay = class extends RootDisplay {
 	#maxPoly = 0;
 	constructor() {
 		super(new OctaviaDevice);
-		this.addEventListener("reset", () => {
-			this.#maxPoly = 0;
+		let upThis = this;
+		upThis.addEventListener("reset", () => {
+			upThis.#maxPoly = 0;
 		});
 	};
 	render(time, ctx) {
@@ -78,10 +79,10 @@ let TuiDisplay = class extends RootDisplay {
 			let metaLine = 0,
 			st = fields.length - 1;
 			while (st >= line) {
-				if (sum.texts[metaLine]?.length) {
-					fields[st] = (sum.texts[metaLine] || "").padEnd(100, " ");
+				if (sum.texts[metaLine]?.data.length) {
+					fields[st] = `${sum.texts[metaLine].type}: ${(sum.texts[metaLine].data || "")}`.padEnd(100, " ");
 				};
-				if (sum.texts[metaLine]?.length > 0 || sum.texts[metaLine]?.length == undefined) {
+				if (sum.texts[metaLine]?.data.length > 0 || sum.texts[metaLine]?.data.length == undefined) {
 					st --;
 				};
 				metaLine ++;

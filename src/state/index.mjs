@@ -1452,6 +1452,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.userBank.strictMode = true;
 		// Prevent bank readers from getting stalled
 		this.userBank.load(`MSB\tPRG\tLSB\tNME\n062\t000\t000\t\n122\t000\t000\t\n122\t001\t000\t\n122\t002\t000\t\n122\t003\t000\t\n122\t004\t000\t\n122\t005\t000\t\n122\t006\t000\t`);
+		this.addEventListener("metacommit", function (ev) {
+			//upThis.dispatchEvent("metacommit", ev.data);
+			let {data} = ev;
+			if (upThis.#metaTexts[0]?.type == data.type && upThis.#metaTexts[0]?.amend) {
+				upThis.#metaTexts[0].amend = data.amend;
+				upThis.#metaTexts[0].data += data.data;
+			} else {
+				upThis.#metaTexts.unshift(data);
+			};
+		});
 		// Metadata events
 		// Should be moved to somewhere else
 		this.#metaRun[1] = function (data) {
@@ -1459,28 +1469,47 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (data.slice(0, 2)) {
 				case "@I": {
 					this.#modeKaraoke = true;
-					this.#metaTexts.unshift(`Kar.Info: ${data.slice(2)}`);
+					this.dispatchEvent("metacommit", {
+						"type": "Kar.Info",
+						"data": data.slice(2)?.trimLeft()
+					});
 					break;
 				};
 				case "@K": {
 					this.#modeKaraoke = true;
-					this.#metaTexts.unshift(`Karaoke mode active.`);
+					//this.#metaTexts.unshift(`Karaoke mode active.`);
+					this.dispatchEvent("metacommit", {
+						"type": "Kar.Mode",
+						"data": data.slice(2)?.trimLeft()
+					});
 					console.debug(`Karaoke mode active: ${data.slice(2)}`);
 					break;
 				};
 				case "@L": {
 					this.#modeKaraoke = true;
-					this.#metaTexts.unshift(`Language: ${data.slice(2)}`);
+					//this.#metaTexts.unshift(`Language: ${data.slice(2)}`);
+					this.dispatchEvent("metacommit", {
+						"type": "Kar.Lang",
+						"data": data.slice(2)?.trimLeft()
+					});
 					break;
 				};
 				case "@T": {
 					this.#modeKaraoke = true;
-					this.#metaTexts.unshift(`Ka.Title: ${data.slice(2)}`);
+					//this.#metaTexts.unshift(`Ka.Title: ${data.slice(2)}`);
+					this.dispatchEvent("metacommit", {
+						"type": "KarTitle",
+						"data": data.slice(2)?.trimLeft()
+					});
 					break;
 				};
 				case "@V": {
 					this.#modeKaraoke = true;
-					this.#metaTexts.unshift(`Kara.Ver: ${data.slice(2)}`);
+					//this.#metaTexts.unshift(`Kara.Ver: ${data.slice(2)}`);
+					this.dispatchEvent("metacommit", {
+						"type": "Kar.Ver.",
+						"data": data.slice(2)?.trimLeft()
+					});
 					break;
 				};
 				case "XF": {
@@ -1489,25 +1518,34 @@ let OctaviaDevice = class extends CustomEventSource {
 					switch (dataArr[0]) {
 						case "hd": {
 							dataArr.slice(1).forEach((e, i) => {
-								e.length && this.#metaTexts.unshift(`${[
-									"SongDate", "SnRegion", "SongCat.", "SongBeat",
-									"SongInst", "Sn.Vocal", "SongCmp.", "SongLrc.",
-									"SongArr.", "SongPerf", "SongPrg.", "SongTags"
-								][i]}: ${e}`);
+								e.length && this.dispatchEvent("metacommit", {
+									"type": [
+										"XfSngDte", "XfSngRgn", "XfSngCat", "XfSongBt",
+										"XfSngIns", "XfSngVoc", "XfSngCmp", "XfSngLrc",
+										"XfSngArr", "XfSngPer", "XfSngPrg", "XfSngTag"
+									][i],
+									"data": e
+								});
 							});
 							break;
 						};
 						case "ln": {
 							dataArr.slice(1).forEach((e, i) => {
-								e.length && this.#metaTexts.unshift(`${[
-									"Kar.Lang", "Kar.Name", "Kar.Cmp.", "Kar.Lrc.",
-									"kar.Arr.", "Kar.Perf", "Kar.Prg."
-								][i]}: ${e}`);
+								e.length && this.dispatchEvent("metacommit", {
+									"type": [
+										"XfKarLng", "XfKarNme", "XfKarCmp", "XfKarLrc",
+										"XfKarArr", "XfKarPer", "XfKarPrg"
+									][i],
+									"data": e
+								});
 							});
 							break;
 						};
 						default: {
-							this.#metaTexts.unshift(`XGF_Data: ${data}`);
+							this.dispatchEvent("metacommit", {
+								"type": "XfUnData",
+								"data": data
+							});
 						};
 					};
 					break;
@@ -1516,47 +1554,104 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (this.#modeKaraoke) {
 						if (data[0] == "\\") {
 							// New section
-							this.#metaTexts.unshift(`@ ${data.slice(1)}`);
+							//this.#metaTexts.unshift(`@ ${data.slice(1)}`);
+							this.dispatchEvent("metacommit", {
+								"type": "KarLyric",
+								"data": "",
+								"amend": false
+							});
+							this.dispatchEvent("metacommit", {
+								"type": "KarLyric",
+								"data": data.slice(1),
+								"amend": true
+							});
 						} else if (data[0] == "/") {
 							// New line
-							this.#metaTexts.unshift(data.slice(1));
+							//this.#metaTexts.unshift(data.slice(1));
+							this.dispatchEvent("metacommit", {
+								"type": "KarLyric",
+								"data": "",
+								"amend": false
+							});
+							this.dispatchEvent("metacommit", {
+								"type": "KarLyric",
+								"data": data.slice(1),
+								"amend": true
+							});
 						} else {
 							// Normal append
-							this.#metaTexts[0] += data;
+							//this.#metaTexts[0] += data;
+							this.dispatchEvent("metacommit", {
+								"type": "KarLyric",
+								"data": data,
+								"amend": true
+							});
 						};
 					} else {
-						this.#metaTexts[0] = data;
-						this.#metaTexts.unshift("");
+						//this.#metaTexts[0] = data;
+						//this.#metaTexts.unshift("");
+						this.dispatchEvent("metacommit", {
+							"type": "Cmn.Text",
+							"data": data
+						});
 					};
 				};
 			};
 		};
 		this.#metaRun[2] = function (data) {
-			this.#metaTexts.unshift(`Copyrite: ${data}`);
+			//this.#metaTexts.unshift(`Copyrite: ${data}`);
+			this.dispatchEvent("metacommit", {
+				"type": "Copyrite",
+				"data": data
+			});
 		};
 		this.#metaRun[3] = function (data, track) {
 			// Filter overly annoying meta events
 			if (track < 1 && this.#metaChannel < 1) {
-				this.#metaTexts.unshift(`TrkTitle: ${data}`);
+				//this.#metaTexts.unshift(`TrkTitle: ${data}`);
+				this.dispatchEvent("metacommit", {
+					"type": "TrkTitle",
+					"data": data
+				});
 			};
 		};
 		this.#metaRun[4] = function (data, track) {
 			//if (track < 1 && this.#metaChannel < 1) {
-				this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}Instrmnt: ${data}`);
+				//this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}Instrmnt: ${data}`);
 			//};
+			this.dispatchEvent("metacommit", {
+				"type": "Instrmnt",
+				"data": data
+			});
 		};
 		this.#metaRun[5] = function (data) {
 			if (data.trim() == "") {
-				this.#metaTexts.unshift("");
+				this.dispatchEvent("metacommit", {
+					"type": "C.Lyrics",
+					"data": "",
+					"amend": false
+				});
 			} else {
-				this.#metaTexts[0] += `${data}`;
+				this.dispatchEvent("metacommit", {
+					"type": "C.Lyrics",
+					"data": data,
+					"amend": true
+				});
 			};
 		};
 		this.#metaRun[6] = function (data) {
-			this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}C.Marker: ${data}`);
+			//this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}C.Marker: ${data}`);
+			this.dispatchEvent("metacommit", {
+				"type": "C.Marker",
+				"data": data
+			});
 		};
 		this.#metaRun[7] = function (data) {
-			this.#metaTexts.unshift(`CuePoint: ${data}`);
+			//this.#metaTexts.unshift(`CuePoint: ${data}`);
+			this.dispatchEvent("metacommit", {
+				"type": "CuePoint",
+				"data": data
+			});
 		};
 		this.#metaRun[32] = function (data) {
 			this.#metaChannel = data[0] + 1;
