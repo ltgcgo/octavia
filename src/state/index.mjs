@@ -1477,7 +1477,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case "@K": {
 					this.#modeKaraoke = true;
-					//this.#metaTexts.unshift(`Karaoke mode active.`);
 					this.dispatchEvent("metacommit", {
 						"type": "Kar.Mode",
 						"data": data.slice(2)?.trimLeft()
@@ -1487,7 +1486,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case "@L": {
 					this.#modeKaraoke = true;
-					//this.#metaTexts.unshift(`Language: ${data.slice(2)}`);
 					this.dispatchEvent("metacommit", {
 						"type": "Kar.Lang",
 						"data": data.slice(2)?.trimLeft()
@@ -1496,7 +1494,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case "@T": {
 					this.#modeKaraoke = true;
-					//this.#metaTexts.unshift(`Ka.Title: ${data.slice(2)}`);
 					this.dispatchEvent("metacommit", {
 						"type": "KarTitle",
 						"data": data.slice(2)?.trimLeft()
@@ -1505,7 +1502,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case "@V": {
 					this.#modeKaraoke = true;
-					//this.#metaTexts.unshift(`Kara.Ver: ${data.slice(2)}`);
 					this.dispatchEvent("metacommit", {
 						"type": "Kar.Ver.",
 						"data": data.slice(2)?.trimLeft()
@@ -1554,7 +1550,6 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (this.#modeKaraoke) {
 						if (data[0] == "\\") {
 							// New section
-							//this.#metaTexts.unshift(`@ ${data.slice(1)}`);
 							this.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": "",
@@ -1567,7 +1562,6 @@ let OctaviaDevice = class extends CustomEventSource {
 							});
 						} else if (data[0] == "/") {
 							// New line
-							//this.#metaTexts.unshift(data.slice(1));
 							this.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": "",
@@ -1589,7 +1583,6 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 					} else {
 						//this.#metaTexts[0] = data;
-						//this.#metaTexts.unshift("");
 						this.dispatchEvent("metacommit", {
 							"type": "Cmn.Text",
 							"data": data
@@ -1599,7 +1592,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		this.#metaRun[2] = function (data) {
-			//this.#metaTexts.unshift(`Copyrite: ${data}`);
 			this.dispatchEvent("metacommit", {
 				"type": "Copyrite",
 				"data": data
@@ -1608,7 +1600,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#metaRun[3] = function (data, track) {
 			// Filter overly annoying meta events
 			if (track < 1 && this.#metaChannel < 1) {
-				//this.#metaTexts.unshift(`TrkTitle: ${data}`);
 				this.dispatchEvent("metacommit", {
 					"type": "TrkTitle",
 					"data": data
@@ -1640,14 +1631,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		this.#metaRun[6] = function (data) {
-			//this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}C.Marker: ${data}`);
 			this.dispatchEvent("metacommit", {
 				"type": "C.Marker",
 				"data": data
 			});
 		};
 		this.#metaRun[7] = function (data) {
-			//this.#metaTexts.unshift(`CuePoint: ${data}`);
 			this.dispatchEvent("metacommit", {
 				"type": "CuePoint",
 				"data": data
@@ -2219,9 +2208,17 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				});
 				if (timeNow >= upThis.#convertLastSyllable) {
-					upThis.#metaTexts.unshift("SG Lyric: ");
+					this.dispatchEvent("metacommit", {
+						"type": "SGLyrics",
+						"data": "",
+						"amend": false
+					});
 				};
-				upThis.#metaTexts[0] += `${getSgKana(vocal)}`;
+				this.dispatchEvent("metacommit", {
+					"type": "SGLyrics",
+					"data": `${getSgKana(vocal)}`,
+					"amend": true
+				});
 				upThis.#convertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
 				if (getDebugState()) {
 					console.debug(`${dPref}vocals: ${vocal}`);
