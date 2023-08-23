@@ -1562,7 +1562,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#metaChannel = data[0] + 1;
 		};
 		this.#metaRun[33] = function (data, track) {
-			console.debug(`Track ${track} requests to get assigned to output ${data}.`);
+			//console.debug(`Track ${track} requests to get assigned to output ${data}.`);
 			upThis.#trkAsReq[track] = data + 1;
 		};
 		this.#metaRun[81] = function (data, track) {
@@ -1592,7 +1592,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seCs = new BinaryMatch("Casio");
 		// Notifies unrecognized SysEx strings with their vendors
 		let syxDefaultErr = function (msg) {
-			console.info(`Unrecognized SysEx in "${this.name}" set.`, msg);
+			console.info(`Unrecognized SysEx in "${this.name}" set.\n%o`, msg);
 		};
 		this.#seUnr.default = syxDefaultErr;
 		this.#seUr.default = syxDefaultErr;

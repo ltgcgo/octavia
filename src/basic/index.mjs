@@ -213,6 +213,9 @@ let RootDisplay = class extends CustomEventSource {
 		this.device.addEventListener("screen", function (ev) {
 			upThis.dispatchEvent("screen", ev.data);
 		});
+		this.device.addEventListener("metacommit", function (ev) {
+			upThis.dispatchEvent("metacommit", ev.data);
+		});
 		this.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;
