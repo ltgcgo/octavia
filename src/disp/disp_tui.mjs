@@ -84,7 +84,7 @@ let TuiDisplay = class extends RootDisplay {
 			st = fields.length - 1;
 			while (st >= line) {
 				if (sum.texts[metaLine]?.data.length) {
-					fields[st] = `${sum.texts[metaLine].type}: ${(sum.texts[metaLine].data || "")}`.padEnd(100, " ");
+					fields[st] = `${sum.texts[metaLine].mask ? "        " : sum.texts[metaLine].type.padStart(8, " ")}: ${(sum.texts[metaLine].data || "")}`.padEnd(100, " ");
 				};
 				if (sum.texts[metaLine]?.data.length > 0 || sum.texts[metaLine]?.data.length == undefined) {
 					st --;

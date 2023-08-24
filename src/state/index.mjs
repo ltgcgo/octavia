@@ -1230,101 +1230,103 @@ let OctaviaDevice = class extends CustomEventSource {
 	init(type = 0) {
 		// Type 0 is full reset
 		// Type 1 is almost-full reset
+		let upThis = this;
 		// Full reset, except the loaded banks
-		this.dispatchEvent("mode", "?");
-		this.#mode = 0;
-		this.#subMsb = 0;
-		this.#subLsb = 0;
-		this.#metaChannel = 0;
-		this.#chActive.fill(0);
-		this.#cc.fill(0);
-		this.#ace.fill(0);
-		this.#prg.fill(0);
-		this.#velo.fill(0);
-		this.#poly.fill(0);
-		this.#rawStrength.fill(0);
-		this.#pitch.fill(0);
-		this.#nrpn.fill(0);
-		this.#drum.fill(0);
-		this.#masterVol = 100;
-		this.#metaTexts = [];
-		this.#noteLength = 500;
-		this.#convertLastSyllable = 0;
-		this.#letterExpire = 0;
-		this.#letterDisp = "";
-		this.#bitmapExpire = 0;
-		this.#bitmapPage = 0;
-		this.#bitmap.fill(0);
-		this.#modeKaraoke = false;
-		this.#selectPort = 0;
-		this.#receiveRS = true;
+		upThis.dispatchEvent("mode", "?");
+		upThis.#mode = 0;
+		upThis.#subMsb = 0;
+		upThis.#subLsb = 0;
+		upThis.#metaChannel = 0;
+		upThis.#chActive.fill(0);
+		upThis.#cc.fill(0);
+		upThis.#ace.fill(0);
+		upThis.#prg.fill(0);
+		upThis.#velo.fill(0);
+		upThis.#poly.fill(0);
+		upThis.#rawStrength.fill(0);
+		upThis.#pitch.fill(0);
+		upThis.#nrpn.fill(0);
+		upThis.#drum.fill(0);
+		upThis.#masterVol = 100;
+		upThis.#metaTexts = [];
+		upThis.#noteLength = 500;
+		upThis.#convertLastSyllable = 0;
+		upThis.#letterExpire = 0;
+		upThis.#letterDisp = "";
+		upThis.#bitmapExpire = 0;
+		upThis.#bitmapPage = 0;
+		upThis.#bitmap.fill(0);
+		upThis.#modeKaraoke = false;
+		upThis.#selectPort = 0;
+		upThis.#receiveRS = true;
 		// Reset MIDI receive channel
-		this.#chReceive.forEach(function (e, i, a) {
+		upThis.#chReceive.forEach(function (e, i, a) {
 			a[i] = i;
 		});
-		this.buildRchTree();
+		upThis.buildRchTree();
 		// Reset channel redirection
 		if (type == 0) {
-			this.#trkRedir.fill(0);
-			this.#trkAsReq.fill(0);
+			upThis.#trkRedir.fill(0);
+			upThis.#trkAsReq.fill(0);
 		};
 		// Channel 10 to drum set
-		this.#cc[allocated.cc * 9] = drumMsb[0];
-		this.#cc[allocated.cc * 25] = drumMsb[0];
-		this.#cc[allocated.cc * 41] = drumMsb[0];
-		this.#cc[allocated.cc * 57] = drumMsb[0];
+		upThis.#cc[allocated.cc * 9] = drumMsb[0];
+		upThis.#cc[allocated.cc * 25] = drumMsb[0];
+		upThis.#cc[allocated.cc * 41] = drumMsb[0];
+		upThis.#cc[allocated.cc * 57] = drumMsb[0];
 		// Channel types
-		this.#chType.fill(this.CH_MELODIC);
-		this.#chType[9] = this.CH_DRUM1;
-		this.#chType[25] = this.CH_DRUM3;
-		this.#chType[41] = this.CH_DRUMS;
-		this.#chType[57] = this.CH_DRUMS;
-		this.#chType[73] = this.CH_DRUM5;
-		this.#chType[89] = this.CH_DRUM7;
-		this.#chType[105] = this.CH_DRUMS;
-		this.#chType[121] = this.CH_DRUMS;
+		upThis.#chType.fill(upThis.CH_MELODIC);
+		upThis.#chType[9] = upThis.CH_DRUM1;
+		upThis.#chType[25] = upThis.CH_DRUM3;
+		upThis.#chType[41] = upThis.CH_DRUMS;
+		upThis.#chType[57] = upThis.CH_DRUMS;
+		upThis.#chType[73] = upThis.CH_DRUM5;
+		upThis.#chType[89] = upThis.CH_DRUM7;
+		upThis.#chType[105] = upThis.CH_DRUMS;
+		upThis.#chType[121] = upThis.CH_DRUMS;
 		// Reset MT-32 user patch and timbre storage
-		this.#cmPatch.fill(0);
-		this.#cmTimbre.fill(0);
-		this.#cmTPatch.fill(0);
-		this.#cmTTimbre.fill(0);
-		this.#bnCustom.fill(0);
+		upThis.#cmPatch.fill(0);
+		upThis.#cmTimbre.fill(0);
+		upThis.#cmTPatch.fill(0);
+		upThis.#cmTTimbre.fill(0);
+		upThis.#bnCustom.fill(0);
 		// Reset EFX base registers
-		this.#efxBase.fill(0);
+		upThis.#efxBase.fill(0);
+		upThis.#efxTo.fill(0);
 		// Reset AI EFX display name
-		this.aiEfxName = "";
+		upThis.aiEfxName = "";
 		// Reset MT-32 user bank
-		this.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
+		upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
 		for (let ch = 0; ch < allocated.ch; ch ++) {
 			let chOff = ch * allocated.cc;
 			// Reset to full
-			this.#cc[chOff + ccToPos[7]] = 100; // Volume
-			this.#cc[chOff + ccToPos[11]] = 127; // Expression
+			upThis.#cc[chOff + ccToPos[7]] = 100; // Volume
+			upThis.#cc[chOff + ccToPos[11]] = 127; // Expression
 			// Reset to centre
-			this.#cc[chOff + ccToPos[10]] = 64; // Pan
-			this.#cc[chOff + ccToPos[71]] = 64; // Resonance
-			this.#cc[chOff + ccToPos[72]] = 64; // Release Time
-			this.#cc[chOff + ccToPos[73]] = 64; // Attack Time
-			this.#cc[chOff + ccToPos[74]] = 64; // Brightness
-			this.#cc[chOff + ccToPos[75]] = 64; // Decay Time
-			this.#cc[chOff + ccToPos[76]] = 64; // Vibrato Rate
-			this.#cc[chOff + ccToPos[77]] = 64; // Vibrato Depth
-			this.#cc[chOff + ccToPos[78]] = 64; // Vibrato Delay
+			upThis.#cc[chOff + ccToPos[10]] = 64; // Pan
+			upThis.#cc[chOff + ccToPos[71]] = 64; // Resonance
+			upThis.#cc[chOff + ccToPos[72]] = 64; // Release Time
+			upThis.#cc[chOff + ccToPos[73]] = 64; // Attack Time
+			upThis.#cc[chOff + ccToPos[74]] = 64; // Brightness
+			upThis.#cc[chOff + ccToPos[75]] = 64; // Decay Time
+			upThis.#cc[chOff + ccToPos[76]] = 64; // Vibrato Rate
+			upThis.#cc[chOff + ccToPos[77]] = 64; // Vibrato Depth
+			upThis.#cc[chOff + ccToPos[78]] = 64; // Vibrato Delay
 			// Extra default values
-			this.#cc[chOff + ccToPos[91]] = 40; // Reverb
+			upThis.#cc[chOff + ccToPos[91]] = 40; // Reverb
 			// RPN/NRPN to null
-			this.#cc[chOff + ccToPos[101]] = 127;
-			this.#cc[chOff + ccToPos[100]] = 127;
-			this.#cc[chOff + ccToPos[99]] = 127;
-			this.#cc[chOff + ccToPos[98]] = 127;
+			upThis.#cc[chOff + ccToPos[101]] = 127;
+			upThis.#cc[chOff + ccToPos[100]] = 127;
+			upThis.#cc[chOff + ccToPos[99]] = 127;
+			upThis.#cc[chOff + ccToPos[98]] = 127;
 			// RPN reset
 			let rpnOff = ch * allocated.rpn;
-			this.#rpn[rpnOff] = 2; // Pitch bend sensitivity
-			this.#rpn[rpnOff + 1] = 64; // Fine tune MSB
-			this.#rpn[rpnOff + 2] = 0; // Fine tune LSB
-			this.#rpn[rpnOff + 3] = 64; // Coarse tune MSB
-			this.#rpn[rpnOff + 4] = 0; // Mod sensitivity MSB
-			this.#rpn[rpnOff + 5] = 0; // Mod sensitivity LSB
+			upThis.#rpn[rpnOff] = 2; // Pitch bend sensitivity
+			upThis.#rpn[rpnOff + 1] = 64; // Fine tune MSB
+			upThis.#rpn[rpnOff + 2] = 0; // Fine tune LSB
+			upThis.#rpn[rpnOff + 3] = 64; // Coarse tune MSB
+			upThis.#rpn[rpnOff + 4] = 0; // Mod sensitivity MSB
+			upThis.#rpn[rpnOff + 5] = 0; // Mod sensitivity LSB
 			// NRPN drum section reset
 		};
 		return;
@@ -1469,6 +1471,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Metadata events
 		// Should be moved to somewhere else
 		this.#metaRun[1] = function (data) {
+			data = data.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
 			// Normal text
 			switch (data.slice(0, 2)) {
 				case "@I": {
@@ -1569,11 +1572,13 @@ let OctaviaDevice = class extends CustomEventSource {
 							this.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": "",
+								"mask": true,
 								"amend": false
 							});
 							this.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": data.slice(1),
+								"mask": true,
 								"amend": true
 							});
 						} else {
@@ -1587,9 +1592,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 					} else {
 						//this.#metaTexts[0] = data;
-						this.dispatchEvent("metacommit", {
-							"type": "Cmn.Text",
-							"data": data
+						data.split("\n").forEach((e, i) => {
+							this.dispatchEvent("metacommit", {
+								"type": "Cmn.Text",
+								"data": e,
+								"mask": i != 0
+							});
 						});
 					};
 				};
