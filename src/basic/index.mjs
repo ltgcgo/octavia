@@ -180,7 +180,8 @@ let RootDisplay = class extends CustomEventSource {
 			tempo: this.getTempo(),
 			noteBar: this.noteBar,
 			noteBeat: this.noteBeat,
-			ace: this.device.getAce()
+			ace: this.device.getAce(),
+			efxSink: this.device.getEffectSink()
 		};
 		return repObj;
 	};

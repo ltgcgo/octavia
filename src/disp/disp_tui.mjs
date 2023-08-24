@@ -65,7 +65,11 @@ let TuiDisplay = class extends RootDisplay {
 				let chOffset = i * ccToPos.length;
 				if (line < fields.length - 5 && i >= (self.minCh || 0)) {
 					let voiceName = upThis.getChVoice(i);
-					fields[line] = `${(i + 1).toString().padStart(2, "0")}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${sum.chType[i]} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]}${map[sum.chContr[chOffset + ccToPos[71]] >> 1]}${(sum.chContr[chOffset + ccToPos[65]] >> 6) ? map[sum.chContr[chOffset + ccToPos[5]] >> 1] : " "}${sum.ace[0] ? map[upThis.device.getChAce(i, 0) >> 1] : " "}${sum.ace[1] ? map[upThis.device.getChAce(i, 1) >> 1] : " "} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
+					let partName = (i + 1).toString().padStart(2, "0");
+					if (sum.efxSink[i]) {
+						partName = `<u>${partName}</u>`;
+					};
+					fields[line] = `${partName}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${sum.chType[i]} ${map[sum.chContr[chOffset + ccToPos[7]] >> 1]}${map[sum.chContr[chOffset + ccToPos[11]] >> 1]}${waveMap[sum.chContr[chOffset + ccToPos[1]] >> 5]} ${map[sum.chContr[chOffset + ccToPos[91]] >> 1]}${map[sum.chContr[chOffset + ccToPos[93]] >> 1]}${map[sum.chContr[chOffset + ccToPos[94]] >> 1]}${map[sum.chContr[chOffset + ccToPos[74]] >> 1]}${map[sum.chContr[chOffset + ccToPos[71]] >> 1]}${(sum.chContr[chOffset + ccToPos[65]] >> 6) ? map[sum.chContr[chOffset + ccToPos[5]] >> 1] : " "}${sum.ace[0] ? map[upThis.device.getChAce(i, 0) >> 1] : " "}${sum.ace[1] ? map[upThis.device.getChAce(i, 1) >> 1] : " "} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(sum.chContr[chOffset + ccToPos[10]])}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
 						if (e1.v > 0) {
 							fields[line] += ` <span style="opacity:${Math.round(e1.v / 1.27) / 100}" class="${{4: "state-hold"}[e1.s] || ""}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;

@@ -200,6 +200,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
 	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
+	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#masterVol = 100;
@@ -1161,6 +1162,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	setEffectType(slot = 0, msb, lsb) {
 		this.setEffectTypeRaw(slot, false, msb);
 		this.setEffectTypeRaw(slot, true, lsb);
+	};
+	getEffectSink() {
+		return this.#efxTo;
 	};
 	setLetterDisplay(data, source, offset = 0, delay = 3200) {
 		let upThis = this,
@@ -2777,6 +2781,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// GS part EFX toggle
 						console.debug(`${dPref}EFX: o${["ff", "n"][e]}`);
+						upThis.#efxTo[part] = e;
 					}][offset + i - 32]();
 				});
 			} else {
