@@ -19,7 +19,8 @@ HTMLElement.prototype.$a = function (selector) {
 };
 self.Alpine = Alpine;
 
-let visualizer = new Cambiare($e(".cambiare"));
+let audioFilePlayer = $e("#audioFilePlayer"),
+visualizer = new Cambiare($e(".cambiare"), audioFilePlayer);
 
 Alpine.store("play", "smf");
 Alpine.store("sound", "file");
@@ -32,6 +33,27 @@ Alpine.store("demo", [{
 	file: "about:blank"
 }]);
 
+audioFilePlayer.addEventListener("ended", () => {
+	audioFilePlayer.currentTime = 0;
+	visualizer.reset();
+});
+
+const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
+let getBlobFrom = async function (filename) {
+	let i = 0;
+	while (i < srcPaths.length) {
+		let e = srcPaths[i];
+		let response = await fetch(`${e}${filename}`);
+		if (response.status < 400) {
+			return response;
+		};
+		i ++;
+	};
+	console.error(`Loading of data ${filename} failed.`);
+};
+
+let audioUri;
+
 self.gMode = async function (mode) {
 	Alpine.store("deviceMode", mode);
 };
@@ -42,6 +64,17 @@ self.gPort = async function (port) {
 	Alpine.store("startPort", port);
 };
 self.gDemo = async function ({file, id}) {
+	await audioFilePlayer.pause();
+	let midiBlob = await(await getBlobFrom(`${file}.mid`)).blob(),
+	audioBlob = await(await getBlobFrom(`${file}.opus`)).blob();
+	visualizer.reset();
+	await visualizer.loadFile(await midiBlob);
+	if (audioUri) {
+		URL.revokeObjectURL(audioUri);
+	};
+	audioUri = URL.createObjectURL(audioBlob);
+	audioFilePlayer.currentTime = 0;
+	audioFilePlayer.src = audioUri;
 	Alpine.store("activeDemo", id);
 };
 
@@ -65,19 +98,6 @@ self.formatTime = function (seconds, withMs = false) {
 
 let demoPool = new SheetData();
 (async () => {
-	const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
-	let getBlobFrom = async function (filename) {
-		let i = 0;
-		while (i < srcPaths.length) {
-			let e = srcPaths[i];
-			let response = await fetch(`${e}${filename}`);
-			if (response.status < 400) {
-				return response;
-			};
-			i ++;
-		};
-		console.error(`Loading of data ${filename} failed.`);
-	};
 	demoPool.load(await (await getBlobFrom(`list.tsv`)).text());
 	Alpine.store("demo", demoPool.data);
 })();

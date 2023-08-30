@@ -1,5 +1,6 @@
 div.cambiare {
 	font-family: "PT Sans Narrow";
+	font-size: 26px;
 	width: 100vw;
 	height: 100vh;
 	display: grid;
@@ -7,14 +8,58 @@ div.cambiare {
 	justify-content: center;
 	background: #000;
 }
-
 div.cambiare > div.cambiare-container {
 	overflow: hidden;
 }
 
+
+div.cambiare-canvas {
+	--background-color: #222;
+	--foreground-color: #fff;
+	--accent-color: #9efaa0;
+}
 div.cambiare div.cambiare-canvas {
-	background: #222;
+	background: var(--background-color);
+	color: var(--foreground-color);
 	width: 1920px;
 	height: 1080px;
 	transform-origin: 0 0;
+}
+div.cambiare-canvas > div {
+	display: inline-block;
+	position: absolute;
+	/*background: #fff5;*/
+	width: 1896px;
+	left: 12px;
+}
+div.cambiare-canvas span {
+	display: inline-block;
+}
+div.cambiare-canvas span.field {
+	position: absolute;
+}
+div.cambiare-canvas span.field-label {
+	color: var(--accent-color);
+}
+div.cambiare-canvas span.field-key {
+	color: var(--accent-color);
+	font-weight: bold;
+}
+
+div.cambiare-canvas > div.sect-info {
+	top: 3px;
+	height: 67px;
+}
+div.cambiare-canvas > div.sect-mark {
+	top: 72px;
+	height: 33px;
+}
+div.cambiare-canvas > div.sect-part {
+	top: 106px;
+	height: 832px;
+}
+div.cambiare-canvas > div.sect-meta {
+	width: 936px;
+	top: 938px;
+	height: 135px;
 }

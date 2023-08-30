@@ -26,7 +26,7 @@
 			<div class="column column-option column-button" @click="gOpenLno()" :active="$store.play=='lno'?'true':'false'" title="Reset and receive MIDI events emitted from middleware.">line out</div>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['kross','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['sd','SD'],['kross','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
 			<div class="column column-option"><b>Set mode to</b></div>
 			<template x-for="mode in modes">
 				<div class="column column-option column-button" @click="gMode(mode[0])" x-text="mode[1]" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
@@ -46,12 +46,13 @@
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered">
 			<div class="column column-option"><b>Audio</b></div>
-			<div class="column column-option">Play</div>
+			<div class="column column-option"><audio id="audioFilePlayer" controls /></div>
+			<!--<div class="column column-option">Play</div>
 			<div class="column column-option" x-text="formatTime($store.audioProgress||0)"></div>
 			<div class="column"><progress class="progress is-success" :value="$store.audioProgress||'0'" :max="$store.audioDuration||1"></progress></div>
 			<div class="column column-option" x-text="formatTime($store.audioDuration||0)"></div>
 			<div class="column is-one-fifth"><progress class="progress is-info" :value="$store.audioVolume||'0'" max="1"></progress></div>
-			<div class="column column-option" x-text="`${Math.round($store.audioVolume||0 * 100)}%`"></div>
+			<div class="column column-option" x-text="`${Math.round($store.audioVolume||0 * 100)}%`"></div>-->
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered">
 			<div class="column column-option"><b>Demo</b></div>
