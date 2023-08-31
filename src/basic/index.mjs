@@ -135,7 +135,7 @@ let RootDisplay = class extends CustomEventSource {
 	getMapped(id) {};
 	getEfx([msb, lsb]) {
 		let id = (msb << 8) | lsb;
-		return upThis.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;
+		return this.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;
 	};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;
@@ -277,27 +277,20 @@ let RootDisplay = class extends CustomEventSource {
 				(upThis.#metaRun[e.meta] || console.debug).call(upThis, e.meta, e.data);
 			});
 		});
-		upThis.device.addEventListener("mode", function (ev) {
-			upThis.dispatchEvent("mode", ev.data);
-		});
-		upThis.device.addEventListener("mastervolume", function (ev) {
-			upThis.dispatchEvent("mastervolume", ev.data);
-		});
-		upThis.device.addEventListener("channelactive", function (ev) {
-			upThis.dispatchEvent("channelactive", ev.data);
-		});
-		upThis.device.addEventListener("channelmin", function (ev) {
-			upThis.dispatchEvent("channelmin", ev.data);
-		});
-		upThis.device.addEventListener("channelmax", function (ev) {
-			upThis.dispatchEvent("channelmax", ev.data);
-		});
-		upThis.device.addEventListener("channelreset", function (ev) {
-			upThis.dispatchEvent("channelreset");
-		});
-		upThis.device.addEventListener("screen", function (ev) {
-			upThis.dispatchEvent("screen", ev.data);
-		});
+		eventPassThru(upThis.device, upThis, "mode");
+		eventPassThru(upThis.device, upThis, "mastervolume");
+		eventPassThru(upThis.device, upThis, "channelactive");
+		eventPassThru(upThis.device, upThis, "channelmin");
+		eventPassThru(upThis.device, upThis, "channelmax");
+		eventPassThru(upThis.device, upThis, "channelreset");
+		eventPassThru(upThis.device, upThis, "screen");
+		eventPassThru(upThis.device, upThis, "efxreverb");
+		eventPassThru(upThis.device, upThis, "efxchorus");
+		eventPassThru(upThis.device, upThis, "efxdelay");
+		eventPassThru(upThis.device, upThis, "efxinsert0");
+		eventPassThru(upThis.device, upThis, "efxinsert1");
+		eventPassThru(upThis.device, upThis, "efxinsert2");
+		eventPassThru(upThis.device, upThis, "efxinsert3");
 		upThis.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;

@@ -18,8 +18,8 @@ MSB	LSB	Name
 06	00	XG Delay LR
 07	00	XG Echo
 08	00	XG Cross Delay
-09	00	XG Early Reflection 1
-09	01	XG Early Reflection 2
+09	00	XG Early Reflect 1
+09	01	XG Early Reflect 2
 0a	00	XG Gate
 0b	00	XG Reverse Gate
 10	00	XG White Room
@@ -60,25 +60,25 @@ MSB	LSB	Name
 21	51	GS Mod Delay
 21	52	GS 3-tap Delay
 21	53	GS 4-tap Delay
-21	54	GS Tremelo Control Delay
+21	54	GS Tremelo C Delay
 21	55	GS Reverb
 21	56	GS Gate
 21	57	GS 3D Delay
 21	60	GS 2 Pitch Shifter
-21	61	GS Feedback Pitch Shifter
+21	61	GS Feedback P Shift
 21	70	GS 3D Auto
 21	71	GS 3D Manual
 21	72	GS Lo-Fi
 21	73	GS Lo-Fi 2
-22	00	GS Overdrive+Chorus
-22	01	GS Overdrive+Flanger
-22	02	GS Overdrive+Delay
-22	03	GS Distortion+Chorus
-22	04	GS Distortion+Flanger
-22	05	GS Distortion+Delay
-22	06	GS Enhancer+Chorus
-22	07	GS Enhancer+Flanger
-22	08	GS Enhancer+Delay
+22	00	GS OvrDrv+Chorus
+22	01	GS OvrDrv+Flanger
+22	02	GS OvrDrv+Delay
+22	03	GS Distort+Chorus
+22	04	GS Distort+Flanger
+22	05	GS Distort+Delay
+22	06	GS Enhance+Chorus
+22	07	GS Enhance+Flanger
+22	08	GS Enhance+Delay
 22	09	GS Chorus+Delay
 22	0a	GS Flanger+Delay
 22	0b	GS Chorus+Flanger
@@ -87,8 +87,8 @@ MSB	LSB	Name
 24	00	GS Guitar Multi
 24	01	GS Guitar Multi 2
 24	02	GS Guitar Multi 3
-24	03	GS Clean Guitar Multi
-24	04	GS Clean Guitar Multi 2
+24	03	GS Cln Gtr Multi
+24	04	GS Cln Gtr Multi 2
 24	05	GS Bass Multi
 24	06	GS Rhodes Multi
 25	00	GS Keyboard Multi
@@ -107,7 +107,7 @@ MSB	LSB	Name
 28	14	GS Feedback Chorus
 28	15	GS Flanger
 28	16	GS Short Delay
-28	17	GS Feedback Short Delay
+28	17	GS Feedback S Delay
 28	20	GS Delay 1
 28	21	GS Delay 2
 28	22	GS Delay 3
@@ -128,9 +128,9 @@ MSB	LSB	Name
 2c	07	AI Wet Plate
 2c	08	AI Dry Plate
 2c	09	AI Spring
-2c	0a	AI Early Reflection 1
-2c	0b	AI Early Reflection 2
-2c	0c	AI Early Reflection 3
+2c	0a	AI Early Reflect 1
+2c	0b	AI Early Reflect 2
+2c	0c	AI Early Reflect 3
 2c	0d	AI Stereo Delay
 2c	0e	AI Cross Delay
 2c	0f	AI Dual Delay
@@ -172,7 +172,7 @@ MSB	LSB	Name
 31	03	GS Double Overdrive
 31	04	GS Overdrive/Rotary
 31	05	GS Overdrive/Phaser
-31	06	GS Overdrive/Auto Wah
+31	06	GS OvrDrv/Auto Wah
 31	07	GS Phaser/Rotary
 31	08	GS Phaser/Auto Wah
 40	00	XG Through
@@ -195,7 +195,7 @@ MSB	LSB	Name
 43	08	XG Flanger 3
 44	00	XG Symphonic
 45	00	XG Rotary
-45	01	XG Distortion+Rotary
+45	01	XG Distort+Rotary
 45	02	XG Overdrive+Rotary
 45	03	XG Amp Sim+Rotary
 46	00	XG Tremelo
@@ -203,8 +203,8 @@ MSB	LSB	Name
 48	00	XG Phaser 1
 48	08	XG Phaser 2
 49	00	XG Distortion
-49	01	XG Compressor+Distortion
-49	08	XG Stereo Distortion
+49	01	XG Compress+Distort
+49	08	XG Stereo Distort
 4a	00	XG Overdrive
 4a	08	XG Stereo Overdrive
 4b	00	XG Amp Simulator
@@ -212,8 +212,8 @@ MSB	LSB	Name
 4c	00	XG 3-band EQ
 4d	00	XG 2-band EQ
 4e	00	XG Auto Wah
-4e	01	XG Auto Wah+Distortion
-4e	02	XG Auto Wah+Overdrive
+4e	01	XG Auto Wah+Dist
+4e	02	XG Auto Wah+OvrDrv
 50	00	XG Pitch Shifter
 50	01	XG Pitch Shifter 2
 51	00	XG Enhancer
@@ -225,9 +225,9 @@ MSB	LSB	Name
 54	00	XG Noise Gate
 55	00	XG Voice Cancel
 56	00	XG 2-way Rotary
-56	01	XG 2-way Rotary+Distortion
-56	02	XG 2-way Rotary+Overdrive
-56	03	XG 2-way Rotary+Amp Sim
+56	01	XG 2-way Rot+Dist
+56	02	XG 2-way Rot+OvrDrv
+56	03	XG 2-way Rot+Amp
 57	00	XG Ensemble Detune
 58	00	XG Ambience
 5d	00	XG Talking Mod
@@ -235,12 +235,12 @@ MSB	LSB	Name
 5f	00	XG Delay+Distortion
 5f	01	XG Delay+Overdrive
 60	00	XG Comp+Dist+Delay
-60	01	XG Comp+OvrDrv+Delay
+60	01	XG Comp+Ovdr+Dly
 61	00	XG Wah+Dist+Delay
-61	01	XG Wah+OvrDrv+Delay
-62	00	XG Vintage Hard Dist
-62	01	XG Vintage Hard Dist+Delay
-62	02	XG Vintage Soft Dist
-62	03	XG Vintage Soft Dist+Delay
+61	01	XG Wah+Ovdr+Delay
+62	00	XG Vin Hard Dist
+62	01	XG Vin Hard Dst+Dly
+62	02	XG Vin Soft Dist
+62	03	XG Vin Soft Dst+Dly
 63	00	XG Dual Rotary 1
 63	01	XG Dual Rotary 2

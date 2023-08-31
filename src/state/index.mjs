@@ -1330,6 +1330,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			// NRPN drum section reset
 		};
 		upThis.dispatchEvent("mastervolume", upThis.#masterVol);
+		upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
+		upThis.dispatchEvent(`efxchorus`, upThis.getEffectType(1));
+		upThis.dispatchEvent(`efxdelay`, upThis.getEffectType(2));
+		upThis.dispatchEvent(`efxinsert0`, upThis.getEffectType(3));
+		upThis.dispatchEvent(`efxinsert1`, upThis.getEffectType(4));
+		upThis.dispatchEvent(`efxinsert2`, upThis.getEffectType(5));
+		upThis.dispatchEvent(`efxinsert3`, upThis.getEffectType(6));
 		return;
 	};
 	switchMode(mode, forced = false) {
@@ -1880,7 +1887,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, (e) => {
 						upThis.setEffectTypeRaw(2, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
-						upThis.dispatchEvent("efxdelay", upThis.getEffectType(0));
+						upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
 					}][msg[0] - 64 + i] || function () {
 						//console.warn(`Unknown XG variation address: ${msg[0]}.`);
 					})(e);

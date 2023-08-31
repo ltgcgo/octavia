@@ -68,13 +68,14 @@ self.gPort = async function (port) {
 };
 self.gDemo = async function ({file, id}) {
 	await audioFilePlayer.pause();
-	let midiBlob = await(await getBlobFrom(`${file}.mid`)).blob(),
-	audioBlob = await(await getBlobFrom(`${file}.opus`)).blob();
 	visualizer.reset();
-	await visualizer.loadFile(await midiBlob);
 	if (audioUri) {
 		URL.revokeObjectURL(audioUri);
 	};
+	audioFilePlayer.src = "";
+	let midiBlob = await(await getBlobFrom(`${file}.mid`)).blob(),
+	audioBlob = await(await getBlobFrom(`${file}.opus`)).blob();
+	await visualizer.loadFile(await midiBlob);
 	audioUri = URL.createObjectURL(audioBlob);
 	audioFilePlayer.currentTime = 0;
 	audioFilePlayer.src = audioUri;

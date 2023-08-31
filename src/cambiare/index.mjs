@@ -115,10 +115,10 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.tempo = createElement("span", ["field"], {t: 1, l: 454, w: 64, h: 33, a: "right"});
 		upThis.#sectInfo.volume = createElement("span", ["field"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
 		upThis.#sectInfo.mode = createElement("span", ["field"], {t: 1, l: 708, w: 152, h: 33});
-		upThis.#sectInfo.reverb = createElement("span", ["field"], {t: 1, l: 1000, w: 188, h: 33});
-		upThis.#sectInfo.chorus = createElement("span", ["field"], {t: 1, l: 1238, w: 188, h: 33});
-		upThis.#sectInfo.delay = createElement("span", ["field"], {t: 1, l: 1471, w: 188, h: 33});
-		upThis.#sectInfo.insert = createElement("span", ["field"], {t: 1, l: 1701, w: 188, h: 33});
+		upThis.#sectInfo.reverb = createElement("span", ["field"], {t: 1, l: 1000, w: 190, h: 33});
+		upThis.#sectInfo.chorus = createElement("span", ["field"], {t: 1, l: 1240, w: 190, h: 33});
+		upThis.#sectInfo.delay = createElement("span", ["field"], {t: 1, l: 1475, w: 190, h: 33});
+		upThis.#sectInfo.insert = createElement("span", ["field"], {t: 1, l: 1706, w: 190, h: 33});
 		upThis.#sectInfo.title = createElement("span", ["field"], {t: 34, l: 50, w: 810, h: 33})
 		canvasElement.appendChild(upThis.#sectInfo.root);
 		mountElement(upThis.#sectInfo.root, [
@@ -143,11 +143,11 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.mode,
 			createElement("span", ["field", "field-key"], {t: 1, l: 960, w: 34, h: 33, i: "Rev"}),
 			upThis.#sectInfo.reverb,
-			createElement("span", ["field", "field-key"], {t: 1, l: 1196, w: 36, h: 33, i: "Cho"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 1198, w: 36, h: 33, i: "Cho"}),
 			upThis.#sectInfo.chorus,
-			createElement("span", ["field", "field-key"], {t: 1, l: 1434, w: 31, h: 33, i: "Var"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 1438, w: 31, h: 33, i: "Var"}),
 			upThis.#sectInfo.delay,
-			createElement("span", ["field", "field-key"], {t: 1, l: 1668, w: 27, h: 33, i: "Ins"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 1674, w: 27, h: 33, i: "Ins"}),
 			upThis.#sectInfo.insert,
 			createElement("span", ["field", "field-key"], {t: 34, l: 0, w: 44, h: 33, i: "Title"}),
 			upThis.#sectInfo.title
@@ -170,14 +170,26 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.volume.innerText = `${Math.floor(cramVolume)}.${`${Math.floor((cramVolume % 1) * 100)}`.padStart(2, "0")}`;
 		});
 		upThis.addEventListener("tempo", (ev) => {
-			let cramTempo = Math.round(ev.data * 100) / 100;
-			upThis.#sectInfo.tempo.innerText = `${Math.floor(cramTempo)}.${`${(cramTempo % 1) * 100}`.padStart(2, "0")}`;
+			let cramTempo = Math.round(ev.data * 100);
+			upThis.#sectInfo.tempo.innerText = `${Math.floor(cramTempo / 100)}.${`${Math.floor(cramTempo % 100)}`.padStart(2, "0")}`;
 		});
 		upThis.addEventListener("tsig", (ev) => {
 			[upThis.#sectInfo.sigN.innerText, upThis.#sectInfo.sigD.innerText] = ev.data;
 		});
 		upThis.addEventListener("title", (ev) => {
 			upThis.#sectInfo.title.innerText = ev.data || `No Title`;
+		});
+		upThis.addEventListener("efxreverb", (ev) => {
+			upThis.#sectInfo.reverb.innerText = upThis.getEfx(ev.data);
+		});
+		upThis.addEventListener("efxchorus", (ev) => {
+			upThis.#sectInfo.chorus.innerText = upThis.getEfx(ev.data);
+		});
+		upThis.addEventListener("efxdelay", (ev) => {
+			upThis.#sectInfo.delay.innerText = upThis.getEfx(ev.data);
+		});
+		upThis.addEventListener("efxinsert0", (ev) => {
+			upThis.#sectInfo.insert.innerText = upThis.getEfx(ev.data);
 		});
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
@@ -188,9 +200,6 @@ let Cambiare = class extends RootDisplay {
 		upThis.dispatchEvent(`efxchorus`, upThis.device.getEffectType(1));
 		upThis.dispatchEvent(`efxdelay`, upThis.device.getEffectType(2));
 		upThis.dispatchEvent(`efxinsert0`, upThis.device.getEffectType(3));
-		upThis.dispatchEvent(`efxinsert1`, upThis.device.getEffectType(4));
-		upThis.dispatchEvent(`efxinsert2`, upThis.device.getEffectType(5));
-		upThis.dispatchEvent(`efxinsert3`, upThis.device.getEffectType(6));
 	};
 	detach(attachElement) {
 		let upThis = this;
