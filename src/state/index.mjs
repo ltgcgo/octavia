@@ -1337,25 +1337,27 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.dispatchEvent(`efxinsert1`, upThis.getEffectType(4));
 		upThis.dispatchEvent(`efxinsert2`, upThis.getEffectType(5));
 		upThis.dispatchEvent(`efxinsert3`, upThis.getEffectType(6));
+		upThis.switchMode("?");
 		return;
 	};
 	switchMode(mode, forced = false) {
+		let upThis = this;
 		let idx = modeIdx.indexOf(mode);
 		if (idx > -1) {
-			if (this.#mode == 0 || forced) {
-				let oldMode = this.#mode;
-				this.#mode = idx;
-				this.#bitmapPage = 0; // Restore page
-				this.#subMsb = substList[0][idx];
-				this.#subLsb = substList[1][idx];
+			if (upThis.#mode == 0 || forced) {
+				let oldMode = upThis.#mode;
+				upThis.#mode = idx;
+				upThis.#bitmapPage = 0; // Restore page
+				upThis.#subMsb = substList[0][idx];
+				upThis.#subLsb = substList[1][idx];
 				for (let ch = 0; ch < allocated.ch; ch ++) {
-					if (this.#chType[ch] > 0 && this.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
+					if (upThis.#chType[ch] > 0 && upThis.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
 						// Switch drum MSBs.
-						this.#cc[ch * allocated.cc] = drumMsb[idx];
+						upThis.#cc[ch * allocated.cc] = drumMsb[idx];
 					};
 					//this.initOnReset && forced && this.#ua.ano(ch);
 				};
-				if (this.initOnReset && forced) {
+				if (upThis.initOnReset && forced) {
 					//this.init(1);
 				};
 				// Bank defaults
@@ -1363,9 +1365,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					case modeMap.mt32: {
 						mt32DefProg.forEach((e, i) => {
 							let ch = i + 1;
-							if (!this.#chActive[ch]) {
-								this.#prg[ch] = e;
-								this.#cc[ch * allocated.cc + ccToPos[91]] = 127;
+							if (!upThis.#chActive[ch]) {
+								upThis.#prg[ch] = e;
+								upThis.#cc[ch * allocated.cc + ccToPos[91]] = 127;
 							};
 						});
 						break;
@@ -1374,26 +1376,45 @@ let OctaviaDevice = class extends CustomEventSource {
 				// EFX defaults
 				let efxDefault;
 				switch (idx) {
-					case modeMap.gs: {
-						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0, 0, 0, 0, 0, 0, 0];
+					case modeMap["?"]:
+					case modeMap.xg: {
+						efxDefault = [1, 0, 65, 0, 5, 0, 0, 0];
 						break;
 					};
+					case modeMap.gm:
+					case modeMap.gs:
+					case modeMap.g2:
+					case modeMap.sd: {
+						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0];
+						break;
+					};
+					case modeMap["05rw"]:
 					case modeMap.x5d:
 					case modeMap.ns5r: {
-						efxDefault = [44, 1, 44, 19, 44, 0, 44, 0, 0, 0, 0, 0, 0, 0];
+						efxDefault = [44, 1, 44, 19, 44, 0, 44, 0];
+						break;
+					};
+					case modeMap.k11:
+					case modeMap.sg: {
+						efxDefault = [24, 0, 0, 0, 0, 0, 0, 0];
+						break;
+					};
+					case modeMap.mt32: {
+						efxDefault = [40, 4, 0, 0, 0, 0, 0, 0];
 						break;
 					};
 					default: {
-						efxDefault = [1, 0, 65, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+						efxDefault = [0, 0, 0, 0, 0, 0, 0, 0];
 					};
 				};
-				for (let i = 0; i < allocated.efx; i ++) {
-					if (!this.#efxBase[3 * i]) {
-						this.#efxBase[3 * i + 1] = efxDefault[2 * i];
-						this.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
+				for (let i = 0; i < 4; i ++) {
+					if (!upThis.#efxBase[3 * i]) {
+						upThis.#efxBase[3 * i + 1] = efxDefault[2 * i];
+						upThis.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
+						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert'][i]}`, upThis.getEffectType(i))
 					};
 				};
-				this.dispatchEvent("mode", mode);
+				upThis.dispatchEvent("mode", mode);
 			};
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
