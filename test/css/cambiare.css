@@ -37,6 +37,10 @@ div.cambiare-canvas span {
 }
 div.cambiare-canvas span.field {
 	position: absolute;
+	cursor: default;
+}
+div.cambiare-canvas.debug span.field {
+	outline: 1px #fff7 solid;
 }
 div.cambiare-canvas span.field-label {
 	color: var(--accent-color);
@@ -47,19 +51,19 @@ div.cambiare-canvas span.field-key {
 }
 
 div.cambiare-canvas > div.sect-info {
-	top: 3px;
+	top: 1px;
 	height: 67px;
 }
 div.cambiare-canvas > div.sect-mark {
-	top: 72px;
+	top: 70px;
 	height: 33px;
 }
 div.cambiare-canvas > div.sect-part {
-	top: 106px;
+	top: 104px;
 	height: 832px;
 }
 div.cambiare-canvas > div.sect-meta {
-	width: 936px;
+	width: 934px;
 	top: 938px;
 	height: 135px;
 }

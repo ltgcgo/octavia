@@ -44,6 +44,7 @@ let RootDisplay = class extends CustomEventSource {
 		upThis.#noteBarOffset = 0;
 		upThis.#noteTime = 0;
 		upThis.dispatchEvent("tempo", upThis.#noteTempo);
+		upThis.dispatchEvent("title", upThis.#titleName);
 	};
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
@@ -232,6 +233,7 @@ let RootDisplay = class extends CustomEventSource {
 		this.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;
+				upThis.dispatchEvent("title", upThis.#titleName);
 			};
 		};
 		this.#metaRun[81] = function (type, data) {

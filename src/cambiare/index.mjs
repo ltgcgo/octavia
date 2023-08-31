@@ -114,7 +114,12 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.barNote = createElement("span", ["field"], {t: 1, l: 354, w: 23, h: 33});
 		upThis.#sectInfo.tempo = createElement("span", ["field"], {t: 1, l: 454, w: 64, h: 33, a: "right"});
 		upThis.#sectInfo.volume = createElement("span", ["field"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
-		upThis.#sectInfo.mode = createElement("span", ["field"], {t: 1, l: 708, w: 152, h: 33})
+		upThis.#sectInfo.mode = createElement("span", ["field"], {t: 1, l: 708, w: 152, h: 33});
+		upThis.#sectInfo.reverb = createElement("span", ["field"], {t: 1, l: 1000, w: 168, h: 33});
+		upThis.#sectInfo.chorus = createElement("span", ["field"], {t: 1, l: 1218, w: 168, h: 33});
+		upThis.#sectInfo.delay = createElement("span", ["field"], {t: 1, l: 1431, w: 168, h: 33});
+		upThis.#sectInfo.insert = createElement("span", ["field"], {t: 1, l: 1641, w: 168, h: 33});
+		upThis.#sectInfo.title = createElement("span", ["field"], {t: 34, l: 50, w: 810, h: 33})
 		canvasElement.appendChild(upThis.#sectInfo.root);
 		mountElement(upThis.#sectInfo.root, [
 			upThis.#sectInfo.events,
@@ -123,11 +128,11 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.maxPoly,
 			createElement("span", ["field", "field-key"], {t: 1, l: 148, w: 41, h: 33, i: "TSig"}),
 			upThis.#sectInfo.sigN,
-			createElement("span", ["field", "field-label"], {t: 1, l: 221, w: 8, h: 33, i: "/"}),
+			createElement("span", ["field", "field-label"], {t: 0, l: 221, w: 8, h: 33, i: "/"}),
 			upThis.#sectInfo.sigD,
 			createElement("span", ["field", "field-key"], {t: 1, l: 268, w: 30, h: 33, i: "Bar"}),
 			upThis.#sectInfo.barCount,
-			createElement("span", ["field", "field-label"], {t: 1, l: 343, w: 8, h: 33, i: "/"}),
+			createElement("span", ["field", "field-label"], {t: 0, l: 343, w: 8, h: 33, i: "/"}),
 			upThis.#sectInfo.barNote,
 			createElement("span", ["field", "field-key"], {t: 1, l: 390, w: 61, h: 33, i: "Tempo", a: "right"}),
 			upThis.#sectInfo.tempo,
@@ -135,7 +140,17 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.volume,
 			createElement("span", ["field", "field-label"], {t: 1, l: 626, w: 17, h: 33, i: "%"}),
 			createElement("span", ["field", "field-key"], {t: 1, l: 652, w: 52, h: 33, i: "Mode"}),
-			upThis.#sectInfo.mode
+			upThis.#sectInfo.mode,
+			createElement("span", ["field", "field-key"], {t: 1, l: 960, w: 34, h: 33, i: "Rev"}),
+			upThis.#sectInfo.reverb,
+			createElement("span", ["field", "field-key"], {t: 1, l: 1176, w: 36, h: 33, i: "Cho"}),
+			upThis.#sectInfo.chorus,
+			createElement("span", ["field", "field-key"], {t: 1, l: 1394, w: 31, h: 33, i: "Var"}),
+			upThis.#sectInfo.delay,
+			createElement("span", ["field", "field-key"], {t: 1, l: 1608, w: 27, h: 33, i: "Ins"}),
+			upThis.#sectInfo.insert,
+			createElement("span", ["field", "field-key"], {t: 34, l: 0, w: 44, h: 33, i: "Title"}),
+			upThis.#sectInfo.title
 		]);
 		// Begin inserting the marker section
 		upThis.#sectMark.root = createElement("div", ["sect-mark"]);
@@ -161,10 +176,14 @@ let Cambiare = class extends RootDisplay {
 		upThis.addEventListener("tsig", (ev) => {
 			[upThis.#sectInfo.sigN.innerText, upThis.#sectInfo.sigD.innerText] = ev.data;
 		});
+		upThis.addEventListener("title", (ev) => {
+			upThis.#sectInfo.title.innerText = ev.data || `No Title`;
+		});
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
 		upThis.dispatchEvent("tempo", 120);
 		upThis.dispatchEvent("tsig", [4, 4]);
+		upThis.dispatchEvent("title", "");
 	};
 	detach(attachElement) {
 		let upThis = this;
