@@ -16,8 +16,21 @@ div.cambiare > div.cambiare-container {
 div.cambiare-canvas {
 	--background-color: #222;
 	--foreground-color: #fff;
+	--accent-color: #e9e1ff;
+}
+div.cambiare-canvas.cambiare-mode-xg, div.cambiare-canvas.cambiare-mode-ns5r, div.cambiare-canvas.cambiare-mode-x5d, div.cambiare-canvas.cambiare-mode-05rw, div.cambiare-canvas.cambiare-mode-k11, div.cambiare-canvas.cambiare-mode-s90es, div.cambiare-canvas.cambiare-mode-motif {
 	--accent-color: #9efaa0;
 }
+div.cambiare-canvas.cambiare-mode-gm, div.cambiare-canvas.cambiare-mode-g2, div.cambiare-canvas.cambiare-mode-krs {
+	--accent-color: #a1f3ff;
+}
+div.cambiare-canvas.cambiare-mode-gs, div.cambiare-canvas.cambiare-mode-mt32, div.cambiare-canvas.cambiare-mode-sd {
+	--accent-color: #ffe1a5;
+}
+div.cambiare-canvas.cambiare-mode-sg {
+	--accent-color: #fdd;
+}
+
 div.cambiare div.cambiare-canvas {
 	background: var(--background-color);
 	color: var(--foreground-color);

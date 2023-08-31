@@ -41,6 +41,10 @@ audioFilePlayer.addEventListener("ended", () => {
 	visualizer.reset();
 });
 
+visualizer.addEventListener("mode", (ev) => {
+	Alpine.store("deviceMode", ev.data);
+});
+
 const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
 let getBlobFrom = async function (filename) {
 	let i = 0;
@@ -58,12 +62,15 @@ let getBlobFrom = async function (filename) {
 let audioUri;
 
 self.gMode = async function (mode) {
+	visualizer.device.switchMode(mode, true);
 	Alpine.store("deviceMode", mode);
 };
 self.gRange = async function (mode) {
+	visualizer.setRange(mode);
 	Alpine.store("showRange", mode);
 };
 self.gPort = async function (port) {
+	visualizer.setPort(port);
 	Alpine.store("startPort", port);
 };
 self.gDemo = async function ({file, id}) {

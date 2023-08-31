@@ -26,7 +26,7 @@
 			<div class="column column-option column-button" @click="gOpenLno()" :active="$store.play=='lno'?'true':'false'" title="Reset and receive MIDI events emitted from middleware.">line out</div>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['sd','SD'],['kross','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['sd','SD'],['krs','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
 			<div class="column column-option"><b>Set mode to</b></div>
 			<template x-for="mode in modes">
 				<div class="column column-option column-button" @click="gMode(mode[0])" x-text="mode[1]" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>

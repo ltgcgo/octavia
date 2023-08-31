@@ -41,6 +41,20 @@ let mountElement = function (root, children) {
 		root.appendChild(e);
 	});
 };
+let classOff = function (target, classes) {
+	classes.forEach((e) => {
+		if (target.classList.contains(e)) {
+			target.classList.remove(e);
+		};
+	});
+};
+let classOn = function (target, classes) {
+	classes.forEach((e) => {
+		if (!target.classList.contains(e)) {
+			target.classList.add(e);
+		};
+	});
+};
 
 let Cambiare = class extends RootDisplay {
 	#maxPoly = 0;
@@ -88,6 +102,23 @@ let Cambiare = class extends RootDisplay {
 	setClockSource(clockSource) {
 		this.#clockSource = clockSource;
 	};
+	setMode(mode) {
+		let upThis = this;
+		classOff(upThis.#canvas, [`cambiare-mode-gm`, `cambiare-mode-xg`, `cambiare-mode-gs`, `cambiare-mode-ns5r`, `cambiare-mode-05rw`, `cambiare-mode-x5d`, `cambiare-mode-k11`, `cambiare-mode-sg`, `cambiare-mode-g2`, `cambiare-mode-mt32`, `cambiare-mode-sd`, `cambiare-mode-krs`, `cambiare-mode-s90es`, `cambiare-mode-motif`]);
+		if (mode != "?") {
+			classOn(upThis.#canvas, [`cambiare-mode-${mode}`]);
+		};
+	};
+	setPort(port) {
+		let upThis = this;
+		classOff(upThis.#canvas, [`cambiare-start0`, `cambiare-start1`, `cambiare-start2`, `cambiare-start3`, `cambiare-start4`, `cambiare-start5`, `cambiare-start6`, `cambiare-start7`]);
+		classOn(upThis.#canvas, [`cambiare-start${port}`]);
+	};
+	setRange(mode) {
+		let upThis = this;
+		classOff(upThis.#canvas, [`cambiare-port1`, `cambiare-port2`, `cambiare-port4`, `cambiare-compact`]);
+		classOn(upThis.#canvas, [`cambiare-${mode}`]);
+	};
 	attach(attachElement) {
 		let upThis = this;
 		upThis.#visualizer = attachElement;
@@ -96,7 +127,7 @@ let Cambiare = class extends RootDisplay {
 		attachElement.appendChild(containerElement);
 		upThis.#container = containerElement;
 		// Insert the canvas
-		let canvasElement = createElement("div", ["cambiare-canvas", "debug"]);
+		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0", "debug"]);
 		containerElement.appendChild(canvasElement);
 		upThis.#canvas = canvasElement;
 		// Start the resizer
@@ -164,6 +195,7 @@ let Cambiare = class extends RootDisplay {
 		// Opportunistic value refreshing
 		upThis.addEventListener("mode", (ev) => {
 			upThis.#sectInfo.mode.innerText = `${modeNames[ev.data]}`;
+			upThis.setMode(ev.data);
 		});
 		upThis.addEventListener("mastervolume", (ev) => {
 			let cramVolume = Math.round(ev.data * 100) / 100;
