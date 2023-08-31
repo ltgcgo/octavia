@@ -4,6 +4,23 @@ import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 
 const targetRatio = 16 / 9;
+const modeNames = {
+	"?": "Unset",
+	"gm": "General MIDI",
+	"g2": "General MIDI 2",
+	"xg": "Yamaha XG",
+	"gs": "Roland GS",
+	"mt32": "Roland MT-32",
+	"sd": "Roland SD",
+	"x5d": "Korg X5D",
+	"05rw": "Korg 05R/W",
+	"ns5r": "Korg NS5R",
+	"k11": "Kawai K11",
+	"sg": "Akai SG",
+	"krs": "Korg KROSS 2",
+	"s90es": "Yamaha S90 ES",
+	"motif": "Yamaha Motif ES"
+};
 
 let createElement = function (tag, classes, details = {}) {
 	let target = document.createElement(tag);
@@ -60,16 +77,11 @@ let Cambiare = class extends RootDisplay {
 		if (upThis.#maxPoly < curPoly) {
 			upThis.#maxPoly = curPoly;
 		};
-		let cramTempo = Math.round(sum.tempo * 100) / 100;
-		let cramVolume = Math.round(sum.master.volume * 100) / 100;
 		upThis.#sectInfo.events.innerText = `${sum.eventCount}`.padStart(3, "0");
 		upThis.#sectInfo.curPoly.innerText = `${curPoly}`.padStart(3, "0");
 		upThis.#sectInfo.maxPoly.innerText = `${upThis.#maxPoly}`.padStart(3, "0");
-		[upThis.#sectInfo.sigN.innerText, upThis.#sectInfo.sigD.innerText] = sum.tSig;
 		upThis.#sectInfo.barCount.innerText = sum.noteBar + 1;
 		upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
-		upThis.#sectInfo.tempo.innerText = `${Math.floor(cramTempo)}.${`${(cramTempo % 1) * 100}`.padStart(2, "0")}`;
-		upThis.#sectInfo.volume.innerText = `${Math.floor(cramVolume)}.${`${Math.floor((cramVolume % 1) * 100)}`.padStart(2, "0")}`;
 	};
 	#renderer;
 	#renderThread;
@@ -93,34 +105,37 @@ let Cambiare = class extends RootDisplay {
 		upThis.#renderThread = setInterval(upThis.#renderer, 20);
 		// Begin inserting the info section
 		upThis.#sectInfo.root = createElement("div", ["sect-info"]);
-		upThis.#sectInfo.events = createElement("span", ["field"], {t: 0, l: 0, w: 35, h: 33});
-		upThis.#sectInfo.curPoly = createElement("span", ["field"], {t: 0, l: 52, w: 35, h: 33});
-		upThis.#sectInfo.maxPoly = createElement("span", ["field"], {t: 0, l: 98, w: 35, h: 33});
-		upThis.#sectInfo.sigN = createElement("span", ["field"], {t: 0, l: 194, w: 23, h: 33, a: "right"});
-		upThis.#sectInfo.sigD = createElement("span", ["field"], {t: 0, l: 232, w: 23, h: 33});
-		upThis.#sectInfo.barCount = createElement("span", ["field"], {t: 0, l: 304, w: 35, h: 33, a: "right"});
-		upThis.#sectInfo.barNote = createElement("span", ["field"], {t: 0, l: 354, w: 23, h: 33});
-		upThis.#sectInfo.tempo = createElement("span", ["field"], {t: 0, l: 454, w: 64, h: 33});
-		upThis.#sectInfo.volume = createElement("span", ["field"], {t: 0, l: 562, w: 63, h: 33, a: "right"});
+		upThis.#sectInfo.events = createElement("span", ["field"], {t: 1, l: 0, w: 35, h: 33});
+		upThis.#sectInfo.curPoly = createElement("span", ["field"], {t: 1, l: 52, w: 35, h: 33});
+		upThis.#sectInfo.maxPoly = createElement("span", ["field"], {t: 1, l: 98, w: 35, h: 33});
+		upThis.#sectInfo.sigN = createElement("span", ["field"], {t: 1, l: 194, w: 23, h: 33, a: "right"});
+		upThis.#sectInfo.sigD = createElement("span", ["field"], {t: 1, l: 232, w: 23, h: 33});
+		upThis.#sectInfo.barCount = createElement("span", ["field"], {t: 1, l: 304, w: 35, h: 33, a: "right"});
+		upThis.#sectInfo.barNote = createElement("span", ["field"], {t: 1, l: 354, w: 23, h: 33});
+		upThis.#sectInfo.tempo = createElement("span", ["field"], {t: 1, l: 454, w: 64, h: 33, a: "right"});
+		upThis.#sectInfo.volume = createElement("span", ["field"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
+		upThis.#sectInfo.mode = createElement("span", ["field"], {t: 1, l: 708, w: 152, h: 33})
 		canvasElement.appendChild(upThis.#sectInfo.root);
 		mountElement(upThis.#sectInfo.root, [
 			upThis.#sectInfo.events,
 			upThis.#sectInfo.curPoly,
-			createElement("span", ["field", "field-label"], {t: 0, l: 89, w: 5, h: 33, i: ":"}),
+			createElement("span", ["field", "field-label"], {t: 1, l: 89, w: 5, h: 33, i: ":"}),
 			upThis.#sectInfo.maxPoly,
-			createElement("span", ["field", "field-key"], {t: 0, l: 148, w: 41, h: 33, i: "TSig"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 148, w: 41, h: 33, i: "TSig"}),
 			upThis.#sectInfo.sigN,
-			createElement("span", ["field", "field-label"], {t: 0, l: 221, w: 8, h: 33, i: "/"}),
+			createElement("span", ["field", "field-label"], {t: 1, l: 221, w: 8, h: 33, i: "/"}),
 			upThis.#sectInfo.sigD,
-			createElement("span", ["field", "field-key"], {t: 0, l: 268, w: 30, h: 33, i: "Bar"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 268, w: 30, h: 33, i: "Bar"}),
 			upThis.#sectInfo.barCount,
-			createElement("span", ["field", "field-label"], {t: 0, l: 343, w: 8, h: 33, i: "/"}),
+			createElement("span", ["field", "field-label"], {t: 1, l: 343, w: 8, h: 33, i: "/"}),
 			upThis.#sectInfo.barNote,
-			createElement("span", ["field", "field-key"], {t: 0, l: 390, w: 61, h: 33, i: "Tempo", a: "right"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 390, w: 61, h: 33, i: "Tempo", a: "right"}),
 			upThis.#sectInfo.tempo,
-			createElement("span", ["field", "field-key"], {t: 0, l: 528, w: 29, h: 33, i: "Vol"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 528, w: 29, h: 33, i: "Vol"}),
 			upThis.#sectInfo.volume,
-			createElement("span", ["field", "field-label"], {t: 0, l: 626, w: 17, h: 33, i: "%"})
+			createElement("span", ["field", "field-label"], {t: 1, l: 626, w: 17, h: 33, i: "%"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 652, w: 52, h: 33, i: "Mode"}),
+			upThis.#sectInfo.mode
 		]);
 		// Begin inserting the marker section
 		upThis.#sectMark.root = createElement("div", ["sect-mark"]);
@@ -131,6 +146,25 @@ let Cambiare = class extends RootDisplay {
 		// Begin inserting the meta section
 		upThis.#sectMeta.root = createElement("div", ["sect-meta"]);
 		canvasElement.appendChild(upThis.#sectMeta.root);
+		// Opportunistic value refreshing
+		upThis.addEventListener("mode", (ev) => {
+			upThis.#sectInfo.mode.innerText = `${modeNames[ev.data]}`;
+		});
+		upThis.addEventListener("mastervolume", (ev) => {
+			let cramVolume = Math.round(ev.data * 100) / 100;
+			upThis.#sectInfo.volume.innerText = `${Math.floor(cramVolume)}.${`${Math.floor((cramVolume % 1) * 100)}`.padStart(2, "0")}`;
+		});
+		upThis.addEventListener("tempo", (ev) => {
+			let cramTempo = Math.round(ev.data * 100) / 100;
+			upThis.#sectInfo.tempo.innerText = `${Math.floor(cramTempo)}.${`${(cramTempo % 1) * 100}`.padStart(2, "0")}`;
+		});
+		upThis.addEventListener("tsig", (ev) => {
+			[upThis.#sectInfo.sigN.innerText, upThis.#sectInfo.sigD.innerText] = ev.data;
+		});
+		upThis.dispatchEvent("mode", "?");
+		upThis.dispatchEvent("mastervolume", 100);
+		upThis.dispatchEvent("tempo", 120);
+		upThis.dispatchEvent("tsig", [4, 4]);
 	};
 	detach(attachElement) {
 		let upThis = this;

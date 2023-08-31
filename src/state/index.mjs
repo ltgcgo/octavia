@@ -1329,6 +1329,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#rpn[rpnOff + 5] = 0; // Mod sensitivity LSB
 			// NRPN drum section reset
 		};
+		upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 		return;
 	};
 	switchMode(mode, forced = false) {
@@ -1713,6 +1714,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seUr.add([4, 1], (msg) => {
 			// Master volume
 			upThis.#masterVol = ((msg[1] << 7) + msg[0]) / 16383 * 100;
+			upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 		}).add([4, 3], (msg) => {
 			// Master fine tune
 			return (((msg[1] << 7) + msg[0] - 8192) / 8192);
@@ -1748,6 +1750,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							(e) => {
 								// XG master volume
 								this.#masterVol = e * 129 / 16383 * 100;
+								upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 							},
 							(e) => {/* XG master attenuator */},
 							(e) => {/* XG master coarse tune */}
@@ -1774,9 +1777,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					([(e) => {
 						upThis.setEffectTypeRaw(0, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
+						upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
 					}, (e) => {
 						upThis.setEffectTypeRaw(0, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
+						upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
 					}, (e) => {
 						console.debug(`${dPref}time: ${getXgRevTime(e)}s`);
 					}, (e) => {
@@ -1822,9 +1827,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					([(e) => {
 						upThis.setEffectTypeRaw(1, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
+						upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
 					}, (e) => {
 						upThis.setEffectTypeRaw(1, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
+						upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
 					}, (e) => {
 						console.debug(`${dPref}LFO: ${xgLfoFreq[e]}Hz`);
 					}, (e) => {
@@ -1869,9 +1876,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					([(e) => {
 						upThis.setEffectTypeRaw(2, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
+						upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
 					}, (e) => {
 						upThis.setEffectTypeRaw(2, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
+						upThis.dispatchEvent("efxdelay", upThis.getEffectType(0));
 					}][msg[0] - 64 + i] || function () {
 						//console.warn(`Unknown XG variation address: ${msg[0]}.`);
 					})(e);
@@ -1939,9 +1948,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				([(e) => {
 					upThis.setEffectTypeRaw(3 + varSlot, false, e);
 					console.info(`${dPref}main type: ${xgEffType[e]}`);
+					upThis.dispatchEvent(`efxinsert${varSlot}`, upThis.getEffectType(3 + varSlot));
 				}, (e) => {
 					upThis.setEffectTypeRaw(3 + varSlot, true, e);
 					console.debug(`${dPref}sub type: ${e + 1}`);
+					upThis.dispatchEvent(`efxinsert${varSlot}`, upThis.getEffectType(3 + varSlot));
 				}][offset + i] || function () {
 					//console.warn(`Unknown XG variation address: ${msg[0]}.`);
 				})(e);
@@ -2317,6 +2328,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					writeTune,
 					() => {
 						this.#masterVol = e * 129 / 16383 * 100;
+						upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 					},
 					() => {
 						return e - 64;
@@ -2492,6 +2504,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							(e) => {
 								// XG master volume
 								this.#masterVol = e * 129 / 16383 * 100;
+								upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 							},
 							(e) => {/* XG master coarse tune */},
 							(e) => {/* XG master pan */}
@@ -2528,6 +2541,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					([() => {
 						console.info(`${dPref}type: ${gsRevType[e]}`);
 						upThis.setEffectType(0, 40, e);
+						upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
 					}, () => {// character
 					}, () => {// pre-LPF
 					}, () => {// level
@@ -2538,6 +2552,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						console.info(`${dPref}type: ${gsChoType[e]}`);
 						upThis.setEffectType(1, 40, 16 + e);
+						upThis.dispatchEvent(`efxchorus`, upThis.getEffectType(1));
 					}, () => {// pre-LPF
 					}, () => {// level
 					}, () => {// feedback
@@ -2559,6 +2574,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					([() => {
 						console.info(`${dPref}type: ${gsDelType[e]}`);
 						upThis.setEffectType(2, 40, 32 + e);
+						upThis.dispatchEvent(`efxdelay`, upThis.getEffectType(2));
 					}, () => {// pre-LPF
 					}, () => {// time C
 					}, () => {// time L
@@ -2603,9 +2619,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
 					upThis.setEffectTypeRaw(3, false, 32 + e);
+					upThis.dispatchEvent(`efxinsert0`, upThis.getEffectType(3));
 				}, () => {
 					upThis.setEffectTypeRaw(3, true, e);
 					console.info(`${dPref}type: ${getGsEfx(upThis.#efxBase.subarray(10, 12))}`);
+					upThis.dispatchEvent(`efxinsert0`, upThis.getEffectType(3));
 				}, false,
 				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
 				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
@@ -2987,6 +3005,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			korgFilter(msg, (e, i) => {
 				if (i > 0 && i < 3) {
 					upThis.setEffectType(i - 1, 44, e);
+					upThis.dispatchEvent(`efx${['reverb', 'chorus'][i - 1]}`, upThis.getEffectType(i - 1));
 				};
 			});
 		}).add([54, 104], (msg, track) => {
@@ -3270,6 +3289,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				setMidiRch,
 				() => {
 					upThis.#masterVol = e;
+					upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 				}][ri] || (() => {}))(e, i);
 			});
 			if (updateRch) {
@@ -3334,6 +3354,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							[writeTune, writeTune, writeTune, writeTune,
 							() => {
 								upThis.#masterVol = e * 129 / 16383 * 100;
+								upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 							}, () => {
 								return (e - 64);
 							}, () => {
@@ -3483,6 +3504,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (i < 10) {
 					// AI effect ID
 					upThis.setEffectType(i - 8, 44, e);
+					upThis.dispatchEvent(`efx${['reverb', 'chorus'][i - 8]}`, upThis.getEffectType(i - 8));
 				};
 			});
 		}).add([66, 53], (msg, track) => {
@@ -3695,6 +3717,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}, () => {
 				upThis.setEffectType(0, 24, e);
 				console.debug(`${dPref}reverb type: ${e}`);
+				upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
 			}, () => {
 				console.debug(`${dPref}reverb time: ${e}`);
 			}, () => {
@@ -3842,6 +3865,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 4: {
 							// master volume
 							upThis.#masterVol = e * 129 / 16383 * 100;
+							upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 							break;
 						};
 						case 5: {
@@ -3912,6 +3936,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
 					upThis.#masterVol = e * 12900 / 16383;
+					upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 				}][offset + i] || (() => {
 					console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
 				}))();

@@ -11,6 +11,8 @@ MidiParser.customInterpreter = customInterpreter;
 let RootDisplay = class extends CustomEventSource {
 	device;
 	#midiPool;
+	#mapList;
+	#efxList;
 	#titleName = "";
 	#metaRun = [];
 	#mimicStrength = new Uint8ClampedArray(128);
@@ -25,24 +27,32 @@ let RootDisplay = class extends CustomEventSource {
 	smoothingAtk = 0;
 	smoothingDcy = 0;
 	reset() {
+		let upThis = this;
 		// Dispatching the event
-		this.dispatchEvent("reset");
+		upThis.dispatchEvent("reset");
 		// Clearing all MIDI instructions up
-		this.#midiPool?.resetIndex();
+		upThis.#midiPool?.resetIndex();
 		// And set all controllers to blank
-		this.device.init();
+		upThis.device.init();
 		// Clear titleName
-		this.#titleName = "";
+		upThis.#titleName = "";
 		// Timing info reset;
-		this.#noteBInt = 0.5;
-		this.#noteTempo = 120;
-		this.#noteNomin = 4;
-		this.#noteDenom = 4;
-		this.#noteBarOffset = 0;
-		this.#noteTime = 0;
+		upThis.#noteBInt = 0.5;
+		upThis.#noteTempo = 120;
+		upThis.#noteNomin = 4;
+		upThis.#noteDenom = 4;
+		upThis.#noteBarOffset = 0;
+		upThis.#noteTime = 0;
+		upThis.dispatchEvent("tempo", upThis.#noteTempo);
 	};
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
+	};
+	async loadMap(blob) {
+		// Load the voice ID to voice name map
+	};
+	async loadEfx(blob) {
+		// Load the EFX map
 	};
 	switchMode(modeName, forced = false) {
 		this.device.switchMode(modeName, forced);
@@ -56,6 +66,8 @@ let RootDisplay = class extends CustomEventSource {
 	getChVoice(ch) {
 		return this.device.getChVoice(ch);
 	};
+	getMapped(id) {};
+	getEfx([msb, lsb]) {};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;
 	};
@@ -199,6 +211,9 @@ let RootDisplay = class extends CustomEventSource {
 		this.device.addEventListener("mode", function (ev) {
 			upThis.dispatchEvent("mode", ev.data);
 		});
+		this.device.addEventListener("mastervolume", function (ev) {
+			upThis.dispatchEvent("mastervolume", ev.data);
+		});
 		this.device.addEventListener("channelactive", function (ev) {
 			upThis.dispatchEvent("channelactive", ev.data);
 		});
@@ -226,6 +241,7 @@ let RootDisplay = class extends CustomEventSource {
 			upThis.#noteTempo = 60000000 / data;
 			upThis.#noteBInt = data / 1000000;
 			upThis.#noteBarOffset += noteProgress * (lastBInt / upThis.#noteBInt) - noteProgress;
+			upThis.dispatchEvent("tempo", upThis.#noteTempo);
 		};
 		this.#metaRun[88] = function (type, data) {
 			let noteProgress = upThis.noteProgress;
@@ -251,6 +267,7 @@ let RootDisplay = class extends CustomEventSource {
 					};
 				};
 			};
+			upThis.dispatchEvent("tsig", upThis.getTimeSig());
 		};
 	};
 };

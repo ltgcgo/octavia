@@ -4,6 +4,7 @@ import {Cambiare} from "../cambiare/index.mjs";
 import {SheetData} from "../basic/sheetLoad.js";
 
 import {Alpine} from "../../libs/alpine@alpinejs/alpine.min.js";
+import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 
 self.$e = function (selector, target = document) {
 	return target.querySelector(selector);
@@ -19,8 +20,10 @@ HTMLElement.prototype.$a = function (selector) {
 };
 self.Alpine = Alpine;
 
+let useMidiBus = false;
 let audioFilePlayer = $e("#audioFilePlayer"),
 visualizer = new Cambiare($e(".cambiare"), audioFilePlayer);
+visualizer.reset();
 
 Alpine.store("play", "smf");
 Alpine.store("sound", "file");
@@ -76,6 +79,49 @@ self.gDemo = async function ({file, id}) {
 	audioFilePlayer.currentTime = 0;
 	audioFilePlayer.src = audioUri;
 	Alpine.store("activeDemo", id);
+	Alpine.store("play", "demo");
+	Alpine.store("sound", "demo");
+};
+
+const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
+propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
+self.gOpenSmf = async function () {
+	useMidiBus = false;
+	let file = await fileOpen(propsMid);
+	let fileSplit = file.name.lastIndexOf("."), ext = "";
+	if (fileSplit > -1) {
+		ext = file.name.slice(fileSplit + 1).toLowerCase();
+	};
+	switch (ext) {
+		case "syx": {
+			// Load SysEx blobs
+			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+			break;
+		};
+		case "s7e": {
+			// Load sound banks
+			visualizer.device.loadBank(ext, file);
+			break;
+		};
+		default: {
+			// Load MIDI files
+			Alpine.store("activeDemo", -1);
+			visualizer.reset();
+			visualizer.loadFile(file);
+			visualizer.device.initOnReset = false;
+			Alpine.store("play", "smf");
+		};
+	};
+};
+self.gOpenSnd = async function () {
+	useMidiBus = false;
+	let audioBlob = await fileOpen(propsAud);
+	Alpine.store("sound", "file");
+	if (audioUri) {
+		URL.revokeObjectURL(audioUri);
+	};
+	audioUri = URL.createObjectURL(audioBlob);
+	audioFilePlayer.src = audioUri;
 };
 
 self.formatTime = function (seconds, withMs = false) {
@@ -103,3 +149,4 @@ let demoPool = new SheetData();
 })();
 
 Alpine.start();
+self.visualizer = visualizer;
