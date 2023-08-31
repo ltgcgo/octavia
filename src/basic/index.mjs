@@ -8,11 +8,17 @@ import {customInterpreter} from "../state/utils.js";
 
 MidiParser.customInterpreter = customInterpreter;
 
+let eventPassThru = function (source, sink, type) {
+	source.addEventListener(type, (ev) => {
+		sink.dispatchEvent(type, ev.data);
+	});
+};
+
 let RootDisplay = class extends CustomEventSource {
 	device;
 	#midiPool;
 	#mapList;
-	#efxList;
+	#efxList = [];
 	#titleName = "";
 	#metaRun = [];
 	#mimicStrength = new Uint8ClampedArray(128);
@@ -49,11 +55,70 @@ let RootDisplay = class extends CustomEventSource {
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
 	};
-	async loadMap(blob) {
+	async loadMap(text) {
 		// Load the voice ID to voice name map
 	};
-	async loadEfx(blob) {
+	async loadEfx(text) {
 		// Load the EFX map
+		let upThis = this;
+		let loadCount = 0, allCount = 0;
+		let fieldMsb, fieldLsb, fieldNme;
+		text.split(`\n`).forEach((e, i) => {
+			if (i) {
+				let id = 0, name;
+				e.split(`\t`).forEach((e0, i0) => {
+					switch(i0) {
+						case fieldMsb: {
+							id |= (parseInt(e0, 16) << 8);
+							break;
+						};
+						case fieldLsb: {
+							id |= parseInt(e0, 16);
+							break;
+						};
+						case fieldNme: {
+							name = e0;
+							break;
+						};
+					};
+				});
+				if (!upThis.#efxList[id]) {
+					upThis.#efxList[id] = name;
+					loadCount ++;
+				} else {
+					console.debug(`EFX ID 0x${id.toString(16).padStart(4, "0")} (${name}) seems to be in conflict.`);
+				};
+				allCount ++;
+			} else {
+				e.split(`\t`).forEach((e0, i0) => {
+					switch(e0) {
+						case "MSB": {
+							fieldMsb = i0;
+							break;
+						};
+						case "LSB": {
+							fieldLsb = i0;
+							break;
+						};
+						case "Name": {
+							fieldNme = i0;
+							break;
+						};
+						default: {
+							console.warn(`Unknown EFX field: ${e0}`);
+						};
+					};
+				});
+			};
+		});
+		console.debug(`EFX: ${allCount} total, ${loadCount} loaded.`);
+		upThis.dispatchEvent(`efxreverb`, upThis.device.getEffectType(0));
+		upThis.dispatchEvent(`efxchorus`, upThis.device.getEffectType(1));
+		upThis.dispatchEvent(`efxdelay`, upThis.device.getEffectType(2));
+		upThis.dispatchEvent(`efxinsert0`, upThis.device.getEffectType(3));
+		upThis.dispatchEvent(`efxinsert1`, upThis.device.getEffectType(4));
+		upThis.dispatchEvent(`efxinsert2`, upThis.device.getEffectType(5));
+		upThis.dispatchEvent(`efxinsert3`, upThis.device.getEffectType(6));
 	};
 	switchMode(modeName, forced = false) {
 		this.device.switchMode(modeName, forced);
@@ -68,7 +133,10 @@ let RootDisplay = class extends CustomEventSource {
 		return this.device.getChVoice(ch);
 	};
 	getMapped(id) {};
-	getEfx([msb, lsb]) {};
+	getEfx([msb, lsb]) {
+		let id = (msb << 8) | lsb;
+		return upThis.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;
+	};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;
 	};
@@ -201,42 +269,42 @@ let RootDisplay = class extends CustomEventSource {
 	constructor(device, atk = 0.5, dcy = 0.5) {
 		super();
 		let upThis = this;
-		this.smoothingAtk = atk;
-		this.smoothingDcy = dcy;
-		this.device = device;
-		this.addEventListener("meta", function (raw) {
+		upThis.smoothingAtk = atk;
+		upThis.smoothingDcy = dcy;
+		upThis.device = device;
+		upThis.addEventListener("meta", function (raw) {
 			raw?.data?.forEach(function (e) {
 				(upThis.#metaRun[e.meta] || console.debug).call(upThis, e.meta, e.data);
 			});
 		});
-		this.device.addEventListener("mode", function (ev) {
+		upThis.device.addEventListener("mode", function (ev) {
 			upThis.dispatchEvent("mode", ev.data);
 		});
-		this.device.addEventListener("mastervolume", function (ev) {
+		upThis.device.addEventListener("mastervolume", function (ev) {
 			upThis.dispatchEvent("mastervolume", ev.data);
 		});
-		this.device.addEventListener("channelactive", function (ev) {
+		upThis.device.addEventListener("channelactive", function (ev) {
 			upThis.dispatchEvent("channelactive", ev.data);
 		});
-		this.device.addEventListener("channelmin", function (ev) {
+		upThis.device.addEventListener("channelmin", function (ev) {
 			upThis.dispatchEvent("channelmin", ev.data);
 		});
-		this.device.addEventListener("channelmax", function (ev) {
+		upThis.device.addEventListener("channelmax", function (ev) {
 			upThis.dispatchEvent("channelmax", ev.data);
 		});
-		this.device.addEventListener("channelreset", function (ev) {
+		upThis.device.addEventListener("channelreset", function (ev) {
 			upThis.dispatchEvent("channelreset");
 		});
-		this.device.addEventListener("screen", function (ev) {
+		upThis.device.addEventListener("screen", function (ev) {
 			upThis.dispatchEvent("screen", ev.data);
 		});
-		this.#metaRun[3] = function (type, data) {
+		upThis.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;
 				upThis.dispatchEvent("title", upThis.#titleName);
 			};
 		};
-		this.#metaRun[81] = function (type, data) {
+		upThis.#metaRun[81] = function (type, data) {
 			let noteProgress = upThis.noteProgress;
 			// Change tempo
 			let lastBInt = upThis.#noteBInt || 0.5;
@@ -245,7 +313,7 @@ let RootDisplay = class extends CustomEventSource {
 			upThis.#noteBarOffset += noteProgress * (lastBInt / upThis.#noteBInt) - noteProgress;
 			upThis.dispatchEvent("tempo", upThis.#noteTempo);
 		};
-		this.#metaRun[88] = function (type, data) {
+		upThis.#metaRun[88] = function (type, data) {
 			let noteProgress = upThis.noteProgress;
 			let noteOverall = upThis.noteOverall;
 			let curBar = upThis.noteBar;

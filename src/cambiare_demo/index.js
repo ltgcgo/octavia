@@ -146,6 +146,8 @@ let demoPool = new SheetData();
 (async () => {
 	demoPool.load(await (await getBlobFrom(`list.tsv`)).text());
 	Alpine.store("demo", demoPool.data);
+	let efxData = await(await fetch(`../data/misc/efxId.tsv`)).text();
+	visualizer.loadEfx(efxData);
 })();
 
 Alpine.start();

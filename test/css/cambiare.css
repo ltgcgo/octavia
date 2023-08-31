@@ -32,6 +32,9 @@ div.cambiare-canvas > div {
 	width: 1896px;
 	left: 12px;
 }
+div.cambiare-canvas.debug > div {
+	outline: 1px #0f07 solid;
+}
 div.cambiare-canvas span {
 	display: inline-block;
 }
@@ -66,4 +69,8 @@ div.cambiare-canvas > div.sect-meta {
 	width: 934px;
 	top: 938px;
 	height: 135px;
+}
+div.cambiare-canvas > div.sect-mark > div {
+	width: 936px;
+	height: 33px;
 }
