@@ -284,6 +284,7 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "channelmax");
 		eventPassThru(upThis.device, upThis, "channelreset");
 		eventPassThru(upThis.device, upThis, "screen");
+		eventPassThru(upThis.device, upThis, "metacommit");
 		eventPassThru(upThis.device, upThis, "efxreverb");
 		eventPassThru(upThis.device, upThis, "efxchorus");
 		eventPassThru(upThis.device, upThis, "efxdelay");

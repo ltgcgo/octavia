@@ -21,6 +21,44 @@ const modeNames = {
 	"s90es": "Yamaha S90 ES",
 	"motif": "Yamaha Motif ES"
 };
+const metaNames = {
+	"Copyrite": "Copyright",
+	"Cmn.Text": "Text",
+	"C.Lyrics": "Lyrics",
+	"C.Marker": "Marker",
+	"CuePoint": "Cue Point",
+	"Instrmnt": "Instrument",
+	"Kar.Info": "Kar Info",
+	"Kar.Mode": "Karaoke",
+	"Kar.Lang": "Language",
+	"KarTitle": "Kar Title",
+	"KarLyric": "Kar Lyrics",
+	"Kar.Ver.": "Kar Version",
+	"SGLyrics": "SG Lyrics",
+	"TrkTitle": "Title",
+	"XfSngDte": "XF Date",
+	"XfSngRgn": "XF Region",
+	"XfSngCat": "XF Category",
+	"XfSongBt": "XF Beat",
+	"XfSngIns": "XF Instr.",
+	"XfSngVoc": "XF Vocalist",
+	"XfSngCmp": "XF Composer",
+	"XfSngLrc": "XF Lyricist",
+	"XfSngArr": "XF Arranger",
+	"XfSngPer": "XF Perform.",
+	"XfSngPrg": "XF Program.",
+	"XfSngTag": "XF Tags",
+	"XfKarLng": "XF Lang.",
+	"XfKarNme": "XF Name",
+	"XfKarCmp": "XK Composer",
+	"XfKarLrc": "XK Lyricist",
+	"XfKarArr": "XK Arranger",
+	"XfKarPer": "XK Perform.",
+	"XfKarPrg": "XK Program."
+}, metaBlocklist = [
+	"XfSongBt",
+	"XfSngIns"
+];
 
 let createElement = function (tag, classes, details = {}) {
 	let target = document.createElement(tag);
@@ -32,7 +70,7 @@ let createElement = function (tag, classes, details = {}) {
 	l?.constructor && (target.style.left = `${l}px`);
 	w?.constructor && (target.style.width = `${w}px`);
 	h?.constructor && (target.style.height = `${h}px`);
-	i?.constructor && (target.innerText = i);
+	i?.constructor && (target.appendChild(document.createTextNode(i)));
 	a?.constructor && (target.style.textAlign = a);
 	return target;
 };
@@ -57,6 +95,10 @@ let classOn = function (target, classes) {
 };
 
 let Cambiare = class extends RootDisplay {
+	#metaMaxLine = 20;
+	#metaAmend = false;
+	#metaType = "";
+	#metaLastLine;
 	#maxPoly = 0;
 	#clockSource;
 	#visualizer;
@@ -65,7 +107,7 @@ let Cambiare = class extends RootDisplay {
 	#sectInfo = {};
 	#sectMark = {};
 	#sectPart = {};
-	#sectMeta = {};
+	#sectMeta;
 	#resizerSrc() {
 		let aspectRatio = self.innerWidth / self.innerHeight;
 		let targetZoom = 1;
@@ -185,13 +227,35 @@ let Cambiare = class extends RootDisplay {
 		]);
 		// Begin inserting the marker section
 		upThis.#sectMark.root = createElement("div", ["sect-mark"]);
+		upThis.#sectMark.left = createElement("div", ["sect-mark-left", "boundary"], {t: 0, l: 0});
+		upThis.#sectMark.right = createElement("div", ["sect-mark-right", "boundary"], {t: 0, l: 960});
 		canvasElement.appendChild(upThis.#sectMark.root);
+		mountElement(upThis.#sectMark.root, [
+			upThis.#sectMark.left,
+			upThis.#sectMark.right
+		]);
+		mountElement(upThis.#sectMark.left, [
+			createElement("span", ["field", "field-key"], {t: 0, l: 0, w: 26, h: 33, i: "CH"}),
+			createElement("span", ["field", "field-key"], {t: 0, l: 30, w: 49, h: 33, i: "Voice"}),
+			createElement("span", ["field", "field-key", "mark-send-title"], {t: 2, l: 164, w: 25, h: 18, i: "Send"}),
+			createElement("span", ["field", "field-label", "mark-send-param"], {t: 16, l: 146, w: 58, h: 16, i: "VEMRCDBP12", a: "center"}),
+			createElement("span", ["field", "field-key"], {t: 0, l: 214, w: 35, h: 33, i: "Pan"}),
+			createElement("span", ["field", "field-key"], {t: 0, l: 256, w: 45, h: 33, i: "Note"})
+		]);
+		mountElement(upThis.#sectMark.right, [
+			createElement("span", ["field", "field-key"], {t: 0, l: 0, w: 26, h: 33, i: "CH"}),
+			createElement("span", ["field", "field-key"], {t: 0, l: 30, w: 49, h: 33, i: "Voice"}),
+			createElement("span", ["field", "field-key", "mark-send-title"], {t: 2, l: 164, w: 25, h: 18, i: "Send"}),
+			createElement("span", ["field", "field-label", "mark-send-param"], {t: 16, l: 146, w: 58, h: 16, i: "VEMRCDBP12", a: "center"}),
+			createElement("span", ["field", "field-key"], {t: 0, l: 214, w: 35, h: 33, i: "Pan"}),
+			createElement("span", ["field", "field-key"], {t: 0, l: 256, w: 45, h: 33, i: "Note"})
+		]);
 		// Begin inserting the channel section
 		upThis.#sectPart.root = createElement("div", ["sect-part"]);
 		canvasElement.appendChild(upThis.#sectPart.root);
 		// Begin inserting the meta section
-		upThis.#sectMeta.root = createElement("div", ["sect-meta"]);
-		canvasElement.appendChild(upThis.#sectMeta.root);
+		upThis.#sectMeta = createElement("div", ["sect-meta"]);
+		canvasElement.appendChild(upThis.#sectMeta);
 		// Opportunistic value refreshing
 		upThis.addEventListener("mode", (ev) => {
 			upThis.#sectInfo.mode.innerText = `${modeNames[ev.data]}`;
@@ -222,6 +286,33 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.addEventListener("efxinsert0", (ev) => {
 			upThis.#sectInfo.insert.innerText = upThis.getEfx(ev.data);
+		});
+		upThis.addEventListener("metacommit", (ev) => {
+			let meta = ev.data;
+			//console.debug(meta);
+			if (upThis.#metaAmend && meta.type == upThis.#metaType && upThis.#metaLastLine) {
+				// Amend the last line
+				upThis.#metaLastLine.childNodes[0].data += meta.data;
+			} else if (meta.data?.length && metaBlocklist.indexOf(meta.type) == -1) {
+				// Commit a new line
+				let metaLineRoot = createElement("div", ["meta-line"]),
+				metaLineType = createElement("span", ["field", "field-key", "meta-type"], {i: metaNames[meta.type] || meta.type});
+				if (meta.mask) {
+					metaLineType.style.display = "none";
+				};
+				upThis.#metaLastLine = createElement("span", ["field", "meta-data"], {i: meta.data});
+				upThis.#sectMeta.appendChild(metaLineRoot);
+				mountElement(metaLineRoot, [
+					metaLineType,
+					upThis.#metaLastLine
+				]);
+				while (upThis.#sectMeta.children.length > upThis.#metaMaxLine) {
+					upThis.#sectMeta.children[0].remove();
+				};
+			};
+			upThis.#metaAmend = meta.amend || false;
+			upThis.#metaType = meta.type || "";
+			upThis.#sectMeta.scrollTop = upThis.#sectMeta.scrollHeight - 140;
 		});
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
@@ -256,6 +347,13 @@ let Cambiare = class extends RootDisplay {
 		};
 		upThis.addEventListener("reset", () => {
 			upThis.#maxPoly = 0;
+			upThis.#metaAmend = false;
+			upThis.#metaType = "";
+			upThis.#metaLastLine = null;
+			let list = upThis.#sectMeta.children;
+			for (let pointer = list.length - 1; pointer >= 0; pointer --) {
+				list[pointer].remove();
+			};
 		});
 	};
 };

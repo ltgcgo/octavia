@@ -16,7 +16,7 @@ div.cambiare > div.cambiare-container {
 div.cambiare-canvas {
 	--background-color: #222;
 	--foreground-color: #fff;
-	--accent-color: #e9e1ff;
+	--accent-color: #ccc;
 }
 div.cambiare-canvas.cambiare-mode-xg, div.cambiare-canvas.cambiare-mode-ns5r, div.cambiare-canvas.cambiare-mode-x5d, div.cambiare-canvas.cambiare-mode-05rw, div.cambiare-canvas.cambiare-mode-k11, div.cambiare-canvas.cambiare-mode-s90es, div.cambiare-canvas.cambiare-mode-motif {
 	--accent-color: #9efaa0;
@@ -51,11 +51,11 @@ div.cambiare-canvas.debug > div {
 div.cambiare-canvas span {
 	display: inline-block;
 }
-div.cambiare-canvas span.field {
+div.cambiare-canvas span.field, div.cambiare-canvas div.boundary {
 	position: absolute;
 	cursor: default;
 }
-div.cambiare-canvas.debug span.field {
+div.cambiare-canvas.debug span.field, div.cambiare-canvas.debug div.boundary {
 	outline: 1px #fff7 solid;
 }
 div.cambiare-canvas span.field-label {
@@ -67,23 +67,54 @@ div.cambiare-canvas span.field-key {
 }
 
 div.cambiare-canvas > div.sect-info {
-	top: 1px;
+	top: 0px;
 	height: 67px;
 }
 div.cambiare-canvas > div.sect-mark {
-	top: 70px;
+	top: 69px;
 	height: 33px;
 }
 div.cambiare-canvas > div.sect-part {
-	top: 104px;
+	top: 103px;
 	height: 832px;
 }
 div.cambiare-canvas > div.sect-meta {
 	width: 934px;
-	top: 938px;
-	height: 135px;
+	top: 937px;
+	height: 137px;
+	overflow: hidden;
 }
+
 div.cambiare-canvas > div.sect-mark > div {
 	width: 936px;
 	height: 33px;
+}
+div.cambiare-canvas > div.sect-mark span.mark-send-title {
+	font-size: 14px;
+}
+div.cambiare-canvas > div.sect-mark span.mark-send-param {
+	font-size: 12px;
+}
+div.cambiare-canvas.cambiare-port1 div.sect-mark-right, div.cambiare-canvas.cambiare-compact div.sect-mark-right {
+	display: none;
+}
+
+div.cambiare-canvas > div.sect-meta > div.meta-line {
+	/*position: relative;*/
+	margin: 0 0 3px;
+	height: 25px;
+	/*overflow: hidden;*/
+	line-height: 25px;
+}
+div.cambiare-canvas > div.sect-meta > div.meta-line > span {
+	font-size: 20px;
+}
+div.cambiare-canvas > div.sect-meta span.meta-type {
+	width: 88px;
+	text-align: right;
+}
+div.cambiare-canvas > div.sect-meta span.meta-data {
+	/*width: 840px;*/
+	left: 94px;
+	white-space: pre;
 }
