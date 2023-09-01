@@ -258,9 +258,11 @@ let OctaviaDevice = class extends CustomEventSource {
 	// Exec Pools
 	#forceVoiceRefresh() {
 		for (let part = 0; part < allocated.ch; part ++) {
-			this.dispatchEvent("voice", {
-				part
-			});
+			if (this.#chActive[part]) {
+				this.dispatchEvent("voice", {
+					part
+				});
+			};
 		};
 	};
 	// Meta event pool
@@ -1431,6 +1433,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 				upThis.dispatchEvent("mode", mode);
+				upThis.#forceVoiceRefresh();
 			};
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
@@ -3191,6 +3194,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								upThis.#cmTTimbre[(part - 1) * allocated.cmt + c] = name.charCodeAt(c);
 							};
 						};
+						upThis.dispatchEvent("voice", {
+							part
+						});
 					};
 				}, () => {
 					upThis.#rpn[part * allocated.rpn + 3] = e + 40;
@@ -3228,6 +3234,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cmTTimbre[(part - 1) * allocated.cmt + ri] = e;
 				};
 			});
+			upThis.dispatchEvent("voice", {
+				part
+			});
 		}).add([22, 18, 3], (msg, track, id) => {
 			// MT-32 Part Patch Setup (dev)
 			upThis.switchMode("mt32");
@@ -3260,6 +3269,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								};
 							};
 						};
+						upThis.dispatchEvent("voice", {
+							part
+						});
 					}, () => {
 						upThis.#rpn[part * allocated.rpn + 3] = e + 40;
 					}, () => {
@@ -3293,6 +3305,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#bnCustom[part] = 1;
 				};
 			});
+			upThis.dispatchEvent("voice", {
+				part
+			});
 		}).add([22, 18, 5], (msg, track, id) => {
 			// MT-32 Patch Memory Write
 			upThis.switchMode("mt32");
@@ -3318,6 +3333,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				}][slot] || (() => {}))();
 			});
+			upThis.#forceVoiceRefresh();
 		}).add([22, 18, 8], (msg, track, id) => {
 			// MT-32 Timbre Memory Write
 			upThis.switchMode("mt32");
@@ -3329,6 +3345,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cmTimbre[(msg[0] >> 1) * allocated.cmt + ri] = e;
 				};
 			});
+			upThis.#forceVoiceRefresh();
 		}).add([22, 18, 16], (msg, track, id) => {
 			// MT-32 System Setup
 			upThis.switchMode("mt32");
