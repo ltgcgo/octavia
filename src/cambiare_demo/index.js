@@ -73,19 +73,24 @@ self.gPort = async function (port) {
 	visualizer.setPort(port);
 	Alpine.store("startPort", port);
 };
-self.gDemo = async function ({file, id}) {
+self.gDemo = async function ({file, id, artist, title}) {
 	await audioFilePlayer.pause();
 	visualizer.reset();
 	if (audioUri) {
 		URL.revokeObjectURL(audioUri);
 	};
 	audioFilePlayer.src = "";
-	let midiBlob = await(await getBlobFrom(`${file}.mid`)).blob(),
-	audioBlob = await(await getBlobFrom(`${file}.opus`)).blob();
+	visualizer.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (MIDI)`);
+	let midiBlob = await(await getBlobFrom(`${file}.mid`)).blob();
+	visualizer.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (audio)`);
+	let audioBlob = await(await getBlobFrom(`${file}.opus`)).blob();
+	visualizer.dispatchEvent("title", `Polak is cute!`);
 	await visualizer.loadFile(await midiBlob);
 	audioUri = URL.createObjectURL(audioBlob);
 	audioFilePlayer.currentTime = 0;
 	audioFilePlayer.src = audioUri;
+	visualizer.device.initOnReset = false;
+	visualizer.dispatchEvent("title", "");
 	Alpine.store("activeDemo", id);
 	Alpine.store("play", "demo");
 	Alpine.store("sound", "demo");
@@ -115,7 +120,9 @@ self.gOpenSmf = async function () {
 			// Load MIDI files
 			Alpine.store("activeDemo", -1);
 			visualizer.reset();
-			visualizer.loadFile(file);
+			visualizer.dispatchEvent("title", `Loading MIDI...`);
+			await visualizer.loadFile(file);
+			visualizer.dispatchEvent("title", ``);
 			visualizer.device.initOnReset = false;
 			Alpine.store("play", "smf");
 		};
