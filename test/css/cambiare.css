@@ -16,7 +16,7 @@ div.cambiare > div.cambiare-container {
 div.cambiare-canvas {
 	--background-color: #222;
 	--foreground-color: #fff;
-	--accent-color: #ccc;
+	--accent-color: #fcdaff;
 }
 div.cambiare-canvas.cambiare-mode-xg, div.cambiare-canvas.cambiare-mode-ns5r, div.cambiare-canvas.cambiare-mode-x5d, div.cambiare-canvas.cambiare-mode-05rw, div.cambiare-canvas.cambiare-mode-k11, div.cambiare-canvas.cambiare-mode-s90es, div.cambiare-canvas.cambiare-mode-motif {
 	--accent-color: #9efaa0;

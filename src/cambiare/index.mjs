@@ -314,7 +314,8 @@ let Cambiare = class extends RootDisplay {
 				// Amend the last line
 				switch (meta.type) {
 					case "C.Lyrics":
-					case "KarLyric": {
+					case "KarLyric":
+					case "SGLyrics": {
 						mountElement(upThis.#metaLastLine, [
 							createElement("span", ["meta-slice"], {i: meta.data})
 						]);
@@ -333,7 +334,8 @@ let Cambiare = class extends RootDisplay {
 				};
 				switch (meta.type) {
 					case "C.Lyrics":
-					case "KarLyric": {
+					case "KarLyric":
+					case "SGLyrics": {
 						upThis.#metaLastLine = createElement("span", ["field", "meta-data"]);
 						mountElement(upThis.#metaLastLine, [
 							createElement("span", ["meta-slice"], {i: meta.data})
