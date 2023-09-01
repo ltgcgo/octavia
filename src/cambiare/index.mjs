@@ -1,6 +1,6 @@
 "use strict";
 
-import {OctaviaDevice} from "../state/index.mjs";
+import {OctaviaDevice, allocated} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 
 const targetRatio = 16 / 9;
@@ -59,6 +59,7 @@ const metaNames = {
 	"XfSongBt",
 	"XfSngIns"
 ];
+const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}];
 
 let createElement = function (tag, classes, details = {}) {
 	let target = document.createElement(tag);
@@ -103,13 +104,15 @@ let Cambiare = class extends RootDisplay {
 	#metaMoveX = 0;
 	#metaMoveY = 0;
 	#maxPoly = 0;
+	#renderRange = 1;
+	#renderPort = 0;
 	#clockSource;
 	#visualizer;
 	#container;
 	#canvas;
 	#sectInfo = {};
 	#sectMark = {};
-	#sectPart = {};
+	#sectPart = [];
 	#sectMeta = {};
 	#scrollMeta(resetTime) {
 		let upThis = this;
@@ -169,15 +172,42 @@ let Cambiare = class extends RootDisplay {
 			classOn(upThis.#canvas, [`cambiare-mode-${mode}`]);
 		};
 	};
+	#setPortView() {
+		let upThis = this;
+		let range = upThis.#renderRange, port = upThis.#renderPort;
+		upThis.#sectPart.forEach((e, i) => {
+			if (i >= port && i < (port + range)) {
+				classOn(e.root, [`part-active`]);
+				let index = i - port;
+				let {l, t} = portPos[index * (4 / range)];
+				e.root.style.top = `${t}px`;
+				e.root.style.left = `${l}px`;
+				e.forEach((e, i) => {
+					e.root.style.top = `${i * (range > 2 ? 26 : 52)}px`;
+				});
+			} else {
+				classOff(e.root, [`part-active`]);
+				e.root.style.top = "";
+				e.root.style.left = "";
+				e.forEach((e, i) => {
+					e.root.style.top = "";
+				});
+			};
+		});
+	};
 	setPort(port) {
 		let upThis = this;
 		classOff(upThis.#canvas, [`cambiare-start0`, `cambiare-start1`, `cambiare-start2`, `cambiare-start3`, `cambiare-start4`, `cambiare-start5`, `cambiare-start6`, `cambiare-start7`]);
 		classOn(upThis.#canvas, [`cambiare-start${port}`]);
+		upThis.#renderPort = port;
+		upThis.#setPortView();
 	};
 	setRange(mode) {
 		let upThis = this;
 		classOff(upThis.#canvas, [`cambiare-port1`, `cambiare-port2`, `cambiare-port4`, `cambiare-compact`]);
 		classOn(upThis.#canvas, [`cambiare-${mode}`]);
+		upThis.#renderRange = parseInt(mode.slice(4)) || 1;
+		upThis.#setPortView();
 	};
 	attach(attachElement) {
 		let upThis = this;
@@ -270,6 +300,32 @@ let Cambiare = class extends RootDisplay {
 		]);
 		// Begin inserting the channel section
 		upThis.#sectPart.root = createElement("div", ["sect-part"]);
+		for (let port = 0; port < (allocated.ch >> 4); port ++) {
+			let startCh = port << 4;
+			upThis.#sectPart[port] = [];
+			upThis.#sectPart[port].root = createElement("div", [`boundary`, `part-port-${port}`]);
+			for (let part = 0; part < 16; part ++) {
+				upThis.#sectPart[port][part] = {
+					"root": createElement("div", [`boundary`, `part-channel`]),
+					"major": createElement("div", [`boundary`, `part-info-major`]),
+					"minor": createElement("div", [`boundary`, `part-info-minor`], {t: 26}),
+					"keys": createElement("div", [`boundary`, `part-keys`]),
+					"notes": createElement("div", [`boundary`, `part-keyboard`])
+				};
+				mountElement(upThis.#sectPart[port][part].keys, [
+					upThis.#sectPart[port][part].notes
+				]);
+				mountElement(upThis.#sectPart[port][part].root, [
+					upThis.#sectPart[port][part].major,
+					upThis.#sectPart[port][part].minor,
+					upThis.#sectPart[port][part].keys
+				]);
+				mountElement(upThis.#sectPart[port].root, [
+					upThis.#sectPart[port][part].root
+				]);
+			};
+			upThis.#sectPart.root.appendChild(upThis.#sectPart[port].root);
+		};
 		canvasElement.appendChild(upThis.#sectPart.root);
 		// Begin inserting the meta section
 		upThis.#sectMeta.root = createElement("div", ["sect-meta"]);
@@ -359,29 +415,6 @@ let Cambiare = class extends RootDisplay {
 			upThis.#metaType = meta.type || "";
 			upThis.#scrollMeta();
 		});
-		/*upThis.#sectMeta.root.addEventListener("wheel", (ev) => {
-			ev.stopImmediatePropagation();
-			let {deltaX, deltaY, deltaMode} = ev;;
-			switch (deltaMode) {
-				case 0: {
-					// Do nothing - pixel mode.
-					break;
-				};
-				case 1: {
-					// Do something - line mode.
-					//deltaX *= 28;
-					//deltaY *= 28;
-					break;
-				};
-			};
-			console.debug(deltaX, deltaY, deltaMode);
-			upThis.#metaLastWheel = Date.now();
-			upThis.#metaMoveX -= deltaX;
-			upThis.#metaMoveY -= deltaY;
-			upThis.#sectMeta.view.style.transform = `translateX(${upThis.#metaMoveX}px) translateY(${upThis.#metaMoveY}px)`;
-		}, {
-			"passive": true
-		});*/
 		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
@@ -392,6 +425,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.dispatchEvent(`efxchorus`, upThis.device.getEffectType(1));
 		upThis.dispatchEvent(`efxdelay`, upThis.device.getEffectType(2));
 		upThis.dispatchEvent(`efxinsert0`, upThis.device.getEffectType(3));
+		upThis.#setPortView();
 	};
 	detach(attachElement) {
 		let upThis = this;

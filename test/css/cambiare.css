@@ -55,8 +55,15 @@ div.cambiare-canvas span.field, div.cambiare-canvas div.boundary {
 	position: absolute;
 	cursor: default;
 }
+div.cambiare-canvas.debug div.portion {
+	position: relative;
+	cursor: default;
+}
 div.cambiare-canvas.debug span.field, div.cambiare-canvas.debug div.boundary {
 	outline: 1px #fff7 solid;
+}
+div.cambiare-canvas.debug div.portion {
+	outline: 1px #aaf7 solid;
 }
 div.cambiare-canvas span.field-label {
 	color: var(--accent-color);
@@ -131,4 +138,45 @@ div.cambiare-canvas > div.sect-meta span.meta-data {
 }
 div.cambiare-canvas > div.sect-meta span.meta-data > span.meta-slice {
 	animation: slideFadeIn 0.1s;
+}
+
+div.cambiare-canvas > div.sect-part > div {
+	width: 1896px;
+	height: 832px;
+	display: none;
+}
+div.cambiare-canvas > div.sect-part > div.part-active {
+	display: block;
+}
+div.cambiare-canvas.cambiare-port2 > div.sect-part > div,
+div.cambiare-canvas.cambiare-port4 > div.sect-part > div {
+	width: 936px;
+}
+div.cambiare-canvas.cambiare-port4 > div.sect-part > div {
+	height: 416px;
+}
+div.cambiare-canvas > div.sect-part div.part-channel {
+	height: 52px;
+	width: 100%;
+}
+div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-channel {
+	height: 26px;
+}
+div.cambiare-canvas > div.sect-part div.part-info-major,
+div.cambiare-canvas > div.sect-part div.part-info-minor {
+	width: 230px;
+	height: 26px;
+}
+div.cambiare-canvas > div.sect-part div.part-keys {
+	left: 232px;
+	width: calc(100% - 232px);
+	height: 100%;
+}
+div.cambiare-canvas > div.sect-part div.part-keyboard {
+	height: 100%;
+	width: calc(100% * 128 / 176);
+	margin: 0 calc(100% * 24 / 176);
+}
+div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-info-minor {
+	display: none;
 }

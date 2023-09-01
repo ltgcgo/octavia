@@ -141,7 +141,7 @@ const allocated = {
 	ace: 8, // active custom effect
 	drm: 8, // Drum setup slots
 	dpn: useDrumNrpn.length, // Drum setup params
-	dnc: 128, // note 0 to 127
+	dnc: 128, // drum note 0 to 127
 	efx: 7
 };
 
