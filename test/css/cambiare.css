@@ -145,9 +145,6 @@ div.cambiare-canvas > div.sect-part > div {
 	height: 832px;
 	display: none;
 }
-div.cambiare-canvas > div.sect-part > div.part-active {
-	display: block;
-}
 div.cambiare-canvas.cambiare-port2 > div.sect-part > div,
 div.cambiare-canvas.cambiare-port4 > div.sect-part > div {
 	width: 936px;
@@ -158,18 +155,27 @@ div.cambiare-canvas.cambiare-port4 > div.sect-part > div {
 div.cambiare-canvas > div.sect-part div.part-channel {
 	height: 52px;
 	width: 100%;
+	display: none;
 }
 div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-channel {
 	height: 26px;
 }
 div.cambiare-canvas > div.sect-part div.part-info-major,
 div.cambiare-canvas > div.sect-part div.part-info-minor {
-	width: 230px;
+	width: 254px;
 	height: 26px;
+	font-size: 20px;
+}
+div.cambiare-canvas > div.sect-part span.part-cc {
+	width: 4px;
+	height: 24px;
+	top: 25px;
+	transform: translateY(-100%);
+	background: var(--accent-color);
 }
 div.cambiare-canvas > div.sect-part div.part-keys {
-	left: 232px;
-	width: calc(100% - 232px);
+	left: 256px;
+	width: calc(100% - 256px);
 	height: 100%;
 }
 div.cambiare-canvas > div.sect-part div.part-keyboard {
@@ -179,4 +185,8 @@ div.cambiare-canvas > div.sect-part div.part-keyboard {
 }
 div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-info-minor {
 	display: none;
+}
+div.cambiare-canvas > div.sect-part > div.port-active,
+div.cambiare-canvas > div.sect-part div.part-active {
+	display: block;
 }

@@ -441,7 +441,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = det.channel;
 			// Note on, but should be off if velocity is 0.
 			// Set channel active
-			this.#chActive[part] = 1;
+			this.setChActive(part, 1)
 			let rawNote = det.data[0];
 			let velocity = det.data[1];
 			if (velocity > 0) {
@@ -475,14 +475,14 @@ let OctaviaDevice = class extends CustomEventSource {
 						case modeMap.s90es:
 						case modeMap.motif: {
 							if (det.data[0] == 0) {
-								([0, 63].indexOf(det.data[1]) > -1) && (this.#chActive[part] = 1);
+								([0, 63].indexOf(det.data[1]) > -1) && (this.setChActive(part, 1));
 								break;
 							};
-							det.data[1] && (this.#chActive[part] = 1);
+							det.data[1] && (this.setChActive(part, 1));
 							break;
 						};
 						default: {
-							this.#chActive[part] = 1;
+							this.setChActive(part, 1);
 							break;
 						};
 					};
@@ -814,11 +814,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (this.#mode) {
 				case modeMap.s90es:
 				case modeMap.motif: {
-					det.data && (this.#chActive[part] = 1);
+					det.data && (this.setChActive(part, 1));
 					break;
 				};
 				default: {
-					this.#chActive[part] = 1;
+					this.setChActive(part, 1);
 				};
 			};
 			this.#prg[part] = det.data;
@@ -983,10 +983,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		//console.debug(tree);
 	};
 	getActive() {
-		let result = this.#chActive.slice();
-		if (this.#mode == modeMap.mt32) {
+		let result = this.#chActive;
+		//if (this.#mode == modeMap.mt32) {
 			//result[0] = 0;
-		};
+		//};
 		return result;
 	};
 	getCc(channel) {
@@ -1025,6 +1025,15 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (type > 0 && !disableMsbSet) {
 			this.#cc[part * allocated.cc + ccToPos[0]] = drumMsb[mode];
 		};
+	};
+	setChActive(part, active = 0) {
+		if (this.#chActive[part] != active) {
+			this.dispatchEvent("channeltoggle", {
+				part,
+				active
+			});
+		};
+		this.#chActive[part] = active;
 	};
 	getPitch() {
 		return this.#pitch;
@@ -3056,7 +3065,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								upThis.#prg[part] = korgDrums[e - 128];
 							};
 							if (e > 0) {
-								upThis.#chActive[part] = 1;
+								upThis.setChActive(part, 1);
 							};
 							break;
 						};
@@ -3561,7 +3570,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Program
 								upThis.#prg[part] = e;
 								if (e > 0) {
-									upThis.#chActive[part] = 1;
+									upThis.setChActive(part, 1);
 								};
 								break;
 							};
@@ -3791,7 +3800,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}, () => {
 				upThis.#cc[chOff + ccToPos[7]] = e; // volume
 			}, () => {
-				upThis.#chActive[part] = e; // toggle channel
+				uupThis.setChActive(part, e); // toggle channel
 			}, () => {
 				upThis.#cc[chOff + ccToPos[10]] = e; // pan
 			}, () => {
@@ -3866,7 +3875,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			rpnOff = part * allocated.rpn;
 			let dPref = `GMLX CH${part + 1} `;
 			[() => {
-				upThis.#chActive[part] = e; // toggle channel
+				upThis.setChActive(part, e); // toggle channel
 			}, () => {
 				upThis.#cc[chOff + ccToPos[7]] = e; // volume
 			}, () => {
@@ -4006,11 +4015,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				([() => {
 					upThis.#cc[chOff + ccToPos[0]] = e;
 				}, () => {
-					e && (upThis.#chActive[part] = 1);
+					e && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[32]] = e;
 					upThis.setChType(part, ([32, 40].indexOf(e) > -1) ? upThis.CH_DRUMS : upThis.CH_MELODIC, upThis.#mode, true);
 				}, () => {
-					e && (upThis.#chActive[part] = 1);
+					e && (upThis.setChActive(part, 1));
 					upThis.#prg[part] = e;
 				}, () => {
 					let ch = upThis.chRedir(e, track, true);

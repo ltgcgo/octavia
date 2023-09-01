@@ -177,7 +177,7 @@ let Cambiare = class extends RootDisplay {
 		let range = upThis.#renderRange, port = upThis.#renderPort;
 		upThis.#sectPart.forEach((e, i) => {
 			if (i >= port && i < (port + range)) {
-				classOn(e.root, [`part-active`]);
+				classOn(e.root, [`port-active`]);
 				let index = i - port;
 				let {l, t} = portPos[index * (4 / range)];
 				e.root.style.top = `${t}px`;
@@ -186,7 +186,7 @@ let Cambiare = class extends RootDisplay {
 					e.root.style.top = `${i * (range > 2 ? 26 : 52)}px`;
 				});
 			} else {
-				classOff(e.root, [`part-active`]);
+				classOff(e.root, [`port-active`]);
 				e.root.style.top = "";
 				e.root.style.left = "";
 				e.forEach((e, i) => {
@@ -305,15 +305,47 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectPart[port] = [];
 			upThis.#sectPart[port].root = createElement("div", [`boundary`, `part-port-${port}`]);
 			for (let part = 0; part < 16; part ++) {
+				let dispPart = (startCh | part) + 1;
+				if (dispPart >= 100) {
+					dispPart = `${Math.floor(dispPart / 10).toString(16)}${dispPart % 10}`;
+				} else {
+					dispPart = `${dispPart}`.padStart(2, "0");
+				};
 				upThis.#sectPart[port][part] = {
 					"root": createElement("div", [`boundary`, `part-channel`]),
 					"major": createElement("div", [`boundary`, `part-info-major`]),
 					"minor": createElement("div", [`boundary`, `part-info-minor`], {t: 26}),
 					"keys": createElement("div", [`boundary`, `part-keys`]),
-					"notes": createElement("div", [`boundary`, `part-keyboard`])
+					"notes": createElement("div", [`boundary`, `part-keyboard`]),
+					"number": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25, i: dispPart}),
+					"voice": createElement("span", [`field`], {l: 22, t: 1, w: 121, h: 25}),
+					"vol": createElement("span", [`field`, `part-cc`], {l: 146}),
+					"exp": createElement("span", [`field`, `part-cc`], {l: 152}),
+					"mod": createElement("span", [`field`, `part-cc`], {l: 158}),
+					"rev": createElement("span", [`field`, `part-cc`], {l: 164}),
+					"cho": createElement("span", [`field`, `part-cc`], {l: 170}),
+					"var": createElement("span", [`field`, `part-cc`], {l: 176}),
+					"brt": createElement("span", [`field`, `part-cc`], {l: 182}),
+					"por": createElement("span", [`field`, `part-cc`], {l: 188}),
+					"cea": createElement("span", [`field`, `part-cc`], {l: 194}),
+					"ceb": createElement("span", [`field`, `part-cc`], {l: 200})
 				};
 				mountElement(upThis.#sectPart[port][part].keys, [
 					upThis.#sectPart[port][part].notes
+				]);
+				mountElement(upThis.#sectPart[port][part].major, [
+					upThis.#sectPart[port][part].number,
+					upThis.#sectPart[port][part].voice,
+					upThis.#sectPart[port][part].vol,
+					upThis.#sectPart[port][part].exp,
+					upThis.#sectPart[port][part].mod,
+					upThis.#sectPart[port][part].rev,
+					upThis.#sectPart[port][part].cho,
+					upThis.#sectPart[port][part].var,
+					upThis.#sectPart[port][part].brt,
+					upThis.#sectPart[port][part].por,
+					upThis.#sectPart[port][part].cea,
+					upThis.#sectPart[port][part].ceb
 				]);
 				mountElement(upThis.#sectPart[port][part].root, [
 					upThis.#sectPart[port][part].major,
@@ -362,6 +394,12 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.addEventListener("efxinsert0", (ev) => {
 			upThis.#sectInfo.insert.innerText = upThis.getEfx(ev.data);
+		});
+		upThis.addEventListener("channeltoggle", (ev) => {
+			let {part, active} = ev.data;
+			([classOff, classOn][active])(upThis.#sectPart[part >> 4][part & 15].root, [
+				`part-active`
+			]);
 		});
 		upThis.addEventListener("metacommit", (ev) => {
 			let meta = ev.data;
@@ -454,11 +492,18 @@ let Cambiare = class extends RootDisplay {
 			upThis.#metaType = "";
 			upThis.#metaLastLine = null;
 			try {
+				// Remove all meta
 				let list = upThis.#sectMeta.view.children;
 				for (let pointer = list.length - 1; pointer >= 0; pointer --) {
 					list[pointer].remove();
 				};
 				upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
+				// Reset channels
+				for (let part = 0; part < allocated.ch; part ++) {
+					classOff(upThis.#sectPart[part >> 4][part & 15].root, [
+						`part-active`
+					]);
+				};
 			} catch (err) {};
 		});
 	};
