@@ -81,6 +81,7 @@ let createSVG = function (tag, details) {
 	for (let key in details) {
 		target.setAttribute(key, details[key]);
 	};
+	return target;
 };
 let mountElement = function (root, children) {
 	children?.forEach((e) => {
@@ -106,6 +107,11 @@ let heightCache = new Array(128).fill(0);
 heightCache.forEach((e, i, a) => {
 	a[i] = Math.floor(24 * i / 12.7) / 10;
 });
+let setCcSvg = function (svg, value) {
+	let hV = heightCache[value];
+	svg.setAttribute("height", hV);
+	svg.setAttribute("y", 24 - hV);
+};
 
 let Cambiare = class extends RootDisplay {
 	#metaMaxLine = 128;
@@ -177,16 +183,16 @@ let Cambiare = class extends RootDisplay {
 			chOff = part * allocated.cc,
 			e = upThis.#sectPart[port][part & 15];
 			if (sum.chInUse[part] && port >= upThis.#renderPort && port < renderPortMax) {
-				e.vol.style.height = `${heightCache[sum.chContr[chOff + ccToPos[7]]]}px`;
-				e.exp.style.height = `${heightCache[sum.chContr[chOff + ccToPos[11]]]}px`;
-				e.mod.style.height = `${heightCache[sum.chContr[chOff + ccToPos[1]]]}px`;
-				e.rev.style.height = `${heightCache[sum.chContr[chOff + ccToPos[91]]]}px`;
-				e.cho.style.height = `${heightCache[sum.chContr[chOff + ccToPos[93]]]}px`;
-				e.var.style.height = `${heightCache[sum.chContr[chOff + ccToPos[94]]]}px`;
-				e.brt.style.height = `${heightCache[sum.chContr[chOff + ccToPos[74]]]}px`;
-				e.por.style.height = `${heightCache[sum.chContr[chOff + ccToPos[5]]]}px`;
-				e.cea.style.height = `${heightCache[sum.ace[0] ? sum.chContr[chOff + ccToPos[sum.ace[0]]] : 0]}px`;
-				e.ceb.style.height = `${heightCache[sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0]}px`;
+				setCcSvg(e.vol, sum.chContr[chOff + ccToPos[7]]);
+				setCcSvg(e.exp, sum.chContr[chOff + ccToPos[11]]);
+				setCcSvg(e.mod, sum.chContr[chOff + ccToPos[1]]);
+				setCcSvg(e.rev, sum.chContr[chOff + ccToPos[91]]);
+				setCcSvg(e.cho, sum.chContr[chOff + ccToPos[93]]);
+				setCcSvg(e.var, sum.chContr[chOff + ccToPos[94]]);
+				setCcSvg(e.brt, sum.chContr[chOff + ccToPos[74]]);
+				setCcSvg(e.por, sum.chContr[chOff + ccToPos[5]]);
+				setCcSvg(e.cea, sum.ace[0] ? sum.chContr[chOff + ccToPos[sum.ace[0]]] : 0);
+				setCcSvg(e.ceb, sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0);
 			};
 		};
 	};
@@ -354,24 +360,23 @@ let Cambiare = class extends RootDisplay {
 					"msb": createElement("span", [`field`], {l: 48, t: 1, w: 27, h: 25}),
 					"prg": createElement("span", [`field`], {l: 81, t: 1, w: 27, h: 25}),
 					"lsb": createElement("span", [`field`], {l: 114, t: 1, w: 27, h: 25}),
-					"vol": createElement("span", [`field`, `part-cc`], {l: 146}),
-					"exp": createElement("span", [`field`, `part-cc`], {l: 152}),
-					"mod": createElement("span", [`field`, `part-cc`], {l: 158}),
-					"rev": createElement("span", [`field`, `part-cc`], {l: 164}),
-					"cho": createElement("span", [`field`, `part-cc`], {l: 170}),
-					"var": createElement("span", [`field`, `part-cc`], {l: 176}),
-					"brt": createElement("span", [`field`, `part-cc`], {l: 182}),
-					"por": createElement("span", [`field`, `part-cc`], {l: 188}),
-					"cea": createElement("span", [`field`, `part-cc`], {l: 194}),
-					"ceb": createElement("span", [`field`, `part-cc`], {l: 200})
+					"cc": createSVG("svg", {viewBox: "0 0 108 24", width: 108, style: `left: 146px; top: 1px; position: absolute;`}),
+					"vol": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 0}),
+					"exp": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 6}),
+					"mod": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 12}),
+					"rev": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 18}),
+					"cho": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 24}),
+					"var": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 30}),
+					"brt": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 36}),
+					"por": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 42}),
+					"cea": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 48}),
+					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54})
 				};
 				let e = upThis.#sectPart[port][part];
 				mountElement(e.keys, [
 					e.notes
 				]);
-				mountElement(e.major, [
-					e.number,
-					e.voice,
+				mountElement(e.cc, [
 					e.vol,
 					e.exp,
 					e.mod,
@@ -382,6 +387,11 @@ let Cambiare = class extends RootDisplay {
 					e.por,
 					e.cea,
 					e.ceb
+				]);
+				mountElement(e.major, [
+					e.number,
+					e.voice,
+					e.cc
 				]);
 				mountElement(e.minor, [
 					e.type,
