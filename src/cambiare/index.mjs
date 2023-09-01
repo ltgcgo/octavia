@@ -314,12 +314,13 @@ let Cambiare = class extends RootDisplay {
 			};
 			upThis.#metaAmend = meta.amend || false;
 			upThis.#metaType = meta.type || "";
-			/* if (upThis.#sectMeta.view.clientHeight > 137) {
-				moveScene = 0;
-			}; */
-			upThis.#sectMeta.view.style.transform = `translateY(${139 - upThis.#sectMeta.view.clientHeight}px)`;
+			let moveX = 0;
+			if ((upThis.#metaLastLine?.clientWidth || 0) > 840) {
+				moveX = 840 - upThis.#metaLastLine.clientWidth;
+			};
+			upThis.#sectMeta.view.style.transform = `translateX(${moveX}px) translateY(${139 - upThis.#sectMeta.view.clientHeight}px)`;
 		});
-		upThis.#sectMeta.view.style.transform = `translateY(139px)`;
+		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(139px)`;
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
 		upThis.dispatchEvent("tempo", 120);
@@ -356,10 +357,13 @@ let Cambiare = class extends RootDisplay {
 			upThis.#metaAmend = false;
 			upThis.#metaType = "";
 			upThis.#metaLastLine = null;
-			let list = upThis.#sectMeta.view.children;
-			for (let pointer = list.length - 1; pointer >= 0; pointer --) {
-				list[pointer].remove();
-			};
+			try {
+				let list = upThis.#sectMeta.view.children;
+				for (let pointer = list.length - 1; pointer >= 0; pointer --) {
+					list[pointer].remove();
+				};
+				upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(139px)`;
+			} catch (err) {};
 		});
 	};
 };
