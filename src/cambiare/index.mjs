@@ -107,6 +107,10 @@ let heightCache = new Array(128).fill(0);
 heightCache.forEach((e, i, a) => {
 	a[i] = Math.floor(24 * i / 12.7) / 10;
 });
+let widthCache = new Array(128).fill(0);
+widthCache.forEach((e, i, a) => {
+	a[i] = Math.abs(Math.round(48 * (i - 64) / 12.7) / 10);
+});
 let setCcSvg = function (svg, value) {
 	let hV = heightCache[value];
 	svg.setAttribute("height", hV);
@@ -195,9 +199,19 @@ let Cambiare = class extends RootDisplay {
 				setCcSvg(e.ceb, sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0);
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.globalCompositeOperation = "source-over";
-				e.metre.fillText(e.metre.innerText, 0, 2);
+				e.metre.fillText(e.metre.innerText, 0, 3);
 				e.metre.globalCompositeOperation = "xor";
 				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
+				let pan = sum.chContr[chOff + ccToPos[10]];
+				e.pan.setAttribute("width", `${widthCache[pan]}`);
+				if (pan < 64) {
+					e.pan.setAttribute("x", `${84 - widthCache[pan]}`);
+				} else if (pan > 127) {
+					e.pan.setAttribute("x", `60`);
+					e.pan.setAttribute("width", `48`);
+				} else {
+					e.pan.setAttribute("x", `84`);
+				};
 			};
 		};
 	};
@@ -328,7 +342,7 @@ let Cambiare = class extends RootDisplay {
 			createElement("span", ["field", "field-key"], {t: 0, l: 30, w: 49, h: 33, i: "Voice"}),
 			createElement("span", ["field", "field-key", "mark-send-title"], {t: 2, l: 164, w: 25, h: 18, i: "Send"}),
 			createElement("span", ["field", "field-label", "mark-send-param"], {t: 16, l: 146, w: 58, h: 16, i: "VEMRCDBP12", a: "center"}),
-			createElement("span", ["field", "field-key"], {t: 0, l: 214, w: 35, h: 33, i: "Pan"}),
+			createElement("span", ["field", "field-key"], {t: 0, l: 212, w: 35, h: 33, i: "Pan"}),
 			createElement("span", ["field", "field-key"], {t: 0, l: 256, w: 45, h: 33, i: "Note"})
 		]);
 		mountElement(upThis.#sectMark.right, [
@@ -336,7 +350,7 @@ let Cambiare = class extends RootDisplay {
 			createElement("span", ["field", "field-key"], {t: 0, l: 30, w: 49, h: 33, i: "Voice"}),
 			createElement("span", ["field", "field-key", "mark-send-title"], {t: 2, l: 164, w: 25, h: 18, i: "Send"}),
 			createElement("span", ["field", "field-label", "mark-send-param"], {t: 16, l: 146, w: 58, h: 16, i: "VEMRCDBP12", a: "center"}),
-			createElement("span", ["field", "field-key"], {t: 0, l: 214, w: 35, h: 33, i: "Pan"}),
+			createElement("span", ["field", "field-key"], {t: 0, l: 212, w: 35, h: 33, i: "Pan"}),
 			createElement("span", ["field", "field-key"], {t: 0, l: 256, w: 45, h: 33, i: "Note"})
 		]);
 		// Begin inserting the channel section
@@ -360,7 +374,7 @@ let Cambiare = class extends RootDisplay {
 					"notes": createElement("div", [`boundary`, `part-keyboard`]),
 					"number": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25, i: dispPart}),
 					"voice": createElement("span", [`field`], {l: 22, t: 1, w: 121, h: 25}),
-					"metre": createElement("canvas", [`field`], {t: 1}).getContext("2d"),
+					"metre": createElement("canvas", [`field`]).getContext("2d"),
 					"type": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25}),
 					"std": createElement("span", [`field`], {l: 22, t: 1, w: 20, h: 25, a: "center"}),
 					"msb": createElement("span", [`field`], {l: 48, t: 1, w: 27, h: 25}),
@@ -376,7 +390,8 @@ let Cambiare = class extends RootDisplay {
 					"brt": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 36}),
 					"por": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 42}),
 					"cea": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 48}),
-					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54})
+					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54}),
+					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84})
 				};
 				let e = upThis.#sectPart[port][part];
 				e.metre.canvas.width = 121;
@@ -400,7 +415,9 @@ let Cambiare = class extends RootDisplay {
 					e.brt,
 					e.por,
 					e.cea,
-					e.ceb
+					e.ceb,
+					e.pan,
+					createSVG("rect", {x: 84, y: 0, width: 1, height: 24, fill: `var(--foreground-color)`})
 				]);
 				mountElement(e.major, [
 					e.number,
