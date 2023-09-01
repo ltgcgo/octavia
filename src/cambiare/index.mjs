@@ -99,6 +99,9 @@ let Cambiare = class extends RootDisplay {
 	#metaAmend = false;
 	#metaType = "";
 	#metaLastLine;
+	#metaLastWheel = 0;
+	#metaMoveX = 0;
+	#metaMoveY = 0;
 	#maxPoly = 0;
 	#clockSource;
 	#visualizer;
@@ -108,6 +111,20 @@ let Cambiare = class extends RootDisplay {
 	#sectMark = {};
 	#sectPart = {};
 	#sectMeta = {};
+	#scrollMeta(resetTime) {
+		let upThis = this;
+		if (Date.now() - upThis.#metaLastWheel > 4000) {
+			upThis.#metaMoveX = 0;
+			upThis.#metaMoveY = 140 - upThis.#sectMeta.view.clientHeight;
+			if ((upThis.#metaLastLine?.clientWidth || 0) > 840) {
+				upThis.#metaMoveX = 840 - upThis.#metaLastLine.clientWidth;
+			};
+			upThis.#sectMeta.view.style.transform = `translateX(${upThis.#metaMoveX}px) translateY(${upThis.#metaMoveY}px)`;
+			if (resetTime) {
+				upThis.#metaLastWheel = 0;
+			};
+		};
+	};
 	#resizerSrc() {
 		let aspectRatio = self.innerWidth / self.innerHeight;
 		let targetZoom = 1;
@@ -138,6 +155,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.maxPoly.innerText = `${upThis.#maxPoly}`.padStart(3, "0");
 		upThis.#sectInfo.barCount.innerText = sum.noteBar + 1;
 		upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
+		upThis.#scrollMeta(true);
 	};
 	#renderer;
 	#renderThread;
@@ -294,7 +312,18 @@ let Cambiare = class extends RootDisplay {
 			//console.debug(meta);
 			if (upThis.#metaAmend && meta.type == upThis.#metaType && upThis.#metaLastLine) {
 				// Amend the last line
-				upThis.#metaLastLine.childNodes[0].data += meta.data;
+				switch (meta.type) {
+					case "C.Lyrics":
+					case "KarLyric": {
+						mountElement(upThis.#metaLastLine, [
+							createElement("span", ["meta-slice"], {i: meta.data})
+						]);
+						break;
+					};
+					default: {
+						upThis.#metaLastLine.childNodes[0].data += meta.data;
+					};
+				};
 			} else if (meta.data?.length && metaBlocklist.indexOf(meta.type) == -1) {
 				// Commit a new line
 				let metaLineRoot = createElement("div", ["meta-line"]),
@@ -302,7 +331,19 @@ let Cambiare = class extends RootDisplay {
 				if (meta.mask) {
 					metaLineType.style.display = "none";
 				};
-				upThis.#metaLastLine = createElement("span", ["field", "meta-data"], {i: meta.data});
+				switch (meta.type) {
+					case "C.Lyrics":
+					case "KarLyric": {
+						upThis.#metaLastLine = createElement("span", ["field", "meta-data"]);
+						mountElement(upThis.#metaLastLine, [
+							createElement("span", ["meta-slice"], {i: meta.data})
+						]);
+						break;
+					};
+					default: {
+						upThis.#metaLastLine = createElement("span", ["field", "meta-data"], {i: meta.data});
+					};
+				};
 				upThis.#sectMeta.view.appendChild(metaLineRoot);
 				mountElement(metaLineRoot, [
 					metaLineType,
@@ -314,13 +355,32 @@ let Cambiare = class extends RootDisplay {
 			};
 			upThis.#metaAmend = meta.amend || false;
 			upThis.#metaType = meta.type || "";
-			let moveX = 0;
-			if ((upThis.#metaLastLine?.clientWidth || 0) > 840) {
-				moveX = 840 - upThis.#metaLastLine.clientWidth;
-			};
-			upThis.#sectMeta.view.style.transform = `translateX(${moveX}px) translateY(${139 - upThis.#sectMeta.view.clientHeight}px)`;
+			upThis.#scrollMeta();
 		});
-		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(139px)`;
+		/*upThis.#sectMeta.root.addEventListener("wheel", (ev) => {
+			ev.stopImmediatePropagation();
+			let {deltaX, deltaY, deltaMode} = ev;;
+			switch (deltaMode) {
+				case 0: {
+					// Do nothing - pixel mode.
+					break;
+				};
+				case 1: {
+					// Do something - line mode.
+					//deltaX *= 28;
+					//deltaY *= 28;
+					break;
+				};
+			};
+			console.debug(deltaX, deltaY, deltaMode);
+			upThis.#metaLastWheel = Date.now();
+			upThis.#metaMoveX -= deltaX;
+			upThis.#metaMoveY -= deltaY;
+			upThis.#sectMeta.view.style.transform = `translateX(${upThis.#metaMoveX}px) translateY(${upThis.#metaMoveY}px)`;
+		}, {
+			"passive": true
+		});*/
+		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
 		upThis.dispatchEvent("tempo", 120);
@@ -362,7 +422,7 @@ let Cambiare = class extends RootDisplay {
 				for (let pointer = list.length - 1; pointer >= 0; pointer --) {
 					list[pointer].remove();
 				};
-				upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(139px)`;
+				upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
 			} catch (err) {};
 		});
 	};
