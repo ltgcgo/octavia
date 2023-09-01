@@ -183,6 +183,7 @@ div.cambiare-canvas > div.sect-part div.part-keyboard {
 	height: 100%;
 	width: calc(100% * 128 / 176);
 	margin: 0 calc(100% * 24 / 176);
+	transition: 0.05s transform;
 }
 div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-info-minor {
 	display: none;

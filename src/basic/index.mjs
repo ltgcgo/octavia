@@ -287,6 +287,8 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "screen");
 		eventPassThru(upThis.device, upThis, "metacommit");
 		eventPassThru(upThis.device, upThis, "voice");
+		eventPassThru(upThis.device, upThis, "pitch");
+		eventPassThru(upThis.device, upThis, "note");
 		eventPassThru(upThis.device, upThis, "efxreverb");
 		eventPassThru(upThis.device, upThis, "efxchorus");
 		eventPassThru(upThis.device, upThis, "efxdelay");

@@ -446,6 +446,10 @@ let Cambiare = class extends RootDisplay {
 			target.prg.innerText = `${voice.sid[1]}`.padStart(3, "0");
 			target.lsb.innerText = `${voice.sid[2]}`.padStart(3, "0");
 		});
+		upThis.addEventListener("pitch", (ev) => {
+			let {part, pitch} = ev.data;
+			upThis.#sectPart[part >> 4][part & 15].notes.style.transform = `translateX(${pitch / 1.28}%)`;
+		});
 		upThis.addEventListener("efxreverb", (ev) => {
 			upThis.#sectInfo.reverb.innerText = upThis.getEfx(ev.data);
 		});
@@ -573,6 +577,7 @@ let Cambiare = class extends RootDisplay {
 					e.msb.innerText = "";
 					e.prg.innerText = "";
 					e.lsb.innerText = "";
+					e.notes.style.transform = "";
 				};
 			} catch (err) {};
 		});
