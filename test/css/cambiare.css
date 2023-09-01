@@ -99,14 +99,18 @@ div.cambiare-canvas.cambiare-port1 div.sect-mark-right, div.cambiare-canvas.camb
 	display: none;
 }
 
-div.cambiare-canvas > div.sect-meta > div.meta-line {
+div.cambiare-canvas > div.sect-meta div.meta-line {
 	/*position: relative;*/
 	margin: 0 0 3px;
 	height: 25px;
 	/*overflow: hidden;*/
 	line-height: 25px;
 }
-div.cambiare-canvas > div.sect-meta > div.meta-line > span {
+div.cambiare-canvas > div.sect-meta > div.boundary {
+	width: 100%;
+	transition: transform 0.1s;
+}
+div.cambiare-canvas > div.sect-meta div.meta-line > span {
 	font-size: 20px;
 }
 div.cambiare-canvas > div.sect-meta span.meta-type {

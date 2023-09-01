@@ -95,7 +95,7 @@ let classOn = function (target, classes) {
 };
 
 let Cambiare = class extends RootDisplay {
-	#metaMaxLine = 20;
+	#metaMaxLine = 128;
 	#metaAmend = false;
 	#metaType = "";
 	#metaLastLine;
@@ -107,7 +107,7 @@ let Cambiare = class extends RootDisplay {
 	#sectInfo = {};
 	#sectMark = {};
 	#sectPart = {};
-	#sectMeta;
+	#sectMeta = {};
 	#resizerSrc() {
 		let aspectRatio = self.innerWidth / self.innerHeight;
 		let targetZoom = 1;
@@ -254,8 +254,10 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectPart.root = createElement("div", ["sect-part"]);
 		canvasElement.appendChild(upThis.#sectPart.root);
 		// Begin inserting the meta section
-		upThis.#sectMeta = createElement("div", ["sect-meta"]);
-		canvasElement.appendChild(upThis.#sectMeta);
+		upThis.#sectMeta.root = createElement("div", ["sect-meta"]);
+		upThis.#sectMeta.view = createElement("div", ["boundary"]);
+		canvasElement.appendChild(upThis.#sectMeta.root);
+		upThis.#sectMeta.root.appendChild(upThis.#sectMeta.view);
 		// Opportunistic value refreshing
 		upThis.addEventListener("mode", (ev) => {
 			upThis.#sectInfo.mode.innerText = `${modeNames[ev.data]}`;
@@ -301,19 +303,23 @@ let Cambiare = class extends RootDisplay {
 					metaLineType.style.display = "none";
 				};
 				upThis.#metaLastLine = createElement("span", ["field", "meta-data"], {i: meta.data});
-				upThis.#sectMeta.appendChild(metaLineRoot);
+				upThis.#sectMeta.view.appendChild(metaLineRoot);
 				mountElement(metaLineRoot, [
 					metaLineType,
 					upThis.#metaLastLine
 				]);
-				while (upThis.#sectMeta.children.length > upThis.#metaMaxLine) {
-					upThis.#sectMeta.children[0].remove();
+				while (upThis.#sectMeta.view.children.length > upThis.#metaMaxLine) {
+					upThis.#sectMeta.view.children[0].remove();
 				};
 			};
 			upThis.#metaAmend = meta.amend || false;
 			upThis.#metaType = meta.type || "";
-			upThis.#sectMeta.scrollTop = upThis.#sectMeta.scrollHeight - 140;
+			/* if (upThis.#sectMeta.view.clientHeight > 137) {
+				moveScene = 0;
+			}; */
+			upThis.#sectMeta.view.style.transform = `translateY(${139 - upThis.#sectMeta.view.clientHeight}px)`;
 		});
+		upThis.#sectMeta.view.style.transform = `translateY(139px)`;
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
 		upThis.dispatchEvent("tempo", 120);
@@ -350,7 +356,7 @@ let Cambiare = class extends RootDisplay {
 			upThis.#metaAmend = false;
 			upThis.#metaType = "";
 			upThis.#metaLastLine = null;
-			let list = upThis.#sectMeta.children;
+			let list = upThis.#sectMeta.view.children;
 			for (let pointer = list.length - 1; pointer >= 0; pointer --) {
 				list[pointer].remove();
 			};
