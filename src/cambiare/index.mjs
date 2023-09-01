@@ -356,7 +356,7 @@ let Cambiare = class extends RootDisplay {
 					"number": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25, i: dispPart}),
 					"voice": createElement("span", [`field`], {l: 22, t: 1, w: 121, h: 25}),
 					"type": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25}),
-					"std": createElement("span", [`field`], {l: 22, t: 1, w: 20, h: 25}),
+					"std": createElement("span", [`field`], {l: 22, t: 1, w: 20, h: 25, a: "center"}),
 					"msb": createElement("span", [`field`], {l: 48, t: 1, w: 27, h: 25}),
 					"prg": createElement("span", [`field`], {l: 81, t: 1, w: 27, h: 25}),
 					"lsb": createElement("span", [`field`], {l: 114, t: 1, w: 27, h: 25}),
