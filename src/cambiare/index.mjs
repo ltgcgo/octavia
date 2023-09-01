@@ -1,9 +1,10 @@
 "use strict";
 
-import {OctaviaDevice, allocated} from "../state/index.mjs";
+import {OctaviaDevice, allocated, ccToPos} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 
 const targetRatio = 16 / 9;
+const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
 const modeNames = {
 	"?": "Unset",
 	"gm": "General MIDI",
@@ -75,6 +76,12 @@ let createElement = function (tag, classes, details = {}) {
 	a?.constructor && (target.style.textAlign = a);
 	return target;
 };
+let createSVG = function (tag, details) {
+	let target = document.createElementNS("http://www.w3.org/2000/svg", tag);
+	for (let key in details) {
+		target.setAttribute(key, details[key]);
+	};
+};
 let mountElement = function (root, children) {
 	children?.forEach((e) => {
 		root.appendChild(e);
@@ -94,6 +101,11 @@ let classOn = function (target, classes) {
 		};
 	});
 };
+
+let heightCache = new Array(128).fill(0);
+heightCache.forEach((e, i, a) => {
+	a[i] = Math.floor(24 * i / 12.7) / 10;
+});
 
 let Cambiare = class extends RootDisplay {
 	#metaMaxLine = 128;
@@ -118,7 +130,7 @@ let Cambiare = class extends RootDisplay {
 		let upThis = this;
 		if (Date.now() - upThis.#metaLastWheel > 4000) {
 			upThis.#metaMoveX = 0;
-			upThis.#metaMoveY = 140 - upThis.#sectMeta.view.clientHeight;
+			upThis.#metaMoveY = 142 - upThis.#sectMeta.view.clientHeight;
 			if ((upThis.#metaLastLine?.clientWidth || 0) > 840) {
 				upThis.#metaMoveX = 840 - upThis.#metaLastLine.clientWidth;
 			};
@@ -159,6 +171,24 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.barCount.innerText = sum.noteBar + 1;
 		upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
 		upThis.#scrollMeta(true);
+		let renderPortMax = upThis.#renderPort + upThis.#renderRange;
+		for (let part = 0; part < allocated.ch; part ++) {
+			let port = part >> 4,
+			chOff = part * allocated.cc,
+			e = upThis.#sectPart[port][part & 15];
+			if (sum.chInUse[part] && port >= upThis.#renderPort && port < renderPortMax) {
+				e.vol.style.height = `${heightCache[sum.chContr[chOff + ccToPos[7]]]}px`;
+				e.exp.style.height = `${heightCache[sum.chContr[chOff + ccToPos[11]]]}px`;
+				e.mod.style.height = `${heightCache[sum.chContr[chOff + ccToPos[1]]]}px`;
+				e.rev.style.height = `${heightCache[sum.chContr[chOff + ccToPos[91]]]}px`;
+				e.cho.style.height = `${heightCache[sum.chContr[chOff + ccToPos[93]]]}px`;
+				e.var.style.height = `${heightCache[sum.chContr[chOff + ccToPos[94]]]}px`;
+				e.brt.style.height = `${heightCache[sum.chContr[chOff + ccToPos[74]]]}px`;
+				e.por.style.height = `${heightCache[sum.chContr[chOff + ccToPos[5]]]}px`;
+				e.cea.style.height = `${heightCache[sum.ace[0] ? sum.chContr[chOff + ccToPos[sum.ace[0]]] : 0]}px`;
+				e.ceb.style.height = `${heightCache[sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0]}px`;
+			};
+		};
 	};
 	#renderer;
 	#renderThread;
@@ -319,6 +349,11 @@ let Cambiare = class extends RootDisplay {
 					"notes": createElement("div", [`boundary`, `part-keyboard`]),
 					"number": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25, i: dispPart}),
 					"voice": createElement("span", [`field`], {l: 22, t: 1, w: 121, h: 25}),
+					"type": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25}),
+					"std": createElement("span", [`field`], {l: 22, t: 1, w: 20, h: 25}),
+					"msb": createElement("span", [`field`], {l: 48, t: 1, w: 27, h: 25}),
+					"prg": createElement("span", [`field`], {l: 81, t: 1, w: 27, h: 25}),
+					"lsb": createElement("span", [`field`], {l: 114, t: 1, w: 27, h: 25}),
 					"vol": createElement("span", [`field`, `part-cc`], {l: 146}),
 					"exp": createElement("span", [`field`, `part-cc`], {l: 152}),
 					"mod": createElement("span", [`field`, `part-cc`], {l: 158}),
@@ -330,30 +365,38 @@ let Cambiare = class extends RootDisplay {
 					"cea": createElement("span", [`field`, `part-cc`], {l: 194}),
 					"ceb": createElement("span", [`field`, `part-cc`], {l: 200})
 				};
-				mountElement(upThis.#sectPart[port][part].keys, [
-					upThis.#sectPart[port][part].notes
+				let e = upThis.#sectPart[port][part];
+				mountElement(e.keys, [
+					e.notes
 				]);
-				mountElement(upThis.#sectPart[port][part].major, [
-					upThis.#sectPart[port][part].number,
-					upThis.#sectPart[port][part].voice,
-					upThis.#sectPart[port][part].vol,
-					upThis.#sectPart[port][part].exp,
-					upThis.#sectPart[port][part].mod,
-					upThis.#sectPart[port][part].rev,
-					upThis.#sectPart[port][part].cho,
-					upThis.#sectPart[port][part].var,
-					upThis.#sectPart[port][part].brt,
-					upThis.#sectPart[port][part].por,
-					upThis.#sectPart[port][part].cea,
-					upThis.#sectPart[port][part].ceb
+				mountElement(e.major, [
+					e.number,
+					e.voice,
+					e.vol,
+					e.exp,
+					e.mod,
+					e.rev,
+					e.cho,
+					e.var,
+					e.brt,
+					e.por,
+					e.cea,
+					e.ceb
 				]);
-				mountElement(upThis.#sectPart[port][part].root, [
-					upThis.#sectPart[port][part].major,
-					upThis.#sectPart[port][part].minor,
-					upThis.#sectPart[port][part].keys
+				mountElement(e.minor, [
+					e.type,
+					e.std,
+					e.msb,
+					e.prg,
+					e.lsb
+				]);
+				mountElement(e.root, [
+					e.major,
+					e.minor,
+					e.keys
 				]);
 				mountElement(upThis.#sectPart[port].root, [
-					upThis.#sectPart[port][part].root
+					e.root
 				]);
 			};
 			upThis.#sectPart.root.appendChild(upThis.#sectPart[port].root);
@@ -382,6 +425,16 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.addEventListener("title", (ev) => {
 			upThis.#sectInfo.title.innerText = ev.data || `No Title`;
+		});
+		upThis.addEventListener("voice", ({data}) => {
+			let voice = upThis.getChVoice(data.part),
+			target = upThis.#sectPart[data.part >> 4][data.part & 15];
+			target.voice.innerText = voice.name;
+			target.type.innerText = chTypes[upThis.device.getChType()[data.part]];
+			target.std.innerText = voice.standard;
+			target.msb.innerText = `${voice.sid[0]}`.padStart(3, "0");
+			target.prg.innerText = `${voice.sid[1]}`.padStart(3, "0");
+			target.lsb.innerText = `${voice.sid[2]}`.padStart(3, "0");
 		});
 		upThis.addEventListener("efxreverb", (ev) => {
 			upThis.#sectInfo.reverb.innerText = upThis.getEfx(ev.data);
@@ -500,9 +553,16 @@ let Cambiare = class extends RootDisplay {
 				upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
 				// Reset channels
 				for (let part = 0; part < allocated.ch; part ++) {
-					classOff(upThis.#sectPart[part >> 4][part & 15].root, [
+					let e = upThis.#sectPart[part >> 4][part & 15];
+					classOff(e.root, [
 						`part-active`
 					]);
+					e.voice.innerText = "";
+					e.type.innerText = "";
+					e.std.innerText = "";
+					e.msb.innerText = "";
+					e.prg.innerText = "";
+					e.lsb.innerText = "";
 				};
 			} catch (err) {};
 		});

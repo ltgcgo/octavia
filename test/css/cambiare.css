@@ -50,6 +50,7 @@ div.cambiare-canvas.debug > div {
 }
 div.cambiare-canvas span {
 	display: inline-block;
+	line-height: 1.15em;
 }
 div.cambiare-canvas span.field, div.cambiare-canvas div.boundary {
 	position: absolute;
@@ -74,20 +75,20 @@ div.cambiare-canvas span.field-key {
 }
 
 div.cambiare-canvas > div.sect-info {
-	top: 0px;
+	top: 3px;
 	height: 67px;
 }
 div.cambiare-canvas > div.sect-mark {
-	top: 69px;
+	top: 72px;
 	height: 33px;
 }
 div.cambiare-canvas > div.sect-part {
-	top: 103px;
+	top: 106px;
 	height: 832px;
 }
 div.cambiare-canvas > div.sect-meta {
 	width: 934px;
-	top: 937px;
+	top: 940px;
 	height: 137px;
 	overflow: hidden;
 }
