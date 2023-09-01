@@ -192,7 +192,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.chorus = createElement("span", ["field"], {t: 1, l: 1240, w: 190, h: 33});
 		upThis.#sectInfo.delay = createElement("span", ["field"], {t: 1, l: 1475, w: 190, h: 33});
 		upThis.#sectInfo.insert = createElement("span", ["field"], {t: 1, l: 1706, w: 190, h: 33});
-		upThis.#sectInfo.title = createElement("span", ["field"], {t: 34, l: 50, w: 810, h: 33})
+		upThis.#sectInfo.title = createElement("span", ["field"], {t: 35, l: 50, w: 810, h: 33})
 		canvasElement.appendChild(upThis.#sectInfo.root);
 		mountElement(upThis.#sectInfo.root, [
 			upThis.#sectInfo.events,
@@ -220,9 +220,9 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.chorus,
 			createElement("span", ["field", "field-key"], {t: 1, l: 1438, w: 31, h: 33, i: "Var"}),
 			upThis.#sectInfo.delay,
-			createElement("span", ["field", "field-key"], {t: 1, l: 1674, w: 27, h: 33, i: "Ins"}),
+			createElement("span", ["field", "field-key"], {t: 1, l: 1673, w: 27, h: 33, i: "Ins"}),
 			upThis.#sectInfo.insert,
-			createElement("span", ["field", "field-key"], {t: 34, l: 0, w: 44, h: 33, i: "Title"}),
+			createElement("span", ["field", "field-key"], {t: 35, l: 0, w: 44, h: 33, i: "Title"}),
 			upThis.#sectInfo.title
 		]);
 		// Begin inserting the marker section

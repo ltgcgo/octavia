@@ -14,11 +14,13 @@
 }
 @font-face {
 	font-family: "PT Sans Narrow";
+	font-display: swap;
 	font-weight: 400;
 	src: local("PT Sans Narrow"), url("../font/PTSansNarrow.woff2") format("woff2");
 }
 @font-face {
 	font-family: "PT Sans Narrow";
+	font-display: swap;
 	font-weight: 700;
 	src: url("../font/PTSansNarrow_b.woff2") format("woff2");
 }
