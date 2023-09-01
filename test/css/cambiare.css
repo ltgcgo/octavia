@@ -52,7 +52,9 @@ div.cambiare-canvas span {
 	display: inline-block;
 	line-height: 1.15em;
 }
-div.cambiare-canvas span.field, div.cambiare-canvas div.boundary {
+div.cambiare-canvas span.field,
+div.cambiare-canvas div.boundary,
+div.cambiare-canvas canvas.field {
 	position: absolute;
 	cursor: default;
 }
@@ -60,7 +62,8 @@ div.cambiare-canvas.debug div.portion {
 	position: relative;
 	cursor: default;
 }
-div.cambiare-canvas.debug span.field, div.cambiare-canvas.debug div.boundary {
+div.cambiare-canvas.debug span.field,
+div.cambiare-canvas.debug div.boundary {
 	outline: 1px #fff7 solid;
 }
 div.cambiare-canvas.debug div.portion {

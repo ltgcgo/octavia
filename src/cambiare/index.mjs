@@ -193,6 +193,11 @@ let Cambiare = class extends RootDisplay {
 				setCcSvg(e.por, sum.chContr[chOff + ccToPos[5]]);
 				setCcSvg(e.cea, sum.ace[0] ? sum.chContr[chOff + ccToPos[sum.ace[0]]] : 0);
 				setCcSvg(e.ceb, sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0);
+				e.metre.clearRect(0, 0, 121, 25);
+				e.metre.globalCompositeOperation = "source-over";
+				e.metre.fillText(e.metre.innerText, 0, 2);
+				e.metre.globalCompositeOperation = "xor";
+				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
 			};
 		};
 	};
@@ -355,6 +360,7 @@ let Cambiare = class extends RootDisplay {
 					"notes": createElement("div", [`boundary`, `part-keyboard`]),
 					"number": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25, i: dispPart}),
 					"voice": createElement("span", [`field`], {l: 22, t: 1, w: 121, h: 25}),
+					"metre": createElement("canvas", [`field`], {t: 1}).getContext("2d"),
 					"type": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25}),
 					"std": createElement("span", [`field`], {l: 22, t: 1, w: 20, h: 25, a: "center"}),
 					"msb": createElement("span", [`field`], {l: 48, t: 1, w: 27, h: 25}),
@@ -373,8 +379,16 @@ let Cambiare = class extends RootDisplay {
 					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54})
 				};
 				let e = upThis.#sectPart[port][part];
+				e.metre.canvas.width = 121;
+				e.metre.canvas.height = 25;
+				e.metre.fillStyle = "#fff";
+				e.metre.textBaseline = "top";
+				e.metre.font = "20px 'PT Sans Narrow'";
 				mountElement(e.keys, [
 					e.notes
+				]);
+				mountElement(e.voice, [
+					e.metre.canvas
 				]);
 				mountElement(e.cc, [
 					e.vol,
@@ -439,7 +453,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.addEventListener("voice", ({data}) => {
 			let voice = upThis.getChVoice(data.part),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
-			target.voice.innerText = voice.name;
+			target.metre.innerText = voice.name;
 			target.type.innerText = chTypes[upThis.device.getChType()[data.part]];
 			target.std.innerText = voice.standard;
 			target.msb.innerText = `${voice.sid[0]}`.padStart(3, "0");
@@ -571,7 +585,7 @@ let Cambiare = class extends RootDisplay {
 					classOff(e.root, [
 						`part-active`
 					]);
-					e.voice.innerText = "";
+					e.metre.innerText = "";
 					e.type.innerText = "";
 					e.std.innerText = "";
 					e.msb.innerText = "";
