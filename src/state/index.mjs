@@ -1388,6 +1388,11 @@ let OctaviaDevice = class extends CustomEventSource {
 								upThis.#cc[ch * allocated.cc + ccToPos[91]] = 127;
 							};
 						});
+						for (let part = 1; part < 10; part ++) {
+							upThis.dispatchEvent("voice", {
+								part
+							});
+						};
 						break;
 					};
 				};
@@ -2878,6 +2883,10 @@ let OctaviaDevice = class extends CustomEventSource {
 						// GS part EFX toggle
 						console.debug(`${dPref}EFX: o${["ff", "n"][e]}`);
 						upThis.#efxTo[part] = e;
+						upThis.dispatchEvent("partefxtoggle", {
+							part,
+							active: e
+						});
 					}][offset + i - 32]();
 				});
 			} else {

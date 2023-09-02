@@ -118,7 +118,7 @@ self.gOpenSmf = async function () {
 		};
 		case "mdat": {
 			// Load ID to name maps
-			visualizer.loadMap(await file.text());
+			visualizer.loadMap(await file.text(), true);
 			break;
 		};
 		default: {

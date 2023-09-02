@@ -155,7 +155,7 @@ let Cambiare = class extends RootDisplay {
 		let targetZoom = 1;
 		let targetWidth = self.innerWidth,
 		targetHeight = self.innerHeight;
-		if (aspectRatio > targetRatio) {
+		if (aspectRatio >= targetRatio) {
 			targetZoom = Math.round(self.innerHeight / 1080 * 10000) / 10000;
 			targetWidth = Math.ceil(self.innerHeight * targetRatio);
 		} else if (aspectRatio < targetRatio) {
@@ -203,7 +203,7 @@ let Cambiare = class extends RootDisplay {
 				e.metre.globalCompositeOperation = "xor";
 				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
 				let pan = sum.chContr[chOff + ccToPos[10]];
-				e.pan.setAttribute("width", `${widthCache[pan]}`);
+				e.pan.setAttribute("width", `${widthCache[pan] || 0}`);
 				if (pan < 64) {
 					e.pan.setAttribute("x", `${84 - widthCache[pan]}`);
 				} else if (pan > 127) {
