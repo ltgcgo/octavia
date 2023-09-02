@@ -267,8 +267,11 @@ let Cambiare = class extends RootDisplay {
 							postponeBuffer.push(ev);
 						} else {
 							// Execute immediately
-							upThis.#notePool[noteId].remove();
-							delete upThis.#notePool[noteId];
+							let e = upThis.#notePool[noteId];
+							if (e) {
+								e.remove();
+								delete upThis.#notePool[noteId];
+							};
 						};
 						break;
 					};
@@ -729,6 +732,15 @@ let Cambiare = class extends RootDisplay {
 					e.lsb.innerText = "";
 					e.notes.style.transform = "";
 				};
+				// Remove lingering notes
+				let removeIndex = [];
+				upThis.#notePool.forEach((e, i) => {
+					e.remove;
+					removeIndex.push(i);
+				});
+				removeIndex.forEach((e) => {
+					delete upThis.#notePool[e];
+				});
 			} catch (err) {};
 		});
 		upThis.addEventListener("note", ({data}) => {
