@@ -5,6 +5,7 @@ import {RootDisplay} from "../basic/index.mjs";
 
 const targetRatio = 16 / 9;
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
+const blackKeys = [1, 3, 6, 8, 10];
 const modeNames = {
 	"?": "Unset",
 	"gm": "General MIDI",
@@ -115,6 +116,10 @@ let leftCache = new Array(11).fill(null);
 leftCache.forEach((e, i, a) => {
 	a[i] = `${Math.round(i * 12 / 0.0128) / 100}%`;
 });
+let centCache = new Array(128).fill(null);
+centCache.forEach((e, i, a) => {
+	a[i] = `${Math.round(i / 1.27) / 100}`;
+});
 let setCcSvg = function (svg, value) {
 	let hV = heightCache[value];
 	svg.setAttribute("height", hV);
@@ -148,6 +153,8 @@ let Cambiare = class extends RootDisplay {
 	#sectMark = {};
 	#sectPart = [];
 	#sectMeta = {};
+	#noteEvents = [];
+	#notePool = new Array(allocated.ch * allocated.nn);
 	#scrollMeta(resetTime) {
 		let upThis = this;
 		if (Date.now() - upThis.#metaLastWheel > 4000) {
@@ -245,6 +252,74 @@ let Cambiare = class extends RootDisplay {
 				};
 			};
 		};
+		// Note visualization
+		let onNotes = new Set(), postponeBuffer = [];
+		while (upThis.#noteEvents?.length) {
+			let ev = upThis.#noteEvents.shift();
+			let noteId = ev.part << 7 | ev.note;
+			if (upThis.device && upThis.#canvas) {
+				switch (ev.state) {
+					case upThis.device.NOTE_IDLE:
+					case upThis.device.NOTE_RELEASE: {
+						// Treat as note off
+						if (onNotes.has(noteId)) {
+							// Schedule note off to the next render run
+							postponeBuffer.push(ev);
+						} else {
+							// Execute immediately
+							upThis.#notePool[noteId].remove();
+							delete upThis.#notePool[noteId];
+						};
+						break;
+					};
+					default: {
+						// Treat as note on
+						// Get the note element
+						onNotes.add(noteId);
+						let noteBlock = upThis.#notePool[noteId];
+						if (!noteBlock) {
+							// Create a new note element
+							noteBlock = createElement("span", [
+								"field",
+								"part-note"
+							], {
+								l: `${ev.note / 1.28}%`
+							});
+							if (blackKeys.indexOf(ev.note % 12) > -1) {
+								classOn(noteBlock, [
+									"part-note-black"
+								]);
+							};
+							upThis.#notePool[noteId] = noteBlock;
+							upThis.#sectPart[ev.part >> 4][ev.part & 15].notes.appendChild(noteBlock);
+						};
+						noteBlock.style.opacity = centCache[ev.velo];
+						switch (ev.state) {
+							case upThis.device.NOTE_HELD:
+							case upThis.device.NOTE_SOSTENUTO_ATTACK:
+							case upThis.device.NOTE_SOSTENUTO_DECAY:
+							case upThis.device.NOTE_SOSTENUTO_SUSTAIN:
+							case upThis.device.NOTE_SOSTENUTO_HELD: {
+								// Treat as held note
+								classOn(noteBlock, [
+									"part-note-held"
+								]);
+								break;
+							};
+							default: {
+								// Treat as normal note
+								classOff(noteBlock, [
+									"part-note-held"
+								]);
+							};
+						};
+					};
+				};
+			};
+		};
+		postponeBuffer.forEach((e) => {
+			upThis.#noteEvents.push(e);
+		});
 	};
 	#renderer;
 	#renderThread;
@@ -428,6 +503,7 @@ let Cambiare = class extends RootDisplay {
 				leftCache.forEach((e0) => {
 					e.notes.appendChild(createElement("span", [`field`, `part-csplit`], {l: e0}));
 				});
+				e.notes.appendChild(createElement("span", [`field`, `part-csplit`, `part-cdive`], {l: 0, w: `100%`, h: 1}));
 				e.metre.canvas.width = 121;
 				e.metre.canvas.height = 25;
 				e.metre.fillStyle = "#fff";
@@ -654,6 +730,10 @@ let Cambiare = class extends RootDisplay {
 					e.notes.style.transform = "";
 				};
 			} catch (err) {};
+		});
+		upThis.addEventListener("note", ({data}) => {
+			upThis.#noteEvents.push(data);
+			//console.debug(data);
 		});
 	};
 };

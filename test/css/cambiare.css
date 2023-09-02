@@ -17,6 +17,8 @@ div.cambiare-canvas {
 	--background-color: #222;
 	--foreground-color: #fff;
 	--accent-color: #fcdaff;
+	--white-keys: var(--foreground-color);
+	--black-keys: var(--accent-color);
 }
 div.cambiare-canvas.cambiare-mode-xg, div.cambiare-canvas.cambiare-mode-ns5r, div.cambiare-canvas.cambiare-mode-x5d, div.cambiare-canvas.cambiare-mode-05rw, div.cambiare-canvas.cambiare-mode-k11, div.cambiare-canvas.cambiare-mode-s90es, div.cambiare-canvas.cambiare-mode-motif {
 	--accent-color: #9efaa0;
@@ -174,12 +176,32 @@ div.cambiare-canvas > div.sect-part div.part-info-major span.part-efx {
 	font-weight: bold;
 }
 div.cambiare-canvas > div.sect-part span.part-csplit {
-	top: 1px;
+	top: 100%;
 	width: 1px;
-	height: calc(100% - 2px);
-	/*top: 25px;
-	transform: translateY(-100%);*/
+	height: calc(33% - 1px);
+	opacity: 0.5;
 	background: var(--accent-color);
+	transform: translateY(-100%);
+}
+div.cambiare-canvas > div.sect-part span.part-cdive {
+	transform: translateY(0);
+}
+div.cambiare-canvas > div.sect-part span.part-note-black {
+	--white-keys: var(--black-keys);
+}
+div.cambiare-canvas > div.sect-part span.part-note {
+	top: 1px;
+	height: calc(100% - 2px);
+	width: 0.78125%;
+	border: 1px solid var(--white-keys);
+	background: var(--white-keys);
+	transform: translateX(1px);
+}
+div.cambiare-canvas > div.sect-part span.part-note-held {
+	background: transparent;
+}
+div.cambiare-canvas.cambiare-port1 > div.sect-part span.part-note {
+	border: 2px solid var(--white-keys);
 }
 div.cambiare-canvas > div.sect-part div.part-keys {
 	left: 256px;
