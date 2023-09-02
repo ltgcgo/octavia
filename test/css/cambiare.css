@@ -190,7 +190,7 @@ div.cambiare-canvas > div.sect-part span.part-note-black {
 	--white-keys: var(--black-keys);
 }
 div.cambiare-canvas > div.sect-part span.part-note {
-	top: 1px;
+	top: 2px;
 	height: calc(100% - 2px);
 	width: 0.78125%;
 	border: 1px solid var(--white-keys);

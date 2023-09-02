@@ -188,5 +188,61 @@ let demoPool = new SheetData();
 	visualizer.loadMap(await(await fetch(`./data/map/kross.24.tsv`)).text());
 })();
 
+document.body.addEventListener("keydown", async (ev) => {
+	ev.preventDefault();
+	let {
+		metaKey, ctrlKey, altKey, shiftKey,
+		location, key
+	} = ev;
+	let portSwitch = "12345678".indexOf(key),
+	modeSwitch = "[]\\".indexOf(key);
+	if (portSwitch > -1) {
+		gPort(portSwitch);
+	} else if (modeSwitch > -1) {
+		gRange(["port1", "port2", "port4"][modeSwitch]);
+	} else {
+		switch (key) {
+			case "Enter": {
+				// Full screen
+				if (document.fullscreen || document.mozFullscreen || document.webkitFullscreen) {
+					(document.exitFullscreen || document.mozExitFullscreen || document.webkitExitFullscreen).apply(document);
+				} else {
+					let cc = $e(".cambiare");
+					(cc.requestFullscreen || cc.mozRequestFullscreen || cc.webkitRequestFullscreen).apply(cc);
+				};
+				break;
+			};
+			case " ": {
+				// Play/pause
+				if (audioFilePlayer.paused) {
+					audioFilePlayer.play();
+				} else {
+					audioFilePlayer.pause();
+				};
+				break;
+			};
+			case "ArrowUp": {
+				// Volume
+				break;
+			};
+			case "ArrowDown": {
+				// Volume
+				break;
+			};
+			case "ArrowLeft": {
+				// Slow down
+				break;
+			};
+			case "ArrowRight": {
+				// Accelerate
+				break;
+			};
+			default: {
+				self.debugMode && console.debug(`Unknown key "${key}" pressed.`);
+			};
+		};
+	};
+});
+
 Alpine.start();
 self.visualizer = visualizer;
