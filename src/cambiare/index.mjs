@@ -227,7 +227,7 @@ let Cambiare = class extends RootDisplay {
 					let runCourse = clock - (e.metre.rOffset || 0),
 					runPadding = 32,
 					runBoundary = e.metre.rWidth - e.metre.canvas.width + runPadding,
-					offsetX = (runCourse * -32) % (e.metre.rWidth + runPadding + 48) + 48;
+					offsetX = (runCourse * -25) % (e.metre.rWidth + runPadding + 48) + 48;
 					if (offsetX > 0) {
 						offsetX = 0;
 					};

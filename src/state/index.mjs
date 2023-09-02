@@ -2545,7 +2545,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[allocated.cc * 25] = 120;
 			upThis.#cc[allocated.cc * 41] = 120;
 			upThis.#cc[allocated.cc * 57] = 120;
-			upThis.#subLsb = 3; // Use SC-88 Pro map by default
+			upThis.#subLsb = 2; // Use SC-88 Pro map by default
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.fill(0);
 			console.info(`GS system to ${["single", "dual"][msg[0]]} mode.`);
