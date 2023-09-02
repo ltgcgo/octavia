@@ -86,7 +86,7 @@ let RootDisplay = class extends CustomEventSource {
 					upThis.#mapList[id] = name;
 					loadCount ++;
 				} else {
-					//console.debug(`Voice "${name}" (${id}) seems to be in conflict with (${upThis.#mapList[id]}).`);
+					self.debugMode && console.debug(`Voice "${name}" (${id}) seems to be in conflict with (${upThis.#mapList[id]}).`);
 				};
 				allCount ++;
 			} else {
@@ -143,7 +143,7 @@ let RootDisplay = class extends CustomEventSource {
 					upThis.#efxList[id] = name;
 					loadCount ++;
 				} else {
-					//console.debug(`EFX ID 0x${id.toString(16).padStart(4, "0")} (${name}) seems to be in conflict.`);
+					self.debugMode && console.debug(`EFX ID 0x${id.toString(16).padStart(4, "0")} (${name}) seems to be in conflict.`);
 				};
 				allCount ++;
 			} else {

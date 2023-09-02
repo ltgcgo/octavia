@@ -3038,6 +3038,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				lsb: 0
 			});
 			upThis.userBank.load(voiceMap);
+			getDebugState() && console.debug(voiceMap);
 			upThis.forceVoiceRefresh();
 		}).add([54, 77, 0], (msg, track) => {
 			// X5D combi dump
@@ -3069,6 +3070,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				lsb: 0
 			});
 			upThis.userBank.load(voiceMap);
+			getDebugState() && console.debug(voiceMap);
 			upThis.forceVoiceRefresh();
 		}).add([54, 78], (msg, track) => {
 			// X5D mode switch
@@ -3753,6 +3755,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			//console.debug(voiceMap);
 			upThis.userBank.load(voiceMap);
+			getDebugState() && console.debug(voiceMap);
 			upThis.forceVoiceRefresh();
 		}).add([66, 55], (msg, track) => {
 			// All combination dump
@@ -3790,6 +3793,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				lsb: 0
 			});
 			upThis.userBank.load(voiceMap);
+			getDebugState() && console.debug(voiceMap);
 			upThis.forceVoiceRefresh();
 		}).add([66, 125], (msg) => {
 			// Backlight

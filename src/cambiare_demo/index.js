@@ -96,7 +96,7 @@ self.gDemo = async function ({file, id, artist, title}) {
 	Alpine.store("sound", "demo");
 };
 
-const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
+const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".mdat",".MDAT"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 self.gOpenSmf = async function () {
 	useMidiBus = false;
@@ -114,6 +114,11 @@ self.gOpenSmf = async function () {
 		case "s7e": {
 			// Load sound banks
 			visualizer.device.loadBank(ext, file);
+			break;
+		};
+		case "mdat": {
+			// Load ID to name maps
+			visualizer.loadMap(await file.text());
 			break;
 		};
 		default: {
