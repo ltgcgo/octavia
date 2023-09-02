@@ -173,13 +173,14 @@ div.cambiare-canvas > div.sect-part div.part-info-minor {
 div.cambiare-canvas > div.sect-part div.part-info-major span.part-efx {
 	font-weight: bold;
 }
-/*div.cambiare-canvas > div.sect-part span.part-cc {
-	width: 4px;
-	height: 24px;
-	top: 25px;
-	transform: translateY(-100%);
+div.cambiare-canvas > div.sect-part span.part-csplit {
+	top: 1px;
+	width: 1px;
+	height: calc(100% - 2px);
+	/*top: 25px;
+	transform: translateY(-100%);*/
 	background: var(--accent-color);
-}*/
+}
 div.cambiare-canvas > div.sect-part div.part-keys {
 	left: 256px;
 	width: calc(100% - 256px);

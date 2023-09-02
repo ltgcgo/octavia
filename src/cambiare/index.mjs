@@ -68,10 +68,10 @@ let createElement = function (tag, classes, details = {}) {
 		target.classList.add(e);
 	});
 	let {t, l, w, h, i, a} = details;
-	t?.constructor && (target.style.top = `${t}px`);
-	l?.constructor && (target.style.left = `${l}px`);
-	w?.constructor && (target.style.width = `${w}px`);
-	h?.constructor && (target.style.height = `${h}px`);
+	t?.constructor && (target.style.top = t?.length ? t : `${t}px`);
+	l?.constructor && (target.style.left = l?.length ? l :`${l}px`);
+	w?.constructor && (target.style.width = w?.length ? w :`${w}px`);
+	h?.constructor && (target.style.height = h?.length ? h :`${h}px`);
 	i?.constructor && (target.appendChild(document.createTextNode(i)));
 	a?.constructor && (target.style.textAlign = a);
 	return target;
@@ -110,6 +110,10 @@ heightCache.forEach((e, i, a) => {
 let widthCache = new Array(128).fill(0);
 widthCache.forEach((e, i, a) => {
 	a[i] = Math.abs(Math.round(48 * (i - 64) / 12.7) / 10);
+});
+let leftCache = new Array(11).fill(null);
+leftCache.forEach((e, i, a) => {
+	a[i] = `${Math.round(i * 12 / 0.0128) / 100}%`;
 });
 let setCcSvg = function (svg, value) {
 	let hV = heightCache[value];
@@ -299,7 +303,7 @@ let Cambiare = class extends RootDisplay {
 		attachElement.appendChild(containerElement);
 		upThis.#container = containerElement;
 		// Insert the canvas
-		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0", "debug"]);
+		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0"]);
 		containerElement.appendChild(canvasElement);
 		upThis.#canvas = canvasElement;
 		// Start the resizer
@@ -421,6 +425,9 @@ let Cambiare = class extends RootDisplay {
 					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84})
 				};
 				let e = upThis.#sectPart[port][part];
+				leftCache.forEach((e0) => {
+					e.notes.appendChild(createElement("span", [`field`, `part-csplit`], {l: e0}));
+				});
 				e.metre.canvas.width = 121;
 				e.metre.canvas.height = 25;
 				e.metre.fillStyle = "#fff";
