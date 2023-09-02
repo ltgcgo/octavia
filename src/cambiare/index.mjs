@@ -117,6 +117,14 @@ let setCcSvg = function (svg, value) {
 	svg.setAttribute("y", 24 - hV);
 };
 
+let setCanvasText = function (context, text) {
+	context.innerText = text;
+	context.rNew = true;
+	//context.rOffset = 0;
+	let measured = context.measureText(text);
+	context.rWidth = measured.width;
+};
+
 let Cambiare = class extends RootDisplay {
 	#metaMaxLine = 128;
 	#metaAmend = false;
@@ -170,7 +178,8 @@ let Cambiare = class extends RootDisplay {
 	#resizer;
 	#rendererSrc() {
 		let upThis = this,
-		sum = upThis.render(upThis.#clockSource?.currentTime || 0);
+		clock = upThis.#clockSource?.currentTime || 0,
+		sum = upThis.render(clock);
 		let curPoly = sum.curPoly + sum.extraPoly;
 		if (upThis.#maxPoly < curPoly) {
 			upThis.#maxPoly = curPoly;
@@ -199,7 +208,25 @@ let Cambiare = class extends RootDisplay {
 				setCcSvg(e.ceb, sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0);
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.globalCompositeOperation = "source-over";
-				e.metre.fillText(e.metre.innerText, 0, 3);
+				if (e.metre.rWidth > e.metre.canvas.width) {
+					if (e.metre.rNew) {
+						e.metre.rNew = false;
+						e.metre.rOffset = clock;
+					};
+					let runCourse = clock - (e.metre.rOffset || 0),
+					runPadding = 32,
+					runBoundary = e.metre.rWidth - e.metre.canvas.width + runPadding,
+					offsetX = (runCourse * -32) % (e.metre.rWidth + runPadding + 48) + 48;
+					if (offsetX > 0) {
+						offsetX = 0;
+					};
+					e.metre.fillText(e.metre.innerText, offsetX, 3);
+					if (Math.abs(offsetX) > runBoundary) {
+						e.metre.fillText(e.metre.innerText, offsetX + e.metre.rWidth + runPadding, 3);
+					};
+				} else {
+					e.metre.fillText(e.metre.innerText, 0, 3);
+				};
 				e.metre.globalCompositeOperation = "xor";
 				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
 				let pan = sum.chContr[chOff + ccToPos[10]];
@@ -470,7 +497,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.addEventListener("voice", ({data}) => {
 			let voice = upThis.getChVoice(data.part),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
-			target.metre.innerText = upThis.getMapped(voice.name);
+			setCanvasText(target.metre, upThis.getMapped(voice.name));
 			target.type.innerText = chTypes[upThis.device.getChType()[data.part]];
 			target.std.innerText = voice.standard;
 			target.msb.innerText = `${voice.sid[0]}`.padStart(3, "0");
@@ -611,7 +638,7 @@ let Cambiare = class extends RootDisplay {
 					classOff(e.number, [
 						`part-efx`
 					]);
-					e.metre.innerText = "";
+					setCanvasText(e.metre, "");
 					e.type.innerText = "";
 					e.std.innerText = "";
 					e.msb.innerText = "";
