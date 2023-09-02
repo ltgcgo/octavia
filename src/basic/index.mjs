@@ -355,6 +355,7 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "efxinsert1");
 		eventPassThru(upThis.device, upThis, "efxinsert2");
 		eventPassThru(upThis.device, upThis, "efxinsert3");
+		eventPassThru(upThis.device, upThis, "partefxtoggle");
 		upThis.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;

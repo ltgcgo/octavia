@@ -493,6 +493,12 @@ let Cambiare = class extends RootDisplay {
 		upThis.addEventListener("efxinsert0", (ev) => {
 			upThis.#sectInfo.insert.innerText = upThis.getEfx(ev.data);
 		});
+		upThis.addEventListener("partefxtoggle", (ev) => {
+			let {part, active} = ev.data;
+			([classOff, classOn][active])(upThis.#sectPart[part >> 4][part & 15].number, [
+				`part-efx`
+			]);
+		});
 		upThis.addEventListener("channeltoggle", (ev) => {
 			let {part, active} = ev.data;
 			([classOff, classOn][active])(upThis.#sectPart[part >> 4][part & 15].root, [
@@ -601,6 +607,9 @@ let Cambiare = class extends RootDisplay {
 					let e = upThis.#sectPart[part >> 4][part & 15];
 					classOff(e.root, [
 						`part-active`
+					]);
+					classOff(e.number, [
+						`part-efx`
 					]);
 					e.metre.innerText = "";
 					e.type.innerText = "";
