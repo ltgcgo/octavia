@@ -256,7 +256,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 	};
 	// Exec Pools
-	#forceVoiceRefresh() {
+	forceVoiceRefresh() {
 		for (let part = 0; part < allocated.ch; part ++) {
 			if (this.#chActive[part]) {
 				this.dispatchEvent("voice", {
@@ -1433,7 +1433,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 				upThis.dispatchEvent("mode", mode);
-				upThis.#forceVoiceRefresh();
+				upThis.forceVoiceRefresh();
 			};
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
@@ -1497,7 +1497,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				break;
 			};
 		};
-		upThis.#forceVoiceRefresh();
+		upThis.forceVoiceRefresh();
 	};
 	constructor() {
 		super();
@@ -3038,7 +3038,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				lsb: 0
 			});
 			upThis.userBank.load(voiceMap);
-			upThis.#forceVoiceRefresh();
+			upThis.forceVoiceRefresh();
 		}).add([54, 77, 0], (msg, track) => {
 			// X5D combi dump
 			upThis.switchMode("x5d", true);
@@ -3069,7 +3069,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				lsb: 0
 			});
 			upThis.userBank.load(voiceMap);
-			upThis.#forceVoiceRefresh();
+			upThis.forceVoiceRefresh();
 		}).add([54, 78], (msg, track) => {
 			// X5D mode switch
 			upThis.switchMode("x5d", true);
@@ -3333,7 +3333,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				}][slot] || (() => {}))();
 			});
-			upThis.#forceVoiceRefresh();
+			upThis.forceVoiceRefresh();
 		}).add([22, 18, 8], (msg, track, id) => {
 			// MT-32 Timbre Memory Write
 			upThis.switchMode("mt32");
@@ -3345,7 +3345,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cmTimbre[(msg[0] >> 1) * allocated.cmt + ri] = e;
 				};
 			});
-			upThis.#forceVoiceRefresh();
+			upThis.forceVoiceRefresh();
 		}).add([22, 18, 16], (msg, track, id) => {
 			// MT-32 System Setup
 			upThis.switchMode("mt32");
@@ -3753,7 +3753,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			//console.debug(voiceMap);
 			upThis.userBank.load(voiceMap);
-			upThis.#forceVoiceRefresh();
+			upThis.forceVoiceRefresh();
 		}).add([66, 55], (msg, track) => {
 			// All combination dump
 			// Just modified from above
@@ -3790,7 +3790,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				lsb: 0
 			});
 			upThis.userBank.load(voiceMap);
-			upThis.#forceVoiceRefresh();
+			upThis.forceVoiceRefresh();
 		}).add([66, 125], (msg) => {
 			// Backlight
 			upThis.dispatchEvent("backlight", ["green", "orange", "red", false, "yellow", "blue", "purple"][msg[0]] || "white");

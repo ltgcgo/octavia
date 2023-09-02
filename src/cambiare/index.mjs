@@ -417,7 +417,7 @@ let Cambiare = class extends RootDisplay {
 					e.cea,
 					e.ceb,
 					e.pan,
-					createSVG("rect", {x: 84, y: 0, width: 1, height: 24, fill: `var(--foreground-color)`})
+					createSVG("rect", {x: 83, y: 0, width: 1, height: 24, fill: `var(--foreground-color)`})
 				]);
 				mountElement(e.major, [
 					e.number,
@@ -470,7 +470,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.addEventListener("voice", ({data}) => {
 			let voice = upThis.getChVoice(data.part),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
-			target.metre.innerText = voice.name;
+			target.metre.innerText = upThis.getMapped(voice.name);
 			target.type.innerText = chTypes[upThis.device.getChType()[data.part]];
 			target.std.innerText = voice.standard;
 			target.msb.innerText = `${voice.sid[0]}`.padStart(3, "0");

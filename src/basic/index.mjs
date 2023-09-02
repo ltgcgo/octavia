@@ -17,7 +17,7 @@ let eventPassThru = function (source, sink, type) {
 let RootDisplay = class extends CustomEventSource {
 	device;
 	#midiPool;
-	#mapList;
+	#mapList = {};
 	#efxList = [];
 	#titleName = "";
 	#metaRun = [];
@@ -55,15 +55,72 @@ let RootDisplay = class extends CustomEventSource {
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
 	};
-	async loadMap(text) {
+	async loadMap(text, overwrite) {
 		// Load the voice ID to voice name map
+		let upThis = this;
+		let loadCount = 0, allCount = 0;
+		let fields = 0, fieldId, fieldNme;
+		text.split(`\n`).forEach((e, i) => {
+			if (!e) {
+				return;
+			};
+			let a = e.split(`\t`);
+			if (i) {
+				if (!fields) {
+					return;
+				};
+				let id = "", name = "";
+				a.forEach((e0, i0) => {
+					switch (i0) {
+						case fieldId: {
+							id = e0;
+							break;
+						};
+						case fieldNme: {
+							name = e0;
+							break;
+						};
+					};
+				});
+				if (!upThis.#mapList[id] || overwrite) {
+					upThis.#mapList[id] = name;
+					loadCount ++;
+				} else {
+					//console.debug(`Voice "${name}" (${id}) seems to be in conflict with (${upThis.#mapList[id]}).`);
+				};
+				allCount ++;
+			} else {
+				a.forEach((e0, i0) => {
+					switch (e0) {
+						case "ID": {
+							fieldId = i0;
+							fields ++;
+							break;
+						};
+						case "Name": {
+							fieldNme = i0;
+							fields ++;
+							break;
+						};
+						default: {
+							console.debug(`Unknown map field: ${e0}`);
+						};
+					};
+				});
+			};
+		});
+		console.debug(`Map: ${allCount} total, ${loadCount} loaded.`);
+		upThis?.device.forceVoiceRefresh();
 	};
-	async loadEfx(text) {
+	async loadEfx(text, overwrite) {
 		// Load the EFX map
 		let upThis = this;
 		let loadCount = 0, allCount = 0;
 		let fieldMsb, fieldLsb, fieldNme;
 		text.split(`\n`).forEach((e, i) => {
+			if (!e) {
+				return;
+			};
 			if (i) {
 				let id = 0, name;
 				e.split(`\t`).forEach((e0, i0) => {
@@ -82,11 +139,11 @@ let RootDisplay = class extends CustomEventSource {
 						};
 					};
 				});
-				if (!upThis.#efxList[id]) {
+				if (!upThis.#efxList[id] || overwrite) {
 					upThis.#efxList[id] = name;
 					loadCount ++;
 				} else {
-					console.debug(`EFX ID 0x${id.toString(16).padStart(4, "0")} (${name}) seems to be in conflict.`);
+					//console.debug(`EFX ID 0x${id.toString(16).padStart(4, "0")} (${name}) seems to be in conflict.`);
 				};
 				allCount ++;
 			} else {
@@ -105,7 +162,7 @@ let RootDisplay = class extends CustomEventSource {
 							break;
 						};
 						default: {
-							console.warn(`Unknown EFX field: ${e0}`);
+							console.debug(`Unknown EFX field: ${e0}`);
 						};
 					};
 				});
@@ -132,7 +189,9 @@ let RootDisplay = class extends CustomEventSource {
 	getChVoice(ch) {
 		return this.device.getChVoice(ch);
 	};
-	getMapped(id) {};
+	getMapped(id) {
+		return this.#mapList[id] || id;
+	};
 	getEfx([msb, lsb]) {
 		let id = (msb << 8) | lsb;
 		return this.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;

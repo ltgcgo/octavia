@@ -211,7 +211,7 @@ let ScDisplay = class extends RootDisplay {
 					infoTxt += "+";
 				};
 			};
-			infoTxt += (upThis.getChVoice(this.#ch).name).slice(0, 12).padEnd(12, " ");
+			infoTxt += upThis.getMapped(upThis.getChVoice(this.#ch).name).slice(0, 12).padEnd(12, " ");
 			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
 					let pX = i0 * 6 + i1 % 5,
