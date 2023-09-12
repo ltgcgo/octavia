@@ -189,7 +189,7 @@ let demoPool = new SheetData();
 })();
 
 document.body.addEventListener("keydown", async (ev) => {
-	ev.preventDefault();
+	//ev.preventDefault();
 	let {
 		metaKey, ctrlKey, altKey, shiftKey,
 		location, key

@@ -47,8 +47,8 @@ let VoiceBank = class {
 						// 80: PLG-150PF + PLG-150AP redirection
 						// 81: PLG-150VL redirection
 						// 82: PLG-100SG redirection
-						// 83: PLG-100DX redirection
-						// 84: PLG-100AN redirection
+						// 83: PLG-150DX redirection
+						// 84: PLG-150AN redirection
 						args[0] += 16;
 					};
 					case 95:

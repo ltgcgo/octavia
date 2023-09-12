@@ -1,33 +1,299 @@
 ID	Name
-Anal.Kt2	Analog Kit 2
-BrilTrmb	BrillintTrmb
-Bril Trp	BrilliantTrp
-BriteTrp	BriteTrumpet
-BrtBsTrb	BrtBassTromb
-BrtFrHrn	BrightFrHorn
-CelloSec	Cello Sect.
-ContrSec	Contr. Sect.
-Dark Trp	Dark Trumpet
+LayerCP1	Layered CP 1
+GrndPnoK	GrandPiano K
+MelloGrP	MellowGrdPno
+PianoStr	PianoStrings
+DreamPno	Dream Piano
 DblConGr	DoublConGrnd
+GrandP #	Grand Piano#
+BritPnoK	BrightPianoK
+BriteP #	BrightPiano#
+EGndPnoK	ElGrndPianoK
+Det.CP80	Detuned CP80
+LayerCP2	Layered CP 2
+HnkyTnkK	HonkyTonk K
+EPiano1K	El.Piano 1 K
+ChorusEP	Chorus EP 1
+HardEPno	Hard El. Pno
+VX E.Pno	VX El. Piano
+60sElPno	60's ElPiano
+EPiano1#	El. Piano 1#
+EPiano2K	El.Piano 2 K
+Chor.EP2	Chorus EP 2
+DXLegend	DX Legend EP
+DX Phase	DX Phase EP
+DXAnalog	DX Analog EP
+VX EPno2	VX El.Piano2
+EPiano2#	El. Piano 2#
+HpschrdK	HarpsichordK
+Hpschrd2	Harpsichord2
+Hpschrd3	Harpsichord3
+ClvchrdK	Clavichord K
+ClaviWah	Wah Clvichrd
+PulseClv	Pulse Clavi.
+Perc Clv	Pierce Clavi
+SupClavi	Super Clavi.
+Clavi. #	Clavichord #
+S. Orgel	Small Orgel
+VibrafnK	Vibraphone K
+HardVibr	HardVibrafon
+SMarimba	Sine Marimba
+ChrchBel	Church Bells
 DetDrwOr	Det.DrawOrgn
-Det.EP 8	Detuned EP 8
-F-Coquet	Fem-Coquette
-FakeAlto	Fake Alto Sx
-FlangrBa	Flanger Bass
-FunkGtr2	Funk Guitar2
+60sDrOrg	60sDrawOrgan
+60sDrOr2	60sDrawOrgn2
+70sDrOrg	70sDrawOrgan
+DrawOrg2	Draw Organ 2
+60sDrOr3	60sDrawOrgn3
+70sDrOr2	70sDrawOrgn2
+CheezOrg	Cheese Organ
+DrawOrg3	Draw Organ 3
+ClkGspOr	ClikGospelOr
+DrawOrg#	Draw Organ #
+70sPcOrg	70s Perc Org
+DetPrcOr	Det.Perc Org
+LightOrg	Light Organ
+PercOrg2	Perc Organ 2
+PercOrg#	Perc Organ #
+RotaryOr	Rotary Organ
+SlwRotar	Slow Rotary
+FstRotar	Fast Rotary
+RockOrg#	Rock Organ #
+ChurOrg3	ChurchOrgan3
+ChurOrg2	ChurchOrgan2
+OrgFlute	Organ Flute
+TrmOrgFl	TremOrgFlute
+AccordIt	Accordion It
+Harmo. 2	Harmonica 2
+TngoAcd2	TangoAccord2
+NylonGt2	Nylon Gtr. 2
+NylonGt3	Nylon Gtr. 3
+VelGtHrm	VelGtHrmonix
+NylonGt#	Nylon Gtr. #
+SteelGt2	Steel Gtr. 2
+12StrGtr	12-Str Gtr.
+Nyln&Stl	Nyln&SteelGt
+Stl&Body	SteelGt&Body
+SteelGt#	Steel Gtr. #
+MelloGtr	Mellow Gtr.
+Jazz Amp	Jazz Gtr Amp
+OctPlate	Octave Plate
+NekRough	NeckRoughcst
+PdlSteel	Pedal Steel
+JazzGtr#	Jazz Gtr. #
+ChorusGt	Chorus Gtr.
+MidT.Gtr	MidToneGtr.
+MidTGtSt	MidToneGtrSt
 NasalGtr	Nasal Guitar
+Funk Gtr	Funk Gtr. 1
+MuteStlG	MutedSteelGt
+FunkGtr2	Funk Guitar2
+Mu.DstGt	MutedDistGtr
+MutedGt#	Muted Gtr. #
+OvdrGtDt	OvrdrvGtrDet
+Gt.Pinch	Guitar Pinch
+Ovrdriv#	Overdriven #
+DstRthmG	DistRhythmGt
+DistGtr2	Dist. Gtr. 2
+DistGtr3	Dist. Gtr. 3
+PowerGt2	Power Gtr. 2
+PowerGtr	Power Gtr.
+Dst.5ths	Dist. Fifths
+FeedbkGt	Feedback Gt.
+FeedbkG2	Feedback Gt2
+RckRthm2	RockRhythm 2
+RockRthm	Rock Rhythm
+Dist.Gt#	Dist. Gtt. #
+GtFeedbk	Gtr.Feedback
+GtrHrmo2	Gtr. Harmo 2
+JazzRthm	Jazz Rhythm
+VXUprght	VX UprightBa
+Acou.Ba#	Acou. Bass #
+FingrDrk	DarkFingerBs
+FlangrBa	Flanger Bass
+RezChase	Reso. Chase
+FW EBass	FingrW EBass
+FingrBa#	FingerBass #
+PickBas2	Picked Bass2
+M.PkBass	MutedPikBass
+HardPick	HardPickBass
+Fretles2	FretlessBas2
+Fretles3	FretlessBas3
+Fretles4	FretlessBas4
+Pwr.Fret	PowerFretles
+TalkinBa	Talking Bass
+SynFretl	SynthFretles
+SmthFrtl	SmoothFrtles
+Fretles#	FretlesBass#
+ResoSlap	ResonantSlap
+PunchThm	PunchThumbBs
+Thum&Slp	Thumb & Slap
+SlapBas#	Slap Bass #
+VeloSlap	VeloSwchSlap
+SlapBa2#	Slap Bass 2#
+SynBs1Dk	DarkSynBass1
+FastResB	FastReso.Bas
+ResoBass	ResonantBass
+TechnoBa	Techno Bass
+Sqr.Bass	Square Bass
+RubberBa	Rubber Bass
+HardReso	HardResonant
+AnalogBa	Analog Bass
+MelloSBa	MelloSynBass
+Seq.Bass	SequencedBas
+ClkSynBa	ClickSynthBs
+SynBs2Dk	DarkSynBass2
+SmthSynB	SmoothSynBas
+ModulrBa	Modular Bass
+X WireBa	X Wire Bass
+AtkPulse	Attack Pulse
+SmoothBs	Smooth Bass
+Oct.Bass	Octave Bass
+SlwVioln	Slow Violin
+CadenzDk	Dark Cadenza
+ViolinSc	Violin Sect.
+HdVlnSec	HardViolnSec
+SlVlnSec	SlowViolnSec
+DblViola	Double Viola
+ViolaSec	Viola Sect.
+HdVlaSec	HardViolaSec
+SlVlaSec	SlowViolaSec
+CellSect	Cello Sect.
+HdCelloS	HardCelloSec
+SlCelloS	SlowCelloSec
+ContrSec	Contr. Sect.
+HdContrS	HardContrSec
+SlContrS	SlowContrSec
+SlwTrStr	SlowTremStr.
+Susp.Str	Suspense Str
+Det.Fear	Detuned Fear
+BrTrmStr	BriteTremStr
+TremStr#	Tremolo Str#
+PizzOcta	Pizz. Octave
+ElecHarp	ElectricHarp
+VlinHarp	Violin Harp
+DtVliHrp	DetViolinHrp
+StStrngs	St. Strings
+Slow Str	Slow Strings
+SforzStr	SforzStrings
+Arco Str	Arco Strings
+60sStrng	60s' Strings
+OrcheStr	OrcheStrings
+OrchStr2	OrchStrings2
+TremOrch	Tremolo Orch
+Velo.Str	Velo Strings
+SwellStr	SwellStrings
+Strngs1#	Strings 1 #
+StSlwStr	St.Slow Str.
+LegatoSt	Legato Str.
+Warm Str	Warm Strings
+70s Str	70s' Strings
+ChmbrStr	Chamber Str.
+Strngs2#	Strings 2 #
+Reso Str	Resonant Str
+Syn.Str3	Synth Str. 3
+GrandPad	GrandStrsPad
+SweepStr	SweepStrings
+Syn.Str4	Synth Str. 4
+Syn.Str5	Synth Str. 5
+SolPlexs	Solar Plexus
+St.Choir	Stereo Choir
+ChoirAh2	Choir Aah 2
+MelChoir	Mellow Choir
+ChoirStr	Choir Strngs
+SynVoix2	SynthVoice 2
+AnalVoix	Analog Voice
+OrchHit2	Orch. Hit 2
+6th Hit+	Sixth Hit +
+BriteTrp	BriteTrumpet
+Warm Trp	Warm Trumpet
+Dark Trp	Dark Trumpet
+SoftDTrp	SoftDarkTrp.
+Soft Trp	Soft Trumpet
+SweetTrp	SweetTrumpet
+MlSwtTrp	Mel.SweetTrp
 NormlTrp	Normal Trmpt
+Bril Trp	BrilliantTrp
+FlugelHr	Flugel Horn
+BrtTromb	Brt Trombone
+MelloTrb	Mellow Tromb
+BrilTrmb	BrillintTrmb
+HardTrmb	HardTrombone
+BrtBsTrb	BrtBassTromb
+HrdBsTrb	HardBassTrmb
+TromSect	TromboneSect
+MuteTrp2	MutedTrmpt 2
+MutedTp#	MutedTrmpt #
+FrHrSolo	Fr.Horn Solo
+FrHorn 2	FrenchHorn 2
+HornOrch	HrnOrchestra
+Syn.Horn	SynthFr.Horn
+HrnOrch2	Horn Orch. 2
+BrtFrHrn	BrightFrHorn
+HardFrHr	Hard Fr.Horn
+StBrsSec	St.BrassSect
+SforzBrs	Sforz. Brass
+Tp&TbSec	Trp&Trb Sect
+TpTbSec2	Trp&TrbSect2
+BrsSect2	Brass Sect 2
+MelloBrs	Mellow Brass
+Tenor&Tp	Tenor&Trmpt
+SymphBrs	Symph. Brass
+QuackBrs	Quack Brass
+RezSynBr	ResoSynthBrs
+SynBras3	SynthBrass 3
+SyBrsSub	SynthBrasSub
+AnVelBrs	Anal.VeloBrs
+Anal.Brs	Analog Brass
+SynBras4	SynthBrass 4
+ChoirBrs	Choir Brass
+Ana.Horn	Analog Horn
+AnVelBr2	AnalVeloBrs2
+AnalBrs2	AnalogBrass2
+LgtAltSx	Lgt.Alto Sax
+FakeAlto	Fake Alto Sx
+TenrSax2	Tenor Sax 2
+SuperTnr	Super Tenor
+BasClari	BassClarinet
+NeatBrth	Neat Breathy
+HollowSq	Hollow Sqr.
+PolyPd80	Poly Pad 80
+CutNoiz2	Cut Noise 2
+DstCutNz	DistCutNoise
+Str Slap	String Slap
+P.Scrape	Pick Scrape
+Fl.KClik	FluteKyClick
+HorseGlp	Horse Gallop
+DoorSqek	Door Squeak
+ScratchC	Scratch Cut
+Scratch2	ScratchSplit
+TeleFon2	Telephone 2
+CarTyreS	Car Tyre Sq.
+Car Pass	Car Passing
+LaughVox	Laugh Voice
+ScreamVx	Scream Voice
+MchinGun	Machine Gun
+TechnoHi	Techno Kit H
+TechnoLo	Techno Kit L
+S. Latin	Small Latin
+AfroCuba	AfroCubanKit
+AfrCuba2	AfroCubanKt2
+BrazilKt	BrazillianKt
+PopLatin	Pop Latin Kt
+DarkRoom	Dark Room Kt
+ElectrKt	Electro Kit
+Anal.Kt2	Analog Kit 2
+HipHopKt	Hip Hop Kit
+PerigeKt	Perigee Kit
+BrushKt2	Brush Kit 2
+SymphnKt	Symphony Kit
 Ntrl Kit	Natural Kit
 NtrlFunk	Ntrl Funk Kt
-OvdrGtDt	OvrdrvGtrDet
-PerigeKt	Perigee Kit
-PickBas2	Picked Bass2
-StBrsSec	St.BrassSect
-StSlwStr	St.Slow Str.
-SupClavi	Super Clavi.
-SweetTrp	SweetTrumpet
-SwellStr	SwellStrings
-TalkinBa	Talking Bass
-TenrSax2	Tenor Sax 2
-ViolaSec	Viola Sect.
-ViolinSc	Violin Sect.
+Lv StdKt	LiveStdrdKit
+LvFunkKt	LiveFunk Kit
+Lv Brush	LiveBrushKit
+Std&Perc	LiveStd&Perc
+FunkPerc	LvFunkPercKt
+Brush&P.	LvBrush&Perc
+F-Coquet	Fem-Coquette
+Det.EP 8	Detuned EP 8
