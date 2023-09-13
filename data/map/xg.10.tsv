@@ -296,17 +296,161 @@ ChoirBrs	ChoirBrass
 Ana.Horn	AnalogHorn
 AnVelBr2	AnVeloBrs2
 AnalBrs2	AnalogBrs2
+SwtSprno	SwtSoprano
 LgtAltSx	LgtAltoSax
+Sax Sect	Sax Sect.
 HyprAlto	Hyper Alto
+PwrAltSx	PowerAltSx
 FakeAlto	Fake Alto
+FakeAlt+	Fake Alto+
+DFakeAlt	DrkFakeAlt
+AltoSax#	Alto Sax #
+BrthTnSx	BrthyTnrSx
+SoftTenr	SoftTenrSx
 TenrSax2	TenorSax 2
 SuperTnr	SuperTenor
+SuprTnr+	SuperTenr+
+SupTnrSt	SuprTnrSt.
+Tenr&Alt	Tenor&Alto
+BrthTnr2	BrthyTenr2
+SwtTenor	SweetTenor
+HeinzUni	HeinzUnisn
+Exp.Oboe	Expr. Oboe
 BasClari	BassClari.
 NeatBrth	NeatBreath
+BthBoehm	BrthyBoehm
 Pastoral	Pastorale
+SwtFlute	SweetFlute
+PanFlut2	PanFlute 2
+SwtPanFl	SwtPanFlut
+PanFlut#	Pan Flute#
+BotlLgto	BotlLegato
+SqrLead2	SquareLd 2
+LMSquare	LM Square
 HollowSq	Hollow Sqr
+DblOsci.	DoublOsci.
+MellowSq	Mellow Sqr
+SoloSine	Solo Sine
+SineLead	Sine Lead
+Pulse Ld	Pulse Lead
+SyncLead	Sync Lead
+SawLead2	Saw Lead 2
+ThickSaw	Thick Saw
+Dyna.Saw	DynamicSaw
+Digi.Saw	DigitalSaw
+HeavySyn	HeavySynth
+WaspySyn	WaspySynth
+RezzySaw	Rezzy Saw
+DoublSaw	Double Saw
+Dim Saw	Dim Saw Ld
+PulseSaw	Pulse Saw
+Dr. Lead	DoctorLead
+VeloLead	Velo. Lead
+NoviceLd	NoviceLead
+VentSyn.	Vent Synth
+PureLead	Pure Lead
+ElecPrim	ElecPrimtv
+SaltLead	Salt Lead
+HardSync	Hard Sync
+DistLead	Dist. Lead
+WireLead	Wire Lead
+SynPluck	SynthPluck
+DaSyncLd	DaSyncLead
+SynthAah	Synth Aah
+Vox Lead	Voice Lead
+5thLdSft	5thLeadSft
+Big&Low	Big & Low
+Fat&Prky	Fat&Perky
+SftWhirl	Soft Whirl
+ThickPad	Thick Pad
+RotarStr	Rotary Str
 LightPad	Light Pad
 PolyPd80	PolyPad 80
+ClickPad	Click Pad
+Anal.Pad	Analog Pad
+SquarePd	Square Pad
+CosmicPd	Cosmic Pad
+GlassPad	Glass Pad
+SqrTwang	Sqr. Twang
+Sqr.Pad8	Sqr. Pad 8
+ChorusPd	Chorus Pad
+PolarPad	Polar Pad
+Celstial	Celestial
+ClaviPad	Clavi. Pad
+HrmoRain	Harmo.Rain
+AfrcWind	AfricaWind
+Ancestrl	Ancestral
+SynDrCmp	SynDrmComp
+TinyBell	Tiny Bells
+RndGlock	RoundGlock
+GlokChim	GlockChime
+ClearBel	Clear Bell
+ChorBell	ChorusBell
+SynMalet	SynthMalet
+SftCryst	SoftCrystl
+LoudGlok	Loud Glock
+XmasBell	Xmas Bells
+VibraBel	VibrafnBel
+DigiBell	Digi. Bell
+AirBells	Air Bells
+BellHarp	Bell Harp
+Gamelmba	Gamelimba
+Anal.Bel	AnalogBell
+WarmAtms	Warm Atmos
+HollwRls	Hollow Rls
+NylonEP.	Nylon EP.
+NylnHarp	Nylon Harp
+Harp Vox	Harp Voice
+AtmosPad	Atmos. Pad
+DigiBmda	DigiBermda
+CloudPad	Cloud Pad
+PulseKey	Pulse Key
+NoisePno	NoisePiano
+FantaBel	FantasyBel
+ShinStar	Shine Star
+Brt.Stab	Brite Stab
+BellPad*	Bell Pad *
+GobSynth	GoblnSynth
+ToHeaven	To Heaven
+MilkyWay	Milky Way
+GblnTalk	GoblinTalk
+BelChoir	Bell Choir
+Echoes 2	EchoDrops2
+EchoBell	Echo Bells
+SynPiano	SynthPiano
+StarDust	Star Dust
+Reso&Pan	Reso.&Pan.
+Ana.Echo	AnalogEcho
+DetSitar	Det. Sitar
+Syn.Raga	Synth Raga
+MuteBnjo	MutedBanjo
+ElecBnjo	Elec.Banjo
+Gopichnt	Gopichant
+TaishoKn	Taisho-Kin
+BigKlmba	BigKalimba
+Hichriki	Hichiriki
+TiklBell	TickleBell
+Gamelan	GamelanGon
+S.Gameln	St.Gamelon
+RamaCymb	RamaCymbal
+AsianBel	Asian Bell
+Atargane	Atarigane
+GlasPerc	Glass Perc
+ThaiBell	Thai Bells
+Gr.Cassa	Gran Cassa
+Mel Tom2	Melo Tom 2
+Tim'sSet	Tim's Set
+Anal.Tom	Analog Tom
+ElecPerc	Elec. Perc
+Syn.Perc	Synth Perc
+RvCymbl2	RevCymbal2
+RvCymbl3	RevCymbal3
+RevSnare	Rev. Snare
+RvSnare2	Rev.Snare2
+Rev.Kick	Rev. Kick
+RConBaDr	RvConBaDrm
+Rev. Tom	ReverseTom
+Rev.Tom2	Rev. Tom 2
 Prcesion	Precession
 CutNoise	Cut Noise
 CutNoiz2	CutNoise 2

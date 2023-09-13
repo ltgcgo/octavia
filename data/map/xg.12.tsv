@@ -250,14 +250,113 @@ ChoirBrs	Choir Brass
 Ana.Horn	Analog Horn
 AnVelBr2	AnalVeloBrs2
 AnalBrs2	AnalogBrass2
+SwtSprno	SweetSoprano
 LgtAltSx	Lgt.Alto Sax
+Sax Sect	Sax Section
+PwrAltSx	Power Alt Sx
 FakeAlto	Fake Alto Sx
+FakeAlt+	Fake Alto +
+DFakeAlt	DarkFakeAlto
+AltoSax#	Alto Sax. #
+BrthTnSx	BrthyTenorSx
+SoftTenr	SoftTenorSax
 TenrSax2	Tenor Sax 2
 SuperTnr	Super Tenor
+SuprTnr+	Super Tenor+
+SupTnrSt	SuperTnr St.
+Tenr&Alt	Tenor & Alto
+BrthTnr2	BreathyTenr2
+SwtTenor	Sweet Tenor
+HeinzUni	Heinz Unison
+Exp.Oboe	Express.Oboe
 BasClari	BassClarinet
 NeatBrth	Neat Breathy
+BthBoehm	BreathyBoehm
+SwtFlute	Sweet Flute
+PanFlut2	Pan Flute 2
+SwtPanFl	SweetPanFlut
+PanFlut#	Pan Flute #
+BotlLgto	BottleLegato
+SqrLead2	Square Ld 2
+LMSquare	LM Square Ld
 HollowSq	Hollow Sqr.
+DblOsci.	DoubleOscil.
+MellowSq	Mellow Sqr.
+SoloSine	Solo Sine Ld
+SawLead2	Saw. Lead 2
+ThickSaw	Thick Saw Ld
+Dyna.Saw	Dynamic Saw
+Digi.Saw	Digital Saw
+HeavySyn	Heavy Synth
+WaspySyn	Waspy Synth
+RezzySaw	Rezzy Saw Ld
+DoublSaw	Double SawLd
+Dim Saw	Dim Saw Lead
+PulseSaw	Pulse Saw Ld
+Dr. Lead	Doctor Lead
+VeloLead	VelocityLead
+NoviceLd	Novice Lead
+ElecPrim	ElecPrimtive
+DistLead	Distort.Lead
+SynPluck	Synth Pluck
+DaSyncLd	TheSyncLead
+5thLdSft	5thLeadSoft
+Fat&Prky	Fat & Perky
+RotarStr	Rotary Str.
 PolyPd80	Poly Pad 80
+SqrTwang	Square Twang
+Sqr.Pad8	Square Pad 8
+ClaviPad	Clavich. Pad
+HrmoRain	HarmonicRain
+AfrcWind	African Wind
+SynDrCmp	Syn.DrumComp
+RndGlock	RoundGlocken
+GlokChim	GlockenChime
+ClearBel	Clear Bells
+ChorBell	Chorus Bells
+SynMalet	Synth Mallet
+SftCryst	Soft Crystal
+LoudGlok	Loud Glocken
+XmasBell	Xmas. Bells
+VibraBel	VibrafoneBel
+DigiBell	Digital Bell
+Anal.Bel	Analog Bells
+WarmAtms	Warm Atmos.
+HollwRls	HollwRelease
+NylonEP.	Nylon EPiano
+AtmosPad	Atmosphr Pad
+DigiBmda	Digi.Bermuda
+NoisePno	Noise Piano
+FantaBel	Fantasy Bell
+ShinStar	Shining Star
+Brt.Stab	Bright Stab
+GobSynth	Goblin Synth
+GblnTalk	Goblin Talk
+Echoes 2	Echo Drops 2
+SynPiano	Synth Piano
+Reso&Pan	Reso. & Pan.
+Ana.Echo	Analog Echo
+DetSitar	Detune Sitar
+MuteBnjo	Muted Banjo
+ElecBnjo	Elec. Banjo
+BigKlmba	Big Kalimba
+TiklBell	Tickle Bell
+Gamelan	Gamelan Gong
+S.Gameln	St. Gamelan
+RamaCymb	Rama Cymbal
+AsianBel	Asian Bells
+GlasPerc	Glass Perc.
+Mel Tom2	Melod. Tom 2
+ElecPerc	Elec. Perc.
+Syn.Perc	Synth Perc.
+RvCymbl2	Rev.Cymbal 2
+RvCymbl3	Rev.Cymbal 3
+RevSnare	ReverseSnare
+RvSnare2	Rev. Snare 2
+Rev.Kick	Reverse Kick
+RConBaDr	RevConBaDrum
+Rev. Tom	Reverse Tom
+Rev.Tom2	ReverseTom 2
 CutNoiz2	Cut Noise 2
 DstCutNz	DistCutNoise
 Str Slap	String Slap

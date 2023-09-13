@@ -178,6 +178,8 @@ SforzBrs	Sforzando Brass
 Tp&TbSec	Trumpet & Tromb. Section
 TpTbSec2	Trumpet & Tromb. Sect. 2
 BrsSect2	Brass Section 2
+Tenor&Tp	Tenor Sax & Trumpet
+SymphBrs	Symphonic Brass
 RezSynBr	Resonant Synth Brass
 SynBras3	Synth Brass 3
 SyBrsSub	Synth Brass Sub-oscillator
@@ -185,16 +187,84 @@ AnVelBrs	Analog Velocity Brass
 SynBras4	Synth Brass 4
 AnVelBr2	Analog Velocity Brass 2
 AnalBrs2	Analog Brass 2
-Tenor&Tp	Tenor Sax & Trumpet
-SymphBrs	Symphonic Brass
-LgtAltSx	Legato Alto Saxophone
+SwtSprno	Sweet Soprano Sax
+LgtAltSx	Legato Alto Sax
+Sax Sect	Saxophone Section
 HyprAlto	Hyper Alto Sax
+PwrAltSx	Power Alto Sax
 FakeAlto	Fake Alto Sax
+FakeAlt+	Fake Alto Sax +
+DFakeAlt	Dark Fake Alto Sax
+AltoSax#	Alto Saxophone #
+BrthTnSx	Breathy Tenor Sax
+SoftTenr	Soft Tenor Sax
 TenrSax2	Tenor Saxophone 2
-SuperTnr	Super Tenor Saxophone
+SuperTnr	Super Tenor Sax
+SuprTnr+	Super Tenor Sax +
+SupTnrSt	Super Tenor Stereo
+Tenr&Alt	Tenor & Alto Sax
+BrthTnr2	Breathy Tenor Sax 2
+SwtTenor	Sweet Tenor Sax
+Exp.Oboe	Expressive Oboe
 BasClari	Bass Clarinet
 NeatBrth	Neat Breathy Flute
+BthBoehm	Breathy Boehm
+SwtPanFl	Sweet Pan Flute
+BotlLgto	Bottle Legato
+SqrLead2	Square Lead 2
+LMSquare	LM Square Lead
 HollowSq	Hollow Square
+DblOsci.	Double Oscillator
+MellowSq	Mellow Square
+SoloSine	Solo Sine Lead
+SawLead2	Sawtooth Lead 2
+ThickSaw	Thick Saw Lead
+Dyna.Saw	Dynamic Sawtooth
+Digi.Saw	Digital Sawtooth
+RezzySaw	Rezzy Sawtooth Lead
+DoublSaw	Double Sawtooth Lead
+Dim Saw	Dim Sawtooth Lead
+PulseSaw	Pulse Sawtooth Ld
+VeloLead	Velocity Lead
+ElecPrim	Electric Primtive
+DistLead	Distortion Lead
+DaSyncLd	The Sync Lead
+5thLdSft	Fifth Lead Soft
+RotarStr	Rotary Strings
+PolyPd80	Poly Synth Pad 80
+ClaviPad	Clavichord Pad
+HrmoRain	Harmonic Rain
+SynDrCmp	Synth Drum Comp
+RndGlock	Round Glockenspiel
+GlokChim	Glockenspiel Chimes
+SftCryst	Soft Crystals
+LoudGlok	Loud Glockenspiel
+XmasBell	Chrismas Bells
+VibraBel	Vibraphone Bells
+DigiBell	Digital Bells
+WarmAtms	Warm Atmosphere
+HollwRls	Hollow Release
+NylonEP.	Nylon Electric Piano
+AtmosPad	Atmosphere Pad
+DigiBmda	Digital Bermuda
+FantaBel	Fantasy Bells
+Reso&Pan	Resonant & Panning
+Ana.Echo	Analog Echoes
+DetSitar	Detuned Sitar
+ElecBnjo	Electric Banjo
+TiklBell	Tickle Bells
+Gamelan	Gamelan Gongs
+S.Gameln	Stereo Gamelan Gongs
+GlasPerc	Glass Percussion
+Mel Tom2	Melodic Tom 2
+ElecPerc	Electric Percussion
+Syn.Perc	Synth Percussion
+RvCymbl2	Reverse Cymbal 2
+RvCymbl3	Reverse Cymbal 3
+RevSnare	Reverse Snare
+RvSnare2	Reverse Snare 2
+RConBaDr	Rev. Concert Bass Drum
+Rev.Tom2	Reverse Tom 2
 CutNoise	Cutting Noise
 CutNoiz2	Cutting Noise 2
 DstCutNz	Distorted Cutting Noise
