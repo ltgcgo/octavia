@@ -27,6 +27,12 @@ let VoiceBank = class {
 						};
 						break;
 					};
+					case 16: {
+						if (lsb == 126) {
+							args[2] = 0; // MU sampler restore
+						};
+						break;
+					};
 					case 32: {
 						args[2] += 4; // PLG-150AP redirection
 						break;
@@ -297,7 +303,7 @@ let VoiceBank = class {
 		};
 		// Hijack XG MU2000 sampler
 		if (mode == "xg" && msb == 16) {
-			bankName = `Voice${(lsb * 128 + prg + 1).toString().padStart(3, "0")}`;
+			bankName = `Voice${(args[2] * 128 + args[1] + 1).toString().padStart(3, "0")}`;
 			ending = " ";
 		};
 		// Internal ID

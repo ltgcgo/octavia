@@ -40,6 +40,7 @@ DrawOrg#	Drawbar Organ #
 70sPcOrg	70s' Percussive Org
 DetPrcOr	Detuned Perc Organ
 PercOrg2	Percussive Organ 2
+WarmJazz	Warm Jazz Organ
 PercOrg#	Percussive Organ #
 SlwRotar	Slow Rotary Organ
 FstRotar	Fast Rotary Organ
@@ -64,12 +65,14 @@ JazzGtr#	Jazz Guitar #
 ChorusGt	Chorus Guitar
 MidT.Gtr	Mid-tone Guitar
 MidTGtSt	Mid-tone Guitar Stereo
+Dbl Hamr	Double Hammer
 Funk Gtr	Funk Guitar 1
 MuteStlG	Muted Steel Guitar
 FunkGtr2	Funk Guitar 2
 Mu.DstGt	Muted Distortion Guitar
 MutedGt#	Muted Guitar #
 OvdrGtDt	Detuned Overdrive Guitar
+BriMnhtn	Bright Manhattan
 Ovrdriv#	Overdriven #
 DstRthmG	Distorted Rhythm Guitar
 DistGtr2	Distortion Guitar 2
@@ -86,12 +89,14 @@ GtrHrmo2	Guitar Harmonics 2
 VXUprght	VX Upright Bass
 Acou.Ba#	Acoustic Bass #
 FingrDrk	Dark Fingered Bass
+Mod Bass	Modulation Bass
 RezChase	Resonant Chase
 FW EBass	Finger W Electric Bass
 FingrBa#	Fingered Bass #
 PickBas2	Picked Bass 2
 M.PkBass	Muted Picked Bass
 HardPick	Hard Picked Bass
+RzHardPk	Resonant Hard Pick Bass
 Fretles2	Fretless Bass 2
 Fretles3	Fretless Bass 3
 Fretles4	Fretless Bass 4
@@ -151,6 +156,7 @@ MelChoir	Mellow Choir
 ChoirStr	Choir Strings
 SynVoix2	Synth Voice 2
 OrchHit2	Orchestra Hit 2
+BrsStb80	Brass Stab 80
 BriteTrp	Bright Trumpet
 SoftDTrp	Soft Dark Trumpet
 SweetTrp	Sweet Trumpet
@@ -285,4 +291,21 @@ Lv Brush	Live! Brush Kit
 Std&Perc	Live! Standard+Perc Kit
 FunkPerc	Live! Funk + Perc Kit
 Brush&P.	Live! Brush + Perc Kit
+PnoStPad	Piano Stereo Pad
+StRichSt	Stage Rich Piano Stereo
+PhaseClv	Phaser Clavichord
+Fretles!	Fretless Bass!
+SweetAlt	Sweet Alto Sax
+F-NMusic	Female New Music
 F-Coquet	Female Coquette
+MM-Fall	MM Fall
+MM-Clav3	MM Clavichord 3
+MM-Vibe2	MM Vibraphone 2
+DX-SLd 9	DX Square Lead 9
+DirtySaw	Dirty Sawtooth Lead
+AnlSforz	Analog Sforzando
+BridHamr	Bridge Hammer
+Easy EP	Easy Electric Piano
+GrvyMtGt	Groovy Muted Guitar
+3 OctStr	3 Octave Strings
+SimplSaw	Simple Sawtooth

@@ -54,6 +54,7 @@ DrawOrg#	Draw Organ #
 DetPrcOr	Det.Perc Org
 LightOrg	Light Organ
 PercOrg2	Perc Organ 2
+WarmJazz	Warm Jazz Or
 PercOrg#	Perc Organ #
 RotaryOr	Rotary Organ
 SlwRotar	Slow Rotary
@@ -85,6 +86,7 @@ ChorusGt	Chorus Gtr.
 MidT.Gtr	MidToneGtr.
 MidTGtSt	MidToneGtrSt
 NasalGtr	Nasal Guitar
+Dbl Hamr	Doubl Hammer
 Funk Gtr	Funk Gtr. 1
 MuteStlG	MutedSteelGt
 FunkGtr2	Funk Guitar2
@@ -92,6 +94,7 @@ Mu.DstGt	MutedDistGtr
 MutedGt#	Muted Gtr. #
 OvdrGtDt	OvrdrvGtrDet
 Gt.Pinch	Guitar Pinch
+BriMnhtn	Bright Mnhtn
 Ovrdriv#	Overdriven #
 DstRthmG	DistRhythmGt
 DistGtr2	Dist. Gtr. 2
@@ -111,12 +114,14 @@ VXUprght	VX UprightBa
 Acou.Ba#	Acou. Bass #
 FingrDrk	DarkFingerBs
 FlangrBa	Flanger Bass
+Mod Bass	ModulateBass
 RezChase	Reso. Chase
 FW EBass	FingrW EBass
 FingrBa#	FingerBass #
 PickBas2	Picked Bass2
 M.PkBass	MutedPikBass
 HardPick	HardPickBass
+RzHardPk	ResoHardPick
 Fretles2	FretlessBas2
 Fretles3	FretlessBas3
 Fretles4	FretlessBas4
@@ -204,6 +209,7 @@ ChoirStr	Choir Strngs
 SynVoix2	SynthVoice 2
 AnalVoix	Analog Voice
 OrchHit2	Orch. Hit 2
+BrsStb80	Brass Stab80
 6th Hit+	Sixth Hit +
 BriteTrp	BriteTrumpet
 Warm Trp	Warm Trumpet
@@ -237,6 +243,7 @@ Tp&TbSec	Trp&Trb Sect
 TpTbSec2	Trp&TrbSect2
 BrsSect2	Brass Sect 2
 MelloBrs	Mellow Brass
+SuperBrs	Super Brass
 Tenor&Tp	Tenor&Trmpt
 SymphBrs	Symph. Brass
 QuackBrs	Quack Brass
@@ -357,6 +364,8 @@ Rev.Kick	Reverse Kick
 RConBaDr	RevConBaDrum
 Rev. Tom	Reverse Tom
 Rev.Tom2	ReverseTom 2
+RndmWalk	Random Walk
+Malfnctn	Malfunction
 CutNoiz2	Cut Noise 2
 DstCutNz	DistCutNoise
 Str Slap	String Slap
@@ -394,5 +403,24 @@ Lv Brush	LiveBrushKit
 Std&Perc	LiveStd&Perc
 FunkPerc	LvFunkPercKt
 Brush&P.	LvBrush&Perc
+PnoStPad	Piano St.Pad
+StRichSt	StageRichSt.
+Hnkytnk1	Honkytonk 1
+PhaseClv	PhaserClavi.
+Fretles!	FretlessBas!
+JazzGtr!	Jazz Guitar!
+SweetAlt	SweetAltoSax
+F-NMusic	Fem-NewMusic
 F-Coquet	Fem-Coquette
 Det.EP 8	Detuned EP 8
+MM-Clav3	MM-Clavi. 3
+MM-Vibe2	MM-Vibrafn.2
+MM-Vce 4	MM-Voices 4
+DX-SLd 9	DX-SquareLd9
+AnlSforz	Analog Sforz
+BridHamr	BridgeHammer
+Easy EP	Easy EP.
+SynthAtk	Synth Attack
+GrvyMtGt	Groovy Mt Gt
+3 OctStr	3 Oct. Str.
+SimplSaw	Simple Saw.
