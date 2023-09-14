@@ -1,88 +1,88 @@
 ID	Name
+ElPiano3	El.Piano 3
+Hpschrd2	Harpsi. 2
+Hpschrd3	Harpsi. 3
 12StrGtr	12 Str Gtr
-1NoteJam	OneNoteJam
-2600Sine	2600 Sine
+MidT.Gtr	MidToneGtr
+Funk Gtr	FunkGuitar
+LPOvrDr2	LPOverDrv2
+HeartBas	Heart Bass
+Fretles2	Fretless 2
+SynBa101	SynthBs101
+SynBass3	Syn Bass 3
 303SqDs2	303SqrDst2
-AcouBass	AcouBass 1
-AcouBas2	AcouBass 2
-AsianKit	Asian Kit
-AudioSwi	AudioSwtch
-Belsingr	Bellsinger
+MGBlipBa	MG Blip Bs
+SynBass4	Syn Bass 4
+SlwTrStr	SlowTrmStr
+Slow Str	SlowString
+OrchStr2	Orchestra2
+Syn.Str3	SynthStr.3
+MelChoir	MelloChoir
+LoFiRave	Lo-Fi Rave
+Trumpet2	Trumpet 2
+FrHorn 2	Fr. Horn 2
 BrasFall	Brass Fall
-BrasSec2	Brass 2
-BrthPipe	BreathPipe
-CarStar2	Car Start2
-CarTyreS	CarTyreScr
-Celesta2	Celesta 2
-Clrinet2	Clarinet 2
+SynBras3	SynBrass 3
+SynBras4	SynBrass 4
+Sax Sect	Sax Sect.
+Piccolo2	Piccolo 2
+Whistle2	Whistle 2
+SineWave	Sine Wave
+2600Sine	2600 Sine
+SynMalet	Syn Mallet
 DigiBell	Digi Bells
-Dp Snare	Deep Snare
-Dr. Solo	DoctorSolo
 EchoBell	Echo Bell
-El.Perc2	ElecPerc 2
-Elec.Gtr	Elec Gtr 1
-ElecBas2	ElecBass 2
-ElecBass	ElecBass 1
-ElecGtr2	Elec Gtr 2
+ElecPerc	ElecPerc 1
+White Nz	WhiteNoise
+PhonNoiz	PhonoNoise
+CarTyreS	CarTyreSq.
+JetPlane	Jet Plane
+AudioSwi	AudioSwtch
+TrainHrn	Train Horn
+TrainPas	Train Pass
+CarStar2	Car Start2
+RailCros	Rail Cross
+VxComeOn	Vx Come On
+SlapBa 2	Slap Bass2
+AcouBass	AcouBass 1
+SynBrass	SynBrass 1
+MelloGrP	MelloGrPno
+ElPiano4	El.Piano 4
 ElecOrgn	Elec Org 1
 ElecOrg2	Elec Org 2
 ElecOrg3	Elec Org 3
 ElecOrg4	Elec Org 4
-ElecPerc	ElecPerc 1
-ElPiano3	El.Piano 3
-ElPiano4	El.Piano 4
-EthnicKt	Ethnic Kit
-Fretles2	Fretless 2
-FrHorn 2	Fr. Horn 2
-Funk Gtr	FunkGuitar
-FunnyVox	Funny Vox
-HarmoPan	Harmo Pan
-HeartBas	Heart Bass
-Hpschrd2	Harpsi. 2
-Hpschrd3	Harpsi. 3
-JetPlane	Jet Plane
-JnglTune	JungleTune
-LoFiRave	Lo-Fi Rave
-LPOvrDr2	LPOverDrv2
-MelChoir	MelloChoir
-MelloGrP	MelloGrPno
-MGBlipBa	MG Blip Bs
-MidT.Gtr	MidToneGtr
-MT-32 Kt	MT-32 Kit
-Oboe2001	Oboe 2001
-OrchStr2	Orchestra2
-PhonNoiz	PhonoNoise
-Piccolo2	Piccolo 2
 PipeOrgn	Pipe Org 1
 PipeOrg2	Pipe Org 2
 PipeOrg3	Pipe Org 3
-RailCros	Rail Cross
-Sax Sect	Sax Sect.
+Celesta2	Celesta 2
+Syn.Bass	Syn Bass 1
+HarmoPan	Harmo Pan
+WarmBell	Warm Bell
+FunnyVox	Funny Vox
+Oboe2001	Oboe 2001
+Dr. Solo	DoctorSolo
 Sch.Daze	SchoolDaze
-SineWave	Sine Wave
-SlapBa 2	Slap Bass2
-Slow Str	SlowString
-SlwTrStr	SlowTrmStr
+Belsingr	Bellsinger
 Sqr.Lead	SquareWave
 Str Sect	Str Sect 1
 StrSect2	Str Sect 2
 StrSect3	Str Sect 3
-Syn.Bass	Syn Bass 1
-Syn.Str3	SynthStr.3
-SynBa101	SynthBs101
-SynBass3	Syn Bass 3
-SynBass4	Syn Bass 4
-SynBrass	SynBrass 1
-SynBras3	SynBrass 3
-SynBras4	SynBrass 4
-SynMalet	Syn Mallet
-TaikoRim	Taiko Rim
-TrainHrn	Train Horn
-TrainPas	Train Pass
-Trumpet2	Trumpet 2
+Elec.Gtr	Elec Gtr 1
+ElecGtr2	Elec Gtr 2
+AcouBas2	AcouBass 2
+ElecBass	ElecBass 1
+ElecBas2	ElecBass 2
+Clrinet2	Clarinet 2
+BrasSec2	Brass 2
 Vibrfon2	Vibraphon2
-VxComeOn	Vx Come On
-WarmBell	Warm Bell
+BrthPipe	BreathPipe
+Dp Snare	Deep Snare
+El.Perc2	ElecPerc 2
+TaikoRim	Taiko Rim
+1NoteJam	OneNoteJam
 WaterBel	Water Bell
-Whistle2	Whistle 2
-White Nz	WhiteNoise
+JnglTune	JungleTune
+EthnicKt	Ethnic Kit
+AsianKit	Asian Kit
+MT-32 Kt	MT-32 Kit

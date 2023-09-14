@@ -189,7 +189,7 @@ let demoPool = new SheetData();
 })();
 
 document.body.addEventListener("keydown", async (ev) => {
-	//ev.preventDefault();
+	let preventKey = true;
 	let {
 		metaKey, ctrlKey, altKey, shiftKey,
 		location, key
@@ -238,9 +238,13 @@ document.body.addEventListener("keydown", async (ev) => {
 				break;
 			};
 			default: {
+				preventKey = false;
 				self.debugMode && console.debug(`Unknown key "${key}" pressed.`);
 			};
 		};
+	};
+	if (preventKey) {
+		ev.preventDefault();
 	};
 });
 

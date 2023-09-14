@@ -1,5 +1,5 @@
 ID	Name
-DanceKit	Dance Kit
+Jazz Gtr	JazzGuitar
 BrtPiano	BritePiano
 HammrPno	HammerPno
 New Tine	New Tines
@@ -9,7 +9,6 @@ BX3 Orgn	BX-3 Organ
 ChrchPpe	ChurchPipe
 ClassGtr	ClassicGtr
 Acou.Gtr	AcouGuitar
-Jazz Gtr	JazzGuitar
 MuteGtr.	MuteGuitar
 Ovrdrive	Over Drive
 Dst.Gtr.	DistGuitar
@@ -23,6 +22,7 @@ Slow Str	SlowString
 Anal.Pad	Analog Pad
 StringPd	String Pad
 DooVoice	Doo Voice
+SynBrass	Syn Brass
 Swt Oboe	Sweet Oboe
 BasnOboe	BasoonOboe
 SquareWv	SquareWave
@@ -41,6 +41,7 @@ Acou.Tom	Tom
 SynthTom	Synth Tom
 NoizChif	NoiseChiff
 Stadium!	Stadium!!!
+DanceKit	Dance Kit
 Piano16'	Piano 16'
 AltoBrth	AltoBreath
 TinyDncr	TinyDancer
@@ -207,7 +208,6 @@ PolkaBox	Polka Box
 FeedbkGt	FeedbackGt
 SwissBox	Swiss Box
 Arbesque	Arabesque
-SynBrass	Syn Brass
 DrillMe!	[DrillMe!]
 Univrs.X	Universe X
 BigOrgan	Big Organ

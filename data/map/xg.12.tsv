@@ -17,6 +17,7 @@ ChorusEP	Chorus EP 1
 HardEPno	Hard El. Pno
 VX E.Pno	VX El. Piano
 60sElPno	60's ElPiano
+Easy EP	Easy EP.
 EPiano1#	El. Piano 1#
 EPiano2K	El.Piano 2 K
 Chor.EP2	Chorus EP 2
@@ -86,10 +87,12 @@ ChorusGt	Chorus Gtr.
 MidT.Gtr	MidToneGtr.
 MidTGtSt	MidToneGtrSt
 NasalGtr	Nasal Guitar
+BridHamr	BridgeHammer
 Dbl Hamr	Doubl Hammer
 Funk Gtr	Funk Gtr. 1
 MuteStlG	MutedSteelGt
 FunkGtr2	Funk Guitar2
+GrvyMtGt	Groovy Mt Gt
 Mu.DstGt	MutedDistGtr
 MutedGt#	Muted Gtr. #
 OvdrGtDt	OvrdrvGtrDet
@@ -114,6 +117,7 @@ VXUprght	VX UprightBa
 Acou.Ba#	Acou. Bass #
 FingrDrk	DarkFingerBs
 FlangrBa	Flanger Bass
+FngrBas2	Finger Bass2
 Mod Bass	ModulateBass
 RezChase	Reso. Chase
 FW EBass	FingrW EBass
@@ -152,6 +156,7 @@ SmthSynB	SmoothSynBas
 ModulrBa	Modular Bass
 X WireBa	X Wire Bass
 AtkPulse	Attack Pulse
+SynthAtk	Synth Attack
 SmoothBs	Smooth Bass
 Oct.Bass	Octave Bass
 SlwVioln	Slow Violin
@@ -188,6 +193,7 @@ OrchStr2	OrchStrings2
 TremOrch	Tremolo Orch
 Velo.Str	Velo Strings
 SwellStr	SwellStrings
+3 OctStr	3 Oct. Str.
 Strngs1#	Strings 1 #
 StSlwStr	St.Slow Str.
 LegatoSt	Legato Str.
@@ -249,6 +255,7 @@ SymphBrs	Symph. Brass
 QuackBrs	Quack Brass
 RezSynBr	ResoSynthBrs
 SynBras3	SynthBrass 3
+AnlSforz	Analog Sforz
 SyBrsSub	SynthBrasSub
 AnVelBrs	Anal.VeloBrs
 Anal.Brs	Analog Brass
@@ -302,6 +309,7 @@ Dim Saw	Dim Saw Lead
 PulseSaw	Pulse Saw Ld
 Dr. Lead	Doctor Lead
 VeloLead	VelocityLead
+SimplSaw	Simple Saw.
 NoviceLd	Novice Lead
 ElecPrim	ElecPrimtive
 DistLead	Distort.Lead
@@ -417,10 +425,4 @@ MM-Clav3	MM-Clavi. 3
 MM-Vibe2	MM-Vibrafn.2
 MM-Vce 4	MM-Voices 4
 DX-SLd 9	DX-SquareLd9
-AnlSforz	Analog Sforz
-BridHamr	BridgeHammer
-Easy EP	Easy EP.
-SynthAtk	Synth Attack
-GrvyMtGt	Groovy Mt Gt
-3 OctStr	3 Oct. Str.
-SimplSaw	Simple Saw.
+BrthLayr	Breath Layer

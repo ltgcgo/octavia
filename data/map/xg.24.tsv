@@ -13,6 +13,7 @@ MellowEP	Mellow Electric Piano
 HardEPno	Hard Electric Piano
 VX E.Pno	VX Electric Piano
 60sElPno	60s' Electric Piano
+Easy EP	Easy Electric Piano
 EPiano1#	Electric Piano 1 #
 EPiano2K	Electric Piano 2 KSP
 VX EPno2	VX Electric Piano 2
@@ -65,10 +66,12 @@ JazzGtr#	Jazz Guitar #
 ChorusGt	Chorus Guitar
 MidT.Gtr	Mid-tone Guitar
 MidTGtSt	Mid-tone Guitar Stereo
+BridHamr	Bridge Hammer
 Dbl Hamr	Double Hammer
 Funk Gtr	Funk Guitar 1
 MuteStlG	Muted Steel Guitar
 FunkGtr2	Funk Guitar 2
+GrvyMtGt	Groovy Muted Guitar
 Mu.DstGt	Muted Distortion Guitar
 MutedGt#	Muted Guitar #
 OvdrGtDt	Detuned Overdrive Guitar
@@ -89,6 +92,7 @@ GtrHrmo2	Guitar Harmonics 2
 VXUprght	VX Upright Bass
 Acou.Ba#	Acoustic Bass #
 FingrDrk	Dark Fingered Bass
+FngrBas2	Fingered Bass 2
 Mod Bass	Modulation Bass
 RezChase	Resonant Chase
 FW EBass	Finger W Electric Bass
@@ -143,6 +147,7 @@ OrchStr2	Orchestral Strings 2
 TremOrch	Tremolo Orch Strings
 Velo.Str	Velocity Strings
 SwellStr	Swell Strings
+3 OctStr	3 Octave Strings
 StSlwStr	Stereo Slow Strings
 LegatoSt	Legato Strings
 ChmbrStr	Chamber Strings
@@ -188,6 +193,7 @@ Tenor&Tp	Tenor Sax & Trumpet
 SymphBrs	Symphonic Brass
 RezSynBr	Resonant Synth Brass
 SynBras3	Synth Brass 3
+AnlSforz	Analog Sforzando
 SyBrsSub	Synth Brass Sub-oscillator
 AnVelBrs	Analog Velocity Brass
 SynBras4	Synth Brass 4
@@ -232,6 +238,7 @@ DoublSaw	Double Sawtooth Lead
 Dim Saw	Dim Sawtooth Lead
 PulseSaw	Pulse Sawtooth Ld
 VeloLead	Velocity Lead
+SimplSaw	Simple Sawtooth
 ElecPrim	Electric Primtive
 DistLead	Distortion Lead
 DaSyncLd	The Sync Lead
@@ -303,9 +310,4 @@ MM-Clav3	MM Clavichord 3
 MM-Vibe2	MM Vibraphone 2
 DX-SLd 9	DX Square Lead 9
 DirtySaw	Dirty Sawtooth Lead
-AnlSforz	Analog Sforzando
-BridHamr	Bridge Hammer
-Easy EP	Easy Electric Piano
-GrvyMtGt	Groovy Muted Guitar
-3 OctStr	3 Octave Strings
-SimplSaw	Simple Sawtooth
+BrthLayr	Breathy Layer

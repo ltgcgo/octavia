@@ -1,17 +1,18 @@
 ID	Name
+Jazz Gtr	Jazz Guitar
 BrtPiano	Bright Piano
 HammrPno	Hammer Piano
 Digi.Pno	DigitalPiano
 ChrchPpe	Church Pipe
 ClassGtr	Classic Gtr
 Acou.Gtr	Acou. Guitar
-Jazz Gtr	Jazz Guitar
 MuteGtr.	Mute Guitar
 Dst.Gtr.	Dist Guitar
 RockHrmo	RockHarmonix
 SlpBass1	Slap Bass 1
 SlpBass2	Slap Bass 2
 Slow Str	Slow Strings
+SynBrass	Synth Brass
 BasnOboe	Bassoon Oboe
 SquareWv	Square Wave
 SyCaliop	SynthCaliope
@@ -117,7 +118,6 @@ TrumpEns	Trump Ensem.
 Ice Man	The Ice Man
 VelFlugl	VeloFlugelHr
 FeedbkGt	Feedback Gtr
-SynBrass	Synth Brass
 DrillMe!	[DrillMe!]
 EthncVln	Ethnic Violn
 GreekGtr	Greek Guitar

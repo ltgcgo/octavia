@@ -245,7 +245,9 @@ StereoOh	Stereo Ooh
 SynVoix2	Syn.Voice2
 AnalVoix	AnalgVoice
 OrchHit2	Orch. Hit2
+DoublHit	Double Hit
 BrsStb80	BrasStab80
+BassHit+	Bass Hit +
 6th Hit	Sixth Hit
 6th Hit+	6th Hit +
 EuroHit+	Euro Hit +
@@ -373,6 +375,7 @@ SynPluck	SynthPluck
 DaSyncLd	DaSyncLead
 SynthAah	Synth Aah
 Vox Lead	Voice Lead
+BrthLayr	BreathLayr
 5thLdSft	5thLeadSft
 Big&Low	Big & Low
 Fat&Prky	Fat&Perky
