@@ -2368,10 +2368,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		let sysExDrumsY = function (drumId, msg) {
 			// The Yamaha XG-style drum setup
 			//console.debug(`XG-style drum setup on set ${drumId + 1}:\n`, msg);
+			let drumOff = drumId * allocated.dpn;
 			let note = msg[0], offset = msg[1];
 			msg.subarray(2).forEach((e, i) => {
 				let ri = i + offset;
-				let drumOff = drumId * allocated.dpn;
 				let commitSlot = -1;
 				if (ri < 16) {
 					([() => {
@@ -2400,7 +2400,6 @@ let OctaviaDevice = class extends CustomEventSource {
 						commitSlot = 31;
 					}, () => {
 						// assign mode (single/multi)
-						// behaviour not yet documented
 					}, () => {
 						// Rx note off
 						// no plans for support yet
@@ -2459,9 +2458,51 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 		};
-		let sysExDrumsR = function (drumId, msg) {
+		let sysExDrumsR = function (drumId, param, msg) {
 			// The Roland GS-style drum setup
-			console.debug(`GS-style drum setup on set ${drumId + 1}:\n`, msg);
+			console.debug(`GS-style drum setup on set ${drumId + 1} param ${param}:\n`, msg);
+			let drumOff = drumId * allocated.dpn;
+			let offset = (param << 7) + msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset,
+				note = ri & 127,
+				key = ri >> 7;
+				let commitSlot = -1;
+				if (key > 1) {
+					([() => {
+						// level
+						commitSlot = 26;
+					}, () => {
+						// exclusive group
+					}, () => {
+						// panpot
+						commitSlot = 28;
+					}, () => {
+						// reverb
+						commitSlot = 29;
+					}, () => {
+						// chorus
+						commitSlot = 30;
+					}, () => {
+						// Rx note off
+						// no plans for support yet
+					}, () => {
+						// Rx note on
+						// no plans for support yet
+					}, () => {
+						// variation
+						commitSlot = 31;
+					}][key - 2] || (() => {
+						console.debug(`Unknown XG-style drum param ${key} on set ${drumId + 1}.`);
+					}))();
+				};
+				if (commitSlot > -1) {
+					getDebugState() && console.debug(drumOff, commitSlot, note, e);
+					upThis.#drum[(drumOff + dnToPos[commitSlot]) * allocated.dnc + note] = e;
+				} else {
+					getDebugState() && console.debug(`XG-style drum param ${key} has no writes.`);
+				};
+			});
 		};
 		this.#seXg.add([76, 48], (msg, track, id) => {
 			// XG drum setup 1
@@ -2894,6 +2935,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([66, 18, 65], (msg) => {
 			// GS drum setup
+			sysExDrumsR(((msg[0] >> 4) + 1) << 1, msg[0] & 15, msg.subarray(1));
 		}).add([69, 18, 16], (msg) => {
 			// GS display section
 			switch (msg[0]) {
@@ -3517,6 +3559,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// MT-32 Part Timbre Setup (dev)
 			upThis.switchMode("mt32");
 			let offsetTotal = msg[1] + (msg[0] << 7);
+			let parts = [];
 			msg.subarray(2).forEach((e, i) => {
 				let ri = i + offsetTotal;
 				let part = upThis.chRedir(Math.floor(ri / 246 + 1), track, true),
@@ -3527,9 +3570,14 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (offset < 10) {
 					upThis.#bnCustom[part] = 1;
 				};
+				if (parts.indexOf(part) < 0) {
+					parts.push(part);
+				};
 			});
-			upThis.dispatchEvent("voice", {
-				part
+			parts.forEach((part) => {
+				upThis.dispatchEvent("voice", {
+					part
+				});
 			});
 		}).add([22, 18, 5], (msg, track, id) => {
 			// MT-32 Patch Memory Write
