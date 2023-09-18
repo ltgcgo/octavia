@@ -95,6 +95,14 @@ useDrumNrpn = [
 	64, // not sure where this came from
 	65 // same as above
 ],
+defDrumNrpn = {
+	26: 127,
+	29: 0,
+	30: 0,
+	31: 0,
+	52: 12,
+	53: 54
+},
 ccAccepted = [
 	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,
 	38, 64, 65, 66, 67, 68, 69, 70, 71,
@@ -217,7 +225,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
-	#drum = new Int8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
+	#drum = new Uint8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
@@ -760,7 +768,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									if (targetSlot < 0) {
 										console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[this.#chType[part]]}.`);
 									} else {
-										this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1] - 64;
+										this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
 									};
 								};
 								getDebugState() && console.debug(`CH${part + 1} (${xgPartMode[this.#chType[part]]}) drum NRPN ${msb} commit`);
@@ -1269,6 +1277,25 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new Error(`Invalid ACE source: ${cc}`));
 		};
 	};
+	initDrums() {
+		// NRPN drum section reset
+		// this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
+		let upThis = this;
+		upThis.#drum.fill(64);
+		for (let targetSlot = 0; targetSlot < allocated.drm; targetSlot ++) {
+			let drumOff = targetSlot * allocated.dpn;
+			for (let key in defDrumNrpn) {
+				let value = defDrumNrpn[key],
+				boundary = (drumOff + dnToPos[key]) * allocated.dnc,
+				slice = upThis.#drum.subarray(boundary, boundary + allocated.dnc);
+				//console.debug(`Init drum write slot #${targetSlot + 1} param ${key} value ${value}: ${boundary}\n`, slice);
+				slice.fill(value);
+				//console.debug(slice);
+			};
+		};
+		//console.debug(`Init drum write registers:\n`, upThis.#drum);
+		return;
+	};
 	init(type = 0) {
 		// Type 0 is full reset
 		// Type 1 is almost-full reset
@@ -1288,7 +1315,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#rawStrength.fill(0);
 		upThis.#pitch.fill(0);
 		upThis.#nrpn.fill(0);
-		upThis.#drum.fill(0);
 		upThis.#masterVol = 100;
 		upThis.#metaTexts = [];
 		upThis.#noteLength = 500;
@@ -1301,6 +1327,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#modeKaraoke = false;
 		upThis.#selectPort = 0;
 		upThis.#receiveRS = true;
+		upThis.initDrums();
 		// Reset MIDI receive channel
 		upThis.#chReceive.forEach(function (e, i, a) {
 			a[i] = i;
@@ -1369,7 +1396,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#rpn[rpnOff + 3] = 64; // Coarse tune MSB
 			upThis.#rpn[rpnOff + 4] = 0; // Mod sensitivity MSB
 			upThis.#rpn[rpnOff + 5] = 0; // Mod sensitivity LSB
-			// NRPN drum section reset
+			// NRPN normal section reset
 		};
 		upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 		upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
@@ -1805,7 +1832,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (msg[0]) {
 				case 125: {
 					// XG drum reset
-					upThis.#drum.fill(0);
+					upThis.initDrums();
 					console.info(`XG drum setup reset: ${msg}`);
 					break;
 				};
@@ -3366,10 +3393,23 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			//console.debug(`MT-32 CH${part + 1} Patch: ${msg}`);
 		}).add([22, 18, 1], (msg, track, id) => {
-			// MT-32 Part Drum Setup (temp)
+			// MT-32 Part Drum/Rhythm Setup (temp)
 			upThis.switchMode("mt32");
 			let part = upThis.chRedir(id, track, true);
-			//console.debug(`MT-32 CH${part + 1} Drum: ${msg}`);
+			console.debug(`MT-32 CH${part + 1} Drum: ${msg}`);
+			let offset = (msg[0] << 7) | msg[1];
+			msg.subarray(2).forEach((e, i) => {
+				let key = (i >> 2) + 24;
+				[() => {
+					//
+				}, () => {
+					//
+				}, () => {
+					//
+				}, () => {
+					//
+				}][i & 3]();
+			});
 		}).add([22, 18, 2], (msg, track, id) => {
 			// MT-32 Part Timbre Setup (temp)
 			upThis.switchMode("mt32");
@@ -3582,7 +3622,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case 125: {// drum reset
-					upThis.#drum.fill(0);
+					upThis.initDrums();
 					console.info(`NS5R drum setup reset: ${msg}`);
 					break;
 				};
