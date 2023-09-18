@@ -304,9 +304,11 @@ let VoiceBank = class {
 		if (mode == "xg") {
 			if (msb == 0) {
 				// Hijack NS5R GM:y section
-				sect = sect
-					.replace("y0", "y:")
-					.replace("y125", "y126");
+				if (args[2] < 100) {
+					sect = sect.replace("y0", "y:");
+				} else if (args[2] == 125) {
+					sect = "y126";
+				};
 			} else if (msb == 16) {
 				// Hijack XG MU2000 sampler
 				bankName = `Voice${(args[2] * 128 + args[1] + 1).toString().padStart(3, "0")}`;

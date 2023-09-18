@@ -1785,6 +1785,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (msg[0]) {
 				case 125: {
 					// XG drum reset
+					upThis.#drum.fill(0);
 					console.info(`XG drum setup reset: ${msg}`);
 					break;
 				};
@@ -2325,6 +2326,14 @@ let OctaviaDevice = class extends CustomEventSource {
 			// XG drum setup 3
 		}).add([76, 51], (msg) => {
 			// XG drum setup 4
+		}).add([76, 52], (msg) => {
+			// XG drum setup 5
+		}).add([76, 53], (msg) => {
+			// XG drum setup 6
+		}).add([76, 54], (msg) => {
+			// XG drum setup 7
+		}).add([76, 55], (msg) => {
+			// XG drum setup 8
 		});
 		// MU1000/2000 EPROM write
 		this.#seXg.add([89, 0], (msg, track, id) => {
