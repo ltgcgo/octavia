@@ -315,6 +315,7 @@ ElecPrim	ElecPrimtive
 DistLead	Distort.Lead
 SynPluck	Synth Pluck
 DaSyncLd	TheSyncLead
+BrthLayr	Breath Layer
 5thLdSft	5thLeadSoft
 Fat&Prky	Fat & Perky
 RotarStr	Rotary Str.
@@ -425,4 +426,3 @@ MM-Clav3	MM-Clavi. 3
 MM-Vibe2	MM-Vibrafn.2
 MM-Vce 4	MM-Voices 4
 DX-SLd 9	DX-SquareLd9
-BrthLayr	Breath Layer

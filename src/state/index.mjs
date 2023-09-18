@@ -69,7 +69,11 @@ rpnCap = [
 	[0, 127],
 	[0, 127]
 ],
-useNormNrpn = [36, 37],
+useNormNrpn = [
+	36, // HPF cut freq
+	37, // Not sure where this came from
+	48, 49, 52, 53 // MU1000 XG EQ NRPN, has no effect when set to drums
+],
 useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65],
 ccAccepted = [
 	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,

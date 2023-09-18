@@ -242,6 +242,7 @@ SimplSaw	Simple Sawtooth
 ElecPrim	Electric Primtive
 DistLead	Distortion Lead
 DaSyncLd	The Sync Lead
+BrthLayr	Breathy Layer
 5thLdSft	Fifth Lead Soft
 RotarStr	Rotary Strings
 PolyPd80	Poly Synth Pad 80
@@ -310,4 +311,4 @@ MM-Clav3	MM Clavichord 3
 MM-Vibe2	MM Vibraphone 2
 DX-SLd 9	DX Square Lead 9
 DirtySaw	Dirty Sawtooth Lead
-BrthLayr	Breathy Layer
+Scratch2	Scratch Split
