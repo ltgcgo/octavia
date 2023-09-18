@@ -1279,7 +1279,6 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	initDrums() {
 		// NRPN drum section reset
-		// this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
 		let upThis = this;
 		upThis.#drum.fill(64);
 		for (let targetSlot = 0; targetSlot < allocated.drm; targetSlot ++) {
@@ -3394,21 +3393,27 @@ let OctaviaDevice = class extends CustomEventSource {
 			//console.debug(`MT-32 CH${part + 1} Patch: ${msg}`);
 		}).add([22, 18, 1], (msg, track, id) => {
 			// MT-32 Part Drum/Rhythm Setup (temp)
+			//this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
 			upThis.switchMode("mt32");
-			let part = upThis.chRedir(id, track, true);
-			console.debug(`MT-32 CH${part + 1} Drum: ${msg}`);
+			//let part = upThis.chRedir(/*id*/9, track, true);
+			let slot = id & 7;
+			console.debug(`MT-32 slot #${id + 1} Drum: ${msg}`);
 			let offset = (msg[0] << 7) | msg[1];
 			msg.subarray(2).forEach((e, i) => {
-				let key = (i >> 2) + 24;
+				let note = (i >> 2) + 24, param = i & 3, drumOff = slot * allocated.dpn;
+				getDebugState() && console.debug(`MT-32 Drum note ${note} param ${param}`);
 				[() => {
-					//
+					// timbre (not supported)
 				}, () => {
-					//
+					// level
+					upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = e;
 				}, () => {
-					//
+					// panpot (map 0-14 to 1-127)
+					upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = (e * 9 + 1) & 127;
 				}, () => {
-					//
-				}][i & 3]();
+					// reverb switch
+					upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = e ? 127 : 0;
+				}][param]();
 			});
 		}).add([22, 18, 2], (msg, track, id) => {
 			// MT-32 Part Timbre Setup (temp)
