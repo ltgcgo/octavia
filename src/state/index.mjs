@@ -2345,24 +2345,33 @@ let OctaviaDevice = class extends CustomEventSource {
 			let note = msg[0], offset = msg[1];
 			msg.subarray(2).forEach((e, i) => {
 				let ri = i + offset;
+				let drumOff = drumId * allocated.dpn;
+				let commitSlot = -1;
 				if (ri < 16) {
 					([() => {
 						// coarse tune
+						commitSlot = 24;
 					}, () => {
 						// fine tune
+						commitSlot = 25;
 					}, () => {
 						// level
+						commitSlot = 26;
 					}, () => {
 						// exclusive group
 						// Postponed until 0.5.1 or 0.6.
 					}, () => {
 						// panpot
+						commitSlot = 28;
 					}, () => {
 						// reverb
+						commitSlot = 29;
 					}, () => {
 						// chorus
+						commitSlot = 30;
 					}, () => {
 						// variation
+						commitSlot = 31;
 					}, () => {
 						// assign mode (single/multi)
 						// behaviour not yet documented
@@ -2374,36 +2383,53 @@ let OctaviaDevice = class extends CustomEventSource {
 						// no plans for support yet
 					}, () => {
 						// LPF cutoff
+						commitSlot = 20;
 					}, () => {
 						// LPF resonance
+						commitSlot = 21;
 					}, () => {
 						// attack rate
+						commitSlot = 22;
 					}, () => {
 						// decay rate
+						commitSlot = 23;
 					}, () => {
 						// decay 2 rate
 						// behaviour not yet documented
 					}][ri] || (() => {
 						console.debug(`Unknown XG-style drum param ${ri} on set ${drumId + 1}.`);
 					}))();
-				} else if (ri < 32) {} else if (ri < 40) {
+				} else if (ri < 32) {
+				} else if (ri < 40) {
 					([() => {
 						// EQ bass gain
+						commitSlot = 48;
 					}, () => {
 						// EQ treble gain
+						commitSlot = 49;
 					}, false, false, () => {
 						// EQ bass freq
+						commitSlot = 52;
 					}, () => {
 						// EQ treble freq
+						commitSlot = 53;
 					}][ri - 32] || (() => {
 						console.debug(`Unknown XG-style drum param ${ri} on set ${drumId + 1}.`);
 					}))();
-				} else if (ri < 80) {} else {
+				} else if (ri < 80) {
+				} else {
 					([() => {
 						// HPF cutoff
+						commitSlot = 36;
 					}][ri - 80] || (() => {
 						console.debug(`Unknown XG-style drum param ${ri} on set ${drumId + 1}.`);
 					}))();
+				};
+				if (commitSlot >= 0) {
+					getDebugState() && console.debug(drumOff, commitSlot, note, e);
+					upThis.#drum[(drumOff + dnToPos[commitSlot]) * allocated.dnc + note] = e;
+				} else {
+					getDebugState() && console.debug(`XG-style drum param ${ri} has no writes.`);
 				};
 			});
 		};
