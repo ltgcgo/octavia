@@ -70,11 +70,31 @@ rpnCap = [
 	[0, 127]
 ],
 useNormNrpn = [
-	36, // HPF cut freq
+	36, // HPF cutoff freq
 	37, // Not sure where this came from
 	48, 49, 52, 53 // MU1000 XG EQ NRPN, has no effect when set to drums
 ],
-useDrumNrpn = [20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 36, 37, 64, 65],
+useDrumNrpn = [
+	20, // LPF cutoff freq
+	21, // LPF resonance
+	22, // attack rate
+	23, // decay rate
+	24, // course tune
+	25, // fine tune
+	26, // level (will introduce conflict to the existing system)
+	28, // panpot
+	29, // reverb
+	30, // chorus
+	31, // variation
+	36, // HPF cutoff freq
+	37, // still not sure where this came from
+	48, // EQ bass gain
+	49, // EQ treble gain
+	52, // EQ bass freq
+	53, // EQ treble freq
+	64, // not sure where this came from
+	65 // same as above
+],
 ccAccepted = [
 	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,
 	38, 64, 65, 66, 67, 68, 69, 70, 71,
@@ -2318,22 +2338,46 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};
 		});
-		this.#seXg.add([76, 48], (msg) => {
+		let sysExDrumWrite = function (drumId, note, key, value) {};
+		let sysExDrumsY = function (drumId, msg) {
+			// The Yamaha XG-style drum setup
+			//console.debug(`XG-style drum setup on set ${drumId + 1}:\n`, msg);
+			let note = msg[0], offset = msg[1];
+			msg.subarray(2).forEach((e, i) => {
+				let ri = i + offset;
+				([][ri] || (() => {
+					console.debug(`Unknown XG-style drum param ${ri} on set ${drumId + 1}.`);
+				}))();
+			});
+		};
+		let sysExDrumsR = function (drumId, msg) {
+			// The Roland GS-style drum setup
+			console.debug(`GS-style drum setup on set ${drumId + 1}:\n`, msg);
+		};
+		this.#seXg.add([76, 48], (msg, track, id) => {
 			// XG drum setup 1
-		}).add([76, 49], (msg) => {
+			sysExDrumsY(0, msg);
+		}).add([76, 49], (msg, track, id) => {
 			// XG drum setup 2
-		}).add([76, 50], (msg) => {
+			sysExDrumsY(1, msg);
+		}).add([76, 50], (msg, track, id) => {
 			// XG drum setup 3
-		}).add([76, 51], (msg) => {
+			sysExDrumsY(2, msg);
+		}).add([76, 51], (msg, track, id) => {
 			// XG drum setup 4
-		}).add([76, 52], (msg) => {
+			sysExDrumsY(3, msg);
+		}).add([76, 52], (msg, track, id) => {
 			// XG drum setup 5
-		}).add([76, 53], (msg) => {
+			sysExDrumsY(4, msg);
+		}).add([76, 53], (msg, track, id) => {
 			// XG drum setup 6
-		}).add([76, 54], (msg) => {
+			sysExDrumsY(5, msg);
+		}).add([76, 54], (msg, track, id) => {
 			// XG drum setup 7
-		}).add([76, 55], (msg) => {
+			sysExDrumsY(6, msg);
+		}).add([76, 55], (msg, track, id) => {
 			// XG drum setup 8
+			sysExDrumsY(7, msg);
 		});
 		// MU1000/2000 EPROM write
 		this.#seXg.add([89, 0], (msg, track, id) => {
@@ -2384,7 +2428,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([89, 3], (msg, track, id) => {
 			// Unknown instruction
 		});
-		// XG drum setup would be blank for now
 		// TG300 SysEx section, the parent of XG
 		this.#seXg.add([39, 48], (msg, track, id) => {
 			// TG100 pool
@@ -3456,6 +3499,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case 125: {// drum reset
+					upThis.#drum.fill(0);
 					console.info(`NS5R drum setup reset: ${msg}`);
 					break;
 				};
@@ -3607,6 +3651,30 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				});
 			};
+		}).add([66, 18, 48], (msg, track, id) => {
+			// NS5R drum setup 1
+			sysExDrumsY(0, msg);
+		}).add([66, 18, 49], (msg, track, id) => {
+			// NS5R drum setup 2
+			sysExDrumsY(1, msg);
+		}).add([66, 18, 50], (msg, track, id) => {
+			// NS5R drum setup 3
+			sysExDrumsY(2, msg);
+		}).add([66, 18, 51], (msg, track, id) => {
+			// NS5R drum setup 4
+			sysExDrumsY(3, msg);
+		}).add([66, 18, 52], (msg, track, id) => {
+			// NS5R drum setup 5
+			sysExDrumsY(4, msg);
+		}).add([66, 18, 53], (msg, track, id) => {
+			// NS5R drum setup 6
+			sysExDrumsY(5, msg);
+		}).add([66, 18, 54], (msg, track, id) => {
+			// NS5R drum setup 7
+			sysExDrumsY(6, msg);
+		}).add([66, 18, 55], (msg, track, id) => {
+			// NS5R drum setup 8
+			sysExDrumsY(7, msg);
 		}).add([66, 52], (msg, track) => {
 			// Currect effect dump
 			upThis.switchMode("ns5r", true);
