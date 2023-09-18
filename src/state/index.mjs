@@ -3406,7 +3406,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// timbre (not supported)
 				}, () => {
 					// level
-					upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = e;
+					upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = Math.round(e * 1.27);
 				}, () => {
 					// panpot (map 0-14 to 1-127)
 					upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = (e * 9 + 1) & 127;
@@ -3438,13 +3438,14 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (msg[0]) {
 				// Rhythm setup
 				let offset = msg[1] - 16;
+				console.debug(`MT-32 dev drum setup`, msg.subarray(0, 2), msg.subarray(2));
 			} else {
 				// Part setup
 				let offset = msg[1];
 				msg.subarray(2).forEach((e, i) => {
 					let ri = i + offset;
 					upThis.#cmTPatch[ri] = e;
-					let part = upThis.chRedir(1 + ri >> 4, track, true),
+					let part = upThis.chRedir(1 + (ri >> 4), track, true),
 					ptr = ri & 15;
 					([false
 					, () => {
