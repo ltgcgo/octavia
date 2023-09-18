@@ -3437,8 +3437,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("mt32");
 			if (msg[0]) {
 				// Rhythm setup
-				let offset = msg[1] - 16;
-				console.debug(`MT-32 dev drum setup`, msg.subarray(0, 2), msg.subarray(2));
+				let offset = ((msg[0] - 1) << 7) + msg[1] - 16;
+				getDebugState() && console.debug(`MT-32 dev drum setup (${offset})`, msg.subarray(0, 2), msg.subarray(2));
 			} else {
 				// Part setup
 				let offset = msg[1];
