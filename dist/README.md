@@ -3,10 +3,11 @@
 
 Made with ❤️ by Lightingale Community.
 
-Visit [our GitHub repo](https://github.com/ltgcgo/octavia/) for more info, or see the [demo in action](https://ltgcgo.github.io/octavia/test/).
+Visit our repo on [Codeberg](https://codeberg.org/ltgc/octavia/), [GitHub](https://github.com/ltgcgo/octavia/) or [GitLab](https://gitlab.com/ltgc/oss/octavia/) for more info, or see the [demos in action](https://ltgcgo.github.io/octavia/test/).
 
 ## Files
 Only files ending in `.mjs` are meant to be used as a library.
 
-* `state.mjs`: MIDI processing core
-* `basic.mjs`: The bare minimum to get you started on writing visualizers
+* `state.mjs`: MIDI processing core.
+* `basic.mjs`: The bare minimum to get you started on writing visualizers. Requires `state.mjs`.
+* `cambiare.mjs`: Batteries-included full-blown visualizer as a module.
