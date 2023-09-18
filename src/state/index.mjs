@@ -2345,9 +2345,66 @@ let OctaviaDevice = class extends CustomEventSource {
 			let note = msg[0], offset = msg[1];
 			msg.subarray(2).forEach((e, i) => {
 				let ri = i + offset;
-				([][ri] || (() => {
-					console.debug(`Unknown XG-style drum param ${ri} on set ${drumId + 1}.`);
-				}))();
+				if (ri < 16) {
+					([() => {
+						// coarse tune
+					}, () => {
+						// fine tune
+					}, () => {
+						// level
+					}, () => {
+						// exclusive group
+						// Postponed until 0.5.1 or 0.6.
+					}, () => {
+						// panpot
+					}, () => {
+						// reverb
+					}, () => {
+						// chorus
+					}, () => {
+						// variation
+					}, () => {
+						// assign mode (single/multi)
+						// behaviour not yet documented
+					}, () => {
+						// Rx note off
+						// no plans for support yet
+					}, () => {
+						// Rx note on
+						// no plans for support yet
+					}, () => {
+						// LPF cutoff
+					}, () => {
+						// LPF resonance
+					}, () => {
+						// attack rate
+					}, () => {
+						// decay rate
+					}, () => {
+						// decay 2 rate
+						// behaviour not yet documented
+					}][ri] || (() => {
+						console.debug(`Unknown XG-style drum param ${ri} on set ${drumId + 1}.`);
+					}))();
+				} else if (ri < 32) {} else if (ri < 40) {
+					([() => {
+						// EQ bass gain
+					}, () => {
+						// EQ treble gain
+					}, false, false, () => {
+						// EQ bass freq
+					}, () => {
+						// EQ treble freq
+					}][ri - 32] || (() => {
+						console.debug(`Unknown XG-style drum param ${ri} on set ${drumId + 1}.`);
+					}))();
+				} else if (ri < 80) {} else {
+					([() => {
+						// HPF cutoff
+					}][ri - 80] || (() => {
+						console.debug(`Unknown XG-style drum param ${ri} on set ${drumId + 1}.`);
+					}))();
+				};
 			});
 		};
 		let sysExDrumsR = function (drumId, msg) {
