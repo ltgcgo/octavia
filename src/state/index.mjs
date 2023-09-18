@@ -3400,8 +3400,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.debug(`MT-32 slot #${id + 1} Drum: ${msg}`);
 			let offset = (msg[0] << 7) | msg[1];
 			msg.subarray(2).forEach((e, i) => {
-				let note = (i >> 2) + 24, param = i & 3, drumOff = slot * allocated.dpn;
-				getDebugState() && console.debug(`MT-32 Drum note ${note} param ${param}`);
+				let ri = i + offset;
+				let note = (ri >> 2) + 24, param = ri & 3, drumOff = slot * allocated.dpn;
+				getDebugState() && console.debug(`MT-32 temp drum note ${note} param ${param}: ${e}`);
+				if (note < 24) {
+					console.warn(`MT-32 dev drum write attempted on an OOB note: ${note}`);
+					return;
+				};
 				[() => {
 					// timbre (not supported)
 				}, () => {
@@ -3435,10 +3440,32 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([22, 18, 3], (msg, track, id) => {
 			// MT-32 Part Patch Setup (dev)
 			upThis.switchMode("mt32");
+			let slot = id & 7;
 			if (msg[0]) {
 				// Rhythm setup
 				let offset = ((msg[0] - 1) << 7) + msg[1] - 16;
-				getDebugState() && console.debug(`MT-32 dev drum setup (${offset})`, msg.subarray(0, 2), msg.subarray(2));
+				//getDebugState() && console.debug(`MT-32 dev drum setup (${offset}) \n`/*, msg.subarray(0, 2)*/, msg.subarray(2));
+				msg.subarray(2).forEach((e, i) => {
+					let ri = i + offset;
+					let note = (ri >> 2) + 24, param = ri & 3, drumOff = slot * allocated.dpn;
+					getDebugState() && console.debug(`MT-32 dev drum note ${note} param ${param}: ${e}`);
+					if (note < 24) {
+						console.warn(`MT-32 dev drum write attempted on an OOB note: ${note}`);
+						return;
+					};
+					[() => {
+						// timbre (not supported)
+					}, () => {
+						// level
+						upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = Math.round(e * 1.27);
+					}, () => {
+						// panpot (map 0-14 to 1-127)
+						upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = (e * 9 + 1) & 127;
+					}, () => {
+						// reverb switch
+						upThis.#drum[(drumOff + dnToPos[26]) * allocated.dnc + note] = e ? 127 : 0;
+					}][param]();
+				});
 			} else {
 				// Part setup
 				let offset = msg[1];
