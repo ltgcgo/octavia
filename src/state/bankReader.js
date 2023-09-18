@@ -301,10 +301,17 @@ let VoiceBank = class {
 		if (sect.length < 4) {
 			sect += `${[msb, lsb, args[0], args[2]][useLsb] - baseShift}`.padStart(4 - sect.length, "0");
 		};
-		// Hijack XG MU2000 sampler
-		if (mode == "xg" && msb == 16) {
-			bankName = `Voice${(args[2] * 128 + args[1] + 1).toString().padStart(3, "0")}`;
-			ending = " ";
+		if (mode == "xg") {
+			if (msb == 0) {
+				// Hijack NS5R GM:y section
+				sect = sect
+					.replace("y0", "y:")
+					.replace("y125", "y126");
+			} else if (msb == 16) {
+				// Hijack XG MU2000 sampler
+				bankName = `Voice${(args[2] * 128 + args[1] + 1).toString().padStart(3, "0")}`;
+				ending = " ";
+			};
 		};
 		// Internal ID
 		let iid = [args[0], args[1], args[2]];
