@@ -5,7 +5,8 @@ import {RootDisplay} from "../basic/index.mjs";
 
 const targetRatio = 16 / 9;
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
-const blackKeys = [1, 3, 6, 8, 10];
+const blackKeys = [1, 3, 6, 8, 10],
+keyXs = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6];
 const modeNames = {
 	"?": "Unset",
 	"gm": "General MIDI",
@@ -134,6 +135,38 @@ let setCanvasText = function (context, text) {
 	context.rWidth = measured.width;
 };
 
+let drawNote = function (context, note, range = 1, style = "block", colour, pitch = 0) {
+	// Param calculation
+	let {width, height} = context.canvas;
+	let sx, ex, dx, border;
+	switch (style) {
+		case "block":
+		case "comb": {
+			sx = Math.round(note * width / 128);
+			ex = Math.round((note + 1) * width / 128);
+			dx = ex - sx;
+			border = range == 1 ? 2 : 1;
+			break;
+		};
+		case "piano": {
+			sx = Math.floor((Math.floor(note / 12) * 7 + keyXs[note % 12]) / 75);
+			ex = Math.floor((Math.floor((note + 1) / 12) * 7 + keyXs[(note + 1) % 12]) / 75);
+			dx = ex - sx;
+			border = range == 1 ? 4 : 2;
+			break;
+		};
+		default: {
+			// Nothing yet
+		};
+	};
+	// Draw calls
+	switch (style) {
+		default: {
+			// Nothing yet
+		};
+	};
+};
+
 let Cambiare = class extends RootDisplay {
 	#metaMaxLine = 128;
 	#metaAmend = false;
@@ -155,7 +188,6 @@ let Cambiare = class extends RootDisplay {
 	#sectPart = [];
 	#sectMeta = {};
 	#noteEvents = [];
-	#notePool = new Array(allocated.ch * allocated.nn);
 	#scrollMeta(resetTime) {
 		let upThis = this;
 		if (Date.now() - upThis.#metaLastWheel > 4000) {
@@ -353,7 +385,7 @@ let Cambiare = class extends RootDisplay {
 			"sg": "ffdddd"
 		}[mode] || "fcdaff";
 	};
-	#setPortView() {
+	#setPortView(canvasUpdate) {
 		let upThis = this;
 		let range = upThis.#renderRange, port = upThis.#renderPort;
 		upThis.#sectPart.forEach((e, i) => {
@@ -374,6 +406,13 @@ let Cambiare = class extends RootDisplay {
 					e.root.style.top = "";
 				});
 			};
+			if (canvasUpdate) {
+				e.forEach((e0, i0) => {
+					//console.debug(e0, i, i0);
+					e0.cxt.canvas.width = upThis.#renderRange == 1 ? 1193 : 495;
+					e0.cxt.canvas.height = upThis.#renderRange == 4 ? 26 : 52;
+				});
+			};
 		});
 	};
 	setPort(port) {
@@ -381,14 +420,14 @@ let Cambiare = class extends RootDisplay {
 		classOff(upThis.#canvas, [`cambiare-start0`, `cambiare-start1`, `cambiare-start2`, `cambiare-start3`, `cambiare-start4`, `cambiare-start5`, `cambiare-start6`, `cambiare-start7`]);
 		classOn(upThis.#canvas, [`cambiare-start${port}`]);
 		upThis.#renderPort = port;
-		upThis.#setPortView();
+		upThis.#setPortView(false);
 	};
 	setRange(mode) {
 		let upThis = this;
 		classOff(upThis.#canvas, [`cambiare-port1`, `cambiare-port2`, `cambiare-port4`, `cambiare-compact`]);
 		classOn(upThis.#canvas, [`cambiare-${mode}`]);
 		upThis.#renderRange = parseInt(mode.slice(4)) || 1;
-		upThis.#setPortView();
+		upThis.#setPortView(true);
 	};
 	attach(attachElement) {
 		let upThis = this;
@@ -498,6 +537,7 @@ let Cambiare = class extends RootDisplay {
 					"minor": createElement("div", [`boundary`, `part-info-minor`], {t: 26}),
 					"keys": createElement("div", [`boundary`, `part-keys`]),
 					"notes": createElement("div", [`boundary`, `part-keyboard`]),
+					"cxt": createElement("canvas", [`field`]).getContext("2d"),
 					"number": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25, i: dispPart}),
 					"voice": createElement("span", [`field`], {l: 22, t: 1, w: 121, h: 25}),
 					"metre": createElement("canvas", [`field`]).getContext("2d"),
@@ -529,6 +569,9 @@ let Cambiare = class extends RootDisplay {
 				e.metre.fillStyle = "#fff";
 				e.metre.textBaseline = "top";
 				e.metre.font = "20px 'PT Sans Narrow'";
+				mountElement(e.notes, [
+					e.cxt.canvas
+				]);
 				mountElement(e.keys, [
 					e.notes
 				]);
@@ -697,7 +740,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.dispatchEvent(`efxchorus`, upThis.device.getEffectType(1));
 		upThis.dispatchEvent(`efxdelay`, upThis.device.getEffectType(2));
 		upThis.dispatchEvent(`efxinsert0`, upThis.device.getEffectType(3));
-		upThis.#setPortView();
+		upThis.#setPortView(true);
 	};
 	detach(attachElement) {
 		let upThis = this;
@@ -750,14 +793,14 @@ let Cambiare = class extends RootDisplay {
 					e.notes.style.transform = "";
 				};
 				// Remove lingering notes
-				let removeIndex = [];
+				/*let removeIndex = [];
 				upThis.#notePool.forEach((e, i) => {
 					e.remove;
 					removeIndex.push(i);
 				});
 				removeIndex.forEach((e) => {
 					delete upThis.#notePool[e];
-				});
+				});*/
 			} catch (err) {};
 		});
 		upThis.addEventListener("note", ({data}) => {
