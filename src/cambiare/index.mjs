@@ -149,6 +149,7 @@ let Cambiare = class extends RootDisplay {
 	#visualizer;
 	#container;
 	#canvas;
+	#accent = "fcdaff";
 	#sectInfo = {};
 	#sectMark = {};
 	#sectPart = [];
@@ -253,7 +254,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Note visualization
-		let onNotes = new Set(), postponeBuffer = [];
+		/*let onNotes = new Set(), postponeBuffer = [];
 		while (upThis.#noteEvents?.length) {
 			let ev = upThis.#noteEvents.shift();
 			let noteId = ev.part << 7 | ev.note;
@@ -322,7 +323,7 @@ let Cambiare = class extends RootDisplay {
 		};
 		postponeBuffer.forEach((e) => {
 			upThis.#noteEvents.push(e);
-		});
+		});*/
 	};
 	#renderer;
 	#renderThread;
@@ -335,6 +336,22 @@ let Cambiare = class extends RootDisplay {
 		if (mode != "?") {
 			classOn(upThis.#canvas, [`cambiare-mode-${mode}`]);
 		};
+		upThis.#accent = {
+			"xg": "9efaa0",
+			"ns5r": "9efaa0",
+			"x5d": "9efaa0",
+			"05rw": "9efaa0",
+			"k11": "9efaa0",
+			"s90es": "9efaa0",
+			"motif": "9efaa0",
+			"gm": "a1f3ff",
+			"g2": "a1f3ff",
+			"krs": "a1f3ff",
+			"gs": "ffe1a5",
+			"mt32": "ffe1a5",
+			"sd": "ffe1a5",
+			"sg": "ffdddd"
+		}[mode] || "fcdaff";
 	};
 	#setPortView() {
 		let upThis = this;
