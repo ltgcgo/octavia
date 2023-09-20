@@ -163,7 +163,8 @@ let Cambiare = class extends RootDisplay {
 		let {width, height} = context.canvas;
 		let sx, ex, dx, border;
 		let range = upThis.#renderRange;
-		let isHeld = state > 2;
+		let isHeld = state > 3,
+		isBlackKey = blackKeys.indexOf(note % 12) > -1;
 		switch (upThis.style) {
 			case "block":
 			case "comb": {
@@ -185,14 +186,23 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Colours
-		context.fillStyle = `#${blackKeys.indexOf(note % 12) > -1 ? (upThis.#accent) : "ffffff"}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
+		context.fillStyle = `#${isBlackKey ? (upThis.#accent) : "ffffff"}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
 		context.strokeStyle = context.fillStyle;
 		// Draw calls
 		switch (upThis.style) {
 			case "block": {
-				context.fillRect(sx, 0, dx, context.canvas.height);
+				let h = context.canvas.height;
+				context.fillRect(sx, 0, dx, h);
 				if (isHeld) {
-					context.clearRect(sx + border, border, dx - (border << 1), context.canvas.height - (border << 1));
+					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
+				};
+				break;
+			};
+			case "comb": {
+				let h = isBlackKey ? Math.round((context.canvas.height << 1) / 3) : context.canvas.height;
+				context.fillRect(sx, 0, dx, h);
+				if (isHeld) {
+					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
 				};
 				break;
 			};
@@ -299,76 +309,29 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Note visualization
-		/*let onNotes = new Set(), postponeBuffer = [];
-		while (upThis.#noteEvents?.length) {
-			let ev = upThis.#noteEvents.shift();
-			let noteId = ev.part << 7 | ev.note;
-			if (upThis.device && upThis.#canvas) {
-				switch (ev.state) {
-					case upThis.device.NOTE_IDLE:
-					case upThis.device.NOTE_RELEASE: {
-						// Treat as note off
-						if (onNotes.has(noteId)) {
-							// Schedule note off to the next render run
-							postponeBuffer.push(ev);
-						} else {
-							// Execute immediately
-							let e = upThis.#notePool[noteId];
-							if (e) {
-								e.remove();
-								delete upThis.#notePool[noteId];
-							};
-						};
-						break;
-					};
-					default: {
-						// Treat as note on
-						// Get the note element
-						onNotes.add(noteId);
-						let noteBlock = upThis.#notePool[noteId];
-						if (!noteBlock) {
-							// Create a new note element
-							noteBlock = createElement("span", [
-								"field",
-								"part-note"
-							], {
-								l: `${ev.note / 1.28}%`
-							});
-							if (blackKeys.indexOf(ev.note % 12) > -1) {
-								classOn(noteBlock, [
-									"part-note-black"
-								]);
-							};
-							upThis.#notePool[noteId] = noteBlock;
-							upThis.#sectPart[ev.part >> 4][ev.part & 15].notes.appendChild(noteBlock);
-						};
-						noteBlock.style.opacity = centCache[ev.velo];
-						switch (ev.state) {
-							case upThis.device.NOTE_HELD:
-							case upThis.device.NOTE_SOSTENUTO_ATTACK:
-							case upThis.device.NOTE_SOSTENUTO_DECAY:
-							case upThis.device.NOTE_SOSTENUTO_SUSTAIN:
-							case upThis.device.NOTE_SOSTENUTO_HELD: {
-								// Treat as held note
-								classOn(noteBlock, [
-									"part-note-held"
-								]);
-								break;
-							};
-							default: {
-								// Treat as normal note
-								classOff(noteBlock, [
-									"part-note-held"
-								]);
-							};
-						};
-					};
-				};
-			};
+		let onNotes = [], channels = new Array(allocated.ch), extraStates = {};
+		// Sift through events fed
+		while (upThis.#noteEvents.length > 0) {
+			let e = upThis.#noteEvents.shift();
+			let {
+				part, note, velo, state
+			} = e;
+			channels[part] = true;
 		};
-		postponeBuffer.forEach((e) => {
-			upThis.#noteEvents.push(e);
-		});*/
+		// Draw every note that has channels updated
+		channels.forEach((e, part) => {
+			if (e) {
+				let context = upThis.#sectPart[part >> 4][part & 15].cxt;
+				context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+				sum.chKeyPr[part].forEach(({v, s}, note) => {
+					upThis.#drawNote(context, note, v, s, upThis.device.getPitchShift(part));
+				});
+			};
+		});
+		// Draw every note inside extraStates
+		for (let key in extraStates) {
+			let port = key >> 11, part = (key >> 7) & 15, note = key & 127;
+		};
 	};
 	#renderer;
 	#renderThread;
