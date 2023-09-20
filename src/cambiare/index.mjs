@@ -191,18 +191,18 @@ let Cambiare = class extends RootDisplay {
 		// Draw calls
 		switch (upThis.style) {
 			case "block": {
-				let h = context.canvas.height;
-				context.fillRect(sx, 0, dx, h);
+				let h = context.canvas.height - 1;
+				context.fillRect(sx, 1, dx, h);
 				if (isHeld) {
-					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
+					context.clearRect(sx + border, border + 1, dx - (border << 1), h - (border << 1));
 				};
 				break;
 			};
 			case "comb": {
-				let h = isBlackKey ? Math.round((context.canvas.height << 1) / 3) : context.canvas.height;
-				context.fillRect(sx, 0, dx, h);
+				let h = (isBlackKey ? Math.round((context.canvas.height << 1) / 3) : context.canvas.height) - 1;
+				context.fillRect(sx, 1, dx, h);
 				if (isHeld) {
-					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
+					context.clearRect(sx + border, border + 1, dx - (border << 1), h - (border << 1));
 				};
 				break;
 			};
