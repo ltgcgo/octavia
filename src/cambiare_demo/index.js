@@ -97,6 +97,7 @@ self.gDemo = async function ({file, id, artist, title}) {
 };
 self.gStyle = async function (type) {
 	visualizer.style = type;
+	Alpine.store("noteStyle", type);
 };
 
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".mdat",".MDAT"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),

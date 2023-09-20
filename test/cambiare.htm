@@ -34,7 +34,7 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4}}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4},styles:[['block','Block'],['comb','Comb'],['piano','Piano'],['line','Line']]}">
 			<div class="column column-option"><b>Display mode</b></div>
 			<template x-for="range in ranges">
 				<div class="column column-option column-button" @click="gRange(range[0])" x-text="range[1]" :active="($store.showRange||'port1')==range[0]?'true':'false'"></div>
@@ -42,6 +42,10 @@
 			<div class="column column-option"><b>Starting port</b></div>
 			<template x-for="port in ports">
 				<div class="column column-option column-button" @click="gPort(port)" x-text="letters[port]" :active="($store.startPort||0)==port?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>Note style</b></div>
+			<template x-for="style in styles">
+				<div class="column column-option column-button" @click="gStyle(style[0])" x-text="style[1]" :active="($store.noteStyle||'block')==style[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
