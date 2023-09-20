@@ -156,7 +156,7 @@ let Cambiare = class extends RootDisplay {
 	#sectPart = [];
 	#sectMeta = {};
 	#noteEvents = [];
-	style = "block";
+	#style = "block";
 	#drawNote(context, note, velo, state = 0, pitch = 0) {
 		// Param calculation
 		let upThis = this;
@@ -165,7 +165,7 @@ let Cambiare = class extends RootDisplay {
 		let range = upThis.#renderRange;
 		let isHeld = state > 3,
 		isBlackKey = blackKeys.indexOf(note % 12) > -1;
-		switch (upThis.style) {
+		switch (upThis.#style) {
 			case "block":
 			case "comb": {
 				sx = Math.round(note * width / 128);
@@ -175,10 +175,9 @@ let Cambiare = class extends RootDisplay {
 				break;
 			};
 			case "piano": {
-				sx = Math.round((Math.floor(note / 12) * 7 + keyXs[note % 12]) * width / 75);
-				ex = Math.round((Math.floor(note / 12) * 7 + keyXs[note % 12] + 1) * width / 75);
+				sx = Math.round((Math.floor(note / 12) * 7 + keyXs[note % 12]) * width / 75 * 1.0044642857142856);
+				ex = Math.round((Math.floor(note / 12) * 7 + keyXs[note % 12] + 1) * width / 75 * 1.0044642857142856) - 1;
 				dx = ex - sx;
-				console.debug(dx, sx, ex);
 				border = range == 1 ? 3 : 1;
 				break;
 			};
@@ -190,7 +189,7 @@ let Cambiare = class extends RootDisplay {
 		context.fillStyle = `#${isBlackKey ? (upThis.#accent) : "ffffff"}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
 		context.strokeStyle = context.fillStyle;
 		// Draw calls
-		switch (upThis.style) {
+		switch (upThis.#style) {
 			case "block": {
 				let h = context.canvas.height - 1;
 				context.fillRect(sx, 1, dx, h);
@@ -208,7 +207,7 @@ let Cambiare = class extends RootDisplay {
 				break;
 			};
 			case "piano": {
-				let sh = (context.canvas.height >> 1) * isHeld + 1,
+				let sh = (isBlackKey ? 0 : context.canvas.height >> 1) + 1,
 				dh = (context.canvas.height >> 1) - 1;
 				context.fillRect(sx, sh, dx, dh);
 				if (isHeld) {
@@ -220,6 +219,18 @@ let Cambiare = class extends RootDisplay {
 				// Nothing yet
 			};
 		};
+	};
+	#redrawNotesInternal(sum, overrideActiveCh) {
+		let upThis = this;
+		(sum?.chInUse || overrideActiveCh).forEach((e, part) => {
+			if (e) {
+				let context = upThis.#sectPart[part >> 4][part & 15].cxt;
+				context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+				sum.chKeyPr[part].forEach(({v, s}, note) => {
+					upThis.#drawNote(context, note, v, s, upThis.device.getPitchShift(part));
+				});
+			};
+		});
 	};
 	#scrollMeta(resetTime) {
 		let upThis = this;
@@ -348,15 +359,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Draw every note that has channels updated
-		channels.forEach((e, part) => {
-			if (e) {
-				let context = upThis.#sectPart[part >> 4][part & 15].cxt;
-				context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-				sum.chKeyPr[part].forEach(({v, s}, note) => {
-					upThis.#drawNote(context, note, v, s, upThis.device.getPitchShift(part));
-				});
-			};
-		});
+		upThis.#redrawNotesInternal(sum, channels);
 		// Draw every note inside extraStates
 		offNotes.forEach((key) => {
 			let {part, note, velo, state} = extraStates[key];
@@ -366,6 +369,14 @@ let Cambiare = class extends RootDisplay {
 	};
 	#renderer;
 	#renderThread;
+	get style() {
+		return this.#style;
+	};
+	set style(value) {
+		let upThis = this;
+		upThis.#style = value;
+		upThis.#redrawNotesInternal(upThis.render(upThis.#clockSource?.currentTime || 0));
+	};
 	setClockSource(clockSource) {
 		this.#clockSource = clockSource;
 	};
