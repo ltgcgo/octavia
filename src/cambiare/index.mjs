@@ -156,6 +156,7 @@ let Cambiare = class extends RootDisplay {
 	#sectPart = [];
 	#sectMeta = {};
 	#noteEvents = [];
+	#pitchEvents = [];
 	#style = "block";
 	#drawNote(context, note, velo, state = 0, pitch = 0) {
 		// Param calculation
@@ -340,6 +341,13 @@ let Cambiare = class extends RootDisplay {
 				};
 			});
 		});
+		if (['line'].indexOf(upThis.#style) > -1) {
+			// Sift through pitch events
+			while (upThis.#pitchEvents.length > 0) {
+				let e = upThis.#pitchEvents.shift();
+				channels[e.part] = true;
+			};
+		};
 		// Sift through events fed
 		while (upThis.#noteEvents.length > 0) {
 			let e = upThis.#noteEvents.shift();
@@ -810,20 +818,14 @@ let Cambiare = class extends RootDisplay {
 					e.lsb.innerText = "";
 					e.notes.style.transform = "";
 				};
-				// Remove lingering notes
-				/*let removeIndex = [];
-				upThis.#notePool.forEach((e, i) => {
-					e.remove;
-					removeIndex.push(i);
-				});
-				removeIndex.forEach((e) => {
-					delete upThis.#notePool[e];
-				});*/
 			} catch (err) {};
 		});
 		upThis.addEventListener("note", ({data}) => {
 			upThis.#noteEvents.push(data);
 			//console.debug(data);
+		});
+		upThis.addEventListener("pitch", ({data}) => {
+			upThis.#pitchEvents.push(data);
 		});
 	};
 };
