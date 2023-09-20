@@ -135,38 +135,6 @@ let setCanvasText = function (context, text) {
 	context.rWidth = measured.width;
 };
 
-let drawNote = function (context, note, range = 1, style = "block", colour, pitch = 0) {
-	// Param calculation
-	let {width, height} = context.canvas;
-	let sx, ex, dx, border;
-	switch (style) {
-		case "block":
-		case "comb": {
-			sx = Math.round(note * width / 128);
-			ex = Math.round((note + 1) * width / 128);
-			dx = ex - sx;
-			border = range == 1 ? 2 : 1;
-			break;
-		};
-		case "piano": {
-			sx = Math.floor((Math.floor(note / 12) * 7 + keyXs[note % 12]) / 75);
-			ex = Math.floor((Math.floor((note + 1) / 12) * 7 + keyXs[(note + 1) % 12]) / 75);
-			dx = ex - sx;
-			border = range == 1 ? 4 : 2;
-			break;
-		};
-		default: {
-			// Nothing yet
-		};
-	};
-	// Draw calls
-	switch (style) {
-		default: {
-			// Nothing yet
-		};
-	};
-};
-
 let Cambiare = class extends RootDisplay {
 	#metaMaxLine = 128;
 	#metaAmend = false;
@@ -188,6 +156,51 @@ let Cambiare = class extends RootDisplay {
 	#sectPart = [];
 	#sectMeta = {};
 	#noteEvents = [];
+	style = "block";
+	#drawNote(context, note, velo, state = 0, pitch = 0) {
+		// Param calculation
+		let upThis = this;
+		let {width, height} = context.canvas;
+		let sx, ex, dx, border;
+		let range = upThis.#renderRange;
+		let isHeld = state > 2;
+		switch (upThis.style) {
+			case "block":
+			case "comb": {
+				sx = Math.round(note * width / 128);
+				ex = Math.round((note + 1) * width / 128);
+				dx = ex - sx;
+				border = range == 1 ? 2 : 1;
+				break;
+			};
+			case "piano": {
+				sx = Math.floor((Math.floor(note / 12) * 7 + keyXs[note % 12]) / 75);
+				ex = Math.floor((Math.floor((note + 1) / 12) * 7 + keyXs[(note + 1) % 12]) / 75);
+				dx = ex - sx;
+				border = range == 1 ? 4 : 2;
+				break;
+			};
+			default: {
+				// Nothing yet
+			};
+		};
+		// Colours
+		context.fillStyle = `#${blackKeys.indexOf(note % 12) > -1 ? (upThis.#accent) : "ffffff"}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
+		context.strokeStyle = context.fillStyle;
+		// Draw calls
+		switch (upThis.style) {
+			case "block": {
+				context.fillRect(sx, 0, dx, context.canvas.height);
+				if (isHeld) {
+					context.clearRect(sx + border, border, dx - (border << 1), context.canvas.height - (border << 1));
+				};
+				break;
+			};
+			default: {
+				// Nothing yet
+			};
+		};
+	};
 	#scrollMeta(resetTime) {
 		let upThis = this;
 		if (Date.now() - upThis.#metaLastWheel > 4000) {
