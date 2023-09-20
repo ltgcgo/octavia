@@ -175,10 +175,11 @@ let Cambiare = class extends RootDisplay {
 				break;
 			};
 			case "piano": {
-				sx = Math.floor((Math.floor(note / 12) * 7 + keyXs[note % 12]) / 75);
-				ex = Math.floor((Math.floor((note + 1) / 12) * 7 + keyXs[(note + 1) % 12]) / 75);
+				sx = Math.round((Math.floor(note / 12) * 7 + keyXs[note % 12]) * width / 75);
+				ex = Math.round((Math.floor(note / 12) * 7 + keyXs[note % 12] + 1) * width / 75);
 				dx = ex - sx;
-				border = range == 1 ? 4 : 2;
+				console.debug(dx, sx, ex);
+				border = range == 1 ? 3 : 1;
 				break;
 			};
 			default: {
@@ -203,6 +204,15 @@ let Cambiare = class extends RootDisplay {
 				context.fillRect(sx, 1, dx, h);
 				if (isHeld) {
 					context.clearRect(sx + border, border + 1, dx - (border << 1), h - (border << 1));
+				};
+				break;
+			};
+			case "piano": {
+				let sh = (context.canvas.height >> 1) * isHeld + 1,
+				dh = (context.canvas.height >> 1) - 1;
+				context.fillRect(sx, sh, dx, dh);
+				if (isHeld) {
+					context.clearRect(sx + border, sh + border, dx - (border << 1), dh - (border << 1));
 				};
 				break;
 			};
@@ -309,14 +319,33 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Note visualization
-		let onNotes = [], channels = new Array(allocated.ch), extraStates = {};
+		let onNotes = new Set(), offNotes = new Set(),
+		channels = new Array(allocated.ch), extraStates = {};
+		upThis.#sectPart.forEach((e, port) => {
+			e.forEach((e0, part) => {
+				if (e0.refresh) {
+					e0.refresh = false;
+					channels[port << 7 | part] = true;
+				};
+			});
+		});
 		// Sift through events fed
 		while (upThis.#noteEvents.length > 0) {
 			let e = upThis.#noteEvents.shift();
 			let {
 				part, note, velo, state
 			} = e;
+			let noteId = part << 7 | note;
 			channels[part] = true;
+			if (state == 0) {
+				if (onNotes.has(noteId)) {
+					offNotes.add(noteId);
+					upThis.#sectPart[part >> 4][part & 15].refresh = true;
+				};
+			} else {
+				onNotes.add(noteId);
+				extraStates[noteId] = e;
+			};
 		};
 		// Draw every note that has channels updated
 		channels.forEach((e, part) => {
@@ -329,9 +358,11 @@ let Cambiare = class extends RootDisplay {
 			};
 		});
 		// Draw every note inside extraStates
-		for (let key in extraStates) {
-			let port = key >> 11, part = (key >> 7) & 15, note = key & 127;
-		};
+		offNotes.forEach((key) => {
+			let {part, note, velo, state} = extraStates[key];
+			let context = upThis.#sectPart[part >> 7][part & 127].cxt;
+			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));
+		});
 	};
 	#renderer;
 	#renderThread;
