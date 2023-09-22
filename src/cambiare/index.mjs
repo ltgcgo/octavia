@@ -4,6 +4,7 @@ import {OctaviaDevice, allocated, ccToPos} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 
 const targetRatio = 16 / 9;
+const pixelBlurSpeed = 48;
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
 const blackKeys = [1, 3, 6, 8, 10],
 keyXs = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6];
@@ -146,6 +147,12 @@ let Cambiare = class extends RootDisplay {
 	#maxPoly = 0;
 	#renderRange = 1;
 	#renderPort = 0;
+	#bufLo = new Uint8Array(1280);
+	#bufLm = new Uint8Array(1280);
+	#bufLn = new Uint8Array(1280);
+	#bufBo = new Uint8Array(512);
+	#bufBm = new Uint8Array(512);
+	#bufBn = new Uint8Array(512);
 	#clockSource;
 	#visualizer;
 	#container;
@@ -155,6 +162,7 @@ let Cambiare = class extends RootDisplay {
 	#sectMark = {};
 	#sectPart = [];
 	#sectMeta = {};
+	#sectPix = {};
 	#noteEvents = [];
 	#pitchEvents = [];
 	#style = "block";
@@ -268,7 +276,8 @@ let Cambiare = class extends RootDisplay {
 	#rendererSrc() {
 		let upThis = this,
 		clock = upThis.#clockSource?.currentTime || 0,
-		sum = upThis.render(clock);
+		sum = upThis.render(clock),
+		timeNow = Date.now();
 		let curPoly = sum.curPoly + sum.extraPoly;
 		if (upThis.#maxPoly < curPoly) {
 			upThis.#maxPoly = curPoly;
@@ -373,6 +382,66 @@ let Cambiare = class extends RootDisplay {
 			let {part, note, velo, state} = extraStates[key];
 			let context = upThis.#sectPart[part >> 7][part & 15].cxt;
 			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));
+		});
+		// Write to the new pixel display buffers
+		let ccxt = upThis.#sectPix.cxt;
+		if (timeNow > sum.bitmap.expire) {
+			upThis.#bufBn.fill(0);
+		} else if (sum.bitmap.bitmap.length > 256) {} else {
+			sum.bitmap.bitmap.forEach((e, i) => {
+				upThis.#bufBn[i << 1] = e ? 255 : 0;
+				upThis.#bufBn[(i << 1) | 1] = e ? 255 : 0;
+			});
+		};
+		// Apply pixel blurs
+		upThis.#bufBo.forEach((e, i, a) => {
+			let e0 = upThis.#bufBn[i];
+			if (e0 > e) {
+				a[i] += Math.min(e0 - e, pixelBlurSpeed);
+			} else if (e0 < e) {
+				a[i] -= Math.min(e - e0, pixelBlurSpeed);
+			};
+		});
+		// Render the old pixel display buffers
+		upThis.#bufBo.forEach((e, i) => {
+			let y = i >> 5, x = i & 31;
+			if (upThis.#bufBm[i] != e) {
+				ccxt.clearRect(252 + (x << 2), y << 2, 3, 3);
+				if (e) {
+					ccxt.fillStyle = `#ffffff${e.toString(16).padStart(2, "0")}`;
+					ccxt.fillRect(252 + (x << 2), y << 2, 3, 3);
+				};
+			} else if (self.debugMode) {
+				ccxt.clearRect(252 + (x << 2), y << 2, 3, 3);
+				if (e) {
+					ccxt.fillStyle = `#ff0000${e.toString(16).padStart(2, "0")}`;
+					ccxt.fillRect(252 + (x << 2), y << 2, 3, 3);
+				};
+			};
+		});
+		upThis.#bufLo.forEach((e, i) => {
+			let y = Math.floor(i / 80), x = i % 80;
+			x += Math.floor(x / 5);
+			if (upThis.#bufLm[i] != e) {
+				ccxt.clearRect(x << 2, (y | 16) << 2, 3, 3);
+				if (e) {
+					ccxt.fillStyle = `#ffffff${e.toString(16).padStart(2, "0")}`;
+					ccxt.fillRect(x << 2, (y | 16) << 2, 3, 3);
+				};
+			} else if (self.debugMode) {
+				ccxt.clearRect(x << 2, (y | 16) << 2, 3, 3);
+				if (e) {
+					ccxt.fillStyle = `#ff0000${e.toString(16).padStart(2, "0")}`;
+					ccxt.fillRect(x << 2, (y | 16) << 2, 3, 3);
+				};
+			};
+		});
+		// Update the intermediary cache
+		upThis.#bufBm.forEach((e, i, a) => {
+			a[i] = upThis.#bufBo[i];
+		});
+		upThis.#bufLm.forEach((e, i, a) => {
+			a[i] = upThis.#bufLo[i];
 		});
 	};
 	#renderer;
@@ -646,7 +715,18 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectMeta.root = createElement("div", ["sect-meta"]);
 		upThis.#sectMeta.view = createElement("div", ["boundary"]);
 		canvasElement.appendChild(upThis.#sectMeta.root);
-		upThis.#sectMeta.root.appendChild(upThis.#sectMeta.view);
+		mountElement(upThis.#sectMeta.root, [
+			upThis.#sectMeta.view
+		]);
+		// Begin inserting the pixel render section
+		upThis.#sectPix.root = createElement("div", ["sect-pix", "boundary"], {l: 1529, t: 950, w: 379, h: 127});
+		upThis.#sectPix.cxt = createElement("canvas", [`field`]).getContext("2d");
+		upThis.#sectPix.cxt.canvas.width = 379;
+		upThis.#sectPix.cxt.canvas.height = 127;
+		mountElement(upThis.#sectPix.root, [
+			upThis.#sectPix.cxt.canvas
+		]);
+		canvasElement.appendChild(upThis.#sectPix.root);
 		// Opportunistic value refreshing
 		upThis.addEventListener("mode", (ev) => {
 			upThis.#sectInfo.mode.innerText = `${modeNames[ev.data]}`;
