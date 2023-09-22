@@ -1300,8 +1300,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Type 1 is almost-full reset
 		let upThis = this;
 		// Full reset, except the loaded banks
-		upThis.dispatchEvent("mode", "?");
-		upThis.#mode = 0;
 		upThis.#subMsb = 0;
 		upThis.#subLsb = 0;
 		upThis.#metaChannel = 0;
@@ -1332,6 +1330,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.buildRchTree();
 		// Reset channel redirection
 		if (type == 0) {
+			upThis.dispatchEvent("mode", "?");
+			upThis.#mode = 0;
 			upThis.#trkRedir.fill(0);
 			upThis.#trkAsReq.fill(0);
 			upThis.#letterExpire = 0;

@@ -199,7 +199,7 @@ let demoPool = new SheetData();
 	visualizer.loadMap(await(await fetch(`./data/map/s90es.12.tsv`)).text());
 	visualizer.loadMap(await(await fetch(`./data/map/s90es.10.tsv`)).text());
 	visualizer.loadMap(await(await fetch(`./data/map/kross.24.tsv`)).text());
-	await visualizer.glyphs.loadFile("../data/bitmaps/xg/font.tsv");
+	await visualizer.glyphs.loadFile("./data/bitmaps/xg/font.tsv");
 })();
 
 document.body.addEventListener("keydown", async (ev) => {
