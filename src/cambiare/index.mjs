@@ -5,7 +5,7 @@ import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40} from "../basic/mxReader.js";
 
 const targetRatio = 16 / 9;
-const pixelBlurSpeed = 48;
+const pixelBlurSpeed = 64;
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
 const blackKeys = [1, 3, 6, 8, 10],
 keyXs = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6];
