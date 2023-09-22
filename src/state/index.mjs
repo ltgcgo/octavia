@@ -1415,6 +1415,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (idx > -1) {
 			if (upThis.#mode == 0 || forced) {
 				let oldMode = upThis.#mode;
+				if (upThis.initOnReset && forced) {
+					this.init(1);
+				};
 				upThis.#mode = idx;
 				upThis.#bitmapPage = 0; // Restore page
 				upThis.#subMsb = substList[0][idx];
@@ -1425,9 +1428,6 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.#cc[ch * allocated.cc] = drumMsb[idx];
 					};
 					//this.initOnReset && forced && this.#ua.ano(ch);
-				};
-				if (upThis.initOnReset && forced) {
-					this.init(1);
 				};
 				// Bank defaults
 				switch (idx) {
