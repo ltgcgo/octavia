@@ -154,6 +154,7 @@ self.gOpenSnd = async function () {
 self.gOpenLni = function () {
 	useMidiBus = !useMidiBus;
 	Alpine.store("useMidiBus", useMidiBus);
+	visualizer.device.initOnReset = true;
 };
 
 self.formatTime = function (seconds, withMs = false) {

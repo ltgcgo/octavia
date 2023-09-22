@@ -1405,6 +1405,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.dispatchEvent(`efxinsert1`, upThis.getEffectType(4));
 		upThis.dispatchEvent(`efxinsert2`, upThis.getEffectType(5));
 		upThis.dispatchEvent(`efxinsert3`, upThis.getEffectType(6));
+		upThis.dispatchEvent("reset");
 		upThis.switchMode("?");
 		return;
 	};
@@ -1426,7 +1427,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					//this.initOnReset && forced && this.#ua.ano(ch);
 				};
 				if (upThis.initOnReset && forced) {
-					//this.init(1);
+					this.init(1);
 				};
 				// Bank defaults
 				switch (idx) {
