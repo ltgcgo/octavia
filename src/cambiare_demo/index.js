@@ -2,6 +2,9 @@
 
 import {Cambiare} from "../cambiare/index.mjs";
 import {SheetData} from "../basic/sheetLoad.js";
+import {
+	getBridge
+} from "../bridge/index.mjs";
 
 import {Alpine} from "../../libs/alpine@alpinejs/alpine.min.js";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
@@ -30,6 +33,7 @@ Alpine.store("sound", "file");
 Alpine.store("deviceMode", "?");
 Alpine.store("showRange", "port1");
 Alpine.store("startPort", 0);
+Alpine.store("useMidiBus", false);
 Alpine.store("demo", [{
 	id: 0,
 	text: "Loading...",
@@ -147,6 +151,10 @@ self.gOpenSnd = async function () {
 	audioUri = URL.createObjectURL(audioBlob);
 	audioFilePlayer.src = audioUri;
 };
+self.gOpenLni = function () {
+	useMidiBus = !useMidiBus;
+	Alpine.store("useMidiBus", useMidiBus);
+};
 
 self.formatTime = function (seconds, withMs = false) {
 	let remains;
@@ -250,6 +258,13 @@ document.body.addEventListener("keydown", async (ev) => {
 	if (preventKey) {
 		ev.preventDefault();
 	};
+});
+
+getBridge().addEventListener("message", function (ev) {
+	if (useMidiBus) {
+		visualizer.sendCmd(ev.data);
+	};
+	//console.debug(ev.data);
 });
 
 Alpine.start();
