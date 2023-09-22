@@ -2,6 +2,7 @@
 
 import {OctaviaDevice, allocated, ccToPos} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
+import {MxFont40} from "../basic/mxReader.js";
 
 const targetRatio = 16 / 9;
 const pixelBlurSpeed = 48;
@@ -166,6 +167,7 @@ let Cambiare = class extends RootDisplay {
 	#noteEvents = [];
 	#pitchEvents = [];
 	#style = "block";
+	glyphs = new MxFont40();
 	#drawNote(context, note, velo, state = 0, pitch = 0) {
 		// Param calculation
 		let upThis = this;
@@ -387,15 +389,40 @@ let Cambiare = class extends RootDisplay {
 		let ccxt = upThis.#sectPix.cxt;
 		if (timeNow > sum.bitmap.expire) {
 			upThis.#bufBn.fill(0);
-		} else if (sum.bitmap.bitmap.length > 256) {} else {
+		} else if (sum.bitmap.bitmap.length > 256) {
+			sum.bitmap.bitmap.forEach((e, i) => {
+				upThis.#bufBn[i] = e ? 255 : 0;
+			});
+		} else {
 			sum.bitmap.bitmap.forEach((e, i) => {
 				upThis.#bufBn[i << 1] = e ? 255 : 0;
 				upThis.#bufBn[(i << 1) | 1] = e ? 255 : 0;
 			});
 		};
+		if (timeNow > sum.letter.expire) {
+			upThis.#bufLn.fill(0);
+		} else {
+			upThis.glyphs.getStr(sum.letter.text).forEach((e0, i0) => {
+				// Per character
+				let baseX = (i0 & 15) * 5, baseY = (i0 >> 4) << 3;
+				e0.forEach((e, i) => {
+					// Per pixel in character
+					let x = baseX + i % 5, y = baseY + Math.floor(i / 5);
+					upThis.#bufLn[y * 80 + x] = e ? 255 : 0;
+				});
+			});
+		};
 		// Apply pixel blurs
 		upThis.#bufBo.forEach((e, i, a) => {
 			let e0 = upThis.#bufBn[i];
+			if (e0 > e) {
+				a[i] += Math.min(e0 - e, pixelBlurSpeed);
+			} else if (e0 < e) {
+				a[i] -= Math.min(e - e0, pixelBlurSpeed);
+			};
+		});
+		upThis.#bufLo.forEach((e, i, a) => {
+			let e0 = upThis.#bufLn[i];
 			if (e0 > e) {
 				a[i] += Math.min(e0 - e, pixelBlurSpeed);
 			} else if (e0 < e) {

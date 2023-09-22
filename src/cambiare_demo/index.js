@@ -27,6 +27,7 @@ let useMidiBus = false;
 let audioFilePlayer = $e("#audioFilePlayer"),
 visualizer = new Cambiare($e(".cambiare"), audioFilePlayer);
 visualizer.reset();
+visualizer.glyphs.loadFile("../data/bitmaps/xg/font.tsv");
 
 Alpine.store("play", "smf");
 Alpine.store("sound", "file");
