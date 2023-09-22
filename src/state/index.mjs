@@ -1427,7 +1427,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					//this.initOnReset && forced && this.#ua.ano(ch);
 				};
 				if (upThis.initOnReset && forced) {
-					this.init(1);
+					//this.init(1);
 				};
 				// Bank defaults
 				switch (idx) {
