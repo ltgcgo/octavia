@@ -1318,8 +1318,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#metaTexts = [];
 		upThis.#noteLength = 500;
 		upThis.#convertLastSyllable = 0;
-		upThis.#letterExpire = 0;
-		upThis.#letterDisp = "";
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
 		upThis.#bitmap.fill(0);
@@ -1336,6 +1334,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (type == 0) {
 			upThis.#trkRedir.fill(0);
 			upThis.#trkAsReq.fill(0);
+			upThis.#letterExpire = 0;
+			upThis.#letterDisp = "";
 		};
 		// Channel 10 to drum set
 		upThis.#cc[allocated.cc * 9] = drumMsb[0];
@@ -3667,10 +3667,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			msg.subarray(2).forEach((e) => {
 				if (e > 31) {
 					text += String.fromCharCode(e);
+				} else {
+					text += " ";
 				};
 			});
 			upThis.#letterDisp = text.padStart(20, " ");
 			upThis.#letterExpire = Date.now() + 3200;
+			//console.info(msg);
 		}).add([22, 18, 82], (msg, track) => {
 			// MT-32 alt reset?
 			let partBase = upThis.chRedir(0, track, true);
