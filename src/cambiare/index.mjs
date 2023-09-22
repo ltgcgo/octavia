@@ -371,7 +371,7 @@ let Cambiare = class extends RootDisplay {
 		// Draw every note inside extraStates
 		offNotes.forEach((key) => {
 			let {part, note, velo, state} = extraStates[key];
-			let context = upThis.#sectPart[part >> 7][part & 127].cxt;
+			let context = upThis.#sectPart[part >> 7][part & 15].cxt;
 			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));
 		});
 	};
