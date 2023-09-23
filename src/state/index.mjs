@@ -1228,7 +1228,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		});
 		upThis.#letterExpire = Date.now() + 3200;
-		upThis.#letterDisp = upThis.#letterDisp.padEnd(32, " ");
+		upThis.#letterDisp = upThis.#letterDisp.padEnd(16, " ");
 		if (invalidCp) {
 			invalidCp = Array.from(invalidCp);
 			invalidCp.forEach((e, i, a) => {
@@ -2494,14 +2494,14 @@ let OctaviaDevice = class extends CustomEventSource {
 						// variation
 						commitSlot = 31;
 					}][key - 2] || (() => {
-						console.debug(`Unknown XG-style drum param ${key} on set ${drumId + 1}.`);
+						console.debug(`Unknown GS-style drum param ${key} on set ${drumId + 1}.`);
 					}))();
 				};
 				if (commitSlot > -1) {
 					getDebugState() && console.debug(drumOff, commitSlot, note, e);
 					upThis.#drum[(drumOff + dnToPos[commitSlot]) * allocated.dnc + note] = e;
 				} else {
-					getDebugState() && console.debug(`XG-style drum param ${key} has no writes.`);
+					getDebugState() && console.debug(`GS-style drum param ${key} has no writes.`);
 				};
 			});
 		};
@@ -2944,6 +2944,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// GS display letter
 					let offset = msg[1];
 					upThis.setLetterDisplay(msg.subarray(2), "GS display text", offset);
+					getDebugState() && console.debug(`GS display text "${upThis.#letterDisp}".`);
 					break;
 				};
 				case 32: {
@@ -2969,7 +2970,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.#bitmapStore[realPage] = new Uint8Array(256);
 						};
 						let target = upThis.#bitmapStore[realPage];
-						getDebugState() && console.debug(`GS frame draw page ${realPage}.\n`);
+						getDebugState() && console.debug(`GS frame draw page ${realPage}.`);
 						let offset = msg[1] & 63;
 						target.fill(0); // Init
 						let workArr = msg.subarray(2);
