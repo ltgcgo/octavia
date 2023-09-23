@@ -2951,28 +2951,33 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (msg[1] == 0) {
 						// GS display page
 						upThis.#bitmapPage = Math.max(Math.min(msg[2] - 1, 9), 0);
+						getDebugState() && console.debug(`GS switch display page ${msg[2] - 1}.`);
 					};
 					break;
 				};
 				default: {
-					if (msg[0] < 11) {
+					if (msg[0] < 6) {
 						// GS display bitmap
 						if (upThis.#bitmapPage > 9) {
 							upThis.#bitmapPage = 0;
 						};
-						upThis.#bitmapExpire = Date.now() + 3200;
-						if (!upThis.#bitmapStore[msg[0] - 1]?.length) {
-							upThis.#bitmapStore[msg[0] - 1] = new Uint8Array(256);
+						let realPage = ((msg[0] - 1) << 1) | (msg[1]) >> 6;
+						if (upThis.#bitmapPage == realPage) {
+							upThis.#bitmapExpire = Date.now() + 3200;
 						};
-						let target = upThis.#bitmapStore[msg[0] - 1];
-						let offset = msg[1];
+						if (!upThis.#bitmapStore[realPage]?.length) {
+							upThis.#bitmapStore[realPage] = new Uint8Array(256);
+						};
+						let target = upThis.#bitmapStore[realPage];
+						getDebugState() && console.debug(`GS frame draw page ${realPage}.\n`);
+						let offset = msg[1] & 63;
 						target.fill(0); // Init
 						let workArr = msg.subarray(2);
 						/*for (let index = 0; index < offset; index ++) {
 							workArr.unshift(0);
 						};*/
 						workArr.forEach(function (e, ii) {
-							let i = ii + 0;
+							let i = ii + offset;
 							let ln = Math.floor(i / 16), co = i % 16;
 							let pt = (co * 4 + ln) * 5, threshold = 5, bi = 0;
 							pt -= co * 4;
