@@ -146,7 +146,7 @@ let ScDisplay = class extends RootDisplay {
 			let original = sum.letter.text,
 			leftTrim = original.length - original.trimLeft().length,
 			rightTrim = original.length - original.trimRight().length;
-			if (original.length > infoTxt.length && infoTxt.length < 16) {
+			if (original.length > 16 && original.length > infoTxt.length && infoTxt.length < 16) {
 				if (leftTrim > 0) {
 					while(infoTxt.length < 15) {
 						infoTxt = ` ${infoTxt} `;
@@ -159,6 +159,8 @@ let ScDisplay = class extends RootDisplay {
 						};
 					};
 				};
+			} else if (original.length <= 16) {
+				infoTxt = original;
 			};
 			let xShift = 0;
 			if (infoTxt.length > 16) {
@@ -170,6 +172,7 @@ let ScDisplay = class extends RootDisplay {
 					xShift = 0;
 				};
 			};
+			console.debug(`"${infoTxt}"`);
 			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
 					let pX = i0 * 6 + i1 % 5 + xShift,
