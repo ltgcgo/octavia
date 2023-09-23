@@ -1227,7 +1227,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				invalidCp.add(e);
 			};
 		});
-		upThis.#letterExpire = Date.now() + 3200;
+		upThis.#letterExpire = Date.now() + delay;
 		//upThis.#letterDisp = upThis.#letterDisp.padEnd(16, " ");
 		if (invalidCp) {
 			invalidCp = Array.from(invalidCp);
@@ -1235,7 +1235,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				a[i] = e.toString(16).padStart(2, "0");
 			});
 			console.warn(`${source}${source ? " " : ""}invalid code point${invalidCp.length > 1 ? "s" : ""}: 0x${invalidCp.join(", 0x")}`);
-
 		};
 	};
 	allocateAce(cc) {
@@ -2461,7 +2460,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		let sysExDrumsR = function (drumId, param, msg) {
 			// The Roland GS-style drum setup
-			console.debug(`GS-style drum setup on set ${drumId + 1} param ${param}:\n`, msg);
+			//console.debug(`GS-style drum setup on set ${drumId + 1} param ${param}:\n`, msg);
 			let drumOff = drumId * allocated.dpn;
 			let offset = (param << 7) + msg[0];
 			msg.subarray(1).forEach((e, i) => {
@@ -2944,7 +2943,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// GS display letter
 					let offset = msg[1];
 					upThis.setLetterDisplay(msg.subarray(2), "GS display text", offset);
-					getDebugState() && console.debug(`GS display text "${upThis.#letterDisp}".`);
+					//getDebugState() && console.debug(`GS display text "${upThis.#letterDisp}".`);
 					break;
 				};
 				case 32: {
