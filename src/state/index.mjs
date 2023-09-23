@@ -2968,10 +2968,11 @@ let OctaviaDevice = class extends CustomEventSource {
 						let offset = msg[1];
 						target.fill(0); // Init
 						let workArr = msg.subarray(2);
-						for (let index = 0; index < offset; index ++) {
+						/*for (let index = 0; index < offset; index ++) {
 							workArr.unshift(0);
-						};
-						workArr.forEach(function (e, i) {
+						};*/
+						workArr.forEach(function (e, ii) {
+							let i = ii + 0;
 							let ln = Math.floor(i / 16), co = i % 16;
 							let pt = (co * 4 + ln) * 5, threshold = 5, bi = 0;
 							pt -= co * 4;
