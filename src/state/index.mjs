@@ -1228,7 +1228,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		});
 		upThis.#letterExpire = Date.now() + 3200;
-		upThis.#letterDisp = upThis.#letterDisp.padEnd(16, " ");
+		//upThis.#letterDisp = upThis.#letterDisp.padEnd(16, " ");
 		if (invalidCp) {
 			invalidCp = Array.from(invalidCp);
 			invalidCp.forEach((e, i, a) => {
