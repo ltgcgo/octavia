@@ -399,9 +399,8 @@ let Cambiare = class extends RootDisplay {
 				upThis.#bufBn[(i << 1) | 1] = e ? 255 : 0;
 			});
 		};
-		if (timeNow > sum.letter.expire) {
-			upThis.#bufLn.fill(0);
-		} else {
+		upThis.#bufLn.fill(0);
+		if (timeNow <= sum.letter.expire) {
 			upThis.glyphs.getStr(sum.letter.text).forEach((e0, i0) => {
 				// Per character
 				let baseX = (i0 & 15) * 5, baseY = (i0 >> 4) << 3;
