@@ -172,7 +172,7 @@ let ScDisplay = class extends RootDisplay {
 					xShift = 0;
 				};
 			};
-			console.debug(`"${infoTxt}"`);
+			//console.debug(`"${infoTxt}"`);
 			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
 					let pX = i0 * 6 + i1 % 5 + xShift,

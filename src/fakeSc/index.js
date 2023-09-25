@@ -83,6 +83,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			if (demoId <= 122 && demoId > 96) {
 				demoId -= 32;
 			};
+			visualizer.device.initOnReset = false;
 			visualizer.device.setLetterDisplay([76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, demoId]);
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
@@ -118,7 +119,8 @@ visualizer.addEventListener("reset", function (e) {
 // Listen to mode switches
 visualizer.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
-	let textArr = Array.from(`Sys:${{"g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motif":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`);
+	let textArr;
+	textArr = Array.from(`Sys:${{"?":"Init","g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motif":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`);
 	textArr.forEach((e, i, a) => {
 		a[i] = e.charCodeAt(0);
 	});
@@ -151,6 +153,7 @@ const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx","
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	useMidiBus = false;
+	visualizer.device.initOnReset = false;
 	midwIndicator.classList.off("active");
 	let file = await fileOpen(propsMid);
 	let fileSplit = file.name.lastIndexOf("."), ext = "";
@@ -179,6 +182,7 @@ $e("#openMidi").addEventListener("click", async function () {
 });
 $e("#openAudio").addEventListener("click", async function () {
 	useMidiBus = false;
+	visualizer.device.initOnReset = false;
 	midwIndicator.classList.off("active");
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
@@ -197,6 +201,7 @@ midwIndicator.addEventListener("click", function () {
 	audioPlayer.src = "";
 	visualizer.reset();
 	useMidiBus = true;
+	visualizer.device.initOnReset = true;
 	midwIndicator.classList.on("active");
 });
 
