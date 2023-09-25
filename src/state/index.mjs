@@ -40,10 +40,28 @@ const modeIdx = [
 	"krs", "s90es", "motif"
 ];
 const substList = [
-	[0, 0, 0, 0, 121, 0,   0, 82, 81, 97, 0, 0, 63, 63, 63],
-	[0, 0, 4, 0, 0,   127, 0, 0,  0,  0,  0, 0, 0,  0,  0]
+	[
+		0,
+		0, 0, 0, 121,
+		0, 0, 82, 81, 97,
+		0, 0,
+		63, 63, 63
+	],
+	[
+		0,
+		0, 4, 0, 0,
+		127, 0, 0, 0, 0,
+		0, 0,
+		0, 0, 0
+	]
 ];
-const drumMsb = [120, 127, 120, 127, 120, 127, 61, 62, 62, 105, 120, 122, 122, 127];
+const drumMsb = [
+	120,
+	127, 120, 127, 120,
+	127, 61, 62, 62, 105,
+	122, 122,
+	120, 127, 127
+];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -1416,15 +1434,20 @@ let OctaviaDevice = class extends CustomEventSource {
 				let oldMode = upThis.#mode;
 				if (upThis.initOnReset && forced) {
 					this.init(1);
+					oldMode = modeMap["?"];
 				};
 				upThis.#mode = idx;
 				upThis.#bitmapPage = 0; // Restore page
 				upThis.#subMsb = substList[0][idx];
 				upThis.#subLsb = substList[1][idx];
+				console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
 				for (let ch = 0; ch < allocated.ch; ch ++) {
-					if (upThis.#chType[ch] > 0 && upThis.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
-						// Switch drum MSBs.
-						upThis.#cc[ch * allocated.cc] = drumMsb[idx];
+					if (upThis.#chType[ch] > 0) {
+						console.debug(`CH${ch + 1} (${upThis.#chType[ch]}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
+						if (upThis.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
+							// Switch drum MSBs.
+							upThis.#cc[ch * allocated.cc] = drumMsb[idx];
+						};
 					};
 					//this.initOnReset && forced && this.#ua.ano(ch);
 				};
