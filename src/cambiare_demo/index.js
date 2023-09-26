@@ -25,13 +25,22 @@ self.Alpine = Alpine;
 
 let useMidiBus = false;
 let audioFilePlayer = $e("#audioFilePlayer");
-let timePlexer = {};
-Object.defineProperty(timePlexer, "currentTime", {
+let timeMuxer = {};
+Object.defineProperty(timeMuxer, "currentTime", {
 	get: () => {
-		return audioFilePlayer.currentTime || (Date.now() / 1000);
+		if (useMidiBus) {
+			return audioFilePlayer.currentTime || (Date.now() / 1000);
+		} else {
+			return audioFilePlayer.currentTime;
+		};
 	}
 });
-let visualizer = new Cambiare($e(".cambiare"), timePlexer);
+Object.defineProperty(timeMuxer, "realtime", {
+	get: () => {
+		return useMidiBus && !audioFilePlayer.currentTime;
+	}
+});
+let visualizer = new Cambiare($e(".cambiare"), timeMuxer);
 visualizer.reset();
 
 Alpine.store("play", "smf");
@@ -90,6 +99,14 @@ self.gDemo = async function ({file, id, artist, title}) {
 		URL.revokeObjectURL(audioUri);
 	};
 	audioFilePlayer.src = "";
+	if (!file) {
+		Alpine.store("activeDemo", -1);
+		console.debug(`Cleared out demos.`);
+		return;
+	} else {
+		useMidiBus = false;
+		Alpine.store("useMidiBus", false);
+	};
 	visualizer.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (MIDI)`);
 	let midiBlob = await(await getBlobFrom(`${file}.mid`)).blob();
 	visualizer.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (audio)`);
@@ -158,6 +175,8 @@ self.gOpenSnd = async function () {
 	audioFilePlayer.src = audioUri;
 };
 self.gOpenLni = function () {
+	gDemo({});
+	visualizer.init();
 	useMidiBus = !useMidiBus;
 	Alpine.store("useMidiBus", useMidiBus);
 	visualizer.device.initOnReset = useMidiBus;

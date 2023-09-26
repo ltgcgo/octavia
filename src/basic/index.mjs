@@ -52,6 +52,10 @@ let RootDisplay = class extends CustomEventSource {
 		upThis.dispatchEvent("tempo", upThis.#noteTempo);
 		upThis.dispatchEvent("title", upThis.#titleName);
 	};
+	init() {
+		this.reset();
+		this.#midiPool = undefined;
+	};
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
 	};

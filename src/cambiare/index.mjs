@@ -287,8 +287,13 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.events.innerText = `${sum.eventCount}`.padStart(3, "0");
 		upThis.#sectInfo.curPoly.innerText = `${curPoly}`.padStart(3, "0");
 		upThis.#sectInfo.maxPoly.innerText = `${upThis.#maxPoly}`.padStart(3, "0");
-		upThis.#sectInfo.barCount.innerText = sum.noteBar + 1;
-		upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
+		if (upThis.#clockSource?.realtime) {
+			upThis.#sectInfo.barCount.innerText = "LIVE";
+			upThis.#sectInfo.barNote.innerText = "0";
+		} else {
+			upThis.#sectInfo.barCount.innerText = sum.noteBar + 1;
+			upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
+		};
 		upThis.#scrollMeta(true);
 		let renderPortMax = upThis.#renderPort + upThis.#renderRange;
 		for (let part = 0; part < allocated.ch; part ++) {
