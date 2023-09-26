@@ -9,4 +9,7 @@ Due to the pruning of all demo files, the Git history was drastically rewritten,
 * [0.3](https://github.com/ltgcgo/octavia/releases/tag/0.3)
 * [0.4](https://github.com/ltgcgo/octavia/releases/tag/0.4)
 * [0.5 pre 1](https://github.com/ltgcgo/octavia/releases/tag/0.4.112)
-* [0.5 pre 2](https://github.com/ltgcgo/octavia/releases/tag/0.4.113)
+
+### Universally available
+* 0.5 pre 2: [GitHub](https://github.com/ltgcgo/octavia/releases/tag/0.4.113)
+* 0.5 pre 3: [GitHub](https://github.com/ltgcgo/octavia/releases/tag/0.4.114)
