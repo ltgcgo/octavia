@@ -232,7 +232,7 @@ let ScDisplay = class extends RootDisplay {
 			};
 			infoTxt += upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ");
 			let timeOff = 0;
-			if (sum.mode == "gs" && timeNow < sum.letter.set + 15000) { // 50 * 300ms
+			if (sum.mode == "gs" && sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
 				let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
 				let critOff = sum.letter.set + (critTxt.length - 16) * 300
 				if (timeNow < critOff) {
