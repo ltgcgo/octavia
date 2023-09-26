@@ -25,6 +25,8 @@ let ScDisplay = class extends RootDisplay {
 	// 0 ~ 664: Text display
 	// 665 ~ 1399: Param display
 	// 1400 ~ 1656: Bitmap display
+	#sysMsg;
+	#sysTime = 0;
 	#pixelLit = 255;
 	#pixelOff = 0;
 	#nmdb = new Uint8Array(1656);
@@ -41,7 +43,13 @@ let ScDisplay = class extends RootDisplay {
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	constructor(conf) {
 		super(new OctaviaDevice(), 0, 0.875);
-		this.useBlur = !!conf?.useBlur;
+		let upThis = this;
+		upThis.useBlur = !!conf?.useBlur;
+		upThis.addEventListener("mode", function (ev) {
+			upThis.#sysMsg = `Sys:${{"?":"Init","g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motif":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`;
+			upThis.#sysTime = Date.now() + 800;
+			//this.device.setLetterDisplay(textArr);
+		});
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -129,19 +137,27 @@ let ScDisplay = class extends RootDisplay {
 		let part = minCh >> 4;
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
-		if (this.#ch > maxCh) {
-			this.#ch = minCh + this.#ch & 15;
+		if (upThis.#ch > maxCh) {
+			upThis.#ch = minCh + upThis.#ch & 15;
 		};
-		if (this.#ch < minCh) {
-			this.#ch = maxCh - 15 + (this.#ch & 15);
+		if (upThis.#ch < minCh) {
+			upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
 		};
-		let chOff = this.#ch * ccToPos.length;
+		let chOff = upThis.#ch * ccToPos.length;
 		// Text matrix display
 		let infoTxt, isTextNull = sum.letter.text.trim();
 		while (isTextNull.indexOf("  ") > -1) {
 			isTextNull = isTextNull.replaceAll("  ", " ");
 		};
-		if (timeNow <= sum.letter.expire) {
+		if (timeNow <= upThis.#sysTime) {
+			upThis.xgFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
+				e0.forEach(function (e1, i1) {
+					let pX = i0 * 6 + i1 % 5,
+					pY = Math.floor(i1 / 5);
+					upThis.#nmdb[pY * 95 + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+				});
+			});
+		} else if (timeNow <= sum.letter.expire && (sum.mode != "gs" || sum.letter.text?.length <= 16)) {
 			infoTxt = isTextNull;
 			let original = sum.letter.text,
 			leftTrim = original.length - original.trimLeft().length,
@@ -173,7 +189,7 @@ let ScDisplay = class extends RootDisplay {
 				};
 			};
 			//console.debug(`"${infoTxt}"`);
-			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
+			upThis.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
 					let pX = i0 * 6 + i1 % 5 + xShift,
 					pY = Math.floor(i1 / 5);
@@ -214,8 +230,21 @@ let ScDisplay = class extends RootDisplay {
 					infoTxt += "+";
 				};
 			};
-			infoTxt += upThis.getMapped(upThis.getChVoice(this.#ch).name).slice(0, 12).padEnd(12, " ");
-			this.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
+			infoTxt += upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ");
+			let timeOff = 0;
+			if (sum.mode == "gs" && timeNow < sum.letter.set + 15000) { // 50 * 300ms
+				let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
+				let critOff = sum.letter.set + (critTxt.length - 16) * 300
+				if (timeNow < critOff) {
+					infoTxt = critTxt;
+					timeOff = critOff - timeNow;
+				};
+			};
+			if (timeOff) {
+				let textWindow = infoTxt.length - Math.floor(timeOff / 300);
+				infoTxt = infoTxt.slice(Math.max(0, textWindow - 16), Math.max(16, textWindow));
+			};
+			upThis.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
 					let pX = i0 * 6 + i1 % 5,
 					pY = Math.floor(i1 / 5);
@@ -287,7 +316,7 @@ let ScDisplay = class extends RootDisplay {
 			for (let c = minCh; c <= maxCh; c ++) {
 				let rendPart = rendPos >> 4;
 				let strSmooth = sum.strength[c] >> (4 + rendMode),
-				lingered = this.#linger[c] >> (4 + rendMode);
+				lingered = upThis.#linger[c] >> (4 + rendMode);
 				if (rendMode == 2) {
 					let offY = 4 * (3 - rendPart);
 					for (let d = 3 - strSmooth; d < 4; d ++) {

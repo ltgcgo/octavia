@@ -259,6 +259,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#convertLastSyllable = 0;
 	#letterDisp = "";
 	#letterExpire = 0;
+	#letterSet = 0;
 	#selectPort = 0;
 	#receiveRS = true; // Receive remote switch
 	#modeKaraoke = false;
@@ -1128,6 +1129,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	getLetter() {
 		return {
 			text: this.#letterDisp,
+			set: this.#letterSet,
 			expire: this.#letterExpire
 		};
 	};
@@ -1245,6 +1247,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				invalidCp.add(e);
 			};
 		});
+		upThis.#letterSet = Date.now();
 		upThis.#letterExpire = Date.now() + delay;
 		//upThis.#letterDisp = upThis.#letterDisp.padEnd(16, " ");
 		if (invalidCp) {

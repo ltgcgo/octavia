@@ -119,12 +119,6 @@ visualizer.addEventListener("reset", function (e) {
 // Listen to mode switches
 visualizer.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
-	let textArr;
-	textArr = Array.from(`Sys:${{"?":"Init","g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motif":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`);
-	textArr.forEach((e, i, a) => {
-		a[i] = e.charCodeAt(0);
-	});
-	visualizer.device.setLetterDisplay(textArr);
 });
 visualizer.addEventListener("meta", function (ev) {
 	if (!title) {
