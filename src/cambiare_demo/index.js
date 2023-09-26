@@ -24,8 +24,14 @@ HTMLElement.prototype.$a = function (selector) {
 self.Alpine = Alpine;
 
 let useMidiBus = false;
-let audioFilePlayer = $e("#audioFilePlayer"),
-visualizer = new Cambiare($e(".cambiare"), audioFilePlayer);
+let audioFilePlayer = $e("#audioFilePlayer");
+let timePlexer = {};
+Object.defineProperty(timePlexer, "currentTime", {
+	get: () => {
+		return audioFilePlayer.currentTime || (Date.now() / 1000);
+	}
+});
+let visualizer = new Cambiare($e(".cambiare"), timePlexer);
 visualizer.reset();
 
 Alpine.store("play", "smf");
