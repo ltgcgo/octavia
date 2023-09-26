@@ -1,24 +1,181 @@
 ID	Name
+Uprt.Pno	Upright Piano
+Piano 1w	Grand Piano w
+UprtP. w	Upright Piano w
+EuropePf	European Piano
+PianoStr	Piano + Strings 1
+Pno+Str2	Piano + Strings 2
+DreamP.2	Dream Piano 2
+Piano 2w	Bright Piano w
+EGRhode1	EG + Rhodes 1
+EGRhode2	EG + Rhodes 2
+Piano 3w	Electric Grand w
+Old Uprt	Old Upright Piano
+StSoftEP	Stereo Soft EP
+ChorusEP	Chorus E. Piano
+SilntRho	Silent Rhodes
+Dst.EPno	Distorted E. Piano
+60sElPno	60s' Electric Piano
+MelRhode	Mellow Rhodes
+ElPno 2v	Electric Piano 2v
+HardFMEP	DX Hard
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
+CplHapsi	Coupled Harpsichord
+Harpsi.w	Harpsichord w
+Harpsi.o	Harpsichord o
+SynHapsi	Synth Harpsichord
+AtkClavi	Attack Clavichord
+AtkClv.2	Attack Clavichord 2
+Comp Clv	Compression Clavichord
+Reso Clv	Resonant Clavichord
+PhaseClv	Phase Clavichord
+AnaClavi	Analog Clavichord
+JP8 Clv1	JP8 Clavichord 1
+JP8 Clv2	JP8 Clavichord 2
+SyRngClv	Synth Ring Clavi.
+SyDstClv	Synth Distorted Clavi.
+JP8k Clv	JP8000 Clavichord
+PulseClv	Pulse Clavichord
+St.MusBx	Stereo Music Box
+HardVibr	Hard Vibraphone
+Pop Vibr	Pop Vibraphone
+ChchBel2	Church Bell 2
+TubBel w	Tubular Bell w
+DetDrwOr	Detuned Organ
+TremDrOr	Tremolo Organ
+Organ. o	Drawbar Organ o
+60sDrOrg	60s' Drawbar Organ 1
+60sDrOr2	60s' Drawbar Organ 2
+60sDrOr3	60s' Drawbar Organ 3
+EChrchOr	Electric Church Organ
+DrawOrg2	Drawbar Organ 2
+70sDrOrg	70s' Drawbar Organ
+EOrg16+2	Electric Organ 16+2
+DetPrcOr	Detuned Percussive Organ
+SlwRotar	Slow Rotary Organ
+RockOrg2	Rock Organ 2
+RockOrg3	Rock Organ 3
+FstRotar	Fast Rotary Organ
+ChurOrg2	Church Organ 2
+ChurOrg3	Church Organ 3
+TrmOrgFl	Tremolo Organ Flute
+ThtreOrg	Theatre Organ
+AccordIt	Italian Accordion
+DstAcord	Distorted Accordion
+ChoAcord	Chorus Accordion
+HrdAcord	Hard Accordion
+SftAcord	Soft Accordion
+BscBHrmo	Basic Blues Harmonica
+SplBHrmo	Suppl. Blues Harmonica
+TngoAcd2	Bandoneon 2
+Bndoneon	Bandoneon
 12StrGtr	12 String Guitar
-MidT.Gtr	Mid Tone Guitar
+ClnHalfG	Clean Half Guitar
+OpnHrdGt	Open Hard Guitar
+OpnHrdG2	Open Hard Guitar 2
+JC ClnGt	JC Clean Guitar
+TCFrntPk	TC Front Pick
+MidT.Gtr	Mid-tone Guitar
+TCMuteGt	TC Muted Guitar
+OvrDrGt2	Overdriven Guitar 2
+OvrDrGt3	Overdriven Guitar 3
+MoDrvGtr	More Drive Guitar
 LPOvrDr2	LP Overdrive 2
+WildAcBa	Wild Acoustic Bass
+AtkAcoBa	Attack Acoustic Bass
+F.Ba/Hrm	Fingered Bass/Harmonics
+PickBas3	Picked Bass 3
+PickBas4	Picked Bass 4
+DblPikBa	Double Picked Bass
 Fretles2	Fretless Bass 2
+WoodFrtl	Wood + Fretless Bass
+ResoSlap	Reso Slap Bass
 SynBa101	Synth Bass 101
 SynBass3	Synth Bass 3
-303SqDs2	303 Square Distorted 2
+Reso 303	Reso 303 Bass
+303SqrBa	303 Square Bass
+303DstBa	303 Distorted Bass
+303SqDst	303 Square Dist. Bass
+303SqDs2	303 Square Dist. Bass 2
+303SqDs2	303 Square Dist. Bass 2
+303SqDs3	303 Square Dist. Bass 3
+303SqrRv	303 Square Reversed
+SynBa201	Synth Bass 201
+MGOctBa2	MG Octave Bass 2
 MGBlipBa	MG Blip Bass
 SynBass4	Synth Bass 4
+ViolnAtk	Violin Attack
 SlwTrStr	Slow Tremolo Strings
+VcCbPizz	Cellos/Cbasses Pizzicato
+St. Pizz	Stereo Pizzicato
+SoloPizz	Solo Pizzicato
+StrsSpic	String Spiccato
 OrchStr2	Orchestra Strings 2
+OrchStr3	Orchestral Strings 3
 Syn.Str3	Synth Strings 3
+FemChoLa	Female Chorus Lah
+FemChoLu	Female Chorus Luh
+FemChLan	Female Chorus Lan
+F.La&Lan	Female La & Lan
+MalChoWa	Male Chorus Wah
+SyVoice2	Synth Voice 2
+Trp&Noiz	Trumpet & Noise
+BassTrom	Bass Trombone
+CMuteTrp	Cup Muted Trumpet
+SlwFrHrn	Slow French Horn
+RipFrHrn	Rip French Horn
+BoneSect	Trombone Section
+OrchBras	Orchestral Brass
+OrchBrs2	Orchestral Brass 2
+StOrBrs2	Stereo Orch. Brass 2
+StOrBrs3	Stereo Orch. Brass 3
 SynBras3	Synth Brass 3
 SynBras4	Synth Brass 4
+Exp.Alto	Expressive Alto
+BsClari.	Bass Clarinet
+TinWhsNm	Tin Whistle Normal
+TinWhsOr	Tin Whistle Oral
+MGSquare	MG Square Lead
+JP-8 Sqr	JP-8 Square Lead
+DsSquare	Distorted Square
+JP8Pulse	JP8 Pulse Lead
+JP8Puls2	JP8 Pulse Lead 2
+MGRezPls	MG Resonant Pulse
+D-50 Fat	D-50 Fat Lead
+OB Saw 2	OB Saw Lead 2
+Seq.Saw.	Sequenced Sawtooth
+Reso Saw	Resonant Sawtooth
+JP8BaLd1	JP8 Bass Lead 1
 DigiBell	Digital Bells
+UillPpNm	Uillean Pipe Normal
+UillPpOr	Uillean Pipe Oral
+RideCym!	Ride Cymbal Menu
+RideBel!	Ride Bell Menu
+909 Clap	909 Hand Clap
+HandClp!	Hand Clap Menu
+ConcrtBD	Concert Bass Drums
+JungleBD	Jungle Bass Drums
+TechnoBD	Techno Bass Drums
+MeloTom2	Melodic Tom 2
+JungleSD	Jungle Snare Drums
 ElecPerc	Electric Perc 1
-CarTyreS	Car Tyre Scratch
+CutNoise	Cutting Noise
+CutNoiz2	Cutting Noise 2
+DstCutNz	Distorted Cutting Noise
+Gtr.Fx!!	Guitar FX Menu
+BartkPiz	Bartok Pizzicato
+GtStrk!!	Guitar Stroke Menu
+GtSlide!	Guitar Slide Menu
+Fl.KClik	Flute Key Click
+BrthNz!!	Breath Noise Menu
+VoxBrth2	Voice Breath 2
+TrumptNz	Trumpet Noise
+Scratch2	Scratch Split
+CarTyreS	Car Tyre Squeal
+PercBang	Percussion Bang
 RailCros	Rail Crossing
+ApplzWav	Applause Waves
 VxComeOn	Voice Come On
 AcouBass	Acoustic Bass 1
 SynBrass	Synth Brass 1
@@ -37,3 +194,11 @@ ElecBass	Electric Bass 1
 ElecBas2	Electric Bass 2
 BrasSec2	Brass Section 2
 El.Perc2	Electric Perc 2
+Standrd3	Standard Kit 3
+StdrdL/R	Standard Kit L/R
+Anal.Kt2	Analog Kit 2
+Brush2LR	Brush Kit 2 L/R
+GamlnKt2	Gamelan Kit 2
+RyFX Kit	Rhythm FX Kit
+RyFX2 Kt	Rhythm FX Kit 2
+RyFX3 Kt	Rhythm FX Kit 3

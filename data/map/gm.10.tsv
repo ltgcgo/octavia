@@ -11,15 +11,15 @@ GrandPno	Piano 1
 BritePno	Piano 2
 EGrndPno	Piano 3
 HnkyTonk	Honky Tonk
-ElPiano1	E.Piano 1
-ElPiano2	E.Piano 2
+ElPiano1	E. Piano 1
+ElPiano2	E. Piano 2
 Hrpschrd	Harpsicord
 Clvichrd	Clavichord
 MusicBox	Music Box
 Vibrafon	Vibraphone
 Xylophon	Xylophone
 TubulBel	Tubular
-Dulcimer	Dulcimer 1
+Dulcimer	Santur 1
 DrawOrgn	Organ 1
 PercOrgn	Organ 2
 RockOrgn	Organ 3
@@ -75,20 +75,21 @@ CharanLd	Charang Ld
 Voice Ld	Voice Lead
 Fifth Ld	Fifth Lead
 Bass&Ld	Bass&Lead
-NewAgePd	New Age Pd
-PolySyPd	PolySyn.Pd
+NewAgePd	Fantasia
+PolySyPd	Polysynth
 ChoirPad	Choir Pad
-BowedPad	BowGlassPd
+BowedPad	BowedGlass
 MetalPad	Metal Pad
 SweepPad	Sweep Pad
 SoundTrk	Soundtrack
 Atmosphr	Atmosphere
 Bright	Brightness
 Echoes	Echo Drops
+Sci-Fi	Star Theme
 TnklBell	TinkleBell
 SteelDrm	SteelDrums
 Woodblok	Woodblock
-MelodTom	MelodicTom
+MelodTom	Melod. Tom
 Syn Drum	Synth Drum
 RevCymbl	Rev.Cymbal
 FretNoiz	Fret Noise

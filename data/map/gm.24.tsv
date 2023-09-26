@@ -6,10 +6,12 @@ BritePno	Bright Piano
 EGrndPno	Electric Grand Piano
 ElPiano1	Electric Piano 1
 ElPiano2	Electric Piano 2
+Dulcimer	Dulcimer
 DrawOrgn	Drawbar Organ
 PercOrgn	Percussive Organ
 RockOrgn	Rock Organ
 Acordion	French Accordion
+TangoAcd	Tango Accordion
 OvrDrvGt	Overdriven Guitar
 Dist.Gtr	Distortion Guitar
 GtrHarmo	Guitar Harmonics
@@ -32,6 +34,9 @@ Alto Sax	Alto Saxophone
 TenorSax	Tenor Saxophone
 Bari.Sax	Baritone Saxophone
 Saw Lead	Sawtooth Lead
+CaliopLd	Calliope Lead
+NewAgePd	New Age Pad
 PolySyPd	Poly Synth Pad
 BowedPad	Bowed Glass Pad
+Sci-Fi	Science Fiction
 RevCymbl	Reverse Cymbal

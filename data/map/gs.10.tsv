@@ -1,48 +1,355 @@
 ID	Name
+Uprt.Pno	UprightPno
+Mild Pno	Mild Piano
+UprtP. w	UprtPno. w
+MildP. w	MildPno. w
+EuropePf	Europe Pno
+PianoStr	Piano+Str.
+Pno+Str2	Piano+Str2
+DreamPno	DreamPiano
+DreamP.2	DreamPno.2
+PopPiano	Pop Piano
+Rock Pno	Rock Piano
+PopPno w	Pop Pno. w
+RockP. w	RockPno. w
+DancePno	DancePiano
+EGRhode1	EG+Rhodes1
+EGRhode2	EG+Rhodes2
+HnkyTk w	HonkyTnk w
+Old Uprt	OldUpright
+HnkyTnk2	HonkyTonk2
+Det.EP 1	Det. EP 1
+StSoftEP	St.Soft EP
+ChorusEP	Chorus EP.
+SilntRho	SilentRho.
+EPiano1v	E.Piano 1v
+FM+SA EP	FM + SA EP
+Dst.EPno	Dist.ElPno
+60sElPno	60s' E.Pno
+HrdRhode	Hard Rhode
+MelRhode	MellwRhode
 ElPiano3	El.Piano 3
+Det.EP 2	Det. EP 2
+Det.EP 3	Det. EP 3
+DXLegend	DX Legend
+ElPno 2v	E.Piano 2v
+St.FM EP	Ste. FM EP
+HardFMEP	Hard FM EP
 Hpschrd2	Harpsi. 2
 Hpschrd3	Harpsi. 3
+CplHapsi	CoupleHpsi
+Harpsi.w	Harpsi. w
+Harpsi.o	Harpsi. o
+SynHapsi	Syn.Harpsi
+Clvchrd2	Clavi. 2
+AtkClavi	Atk Clavi.
+AtkClv.2	AtkClavi 2
+Comp Clv	Comp Clav.
+Reso Clv	Reso Clav.
+PhaseClv	Phase Clv.
+AnaClavi	Analog Clv
+JP8 Clv1	JP8 Clav.1
+JP8 Clv2	JP8 Clav.2
+SyRngClv	SynRingClv
+SyDstClv	SynDistClv
+JP8k Clv	JP8000 Clv
+PulseClv	Pulse Clv.
+PopCelst	Pop Celest
+MusicBx2	MusicBox 2
+St.MusBx	StMusicBox
+HardVibr	Hard Vibra
+Pop Vibr	Pop Vibra.
+Vibrafns	Vibrafones
+Marmba w	Marimba w
+Barafon2	Barafon 2
+Log Drum	Log Drums
+Xylofn.w	Xylofon. w
+ChrchBel	ChurchBell
+ChchBel2	ChurchBel2
+TubBel w	TubulBel w
+Organ101	Organ 101
+FullOrgn	Full Organ
+FullOrg2	Full Or. 2
+FullOrg3	Full Or. 3
+FullOrg4	Full Or. 4
+FullOrg5	Full Or. 5
+FullOrg6	Full Or. 6
+DetDrwOr	Detuned Or
+TremDrOr	Tremolo Or
+Organ109	Organ 109
+FullOrg7	Full Or. 7
+FullOrg8	Full Or. 8
+FullOrg9	Full Or. 9
+60sDrOrg	60s Org. 1
+60sDrOr2	60s Org. 2
+60sDrOr3	60s Org. 3
+FarfOrgn	Farf Organ
+CheezOrg	Cheese Or.
+D-50 Org	D-50 Organ
+JUNO Org	JUNO Organ
+HybridOr	Hybrid Or.
+EChrchOr	DigiChurch
+JX-8P Or	JX-8P Org.
+DrawOrg2	Organ 4
+70sDrOrg	70s' Organ
+EvenBar	Even Bar
+Organ Ba	Organ Bass
+5thOrgan	5th Organ
+Organ201	Organ 201
+JazzOrgn	Jazz Organ
+EOrg16+2	E.Org.16+2
+JazzOrg2	Jazz Org.2
+JazzOrg3	Jazz Org.3
+JazzOrg4	Jazz Org.4
+JazzOrg5	Jazz Org.5
+JazzOrg6	Jazz Org.6
+DetPrcOr	Det.Organ2
+ChorusOr	Chorus Or.
+OctaveOr	Octave Or.
+PercOrg2	Perc Organ
+PercOrg3	Perc Org.2
+PercOrg4	Perc Org.3
+PercOrg5	Perc Org.4
+PercOrg6	Perc Org.5
+RotaryOr	Rotary Or.
+SlwRotar	SlowRotary
+RockOrg2	Rock Organ
+RockOrg3	Rock Or. 2
+FstRotar	FastRotary
+ChurOrg2	Church Or2
+ChurOrg3	Church Or3
+OrgFlute	Org. Flute
+TrmOrgFl	TrmOrgnFlu
+ThtreOrg	TheatreOrg
+WindOrgn	Wind Organ
+PuffOrgn	Puff Organ
+AccordIt	Accord. It
+DstAcord	Dist.Acord
+ChoAcord	Cho.Accord
+HrdAcord	HardAccord
+SftAcord	SoftAccord
+Harmo. 2	Harmonica2
+BscBHrmo	BasicBHrmo
+SplBHrmo	SupplBHrmo
+TngoAcd2	Bandoneon2
+Bndoneon	Bandoneon3
 12StrGtr	12 Str Gtr
+ClnHalfG	CleanHalfG
+OpnHrdGt	OpenHardGt
+OpnHrdG2	OpenHardG2
+JC ClnGt	JC CleanGt
+TCFrntPk	TCFrontPk.
+TCRearPk	TCRearPick
+LPRearPk	LPRearPick
 MidT.Gtr	MidToneGtr
+TCMuteGt	TCMutedGt.
 Funk Gtr	FunkGuitar
+OvrDrGt2	OvrDrvGt.2
+OvrDrGt3	OvrDrvGt.3
+MoDrvGtr	Mo.DriveGt
 LPOvrDr2	LPOverDrv2
+Rokabily	Rockabilly
+WildAcBa	WildAcBass
+AtkAcoBa	AtkAcou.Ba
+JazzyBa2	Jazzy Ba.2
 HeartBas	Heart Bass
+F.Ba/Hrm	F.Ba/Harm.
+PickBas3	PickedBas3
+PickBas4	PickedBas4
+DblPikBa	DblPickBas
 Fretles2	Fretless 2
+WoodFrtl	Wood+Frtls
+ResoSlap	ResoSlapBa
 SynBa101	SynthBs101
 SynBass3	Syn Bass 3
-303SqDs2	303SqrDst2
+Reso 303	Reso 303Ba
+ResoSHBa	Reso SH Ba
+303SqrBa	303 Sqr.Ba
+303DstBa	303 DistBa
+JungleBa	JungleBass
+303SqDst	303SqDstBa
+303SqDs2	303SqDsBa2
+303SqDs2	303SqDsBa2
+303SqDs3	303SqDsBa3
+303SqrRv	303Sqr.Rev
+SynBa201	SynBass201
+MGOctBa2	MGOctavBa2
 MGBlipBa	MG Blip Bs
 SynBass4	Syn Bass 4
+BeefFMBa	Beef FM Ba
+SyncBass	Sync Bass
+ViolnAtk	Violin Atk
+ViolaAtk	Viola Atk.
+CelloAtk	Cello Atk.
 SlwTrStr	SlowTrmStr
+VcCbPizz	VcCb Pizz.
+St. Pizz	Ste. Pizz.
+SoloPizz	Solo Pizz.
+StrsSpic	Str. Spic.
+UileanHp	UileanHarp
 Slow Str	SlowString
+Mild Str	Mild Str.
 OrchStr2	Orchestra2
+OrchStr3	Orch.Str 3
+OB Str.	OB Strings
+JP Str.	JP Strings
 Syn.Str3	SynthStr.3
-MelChoir	MelloChoir
+Air Str.	Air String
+MltChoir	Melt Choir
+BoyChoir	Boy Choir
+ChoirHah	Choir Hahs
+ChoirLah	Choir Lahs
+OohsMaj7	Oohs maj7
+OohsSus4	Oohs sus4
+JazzScat	Jazz Scat
+VoiceDah	Voice Dah
+JazzThum	Jazz Thum
+Fem. Lah	Female Lah
+FemChoLa	Fem.Ch.Lah
+Fem. Luh	Female Luh
+FemChoLu	Fem.Ch.Luh
+FemChLan	Fem.Ch.Lan
+F.La&Lan	Fem.La&Lan
+MalChoWa	MaleCh.Wah
+SyVoice2	SynVoice 2
 LoFiRave	Lo-Fi Rave
+StackHit	Stack Hit
 Trumpet2	Trumpet 2
+Trumpet3	Trumpet 3
+Trp&Noiz	Trpt&Noise
+Twinbone	Twinbones
+BassTrom	Bass Trmb.
+CMuteTrp	CupMuteTrp
 FrHorn 2	Fr. Horn 2
+SlwFrHrn	Slow FrHrn
+RipFrHrn	Rip FrHorn
+BoneSect	Bone Sect.
+QuadBras	Quad Brass
 BrasFall	Brass Fall
+Trp Fall	TrumptFall
+OrchBras	Orch.Brass
+OrchBrs2	Orch.Brs 2
+StOrBrs2	StOrchBrs2
+StOrBrs3	StOrchBrs3
 SynBras3	SynBrass 3
 SynBras4	SynBrass 4
+Exp.Alto	Expr. Alto
 Sax Sect	Sax Sect.
+BsClari.	BassClari.
 Piccolo2	Piccolo 2
+TinWhsNm	TinWhis.Nm
+TinWhsOr	TinWhis.Or
 Whistle2	Whistle 2
+MGSquare	MG Square
+HolwMini	HollowMini
+CC Solo	CC Solo Ld
 SineWave	Sine Wave
 2600Sine	2600 Sine
+JP-8 Sqr	JP-8 Sqr.
+DsSquare	DistSquare
+JP8Pulse	JP8 Pulse
+JP8Puls2	JP8 Pulse2
+MGRezPls	MGRezPulse
+GR-300	GR-300 Ld
+D-50 Fat	D-50 FatLd
+CS SawLd	CS Saw Ld
+OB Saw 2	OB SawLd 2
+P5 SawLd	P5 Saw Ld
+MGUnison	MG Unison
+Seq.Saw.	Seq. Saw.
+Reso Saw	Reso. Saw
+FatGR Ld	Fat GR Ld
+DirtySnc	Dirty Sync
+LFO Vox	LFO Voice
+JP8BaLd1	JP8BassLd1
+ThickMtx	ThickMatrx
+OBSoftPd	OB Soft Pd
+VoicePad	Voice Pad
 SynMalet	Syn Mallet
 DigiBell	Digi Bells
+Org Bell	Organ Bell
+LFO Horr	LFO Horror
+LFO Tech	LFO Techno
+Altrnate	Alternate
 EchoBell	Echo Bell
+Reso Pan	Reso. Pan
+UillPpNm	UillPipeNm
+UillPpOr	UillPipeOr
+RideCym!	Ride Cym!!
+RideBel!	Ride Bell!
+909 Clap	909 H.Clap
+HandClp!	Hand Clap!
+ConcrtBD	Concert BD
+JungleBD	Jungle BD
+TechnoBD	Techno BD
+Kick3 !!	Kick 3 !!
+Kick4 !!	Kick 4 !!
+MeloTom2	Melod.Tom2
+JungleSD	Jungle SD
 ElecPerc	ElecPerc 1
+CutNoise	Cut Noise
+Str.Slap	StringSlap
+CutNoiz2	CutNoise 2
+DstCutNz	DstCutNoiz
+B.Slide	Bass Slide
+P.Scrape	PickScrape
+Gtr.Fx!!	GuitarFX!!
+BartkPiz	BartokPizz
+Gtr.Slap	Gtr. Slap
+ChrdStrk	Chord Strk
+BiwaStrk	Biwa Strk.
+BiwaTrem	Biwa Trem.
+GtStrk!!	GtStroke!!
+GtSlide!	GtSlide!!!
+Fl.KClik	FltKyClick
+BrthNz!!	BreathNz!!
+VoxBrth2	VoxBreath2
+TrumptNz	Trumpet Nz
+PinkNoiz	Pink Noise
 White Nz	WhiteNoise
+HorseGlp	HorseGalop
+BirdTwit	Bird Tweet
+PhonCall	Phone Call
+DoorSqek	DoorSqueak
+DoorSlam	Door Slam
+ScratchC	ScratchCut
+WindChim	Windchimes
+Scratch2	ScratchSpl
+ScrachKy	ScratchKey
+TapeRwnd	TapeRewind
 PhonNoiz	PhonoNoise
+MC500 Bp	MC500 Beep
+Scratch3	Scratch 3
+CarStart	Car Start
 CarTyreS	CarTyreSq.
+Car Pass	CarPassing
+CarCrash	Car Crash
 JetPlane	Jet Plane
+Calclate	Calculate
+PercBang	Perc. Bang
 AudioSwi	AudioSwtch
 TrainHrn	Train Horn
 TrainPas	Train Pass
 CarStar2	Car Start2
 RailCros	Rail Cross
+LaughVox	Laugh Vox
+ScreamVx	Scream Vox
+Heart	Heartbeat
+Footstep	Footsteps
+Applauz2	Applause 2
+SmalClub	Small Club
+ApplzWav	ApplauseWv
+Voice 1	Voice One
+Voice 2	Voice Two
+Voice 3	VoiceThree
+VoiceTah	Voice Tah
+VoiceWey	Voice Whey
 VxComeOn	Vx Come On
+VoiceWoo	Voice Woo
+MchinGun	MachineGun
+LaserGun	Laser Gun
+Xplosion	Explosion
+Xploshn2	Explosion2
 SlapBa 2	Slap Bass2
 AcouBass	AcouBass 1
 SynBrass	SynBrass 1
@@ -83,6 +390,31 @@ TaikoRim	Taiko Rim
 1NoteJam	OneNoteJam
 WaterBel	Water Bell
 JnglTune	JungleTune
+Standrd3	Standard 3
+StdrdL/R	Stndrd L/R
+HipHopKt	Hip Hop Kt
+JungleKt	Jungle Kit
+TechnoKt	Techno Kit
+HouseKit	House Kit
+DanceKit	Dance Kit
+CR-78 Kt	CR-78 Kit
+TR-606Kt	TR-606 Kit
+TR-707Kt	TR-707 Kit
+Anal.Kt2	TR-909 Kit
+BrushKt2	Brush Kt 2
+Brush2LR	Brush2 L/R
 EthnicKt	Ethnic Kit
+EthnicKt	Ethnic Kit
+KikSnare	Kick Snare
+KkSnare2	Kick Sn. 2
 AsianKit	Asian Kit
+CymbalKt	Cymbal Kit
+GamelnKt	Gamelan Kt
+GamlnKt2	Gamln Kt 2
+RyFX Kit	Ry.FX Kit
+RyFX2 Kt	Ry.FX Kt 2
+RyFX3 Kt	Ry.FX Kt 3
+SFX Kt 2	SFX Kit 2
+VoiceKit	Voice Kit
+CymblKt2	CymbalKit2
 MT-32 Kt	MT-32 Kit

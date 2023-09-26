@@ -1440,10 +1440,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#bitmapPage = 0; // Restore page
 				upThis.#subMsb = substList[0][idx];
 				upThis.#subLsb = substList[1][idx];
-				console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
+				//console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
 				for (let ch = 0; ch < allocated.ch; ch ++) {
 					if (upThis.#chType[ch] > 0) {
-						console.debug(`CH${ch + 1} (${upThis.#chType[ch]}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
+						//console.debug(`CH${ch + 1} (${upThis.#chType[ch]}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
 						if (upThis.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
 							// Switch drum MSBs.
 							upThis.#cc[ch * allocated.cc] = drumMsb[idx];
