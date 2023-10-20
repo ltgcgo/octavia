@@ -188,6 +188,7 @@ const allocated = {
 	tr: 256, // tracks
 	cmt: 14, // C/M timbre storage size
 	rpn: 6,
+	rpnt: 4, // the real size of RPN registers
 	ace: 8, // active custom effect
 	drm: 8, // Drum setup slots
 	dpn: useDrumNrpn.length, // Drum setup params
@@ -242,6 +243,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#rawStrength = new Uint8Array(allocated.ch);
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
+	#rpnt = new Uint8Array(allocated.ch * allocated.rpnt); // Whether or not an RPN has been written
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
 	#drum = new Uint8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
