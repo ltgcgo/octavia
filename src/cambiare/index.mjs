@@ -64,6 +64,7 @@ const metaNames = {
 	"XfSongBt",
 	"XfSngIns"
 ];
+const lineDash = [[], [4, 4], [2, 2]];
 const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}];
 
 let createElement = function (tag, classes, details = {}) {
@@ -107,14 +108,17 @@ let classOn = function (target, classes) {
 	});
 };
 
+// Cache for CC register display heights
 let heightCache = new Array(128).fill(0);
 heightCache.forEach((e, i, a) => {
 	a[i] = Math.floor(24 * i / 12.7) / 10;
 });
+// Cache for panpot display widths
 let widthCache = new Array(128).fill(0);
 widthCache.forEach((e, i, a) => {
 	a[i] = Math.abs(Math.round(48 * (i - 64) / 12.7) / 10);
 });
+// Cache for the scale segments
 let leftCache = new Array(11).fill(null);
 leftCache.forEach((e, i, a) => {
 	a[i] = `${Math.round(i * 12 / 0.0128) / 100}%`;
@@ -192,6 +196,14 @@ let Cambiare = class extends RootDisplay {
 				border = range == 1 ? 3 : 1;
 				break;
 			};
+			case "line": {
+				let originPitch = note - pitch;
+				if (Math.abs(pitch) > 2) {
+					originPitch = note - Math.sign(pitch) * 2;
+				};
+				ex = Math.round((note + 0.5) * width / 128);
+				sx = Math.round((originPitch + 0.5) * width / 128);
+			};
 			default: {
 				// Nothing yet
 			};
@@ -199,6 +211,8 @@ let Cambiare = class extends RootDisplay {
 		// Colours
 		context.fillStyle = `#${isBlackKey ? (upThis.#accent) : "ffffff"}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
 		context.strokeStyle = context.fillStyle;
+		context.lineWidth = range == 1 ? 4 : 2;
+		context.lineDashOffset = 0;
 		// Draw calls
 		switch (upThis.#style) {
 			case "block": {
@@ -224,6 +238,32 @@ let Cambiare = class extends RootDisplay {
 				if (isHeld) {
 					context.clearRect(sx + border, sh + border, dx - (border << 1), dh - (border << 1));
 				};
+				break;
+			};
+			case "line": {
+				if (isHeld) {
+					context.setLineDash(lineDash[range == 1 ? 1 : 2]);
+					switch (range) {
+						case 4: {
+							context.lineDashOffset = -1;
+							break;
+						};
+						default: {
+							context.lineDashOffset = 0;
+						};
+					};
+				} else {
+					context.setLineDash(lineDash[0]);
+					if (range != 4) {
+						sx += 0.5;
+						ex += 0.5;
+					};
+				};
+				context.beginPath();
+				context.moveTo(sx, (range == 4 || !isHeld) ? 2 : 1);
+				context.lineTo(ex, (height >> 1) + 2);
+				context.lineTo(sx, height + 2);
+				context.stroke();
 				break;
 			};
 			default: {
