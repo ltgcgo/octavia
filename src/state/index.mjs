@@ -1052,10 +1052,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (!tree[e]?.constructor) {
 				tree[e] = [];
 			};
-			tree[e].push(i);
+			if (e < allocated.ch) {
+				// Remove disabled channels
+				tree[e].push(i);
+			};
 		});
 		this.#receiveTree = tree;
-		//console.debug(tree);
+		console.debug(tree);
 	};
 	getActive() {
 		let result = this.#chActive;
@@ -3063,7 +3066,12 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						upThis.#prg[part] = e; // program
 					}, () => {
-						let ch = upThis.chRedir(e, track, true);
+						let ch = 0;
+						if (e < 16) {
+							ch = upThis.chRedir(e, track, true);
+						} else {
+							ch = allocated.ch; // Effectively disabling event receives
+						};
 						upThis.#chReceive[part] = ch; // Rx CH
 						if (part != ch) {
 							upThis.buildRchTree();
