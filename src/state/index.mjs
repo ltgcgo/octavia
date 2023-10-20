@@ -1058,7 +1058,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		});
 		this.#receiveTree = tree;
-		console.debug(tree);
+		//console.debug(tree);
 	};
 	getActive() {
 		let result = this.#chActive;
