@@ -79,6 +79,12 @@ const useRpnMap = {
 	2: 3,
 	5: 4
 },
+rpnOptions = {
+	0: 0,
+	1: 1,
+	2: 2,
+	5: 3
+},
 rpnCap = [
 	[0, 24],
 	[0, 127],
@@ -796,11 +802,14 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						} else {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.#cc[chOffset + ccToPos[100]]];
+							let rpnIndex = useRpnMap[this.#cc[chOffset + ccToPos[100]]],
+							rpnIndex2 = rpnOptions[this.#cc[chOffset + ccToPos[100]]];
 							if (this.#cc[chOffset + ccToPos[101]] == 0 && rpnIndex != undefined) {
 								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + ccToPos[100]]} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
+								//console.debug(this.#cc[chOffset + ccToPos[100]], rpnIndex, rpnOptions[this.#cc[chOffset + ccToPos[100]]]);
+								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
 							};
 						};
 						break;
@@ -825,9 +834,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Show RPN and NRPN
 						if (!this.#dataCommit) {
 							// Commit supported RPN values
-							if (this.#cc[chOffset + 101] == 0 && useRpnMap[this.#cc[chOffset + 100]] != undefined) {
+							let rpnIndex = useRpnMap[this.#cc[chOffset + 100]],
+							rpnIndex2 = rpnOptions[this.#cc[chOffset + 100]];
+							if (this.#cc[chOffset + 101] == 0 && rpnIndex != undefined) {
 								// This section is potentially unsafe
-								this.#rpn[part * allocated.rpn + useRpnMap[this.#cc[chOffset + 100]] + 1] = det.data[1];
+								this.#rpn[part * allocated.rpn + rpnIndex + 1] = det.data[1];
+								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
 							};
 						} else {
 							//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
@@ -1220,8 +1232,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		return voice;
 	};
 	getPitchShift(part) {
+		let upThis = this;
 		let rpnOff = part * allocated.rpn;
-		return this.#pitch[part] / 8192 * this.#rpn[rpnOff] + (this.#rpn[rpnOff + 3] - 64) + ((this.#rpn[rpnOff + 1] << 7) + this.#rpn[rpnOff + 2] - 8192) / 8192;
+		let pitchBendRange = upThis.#rpn[rpnOff];
+		if (!upThis.#rpnt[part * allocated.rpnt]) {
+			// Override unwritten RPN values according to the current modeIdx
+			if (upThis.#mode == modeMap.mt32) {
+				pitchBendRange = 12;
+			};
+		};
+		return upThis.#pitch[part] / 8192 * pitchBendRange + (upThis.#rpn[rpnOff + 3] - 64) + ((upThis.#rpn[rpnOff + 1] << 7) + upThis.#rpn[rpnOff + 2] - 8192) / 8192;
 	};
 	getEffectType(slot = 0) {
 		let index = 3 * slot + 1;
