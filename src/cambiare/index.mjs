@@ -254,13 +254,13 @@ let Cambiare = class extends RootDisplay {
 					};
 				} else {
 					context.setLineDash(lineDash[0]);
-					if (range != 4) {
+					if (range != 4 && self?.document?.mozFullScreen) {
 						sx += 0.5;
 						ex += 0.5;
 					};
 				};
 				context.beginPath();
-				context.moveTo(sx, (range == 4 || !isHeld) ? 2 : 1);
+				context.moveTo(sx, (range == 4 || !isHeld) && self?.document?.mozFullScreen ? 2 : 1);
 				context.lineTo(ex, (height >> 1) + 2);
 				context.lineTo(sx, height + 2);
 				context.stroke();
