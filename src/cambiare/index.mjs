@@ -372,6 +372,7 @@ let Cambiare = class extends RootDisplay {
 			} = e;
 			let noteId = part << 7 | note;
 			channels[part] = true;
+			//console.debug(part);
 			if (state == 0) {
 				if (onNotes.has(noteId)) {
 					offNotes.add(noteId);
@@ -387,8 +388,9 @@ let Cambiare = class extends RootDisplay {
 		// Draw every note inside extraStates
 		offNotes.forEach((key) => {
 			let {part, note, velo, state} = extraStates[key];
-			let context = upThis.#sectPart[part >> 7][part & 15].cxt;
+			let context = upThis.#sectPart[part >> 4][part & 15].cxt;
 			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));
+			//console.debug(part, note);
 		});
 		// Write to the new pixel display buffers
 		let ccxt = upThis.#sectPix.cxt;

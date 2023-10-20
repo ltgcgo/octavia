@@ -107,6 +107,7 @@ PowerGtr	Power Gtr.
 Dst.5ths	Dist. Fifths
 FeedbkGt	Feedback Gt.
 FeedbkG2	Feedback Gt2
+TwinDist	Twin Dist.Gt
 RckRthm2	RockRhythm 2
 RockRthm	Rock Rhythm
 Dist.Gt#	Dist. Gtt. #
@@ -310,6 +311,7 @@ PulseSaw	Pulse Saw Ld
 Dr. Lead	Doctor Lead
 VeloLead	VelocityLead
 SimplSaw	Simple Saw.
+SeqAnal.	Seq. Analog
 NoviceLd	Novice Lead
 ElecPrim	ElecPrimtive
 DistLead	Distort.Lead
@@ -412,6 +414,8 @@ Lv Brush	LiveBrushKit
 Std&Perc	LiveStd&Perc
 FunkPerc	LvFunkPercKt
 Brush&P.	LvBrush&Perc
+LiveRm A	Live! Room A
+LiveRm B	Live! Room B
 PnoStPad	Piano St.Pad
 StRichSt	StageRichSt.
 Hnkytnk1	Honkytonk 1
@@ -426,5 +430,3 @@ MM-Clav3	MM-Clavi. 3
 MM-Vibe2	MM-Vibrafn.2
 MM-Vce 4	MM-Voices 4
 DX-SLd 9	DX-SquareLd9
-LiveRm A	Live! Room A
-LiveRm B	Live! Room B

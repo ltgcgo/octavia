@@ -85,6 +85,7 @@ PowerGtr	Power Guitar
 Dst.5ths	Distorted Fifths
 FeedbkGt	Feedback Guitar
 FeedbkG2	Feedback Guitar 2
+TwinDist	Twin Distortion Guitar
 RckRthm2	Rock Rhythm 2
 Dist.Gt#	Distortion Guitar #
 GtFeedbk	Guitar Feedback
@@ -239,6 +240,7 @@ Dim Saw	Dim Sawtooth Lead
 PulseSaw	Pulse Sawtooth Ld
 VeloLead	Velocity Lead
 SimplSaw	Simple Sawtooth
+SeqAnal.	Sequenced Analog Lead
 ElecPrim	Electric Primtive
 DistLead	Distortion Lead
 DaSyncLd	The Sync Lead
@@ -300,6 +302,8 @@ Lv Brush	Live! Brush Kit
 Std&Perc	Live! Standard+Perc Kit
 FunkPerc	Live! Funk + Perc Kit
 Brush&P.	Live! Brush + Perc Kit
+LiveRm A	Live! Room Kit A
+LiveRm B	Live! Room Kit B
 PnoStPad	Piano Stereo Pad
 StRichSt	Stage Rich Piano Stereo
 60's EP	60s' Electric Piano
@@ -313,5 +317,3 @@ MM-Clav3	MM Clavichord 3
 MM-Vibe2	MM Vibraphone 2
 DX-SLd 9	DX Square Lead 9
 DirtySaw	Dirty Sawtooth Lead
-LiveRm A	Live! Room Kit A
-LiveRm B	Live! Room Kit B

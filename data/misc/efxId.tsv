@@ -47,12 +47,12 @@ MSB	LSB	Name
 21	22	GS Rotary
 21	23	GS Stereo Flanger
 21	24	GS Step Flanger
-21	25	GS Tremelo
+21	25	GS Tremolo
 21	26	GS Auto Pan
 21	30	GS Compressor
 21	31	GS Limiter
 21	40	GS Hexa Chorus
-21	41	GS Tremelo Chorus
+21	41	GS Tremolo Chorus
 21	42	GS Stereo Chorus
 21	43	GS Space Delay
 21	44	GS 3D Chorus
@@ -60,7 +60,7 @@ MSB	LSB	Name
 21	51	GS Mod Delay
 21	52	GS 3-tap Delay
 21	53	GS 4-tap Delay
-21	54	GS Tremelo C Delay
+21	54	GS Tremolo C Delay
 21	55	GS Reverb
 21	56	GS Gate
 21	57	GS 3D Delay
@@ -154,7 +154,7 @@ MSB	LSB	Name
 2c	21	AI Phaser 2
 2c	22	AI Rotary
 2c	23	AI Auto Pan
-2c	24	AI Tremelo
+2c	24	AI Tremolo
 2c	25	AI 3-band EQ
 2c	26	AI Chorus+Delay
 2c	27	AI Flanger+Delay
@@ -198,7 +198,7 @@ MSB	LSB	Name
 45	01	XG Distort+Rotary
 45	02	XG Overdrive+Rotary
 45	03	XG Amp Sim+Rotary
-46	00	XG Tremelo
+46	00	XG Tremolo
 47	00	XG Auto Pan
 48	00	XG Phaser 1
 48	08	XG Phaser 2
