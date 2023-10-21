@@ -1049,10 +1049,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Can be optimized to move elements instead
 		let tree = [];
 		this.#chReceive.forEach((e, i) => {
-			if (!tree[e]?.constructor) {
-				tree[e] = [];
-			};
 			if (e < allocated.ch) {
+				if (!tree[e]?.constructor) {
+					tree[e] = [];
+				};
 				// Remove disabled channels
 				tree[e].push(i);
 			};
