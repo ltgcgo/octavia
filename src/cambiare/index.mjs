@@ -64,7 +64,7 @@ const metaNames = {
 	"XfSongBt",
 	"XfSngIns"
 ];
-const lineDash = [[], [4, 4], [2, 2]];
+const lineDash = [[], [12, 8], [6, 3]];
 const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}];
 
 let createElement = function (tag, classes, details = {}) {
@@ -242,14 +242,15 @@ let Cambiare = class extends RootDisplay {
 			};
 			case "line": {
 				if (isHeld) {
-					context.setLineDash(lineDash[range == 1 ? 1 : 2]);
 					switch (range) {
 						case 4: {
-							context.lineDashOffset = -1;
+							context.setLineDash(lineDash[2]);
+							//context.lineDashOffset = -1;
 							break;
 						};
 						default: {
-							context.lineDashOffset = 0;
+							context.setLineDash(lineDash[1]);
+							//context.lineDashOffset = 0;
 						};
 					};
 				} else {
