@@ -70,18 +70,58 @@ BscBHrmo	Basic Blues Harmonica
 SplBHrmo	Suppl. Blues Harmonica
 TngoAcd2	Bandoneon 2
 Bndoneon	Bandoneon
+NylonGt3	Nylon Guitar o
+VelGtHrm	Velo Harmonics
+NylonGt2	Nylon Guitar 2
+LequintG	Lequint Guitar
 12StrGtr	12 String Guitar
+Nyln&Stl	Nylon & Steel Guitar
+AtkSteel	Attack Steel Guitar
+MandoTrm	Mandolin Tremolo
+SteelGt2	Steel Guitar 2
+Stl&Body	Steel Guitar & Body
+MellowGt	Mellow Guitar
+HawaiiGt	Hawaiian Guitar
 ClnHalfG	Clean Half Guitar
 OpnHrdGt	Open Hard Guitar
 OpnHrdG2	Open Hard Guitar 2
 JC ClnGt	JC Clean Guitar
+AtkClnGt	Attack Clean Guitar
+ChorusGt	Chorus Guitar
+JC ChoGt	JC Chorus Guitar
 TCFrntPk	TC Front Pick
+TC Clean	TC Clean Guitar
+TC Cln 2	TC Clean Guitar 2
+LPRearAt	LP Rear Attack
 MidT.Gtr	Mid-tone Guitar
+Mu.DstGt	Muted Distortion Guitar
 TCMuteGt	TC Muted Guitar
+FunkGtr2	Funk Guitar 2
 OvrDrGt2	Overdriven Guitar 2
 OvrDrGt3	Overdriven Guitar 3
 MoDrvGtr	More Drive Guitar
+AtkDrvGt	Attack Drive Guitar
+LPOvrDrv	LP Overdrive Guitar
 LPOvrDr2	LP Overdrive 2
+LP HfDrv	LP Half Drive
+LPHfDrv2	LP Half Drive 2
+LPChorus	LP Chorus Guitar
+DistGtr2	Distortion Guitar 2
+DistGtr3	Distortion Guitar 3
+FstDstGt	Fast Distortion Guitar
+AtkDstGt	Attack Distortion Guitar
+FeedbkGt	Feedback Guitar
+FeedbkG2	Feedback Guitar 2
+PowerGtr	Power Guitar
+PowerGt2	Power Guitar 2
+5thDist.	5th Distortion
+RockRthm	Rock Rhythm Guitar
+RckRthm2	Rock Rhythm Guitar 2
+DsRthmGt	Distortion Rhythm
+GtFeedbk	Guitar Feedback
+GtrFdbk2	Guitar Feedback 2
+AcGtrHmo	Ac. Guitar Harmonics
+ElBaHrmo	E. Bass Harmonics
 WildAcBa	Wild Acoustic Bass
 AtkAcoBa	Attack Acoustic Bass
 F.Ba/Hrm	Fingered Bass/Harmonics
@@ -165,17 +205,44 @@ CutNoiz2	Cutting Noise 2
 DstCutNz	Distorted Cutting Noise
 Gtr.Fx!!	Guitar FX Menu
 BartkPiz	Bartok Pizzicato
+AcBaNz!!	Acoustic Bass Noise Menu
+DsGtNz!!	Dist. Guitar Noise Menu
+ElGtNz!!	E. Guitar Noise Menu 1
+ElGtNz!2	E. Guitar Noise Menu 2
 GtStrk!!	Guitar Stroke Menu
 GtSlide!	Guitar Slide Menu
+AcBaMute	Acoustic Bass Mute Noise
+AcBaTch.	Acou. Bass Touch Noise
+AcBaAtk.	Acou. Bass Attack Noise
+TCDownMt	TC Down Mute Noise
+TC Up Mt	TC Up Mute Noise
+TCDownNz	TC Down Noise
+DsGtUpNz	Dist. Guitar Up Noise
+DsGtDown	Dist. Guitar Down Noise
+DsGtDwn2	Dst. Guitar Down Noise 2
+DsGtMute	Dist. Guitar Mute Noise
+GtrStrk5	Guitar Stroke Noise 5
+StlGtrSl	Steel G. Slide Noise 1
+StlGtSl2	Steel G. Slide Noise 2
+StlGtSl3	Steel G. Slide Noise 3
+StlGtSl4	Steel G. Slide Noise 4
+Gtr.Strk	Guitar Stroke Noise 1
+GtrStrk2	Guitar Stroke Noise 2
+GtrStrk3	Guitar Stroke Noise 3
+GtrStrk4	Guitar Stroke Noise 4
 Fl.KClik	Flute Key Click
 BrthNz!!	Breath Noise Menu
+Fl.Brth2	Flute Breath 2
+Fl.Brth3	Flute Breath 3
 VoxBrth2	Voice Breath 2
+TrombnNz	Trombone Noise
 TrumptNz	Trumpet Noise
 Scratch2	Scratch Split
 CarTyreS	Car Tyre Squeal
 PercBang	Percussion Bang
 RailCros	Rail Crossing
 ApplzWav	Applause Waves
+BabyLaf.	Baby Laughing
 VxComeOn	Voice Come On
 AcouBass	Acoustic Bass 1
 SynBrass	Synth Brass 1

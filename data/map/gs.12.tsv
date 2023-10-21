@@ -106,21 +106,56 @@ BscBHrmo	BasicB.Harmo
 SplBHrmo	SupplB.Harmo
 TngoAcd2	Bandoneon 2
 Bndoneon	Bandoneon 3
+VelGtHrm	Velo Harmnix
+LequintG	Lequint Gt.
 12StrGtr	12Str Guitar
+Nyln&Stl	Nylon+Steel
+AtkSteel	Atk Steel Gt
+MandoTrm	MandolinTrem
+Stl&Body	Steel + Body
+HawaiiGt	Hawaiian Gt
+PedalStl	Pedal Steel
 ClnHalfG	Clean Half G
 OpnHrdGt	Open Hard Gt
 OpnHrdG2	Open Hard G2
 JC ClnGt	JC Clean Gt.
-TCFrntPk	TCFront Pick
+AtkClnGt	Atk CleanGt.
+JC ChoGt	JC Chorus Gt
+TCFrntPk	TC FrontPick
 TCRearPk	TC Rear Pick
+TC Clean	TC Clean ff
+TC Cln 2	TC Clean 2:
 LPRearPk	LP Rear Pick
+LPRearAt	LP RearAtack
 MidT.Gtr	Mid Tone Gtr
+ChgRuan2	Chung Ruan 2
+Mu.DstGt	Muted Dis.Gt
 TCMuteGt	TCMuted Gtr.
 Funk Gtr	Funk Guitar
 OvrDrGt2	Overdriven 2
 OvrDrGt3	Overdriven 3
 MoDrvGtr	More Drive G
-LPOvrDr2	LPOverdrive2
+Gt.Pinch	Guitar Pinch
+AtkDrvGt	Attack Drive
+LPOvrDrv	LP OverDrvGt
+LPOvrDr2	LP OvrDrv:
+LP HfDrv	LP Half Drv
+LPHfDrv2	LP Half Drv2
+DistGtr2	Dist. Gt2 :
+DazedGtr	Dazed Guitar
+DistGtr3	Distortion:
+FstDstGt	Dist.Fast :
+AtkDstGt	Attack Dist
+FeedbkGt	Feedback Gt.
+FeedbkG2	Feedback Gt2
+PowerGtr	Power Guitar
+RockRthm	Rock Rhythm
+RckRthm2	Rock Rhythm2
+DsRthmGt	DistRhythmGt
+GtFeedbk	Gt. Feedback
+GtrFdbk2	Gt.Feedback2
+AcGtrHmo	Ac.Gt.Harmnx
+ElBaHrmo	E.Bass Hrmnx
 WildAcBa	Wild Ac.Bass
 AtkAcoBa	AtkAcou.Bass
 JazzyBa2	Jazzy Bass 2
@@ -144,6 +179,7 @@ JungleBa	Jungle Bass
 SynBa201	Syn.Bass 201
 MGOctBa2	MGOctaveBas2
 BeefFMBa	Beef FM Bass
+BubbleBa	Bubble Bass
 ViolnAtk	Violin Atk.
 ViolaAtk	Viola Attack
 CelloAtk	Cello Attack
@@ -227,14 +263,44 @@ Gtr.Slap	Guitar Slap
 ChrdStrk	Chord Stroke
 BiwaStrk	Biwa Stroke
 BiwaTrem	Biwa Tremolo
+AcBaNz!!	AcouBassNz!!
+DsGtNz!!	Dist.GtrNz!!
+ElGtNz!!	El.Gtr.Nz!!1
+ElGtNz!2	El.Gtr.Nz!!2
 GtStrk!!	Gtr.Stroke!!
 GtSlide!	Gtr.Slide!!!
+AcBaMute	AcouBaMuteNz
+AcBaTch.	AcouBaTch.Nz
+AcBaAtk.	AcouBaAtk.Nz
+TCUpNoiz	TC Up Noise
+TCDownMt	TCDownMuteNz
+TC Up Mt	TC Up MuteNz
+TCDownNz	TCDown Noise
+DsGtUpNz	Dist.GtrUpNz
+DsGtDown	DstGtrDownNz
+DsGtDwn2	DstGtrDwnNz2
+DsGtMute	DstGtrMuteNz
+GtrStrk5	GtrStrokeNz5
+StlGtrSl	StlGSlideNz1
+StlGtSl2	StlGSlideNz2
+StlGtSl3	StlGSlideNz3
+StlGtSl4	StlGSlideNz4
+Gtr.Strk	GtrStrokeNz1
+GtrStrk2	GtrStrokeNz2
+GtrStrk3	GtrStrokeNz3
+GtrStrk4	GtrStrokeNz4
 Fl.KClik	FluteKyClick
 BrthNz!!	Breath Nz!!!
+Fl. Brth	Flute Breath
+Fl.Brth2	FluteBreath2
+Fl.Brth3	FluteBreath3
+VoxBrth.	Voice Breath
 VoxBrth2	VoiceBreath2
+TrombnNz	Trombone Nz
 TrumptNz	Trumpet Nz.
 White Nz	White Noise
 HorseGlp	Horse Gallop
+FancyAni	Fancy Animal
 DoorSqek	Door Squeak
 ScratchC	Scratch Cut
 Scratch2	ScratchSplit
@@ -246,12 +312,18 @@ CarTyreS	Car Tyre Scr
 Car Pass	Car Passing
 Calclate	Calculating
 Glas&Glm	Glass & Glam
+CrakBotl	Crack Bottle
+PourBotl	Pour Bottle
+CD Tray	Open CD Tray
 AudioSwi	Audio Switch
 CarStar2	Car Start 2
+SwordCrs	Sword Cross
 LaughVox	Laugh Voice
 ScreamVx	Scream Voice
 ApplzWav	ApplauseWave
+BabyLaf.	Baby Laughin
 Voice 3	Voice Three
+Vx Kikit	Voice Kikit
 MchinGun	Machine Gun
 Xploshn2	Explosion 2
 SynBrass	SynthBrass 1
