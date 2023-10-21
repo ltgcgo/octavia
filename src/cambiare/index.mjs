@@ -526,6 +526,8 @@ let Cambiare = class extends RootDisplay {
 		let upThis = this;
 		upThis.#style = value;
 		upThis.#redrawNotesInternal(upThis.render(upThis.#clockSource?.currentTime || 0));
+		classOff(upThis.#canvas, [`cambiare-style-block`, `cambiare-style-comb`, `cambiare-style-piano`, `cambiare-style-line`]);
+		classOn(upThis.#canvas, [`cambiare-style-${value}`]);
 	};
 	setClockSource(clockSource) {
 		this.#clockSource = clockSource;
@@ -605,7 +607,7 @@ let Cambiare = class extends RootDisplay {
 		attachElement.appendChild(containerElement);
 		upThis.#container = containerElement;
 		// Insert the canvas
-		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0"]);
+		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-block"]);
 		containerElement.appendChild(canvasElement);
 		upThis.#canvas = canvasElement;
 		// Start the resizer
