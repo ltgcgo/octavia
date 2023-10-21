@@ -198,43 +198,103 @@ ElBaHrmo	EBassHrmnx
 Rokabily	Rockabilly
 WildAcBa	WildAcBass
 AtkAcoBa	AtkAcou.Ba
+Bass+OHH	Bass + OHH
+FngrBas2	FingerdBs2
+Jazzy Ba	Jazzy Bass
 JazzyBa2	Jazzy Ba.2
+RockBass	Rock Bass
 HeartBas	Heart Bass
+AtkFngr.	Atk.Finger
+FngrSlap	FingerSlap
+ChorJzBa	ChorusJzBs
 F.Ba/Hrm	F.Ba/Harm.
+PickBas2	PickedBas2
 PickBas3	PickedBas3
 PickBas4	PickedBas4
 DblPikBa	DblPickBas
+M.PkBass	MutedPikBs
+PkBa/Hrm	PkBass/Hrm
 Fretles2	Fretless 2
+Fretles3	Fretless 3
+Fretles4	Fretless 4
+SynFretl	SynFretles
+SmthFrtl	SmthFrtles
 WoodFrtl	Wood+Frtls
+Pop Slap	PopSlapBas
 ResoSlap	ResoSlapBa
+UnisnSlp	UnisonSlap
+SlpBass3	SlapBass 3
+FM Slap	FMSlapBass
 SynBa101	SynthBs101
-SynBass3	Syn Bass 3
+JP-4 Ba	JP-4 Bass
+JP-8 Ba	JP-8 Bass
+JPMG Ba	JPMG Bass
+SynBass3	SynthBass3
+AcidBass	Acid Bass
+TB303 Ba	TB303 Bass
+TechnoBa	TechnoBass
+TB303Ba2	TB303 Bas2
+TB303Kik	TB303 Kick
+TB303Saw	TB303 Saw
+Rubbr303	Rubber 303
 Reso 303	Reso 303Ba
 ResoSHBa	Reso SH Ba
 303SqrBa	303 Sqr.Ba
 303DstBa	303 DistBa
 JungleBa	JungleBass
+ArpgioBa	ArpeggioBs
 303SqDst	303SqDstBa
 303SqDs2	303SqDsBa2
 303SqDs2	303SqDsBa2
 303SqDs3	303SqDsBa3
 303SqrRv	303Sqr.Rev
 SynBa201	SynBass201
+ModulrBs	Modular Bs
+Seq.Bass	SequenceBs
+MGOctBas	MGOctavBa1
 MGOctBa2	MGOctavBa2
 MGBlipBa	MG Blip Bs
 SynBass4	Syn Bass 4
 BeefFMBa	Beef FM Ba
+X WireBa	X Wire Bas
+Dly Bass	Delay Bass
+WreStrBa	WireStrBas
+BlipBass	Blip Bass
+RubbrBa2	RubberBas2
+SynBelBa	SynthBelBa
+RubberBa	RubberBass
+SH101Ba1	SH101Bass1
+SH101Ba2	SH101Bass2
+SmoothBa	SmoothBass
+SH101Ba3	SH101Bass3
+Spike Ba	Spike Bass
+House Ba	House Bass
 SyncBass	Sync Bass
+MG5th Ba	MG 5th Bas
+RandomBa	RandomBass
+WowMG Ba	WowMG Bass
 BubbleBa	BubbleBass
 ViolnAtk	Violin Atk
+SlwVioln	SlowViolin
 ViolaAtk	Viola Atk.
 CelloAtk	Cello Atk.
+TrmStrSt	TremStrSt.
 SlwTrStr	SlowTrmStr
+Susp.Str	Susp. Str.
+SuspStr2	Susp.Str.2
 VcCbPizz	VcCb Pizz.
+ChmbrPiz	ChamberPiz
 St. Pizz	Ste. Pizz.
 SoloPizz	Solo Pizz.
+SoloSpic	Solo Spic.
 StrsSpic	Str. Spic.
+Harp&Str	Harp&Strng
+Harp St.	HarpStereo
 UileanHp	UileanHarp
+Syn.Harp	Synth Harp
+YangChin	Yang Qin
+YangQin2	Yang Qin 2
+SynYanQn	SynYangQin
 Slow Str	SlowString
 Mild Str	Mild Str.
 OrchStr2	Orchestra2
@@ -281,10 +341,31 @@ StOrBrs2	StOrchBrs2
 StOrBrs3	StOrchBrs3
 SynBras3	SynBrass 3
 SynBras4	SynBrass 4
+ExpSprno	ExpSoprano
+HyprAlto	Hyper Alto
 Exp.Alto	Expr. Alto
+Alto+Trp	AltoSx+Trp
 Sax Sect	Sax Sect.
+TenrSax2	TenorSax 2
+BrthTnSx	BrthyTenor
+St.TnrSx	St.TenorSx
+BariSax2	Bari.Sax 2
+Bari&Tnr	Bari&Tenor
+Exp.Oboe	Expr. Oboe
+Mul.Reed	Multi Reed
 BsClari.	BassClari.
+MultiWnd	Multi Wind
+QuadWind	Quad Wind
 Piccolo2	Piccolo 2
+NayTrem.	NayTremolo
+ExpFlute	Expr.Flute
+TrvFlute	TrvlsFlute
+FluteVln	Flute+Vln
+PipeReed	Pipe&Reed
+TrnFlute	Tron Flute
+IndiaFlu	IndiaFlute
+ZmpnaAtk	ZamponaAtk
+TinWhist	TinWhistle
 TinWhsNm	TinWhis.Nm
 TinWhsOr	TinWhis.Or
 Whistle2	Whistle 2
@@ -321,6 +402,18 @@ LFO Tech	LFO Techno
 Altrnate	Alternate
 EchoBell	Echo Bell
 Reso Pan	Reso. Pan
+DetSitar	Det. Sitar
+SitarDrn	SitarDrone
+MuteBnjo	MutedBanjo
+Gopichnt	Gopichant
+Oud&Str	Oud+String
+SynShami	SynthShami
+Taisho	TaishoKoto
+Kann&Chr	Kanoon+Chr
+Oct Harp	OctaveHarp
+MuteBodh	MutedBodhr
+Didgrdoo	Didgeridoo
+UillPipe	UilleanPpe
 UillPpNm	UillPipeNm
 UillPpOr	UillPipeOr
 RideCym!	Ride Cym!!

@@ -158,36 +158,77 @@ AcGtrHmo	Ac.Gt.Harmnx
 ElBaHrmo	E.Bass Hrmnx
 WildAcBa	Wild Ac.Bass
 AtkAcoBa	AtkAcou.Bass
+FngrBas2	Fingered Bs2
 JazzyBa2	Jazzy Bass 2
+AtkFngr.	Attak.Finger
+FngrSlap	Finger Slap
+ChorJzBa	ChorusJazzBs
 F.Ba/Hrm	F.Bass/Harm.
+PickBas2	PickedBass 2
 PickBas3	Picked Bass3
 PickBas4	Picked Bass4
 DblPikBa	Dbl.PickBass
+M.PkBass	Muted PickBs
+PkBa/Hrm	PkBass/Harm.
+SynFretl	SynthFretles
+SmthFrtl	SmoothFrtles
 WoodFrtl	Wood+Fretles
 SlapBass	Slap Bass 1
+Pop Slap	Pop SlapBass
 ResoSlap	Reso Slap Ba
+UnisnSlp	Unison Slap
+SlpBass3	Slap Bass 3
+FM Slap	FM Slap Bass
 SynBa101	SynthBass101
+SynBass3	Synth Bass 3
+TechnoBa	Techno Bass
+TB303Ba2	TB303 Bass 2
+TB303Kik	TB303 KickBs
+TB303Saw	TB303 Saw Bs
+Rubbr303	Rubber 303Bs
 Reso 303	Reso 303Bass
 ResoSHBa	Reso SH Bass
 303SqrBa	303 Sqr. Ba.
 303DstBa	303 Dist Ba.
 JungleBa	Jungle Bass
+ArpgioBa	ArpeggioBass
 303SqDst	303 SqDistBa
 303SqDs2	303 SqDstBa2
 303SqDs3	303 SqDstBa3
 303SqrRv	303 Sqr. Rev
 SynBa201	Syn.Bass 201
+ModulrBs	Modular Bass
+Seq.Bass	Sequenced Bs
+MGOctBas	MGOctaveBas1
 MGOctBa2	MGOctaveBas2
 BeefFMBa	Beef FM Bass
+X WireBa	X Wire Bass
+WreStrBa	WireStr Bass
+RubbrBa2	Rubber Bass2
+SynBelBa	SynthBellBas
+RubberBa	Rubber Bass
+SH101Ba1	SH101 Bass 1
+SH101Ba2	SH101 Bass 2
+SmoothBa	Smooth Bass
+SH101Ba3	SH101 Bass 3
+RandomBa	Random Bass
 BubbleBa	Bubble Bass
 ViolnAtk	Violin Atk.
+SlwVioln	Slow Violin
 ViolaAtk	Viola Attack
 CelloAtk	Cello Attack
+TrmStrSt	Trem Str.St.
 SlwTrStr	Slow Tremolo
+Susp.Str	Suspense Str
+SuspStr2	SuspenseStr2
 VcCbPizz	Vc/Cb Pizz.
+ChmbrPiz	Chamber Pizz
 St. Pizz	Stereo Pizz.
 StrsSpic	Strings Spic
+Harp&Str	Harp&Strings
+Harp St.	Harp Stereo
 UileanHp	Uillean Harp
+SynYanQn	SynthYangQin
 Slow Str	Slow Strings
 Mild Str	Mild Strings
 OrchStr2	Orchestra 2
@@ -216,9 +257,25 @@ StOrBrs2	St.Orch.Brs2
 StOrBrs3	St.Orch.Brs3
 SynBras3	SynthBrass 3
 SynBras4	SynthBrass 4
+ExpSprno	Expr.Soprano
 Exp.Alto	Express Alto
+Alto+Trp	Alto Sax+Trp
 Sax Sect	Sax Section
+TenrSax2	Tenor Sax 2
+BrthTnSx	BreathyTenor
+St.TnrSx	St.Tenor Sax
+BariSax2	Bari. Sax 2
+Bari&Tnr	Bari & Tenor
+Exp.Oboe	Express Oboe
 BsClari.	BassClarinet
+NayTrem.	Nay Tremolo
+ExpFlute	ExpressFlute
+TrvFlute	Travelso Flt
+FluteVln	Flute+Violin
+PipeReed	Pipe & Reed
+IndiaFlu	Indian Flute
+ZmpnaAtk	Zampona Atk.
+TinWhist	Tin Whistle
 TinWhsNm	TinWhistleNm
 TinWhsOr	TinWhistleOr
 MGSquare	MG Square Ld
@@ -243,6 +300,17 @@ OBSoftPd	OB Soft Pad
 SynMalet	Synth Mallet
 Altrnate	Alternative
 Reso Pan	Resonant Pan
+DetSitar	DetunedSitar
+SitarDrn	Sitar/Drone
+MuteBnjo	Muted Banjo
+Oud&Str	Oud+Strings
+SynShami	Synth Shami
+Taisho	Taisho Koto
+Kann&Chr	Kanoon+Choir
+Oct Harp	Octave Harp
+MuteBodh	MutedBodhran
+Didgrdoo	Didgeridoo
+UillPipe	Uillean Pipe
 UillPpNm	UileanPipeNm
 UillPpOr	UileanPipeOr
 RideCym!	Ride Cymb.!!
