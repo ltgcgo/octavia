@@ -229,13 +229,36 @@ Harp&Str	Harp&Strings
 Harp St.	Harp Stereo
 UileanHp	Uillean Harp
 SynYanQn	SynthYangQin
-Slow Str	Slow Strings
+BriteStr	Bright Str:
+ChmbrStr	Chamber Str:
+CellSect	Cello sect.
 Mild Str	Mild Strings
 OrchStr2	Orchestra 2
-OrchStr3	Orch. Str 3
-Syn.Str3	SynthString3
+TremOrch	Tremolo Orch
+Str&FrHr	Strings+Horn
+StStrngs	St. Strings
+OrchStr3	Orchestra 3
+Velo.Str	Velo Strings
+OctavStr	Oct Strings1
+OctStr.2	Oct Strings2
+SlowStr2	SlowStrings2
+LegatoSt	Legato Str.
+Warm Str	Warm Strings
+StSlwStr	StSlow Str.
+StackStr	StackStrings
+Syn.Str3	Syn.Strings3
+Syn.Str4	Syn.Strings4
+High Str	High Strings
+HybrdStr	Hybrid Str.
+Tron Str	Tron Strings
+NoizyStr	Noiz Strings
+Syn.Str5	Syn.Strings5
+JUNO Str	JUNO Strings
 Air Str.	Air Strings
 MltChoir	Melted Choir
+ChurchCh	Church Choir
+ChoirAh2	Choir Aahs 2
+MaleC.Ah	Male Aah+Str
 OohsMaj7	Oohs (maj7)
 OohsSus4	Oohs (sus4)
 FemChoLa	FemaleCh.Lah
@@ -244,19 +267,45 @@ FemChLan	FemaleCh.Lan
 F.La&Lan	FemaleLa&Lan
 MalChoWa	Male Cho.Wah
 SyVoice2	Syn.Voice 2
+SlntNght	Silent Night
+VP330	VP330 Choir
+VnlChoir	Vinyl Choir
+Tkng Hit	Technorg Hit
+Str. Hit	Strings Hit
 Trp&Noiz	Trumpt&Noise
-BassTrom	Bass Trmbone
+FlugelHr	Flugel Horn
+4th Trp	4th Trumpets
+Syn Trp	Syn. Trumpet
+BassTrom	Bs. Trombone
 CMuteTrp	Cup MutedTrp
+MutedHrn	Muted Horns
+Hrn+Orch	Horn + Orche
+WideFrHr	Wide FreHrns
+FrHrSolo	Fr.Horn Solo
 SlwFrHrn	Slow Fr.Horn
+DualFrHr	Dual Horns
+HornOrch	Horn Orch.
 RipFrHrn	Rip Fr. Horn
-BoneSect	Bone Section
+BoneSect	Bones Sect.
 Trp Fall	Trumpet Fall
+OctBrass	Octave Brass
+Brs+Reed	Brass + Reed
 OrchBras	Orch. Brass
 OrchBrs2	Orch.Brass 2
 StOrBrs2	St.Orch.Brs2
 StOrBrs3	St.Orch.Brs3
+StackBrs	Stack Brass
 SynBras3	SynthBrass 3
+QuackBrs	Quack Brass
+Anal.Brs	Analog Brass
+Octa.Brs	OctaveBrass2
+OctSynBr	Oct SynBrass
+HybridBr	Hybrid Brass
 SynBras4	SynthBrass 4
+SynSfzBr	SynBrass sfz
+Ana.Brs2	AnalogBrass2
+VeloBras	Velo Brass 1
+VeloBrs2	Velo Brass 2
 ExpSprno	Expr.Soprano
 Exp.Alto	Express Alto
 Alto+Trp	Alto Sax+Trp
@@ -287,19 +336,73 @@ JP8Pulse	JP8 Pulse Ld
 JP8Puls2	JP8 Pulse 2
 MGRezPls	MG Rez.Pulse
 GR-300	GR-300 Lead
+Dr. Lead	Doctor Solo
+ThickSaw	Fat Saw Lead
 D-50 Fat	D-50 FatLead
+WaspySyn	Waspy Synth
 CS SawLd	CS Saw Lead
 OB Saw 2	OB SawLead 2
 P5 SawLd	P5 Saw Lead
 Seq.Saw.	SequencedSaw
 Reso Saw	Resonant Saw
+Pure Pan	Pure PanLead
 FatGR Ld	Fat GR Lead
-JP8BaLd1	JP8BassLead1
+Acid Gtr	Acid Guitar
+AcidGtr2	Acid Guitar2
+P5Snc.Ld	P5 Sync Lead
+FatSncLd	FatSync Lead
+5thDcySn	5thDecaySync
+JUNOSbOs	JUNO Sub Osc
+5thAnClv	5th Ana.Clav
+Fat&Prky	Fat & Perky
+JP8BaLd1	JP8 Bs Lead1
+JP8BaLd2	JP8 Bs Lead2
+SH-5BaLd	SH-5 Bs.Lead
+BelHeavn	Bell Heaven
 ThickMtx	Thick Matrix
+RotarStr	RotaryString
 OBSoftPd	OB Soft Pad
+80sPlySy	80's PolySyn
+PlySyPd2	Polysynth 2
+PwrStack	Power Stack
+OctStack	Octave Stack
+TekStack	Techno Stack
+CosmicVx	Cosmis Voice
+Vocorder	Vocorderman
+SftBelPd	SoftBellPad
+JP8SqrPd	JP8 Sqr Pad
+7thBelPd	7thBelPad
+VoicePad	Vox Pad
+VoxSweep	Vox Sweep
+Celstial	Celestial Pd
+AfrcWind	African Wind
+AnklngPd	Anklung Pad
+Hols Str	Hols Strings
 SynMalet	Synth Mallet
+SftCryst	Soft Crystal
+RndGlock	Round Glock
+LoudGlok	Loud Glocken
+GlockChi	GlockenChime
+ClearBel	Clear Bells
+XmasBell	ChristmasBel
+VibraBel	Vibra Bells
+Anal.Bel	Analog Bell
+ChorlBel	Choral Bell
+Harp Vox	Harpvox
+Holw.Rlz	HollowReleas
+NlnRhode	Nylon+Rhodes
+Ambient	Ambient Pad
+NoisePno	Noise Piano
+ShneStar	Shining Star
+50sSciFi	50's Sci-Fi
+Low Bird	LowBirds Pad
+FallDown	Falling Down
 Altrnate	Alternative
 Reso Pan	Resonant Pan
+WaterPno	Water Piano
+Pan Seq.	Pan Sequnce
+Sci-Fi 2	Star Theme 2
+NewCntry	New Century
 DetSitar	DetunedSitar
 SitarDrn	Sitar/Drone
 MuteBnjo	Muted Banjo
@@ -313,14 +416,25 @@ Didgrdoo	Didgeridoo
 UillPipe	Uillean Pipe
 UillPpNm	UileanPipeNm
 UillPpOr	UileanPipeOr
+GmlnGong	Gamelan Gong
+StGameln	St. Gamelan
+RAMACymb	RAMA Cymbal
 RideCym!	Ride Cymb.!!
 RideBel!	Ride Bells!!
+AngkRthm	Angkl Rhythm
+FngrSnap	Finger Snaps
 909 Clap	909 HandClap
 HandClp!	Hand Clap!!!
+SmallTko	Small Taiko
 Kick3 !!	Kick 3 Menu
 Kick4 !!	Kick 4 Menu
 MeloTom2	Melod. Tom 2
 ElecPerc	Elec Perc 1
+RvCymbl2	Rev.Cymbal 2
+RvCymbl3	Rev.Cymbal 3
+RvCymbl4	Rev.Cymbal 4
+RevSnare	Rev.Snare 1
+RvSnare2	Rev.Snare 2
 Str.Slap	String Slap
 CutNoiz2	Cut Noise 2
 DstCutNz	DistCutNoise
@@ -407,6 +521,7 @@ PipeOrg3	Pipe Organ 3
 Clavi. 2	Clavichord 2
 Clavi. 3	Clavichord 3
 Syn.Bass	Synth Bass 1
+Fantasy	New Age Pad
 HarmoPan	Harmonic Pan
 FunnyVox	Funny Voices
 Dr. Solo	Doctor Solo

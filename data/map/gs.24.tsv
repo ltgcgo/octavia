@@ -177,27 +177,67 @@ SoloSpic	Solo Spiccato
 StrsSpic	String Spiccato
 Harp&Str	Harp & Strings
 SynYanQn	Synth Yang Qin
+Slow Str	Slow Strings
+BriteStr	Bright Strings
+ChmbrStr	Chamber Strings
+CellSect	Cello Section
+Orch.Str	Orchestra Strings
 OrchStr2	Orchestra Strings 2
-OrchStr3	Orchestral Strings 3
+TremOrch	Tremolo Orchestra
+ChoirStr	Choir Strings
+Str&FrHr	Strings + Horn
+StStrngs	Stereo Strings
+OrchStr3	Orchestra Strings 3
+OctavStr	Octave Strings 1
+OctStr.2	Octave Stings. 2
+SlowStr2	Slow Strings 2
+LegatoSt	Legato Strings
+StSlwStr	Stereo Slow Strings
+StackStr	Stack Strings
 Syn.Str3	Synth Strings 3
+Syn.Str4	Synth Strings 4
+High Str	High Strings
+HybrdStr	Hybrid Strings
+NoizyStr	Noisy Strings
+Syn.Str5	Synth Strings 5
+St.Choir	Stereo Choir
+MaleC.Ah	Male Aahs + Strings
 FemChoLa	Female Chorus Lah
 FemChoLu	Female Chorus Luh
 FemChLan	Female Chorus Lan
 F.La&Lan	Female Lah & Lan
 MalChoWa	Male Chorus Wah
 SyVoice2	Synth Voice 2
+Perc.Hit	Percussive Hit
+Dist.Hit	Distortion Hit
 Trp&Noiz	Trumpet & Noise
+BriteTrp	Bright Trumpet
+Warm Trp	Warm Trumpet
+Syn Trp	Synth Trumpet
+Twinbone	Twin Bones
 BassTrom	Bass Trombone
 CMuteTrp	Cup Muted Trumpet
+MutedHrn	Muted French Horn
+FrHorn 2	French Horn 2
+Hrn+Orch	Horn + Orchestra
+WideFrHr	Wide French Horn
+FrHrSolo	Solo French Horn
 SlwFrHrn	Slow French Horn
 RipFrHrn	Rip French Horn
 BoneSect	Trombone Section
+BrsSect2	Brass Section 2
+BrsSect3	Brass Section 3
+SforzBrs	Sforzando Brass
 OrchBras	Orchestral Brass
 OrchBrs2	Orchestral Brass 2
 StOrBrs2	Stereo Orch. Brass 2
 StOrBrs3	Stereo Orch. Brass 3
 SynBras3	Synth Brass 3
+OctSynBr	Octave Synth Brass
 SynBras4	Synth Brass 4
+SynSfzBr	Sforzando Synth Brass
+RezBrass	Resonant Brass
+Ana.Brs2	Analog Brass 2
 ExpSprno	Expressive Soprano Sax
 Exp.Alto	Expressive Alto
 Alto+Trp	Alto Sax + Trumpet
@@ -214,17 +254,63 @@ ZmpnaAtk	Zampona Attack
 TinWhsNm	Tin Whistle Normal
 TinWhsOr	Tin Whistle Oral
 MGSquare	MG Square Lead
+MellowFM	Mellow FM Lead
+LMSquare	LM Square Lead
+P5Square	P5 Square Lead
+OBSquare	OB Square Lead
 JP-8 Sqr	JP-8 Square Lead
 DsSquare	Distorted Square
 JP8Pulse	JP8 Pulse Lead
 JP8Puls2	JP8 Pulse Lead 2
 MGRezPls	MG Resonant Pulse
+PulseSaw	Pulse Sawtooth Lead
+Dr. Lead	Doctor Lead
+ThickSaw	Fat Sawtooth Lead
 D-50 Fat	D-50 Fat Lead
 OB Saw 2	OB Saw Lead 2
 Seq.Saw.	Sequenced Sawtooth
 Reso Saw	Resonant Sawtooth
+VentLead	Vent Synth Lead
+Pure Pan	Pure Pan Lead
+DistLead	Distortion Lead
+AcidGtr2	Acid Guitar 2
+FatSncLd	Fat Sync Lead
+5thDcySn	5th Decay Synv
+JUNOSbOs	JUNO Sub Oscillator
+5thAnClv	5th Analog Clav.
 JP8BaLd1	JP8 Bass Lead 1
+JP8BaLd1	JP8 Bass Lead 1
+JP8BaLd2	JP8 Bass Lead 2
+SH-5BaLd	SH-5 Bass Lead
+Fantasy2	Fantasia 2
+Fantasy1	Fantasia
+RotarStr	Rotary Strings
+80sPlySy	80s' Poly Synth
+PlySyPd2	Poly Synth Pad 2
+PolyKing	Poly Synth King
+RezStack	Resonant Stack
+Auh Vox	Auh Voice
+SftBelPd	Soft Bell Pad
+JP8SqrPd	JP8 Square Pd
+7thBelPd	7th Bell Pad
+VoxSweep	Voice Sweep
+Celstial	Celestial Pad
+HrmoRain	Harmonic Rain
+ClaviPad	Clavichord Pad
+RndGlock	Round Glockenspiel
+LoudGlok	Loud Glockenspiel
+GlockChi	Glockenspiel Chime
+XmasBell	Christmas Bell
+VibraBel	Vibraphone Bells
 DigiBell	Digital Bells
+WarmAtms	Warm Atmosphere
+Harp Vox	Harp Voice
+Holw.Rlz	Hollow Release
+NlnRhode	Nylon + Rhodes
+RandmStr	Random Strings
+Low Bird	Low Birds Pad
+Sci-Fi 2	Science Fiction 2
+7thAtmos	7th Atmosphere
 DetSitar	Detuned Sitar
 SitarDrn	Sitar / Drone
 Oud&Str	Oud + Strings
@@ -233,16 +319,31 @@ Kann&Chr	Kanoon + Choir
 MuteBodh	Muted Bodhran
 UillPpNm	Uillean Pipe Normal
 UillPpOr	Uillean Pipe Oral
+StGameln	Stereo Gamelan
 RideCym!	Ride Cymbal Menu
 RideBel!	Ride Bell Menu
+AngkRthm	Angklung Rhythm
 909 Clap	909 Hand Clap
 HandClp!	Hand Clap Menu
 ConcrtBD	Concert Bass Drums
 JungleBD	Jungle Bass Drums
 TechnoBD	Techno Bass Drums
 MeloTom2	Melodic Tom 2
+Rash SD	Rash Snare Drums
+House SD	House Snare Drums
 JungleSD	Jungle Snare Drums
-ElecPerc	Electric Perc 1
+909 SD	909 Snare Drums
+ElecPerc	Electric Percussion 1
+SinePerc	Sine Percussion
+RvCymbl2	Reverse Cymbal 2
+RvCymbl3	Reverse Cymbal 3
+RvCymbl4	Reverse Cymbal 4
+RevSnare	Reverse Snare 1
+RvSnare2	Reverse Snare 2
+Rev Kick	Reverse Kick
+RevConBD	Rev. Concert Bass Drum
+Rev.Tom	Reverse Tom
+Rev.Tom2	Reverse Tom 2
 CutNoise	Cutting Noise
 CutNoiz2	Cutting Noise 2
 DstCutNz	Distorted Cutting Noise

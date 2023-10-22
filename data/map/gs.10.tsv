@@ -295,18 +295,45 @@ Syn.Harp	Synth Harp
 YangChin	Yang Qin
 YangQin2	Yang Qin 2
 SynYanQn	SynYangQin
-Slow Str	SlowString
+Slow Str	Strings 2
+BriteStr	Bright Str
+ChmbrStr	ChamberStr
+CellSect	Cello Sect
 Mild Str	Mild Str.
+Orch.Str	Orchestra
 OrchStr2	Orchestra2
-OrchStr3	Orch.Str 3
+TremOrch	Trem.Orch.
+ChoirStr	Choir Str.
+Str&FrHr	Strng+Horn
+StStrngs	St.Strings
+OrchStr3	Orchestra3
+Velo.Str	VeloStrngs
+OctavStr	Oct Str. 1
+OctStr.2	Oct Str. 2
+SlowStr2	SlowStrng2
+LegatoSt	Legato Str
+Warm Str	Warm Str.
+StSlwStr	StSlow Str
 OB Str.	OB Strings
+StackStr	Stack Str.
 JP Str.	JP Strings
 Syn.Str3	SynthStr.3
+Syn.Str4	SynthStr.4
+High Str	HighString
+HybrdStr	Hybrid Str
+Tron Str	TronString
+NoizyStr	NoizString
+Syn.Str5	SynthStr.5
+JUNO Str	JUNOString
 Air Str.	Air String
+St.Choir	St. Choir
 MltChoir	Melt Choir
+ChurchCh	Church Ch.
 BoyChoir	Boy Choir
 ChoirHah	Choir Hahs
 ChoirLah	Choir Lahs
+ChoirAh2	ChoirAahs2
+MaleC.Ah	MaleAah+St
 OohsMaj7	Oohs maj7
 OohsSus4	Oohs sus4
 JazzScat	Jazz Scat
@@ -320,27 +347,76 @@ FemChLan	Fem.Ch.Lan
 F.La&Lan	Fem.La&Lan
 MalChoWa	MaleCh.Wah
 SyVoice2	SynVoice 2
+SlntNght	SilntNight
+VP330	VP330Choir
+VnlChoir	VinylChoir
+ImpactHt	Impact Hit
+PhillyHt	Philly Hit
+DoublHit	Double Hit
+Perc.Hit	Perc. Hit
+ShockWav	Shock Wave
 LoFiRave	Lo-Fi Rave
+TechnoHt	Techno Hit
+Dist.Hit	Dist. Hit
+Tkng Hit	TeknorgHit
+Str. Hit	StringsHit
 StackHit	Stack Hit
 Trumpet2	Trumpet 2
 Trumpet3	Trumpet 3
 Trp&Noiz	Trpt&Noise
-Twinbone	Twinbones
+FlugelHr	FlugelHorn
+4th Trp	4thTrumpet
+BriteTrp	Bright Tp.
+Warm Trp	Warm Tp.
+Syn Trp	SynTrumpet
+Trombon2	Trombone 2
+Twinbone	Twin bones
 BassTrom	Bass Trmb.
 CMuteTrp	CupMuteTrp
+MutedHrn	Muted Horn
 FrHorn 2	Fr. Horn 2
+Hrn+Orch	Horn+Orche
+WideFrHr	Wide FrHrn
+FrHrSolo	Solo FrHrn
 SlwFrHrn	Slow FrHrn
+DualFrHr	Dual FrHrn
+HornOrch	Horn Orch.
+Syn.Horn	Synth Horn
 RipFrHrn	Rip FrHorn
 BoneSect	Bone Sect.
 QuadBras	Quad Brass
+BrsSect2	Brass 2
+BrsSect3	Brass 3
+SforzBrs	Brass sfz
 BrasFall	Brass Fall
 Trp Fall	TrumptFall
+OctBrass	OctavBrass
+Brs+Reed	Brass+Reed
 OrchBras	Orch.Brass
 OrchBrs2	Orch.Brs 2
 StOrBrs2	StOrchBrs2
 StOrBrs3	StOrchBrs3
+PolyBras	Poly Brass
+JUNO Brs	JUNO Brass
+StackBrs	StackBrass
+SH-5 Brs	SH-5 Brass
+MKS Bras	MKS Brass
 SynBras3	SynBrass 3
+ProBrass	Pro Brass
+QuackBrs	QuackBrass
+Anal.Brs	AnalgBrass
+Octa.Brs	OctavBrass
+OctSynBr	Oct SynBrs
+HybridBr	Hybrid Brs
+SoftBras	Soft Brass
+WarmBras	Warm Brass
 SynBras4	SynBrass 4
+SynSfzBr	SynBrs sfz
+RezBrass	Reso Brass
+Ana.Brs2	AnalogBrs2
+VeloBras	VeloBrass1
+VeloBrs2	VeloBrass2
+TransBrs	Transbrass
 ExpSprno	ExpSoprano
 HyprAlto	Hyper Alto
 Exp.Alto	Expr. Alto
@@ -371,37 +447,142 @@ TinWhsOr	TinWhis.Or
 Whistle2	Whistle 2
 MGSquare	MG Square
 HolwMini	HollowMini
+MellowFM	Mellow FM
 CC Solo	CC Solo Ld
+LMSquare	LM Square
 SineWave	Sine Wave
 2600Sine	2600 Sine
+SineLead	Sine Lead
+P5Square	P5 Square
+OBSquare	OB Square
 JP-8 Sqr	JP-8 Sqr.
 DsSquare	DistSquare
+Pulse Ld	Pulse Lead
 JP8Pulse	JP8 Pulse
 JP8Puls2	JP8 Pulse2
 MGRezPls	MGRezPulse
+PulseSaw	Pulse Saw
+FelineGR	Feline GR
+VeloLead	Velo Lead
 GR-300	GR-300 Ld
+Dr. Lead	DoctorSolo
+ThickSaw	Fat Saw Ld
 D-50 Fat	D-50 FatLd
+WaspySyn	WaspySynth
 CS SawLd	CS Saw Ld
 OB Saw 2	OB SawLd 2
 P5 SawLd	P5 Saw Ld
 MGUnison	MG Unison
 Seq.Saw.	Seq. Saw.
 Reso Saw	Reso. Saw
+VentLead	Vent Synth
+Pure Pan	Pure PanLd
 FatGR Ld	Fat GR Ld
+DistLead	Dist.Lead
+Acid Gtr	Acid Gtr.
+AcidGtr2	Acid Gtr.2
+P5Snc.Ld	P5 Sync Ld
+FatSncLd	FatSync Ld
+RockLead	Rock Lead
+5thDcySn	5thDecaySn
 DirtySnc	Dirty Sync
+JUNOSbOs	JUNOSubOsc
 LFO Vox	LFO Voice
+5thAnClv	5thAna.Clv
+Big&Raw	Big & Raw
+Fat&Prky	Fat&Perky
+JUNORave	JUNO Rave
 JP8BaLd1	JP8BassLd1
+JP8BaLd2	JP8BassLd2
+SH-5BaLd	SH-5 Bs.Ld
+Fantasy2	Fantasia 2
+Fantasy1	NewAge Pad
+BelHeavn	BellHeaven
+ThickPad	Thick Pad
 ThickMtx	ThickMatrx
+RotarStr	Rotary Str
 OBSoftPd	OB Soft Pd
+OctavePd	Octave Pad
+StackPad	Stack Pad
+80sPlySy	80sPolySyn
+PlySyPd2	Polysynth2
+PolyKing	Poly King
+PwrStack	PowerStack
+OctStack	Oct. Stack
+RezStack	Reso Stack
+TekStack	TeknoStack
+SCHeaven	SC Heaven
+CosmicVx	Cosmis Vox
+Auh Vox	Auh Voice
+Vocorder	Vocordermn
+SftBelPd	SoftBellPd
+JP8SqrPd	JP8 Sqr Pd
+7thBelPd	7thBellPad
+PannerPd	Panner Pad
 VoicePad	Voice Pad
+VoxSweep	VoiceSweep
+HorrorPd	Horror Pad
+PolarPad	Polar Pad
+Celstial	CelestiaPd
+BagSweep	Bag Sweep
+HrmoRain	Harmo Rain
+AfrcWind	AfricaWind
+AnklngPd	AnklungPad
+RattlePd	Rattle Pad
+ClaviPad	Clavi Pad
+Ancestrl	Ancestral
+Prolog 2	Prologue 2
+Hols Str	Hols Str.
 SynMalet	Syn Mallet
+SftCryst	SoftCrystl
+RndGlock	RoundGlock
+LoudGlok	Loud Glock
+GlockChi	GlockChime
+ClearBel	ClearBells
+XmasBell	Xmas Bell
+VibraBel	VibraBells
 DigiBell	Digi Bells
+MusicBel	Music Bell
+Anal.Bel	AnalogBell
+ChorlBel	ChoralBell
+AirBells	Air Bells
+BellHarp	Bell Harp
+Gamelmba	Gamelimba
+JUNO Bel	JUNO Bell
+WarmAtms	Warm Atmos
+NylnHarp	Nylon Harp
+Harp Vox	Harp Voice
+Holw.Rlz	HollwRels.
+NlnRhode	NylonRhode
+Ambient	AmbientPad
+Invisibl	Invisible
+PulseKey	Pulsey Key
+NoisePno	NoisePiano
+ShneStar	Shine Star
 Org Bell	Organ Bell
+GobSynth	Goblinson
+50sSciFi	50's SciFi
+Abduct	Abduction
+RandmStr	Random Str
+RandomPd	Random Pad
+Low Bird	LowBirdPad
+FallDown	FallinDown
 LFO Horr	LFO Horror
 LFO Tech	LFO Techno
 Altrnate	Alternate
+GarglMan	Gargle Man
 EchoBell	Echo Bell
+EchoPan2	Echo Pan 2
+Big Pan	Big Panner
 Reso Pan	Reso. Pan
+WaterPno	WaterPiano
+Pan Seq.	PanSequnce
+Sci-Fi 2	StarTheme2
+DreamPad	Dream Pad
+SilkyPad	Silky Pad
+NewCntry	NewCentury
+7thAtmos	7th Atmos.
+GalaxyWy	Galaxy Way
 DetSitar	Det. Sitar
 SitarDrn	SitarDrone
 MuteBnjo	MutedBanjo
@@ -416,10 +597,20 @@ Didgrdoo	Didgeridoo
 UillPipe	UilleanPpe
 UillPpNm	UillPipeNm
 UillPpOr	UillPipeOr
+GmlnGong	GamlanGong
+StGameln	St.Gamelan
+RAMACymb	RAMACymbal
 RideCym!	Ride Cym!!
 RideBel!	Ride Bell!
+Atargane	Atarigane
+Tmbourin	Tambourine
+IslndMlt	Island Mlt
+Castanet	Castanets
+AngkRthm	AngkRhythm
+FngrSnap	FingerSnap
 909 Clap	909 H.Clap
 HandClp!	Hand Clap!
+SmallTko	SmallTaiko
 ConcrtBD	Concert BD
 JungleBD	Jungle BD
 TechnoBD	Techno BD
@@ -428,6 +619,16 @@ Kick4 !!	Kick 4 !!
 MeloTom2	Melod.Tom2
 JungleSD	Jungle SD
 ElecPerc	ElecPerc 1
+SinePerc	Sine Perc.
+RvCymbl2	Rev.Cymbl2
+RvCymbl3	Rev.Cymbl3
+RvCymbl4	Rev.Cymbl4
+RevSnare	Rev.Snare1
+RvSnare2	Rev.Snare2
+Rev Kick	Rev.Kick 1
+RevConBD	Rev.Con BD
+Rev.Tom	Rev.Tom 1
+Rev.Tom2	Rev.Tom 2
 CutNoise	Cut Noise
 Str.Slap	StringSlap
 CutNoiz2	CutNoise 2
