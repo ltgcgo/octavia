@@ -213,7 +213,7 @@ div.cambiare-canvas > div.sect-part div.part-keyboard {
 	margin: 0 calc(100% * 24 / 176);
 }
 div.cambiare-canvas:not(div.cambiare-style-line) > div.sect-part div.part-keyboard {
-	transition: 0.05s transform;
+	transition: 0.025s transform;
 }
 div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-info-minor {
 	display: none;

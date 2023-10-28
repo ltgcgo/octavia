@@ -34,12 +34,18 @@ let VoiceBank = class {
 						break;
 					};
 					case 32: {
+						if (lsb > 125) {
+							args[2] = 0; // cc reset
+						};
 						args[2] += 4; // PLG-150AP redirection
 						break;
 					};
 					case 33:
 					case 35:
 					case 36: {
+						if (lsb > 125) {
+							args[2] = 0; // cc reset
+						};
 						args[2] += 5; // PLG-150VL/DX/AN redirection
 						break;
 					};
@@ -431,6 +437,17 @@ let VoiceBank = class {
 					standard = "XG";
 				} else if (args[2] == 127) {
 					standard = "MT";
+				};
+				break;
+			};
+			case 32:
+			case 33:
+			case 35:
+			case 36: {
+				if (args[2] > 4) {
+					standard = ["AP", "VL", "PF", "DX", "AN"][args[0] - 32];
+				} else {
+					standard = "GS";
 				};
 				break;
 			};

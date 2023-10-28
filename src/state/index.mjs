@@ -134,9 +134,10 @@ ccAccepted = [
 	92, 93, 94, 95, 98, 99, 100, 101,
 	128, // Dry level (internal register for Octavia)
 	12, 13, // General-purpose effect controllers
-	16, 17, 18, 19 // General-purpose sound controllers
+	16, 17, 18, 19, // General-purpose sound controllers
+	14, 15, 20, 21 // For some reason, used by PLG-150VL
 ], // 96, 97, 120 to 127 all have special functions
-aceCandidates = [12, 13, 16, 17, 18, 19],
+aceCandidates = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
 const korgDrums = [0, 16, 25, 40, 32, 64, 26, 48];
