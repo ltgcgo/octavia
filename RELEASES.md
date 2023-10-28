@@ -16,3 +16,5 @@ Due to the pruning of all demo files, the Git history was drastically rewritten,
 * 0.5 RC 1: [GitHub](https://github.com/ltgcgo/octavia/releases/tag/0.4.115)
 * 0.5 RC 2: [GitHub](https://github.com/ltgcgo/octavia/releases/tag/0.4.116)
 * 0.5 RC 3: [GitHub](https://github.com/ltgcgo/octavia/releases/tag/0.4.117)
+* 0.5 RC 4: [GitHub](https://github.com/ltgcgo/octavia/releases/tag/0.4.118)
+* 0.5: [GitHub](https://github.com/ltgcgo/octavia/releases/tag/0.5)
