@@ -49,6 +49,13 @@
 			</template>
 			<div class="column"></div>
 		</div>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['macos','macOS']]}">
+			<div class="column column-option"><b>Pixel correction</b></div>
+			<template x-for="profile in profiles">
+				<div class="column column-option column-button" @click="gPixelC(profile[0])" x-text="profile[1]" :active="($store.pixelProfile||'none')==profile[0]?'true':'false'"></div>
+			</template>
+			<div class="column"></div>
+		</div>
 		<div class="columns is-multiline is-mobile is-vcentered">
 			<div class="column column-option"><b>Audio</b></div>
 			<div class="column column-option"><audio id="audioFilePlayer" controls /></div>

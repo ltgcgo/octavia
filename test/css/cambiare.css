@@ -19,6 +19,12 @@ div.cambiare-canvas {
 	--white-keys: var(--foreground-color);
 	--black-keys: var(--accent-color);
 }
+div.cambiare-canvas .pcp-font4 {
+	transform: var(--pcp-font4);
+}
+div.cambiare-canvas .pcp-font7 {
+	transform: var(--pcp-font7);
+}
 div.cambiare-canvas.cambiare-mode-xg, div.cambiare-canvas.cambiare-mode-ns5r, div.cambiare-canvas.cambiare-mode-x5d, div.cambiare-canvas.cambiare-mode-05rw, div.cambiare-canvas.cambiare-mode-k11, div.cambiare-canvas.cambiare-mode-s90es, div.cambiare-canvas.cambiare-mode-motif {
 	--accent-color: #9efaa0;
 }

@@ -67,6 +67,17 @@ const metaNames = {
 const lineDash = [[], [12, 8], [6, 3]];
 const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}];
 
+const pixelProfiles = {
+	"none": {
+		"font4": [0, 0], // y, x
+		"font7": [0, 0]
+	},
+	"macos": {
+		"font4": [2, 0],
+		"font7": [0, 0]
+	}
+};
+
 let createElement = function (tag, classes, details = {}) {
 	let target = document.createElement(tag);
 	classes?.forEach((e) => {
@@ -162,6 +173,7 @@ let Cambiare = class extends RootDisplay {
 	#visualizer;
 	#container;
 	#canvas;
+	#pixelProfile;
 	#accent = "fcdaff";
 	#sectInfo = {};
 	#sectMark = {};
@@ -366,12 +378,12 @@ let Cambiare = class extends RootDisplay {
 					if (offsetX > 0) {
 						offsetX = 0;
 					};
-					e.metre.fillText(e.metre.innerText, offsetX, 3);
+					e.metre.fillText(e.metre.innerText, offsetX, 3 + upThis.#pixelProfile.font4[0]);
 					if (Math.abs(offsetX) > runBoundary) {
-						e.metre.fillText(e.metre.innerText, offsetX + e.metre.rWidth + runPadding, 3);
+						e.metre.fillText(e.metre.innerText, offsetX + e.metre.rWidth + runPadding, 3 + upThis.#pixelProfile.font4[0]);
 					};
 				} else {
-					e.metre.fillText(e.metre.innerText, 0, 3);
+					e.metre.fillText(e.metre.innerText, 0, 3 + upThis.#pixelProfile.font4[0]);
 				};
 				e.metre.globalCompositeOperation = "xor";
 				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
@@ -533,6 +545,23 @@ let Cambiare = class extends RootDisplay {
 	setClockSource(clockSource) {
 		this.#clockSource = clockSource;
 	};
+	setPixelProfile(profileName) {
+		let upThis = this;
+		if (pixelProfiles[profileName]) {
+			let profileDetails = pixelProfiles[profileName]
+			upThis.#pixelProfile = profileDetails;
+			if (upThis.#canvas) {
+				upThis.#canvas.style.setProperty("--pcp-font4", `translate(${profileDetails.font4[1]}px, ${profileDetails.font4[0]}px)`);
+				upThis.#canvas.style.setProperty("--pcp-font7", `translate(${profileDetails.font7[1]}px, ${profileDetails.font7[0]}px)`);
+				/*for (let profile in pixelProfiles) {
+					classOff(upThis.#canvas, [`cambiare-pixel-${profile}`]);
+				};
+				classOn(upThis.#canvas, [`cambiare-pixel-${profileName}`]);*/
+			};
+		} else {
+			throw(new Error(`"${profileName}" is not a valid pixel correction profile`));
+		};
+	};
 	setMode(mode) {
 		let upThis = this;
 		classOff(upThis.#canvas, [`cambiare-mode-gm`, `cambiare-mode-xg`, `cambiare-mode-gs`, `cambiare-mode-ns5r`, `cambiare-mode-05rw`, `cambiare-mode-x5d`, `cambiare-mode-k11`, `cambiare-mode-sg`, `cambiare-mode-g2`, `cambiare-mode-mt32`, `cambiare-mode-sd`, `cambiare-mode-krs`, `cambiare-mode-s90es`, `cambiare-mode-motif`]);
@@ -617,51 +646,51 @@ let Cambiare = class extends RootDisplay {
 		upThis.#renderThread = setInterval(upThis.#renderer, 20);
 		// Begin inserting the info section
 		upThis.#sectInfo.root = createElement("div", ["sect-info"]);
-		upThis.#sectInfo.events = createElement("span", ["field"], {t: 1, l: 0, w: 35, h: 33});
-		upThis.#sectInfo.curPoly = createElement("span", ["field"], {t: 1, l: 52, w: 35, h: 33});
-		upThis.#sectInfo.maxPoly = createElement("span", ["field"], {t: 1, l: 98, w: 35, h: 33});
-		upThis.#sectInfo.sigN = createElement("span", ["field"], {t: 1, l: 194, w: 23, h: 33, a: "right"});
-		upThis.#sectInfo.sigD = createElement("span", ["field"], {t: 1, l: 232, w: 23, h: 33});
-		upThis.#sectInfo.barCount = createElement("span", ["field"], {t: 1, l: 304, w: 35, h: 33, a: "right"});
-		upThis.#sectInfo.barNote = createElement("span", ["field"], {t: 1, l: 354, w: 23, h: 33});
-		upThis.#sectInfo.tempo = createElement("span", ["field"], {t: 1, l: 454, w: 64, h: 33, a: "right"});
-		upThis.#sectInfo.volume = createElement("span", ["field"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
-		upThis.#sectInfo.mode = createElement("span", ["field"], {t: 1, l: 708, w: 152, h: 33});
-		upThis.#sectInfo.reverb = createElement("span", ["field"], {t: 1, l: 1000, w: 190, h: 33});
-		upThis.#sectInfo.chorus = createElement("span", ["field"], {t: 1, l: 1240, w: 190, h: 33});
-		upThis.#sectInfo.delay = createElement("span", ["field"], {t: 1, l: 1475, w: 190, h: 33});
-		upThis.#sectInfo.insert = createElement("span", ["field"], {t: 1, l: 1706, w: 190, h: 33});
-		upThis.#sectInfo.title = createElement("span", ["field"], {t: 35, l: 50, w: 810, h: 33})
+		upThis.#sectInfo.events = createElement("span", ["field", "pcp-font4"], {t: 1, l: 0, w: 35, h: 33});
+		upThis.#sectInfo.curPoly = createElement("span", ["field", "pcp-font4"], {t: 1, l: 52, w: 35, h: 33});
+		upThis.#sectInfo.maxPoly = createElement("span", ["field", "pcp-font4"], {t: 1, l: 98, w: 35, h: 33});
+		upThis.#sectInfo.sigN = createElement("span", ["field", "pcp-font4"], {t: 1, l: 194, w: 23, h: 33, a: "right"});
+		upThis.#sectInfo.sigD = createElement("span", ["field", "pcp-font4"], {t: 1, l: 232, w: 23, h: 33});
+		upThis.#sectInfo.barCount = createElement("span", ["field", "pcp-font4"], {t: 1, l: 304, w: 35, h: 33, a: "right"});
+		upThis.#sectInfo.barNote = createElement("span", ["field", "pcp-font4"], {t: 1, l: 354, w: 23, h: 33});
+		upThis.#sectInfo.tempo = createElement("span", ["field", "pcp-font4"], {t: 1, l: 454, w: 64, h: 33, a: "right"});
+		upThis.#sectInfo.volume = createElement("span", ["field", "pcp-font4"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
+		upThis.#sectInfo.mode = createElement("span", ["field", "pcp-font4"], {t: 1, l: 708, w: 152, h: 33});
+		upThis.#sectInfo.reverb = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1000, w: 190, h: 33});
+		upThis.#sectInfo.chorus = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1240, w: 190, h: 33});
+		upThis.#sectInfo.delay = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1475, w: 190, h: 33});
+		upThis.#sectInfo.insert = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1706, w: 190, h: 33});
+		upThis.#sectInfo.title = createElement("span", ["field", "pcp-font4"], {t: 35, l: 50, w: 810, h: 33})
 		canvasElement.appendChild(upThis.#sectInfo.root);
 		mountElement(upThis.#sectInfo.root, [
 			upThis.#sectInfo.events,
 			upThis.#sectInfo.curPoly,
-			createElement("span", ["field", "field-label"], {t: 1, l: 89, w: 5, h: 33, i: ":"}),
+			createElement("span", ["field", "field-label", "pcp-font4"], {t: 1, l: 89, w: 5, h: 33, i: ":"}),
 			upThis.#sectInfo.maxPoly,
-			createElement("span", ["field", "field-key"], {t: 1, l: 148, w: 41, h: 33, i: "TSig"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 148, w: 41, h: 33, i: "TSig"}),
 			upThis.#sectInfo.sigN,
-			createElement("span", ["field", "field-label"], {t: 0, l: 221, w: 8, h: 33, i: "/"}),
+			createElement("span", ["field", "field-label", "pcp-font4"], {t: 0, l: 221, w: 8, h: 33, i: "/"}),
 			upThis.#sectInfo.sigD,
-			createElement("span", ["field", "field-key"], {t: 1, l: 268, w: 30, h: 33, i: "Bar"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 268, w: 30, h: 33, i: "Bar"}),
 			upThis.#sectInfo.barCount,
-			createElement("span", ["field", "field-label"], {t: 0, l: 343, w: 8, h: 33, i: "/"}),
+			createElement("span", ["field", "field-label", "pcp-font4"], {t: 0, l: 343, w: 8, h: 33, i: "/"}),
 			upThis.#sectInfo.barNote,
-			createElement("span", ["field", "field-key"], {t: 1, l: 390, w: 61, h: 33, i: "Tempo", a: "right"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 390, w: 61, h: 33, i: "Tempo", a: "right"}),
 			upThis.#sectInfo.tempo,
-			createElement("span", ["field", "field-key"], {t: 1, l: 528, w: 29, h: 33, i: "Vol"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 528, w: 29, h: 33, i: "Vol"}),
 			upThis.#sectInfo.volume,
-			createElement("span", ["field", "field-label"], {t: 1, l: 626, w: 17, h: 33, i: "%"}),
-			createElement("span", ["field", "field-key"], {t: 1, l: 652, w: 52, h: 33, i: "Mode"}),
+			createElement("span", ["field", "field-label", "pcp-font4"], {t: 1, l: 626, w: 17, h: 33, i: "%"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 652, w: 52, h: 33, i: "Mode"}),
 			upThis.#sectInfo.mode,
-			createElement("span", ["field", "field-key"], {t: 1, l: 960, w: 34, h: 33, i: "Rev"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 960, w: 34, h: 33, i: "Rev"}),
 			upThis.#sectInfo.reverb,
-			createElement("span", ["field", "field-key"], {t: 1, l: 1198, w: 36, h: 33, i: "Cho"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1198, w: 36, h: 33, i: "Cho"}),
 			upThis.#sectInfo.chorus,
-			createElement("span", ["field", "field-key"], {t: 1, l: 1438, w: 31, h: 33, i: "Var"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1438, w: 31, h: 33, i: "Var"}),
 			upThis.#sectInfo.delay,
-			createElement("span", ["field", "field-key"], {t: 1, l: 1673, w: 27, h: 33, i: "Ins"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1673, w: 27, h: 33, i: "Ins"}),
 			upThis.#sectInfo.insert,
-			createElement("span", ["field", "field-key"], {t: 35, l: 0, w: 44, h: 33, i: "Title"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 0, w: 44, h: 33, i: "Title"}),
 			upThis.#sectInfo.title
 		]);
 		// Begin inserting the marker section
@@ -709,14 +738,14 @@ let Cambiare = class extends RootDisplay {
 					"keys": createElement("div", [`boundary`, `part-keys`]),
 					"notes": createElement("div", [`boundary`, `part-keyboard`]),
 					"cxt": createElement("canvas", [`field`]).getContext("2d"),
-					"number": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25, i: dispPart}),
+					"number": createElement("span", [`field`, `field-label`, `pcp-font4`], {t: 1, w: 18, h: 25, i: dispPart}),
 					"voice": createElement("span", [`field`], {l: 22, t: 1, w: 121, h: 25}),
 					"metre": createElement("canvas", [`field`]).getContext("2d"),
-					"type": createElement("span", [`field`, `field-label`], {t: 1, w: 18, h: 25}),
-					"std": createElement("span", [`field`], {l: 22, t: 1, w: 20, h: 25, a: "center"}),
-					"msb": createElement("span", [`field`], {l: 48, t: 1, w: 27, h: 25}),
-					"prg": createElement("span", [`field`], {l: 81, t: 1, w: 27, h: 25}),
-					"lsb": createElement("span", [`field`], {l: 114, t: 1, w: 27, h: 25}),
+					"type": createElement("span", [`field`, `field-label`, `pcp-font4`], {t: 1, w: 18, h: 25}),
+					"std": createElement("span", [`field`, `pcp-font4`], {l: 22, t: 1, w: 20, h: 25, a: "center"}),
+					"msb": createElement("span", [`field`, `pcp-font4`], {l: 48, t: 1, w: 27, h: 25}),
+					"prg": createElement("span", [`field`, `pcp-font4`], {l: 81, t: 1, w: 27, h: 25}),
+					"lsb": createElement("span", [`field`, `pcp-font4`], {l: 114, t: 1, w: 27, h: 25}),
 					"cc": createSVG("svg", {viewBox: "0 0 108 24", width: 108, style: `left: 146px; top: 1px; position: absolute;`}),
 					"vol": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 0}),
 					"exp": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 6}),
@@ -945,6 +974,7 @@ let Cambiare = class extends RootDisplay {
 		if (clockSource) {
 			upThis.setClockSource(clockSource);
 		};
+		upThis.setPixelProfile("none");
 		upThis.addEventListener("reset", () => {
 			upThis.#maxPoly = 0;
 			upThis.#metaAmend = false;
