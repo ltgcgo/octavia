@@ -281,7 +281,13 @@ let ScDisplay = class extends RootDisplay {
 			paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
 		};
 		paramText += sum.chContr[chOff + ccToPos[93]].toString().padStart(3, " ");
-		paramText += (upThis.device.getChSource()[upThis.#ch] + 1).toString().padStart(3, "0");
+		let chSource = upThis.device.getChSource()[upThis.#ch];
+		if (chSource < 128) {
+			paramText += "ABCDEFGH"[chSource >> 4];
+			paramText += ((chSource & 15) + 1).toString().padStart(2, "0");
+		} else {
+			paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}--`;
+		};
 		// Render fonts
 		upThis.xgFont.getStr(paramText).forEach(function (e0, i0) {
 			e0.forEach(function (e1, i1) {

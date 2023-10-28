@@ -265,11 +265,26 @@ JP8Puls2	JP8 Pulse Lead 2
 MGRezPls	MG Resonant Pulse
 PulseSaw	Pulse Sawtooth Lead
 Dr. Lead	Doctor Lead
-ThickSaw	Fat Sawtooth Lead
+ThickSaw	Thick Sawtooth Lead
 D-50 Fat	D-50 Fat Lead
-OB Saw 2	OB Saw Lead 2
+CS SawLd	CS Sawtooth Lead
+MG Saw	MG Sawtooth 1
+MG Saw 2	MG Sawtooth 2
+OB Saw	OB Sawtooth
+OB Saw 2	OB Sawtooth 2
+D-50 Saw	D-50 Sawtooth
+SH101Saw	SH-101 Sawtooth
+CS Saw	CS Sawtooth Lead
+MG SawLd	MG Sawtooth Lead
+OB SawLd	OB Sawtooth Lead
+P5 SawLd	P5 Sawtooth Lead
+OctSawLd	Octave Sawtooth Lead
 Seq.Saw.	Sequenced Sawtooth
+Seq.Saw2	Sequenced Sawtooth 2
 Reso Saw	Resonant Sawtooth
+CheezSaw	Cheesy Sawtooth
+ChzSaw 2	Cheesy Sawtooth 2
+Rthm Saw	Rhythmic Sawtooth
 VentLead	Vent Synth Lead
 Pure Pan	Pure Pan Lead
 DistLead	Distortion Lead

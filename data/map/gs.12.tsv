@@ -340,11 +340,24 @@ Dr. Lead	Doctor Solo
 ThickSaw	Fat Saw Lead
 D-50 Fat	D-50 FatLead
 WaspySyn	Waspy Synth
-CS SawLd	CS Saw Lead
-OB Saw 2	OB SawLead 2
+CS SawLd	CS Saw
+MG Saw	MG Saw 1
+MG Saw 2	MG Saw 2
+OB Saw	OB Saw 1
+OB Saw 2	OB Saw 2
+D-50 Saw	D-50 Saw
+CS Saw	CS Saw
+MG SawLd	MG Saw Lead
+OB SawLd	OB Saw Lead
 P5 SawLd	P5 Saw Lead
+P5 SawLd	P5 Saw Lead
+OctSawLd	Oct Saw Lead
 Seq.Saw.	SequencedSaw
+Seq.Saw2	SequenceSaw2
 Reso Saw	Resonant Saw
+CheezSaw	Cheese Saw 1
+ChzSaw 2	Cheese Saw 2
+Rthm Saw	Rhythmic Saw
 Pure Pan	Pure PanLead
 FatGR Ld	Fat GR Lead
 Acid Gtr	Acid Guitar

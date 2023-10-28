@@ -470,11 +470,24 @@ ThickSaw	Fat Saw Ld
 D-50 Fat	D-50 FatLd
 WaspySyn	WaspySynth
 CS SawLd	CS Saw Ld
+MG Saw	MG SawWave
+MG Saw 2	MG SawLd 2
+OB Saw	OB SawWave
 OB Saw 2	OB SawLd 2
-P5 SawLd	P5 Saw Ld
+D-50 Saw	D-50 SawLd
+SH101Saw	SH-101 Saw
+CS Saw	CS SawLead
+MG SawLd	MG SawLead
+OB SawLd	OB SawLead
+P5 SawLd	P5 SawLead
 MGUnison	MG Unison
+OctSawLd	OctSawLead
 Seq.Saw.	Seq. Saw.
+Seq.Saw2	Seq.Saw. 2
 Reso Saw	Reso. Saw
+CheezSaw	Cheese Saw
+ChzSaw 2	CheeseSaw2
+Rthm Saw	Rhythm Saw
 VentLead	Vent Synth
 Pure Pan	Pure PanLd
 FatGR Ld	Fat GR Ld
