@@ -35,4 +35,7 @@ body {
 
 .cambiare {
 	margin: 0 auto;
+	max-height: 100vw;
+	width: 100vw;
+	height: 100vh;
 }

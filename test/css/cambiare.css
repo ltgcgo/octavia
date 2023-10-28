@@ -1,8 +1,6 @@
 div.cambiare {
 	font-family: "PT Sans Narrow";
 	font-size: 26px;
-	width: 100vw;
-	height: 100vh;
 	display: grid;
 	align-items: center;
 	justify-content: center;
