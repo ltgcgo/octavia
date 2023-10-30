@@ -691,7 +691,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						switch (this.#mode) {
 							case modeMap.xg: {
-								if ([126, 127].indexOf(det.data[1]) > -1) {
+								if ([79, 95, 126, 127].indexOf(det.data[1]) > -1) {
 									if (this.#chType[part] == 0) {
 										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
