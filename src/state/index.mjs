@@ -2300,7 +2300,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// XG A/D mono/stereo mode, won't implement for now
 		}).add([76, 112], (msg) => {
 			// XG plugin board generic
-			console.debug(`XG enable PLG-1${["50VL", "00SG", "50DX"][msg[0]]} for CH${msg[2] + 1}.`);
+			console.debug(`XG enable PLG1${["50-VL", "00-SG", "50-DX", "50-AN", "50-PF", "50-DR", "50-PC", "50-AP"][msg[0]]} for CH${msg[2] + 1}.`);
 		}).add([73, 0, 0], (msg, track) => {
 			// MU1000/2000 System
 			let offset = msg[0];
