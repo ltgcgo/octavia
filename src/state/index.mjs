@@ -4032,10 +4032,15 @@ let OctaviaDevice = class extends CustomEventSource {
 									console.info(`NS5R CH${part + 1} receives from CH${ch + 1}.`);
 									upThis.buildRchTree();
 								};
+								break;
 							};
 							case 7: {
 								// 0 for melodic, 1 for drum, 2~5 for mod drums 1~4
 								// KORG has multiple MSBs for drums, well...
+								upThis.#chType[part] = e;
+								upThis.dispatchEvent("voice", {
+									part
+								});
 								break;
 							};
 							case 8: {
