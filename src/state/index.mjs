@@ -38,6 +38,11 @@ const modeIdx = [
 	"mt32", "ns5r", "x5d", "05rw", "sd",
 	"k11", "sg",
 	"krs", "s90es", "motif"
+],
+voiceIdx = [
+	"melodic",
+	"drum",
+	"menu"
 ];
 const substList = [
 	[
@@ -157,6 +162,10 @@ let dnToPos = {
 };
 useDrumNrpn.forEach((e, i) => {
 	dnToPos[e] = i;
+});
+let voiceType = {};
+voiceIdx.forEach((e, i) => {
+	voiceType[e] = i;
 });
 
 let getDebugState = function () {
@@ -708,12 +717,24 @@ let OctaviaDevice = class extends CustomEventSource {
 							case modeMap.x5d:
 							case modeMap.ns5r: {
 								if ([61, 62, 126, 127].indexOf(det.data[1]) > -1) {
-									if (this.#chType[part] == 0) {
+									if (this.#chType[part] == this.CH_MELODIC) {
 										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
+								} else if ([80, 81, 82, 83].indexOf(det.data[1]) > -1) {
+									/*let voiceObject = this.getVoice(
+										this.getCcCh(part, 0),
+										this.#prg[part],
+										this.getCcCh(part, 32),
+										modeIdx[this.#mode]
+									);
+									console.debug(voiceObject);
+									if (this.#chType[part] == 0) {
+										//this.setChType(part, this.CH_MELODIC);
+										console.debug(`CH${part + 1} set to ${voiceIdx[(voiceObject.type || 0) & 1]} by MSB.`);
+									};*/
 								} else {
-									if (this.#chType[part] > 0) {
+									if (this.#chType[part] != this.CH_MELODIC) {
 										this.setChType(part, this.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
@@ -3310,6 +3331,13 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 							break;
 						};
+						case (p == 10): {
+							// 0: singular oscillator
+							// 1: dual oscillator
+							// 2: drum kit
+							//console.debug(`${name}: ${e}`);
+							break;
+						};
 						case (p == 11): {
 							voiceMap += `\n${msb}\t${prg}\t${lsb}\t${name.trim().replace("Init Voice", "")}`;
 							prg ++;
@@ -4118,6 +4146,13 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (e > 31) {
 							name += String.fromCharCode(e);
 						};
+						break;
+					};
+					case (p == 10): {
+						// 0: singular oscillator
+						// 1: dual oscillator
+						// 2: drum kit
+						//console.debug(`${name}: ${e}`);
 						break;
 					};
 					case (p == 11): {

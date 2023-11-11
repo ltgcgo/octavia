@@ -113,7 +113,7 @@ let RootDisplay = class extends CustomEventSource {
 				});
 			};
 		});
-		console.debug(`Map: ${allCount} total, ${loadCount} loaded.`);
+		console.debug(`Voice names: ${allCount} total, ${loadCount} loaded.`);
 		upThis?.device.forceVoiceRefresh();
 	};
 	async loadEfx(text, overwrite) {

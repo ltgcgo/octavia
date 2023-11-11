@@ -2,7 +2,7 @@
 
 import {ccToPos} from "../state/index.mjs";
 
-const sgCrit = ["MSB", "PRG", "LSB"];
+const sgCrit = ["MSB", "PRG", "LSB", "NME", "ELC", "DRM"];
 
 let halfHex = function (n) {
 	let segA = Math.floor(n / 10), segB = n % 10;
@@ -15,6 +15,7 @@ let VoiceBank = class {
 	get(msb = 0, prg = 0, lsb = 0, mode) {
 		let sid = [msb, prg, lsb];
 		let bankName;
+		let bankPoly = 1, bankType = 0, bankDrum;
 		let args = Array.from(arguments);
 		switch (mode) {
 			case "xg": {
@@ -325,8 +326,13 @@ let VoiceBank = class {
 		let iid = [args[0], args[1], args[2]];
 		// Bank read
 		while (!(bankName?.length >= 0)) {
-			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
-			if (!bankName) {
+			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]]?.name;
+			if (bankName) {
+				let bankObject = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
+				bankPoly = bankObject?.poly || bankPoly;
+				bankType = bankObject?.type || bankType;
+				bankDrum = bankObject?.drum;
+			} else {
 				if (!this.strictMode) {
 					/* if (mode != "gs" && mode != "ns5r") {
 						args[2] = 0;
@@ -371,9 +377,13 @@ let VoiceBank = class {
 							} else {
 								args[1] %= 7;
 							};
-							bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
+							bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]]?.name;
 							if (bankName) {
 								ending = " ";
+								let bankObject = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
+								bankPoly = bankObject?.poly || bankPoly;
+								bankType = bankObject?.type || bankType;
+								bankDrum = bankObject?.drum;
 							} else {
 								bankName = "";
 								ending = "*";
@@ -553,6 +563,9 @@ let VoiceBank = class {
 		};
 		return {
 			name: bankName || `${halfHex(msb || 0)} ${halfHex(prg || 0)} ${halfHex(lsb || 0)}`,
+			poly: bankPoly,
+			type: bankType,
+			drum: bankDrum,
 			iid,
 			eid,
 			sid,
@@ -571,22 +584,61 @@ let VoiceBank = class {
 				assign.forEach(function (e0, i0) {
 					sig[sgCrit.indexOf(e0)] = i0;
 				});
-				//console.debug(`Bank map significance: ${sig}`);
+				console.debug(`Bank map significance: ${sig}`);
 			} else {
+				let msb = 0, prg = 0, lsb = 0, name, poly = 1, type = 0, drum;
 				assign.forEach(async function (e1, i1) {
-					if (i1 > 2) {
-						upThis.#bankInfo[to[sig[1]]] = upThis.#bankInfo[to[sig[1]]] || [];
-						if (!upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]?.length || allowOverwrite) {
-							upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]] = assign[3];
-							loadCount ++;
-						} else {
-							//console.debug(`Skipped overwriting ${to[sig[0]]},${to[sig[1]]},${to[sig[2]]}: [${upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]}] to [${assign[3]}]`);
+					switch (i1) {
+						case sig[0]: {
+							msb = parseInt(e1);
+							break;
 						};
-						allCount ++;
-					} else {
-						to.push(parseInt(assign[i1]));
+						case sig[1]: {
+							prg = parseInt(e1);
+							break;
+						};
+						case sig[2]: {
+							lsb = parseInt(e1);
+							break;
+						};
+						case sig[3]: {
+							name = e1;
+							break;
+						};
+						case sig[4]: {
+							e1 = parseInt(e1)
+							if (e1 < 16) {
+								poly = e1 + 1;
+							} else {
+								type = (e1 & 15) + 1;
+							};
+							break;
+						};
+						case sig[5]: {
+							drum = e1;
+							break;
+						};
 					};
 				});
+				upThis.#bankInfo[prg] = upThis.#bankInfo[prg] || [];
+				let writeArray = upThis.#bankInfo[prg];
+				if (!writeArray[(msb << 7) | lsb] || allowOverwrite) {
+					let voiceObject = {
+						msb,
+						prg,
+						lsb,
+						name,
+						poly,
+						type,
+						drum
+					};
+					//console.debug(voiceObject);
+					writeArray[(msb << 7) | lsb] = voiceObject;
+					loadCount ++;
+				} else {
+					//console.debug(`Skipped overwriting ${to[sig[0]]},${to[sig[1]]},${to[sig[2]]}: [${upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]}] to [${assign[3]}]`);
+				};
+				allCount ++;
 			};
 		});
 		if (!allowOverwrite) {
