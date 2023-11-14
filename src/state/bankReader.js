@@ -327,6 +327,8 @@ let VoiceBank = class {
 		// Bank read
 		while (!(bankName?.length >= 0)) {
 			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]]?.name;
+			//console.debug("Result of the current round of bank fetch: ", bankName);
+			//console.debug(`${args}`);
 			if (bankName) {
 				let bankObject = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
 				bankPoly = bankObject?.poly || bankPoly;
@@ -338,7 +340,9 @@ let VoiceBank = class {
 						args[2] = 0;
 						ending = "^";
 					}; */
-					if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
+					if (args[0] == 0 && args[1] == 0 && args[2] == 0) {
+						bankName = "Unloaded";
+					} else if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
 						if (msb == 48) {
 							args[0] = 0;
 							args[2] = 0;
@@ -574,7 +578,7 @@ let VoiceBank = class {
 			standard
 		};
 	};
-	async load(text, allowOverwrite, name) {
+	async load(text, allowOverwrite, name = "(internal)") {
 		let upThis = this;
 		let sig = []; // Significance
 		let loadCount = 0, allCount = 0;
@@ -646,7 +650,7 @@ let VoiceBank = class {
 			};
 		});
 		if (!allowOverwrite) {
-			console.debug(`Map "${name || "(internal)"}": ${allCount} total, ${loadCount} loaded.`);
+			console.debug(`Map "${name}": ${allCount} total, ${loadCount} loaded.`);
 		};
 	};
 	clearRange(options) {
@@ -672,7 +676,7 @@ let VoiceBank = class {
 	async loadFiles(...type) {
 		this.init();
 		let upThis = this;
-		type.forEach(async function (e, i) {
+		type.forEach(async function (e) {
 			try {
 				await fetch(`./data/bank/${e}.tsv`).then(function (response) {
 					//console.debug(`Parsing voice map "${e}".`);
