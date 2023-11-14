@@ -1229,7 +1229,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						userBank += String.fromCharCode(e);
 					};
 				});
-				this.userBank.load(`MSB\tLSB\tPRG\n0\t127\t${prg}\t${userBank}`, true);
+				let loadTsv = `MSB\tLSB\tPRG\tNME\n0\t127\t${prg}\t${userBank}`;
+				//console.debug(loadTsv);
+				this.userBank.load(loadTsv, true);
 				bank.name = userBank;
 				bank.ending = " ";
 			};
@@ -3711,7 +3713,9 @@ let OctaviaDevice = class extends CustomEventSource {
 							name = upThis.baseBank.get(0, e + (timbreGroup << 6), 127, "mt32").name;
 						};
 						upThis.userBank.clearRange({msb: 0, lsb: 127, prg: patch});
-						upThis.userBank.load(`MSB\tLSB\tPRG\tNME\n000\t127\t${patch}\t${name}`, true);
+						let loadTsv = `MSB\tLSB\tPRG\tNME\n000\t127\t${patch}\t${name}`;
+						//console.debug(loadTsv);
+						upThis.userBank.load(loadTsv, true);
 					};
 				}][slot] || (() => {}))();
 			});

@@ -584,7 +584,11 @@ let VoiceBank = class {
 				assign.forEach(function (e0, i0) {
 					sig[sgCrit.indexOf(e0)] = i0;
 				});
-				console.debug(`Bank map significance: ${sig}`);
+				//console.debug(`Bank map significance: ${sig}`);
+				if (sig.length < 4) {
+					console.debug(`Debugger launched.`);
+					debugger;
+				};
 			} else {
 				let msb = 0, prg = 0, lsb = 0, name, poly = 1, type = 0, drum;
 				assign.forEach(async function (e1, i1) {
