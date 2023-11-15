@@ -264,10 +264,7 @@ let Ns5rDisplay = class extends RootDisplay {
 					continue;
 				};
 				for (let c = Math.floor(e / showReduction); c >= 0; c --) {
-					let pixX = (i % 32) * 4 + 12 + ((i >> 5) & 1), pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
-					if (trueMode) {
-						pixX ++;
-					};
+					let pixX = (i % 32) * 4 + 12 + ((i >> 5) & 1) + 1, pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
 					this.#nmdb[pixY * 144 + pixX] = this.#pixelLit;
 					this.#nmdb[pixY * 144 + pixX + 1] = this.#pixelLit;
 					this.#nmdb[pixY * 144 + pixX + 2] = this.#pixelLit;
@@ -342,7 +339,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				// White bounding box
 				for (let i = 0; i < 777; i ++) {
 					let x = i % 37, y = Math.floor(i / 37);
-					let realX = x + 77 + (+trueMode), realY = y + 19;
+					let realX = x + 78, realY = y + 19;
 					// Top and bottom borders
 					if (
 						(y == 0 && x < 36) ||
@@ -359,7 +356,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				let colUnit = (sum.bitmap.bitmap.length == 512) ? 1 : 2;
 				for (let i = 0; i < 512; i += colUnit) {
 					let x = i & 31, y = i >> 5;
-					let realX = x + 79 + (+trueMode), realY = y + 21;
+					let realX = x + 80, realY = y + 21;
 					this.#nmdb[realY * 144 + realX] = sum.bitmap.bitmap[i / colUnit] ? this.#pixelLit : this.#pixelOff;
 					if (colUnit == 2) {
 						this.#nmdb[realY * 144 + realX + 1] = sum.bitmap.bitmap[i / colUnit] ? this.#pixelLit : this.#pixelOff;
@@ -390,11 +387,11 @@ let Ns5rDisplay = class extends RootDisplay {
 			let circle = 2 * Math.PI;
 			for (let c = 1; c < 33; c ++) {
 				if (c == 1 || c == 32 || c % 5 == 0) {
-					ctx.fillText(`${c}`, 24 * c + 58, 262);
+					ctx.fillText(`${c}`, 24 * c + 64, 262);
 				} else {
 					ctx.beginPath();
 					ctx.ellipse(
-						24 * c + 58,
+						24 * c + 64,
 						258,
 						2, 2,
 						0, 0, circle
