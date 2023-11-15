@@ -25,6 +25,7 @@ let Ns5rDisplay = class extends RootDisplay {
 	#pixelLit = 255;
 	#pixelOff = 0;
 	#refreshed = true;
+	#lastTrue = false;
 	useBlur = false; // Pixel blur will only activate if this is enabled
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
@@ -367,6 +368,9 @@ let Ns5rDisplay = class extends RootDisplay {
 		// Screen buffer write finish.
 		// Determine if full render is required.
 		let drawPixMode = false;
+		if (this.#lastTrue != trueMode) {
+			this.#refreshed = true;
+		};
 		if (this.#refreshed) {
 			// Full render required.
 			// Clear all pixels.
@@ -376,13 +380,13 @@ let Ns5rDisplay = class extends RootDisplay {
 			ctx.font = '11px "Arial Web"';
 			ctx.fillStyle = "#000e";
 			ctx.fillText("MIDI. CH", 58, 10);
-			ctx.fillText("VOL", 153.5, 10);
-			ctx.fillText("EXP", 231.5, 10);
-			ctx.fillText("PAN", 322.5, 10);
-			ctx.fillText("REV", 405, 10);
-			ctx.fillText("CHO", 484, 10);
-			ctx.fillText("BRT", 561.5, 10);
-			ctx.fillText("EFFECT TYPE", 738, 10);
+			ctx.fillText("VOL", 153.5 + (+trueMode * 12), 10);
+			ctx.fillText("EXP", 231.5 + (+trueMode * 12), 10);
+			ctx.fillText("PAN", 322.5 + (+trueMode * 12), 10);
+			ctx.fillText("REV", 405 + (+trueMode * 18), 10);
+			ctx.fillText("CHO", 484 + (+trueMode * 18), 10);
+			!trueMode && ctx.fillText("BRT", 561.5, 10);
+			ctx.fillText("EFFECT TYPE", 738 - (+trueMode * 18), 10);
 			ctx.fillText("PART", 34, 262);
 			let circle = 2 * Math.PI;
 			for (let c = 1; c < 33; c ++) {
@@ -446,6 +450,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				this.#omdb[i] = e;
 			};
 		});
+		this.#lastTrue = trueMode;
 	};
 };
 
