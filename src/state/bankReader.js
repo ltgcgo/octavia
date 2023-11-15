@@ -42,6 +42,7 @@ let VoiceBank = class {
 						break;
 					};
 					case 33:
+					case 34: // I guess this is for PF, but I'm not sure
 					case 35:
 					case 36: {
 						if (lsb > 125) {
@@ -163,6 +164,16 @@ let VoiceBank = class {
 					sect = "GM-s";
 				} else {
 					sect = "r:";
+				};
+				break;
+			};
+			case 32:
+			case 33:
+			case 34:
+			case 35:
+			case 36: {
+				if (mode == "xg") {
+					sect = `${["AP", "VL", "PF", "DX", "AN"][msb & 7]}-${"abcdefgh"[lsb]}`;
 				};
 				break;
 			};
