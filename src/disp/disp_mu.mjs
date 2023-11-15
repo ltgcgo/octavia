@@ -235,7 +235,7 @@ let MuDisplay = class extends RootDisplay {
 					showLsb = true;
 				};
 				if (upThis.getMode() == "xg") {
-					if ([48, 79, 80, 81, 82, 83, 84, 95, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
+					if ([32, 33, 34, 35, 36, 48, 79, 80, 81, 82, 83, 84, 95, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
 						bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
 						showLsb = true;
 					};
