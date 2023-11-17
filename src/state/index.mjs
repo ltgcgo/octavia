@@ -4021,6 +4021,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Current multi dump
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
+			let efxName = "";
 			// I'm lazy I just ported the old code here don't judge meee
 			korgFilter(msg, function (e, i) {
 				switch (true) {
@@ -4133,10 +4134,24 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case i < 3134: {
 						// current effect params, 38 bytes
+						let ri = i - 3096;
+						if (ri < 8) {
+							if (e > 31) {
+								efxName += String.fromCharCode(e);
+							};
+							if (ri == 7) {
+								upThis.aiEfxName = efxName;
+							};
+						} else if (ri < 10) {
+							// AI effect ID
+							upThis.setEffectType(ri - 8, 44, e);
+							upThis.dispatchEvent(`efx${['reverb', 'chorus'][ri - 8]}`, upThis.getEffectType(ri - 8));
+						};
 						break;
 					};
 					case i < 8566: {
 						// 4 mod drum params, 5432 bytes
+						// This HAS TO BE finished before 0.6!
 						break;
 					};
 				};
