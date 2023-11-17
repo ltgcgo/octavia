@@ -4031,7 +4031,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						switch (i % 92) {
 							case 0: {
 								// MSB Bank
-								upThis.#cc[chOff + ccToPos[0]] = e || 121;
+								upThis.#cc[chOff + ccToPos[0]] = e;
+								// Needs an MSB = 125 for XG fallback
 								upThis.dispatchEvent("voice", {
 									part
 								});
@@ -4040,6 +4041,9 @@ let OctaviaDevice = class extends CustomEventSource {
 							case 1: {
 								// LSB Bank
 								upThis.#cc[chOff + ccToPos[32]] = e;
+								if (!e && !upThis.#cc[chOff + ccToPos[0]]) {
+									upThis.#cc[chOff + ccToPos[0]] = 121;
+								};
 								upThis.dispatchEvent("voice", {
 									part
 								});
