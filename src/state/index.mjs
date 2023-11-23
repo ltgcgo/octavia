@@ -4147,6 +4147,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.setEffectType(ri - 8, 44, e);
 							upThis.dispatchEvent(`efx${['reverb', 'chorus'][ri - 8]}`, upThis.getEffectType(ri - 8));
 						};
+						//console.debug(e);
 						break;
 					};
 					case i < 8566: {
