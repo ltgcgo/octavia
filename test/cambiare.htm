@@ -69,7 +69,7 @@
 		<div class="columns is-multiline is-mobile is-vcentered">
 			<div class="column column-option"><b>Demo</b></div>
 			<template x-for="demo in $store.demo">
-				<div class="column column-option column-button" @click="gDemo(demo)" x-text="demo.text" :title="`${demo.artist} - ${demo.title} (${demo.standard}, ${demo.audio})`" :active="($store.activeDemo||-1)==demo.id?'true':'false'"></div>
+				<div class="column column-option column-button" @click="gDemo(demo)" x-text="demo.text" :title="`${demo.artist} - ${demo.title} (${demo.standard}; ${demo.audio})`" :active="($store.activeDemo||-1)==demo.id?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
