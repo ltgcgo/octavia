@@ -1249,10 +1249,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					voice.ending = "~";
 					voice.name = "";
 					this.#cmTTimbre.subarray(14 * (part - 1), 14 * (part - 1) + 10).forEach((e) => {
-						if (e > 31) {
-							voice.name += String.fromCharCode(e);
-						};
+						voice.name += String.fromCharCode(Math.max(e, 32));
 					});
+					voice.name = voice.name.trimRight();
 				};
 			};
 		};
@@ -2461,7 +2460,27 @@ let OctaviaDevice = class extends CustomEventSource {
 		dxDump.add([0, 14, 31], (msg) => {
 			upThis.#cc[allocated.cc * msg[0] + ccToPos[64]] = 0;
 			upThis.#ua.ano(msg[0]);
-			console.debug(`Yamaha DX7 reset CH${msg[0] + 1}.`);
+			upThis.switchMode("xg");
+			console.debug(`Yamaha DX7+ reset CH${msg[0] + 1}.`);
+		}).add([56, 76, 112], async (msg) => {
+			// Per-part DX7+ dump should take 035, XXX, 002/003
+			let part = msg[0];
+			let voiceNameBuf = "";
+			msg.subarray(1).forEach((e, i) => {
+				if (i < 10) {
+					voiceNameBuf += String.fromCharCode(Math.max(e, 32));
+				};
+			});
+			upThis.#prg[part] = part & 127;
+			upThis.#cc[allocated.cc * part + ccToPos[0]] = 35;
+			upThis.#cc[allocated.cc * part + ccToPos[32]] = part >> 7 | 2;
+			upThis.dispatchEvent("voice", {
+				part
+			});
+			if (voiceNameBuf.length > 0) {
+				voiceNameBuf = voiceNameBuf.trimRight();
+				console.debug(`DX7+ CH${part + 1} dumped voice name: "${voiceNameBuf}"`);
+			};
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {
