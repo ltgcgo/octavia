@@ -2445,7 +2445,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};
 		}).add([100, 0], (msg, track, id) => {
-			// Unknown Yamaha DX7 dump SysEx
+			// Unknown Yamaha DX7+ dump SysEx
 			let dumpString = msg.subarray(0, msg.length - 1)
 			let expectedChecksum = gsChecksum(dumpString);
 			let receivedChecksum = msg[msg.length - 1];
@@ -2453,13 +2453,14 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.warn(`Yamaha DX7 dump SysEx checksum mismatch! Expected ${expectedChecksum}, but got ${receivedChecksum}:\n`, msg);
 				return;
 			} else {
-				// Placeholder until further documentation
-				console.debug(`Yamaha DX7 dump SysEx passed checksum validation.\n`, msg);
 				dxDump.run(dumpString);
 			};
 		});
 		// DX7 Dumps
+		// Placeholder until further documentation
 		dxDump.add([0, 14, 31], (msg) => {
+			upThis.#cc[allocated.cc * msg[0] + ccToPos[64]] = 0;
+			upThis.#ua.ano(msg[0]);
 			console.debug(`Yamaha DX7 reset CH${msg[0] + 1}.`);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
