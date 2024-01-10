@@ -1869,6 +1869,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seKg = new BinaryMatch("Kawai");
 		this.#seSg = new BinaryMatch("Akai");
 		this.#seCs = new BinaryMatch("Casio");
+		let dxDump = new BinaryMatch("DX7+ Dump");
 		// Notifies unrecognized SysEx strings with their vendors
 		let syxDefaultErr = function (msg) {
 			console.info(`Unrecognized SysEx in "${this.name}" set.\n%o`, msg);
@@ -1881,6 +1882,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seKg.default = syxDefaultErr;
 		this.#seSg.default = syxDefaultErr;
 		this.#seCs.default = syxDefaultErr;
+		dxDump.default = syxDefaultErr;
 		// The new SysEx engine only defines actions when absolutely needed.
 		// Mode reset section
 		this.#seUnr.add([9], (msg) => {
@@ -2442,6 +2444,23 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};
+		}).add([100, 0], (msg, track, id) => {
+			// Unknown Yamaha DX7 dump SysEx
+			let dumpString = msg.subarray(0, msg.length - 1)
+			let expectedChecksum = gsChecksum(dumpString);
+			let receivedChecksum = msg[msg.length - 1];
+			if (expectedChecksum != receivedChecksum) {
+				console.warn(`Yamaha DX7 dump SysEx checksum mismatch! Expected ${expectedChecksum}, but got ${receivedChecksum}:\n`, msg);
+				return;
+			} else {
+				// Placeholder until further documentation
+				console.debug(`Yamaha DX7 dump SysEx passed checksum validation.\n`, msg);
+				dxDump.run(dumpString);
+			};
+		});
+		// DX7 Dumps
+		dxDump.add([0, 14, 31], (msg) => {
+			console.debug(`Yamaha DX7 reset CH${msg[0] + 1}.`);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {
