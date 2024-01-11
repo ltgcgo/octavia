@@ -98,6 +98,22 @@ let PsrDisplay = class extends RootDisplay {
 			F: new Uint8Array([0, 1, 1, 1, 0, 0, 0, 1]),
 			G: new Uint8Array([0, 0, 1, 1, 1, 1, 0, 1]),
 			H: new Uint8Array([0, 1, 1, 1, 0, 1, 1, 0]),
+			I: new Uint8Array([0, 0, 1, 1, 0, 0, 0, 0]),
+			J: new Uint8Array([0, 0, 0, 0, 1, 1, 1, 0]),
+			K: new Uint8Array([0, 1, 1, 1, 0, 0, 1, 0]),
+			L: new Uint8Array([0, 0, 1, 1, 1, 0, 0, 0]),
+			M: new Uint8Array([0, 1, 0, 1, 0, 1, 0, 1]),
+			N: new Uint8Array([0, 1, 0, 1, 0, 1, 0, 0]),
+			O: new Uint8Array([0, 1, 0, 1, 1, 1, 0, 0]),
+			P: new Uint8Array([0, 1, 1, 1, 0, 0, 1, 1]),
+			Q: new Uint8Array([0, 1, 1, 0, 0, 1, 1, 1]),
+			R: new Uint8Array([0, 1, 0, 1, 0, 0, 0, 0]),
+			S: new Uint8Array([0, 0, 1, 0, 1, 1, 0, 1]),
+			T: new Uint8Array([0, 1, 1, 1, 1, 0, 0, 0]),
+			U: new Uint8Array([0, 0, 1, 1, 1, 1, 1, 0]),
+			X: new Uint8Array([0, 0, 1, 1, 0, 1, 1, 0]),
+			Y: new Uint8Array([0, 1, 1, 0, 1, 1, 1, 0]),
+			Z: new Uint8Array([0, 0, 0, 1, 1, 0, 1, 1]),
 			"-": new Uint8Array([0, 1, 0, 0, 0, 0, 0, 0])
 		};
 		Array.from(str).forEach((e, i) => {

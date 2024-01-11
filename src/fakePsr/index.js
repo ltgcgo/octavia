@@ -190,24 +190,26 @@ visualizer.addEventListener("reset", function (e) {
 // Listen to mode switches
 visualizer.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
-	let textCmd = [67, 16, 76, 6, 0, 0, 77, 79, 68, 69, 58, 32];
-	let modeText = {
-		gm: [71, 77],
-		gs: [71, 83],
-		xg: [88, 71],
-		g2: [71, 77, 50],
-		sd: [83, 68],
-		mt32: [77, 84, 45, 51, 50],
-		ns5r: [78, 83, 53, 82],
-		"05rw": [48, 53, 82, 47, 87],
-		x5d: [88, 53, 68],
-		k11: [71, 77, 101, 103, 97],
-		sg: [83, 71],
-		krs: [75, 82, 79, 83, 83],
-		s90es: [83, 57, 48, 32, 69, 83],
-		motif: [77, 111, 116, 105, 102, 32, 69, 83]
-	};
-	visualizer.sendCmd({type: 15, track: 0, data: textCmd.concat(modeText[visualizer.getMode()])});
+	if (visualizer.getMode() != "?") {
+		let textCmd = [67, 16, 76, 6, 0, 0, 77, 79, 68, 69, 58, 32];
+		let modeText = {
+			gm: [71, 77],
+			gs: [71, 83],
+			xg: [88, 71],
+			g2: [71, 77, 50],
+			sd: [83, 68],
+			mt32: [77, 84, 45, 51, 50],
+			ns5r: [78, 83, 53, 82],
+			"05rw": [48, 53, 82, 47, 87],
+			x5d: [88, 53, 68],
+			k11: [71, 77, 101, 103, 97],
+			sg: [83, 71],
+			krs: [75, 82, 79, 83, 83],
+			s90es: [83, 57, 48, 32, 69, 83],
+			motif: [77, 111, 116, 105, 102, 32, 69, 83]
+		};
+		visualizer.sendCmd({type: 15, track: 0, data: textCmd.concat(modeText[visualizer.getMode()])});
+	}
 });
 
 // Open the files
