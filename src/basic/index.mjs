@@ -241,7 +241,15 @@ let RootDisplay = class extends CustomEventSource {
 		upThis.device.newStrength();
 		events.forEach(function (e) {
 			let raw = e.data,
-			noteEnc = (raw.part << 7) | raw.data[0];
+			noteEnc = 0;
+			switch (raw.type) {
+				case 8:
+				case 9:
+				case 10: {
+					noteEnc = (raw.part << 7) | raw.data[0];
+					break;
+				};
+			};
 			if (raw.type == 9) {
 				if (raw.data[1] > 0) {
 					notes.add(noteEnc);
