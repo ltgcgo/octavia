@@ -234,6 +234,15 @@ let PsrDisplay = class extends RootDisplay {
 		arrowLeftFlag = false,
 		arrowRightFlag = false;
 		let note;
+		// Add all of the missing notes
+		sum.extraNotes.forEach(({part, note, velo, state}) => {
+			if (state && velo) {
+				sum.chKeyPr[part].set(note, {
+					v: velo,
+					s: state
+				});
+			};
+		});
 		// Main range
 		for (let i = 36; i < 97; i++) {
 			let pixel = 0,

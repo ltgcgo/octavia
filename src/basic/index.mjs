@@ -231,7 +231,7 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		let events = this.#midiPool?.step(time) || [];
 		let extraPoly = 0, notes = new Set(), noteVelo = {};
-		let extraNotes = [];
+		let extraNotes = []; // Should be visualized before the final internal state!
 		let upThis = this;
 		let metaReplies = [];
 		// Reset strength for a new frame
