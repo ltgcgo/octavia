@@ -243,9 +243,6 @@ let RootDisplay = class extends CustomEventSource {
 			if (raw.type == 9) {
 				if (raw.data[1] > 0) {
 					notes.add(raw.part * 128 + raw.data[0]);
-					/*if (writeStrength[raw.part] == 0) {
-						upThis.#mimicStrength[raw.part] = raw.data[1];
-					};*/
 				} else {
 					if (notes.has(raw.part * 128 + raw.data[0])) {
 						extraPoly ++;
