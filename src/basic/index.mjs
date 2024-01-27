@@ -230,7 +230,8 @@ let RootDisplay = class extends CustomEventSource {
 			this.#noteTime = time;
 		};
 		let events = this.#midiPool?.step(time) || [];
-		let extraPoly = 0, notes = new Set();
+		let extraPoly = 0, notes = new Set(), noteVelo = {};
+		let extraNotes = [];
 		let upThis = this;
 		let metaReplies = [];
 		// Reset strength for a new frame
@@ -243,14 +244,27 @@ let RootDisplay = class extends CustomEventSource {
 			if (raw.type == 9) {
 				if (raw.data[1] > 0) {
 					notes.add(raw.part * 128 + raw.data[0]);
+					noteVelo[raw.part * 128 + raw.data[0]] = raw.data[1];
 				} else {
 					if (notes.has(raw.part * 128 + raw.data[0])) {
+						extraNotes.push({
+							part: raw.part,
+							note: raw.data[0],
+							velo: noteVelo[raw.part * 128 + raw.data[0]],
+							state: 3 // OctaviaDevice.NOTE_SUSTAIN
+						});
 						extraPoly ++;
 					};
 				};
 			};
 			if (e.data.type == 8) {
 				if (notes.has(raw.part * 128 + raw.data[0])) {
+					extraNotes.push({
+						part: raw.part,
+						note: raw.data[0],
+						velo: noteVelo[raw.part * 128 + raw.data[0]],
+						state: 3 // OctaviaDevice.NOTE_SUSTAIN
+					});
 					extraPoly ++;
 				};
 			};
@@ -300,6 +314,7 @@ let RootDisplay = class extends CustomEventSource {
 		});
 		let repObj = {
 			extraPoly,
+			extraNotes,
 			curPoly,
 			chInUse,
 			chKeyPr,
