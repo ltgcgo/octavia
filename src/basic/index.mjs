@@ -240,17 +240,18 @@ let RootDisplay = class extends CustomEventSource {
 		});
 		upThis.device.newStrength();
 		events.forEach(function (e) {
-			let raw = e.data;
+			let raw = e.data,
+			noteEnc = (raw.part << 7) | raw.data[0];
 			if (raw.type == 9) {
 				if (raw.data[1] > 0) {
-					notes.add(raw.part * 128 + raw.data[0]);
-					noteVelo[raw.part * 128 + raw.data[0]] = raw.data[1];
+					notes.add(noteEnc);
+					noteVelo[noteEnc] = raw.data[1];
 				} else {
-					if (notes.has(raw.part * 128 + raw.data[0])) {
+					if (notes.has(noteEnc)) {
 						extraNotes.push({
 							part: raw.part,
 							note: raw.data[0],
-							velo: noteVelo[raw.part * 128 + raw.data[0]],
+							velo: noteVelo[noteEnc],
 							state: 3 // OctaviaDevice.NOTE_SUSTAIN
 						});
 						extraPoly ++;
@@ -258,11 +259,11 @@ let RootDisplay = class extends CustomEventSource {
 				};
 			};
 			if (e.data.type == 8) {
-				if (notes.has(raw.part * 128 + raw.data[0])) {
+				if (notes.has(noteEnc)) {
 					extraNotes.push({
 						part: raw.part,
 						note: raw.data[0],
-						velo: noteVelo[raw.part * 128 + raw.data[0]],
+						velo: noteVelo[noteEnc],
 						state: 3 // OctaviaDevice.NOTE_SUSTAIN
 					});
 					extraPoly ++;
