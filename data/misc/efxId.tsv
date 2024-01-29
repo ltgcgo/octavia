@@ -60,7 +60,7 @@ MSB	LSB	Name
 21	51	GS Mod Delay
 21	52	GS 3-tap Delay
 21	53	GS 4-tap Delay
-21	54	GS Tremolo C Delay
+21	54	GS Trem Ctrl Delay
 21	55	GS Reverb
 21	56	GS Gate
 21	57	GS 3D Delay
@@ -84,11 +84,11 @@ MSB	LSB	Name
 22	0b	GS Chorus+Flanger
 22	0c	GS Rotary Multi Alt
 23	00	GS Rotary Multi
-24	00	GS Guitar Multi
+24	00	GS Guitar Multi 1
 24	01	GS Guitar Multi 2
 24	02	GS Guitar Multi 3
-24	03	GS Cln Gtr Multi
-24	04	GS Cln Gtr Multi 2
+24	03	GS Clean Gtr Multi 1
+24	04	GS Clean Gtr Multi 2
 24	05	GS Bass Multi
 24	06	GS Rhodes Multi
 25	00	GS Keyboard Multi
@@ -195,13 +195,102 @@ MSB	LSB	Name
 38	05	SD Hall 2
 38	06	SD Delay
 38	07	SD Pan Delay
-39	00	SD Studio Room
-3a	00	SD Studio Hall
-3b	00	SD Studio Plate
+39	00	SD SRV Room
+3a	00	SD SRV Hall
+3b	00	SD SRV Plate
 3c	00	SD Chorus
 3c	01	SD Delay
 3d	00	SD Through
 3d	01	SD Stereo EQ
+3d	02	SD Overdrive
+3d	03	SD Distortion
+3d	04	SD Phaser
+3d	05	SD Spectrum
+3d	06	SD Enhancer
+3d	07	SD Auto Wah
+3d	08	SD Rotary
+3d	09	SD Compress Attack
+3d	0a	SD Limiter
+3d	0b	SD Hexa-Chorus
+3d	0c	SD Tremolo Chorus
+3d	0d	SD Space-D
+3d	0e	SD Stereo Chorus
+3d	0f	SD Stereo Flanger
+3d	10	SD Step Flanger
+3d	11	SD Stereo Delay
+3d	12	SD Mod. Delay
+3d	13	SD 3-Tap Delay
+3d	14	SD 4-Tap Delay
+3d	15	SD Trem Ctrl Delay
+3d	16	SD 2-Pitch Shift
+3d	17	SD Feedbk Pitch Shift
+3d	18	SD Reverb
+3d	19	SD Gated Reverb
+3d	1a	SD OvrDrv+Chorus
+3d	1b	SD OvrDrv+Flanger
+3d	1c	SD OvrDrv+Delay
+3d	1d	SD Distort+Chorus
+3d	1e	SD Distort+Flanger
+3d	1f	SD Distort+Delay
+3d	20	SD Enhance+Chorus
+3d	21	SD Enhance+Flanger
+3d	22	SD Enhance+Delay
+3d	23	SD Chorus+Delay
+3d	24	SD Flanger+Delay
+3d	25	SD Chorus+Flanger
+3d	26	SD Chorus/Delay
+3d	27	SD Flanger/Delay
+3d	28	SD Chorus/Flanger
+3d	29	SD Stereo Phaser
+3d	2a	SD Key Sync Flanger
+3d	2b	SD Formant Flanger
+3d	2c	SD Ring Modulator
+3d	2d	SD Multi-Tap Delay
+3d	2e	SD Reverse Delay
+3d	2f	SD Shuffle Delay
+3d	30	SD 3D Delay
+3d	31	SD 3-Pitch Shift
+3d	32	SD Lo-Fi Compress
+3d	33	SD Lo-Fi Noise
+3d	34	SD Speaker Sim.
+3d	35	SD Overdrive 2
+3d	36	SD Distortion 2
+3d	37	SD Stereo Compress
+3d	38	SD Stereo Limiter
+3d	39	SD Gate
+3d	3a	SD Slicer
+3d	3b	SD Isolator
+3d	3c	SD 3D Chorus
+3d	3d	SD 3D Flanger
+3d	3e	SD Tremoro
+3d	3f	SD Auto Pan
+3d	40	SD Stereo Phaser 2
+3d	41	SD Stereo Auto Wah
+3d	42	SD St Formant Filter
+3d	43	SD Multi-Tap Delay 2
+3d	44	SD Reverse Delay 2
+3d	45	SD Shuffle Delay 2
+3d	46	SD 3D Delay 2
+3d	47	SD Rotary 2
+3d	48	SD Rotary Multi
+3d	49	SD Keyboard Multi
+3d	4a	SD Rhodes Multi
+3d	4b	SD JD Multi
+3d	4c	SD St Lo-Fi Compress
+3d	4d	SD St Lo-Fi Noise
+3d	4e	SD Guitar Amp Sim
+3d	4f	SD Stereo Overdrive
+3d	50	SD Stereo Distort
+3d	51	SD Guitar Multi 1
+3d	52	SD Guitar Multi 2
+3d	53	SD Guitar Multi 3
+3d	54	SD Clean Gtr Multi 1
+3d	55	SD Clean Gtr Multi 2
+3d	56	SD Bass Multi
+3d	57	SD Isolator 2
+3d	58	SD Stereo Spectrum
+3d	59	SD 3D Auto Spin
+3d	5a	SD 3D Manual Spin
 40	00	XG Through
 41	00	XG Chorus 1
 41	01	XG Chorus 2
