@@ -1,0 +1,15 @@
+#!/bin/bash
+typeReply=$(type -p $0)
+if [[ "$typeReply" != "$0 "* ]]; then
+	type -p $1
+else
+	echo "" | read -a dummyVar 2>/dev/null
+	if [[ "$?" == "0" ]]; then
+		reply=( $(type -p $1) )
+		echo ${reply[$((${#reply[@]} - 1))]}
+	else
+		set -A reply $(type -p $1)
+		echo ${reply[$((${#reply[@]}))]}
+	fi
+fi
+exit

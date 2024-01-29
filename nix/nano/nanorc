@@ -1,0 +1,34 @@
+# Welcome to PonyTrails GNU Nano default configuration file.
+# You can choose to disable several settings by comment them out.
+
+# Make your GNU Nano editor display and behave vaguely like normal editors.
+set titlecolor bold,lightblack,black
+set numbercolor bold,lightblack,black
+set statuscolor lightblack,black
+set autoindent # Follows the current indentation
+set smarthome # Don't let indentation frustrate you.
+set tabsize 4 # A tabsize of 4 follows the setting of most editors.
+set softwrap # Just display the lines, and don't hide them.
+set linenumbers # Just show the line numbers.
+set constantshow # Display information of the cursor position constantly.
+set nonewlines # Do not add a blank new line at the end of every file.
+set nohelp # I know how to do basic Nano operations, so stop pestering me.
+set historylog # Save historical searches and replaces for later use.
+set positionlog # Save cursor positions of the last 200 edited files.
+# Some other configurations. Uncomment them to enable.
+
+# Display
+#set atblanks # Make soft wrapping wrap at word blanks, instead of the edge of display area.
+#set bookstyle # Treat lines starting with whitespaces as beginnings of paragraphs.
+#set emptyline # Keep the line below title bar empty. Not recommended to enable.
+#set indicator # Display a scroll bar on the right of display area.
+#set scrollercolor lightblack
+
+# Editing
+#set afterends # Make (^▶) and (^Del) stop at word ends instead of word beginnings.
+#set breaklonglines # Automatically hard-wraps the current line when too long.
+#set rebinddelete # Interpret (Del) and (Bksp) differently. Only enable when the two are wrong!
+
+# File behaviour
+#set backup # Automatically creates backups when saving files.
+#set backupdir ~/.nanobak # Keep seperate backups in the directory every time you save a file.
