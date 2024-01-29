@@ -1563,8 +1563,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						efxDefault = [0, 0, 0, 0, 0, 0, 0, 0];
 					};
 				};
-				for (let i = 0; i < 4; i ++) {
-					if (!upThis.#efxBase[3 * i]) {
+				for (let i = 0; i < allocated.efx; i ++) {
+					if (!upThis.#efxBase[3 * i] && efxDefault[i << 1]?.constructor) {
 						upThis.#efxBase[3 * i + 1] = efxDefault[2 * i];
 						upThis.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
 						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert'][i]}`, upThis.getEffectType(i))
