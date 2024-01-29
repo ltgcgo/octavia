@@ -199,8 +199,8 @@ MSB	LSB	Name
 3a	00	SD Studio Hall
 3b	00	SD Studio Plate
 3c	00	SD Chorus
-3d	00	SD Delay
-3e	00	SD Stereo EQ
+3c	01	SD Delay
+3d	00	SD Stereo EQ
 40	00	XG Through
 41	00	XG Chorus 1
 41	01	XG Chorus 2
