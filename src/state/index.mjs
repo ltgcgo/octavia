@@ -4852,6 +4852,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Melodic
 								upThis.#cc[chOff + ccToPos[0]] = 96 | e;
 							};
+							upThis.dispatchEvent("voice", {
+								part
+							});
 						} else {
 							console.debug(`Unknown SD-90 global CH${part + 1} param setup message:\n%o`, msg);
 						};
