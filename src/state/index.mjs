@@ -1527,13 +1527,19 @@ let OctaviaDevice = class extends CustomEventSource {
 				let efxDefault;
 				switch (idx) {
 					case modeMap["?"]:
+					case modeMap.gm:
+					case modeMap.g2: {
+						efxDefault = [52, 4, 52, 18, 0, 0, 0, 0];
+						break;
+					};
 					case modeMap.xg: {
 						efxDefault = [1, 0, 65, 0, 5, 0, 0, 0];
 						break;
 					};
-					case modeMap.gm:
-					case modeMap.gs:
-					case modeMap.g2:
+					case modeMap.gs: {
+						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0];
+						break;
+					};
 					case modeMap.sd: {
 						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0];
 						break;
@@ -1904,6 +1910,24 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([4, 4], (msg) => {
 			// Master coarse tune
 			return (msg[1] - 64);
+		}).add([4, 5], (msg) => {
+			// Global parameter change
+			let slotLen = msg[0], // Slotpath length, 1 means 2?
+			paramLen = msg[1], // Parameter length
+			valueLen = msg[2]; // Value length
+			let paramStart = 5, valueStart = 5 + paramLen;
+			if (slotLen != 1) {
+				console.error(`Unsupported GM2 global parameter set: slotpath length too long (${slotLen})!\n`, msg);
+				return;
+			};
+			let param = 0, value = 0;
+			msg.subarray(paramStart, valueStart).forEach((e, i) => {
+				param |= e << (i * 7);
+			});
+			msg.subarray(valueStart).forEach((e, i) => {
+				value |= e << (i * 7);
+			});
+			console.debug(`GM2 global parameter: (${msg.subarray(3, paramStart)}; p: ${param}, v: ${value})`);
 		});
 		// XG SysEx section
 		this.#seXg.add([76, 0, 0], (msg) => {

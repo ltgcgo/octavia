@@ -175,6 +175,32 @@ MSB	LSB	Name
 31	06	GS OvrDrv/Auto Wah
 31	07	GS Phaser/Rotary
 31	08	GS Phaser/Auto Wah
+34	00	GM Room Small
+34	01	GM Room Medium
+34	02	GM Room Large
+34	03	GM Hall Medium
+34	04	GM Hall Large
+34	08	GM Plate
+34	10	GM Chorus 1
+34	11	GM Chorus 2
+34	12	GM Chorus 3
+34	13	GM Chorus 4
+34	14	GM Feedback Chorus
+34	15	GM Flanger
+38	00	SD Room 1
+38	01	SD Room 2
+38	02	SD Stage 1
+38	03	SD Stage 2
+38	04	SD Hall 1
+38	05	SD Hall 2
+38	06	SD Delay
+38	07	SD Pan Delay
+39	00	SD Studio Room
+3a	00	SD Studio Hall
+3b	00	SD Studio Plate
+3c	00	SD Chorus
+3d	00	SD Delay
+3e	00	SD Stereo EQ
 40	00	XG Through
 41	00	XG Chorus 1
 41	01	XG Chorus 2
