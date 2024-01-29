@@ -1915,19 +1915,44 @@ let OctaviaDevice = class extends CustomEventSource {
 			let slotLen = msg[0], // Slotpath length, 1 means 2?
 			paramLen = msg[1], // Parameter length
 			valueLen = msg[2]; // Value length
-			let paramStart = 5, valueStart = 5 + paramLen;
+			let slotStart = 3,
+			paramStart = slotStart + (slotLen << 1),
+			valueStart = paramStart + paramLen;
 			if (slotLen != 1) {
 				console.error(`Unsupported GM2 global parameter set: slotpath length too long (${slotLen})!\n`, msg);
 				return;
 			};
-			let param = 0, value = 0;
+			let slot = 0, param = 0, value = 0;
+			msg.subarray(slotStart, paramStart).forEach((e) => {
+				slot = slot << 7;
+				slot |= e;
+			});
 			msg.subarray(paramStart, valueStart).forEach((e, i) => {
 				param |= e << (i * 7);
 			});
 			msg.subarray(valueStart).forEach((e, i) => {
 				value |= e << (i * 7);
 			});
-			console.debug(`GM2 global parameter: (${msg.subarray(3, paramStart)}; p: ${param}, v: ${value})`);
+			getDebugState() && console.debug(`GM2 global parameter: (${msg.subarray(3, paramStart)}; p: ${param}, v: ${value})`);
+			switch (slot) {
+				case 129: {
+					// GM reverb set
+					if (param == 0) {
+						upThis.setEffectType(52, value);
+					};
+					break;
+				};
+				case 130: {
+					// GM chorus set
+					if (param == 0) {
+						upThis.setEffectType(52, value | 16);
+					};
+					break;
+				};
+				default: {
+					getDebugState() && console.debug(`GM2 global paramater slot path unknown.`);
+				};
+			};
 		});
 		// XG SysEx section
 		this.#seXg.add([76, 0, 0], (msg) => {

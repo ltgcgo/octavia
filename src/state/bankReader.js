@@ -105,6 +105,9 @@ let VoiceBank = class {
 					args[2] |= 16;
 				} else if (msb > 95 && msb < 100) {
 					args[2] |= 16;
+					if (prg >> 3 == 15) {
+						args[0] = 96;
+					};
 				};
 				break;
 			};
