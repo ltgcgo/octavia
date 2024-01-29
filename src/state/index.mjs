@@ -4736,6 +4736,7 @@ let OctaviaDevice = class extends CustomEventSource {
 										if (e) {
 											upThis.setEffectType(1, 60, e - 1);
 											upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+											console.debug(`SD MFX Cho: ${ri} - ${e}`);
 										};
 										break;
 									};
@@ -4752,8 +4753,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								switch (ri) {
 									case 0: {
 										if (e) {
-											upThis.setEffectTypeRaw(0, 55 + e, false);
+											upThis.setEffectType(0, 55 + e, 0);
 											upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+											console.debug(`SD MFX Rev: ${ri} - ${e}`);
 										};
 										break;
 									};
@@ -4767,18 +4769,18 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 5: {
 							// SD EFX (MIDI FX)
 							let efxSink = slot - 1;
-							//console.debug(`SD MFX ${efxSink - 2}: ${ri} - ${e}`);
 							msg.subarray(2).forEach((e, i) => {
 								let ri = i + offset;
+								console.debug(`SD MFX ${efxSink - 2}: ${ri} - ${e}`);
 								switch (ri) {
 									case 0: {
 										upThis.setEffectTypeRaw(efxSink, 62, e);
-										upThis.dispatchEvent(`efx${efx > 2 ? "delay" : "insert" + (efxSink - 4)}`, upThis.getEffectType(efxSink));
+										upThis.dispatchEvent(`efx${efxSink > 2 ? "delay" : "insert" + (efxSink - 4)}`, upThis.getEffectType(efxSink));
 										break;
 									};
 								};
 							});
-							//console.debug(`SD MFX message:\n%o`, msg);
+							console.debug(`SD MFX message:\n%o`, msg);
 							break;
 						};
 						default: {
