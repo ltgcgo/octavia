@@ -1939,6 +1939,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// GM reverb set
 					if (param == 0) {
 						upThis.setEffectType(0, 52, value);
+						upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
 					};
 					break;
 				};
@@ -1946,6 +1947,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// GM chorus set
 					if (param == 0) {
 						upThis.setEffectType(1, 52, value | 16);
+						upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
 					};
 					break;
 				};
