@@ -1938,14 +1938,14 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 129: {
 					// GM reverb set
 					if (param == 0) {
-						upThis.setEffectType(52, value);
+						upThis.setEffectType(0, 52, value);
 					};
 					break;
 				};
 				case 130: {
 					// GM chorus set
 					if (param == 0) {
-						upThis.setEffectType(52, value | 16);
+						upThis.setEffectType(1, 52, value | 16);
 					};
 					break;
 				};
@@ -4722,7 +4722,67 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (type) {
 				case 0: {
 					// Global effects
-					console.debug(`Unknown SD-90 global effects message:\n%o`, msg);
+					let slot = msg[0] >> 1, offset = msg[1];
+					switch (slot) {
+						case 1: {
+							// SD chorus
+							msg.subarray(2).forEach((e, i, a) => {
+								let ri = i + offset;
+								//console.debug(`SD MFX Cho: ${ri} - ${e}, %o`, a);
+								switch (ri) {
+									case 0: {
+										if (e) {
+											upThis.setEffectType(1, 60, e - 1);
+											upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+										};
+										break;
+									};
+								};
+							});
+							//console.debug(`SD chorus message:\n%o`, msg);
+							break;
+						};
+						case 2: {
+							// SD reverb
+							msg.subarray(2).forEach((e, i) => {
+								let ri = i + offset;
+								//console.debug(`SD MFX Rev: ${ri} - ${e}`);
+								switch (ri) {
+									case 0: {
+										if (e) {
+											upThis.setEffectTypeRaw(0, 55 + e, false);
+											upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+										};
+										break;
+									};
+								};
+							});
+							//console.debug(`SD reverb message:\n%o`, msg);
+							break;
+						};
+						case 3:
+						case 4:
+						case 5: {
+							// SD EFX (MIDI FX)
+							let efxSink = slot - 1;
+							//console.debug(`SD MFX ${efxSink - 2}: ${ri} - ${e}`);
+							msg.subarray(2).forEach((e, i) => {
+								let ri = i + offset;
+								switch (ri) {
+									case 0: {
+										upThis.setEffectTypeRaw(efxSink, 62, e);
+										upThis.dispatchEvent(`efx${efx > 2 ? "delay" : "insert" + (efxSink - 4)}`, upThis.getEffectType(efxSink));
+										break;
+									};
+								};
+							});
+							//console.debug(`SD MFX message:\n%o`, msg);
+							break;
+						};
+						default: {
+							console.debug(`Unknown SD-90 global effects message:\n%o`, msg);
+						};
+					};
 					break;
 				};
 				case 1: {
