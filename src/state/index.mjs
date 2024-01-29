@@ -1527,7 +1527,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				let efxDefault;
 				switch (idx) {
 					case modeMap["?"]:
-					case modeMap.gm:
 					case modeMap.g2: {
 						efxDefault = [52, 4, 52, 18, 0, 0, 0, 0];
 						break;
@@ -1536,6 +1535,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						efxDefault = [1, 0, 65, 0, 5, 0, 0, 0];
 						break;
 					};
+					case modeMap.gm:
 					case modeMap.gs: {
 						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0];
 						break;
