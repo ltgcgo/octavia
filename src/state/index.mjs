@@ -1541,7 +1541,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case modeMap.sd: {
-						efxDefault = [58, 0, 60, 0, 0, 0, 0, 0];
+						efxDefault = [58, 0, 60, 0, 61, 0, 61, 0];
 						break;
 					};
 					case modeMap["05rw"]:
