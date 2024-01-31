@@ -341,10 +341,12 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.curPoly.innerText = `${curPoly}`.padStart(3, "0");
 		upThis.#sectInfo.maxPoly.innerText = `${upThis.#maxPoly}`.padStart(3, "0");
 		if (upThis.#clockSource?.realtime) {
-			upThis.#sectInfo.barCount.innerText = "LIVE";
-			upThis.#sectInfo.barNote.innerText = "0";
+			upThis.#sectInfo.barCount.innerText = "LINE";
+			upThis.#sectInfo.barDelim.style.display = "none";
+			upThis.#sectInfo.barNote.innerText = "IN";
 		} else {
 			upThis.#sectInfo.barCount.innerText = sum.noteBar + 1;
+			upThis.#sectInfo.barDelim.style.display = "";
 			upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
 		};
 		upThis.#scrollMeta(true);
@@ -652,6 +654,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.sigN = createElement("span", ["field", "pcp-font4"], {t: 1, l: 194, w: 23, h: 33, a: "right"});
 		upThis.#sectInfo.sigD = createElement("span", ["field", "pcp-font4"], {t: 1, l: 232, w: 23, h: 33});
 		upThis.#sectInfo.barCount = createElement("span", ["field", "pcp-font4"], {t: 1, l: 304, w: 35, h: 33, a: "right"});
+		upThis.#sectInfo.barDelim = createElement("span", ["field", "field-label", "pcp-font4"], {t: 0, l: 343, w: 8, h: 33, i: "/"});
 		upThis.#sectInfo.barNote = createElement("span", ["field", "pcp-font4"], {t: 1, l: 354, w: 23, h: 33});
 		upThis.#sectInfo.tempo = createElement("span", ["field", "pcp-font4"], {t: 1, l: 454, w: 64, h: 33, a: "right"});
 		upThis.#sectInfo.volume = createElement("span", ["field", "pcp-font4"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
@@ -673,7 +676,7 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.sigD,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 268, w: 30, h: 33, i: "Bar"}),
 			upThis.#sectInfo.barCount,
-			createElement("span", ["field", "field-label", "pcp-font4"], {t: 0, l: 343, w: 8, h: 33, i: "/"}),
+			upThis.#sectInfo.barDelim,
 			upThis.#sectInfo.barNote,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 390, w: 61, h: 33, i: "Tempo", a: "right"}),
 			upThis.#sectInfo.tempo,
