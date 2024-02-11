@@ -399,6 +399,24 @@ let Cambiare = class extends RootDisplay {
 				} else {
 					e.pan.setAttribute("x", `84`);
 				};
+				// Extensible visualizer
+				e.extVis.clearRect(0, 0, 44, 25);
+				switch (sum.chExt[part][0]) {
+					case upThis.device.EXT_VL: {
+						let mouth = 8, velocity = +(!!sum.rawVelo[part]) * (sum.chContr[chOff + ccToPos[129]] * sum.chContr[chOff + ccToPos[11]] / 16129);
+						if (!velocity && sum.rawVelo[part]) {
+							velocity = sum.rawVelo[part] / 255;
+						};
+						velocity *= 36;
+						e.extVis.beginPath();
+						e.extVis.moveTo(0, 12 - mouth - 3);
+						e.extVis.lineTo(8 + velocity, 12);
+						e.extVis.lineTo(0, 12 + mouth + 3);
+						e.extVis.fill();
+						//console.debug(`Painted!`);
+						break;
+					};
+				};
 			};
 		};
 		// Note visualization
@@ -752,7 +770,7 @@ let Cambiare = class extends RootDisplay {
 					"cea": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 48}),
 					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54}),
 					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84}),
-					"extVis": createElement("canvas", [`field`], {l: 206, t: 1}).getContext("2d")
+					"extVis": createElement("canvas", [`field`], {l: 210, t: 1}).getContext("2d")
 				};
 				let e = upThis.#sectPart[port][part];
 				leftCache.forEach((e0) => {
@@ -764,7 +782,7 @@ let Cambiare = class extends RootDisplay {
 				e.metre.fillStyle = "#fff";
 				e.metre.textBaseline = "top";
 				e.metre.font = "20px 'PT Sans Narrow'";
-				e.extVis.canvas.width = 48;
+				e.extVis.canvas.width = 44;
 				e.extVis.canvas.height = 25;
 				e.extVis.fillStyle = "#fff";
 				mountElement(e.notes, [

@@ -298,6 +298,7 @@ let RootDisplay = class extends CustomEventSource {
 		let chContr = upThis.device.getCcAll(); // All CC values
 		let chProgr = upThis.device.getProgram(); // All program values
 		let chType = upThis.device.getChType(); // All channel types
+		let chExt = [];
 		// Mimic strength variation
 		let writeStrength = this.device.getStrength();
 		writeStrength.forEach(function (e, i, a) {
@@ -318,6 +319,7 @@ let RootDisplay = class extends CustomEventSource {
 		chInUse.forEach(function (e, i) {
 			if (e) {
 				chKeyPr[i] = upThis.device.getVel(i);
+				chExt[i] = upThis.device.getExt(i);
 				curPoly += chKeyPr[i].size;
 			};
 		});
@@ -331,6 +333,7 @@ let RootDisplay = class extends CustomEventSource {
 			chProgr,
 			chContr,
 			chType,
+			chExt,
 			eventCount: events.length,
 			title: this.#titleName,
 			bitmap: this.device.getBitmap(),
@@ -340,6 +343,7 @@ let RootDisplay = class extends CustomEventSource {
 			mode: this.device.getMode(),
 			strength: this.#mimicStrength.slice(),
 			velo: writeStrength,
+			rawVelo: this.device.getStrength(),
 			rpn: this.device.getRpn(),
 			tSig: this.getTimeSig(),
 			tempo: this.getTempo(),

@@ -406,7 +406,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#poly[polyIdx] = 0;
 					this.#velo[rawNote] = 0;
 					this.#polyState[polyIdx] = this.NOTE_IDLE;
-					let breathMode = this.getExt(part)[0];
+					let breathMode = this.getExt(part)[1];
 					if (breathMode == this.VLBC_VELOINIT ||
 						breathMode == this.VLBC_VELOALL) {
 						this.#cc[allocated.cc * part + ccToPos[129]] = 0;
@@ -450,7 +450,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (this.#rawStrength[part] < velo) {
 					this.#rawStrength[part] = velo;
 				};
-				let breathMode = this.getExt(part)[0];
+				let breathMode = this.getExt(part)[1];
 				if (breathMode == this.VLBC_VELOINIT ||
 					breathMode == this.VLBC_VELOALL) {
 					this.#cc[allocated.cc * part + ccToPos[129]] = velo;
@@ -585,7 +585,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let polyIdx = this.#poly.indexOf(rawNote);
 			if (polyIdx > -1) {
 				this.#velo[rawNote] = data[1];
-				let breathMode = this.getExt(part)[0];
+				let breathMode = this.getExt(part)[1];
 				if (breathMode == this.VLBC_VELOALL) {
 					this.#cc[allocated.cc * part + ccToPos[129]] = data[1];
 				};
@@ -642,7 +642,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Reset controllers
 					this.#ua.ano(part);
 					this.#pitch[part] = 0;
-					let chOff = part * allocated.cc;
+					//let chOff = part * allocated.cc;
 					// Reset to zero
 					this.#cc[chOff + ccToPos[1]] = 0; // Modulation
 					this.#cc[chOff + ccToPos[5]] = 0; // Portamento Time
@@ -765,6 +765,11 @@ let OctaviaDevice = class extends CustomEventSource {
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
+								if ([81, 97].indexOf(det.data[1]) > -1) {
+									this.#ext[extOff] = this.EXT_VL;
+								} else {
+									this.#ext[extOff] = this.EXT_NONE;
+								};
 								break;
 							};
 							case modeMap["05rw"]:
@@ -831,7 +836,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case 2: {
 						// Breath for VL and more!
-						let breathMode = this.getExt(part)[0];
+						let breathMode = this.getExt(part)[1];
 						if (breathMode == this.VLBC_BRTHEXPR) {
 							this.#cc[chOff + ccToPos[129]] = det.data[1];
 						};
@@ -1217,7 +1222,11 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getExt(part) {
 		let start = allocated.ext * part;
-		return this.#ext.subarray(start, start + allocated.ext);
+		let view = this.#ext.subarray(start, start + allocated.ext);
+		let copy = new Uint8Array(view.length);
+		copy.set(view);
+		copy[1] = copy[1] || this.#vlSysBreathMode;
+		return copy;
 	};
 	getPitch() {
 		return this.#pitch;
@@ -2521,7 +2530,16 @@ let OctaviaDevice = class extends CustomEventSource {
 			// XG A/D mono/stereo mode, won't implement for now
 		}).add([76, 112], (msg) => {
 			// XG plugin board generic
-			console.debug(`XG enable PLG1${["50-VL", "00-SG", "50-DX", "50-AN", "50-PF", "50-DR", "50-PC", "50-AP"][msg[0]]} for CH${msg[2] + 1}.`);
+			console.debug(`XG enable PLG-${["VL", "SG", "DX", "AN", "PF", "DR", "PC", "AP"][msg[0]]} for CH${msg[2] + 1}.`);
+			switch (msg[0]) {
+				case 0: {
+					upThis.#ext[allocated.ext * msg[2]] = upThis.EXT_VL;
+					break;
+				};
+				default: {
+					upThis.#ext[allocated.ext * msg[2]] = upThis.EXT_NONE;
+				};
+			};
 		}).add([73, 0, 0], (msg, track) => {
 			// MU1000/2000 System
 			let offset = msg[0];
