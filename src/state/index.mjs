@@ -39,6 +39,20 @@ const modeIdx = [
 	"k11", "sg",
 	"krs", "s90es", "motif"
 ],
+modeAdapt = {
+	"gm2": "g2",
+	"mt-32": "mt32",
+	"c/m": "mt32",
+	"ag10": "05rw",
+	"ag-10": "05rw",
+	"05r/w": "05rw",
+	"x5": "05rw",
+	"x5dr": "x5d",
+	"gmega": "k11",
+	"kross 2": "krs",
+	"motif es": "motif",
+	"s90 es": "s90es"
+},
 voiceIdx = [
 	"melodic",
 	"drum",
@@ -274,7 +288,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
-	#detectX5Target = 82; // Defaults to X5D/X5DR.
+	#detectX5Target = 82; // The target device of X5-related functions
+	#detect63Target = modeMap.kross; // The target device of device-exclusive banks
 	#masterVol = 100;
 	#metaChannel = 0;
 	#noteLength = 500;
@@ -1320,6 +1335,31 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.warn(`${source}${source ? " " : ""}invalid code point${invalidCp.length > 1 ? "s" : ""}: 0x${invalidCp.join(", 0x")}`);
 		};
 	};
+	setDetectionTargets(mode = "?", port = 0) {
+		let validId = -1;
+		mode.split(",").forEach((e) => {
+			e = e.toLowerCase();
+			let modeId = modeIdx.indexOf(modeAdapt[e] || e);
+			console.debug(`Mapped mode "${e}" to ID "${modeId}".`);
+			if (modeId > -1) {
+				validId = modeId;
+			};
+		});
+		upThis.#detectX5Target = 82; // Reset to X5DR
+		upThis.#detect63Target = modeMap.kross; // Reset to KORG KROSS 2
+		switch (validId) {
+			case modeMap["05rw"]: {
+				upThis.#detectX5Target = 81;
+				break;
+			};
+			case modeMap.s90es: {
+				upThis.#detect63Target = modeMap.s90es;
+			};
+			case modeMap.motif: {
+				upThis.#detect63Target = modeMap.motif;
+			};
+		};
+	};
 	allocateAce(cc) {
 		// Allocate active custom effect
 		// Off, cc1~cc95, CAT, velo, PB
@@ -1385,6 +1425,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#subMsb = 0;
 		upThis.#subLsb = 0;
 		upThis.#metaChannel = 0;
+		upThis.#detectX5Target = 82; // Reset to X5DR
 		upThis.#chActive.fill(0);
 		upThis.#cc.fill(0);
 		upThis.#ace.fill(0);
