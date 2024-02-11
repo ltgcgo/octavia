@@ -7,6 +7,7 @@ DreamPno	DreamPiano
 DblConGr	DblConGrnd
 GrandP #	GrndPiano#
 BritPnoK	BritPianoK
+StBrtPno	StBritePno
 BriteP #	BritPiano#
 EGndPnoK	ElGrndPnoK
 Det.CP80	DetuneCP80
@@ -648,15 +649,23 @@ WX Clari	WXClarinet
 WX JzGtr	WX JazzGtr
 Shakuha!	Shakhachi!
 LipClari	LipClarint
+SprnoSx!	SopranoSx!
 LiteAlto	Light Alto
 Trombon!	Trombone!
 Air Sax	Airy Sax
+TenorSx!	Tenor Sax!
 Trumpt!2	Trumpet! 2
+MuteTp!2	MutedTrp!2
 C Violin	Con.Violin
 C Flute	CncrtFlute
 JazFlute	Jazz Flute
 Bamboo	Bamboo Di
+SoprPipe	SoprnoPipe
 SweetAlt	Sweet Alto
+MildTenr	Mild Tenor
+GlassTnr	GlassTenor
+FunkyTnr	FunkyTenor
+OldTenor	Old Tenor
 BrtTenor	BriteTenor
 SoftPipe	Soft Pipe
 BowedSaw	Bowed Saw

@@ -7,6 +7,7 @@ DreamPno	Dream Piano
 DblConGr	DoublConGrnd
 GrandP #	Grand Piano#
 BritPnoK	BrightPianoK
+StBrtPno	StBritePiano
 BriteP #	BrightPiano#
 EGndPnoK	ElGrndPianoK
 Det.CP80	Detuned CP80
@@ -432,15 +433,22 @@ RichHpsi	Rich Harpsi.
 PhaseClv	PhaserClavi.
 AnaSquid	Analog Squid
 Fretles!	FretlessBas!
+Q. Klav	Q. Klavinet
 YamSteel	YamaStlDrums
 JazzGtr!	Jazz Guitar!
 Thin Gtr	Thin Guitar
 Shakuha!	Shakuhachi!
+LipClari	Lip Clarinet
+SprnoSx!	Soprano Sax!
 LiteAlto	LightAltoSax
+MuteTp!2	MutedTrump!2
 C Violin	ConcrtViolin
 C Flute	ConcertFlute
 Bamboo	Bamboo Dizi
+SoprPipe	Soprano Pipe
 SweetAlt	SweetAltoSax
+GlassTnr	Glass Tenor
+FunkyTnr	Funky Tenor
 BrtTenor	Bright Tenor
 AmpdHarp	Amped Harmo.
 CromHarp	Chrome Harmo
@@ -452,4 +460,3 @@ MM-Clav3	MM-Clavi. 3
 MM-Vibe2	MM-Vibrafn.2
 MM-Vce 4	MM-Voices 4
 DX-SLd 9	DX-SquareLd9
-Q. Klav	Q. Klavinet
