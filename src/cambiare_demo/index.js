@@ -81,7 +81,7 @@ let getBlobFrom = async function (filename) {
 let audioUri;
 
 self.gMode = async function (mode) {
-	visualizer.device.switchMode(mode, true);
+	visualizer.device.switchMode(mode, true, true);
 	Alpine.store("deviceMode", mode);
 };
 self.gRange = async function (mode) {
@@ -92,7 +92,7 @@ self.gPort = async function (port) {
 	visualizer.setPort(port);
 	Alpine.store("startPort", port);
 };
-self.gDemo = async function ({file, id, artist, title}) {
+self.gDemo = async function ({file, id, artist, title, standard}) {
 	await audioFilePlayer.pause();
 	visualizer.reset();
 	if (audioUri) {
@@ -118,6 +118,7 @@ self.gDemo = async function ({file, id, artist, title}) {
 	audioFilePlayer.src = audioUri;
 	visualizer.device.initOnReset = false;
 	visualizer.dispatchEvent("title", "");
+	visualizer.device.setDetectionTargets(standard);
 	Alpine.store("activeDemo", id);
 	Alpine.store("play", "demo");
 	Alpine.store("sound", "demo");

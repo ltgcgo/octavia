@@ -686,9 +686,9 @@ let OctaviaDevice = class extends CustomEventSource {
 									this.switchMode("gs");
 								};
 							} else if (det.data[1] == 62) {
-								this.switchMode("x5d");
+								this.switchMode(this.#detectX5Target == 82 ? "x5d" : "05rw");
 							} else if (det.data[1] == 63) {
-								this.switchMode("krs");
+								this.switchMode(this.modeIdx[this.#detect63Target]);
 							} else if (det.data[1] == 64 || det.data[1] == 127) {
 								this.switchMode("xg");
 							};
@@ -712,11 +712,11 @@ let OctaviaDevice = class extends CustomEventSource {
 							} else if (det.data[1] == 64 || det.data[1] == 127) {
 								this.switchMode("xg", true);
 							};
-						} else if (this.#mode == modeMap.x5d) {
+						}/* else if (this.#mode == modeMap.x5d) {
 							if (det.data[1] > 0 && det.data[1] < 8) {
 								this.switchMode("05rw", true);
 							};
-						};
+						}*/;
 						switch (this.#mode) {
 							case modeMap.xg: {
 								if ([79, 95, 126, 127].indexOf(det.data[1]) > -1) {
@@ -1336,8 +1336,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 	};
 	setDetectionTargets(mode = "?", port = 0) {
-		let validId = -1;
-		mode.split(",").forEach((e) => {
+		let upThis = this,
+		validId = -1;
+		mode.replaceAll(", ", ",").split(",").forEach((e) => {
 			e = e.toLowerCase();
 			let modeId = modeIdx.indexOf(modeAdapt[e] || e);
 			console.debug(`Mapped mode "${e}" to ID "${modeId}".`);
@@ -1345,6 +1346,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				validId = modeId;
 			};
 		});
+		console.debug(`Set detection target to ID "${validId}".`);
 		upThis.#detectX5Target = 82; // Reset to X5DR
 		upThis.#detect63Target = modeMap.kross; // Reset to KORG KROSS 2
 		switch (validId) {
@@ -1426,6 +1428,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#subLsb = 0;
 		upThis.#metaChannel = 0;
 		upThis.#detectX5Target = 82; // Reset to X5DR
+		upThis.#detect63Target = modeMap.kross; // Reset to KROSS 2
 		upThis.#chActive.fill(0);
 		upThis.#cc.fill(0);
 		upThis.#ace.fill(0);
@@ -1534,7 +1537,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.switchMode("?");
 		return;
 	};
-	switchMode(mode, forced = false) {
+	switchMode(mode, forced = false, setTarget = false) {
 		let upThis = this;
 		let idx = modeIdx.indexOf(mode);
 		if (idx > -1) {
@@ -1621,8 +1624,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (!upThis.#efxBase[3 * i] && efxDefault[i << 1]?.constructor) {
 						upThis.#efxBase[3 * i + 1] = efxDefault[2 * i];
 						upThis.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
-						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert'][i]}`, upThis.getEffectType(i))
+						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert0'][i]}`, upThis.getEffectType(i));
 					};
+				};
+				if (setTarget) {
+					upThis.setDetectionTargets(mode);
 				};
 				upThis.dispatchEvent("mode", mode);
 				upThis.forceVoiceRefresh();
