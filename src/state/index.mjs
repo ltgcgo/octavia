@@ -152,15 +152,15 @@ ccAccepted = [
 	72, 73, 74, 75, 76, 77, 78, 84, 91,
 	92, 93, 94, 95, 98, 99, 100, 101,
 	128, // Dry level (internal register for Octavia)
-	// 12, 13, // General-purpose effect controllers
+	12, 13, // General-purpose effect controllers
 	16, 17, 18, 19, // General-purpose sound controllers
-	// 14, 15, 20, 21, 26, 28 // For some reason, used by PLG-VL
+	14, 15, 20, 21, 26, 28 // For some reason, used by PLG-VL
 	129, // PLG-VL part breath mode
 	130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, // PLG-VL part controls
 	142, 143, 144, 145, 146, 147, 148, 149, // PLG-DX carrier level
 	150, 151, 152, 153, 154, 155, 156, 157 // PLG-DX modulator level
 ], // 96, 97, 120 to 127 all have special functions
-aceCandidates = [2, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+aceCandidates = [2, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 131, 136],
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
 const korgDrums = [0, 16, 25, 40, 32, 64, 26, 48];
@@ -765,7 +765,7 @@ let OctaviaDevice = class extends CustomEventSource {
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
-								if ([81, 97].indexOf(det.data[1]) > -1) {
+								if ([33, 81, 97].indexOf(det.data[1]) > -1) {
 									this.#ext[extOff] = this.EXT_VL;
 								} else {
 									this.#ext[extOff] = this.EXT_NONE;
