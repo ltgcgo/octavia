@@ -160,7 +160,11 @@ ccAccepted = [
 	142, 143, 144, 145, 146, 147, 148, 149, // PLG-DX carrier level
 	150, 151, 152, 153, 154, 155, 156, 157 // PLG-DX modulator level
 ], // 96, 97, 120 to 127 all have special functions
-aceCandidates = [2, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 131, 136],
+aceCandidates = [
+	2,
+	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+	136
+],
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
 const korgDrums = [0, 16, 25, 40, 32, 64, 26, 48];
@@ -228,7 +232,8 @@ const allocated = {
 	dpn: useDrumNrpn.length, // Drum setup params
 	dnc: 128, // drum note 0 to 127
 	ext: 2, // extensions
-	efx: 7
+	efx: 7,
+	redir: 32
 };
 const overrides = {
 	bank0: 128
@@ -298,7 +303,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#drum = new Uint8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
 	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
-	#ccCapturer = new Uint8Array(64); // Redirect non-internal CCs to internal CCs
+	#ccCapturer = new Uint8Array(allocated.ch * allocated.redir); // Redirect non-internal CCs to internal CCs
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
@@ -306,7 +311,6 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
-	#detectR;
 	#detect;
 	#masterVol = 100;
 	#metaChannel = 0;
@@ -320,7 +324,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#modeKaraoke = false;
 	#vlSysBreathMode = 1; // PLG-VL system breath mode
 	#receiveTree;
-	#ccRedirMap;
+	#ccRedirMap = new Array(allocated.ch);
 	// Temporary EFX storage
 	#gsEfxSto = new Uint8Array(2);
 	// Metadata text events
@@ -599,6 +603,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		11: function (det) {
 			let part = det.channel;
+			// Redirect CC event
+			let redirMap = this.#ccRedirMap[part],
+			redirTarget = redirMap[det.data[0]];
+			if (redirTarget) {
+				//console.debug(`Redirected cc${det.data[0]} on CH${part + 1} to cc${redirTarget}.`);
+				det.data[0] = redirTarget;
+			};
 			// CC event, directly assign values to the register.
 			if ([0, 32].indexOf(det.data[0]) > -1) {
 				(() => {
@@ -1151,15 +1162,17 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	buildRccMap() {
 		// Build a receiving tree from the defined CCs
+		let upThis = this;
 		// Builds from the ground up each time
-		let map = {};
-		this.#ccCapturer.forEach((e, i) => {
+		for (let ch = 0; ch < allocated.ch; ch ++) {
+			upThis.#ccRedirMap[ch] = {};
+		};
+		upThis.#ccCapturer.forEach((e, i) => {
 			if (e) {
-				map[e] = i | 128;
+				upThis.#ccRedirMap[Math.floor(i / allocated.redir)][e] = (i % allocated.redir) | 128;
 			};
 		});
-		this.#ccRedirMap = map;
-		console.debug(map);
+		console.debug(upThis.#ccRedirMap);
 	};
 	getActive() {
 		let result = this.#chActive;
@@ -1353,6 +1366,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		return voice;
 	};
+	getRawPitch() {
+		return this.#pitch;
+	};
 	getPitchShift(part) {
 		let upThis = this;
 		let rpnOff = part * allocated.rpn;
@@ -1435,7 +1451,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	allocateAce(cc) {
 		// Allocate active custom effect
 		// Off, cc1~cc95, CAT, velo, PB
-		if (!cc || cc > 95) {
+		if (!cc || (cc < 128 && cc > 95)) {
 			console.warn(`cc${cc} cannot be allocated as an active custom effect.`);
 			return;
 		};
@@ -2472,10 +2488,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 		}).add([76, 9], (msg, track) => {
-			// PLG-150VL Part Setup
+			// PLG-VL Part Setup
 			let part = upThis.chRedir(msg[0], track, true),
-			id = msg[1];
-			let dPref = `PLG-150VL CH${part + 1} `;
+			id = msg[1],
+			chOff = allocated.cc * part;
+			let dPref = `PLG-VL CH${part + 1} `;
 			msg.subarray(2).forEach((e, i) => {
 				let ri = i + id;
 				switch (ri) {
@@ -2490,7 +2507,8 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					default: {
 						if (ri < 27) {
-							let pType = [
+							let pId = (ri - 3) >> 1,
+							pType = [
 								"pressure",
 								"embouchure",
 								"tonguing",
@@ -2503,19 +2521,22 @@ let OctaviaDevice = class extends CustomEventSource {
 								"absorption",
 								"amplification",
 								"brightness"
-							][(ri - 3) >> 1];
+							][pId];
 							if (ri & 1) {
 								if (ri < 23) {
 									console.debug(`${dPref}${pType} control source: ${getVlCtrlSrc(e)}`);
 									if (e && e < 96) {
-										upThis.allocateAce(e);
+										upThis.allocateAce(130 + pId);
 									};
+									upThis.#ccCapturer[allocated.redir * part + pId + 2] = e;
+									upThis.buildRccMap();
 								} else {
 									// These actually belong to 0x57, not 0x4c
 									console.debug(`${dPref}${pType} scale break point: ${e}`);
 								};
 							} else {
 								console.debug(`${dPref}${pType} depth: ${e - 64}`);
+								upThis.#cc[chOff + ccToPos[130 + pId]] = e;
 							};
 						};
 					};

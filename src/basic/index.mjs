@@ -343,13 +343,14 @@ let RootDisplay = class extends CustomEventSource {
 			mode: this.device.getMode(),
 			strength: this.#mimicStrength.slice(),
 			velo: writeStrength,
-			rawVelo: this.device.getStrength(),
 			rpn: this.device.getRpn(),
 			tSig: this.getTimeSig(),
 			tempo: this.getTempo(),
 			noteBar: this.noteBar,
 			noteBeat: this.noteBeat,
 			ace: this.device.getAce(),
+			rawVelo: this.device.getStrength(),
+			rawPitch: this.device.getRawPitch(),
 			efxSink: this.device.getEffectSink()
 		};
 		return repObj;
