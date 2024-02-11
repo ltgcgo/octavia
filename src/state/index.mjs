@@ -1524,14 +1524,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[chOff + ccToPos[11]] = 127; // Expression
 			// Reset to centre
 			upThis.#cc[chOff + ccToPos[10]] = 64; // Pan
-			upThis.#cc[chOff + ccToPos[71]] = 64; // Resonance
+			/*upThis.#cc[chOff + ccToPos[71]] = 64; // Resonance
 			upThis.#cc[chOff + ccToPos[72]] = 64; // Release Time
 			upThis.#cc[chOff + ccToPos[73]] = 64; // Attack Time
 			upThis.#cc[chOff + ccToPos[74]] = 64; // Brightness
 			upThis.#cc[chOff + ccToPos[75]] = 64; // Decay Time
 			upThis.#cc[chOff + ccToPos[76]] = 64; // Vibrato Rate
 			upThis.#cc[chOff + ccToPos[77]] = 64; // Vibrato Depth
-			upThis.#cc[chOff + ccToPos[78]] = 64; // Vibrato Delay
+			upThis.#cc[chOff + ccToPos[78]] = 64; // Vibrato Delay*/
+			upThis.#cc.subarray(chOff + ccToPos[71], chOff + ccToPos[71] + 8).fill(64);
+			// Internal reset
+			upThis.#cc.subarray(chOff + ccToPos[130], chOff + ccToPos[130] + 28).fill(64);
 			// Extra default values
 			upThis.#cc[chOff + ccToPos[91]] = 40; // Reverb
 			// RPN/NRPN to null
