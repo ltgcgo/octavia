@@ -288,8 +288,11 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
-	#detectX5Target = 82; // The target device of X5-related functions
-	#detect63Target = modeMap.kross; // The target device of device-exclusive banks
+	#detect = {
+		"x5": 82, // The target device of X5-related functions
+		"ds": modeMap.krs // The target device of device-exclusive banks
+	};
+	//#detect;
 	#masterVol = 100;
 	#metaChannel = 0;
 	#noteLength = 500;
@@ -308,7 +311,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross", "s90es"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "krs", "s90es"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
@@ -686,9 +689,9 @@ let OctaviaDevice = class extends CustomEventSource {
 									this.switchMode("gs");
 								};
 							} else if (det.data[1] == 62) {
-								this.switchMode(this.#detectX5Target == 82 ? "x5d" : "05rw");
+								this.switchMode(this.#detect.x5 == 82 ? "x5d" : "05rw");
 							} else if (det.data[1] == 63) {
-								this.switchMode(this.modeIdx[this.#detect63Target]);
+								this.switchMode(this.modeIdx[this.#detect.ds]);
 							} else if (det.data[1] == 64 || det.data[1] == 127) {
 								this.switchMode("xg");
 							};
@@ -1348,19 +1351,19 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		console.debug(`Set detection target to ID "${validId}".`);
 		if (validId > 0) {
-			upThis.#detectX5Target = 82; // Reset to X5DR
-			upThis.#detect63Target = modeMap.kross; // Reset to KORG KROSS 2
+			upThis.#detect.x5 = 82; // Reset to X5DR
+			upThis.#detect.ds = modeMap.krs; // Reset to KORG KROSS 2
 		};
 		switch (validId) {
 			case modeMap["05rw"]: {
-				upThis.#detectX5Target = 81;
+				upThis.#detect.x5 = 81;
 				break;
 			};
 			case modeMap.s90es: {
-				upThis.#detect63Target = modeMap.s90es;
+				upThis.#detect.ds = modeMap.s90es;
 			};
 			case modeMap.motif: {
-				upThis.#detect63Target = modeMap.motif;
+				upThis.#detect.ds = modeMap.motif;
 			};
 		};
 	};
@@ -1429,8 +1432,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#subMsb = 0;
 		upThis.#subLsb = 0;
 		upThis.#metaChannel = 0;
-		upThis.#detectX5Target = 82; // Reset to X5DR
-		upThis.#detect63Target = modeMap.kross; // Reset to KROSS 2
+		//upThis.#detect.x5 = 82; // Reset to X5DR
+		//upThis.#detect.ds = modeMap.krs; // Reset to KROSS 2
 		upThis.#chActive.fill(0);
 		upThis.#cc.fill(0);
 		upThis.#ace.fill(0);
@@ -1702,13 +1705,23 @@ let OctaviaDevice = class extends CustomEventSource {
 	constructor() {
 		super();
 		let upThis = this;
-		this.#bitmap = new Uint8Array(256);
-		this.#bitmapStore[10] = new Uint8Array(512);
-		this.#metaSeq = new BinaryMatch();
-		this.userBank.strictMode = true;
+		upThis.#bitmap = new Uint8Array(256);
+		upThis.#bitmapStore[10] = new Uint8Array(512);
+		upThis.#metaSeq = new BinaryMatch();
+		/*upThis.#detect = new Proxy(upThis.#detectR, {
+			get: (real, key) => {
+				return real[key];
+			},
+			set: (real, key, value) => {
+				console.debug(new Error(`Caught detection target writes: ${key} = ${value}.`));
+				real[key] = value;
+				return true;
+			}
+		});*/
+		upThis.userBank.strictMode = true;
 		// Prevent bank readers from getting stalled
-		this.userBank.load(`MSB\tPRG\tLSB\tNME\n062\t000\t000\t\n122\t000\t000\t\n122\t001\t000\t\n122\t002\t000\t\n122\t003\t000\t\n122\t004\t000\t\n122\t005\t000\t\n122\t006\t000\t`);
-		this.addEventListener("metacommit", function (ev) {
+		upThis.userBank.load(`MSB\tPRG\tLSB\tNME\n062\t000\t000\t\n122\t000\t000\t\n122\t001\t000\t\n122\t002\t000\t\n122\t003\t000\t\n122\t004\t000\t\n122\t005\t000\t\n122\t006\t000\t`);
+		upThis.addEventListener("metacommit", function (ev) {
 			//upThis.dispatchEvent("metacommit", ev.data);
 			let {data} = ev;
 			if (upThis.#metaTexts[0]?.type == data.type && upThis.#metaTexts[0]?.amend) {
@@ -1720,7 +1733,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		// Metadata events
 		// Should be moved to somewhere else
-		this.#metaRun[1] = function (data) {
+		upThis.#metaRun[1] = function (data) {
 			data = data.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
 			// Normal text
 			switch (data.slice(0, 2)) {
@@ -1853,13 +1866,13 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			};
 		};
-		this.#metaRun[2] = function (data) {
+		upThis.#metaRun[2] = function (data) {
 			this.dispatchEvent("metacommit", {
 				"type": "Copyrite",
 				"data": data
 			});
 		};
-		this.#metaRun[3] = function (data, track) {
+		upThis.#metaRun[3] = function (data, track) {
 			// Filter overly annoying meta events
 			if (track < 1 && this.#metaChannel < 1) {
 				this.dispatchEvent("metacommit", {
@@ -1868,7 +1881,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				});
 			};
 		};
-		this.#metaRun[4] = function (data, track) {
+		upThis.#metaRun[4] = function (data, track) {
 			//if (track < 1 && this.#metaChannel < 1) {
 				//this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}Instrmnt: ${data}`);
 			//};
@@ -1877,7 +1890,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				"data": data
 			});
 		};
-		this.#metaRun[5] = function (data) {
+		upThis.#metaRun[5] = function (data) {
 			if (data.trim() == "") {
 				this.dispatchEvent("metacommit", {
 					"type": "C.Lyrics",
@@ -1892,67 +1905,67 @@ let OctaviaDevice = class extends CustomEventSource {
 				});
 			};
 		};
-		this.#metaRun[6] = function (data) {
+		upThis.#metaRun[6] = function (data) {
 			this.dispatchEvent("metacommit", {
 				"type": "C.Marker",
 				"data": data
 			});
 		};
-		this.#metaRun[7] = function (data) {
+		upThis.#metaRun[7] = function (data) {
 			this.dispatchEvent("metacommit", {
 				"type": "CuePoint",
 				"data": data
 			});
 		};
-		this.#metaRun[32] = function (data) {
+		upThis.#metaRun[32] = function (data) {
 			this.#metaChannel = data[0] + 1;
 		};
-		this.#metaRun[33] = function (data, track) {
+		upThis.#metaRun[33] = function (data, track) {
 			//console.debug(`Track ${track} requests to get assigned to output ${data}.`);
 			upThis.#trkAsReq[track] = data + 1;
 		};
-		this.#metaRun[81] = function (data, track) {
+		upThis.#metaRun[81] = function (data, track) {
 			upThis.#noteLength = data / 1000;
 		};
-		this.#metaRun[127] = function (data, track) {
+		upThis.#metaRun[127] = function (data, track) {
 			//console.debug(`Sequencer specific on track ${track}: `, data);
 			upThis.#metaSeq.run(data, track);
 		};
 		// Sequencer specific meta event
 		// No refactoring needed.
-		this.#metaSeq.default = function (seq) {
+		upThis.#metaSeq.default = function (seq) {
 			console.warn(`Unrecognized sequencer-specific byte sequence: ${seq}`);
 		};
-		this.#metaSeq.add([67, 0, 1], function (msg, track) {
+		upThis.#metaSeq.add([67, 0, 1], function (msg, track) {
 			//console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		});
 		// Binary match should be avoided in favour of a circular structure
-		this.#seUnr = new BinaryMatch("universal non-realtime");
-		this.#seUr = new BinaryMatch("universal realtime");
-		this.#seXg = new BinaryMatch("Yamaha");
-		this.#seGs = new BinaryMatch("Roland");
-		this.#seAi = new BinaryMatch("Korg");
-		this.#seKg = new BinaryMatch("Kawai");
-		this.#seSg = new BinaryMatch("Akai");
-		this.#seCs = new BinaryMatch("Casio");
+		upThis.#seUnr = new BinaryMatch("universal non-realtime");
+		upThis.#seUr = new BinaryMatch("universal realtime");
+		upThis.#seXg = new BinaryMatch("Yamaha");
+		upThis.#seGs = new BinaryMatch("Roland");
+		upThis.#seAi = new BinaryMatch("Korg");
+		upThis.#seKg = new BinaryMatch("Kawai");
+		upThis.#seSg = new BinaryMatch("Akai");
+		upThis.#seCs = new BinaryMatch("Casio");
 		let dxDump = new BinaryMatch("DX7+ Dump");
 		// Notifies unrecognized SysEx strings with their vendors
 		let syxDefaultErr = function (msg) {
 			console.info(`Unrecognized SysEx in "${this.name}" set.\n%o`, msg);
 		};
-		this.#seUnr.default = syxDefaultErr;
-		this.#seUr.default = syxDefaultErr;
-		this.#seXg.default = syxDefaultErr;
-		this.#seGs.default = syxDefaultErr;
-		this.#seAi.default = syxDefaultErr;
-		this.#seKg.default = syxDefaultErr;
-		this.#seSg.default = syxDefaultErr;
-		this.#seCs.default = syxDefaultErr;
+		upThis.#seUnr.default = syxDefaultErr;
+		upThis.#seUr.default = syxDefaultErr;
+		upThis.#seXg.default = syxDefaultErr;
+		upThis.#seGs.default = syxDefaultErr;
+		upThis.#seAi.default = syxDefaultErr;
+		upThis.#seKg.default = syxDefaultErr;
+		upThis.#seSg.default = syxDefaultErr;
+		upThis.#seCs.default = syxDefaultErr;
 		dxDump.default = syxDefaultErr;
 		// The new SysEx engine only defines actions when absolutely needed.
 		// Mode reset section
-		this.#seUnr.add([9], (msg) => {
+		upThis.#seUnr.add([9], (msg) => {
 			// General MIDI reset.
 			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], true);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
@@ -1962,7 +1975,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		});
 		// GM SysEx section
-		this.#seUr.add([4, 1], (msg) => {
+		upThis.#seUr.add([4, 1], (msg) => {
 			// Master volume
 			upThis.#masterVol = ((msg[1] << 7) + msg[0]) / 16383 * 100;
 			upThis.dispatchEvent("mastervolume", upThis.#masterVol);
@@ -3426,7 +3439,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (e < 101) {
 					upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 					upThis.#prg[part] = e - 1;
-					upThis.#cc[chOff + ccToPos[0]] = upThis.#detectX5Target;
+					upThis.#cc[chOff + ccToPos[0]] = upThis.#detect.x5;
 				} else if (e < 229) {
 					upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 					upThis.#prg[part] = e - 101;
@@ -3473,7 +3486,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 76, 0], (msg, track) => {
 			// X5D program dump
 			upThis.switchMode("x5d", true);
-			let name = "", msb = upThis.#detectX5Target, prg = 0, lsb = 0;
+			let name = "", msb = upThis.#detect.x5, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
 				if (i < 16400) {
@@ -3506,7 +3519,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 			upThis.userBank.clearRange({
-				msb: upThis.#detectX5Target,
+				msb: upThis.#detect.x5,
 				prg: [0, 99],
 				lsb: 0
 			});
@@ -3570,7 +3583,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Program change
 							if (e < 128) {
 								upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
-								upThis.#cc[chOff + ccToPos[0]] = upThis.#detectX5Target;
+								upThis.#cc[chOff + ccToPos[0]] = upThis.#detect.x5;
 								upThis.#prg[part] = e;
 							} else {
 								upThis.setChType(part, upThis.CH_DRUMS, modeMap.x5d);
