@@ -274,6 +274,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
+	#detectX5Target = 82; // Defaults to X5D/X5DR.
 	#masterVol = 100;
 	#metaChannel = 0;
 	#noteLength = 500;
@@ -3376,7 +3377,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (e < 101) {
 					upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 					upThis.#prg[part] = e - 1;
-					upThis.#cc[chOff + ccToPos[0]] = 82;
+					upThis.#cc[chOff + ccToPos[0]] = upThis.#detectX5Target;
 				} else if (e < 229) {
 					upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
 					upThis.#prg[part] = e - 101;
@@ -3423,7 +3424,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 76, 0], (msg, track) => {
 			// X5D program dump
 			upThis.switchMode("x5d", true);
-			let name = "", msb = 82, prg = 0, lsb = 0;
+			let name = "", msb = upThis.#detectX5Target, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
 				if (i < 16400) {
@@ -3456,7 +3457,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 			upThis.userBank.clearRange({
-				msb: 82,
+				msb: upThis.#detectX5Target,
 				prg: [0, 99],
 				lsb: 0
 			});
@@ -3520,7 +3521,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Program change
 							if (e < 128) {
 								upThis.setChType(part, upThis.CH_MELODIC, modeMap.x5d);
-								upThis.#cc[chOff + ccToPos[0]] = 82;
+								upThis.#cc[chOff + ccToPos[0]] = upThis.#detectX5Target;
 								upThis.#prg[part] = e;
 							} else {
 								upThis.setChType(part, upThis.CH_DRUMS, modeMap.x5d);
