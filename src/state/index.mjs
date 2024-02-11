@@ -1620,7 +1620,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#ext[extOff + 1] = upThis.VLBC_BRTHEXPR;
 			// CC redirection reset
 			let redirOff = ch * allocated.redir;
-			upThis.#ccCapturer[redirOff + 6] = 13;
+			upThis.#ccCapturer[redirOff + 8] = 13;
 		};
 		upThis.buildRchTree();
 		upThis.buildRccMap();
