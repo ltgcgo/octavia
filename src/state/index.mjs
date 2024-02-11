@@ -251,6 +251,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	CH_DRUM6 = 7;
 	CH_DRUM7 = 8;
 	CH_DRUM8 = 9;
+	EXT_NONE = 0;
+	EXT_VL = 1;
 	// Values
 	#mode = 0;
 	#bitmapPage = 0;
