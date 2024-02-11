@@ -154,7 +154,7 @@ ccAccepted = [
 	128, // Dry level (internal register for Octavia)
 	12, 13, // General-purpose effect controllers
 	16, 17, 18, 19, // General-purpose sound controllers
-	14, 15, 20, 21, 26, 28 // For some reason, used by PLG-VL
+	14, 15, 20, 21, 26, 28, // For some reason, used by PLG-VL
 	129, // PLG-VL part breath mode
 	130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, // PLG-VL part controls
 	142, 143, 144, 145, 146, 147, 148, 149, // PLG-DX carrier level
