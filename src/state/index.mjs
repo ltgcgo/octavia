@@ -160,7 +160,7 @@ ccAccepted = [
 	142, 143, 144, 145, 146, 147, 148, 149, // PLG-DX carrier level
 	150, 151, 152, 153, 154, 155, 156, 157 // PLG-DX modulator level
 ], // 96, 97, 120 to 127 all have special functions
-aceCandidates = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+aceCandidates = [2, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
 const korgDrums = [0, 16, 25, 40, 32, 64, 26, 48];
