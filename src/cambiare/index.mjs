@@ -404,7 +404,6 @@ let Cambiare = class extends RootDisplay {
 				switch (sum.chExt[part][0]) {
 					case upThis.device.EXT_VL: {
 						let mouth = (sum.chContr[chOff + ccToPos[136]] - 64) / 64 || sum.rawPitch[part] / -8192;
-						console.debug(mouth);
 						mouth = mouth * 4 + 4;
 						let velocity = +(!!sum.rawVelo[part]) * (sum.chContr[chOff + ccToPos[129]] * sum.chContr[chOff + ccToPos[11]] / 16129);
 						if (!velocity && sum.rawVelo[part]) {
