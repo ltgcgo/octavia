@@ -65,7 +65,7 @@ stSwitch.to = function (i) {
 stSwitch.forEach(function (e, i, a) {
 	stSwitchMode[i] = e.title;
 	e.addEventListener("click", function () {
-		visualizer.switchMode(e.title, true);
+		visualizer.switchMode(e.title, true, true);
 		stSwitch.to(i);
 	});
 });

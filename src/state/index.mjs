@@ -1347,8 +1347,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		});
 		console.debug(`Set detection target to ID "${validId}".`);
-		upThis.#detectX5Target = 82; // Reset to X5DR
-		upThis.#detect63Target = modeMap.kross; // Reset to KORG KROSS 2
+		if (validId > 0) {
+			upThis.#detectX5Target = 82; // Reset to X5DR
+			upThis.#detect63Target = modeMap.kross; // Reset to KORG KROSS 2
+		};
 		switch (validId) {
 			case modeMap["05rw"]: {
 				upThis.#detectX5Target = 81;
