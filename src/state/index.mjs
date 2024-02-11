@@ -152,9 +152,13 @@ ccAccepted = [
 	72, 73, 74, 75, 76, 77, 78, 84, 91,
 	92, 93, 94, 95, 98, 99, 100, 101,
 	128, // Dry level (internal register for Octavia)
-	12, 13, // General-purpose effect controllers
+	// 12, 13, // General-purpose effect controllers
 	16, 17, 18, 19, // General-purpose sound controllers
-	14, 15, 20, 21, 26, 28 // For some reason, used by PLG-150VL
+	// 14, 15, 20, 21, 26, 28 // For some reason, used by PLG-VL
+	129, // PLG-VL part breath mode
+	130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, // PLG-VL part controls
+	142, 143, 144, 145, 146, 147, 148, 149, // PLG-DX carrier level
+	150, 151, 152, 153, 154, 155, 156, 157 // PLG-DX modulator level
 ], // 96, 97, 120 to 127 all have special functions
 aceCandidates = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
@@ -288,6 +292,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
 	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
+	#ccCapturer = new Uint8Array(64); // Redirect non-internal CCs to internal CCs
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#detectR;
@@ -303,6 +308,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#receiveRS = true; // Receive remote switch
 	#modeKaraoke = false;
 	#receiveTree;
+	#ccRedirMap;
 	// Temporary EFX storage
 	#gsEfxSto = new Uint8Array(2);
 	// Metadata text events
@@ -1103,6 +1109,18 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#receiveTree = tree;
 		//console.debug(tree);
 	};
+	buildRccMap() {
+		// Build a receiving tree from the defined CCs
+		// Builds from the ground up each time
+		let map = {};
+		this.#ccCapturer.forEach((e, i) => {
+			if (e) {
+				map[e] = i | 128;
+			};
+		});
+		this.#ccRedirMap = map;
+		console.debug(map);
+	};
 	getActive() {
 		let result = this.#chActive;
 		//if (this.#mode == modeMap.mt32) {
@@ -1444,6 +1462,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#pitch.fill(0);
 		upThis.#nrpn.fill(0);
 		upThis.#rpnt.fill(0);
+		upThis.#ccCapturer.fill(0);
 		upThis.#masterVol = 100;
 		upThis.#metaTexts = [];
 		upThis.#noteLength = 500;
@@ -1460,6 +1479,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			a[i] = i;
 		});
 		upThis.buildRchTree();
+		upThis.buildRccMap();
 		// Reset channel redirection
 		if (type == 0) {
 			upThis.dispatchEvent("mode", "?");
