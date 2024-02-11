@@ -227,11 +227,18 @@ const allocated = {
 	drm: 8, // Drum setup slots
 	dpn: useDrumNrpn.length, // Drum setup params
 	dnc: 128, // drum note 0 to 127
+	ext: 2, // extensions
 	efx: 7
 };
 const overrides = {
 	bank0: 128
 };
+
+/*
+Extensions:
+  0: part extension mode (EXT_*)
+  1: VL breath mode (VLBC_*)
+*/
 
 let OctaviaDevice = class extends CustomEventSource {
 	// Constants
@@ -257,6 +264,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	CH_DRUM8 = 9;
 	EXT_NONE = 0;
 	EXT_VL = 1;
+	VLBC_BRTHEXPR = 1; // Breath controller or expression
+	VLBC_VELOINIT = 2; // Initial key velocity
+	VLBC_VELOALL = 3; // Initial key velocity and aftertouch
 	// Values
 	#mode = 0;
 	#bitmapPage = 0;
@@ -281,18 +291,19 @@ let OctaviaDevice = class extends CustomEventSource {
 	#pitch = new Int16Array(allocated.ch); // Pitch for channels, from -8192 to 8191
 	#rawStrength = new Uint8Array(allocated.ch);
 	#dataCommit = 0; // 0 for RPN, 1 for NRPN
+	#ext = new Uint8Array(allocated.ch * allocated.ext); // Extension configs
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
 	#rpnt = new Uint8Array(allocated.ch * allocated.rpnt); // Whether or not an RPN has been written
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
 	#drum = new Uint8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
+	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
+	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
+	#ccCapturer = new Uint8Array(64); // Redirect non-internal CCs to internal CCs
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
-	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
-	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
-	#ccCapturer = new Uint8Array(64); // Redirect non-internal CCs to internal CCs
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#detectR;
@@ -307,6 +318,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#selectPort = 0;
 	#receiveRS = true; // Receive remote switch
 	#modeKaraoke = false;
+	#vlSysBreathMode = 1; // PLG-VL system breath mode
 	#receiveTree;
 	#ccRedirMap;
 	// Temporary EFX storage
@@ -1180,6 +1192,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		this.#chActive[part] = active;
 	};
+	getExt(part) {
+
+	};
 	getPitch() {
 		return this.#pitch;
 	};
@@ -1462,6 +1477,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#pitch.fill(0);
 		upThis.#nrpn.fill(0);
 		upThis.#rpnt.fill(0);
+		upThis.#ext.fill(0);
 		upThis.#ccCapturer.fill(0);
 		upThis.#masterVol = 100;
 		upThis.#metaTexts = [];
@@ -1551,6 +1567,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#rpn[rpnOff + 4] = 0; // Mod sensitivity MSB
 			upThis.#rpn[rpnOff + 5] = 0; // Mod sensitivity LSB
 			// NRPN normal section reset
+			// Extension config reset
+			let extOff = ch * allocated.ext;
+			upThis.#ext[extOff + 1] = upThis.VLBC_BRTHEXPR;
 		};
 		upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 		upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
