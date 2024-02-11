@@ -181,9 +181,9 @@ let RootDisplay = class extends CustomEventSource {
 		upThis.dispatchEvent(`efxinsert2`, upThis.device.getEffectType(5));
 		upThis.dispatchEvent(`efxinsert3`, upThis.device.getEffectType(6));
 	};
-	/*switchMode(modeName, forced = false) {
+	switchMode(modeName, forced = false) {
 		this.device.switchMode(modeName, forced);
-	};*/
+	};
 	getMode() {
 		return this.device.getMode();
 	};

@@ -101,6 +101,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 		demoChoice.innerText = e.text;
 		demoChoice.title = e.file;
 		demoChoice.classList.on("demo");
+		demoChoice.standard = e.standard;
 		stDemo.push(demoChoice);
 		stList.appendChild(demoChoice);
 	});
@@ -133,6 +134,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			};
 			audioBlob = demoBlobs[e.title].wave;
 			audioPlayer.src = URL.createObjectURL(audioBlob);
+			visualizer.device.setDetectionTargets(e.standard);
 			if (demoModes[i]?.length > 0) {
 				visualizer.switchMode(demoModes[i]);
 			};

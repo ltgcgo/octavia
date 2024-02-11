@@ -1341,12 +1341,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		mode.replaceAll(", ", ",").split(",").forEach((e) => {
 			e = e.toLowerCase();
 			let modeId = modeIdx.indexOf(modeAdapt[e] || e);
-			console.debug(`Mapped mode "${e}" to ID "${modeId}".`);
+			getDebugState() && console.debug(`Mapped mode "${e}" to ID "${modeId}".`);
 			if (modeId > -1) {
 				validId = modeId;
 			};
 		});
-		console.debug(`Set detection target to ID "${validId}".`);
+		getDebugState() && console.debug(`Set detection target to ID "${validId}".`);
 		if (validId > 0) {
 			upThis.#detect.x5 = 82; // Reset to X5DR
 			upThis.#detect.ds = modeMap.krs; // Reset to KORG KROSS 2
