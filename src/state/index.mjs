@@ -1543,8 +1543,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#chReceive.forEach(function (e, i, a) {
 			a[i] = i;
 		});
-		upThis.buildRchTree();
-		upThis.buildRccMap();
 		// Reset channel redirection
 		if (type == 0) {
 			upThis.dispatchEvent("mode", "?");
@@ -1620,7 +1618,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Extension config reset
 			let extOff = ch * allocated.ext;
 			upThis.#ext[extOff + 1] = upThis.VLBC_BRTHEXPR;
+			// CC redirection reset
+			let redirOff = ch * allocated.redir;
+			upThis.#ccCapturer[redirOff + 6] = 13;
 		};
+		upThis.buildRchTree();
+		upThis.buildRccMap();
 		upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 		upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
 		upThis.dispatchEvent(`efxchorus`, upThis.getEffectType(1));
