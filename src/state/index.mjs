@@ -211,6 +211,9 @@ const allocated = {
 	dnc: 128, // drum note 0 to 127
 	efx: 7
 };
+const overrides = {
+	bank0: 128
+};
 
 let OctaviaDevice = class extends CustomEventSource {
 	// Constants
@@ -1095,6 +1098,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		let arr = this.#cc.subarray(start, start + allocated.cc);
 		arr[ccToPos[0]] = arr[ccToPos[0]] || this.#subMsb;
 		arr[ccToPos[32]] = arr[ccToPos[32]] || this.#subLsb;
+		if (arr[ccToPos[0]] == overrides.bank0) {
+			arr[ccToPos[0]] = 0;
+		};
 		return arr;
 	};
 	getCcCh(channel, cc) {
@@ -1110,6 +1116,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			let chOff = c * allocated.cc;
 			arr[chOff + ccToPos[0]] = arr[chOff + ccToPos[0]] || this.#subMsb;
 			arr[chOff + ccToPos[32]] = arr[chOff + ccToPos[32]] || this.#subLsb;
+			if (arr[ccToPos[0]] == overrides.bank0) {
+				arr[ccToPos[0]] = 0;
+			};
 		};
 		return arr;
 	};
@@ -1211,6 +1220,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		let msb = msbO || this.#subMsb,
 		prg = prgO,
 		lsb = lsbO || this.#subLsb;
+		if (msb == overrides.bank0) {
+			msb = 0;
+		};
 		if (modeIdx[this.#mode] == "ns5r") {
 			if (msb > 0 && msb < 56) {
 				lsb = 3; // Use SC-88 Pro map
@@ -3963,7 +3975,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (c < 3) {
 					// MSB, LSB, PRG
 					[() => {
-						upThis.#cc[chOff + ccToPos[0]] = e || 121;
+						upThis.#cc[chOff + ccToPos[0]] = e || overrides.bank0;
 					}, () => {
 						upThis.#cc[chOff + ccToPos[32]] = e;
 					}, () => {
@@ -4133,7 +4145,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								// LSB Bank
 								upThis.#cc[chOff + ccToPos[32]] = e;
 								if (!e && !upThis.#cc[chOff + ccToPos[0]]) {
-									upThis.#cc[chOff + ccToPos[0]] = 121;
+									upThis.#cc[chOff + ccToPos[0]] = overrides.bank0;
 								};
 								upThis.dispatchEvent("voice", {
 									part
