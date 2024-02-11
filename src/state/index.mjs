@@ -406,6 +406,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#poly[polyIdx] = 0;
 					this.#velo[rawNote] = 0;
 					this.#polyState[polyIdx] = this.NOTE_IDLE;
+					let breathMode = this.getExt(part)[0];
+					if (breathMode == this.VLBC_VELOINIT ||
+						breathMode == this.VLBC_VELOALL) {
+						this.#cc[allocated.cc * part + ccToPos[129]] = 0;
+					};
 					this.dispatchEvent("note", {
 						part,
 						note,
@@ -444,6 +449,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#polyState[place] = this.NOTE_SUSTAIN;
 				if (this.#rawStrength[part] < velo) {
 					this.#rawStrength[part] = velo;
+				};
+				let breathMode = this.getExt(part)[0];
+				if (breathMode == this.VLBC_VELOINIT ||
+					breathMode == this.VLBC_VELOALL) {
+					this.#cc[allocated.cc * part + ccToPos[129]] = velo;
 				};
 				this.dispatchEvent("note", {
 					part,
@@ -575,6 +585,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			let polyIdx = this.#poly.indexOf(rawNote);
 			if (polyIdx > -1) {
 				this.#velo[rawNote] = data[1];
+				let breathMode = this.getExt(part)[0];
+				if (breathMode == this.VLBC_VELOALL) {
+					this.#cc[allocated.cc * part + ccToPos[129]] = data[1];
+				};
 				this.dispatchEvent("note", {
 					part,
 					note: det.data[0],
@@ -605,7 +619,8 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				})();
 			};
-			let chOffset = part * allocated.cc;
+			let chOff = part * allocated.cc,
+			extOff = part * allocated.ext;
 			// Non-store CC messages
 			switch (det.data[0]) {
 				case 96: {
@@ -697,7 +712,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
-									det.data[1] = this.#cc[chOffset];
+									det.data[1] = this.#cc[chOff];
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
@@ -716,7 +731,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
-									det.data[1] = this.#cc[chOffset];
+									det.data[1] = this.#cc[chOff];
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
@@ -814,6 +829,14 @@ let OctaviaDevice = class extends CustomEventSource {
 						});
 						break;
 					};
+					case 2: {
+						// Breath for VL and more!
+						let breathMode = this.getExt(part)[0];
+						if (breathMode == this.VLBC_BRTHEXPR) {
+							this.#cc[chOff + ccToPos[129]] = det.data[1];
+						};
+						break;
+					};
 					case 6: {
 						// Show RPN and NRPN
 						if (this.#dataCommit) {
@@ -821,12 +844,12 @@ let OctaviaDevice = class extends CustomEventSource {
 							if ([modeMap.xg, modeMap.gs, modeMap.ns5r].indexOf(this.#mode) < 0) {
 								console.warn(`NRPN commits are not available under "${modeIdx[this.#mode]}" mode, even when they are supported in Octavia.`);
 							};
-							let msb = this.#cc[chOffset + ccToPos[99]],
-							lsb = this.#cc[chOffset + ccToPos[98]];
+							let msb = this.#cc[chOff + ccToPos[99]],
+							lsb = this.#cc[chOff + ccToPos[98]];
 							if (msb == 1) {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
-									this.#cc[chOffset + ccToPos[71 + toCc]] = det.data[1];
+									this.#cc[chOff + ccToPos[71 + toCc]] = det.data[1];
 									getDebugState() && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
 									this.dispatchEvent("cc", {
 										part,
@@ -863,13 +886,13 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						} else {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.#cc[chOffset + ccToPos[100]]],
-							rpnIndex2 = rpnOptions[this.#cc[chOffset + ccToPos[100]]];
-							if (this.#cc[chOffset + ccToPos[101]] == 0 && rpnIndex != undefined) {
-								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOffset + ccToPos[100]]} commit: ${det.data[1]}`);
+							let rpnIndex = useRpnMap[this.#cc[chOff + ccToPos[100]]],
+							rpnIndex2 = rpnOptions[this.#cc[chOff + ccToPos[100]]];
+							if (this.#cc[chOff + ccToPos[101]] == 0 && rpnIndex != undefined) {
+								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOff + ccToPos[100]]} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
-								//console.debug(this.#cc[chOffset + ccToPos[100]], rpnIndex, rpnOptions[this.#cc[chOffset + ccToPos[100]]]);
+								//console.debug(this.#cc[chOf + ccToPos[100]], rpnIndex, rpnOptions[this.#cc[chOff + ccToPos[100]]]);
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
 							};
 						};
@@ -895,15 +918,15 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Show RPN and NRPN
 						if (!this.#dataCommit) {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.#cc[chOffset + 100]],
-							rpnIndex2 = rpnOptions[this.#cc[chOffset + 100]];
-							if (this.#cc[chOffset + 101] == 0 && rpnIndex != undefined) {
+							let rpnIndex = useRpnMap[this.#cc[chOff + 100]],
+							rpnIndex2 = rpnOptions[this.#cc[chOff + 100]];
+							if (this.#cc[chOff + 101] == 0 && rpnIndex != undefined) {
 								// This section is potentially unsafe
 								this.#rpn[part * allocated.rpn + rpnIndex + 1] = det.data[1];
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
 							};
 						} else {
-							//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOffset + 99] : this.#cc[chOffset + 101]} ${this.#dataCommit ? this.#cc[chOffset + 98] : this.#cc[chOffset + 100]}`);
+							//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOff + 99] : this.#cc[chOff + 101]} ${this.#dataCommit ? this.#cc[chOff + 98] : this.#cc[chOff + 100]}`);
 						};
 						break;
 					};
@@ -936,7 +959,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 				};
-				this.#cc[chOffset + ccToPos[det.data[0]]] = det.data[1];
+				this.#cc[chOff + ccToPos[det.data[0]]] = det.data[1];
 				this.dispatchEvent("cc", {
 					part,
 					cc: det.data[0],
@@ -1193,7 +1216,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#chActive[part] = active;
 	};
 	getExt(part) {
-
+		let start = allocated.ext * part;
+		return this.#ext.subarray(start, start + allocated.ext);
 	};
 	getPitch() {
 		return this.#pitch;
@@ -1538,6 +1562,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Reset to full
 			upThis.#cc[chOff + ccToPos[7]] = 100; // Volume
 			upThis.#cc[chOff + ccToPos[11]] = 127; // Expression
+			upThis.#cc[chOff + ccToPos[2]] = 127; // Breath
 			// Reset to centre
 			upThis.#cc[chOff + ccToPos[10]] = 64; // Pan
 			/*upThis.#cc[chOff + ccToPos[71]] = 64; // Resonance

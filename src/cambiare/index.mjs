@@ -751,7 +751,8 @@ let Cambiare = class extends RootDisplay {
 					"por": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 42}),
 					"cea": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 48}),
 					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54}),
-					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84})
+					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84}),
+					"extVis": createElement("canvas", [`field`], {l: 206, t: 1}).getContext("2d")
 				};
 				let e = upThis.#sectPart[port][part];
 				leftCache.forEach((e0) => {
@@ -763,6 +764,9 @@ let Cambiare = class extends RootDisplay {
 				e.metre.fillStyle = "#fff";
 				e.metre.textBaseline = "top";
 				e.metre.font = "20px 'PT Sans Narrow'";
+				e.extVis.canvas.width = 48;
+				e.extVis.canvas.height = 25;
+				e.extVis.fillStyle = "#fff";
 				mountElement(e.notes, [
 					e.cxt.canvas
 				]);
@@ -796,7 +800,8 @@ let Cambiare = class extends RootDisplay {
 					e.std,
 					e.msb,
 					e.prg,
-					e.lsb
+					e.lsb,
+					e.extVis.canvas
 				]);
 				mountElement(e.root, [
 					e.major,
