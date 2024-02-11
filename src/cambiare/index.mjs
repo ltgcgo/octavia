@@ -402,8 +402,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Note visualization
-		let onNotes = new Set(), offNotes = new Set(),
-		channels = new Array(allocated.ch), extraStates = {};
+		let channels = new Array(allocated.ch);
 		upThis.#sectPart.forEach((e, port) => {
 			e.forEach((e0, part) => {
 				if (e0.refresh) {
@@ -419,30 +418,12 @@ let Cambiare = class extends RootDisplay {
 				channels[e.part] = true;
 			};
 		};
-		// Sift through events fed
-		while (upThis.#noteEvents.length > 0) {
-			let e = upThis.#noteEvents.shift();
-			let {
-				part, note, velo, state
-			} = e;
-			let noteId = part << 7 | note;
-			channels[part] = true;
-			//console.debug(part);
-			if (state == 0) {
-				if (onNotes.has(noteId)) {
-					offNotes.add(noteId);
-					upThis.#sectPart[part >> 4][part & 15].refresh = true;
-				};
-			} else {
-				onNotes.add(noteId);
-				extraStates[noteId] = e;
-			};
-		};
 		// Draw every note that has channels updated
 		upThis.#redrawNotesInternal(sum, channels);
 		// Draw every note inside extraStates
-		offNotes.forEach((key) => {
-			let {part, note, velo, state} = extraStates[key];
+		sum.extraNotes.forEach((ev) => {
+			//console.debug(ev);
+			let {part, note, velo, state} = ev;
 			let context = upThis.#sectPart[part >> 4][part & 15].cxt;
 			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));
 			//console.debug(part, note);

@@ -235,7 +235,8 @@ let PsrDisplay = class extends RootDisplay {
 		arrowRightFlag = false;
 		let note;
 		// Add all of the missing notes
-		sum.extraNotes.forEach(({part, note, velo, state}) => {
+		sum.extraNotes.forEach((ev) => {
+			let {part, note, velo, state} = ev;
 			if (state && velo) {
 				sum.chKeyPr[part].set(note, {
 					v: velo,
