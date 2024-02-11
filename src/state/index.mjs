@@ -288,11 +288,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
-	#detect = {
-		"x5": 82, // The target device of X5-related functions
-		"ds": modeMap.krs // The target device of device-exclusive banks
-	};
-	//#detect;
+	#detectR;
+	#detect;
 	#masterVol = 100;
 	#metaChannel = 0;
 	#noteLength = 500;
@@ -1708,7 +1705,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#bitmap = new Uint8Array(256);
 		upThis.#bitmapStore[10] = new Uint8Array(512);
 		upThis.#metaSeq = new BinaryMatch();
-		/*upThis.#detect = new Proxy(upThis.#detectR, {
+		upThis.#detect = {
+			"x5": 82, // The target device of X5-related functions
+			"ds": modeMap.krs // The target device of device-exclusive banks
+		};
+		/* upThis.#detect = new Proxy(upThis.#detectR, {
 			get: (real, key) => {
 				return real[key];
 			},
@@ -1717,7 +1718,8 @@ let OctaviaDevice = class extends CustomEventSource {
 				real[key] = value;
 				return true;
 			}
-		});*/
+		});
+		console.debug(`Detection target initialization finished.`); */
 		upThis.userBank.strictMode = true;
 		// Prevent bank readers from getting stalled
 		upThis.userBank.load(`MSB\tPRG\tLSB\tNME\n062\t000\t000\t\n122\t000\t000\t\n122\t001\t000\t\n122\t002\t000\t\n122\t003\t000\t\n122\t004\t000\t\n122\t005\t000\t\n122\t006\t000\t`);
