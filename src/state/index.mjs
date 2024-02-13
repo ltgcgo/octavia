@@ -3547,6 +3547,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seAi.add([54, 65], (msg, track) => {
 			// X5D multi parameters (part setup)
 			upThis.switchMode("x5d");
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.info(`X5D multi parameters checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
+			};
 			let key = (msg[1] << 7) + msg[0],
 			e = (msg[3] << 7) + msg[2],
 			part = upThis.chRedir(key & 15, track, true),
@@ -3604,6 +3611,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 76, 0], (msg, track) => {
 			// X5D program dump
 			upThis.switchMode("x5d", true);
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.info(`X5D program dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
+			};
 			let name = "", msb = upThis.#detect.x5, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -3647,6 +3661,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 77, 0], (msg, track) => {
 			// X5D combi dump
 			upThis.switchMode("x5d", true);
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.info(`X5D combi dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
+			};
 			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -3691,7 +3712,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([54, 104], (msg, track) => {
 			// X5D extended multi setup
+			console.debug(gsChecksum(msg));
 			upThis.switchMode("x5d", true);
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
 			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
 					let part = upThis.chRedir(Math.floor(i / 12), track, true),
@@ -4286,13 +4311,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
 			let efxName = "";
-			let checksum = msg[msg.length - 1],
-			msgData = msg.subarray(0, msg.length - 1),
-			expected = gsChecksum(msgData);
-			if (expected != checksum) {
-				console.info(`NS5R current effect dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
-				console.debug(msg);
-			};
 			korgFilter(msg, (e, i) => {
 				if (i < 8) {
 					if (e > 31) {
@@ -4316,8 +4334,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			msgData = msg.subarray(0, msg.length - 1),
 			expected = gsChecksum(msgData);
 			if (expected != checksum) {
-				console.warn(`NS5R current multi dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
-				return;
+				console.info(`NS5R current multi dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
 			};
 			// I'm lazy I just ported the old code here don't judge meee
 			korgFilter(msgData, function (e, i) {
@@ -4458,6 +4476,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			// All program dump
 			// Yup this one is also ported from old code
 			upThis.switchMode("ns5r", true);
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.info(`NS5R all program dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
+			};
 			let name = "", msb = 80, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -4504,6 +4529,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			// All combination dump
 			// Just modified from above
 			upThis.switchMode("ns5r", true);
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.info(`NS5R all combi dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
+			};
 			let name = "", msb = 88, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -4543,6 +4575,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("backlight", ["green", "orange", "red", false, "yellow", "blue", "purple"][msg[0]] || "white");
 		}).add([66, 127], (msg) => {
 			// NS5R screen dump
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.info(`NS5R screen dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
+			};
 			let screenBuffer = new Uint8Array(5760);
 			korgFilter(msg, (e, i, a) => {
 				if (i < 720) {
