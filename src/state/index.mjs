@@ -29,6 +29,8 @@ import {
 	toDecibel,
 	gsChecksum,
 	korgFilter,
+	korgUnpack,
+	korgPack,
 	x5dSendLevel
 } from "./utils.js";
 
@@ -189,6 +191,9 @@ let voiceType = {};
 voiceIdx.forEach((e, i) => {
 	voiceType[e] = i;
 });
+
+self.korgUnpack = korgUnpack;
+self.korgPack = korgPack;
 
 let getDebugState = function () {
 	return !!self.Bun || self.debugMode || false; // If run on Bun.js, output all possible logs
@@ -1172,7 +1177,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#ccRedirMap[Math.floor(i / allocated.redir)][e] = (i % allocated.redir) | 128;
 			};
 		});
-		console.debug(upThis.#ccRedirMap);
+		getDebugState() && console.debug(upThis.#ccRedirMap);
 	};
 	getActive() {
 		let result = this.#chActive;
@@ -4281,6 +4286,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
 			let efxName = "";
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.info(`NS5R current effect dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
+			};
 			korgFilter(msg, (e, i) => {
 				if (i < 8) {
 					if (e > 31) {
@@ -4300,8 +4312,15 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
 			let efxName = "";
+			let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.warn(`NS5R current multi dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				return;
+			};
 			// I'm lazy I just ported the old code here don't judge meee
-			korgFilter(msg, function (e, i) {
+			korgFilter(msgData, function (e, i) {
 				switch (true) {
 					case i < 2944: {
 						// 32 part setup params, 2944 bytes
