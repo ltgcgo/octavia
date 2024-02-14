@@ -3610,7 +3610,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}][key >> 4]();
 		}).add([54, 76, 0], (msg, track) => {
 			// X5D program dump
-			upThis.switchMode("x5d", true);
+			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			let name = "", msb = upThis.#detect.x5, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -3653,7 +3653,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.forceVoiceRefresh();
 		}).add([54, 77, 0], (msg, track) => {
 			// X5D combi dump
-			upThis.switchMode("x5d", true);
+			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -3685,11 +3685,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.forceVoiceRefresh();
 		}).add([54, 78], (msg, track) => {
 			// X5D mode switch
-			upThis.switchMode("x5d", true);
+			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			console.debug(`X5D mode switch requested: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]} mode.`);
 		}).add([54, 85], (msg, track) => {
 			// X5D effect dump
-			upThis.switchMode("x5d", true);
+			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			korgFilter(msg, (e, i) => {
 				if (i > 0 && i < 3) {
 					upThis.setEffectType(i - 1, 44, e);
@@ -3698,7 +3698,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([54, 104], (msg, track) => {
 			// X5D extended multi setup
-			upThis.switchMode("x5d", true);
+			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
 					let part = upThis.chRedir(Math.floor(i / 12), track, true),
@@ -4292,6 +4292,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Currect effect dump
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
+			//console.debug(`Dumped raw data: ${korgUnpack(msg).join(", ")}`);
 			let efxName = "";
 			korgFilter(msg, (e, i) => {
 				if (i < 8) {
@@ -4458,6 +4459,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			// All program dump
 			// Yup this one is also ported from old code
 			upThis.switchMode("ns5r", true);
+			/*let checksum = msg[msg.length - 1],
+			msgData = msg.subarray(0, msg.length - 1),
+			expected = gsChecksum(msgData);
+			if (expected != checksum) {
+				console.info(`NS5R all program dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
+				console.debug(msg);
+			};*/
 			let name = "", msb = 80, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
