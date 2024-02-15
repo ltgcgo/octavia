@@ -1,0 +1,7 @@
+{
+	"targets": {
+		"chrome": "49",
+		"firefox": "52"
+	},
+	"minified": true
+}
