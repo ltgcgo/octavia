@@ -1472,6 +1472,24 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.warn(`ACE slots are full.`);
 		};
 	};
+	releaseAce(cc) {
+		let continueScan = true, pointer = 0;
+		while (continueScan && pointer < allocated.ace) {
+			if (this.#ace[pointer] == cc) {
+				this.#ace[pointer] = 0;
+				continueScan = false;
+			};
+			pointer ++;
+		};
+		if (continueScan) {
+			getDebugState() && console.debug(`No ACE slot was allocated to cc${cc}.`);
+		};
+	};
+	resetAce() {
+		// Clear all allocated ACE
+		this.#ace.fill(0);
+		console.info(`All ACE slots have been reset.`);
+	};
 	getAce() {
 		return this.#ace;
 	};
