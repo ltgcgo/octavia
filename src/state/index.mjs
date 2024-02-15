@@ -2766,14 +2766,18 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([100, 0], (msg, track, id) => {
 			// Unknown Yamaha DX7+ dump SysEx
 			let dumpString = msg.subarray(0, msg.length - 1)
+			if (msg[0] + 5 != msg.length) {
+				console.warn(`Yamaha DX7+ dump SysEx size mismatch! Expected ${msg.length}, but got ${msg[0]}:\n`, msg);
+				return;
+			};
 			let expectedChecksum = gsChecksum(dumpString);
 			let receivedChecksum = msg[msg.length - 1];
 			if (expectedChecksum != receivedChecksum) {
 				console.warn(`Yamaha DX7+ dump SysEx checksum mismatch! Expected ${expectedChecksum}, but got ${receivedChecksum}:\n`, msg);
 				return;
-			} else {
-				dxDump.run(dumpString);
 			};
+			//console.debug(msg);
+			dxDump.run(dumpString.subarray(1));
 		}).add([100, 76], (msg, track, id) => {
 			// Unknown Yamaha DX7+ multipart SysEx
 			let use = msg[0] >> 4, section = msg[0] & 15, offset = msg[1];
@@ -2809,16 +2813,18 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		// DX7 Dumps
 		// Placeholder until further documentation
-		dxDump.add([0, 14, 31], (msg) => {
+		dxDump.add([14, 31], (msg) => {
 			upThis.#cc[allocated.cc * msg[0] + ccToPos[64]] = 0;
 			upThis.#ua.ano(msg[0]);
 			upThis.switchMode("xg");
 			upThis.resetAce();
 			console.debug(`Yamaha DX7+ reset CH${msg[0] + 1}.`);
-		}).add([56, 76, 112], async (msg) => {
+		}).add([76, 112], async (msg) => {
 			// Per-part DX7+ dump should take 035, XXX, 002/003
 			let part = msg[0];
 			let voiceNameBuf = "";
+			let extOff = allocated.ext * part
+			upThis.#ext[extOff] = upThis.EXT_DX;
 			msg.subarray(1).forEach((e, i) => {
 				if (i < 10) {
 					voiceNameBuf += String.fromCharCode(Math.max(e, 32));
@@ -2834,6 +2840,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				voiceNameBuf = voiceNameBuf.trimRight();
 				console.debug(`DX7+ CH${part + 1} dumped voice name: "${voiceNameBuf}"`);
 			};
+			console.debug(`DX7+ CH${part + 1} dump: %o`, msg);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {

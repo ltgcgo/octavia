@@ -426,7 +426,7 @@ let Cambiare = class extends RootDisplay {
 							if (size >= 0) {
 								e.extVis.fillRect(x, 12 - size, 2, size + 1);
 							} else {
-								e.extVis.fillRect(x, 12, 2, -1 - size);
+								e.extVis.fillRect(x, 12, 2, 1 - size);
 							};
 						});
 						break;
