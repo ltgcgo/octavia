@@ -2823,11 +2823,24 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Per-part DX7+ dump should take 035, XXX, 002/003
 			let part = msg[0];
 			let voiceNameBuf = "";
-			let extOff = allocated.ext * part
+			let chOff = allocated.cc * part;
+			let extOff = allocated.ext * part;
 			upThis.#ext[extOff] = upThis.EXT_DX;
 			msg.subarray(1).forEach((e, i) => {
 				if (i < 10) {
 					voiceNameBuf += String.fromCharCode(Math.max(e, 32));
+				} else if (i < 40) {
+					// What the heck are these?
+				} else if (i < 56) {
+					// An educated guess that these are operator levels
+					// 40~55 to 142~157
+					let targetCc = i + 102;
+					upThis.#cc[chOff + ccToPos[targetCc]] = e;
+					upThis.dispatchEvent("cc", {
+						part,
+						cc: targetCc,
+						data: e
+					});
 				};
 			});
 			upThis.#prg[part] = part & 127;
