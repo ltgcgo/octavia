@@ -442,7 +442,6 @@ let Cambiare = class extends RootDisplay {
 		upThis.#redrawNotesInternal(sum, channels);
 		// Draw every note inside extraStates
 		sum.extraNotes.forEach((ev) => {
-			console.warn(ev);
 			let {part, note, velo, state} = ev;
 			let context = upThis.#sectPart[part >> 4][part & 15].cxt;
 			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));

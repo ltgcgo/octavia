@@ -192,9 +192,6 @@ voiceIdx.forEach((e, i) => {
 	voiceType[e] = i;
 });
 
-self.korgUnpack = korgUnpack;
-self.korgPack = korgPack;
-
 let getDebugState = function () {
 	return !!self.Bun || self.debugMode || false; // If run on Bun.js, output all possible logs
 };
