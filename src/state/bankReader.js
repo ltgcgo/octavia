@@ -332,11 +332,11 @@ let VoiceBank = class {
 				};
 			} else if (msb == 16) {
 				// Hijack XG MU2000 sampler
-				bankName = `Voice${(args[2] * 128 + args[1] + 1).toString().padStart(3, "0")}`;
+				bankName = `Voice${((args[2] << 7) + args[1] + 1).toString().padStart(3, "0")}`;
 				ending = " ";
 			} else if (msb == 35) {
 				if ((lsb >> 1) == 2) {
-					bankName = `DXCH_${(prg + 1).toString().padStart(3, "0")}`;
+					bankName = `DXCH_${(((args[2] & 1) << 7) + prg + 1).toString().padStart(3, "0")}`;
 					ending = " ";
 				};
 			};

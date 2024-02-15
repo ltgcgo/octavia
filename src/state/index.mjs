@@ -237,6 +237,7 @@ const allocated = {
 	dnc: 128, // drum note 0 to 127
 	ext: 2, // extensions
 	efx: 7,
+	cvn: 12, // custom voice names
 	redir: 32
 };
 const overrides = {
@@ -310,6 +311,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#ccCapturer = new Uint8Array(allocated.ch * allocated.redir); // Redirect non-internal CCs to internal CCs
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
+	#cvnBuffer = new Uint8Array(allocated.ch * allocated.cvn); // Per-channel custom voice name
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
@@ -1368,19 +1370,26 @@ let OctaviaDevice = class extends CustomEventSource {
 	getChVoice(part) {
 		let voice = this.getVoice(this.#cc[part * allocated.cc + ccToPos[0]], this.#prg[part], this.#cc[part * allocated.cc + ccToPos[32]], modeIdx[this.#mode]);
 		if (this.#bnCustom[part]) {
+			let name = "";
 			switch (this.#mode) {
 				case modeMap.mt32: {
-					voice.ending = "~";
-					voice.name = "";
-					this.#cmTTimbre.subarray(14 * (part - 1), 14 * (part - 1) + 10).forEach((e) => {
-						voice.name += String.fromCharCode(Math.max(e, 32));
+					this.#cmTTimbre.subarray(allocated.cmt * (part - 1), allocated.cmt * (part - 1) + 10).forEach((e) => {
+						name += String.fromCharCode(Math.max(e, 32));
 					});
-					voice.name = voice.name.trimRight();
+					name = name.trimRight();
 					break;
 				};
 				default: {
-					l
+					let pointer = allocated.cvn * part;
+					this.#cvnBuffer.subarray(pointer, pointer + allocated.cvn).forEach((e) => {
+						name += String.fromCharCode(Math.max(e, 32));
+					});
+					name = name.trimRight();
 				};
+			};
+			if (name.length) {
+				voice.ending = "~";
+				voice.name = name;
 			};
 		};
 		return voice;
@@ -2830,6 +2839,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let chOff = allocated.cc * part;
 			let extOff = allocated.ext * part;
 			upThis.#ext[extOff] = upThis.EXT_DX;
+			bnCustom;
 			msg.subarray(1).forEach((e, i) => {
 				if (i < 10) {
 					voiceNameBuf += String.fromCharCode(Math.max(e, 32));
