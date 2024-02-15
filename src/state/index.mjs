@@ -273,6 +273,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	CH_DRUM8 = 9;
 	EXT_NONE = 0;
 	EXT_VL = 1;
+	EXT_DX = 3;
 	VLBC_BRTHEXPR = 1; // Breath controller or expression
 	VLBC_VELOINIT = 2; // Initial key velocity
 	VLBC_VELOALL = 3; // Initial key velocity and aftertouch
@@ -782,6 +783,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								};
 								if ([33, 81, 97].indexOf(det.data[1]) > -1) {
 									this.#ext[extOff] = this.EXT_VL;
+								} else if ([35, 67, 83, 99].indexOf(det.data[1]) > -1) {
+									this.#ext[extOff] = this.EXT_DX;
+									this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 								} else {
 									this.#ext[extOff] = this.EXT_NONE;
 								};
@@ -929,6 +933,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								break;
 							};
 						};
+						if (this.getExt(part)[0] == this.EXT_DX) {
+							this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
+						};
 						this.dispatchEvent("voice", {
 							part
 						});
@@ -999,6 +1006,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				default: {
 					this.setChActive(part, 1);
 				};
+			};
+			if (this.getExt(part)[0] == this.EXT_DX) {
+				let chOff = allocated.cc * part;
+				this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 			};
 			this.#prg[part] = det.data;
 			this.#bnCustom[part] = 0;
@@ -1096,7 +1107,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (sentCs == calcCs) {
 						this.#seGs.run(msg.subarray(0, msg.length - 1), track, id);
 					} else {
-						console.warn(`Bad SD checksum ${sentCs}. Should be ${calcCs}.`);
+						console.warn(`Bad SD checksum ${sentCs} - should be ${calcCs}.`);
 					};
 				} else {
 					this.#seGs.run(msg, track, id);
@@ -1108,7 +1119,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (sentCs == calcCs) {
 					this.#seGs.run(msg.subarray(0, msg.length - 1), track, id);
 				} else {
-					console.warn(`Bad GS checksum ${sentCs}. Should be ${calcCs}.`);
+					console.warn(`Bad GS checksum ${sentCs} - should be ${calcCs}.`);
 				};
 			};
 		},
@@ -2582,6 +2593,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#ext[allocated.ext * msg[2]] = upThis.EXT_VL;
 					break;
 				};
+				case 2: {
+					upThis.#ext[allocated.ext * msg[2]] = upThis.EXT_DX;
+					break;
+				};
 				default: {
 					upThis.#ext[allocated.ext * msg[2]] = upThis.EXT_NONE;
 				};
@@ -2704,6 +2719,50 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};
+		}).add([98, 0], (msg, track, id) => {
+			// PLG-DX native dump
+			let size = msg[0], realSize = msg.length - 5,
+			lastIndex = msg.length - 1;
+			if (size != realSize) {
+				console.info(`PLG-DX native dump size mismatch! Gave ${size} instead of ${msg.length - 5}.`);
+				return;
+			};
+			let checksum = gsChecksum(msg.subarray(4, lastIndex));
+			if (checksum != msg[lastIndex]) {
+				console.info(`Bad PLG-DX checksum ${msg[lastIndex]} - should be ${checksum}.`);
+				return;
+			};
+			// Dump to normal setup redirector
+			msg[0] = 98;
+			upThis.#seXg.run(msg.subarray(0, lastIndex), track, id, {noAce: true});
+		}).add([98, 96], (msg, track, id, opt) => {
+			// PLG-DX multi-part param set
+			let part = upThis.chRedir(msg[0], track, true);
+			let chOff = allocated.cc * part;
+			let offset = msg[1];
+			msg.subarray(2).forEach((e, i) => {
+				let ri = offset + i;
+				if (ri < 10) {
+					// Unknown section
+				} else if (ri == 10) {
+					// Only dumps will attempt to write here
+					upThis.resetAce();
+				} else if (ri < 27) {
+					// 11~26 to 142~157
+					let targetCc = ri + 131;
+					if (!opt?.noAce) {
+						upThis.allocateAce(targetCc);
+					};
+					upThis.#cc[chOff + ccToPos[targetCc]] = e;
+					upThis.dispatchEvent("cc", {
+						part,
+						cc: targetCc,
+						data: e
+					});
+				} else {
+					// Unknown section
+				};
+			});
 		}).add([100, 0], (msg, track, id) => {
 			// Unknown Yamaha DX7+ dump SysEx
 			let dumpString = msg.subarray(0, msg.length - 1)

@@ -411,11 +411,15 @@ let Cambiare = class extends RootDisplay {
 						};
 						velocity *= 36;
 						e.extVis.beginPath();
-						e.extVis.moveTo(0, 12 - mouth - 3);
-						e.extVis.lineTo(8 + velocity, 12);
-						e.extVis.lineTo(0, 12 + mouth + 3);
+						e.extVis.moveTo(3, 12 - mouth - 3);
+						e.extVis.lineTo(11 + velocity, 12);
+						e.extVis.lineTo(3, 12 + mouth + 3);
 						e.extVis.fill();
 						//console.debug(`Painted!`);
+						break;
+					};
+					case upThis.device.EXT_DX: {
+
 						break;
 					};
 				};
@@ -783,7 +787,7 @@ let Cambiare = class extends RootDisplay {
 				e.metre.fillStyle = "#fff";
 				e.metre.textBaseline = "top";
 				e.metre.font = "20px 'PT Sans Narrow'";
-				e.extVis.canvas.width = 44;
+				e.extVis.canvas.width = 47;
 				e.extVis.canvas.height = 25;
 				e.extVis.fillStyle = "#fff";
 				mountElement(e.notes, [
