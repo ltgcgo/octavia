@@ -105,6 +105,9 @@ let VoiceBank = class {
 					args[2] |= 16;
 				} else if (msb > 95 && msb < 100) {
 					args[2] |= 16;
+					if (prg >> 3 == 15) {
+						args[0] = 96;
+					};
 				};
 				break;
 			};
@@ -329,8 +332,13 @@ let VoiceBank = class {
 				};
 			} else if (msb == 16) {
 				// Hijack XG MU2000 sampler
-				bankName = `Voice${(args[2] * 128 + args[1] + 1).toString().padStart(3, "0")}`;
+				bankName = `Voice${((args[2] << 7) + args[1] + 1).toString().padStart(3, "0")}`;
 				ending = " ";
+			} else if (msb == 35) {
+				if ((lsb >> 1) == 2) {
+					bankName = `DXCH_${(((args[2] & 1) << 7) + prg + 1).toString().padStart(3, "0")}`;
+					ending = " ";
+				};
 			};
 		};
 		// Internal ID

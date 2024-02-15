@@ -7,6 +7,7 @@ DreamPno	DreamPiano
 DblConGr	DblConGrnd
 GrandP #	GrndPiano#
 BritPnoK	BritPianoK
+StBrtPno	StBritePno
 BriteP #	BritPiano#
 EGndPnoK	ElGrndPnoK
 Det.CP80	DetuneCP80
@@ -571,31 +572,105 @@ ChorTine	ChorusTine
 DXEP+Cho	DXEP+Chor.
 RichHpsi	RichHarpsi
 PhaseClv	PhaseClavi
+VintLead	Vintage Ld
+SpaceZoo	Space Zoo
+Gtr Hero	GuitarHero
 StoneHng	Stonehenge
+SimpleBa	SimpleBass
+ClavBass	Clavi.Bass
+SuperBas	Super Bass
+New Slap	NewSlapBas
+RockPigs	Rock Pigs
+Cybastrg	Cybastring
+Buzz Saw	Buzzy Saw
+OsciLead	Oscil.Lead
+SqrLead!	Square Ld!
 AnaSquid	AnalgSquid
+SharpSyn	SharpSynth
+Ana.Wave	AnalogWave
+Ana.Wurl	AnalgWurly
+FngrBas!	FingerBas!
+UprghtBa	UprightBas
+FlageoBa	FlageoBass
 DampBass	Damp Bass
 Fretles!	Fretless!
-Q. Klav	Q. Klav.
+Fretls!2	Fretless!2
+ThumBass	Thumb Bass
+RockBass	Rock Bass
+SmooBass	SmoothBass
+WarmBass	Warm Bass
+YamaBass	Yama Bass
+FruitBas	FruityBass
+AcidBas!	Acid Bass!
+SqrBass!	SquareBas!
+PlsClav!	PulseClav!
+MogueBas	Mogue Bass
+BoppaBas	Boppa Bass
+BuzzerBa	BuzzerBass
+MuteHrBa	MutedHrtBa
+Tek.Bass	TeknoBass!
+TranzBas	TranceBass
+Chamlion	Chamelion
+Para.Syn	Para.Synth
+SteamBas	Steam Bass
+WhelkBas	Whelk Bass
+AttakSyn	AttakSynth
+Q. Klav	Q.Klavinet
+India	IndiaSitar
 YamSteel	Yama Steel
+Stung St	StungStrng
 Waterfon	Waterphone
 DinoPerc	Dino Perc.
+SpcHorse	SpaceHorse
+Suedhead	Suedehead
+EspaGtr!	EspagnGtr!
 JazzGtr!	JazzGuitr!
 WetPluck	Wet Pluck
+Comp.Gtr	Compr.Gtr.
+FunkyGtr	Funky Gtr.
 Thin Gtr	ThinGuitar
+Carlos	CarlosGtr.
+Destiny	DestinyGtr
+Sync Ld!	Sync Lead!
+SimpleSy	SimpleSyn.
+SlitMinu	Slit.Minu.
+SynHarmo	SynthHarmo
+Syn.Skex	Synth Skex
+Reso.Sqr	ResoSquare
+Wurli Ld	Wurli Lead
+FlatLead	Flat Lead
+Pluck Ld	Pluck Lead
+Brassyn	BrassSynth
+AcoSynLd	Acou.SynLd
+Binafone	Binaphone
 AlbaPipe	Alba Pipe
+BaClari!	BassClari!
+WX Clari	WXClarinet
+WX JzGtr	WX JazzGtr
 Shakuha!	Shakhachi!
+LipClari	LipClarint
+SprnoSx!	SopranoSx!
 LiteAlto	Light Alto
 Trombon!	Trombone!
 Air Sax	Airy Sax
+TenorSx!	Tenor Sax!
 Trumpt!2	Trumpet! 2
+MuteTp!2	MutedTrp!2
 C Violin	Con.Violin
 C Flute	CncrtFlute
 JazFlute	Jazz Flute
 Bamboo	Bamboo Di
+SoprPipe	SoprnoPipe
 SweetAlt	Sweet Alto
+MildTenr	Mild Tenor
+GlassTnr	GlassTenor
+FunkyTnr	FunkyTenor
+OldTenor	Old Tenor
 BrtTenor	BriteTenor
 SoftPipe	Soft Pipe
 BowedSaw	Bowed Saw
+Squeeze	SqeezAcord
+MouthKey	Mouth Key
 AmpdHarp	AmpdHarmnc
 CromHarp	ChromHrmnc
 YamaBotl	YamaBottle

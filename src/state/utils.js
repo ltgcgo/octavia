@@ -58,6 +58,26 @@ let korgFilter = function (korgArr, iterator) {
 		};
 	};
 };
+let korgUnpack = function (korgArr) {
+	let newLength = (korgArr.length * 7) >> 3;
+	let unpacked = new Uint8Array(newLength);
+	korgFilter(korgArr, (e, i) => {
+		unpacked[i] = e;
+	});
+	return unpacked;
+};
+let korgPack = function (rawArr) {
+	let newLength = Math.ceil((rawArr.length << 3) / 7);
+	let packed = new Uint8Array(newLength);
+	rawArr.forEach((e, i) => {
+		let ptrOverlay = Math.floor(i / 7) << 3;
+		let ptrData = Math.floor((i << 3) / 7) + 1;
+		let ptrShift = i % 7;
+		packed[ptrOverlay] |= (e >> 7) << ptrShift;
+		packed[ptrData] |= e & 127;
+	});
+	return packed;
+};
 
 let x5dSendLevel = function (sendParam) {
 	let res = Math.floor(sendParam * 14.2);
@@ -72,6 +92,8 @@ export {
 	toDecibel,
 	gsChecksum,
 	korgFilter,
+	korgUnpack,
+	korgPack,
 	x5dSendLevel,
 	customInterpreter
 };

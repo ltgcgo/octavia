@@ -180,7 +180,7 @@ let Cambiare = class extends RootDisplay {
 	#sectPart = [];
 	#sectMeta = {};
 	#sectPix = {};
-	#noteEvents = [];
+	//#noteEvents = [];
 	#pitchEvents = [];
 	#style = "block";
 	glyphs = new MxFont40();
@@ -316,10 +316,10 @@ let Cambiare = class extends RootDisplay {
 		let targetWidth = self.innerWidth,
 		targetHeight = self.innerHeight;
 		if (aspectRatio >= targetRatio) {
-			targetZoom = Math.round(self.innerHeight / 1080 * 10000) / 10000;
+			targetZoom = Math.min(Math.round(self.innerHeight / 1080 * 10000) / 10000, 100);
 			targetWidth = Math.ceil(self.innerHeight * targetRatio);
 		} else if (aspectRatio < targetRatio) {
-			targetZoom = Math.round(self.innerWidth / 1920 * 10000) / 10000;
+			targetZoom = Math.min(Math.round(self.innerWidth / 1920 * 10000) / 10000, 100);
 			targetHeight = Math.ceil(self.innerWidth / targetRatio);
 		};
 		//console.debug(targetZoom);
@@ -341,10 +341,12 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.curPoly.innerText = `${curPoly}`.padStart(3, "0");
 		upThis.#sectInfo.maxPoly.innerText = `${upThis.#maxPoly}`.padStart(3, "0");
 		if (upThis.#clockSource?.realtime) {
-			upThis.#sectInfo.barCount.innerText = "LIVE";
-			upThis.#sectInfo.barNote.innerText = "0";
+			upThis.#sectInfo.barCount.innerText = "LINE";
+			upThis.#sectInfo.barDelim.style.display = "none";
+			upThis.#sectInfo.barNote.innerText = "IN";
 		} else {
 			upThis.#sectInfo.barCount.innerText = sum.noteBar + 1;
+			upThis.#sectInfo.barDelim.style.display = "";
 			upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
 		};
 		upThis.#scrollMeta(true);
@@ -397,11 +399,47 @@ let Cambiare = class extends RootDisplay {
 				} else {
 					e.pan.setAttribute("x", `84`);
 				};
+				// Extensible visualizer
+				e.extVis.clearRect(0, 0, 44, 25);
+				e.extVis.fillStyle = "#fff";
+				switch (sum.chExt[part][0]) {
+					case upThis.device.EXT_VL: {
+						let mouth = (sum.chContr[chOff + ccToPos[136]] - 64) / 64 || sum.rawPitch[part] / 8192;
+						mouth = mouth * -4 + 4;
+						let velocity = +(!!sum.rawVelo[part]) * (sum.chContr[chOff + ccToPos[129]] * sum.chContr[chOff + ccToPos[11]] / 16129);
+						if (!velocity && sum.rawVelo[part]) {
+							velocity = sum.rawVelo[part] / 255;
+						};
+						velocity *= 36;
+						e.extVis.beginPath();
+						e.extVis.moveTo(3, 12 - mouth - 3);
+						e.extVis.lineTo(11 + velocity, 12);
+						e.extVis.lineTo(3, 12 + mouth + 3);
+						e.extVis.fill();
+						//console.debug(`Painted!`);
+						break;
+					};
+					case upThis.device.EXT_DX: {
+						let dxView = sum.chContr.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1);
+						dxView.forEach((v, i) => {
+							if (i >= 8) {
+								e.extVis.fillStyle = `#${upThis.#accent}`;
+							};
+							let x = i * 3;
+							let size = (v - 64) / 5.82;
+							if (size >= 0) {
+								e.extVis.fillRect(x, 12 - size, 2, size + 1);
+							} else {
+								e.extVis.fillRect(x, 12, 2, 1 - size);
+							};
+						});
+						break;
+					};
+				};
 			};
 		};
 		// Note visualization
-		let onNotes = new Set(), offNotes = new Set(),
-		channels = new Array(allocated.ch), extraStates = {};
+		let channels = new Array(allocated.ch);
 		upThis.#sectPart.forEach((e, port) => {
 			e.forEach((e0, part) => {
 				if (e0.refresh) {
@@ -417,30 +455,11 @@ let Cambiare = class extends RootDisplay {
 				channels[e.part] = true;
 			};
 		};
-		// Sift through events fed
-		while (upThis.#noteEvents.length > 0) {
-			let e = upThis.#noteEvents.shift();
-			let {
-				part, note, velo, state
-			} = e;
-			let noteId = part << 7 | note;
-			channels[part] = true;
-			//console.debug(part);
-			if (state == 0) {
-				if (onNotes.has(noteId)) {
-					offNotes.add(noteId);
-					upThis.#sectPart[part >> 4][part & 15].refresh = true;
-				};
-			} else {
-				onNotes.add(noteId);
-				extraStates[noteId] = e;
-			};
-		};
 		// Draw every note that has channels updated
 		upThis.#redrawNotesInternal(sum, channels);
 		// Draw every note inside extraStates
-		offNotes.forEach((key) => {
-			let {part, note, velo, state} = extraStates[key];
+		sum.extraNotes.forEach((ev) => {
+			let {part, note, velo, state} = ev;
 			let context = upThis.#sectPart[part >> 4][part & 15].cxt;
 			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));
 			//console.debug(part, note);
@@ -652,6 +671,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.sigN = createElement("span", ["field", "pcp-font4"], {t: 1, l: 194, w: 23, h: 33, a: "right"});
 		upThis.#sectInfo.sigD = createElement("span", ["field", "pcp-font4"], {t: 1, l: 232, w: 23, h: 33});
 		upThis.#sectInfo.barCount = createElement("span", ["field", "pcp-font4"], {t: 1, l: 304, w: 35, h: 33, a: "right"});
+		upThis.#sectInfo.barDelim = createElement("span", ["field", "field-label", "pcp-font4"], {t: 0, l: 343, w: 8, h: 33, i: "/"});
 		upThis.#sectInfo.barNote = createElement("span", ["field", "pcp-font4"], {t: 1, l: 354, w: 23, h: 33});
 		upThis.#sectInfo.tempo = createElement("span", ["field", "pcp-font4"], {t: 1, l: 454, w: 64, h: 33, a: "right"});
 		upThis.#sectInfo.volume = createElement("span", ["field", "pcp-font4"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
@@ -661,6 +681,11 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.delay = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1475, w: 190, h: 33});
 		upThis.#sectInfo.insert = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1706, w: 190, h: 33});
 		upThis.#sectInfo.title = createElement("span", ["field", "pcp-font4"], {t: 35, l: 50, w: 810, h: 33})
+		/*upThis.#sectInfo.reverb = createElement("span", ["field", "pcp-font4"], {t: 35, l: 40, w: 190, h: 33});
+		upThis.#sectInfo.chorus = createElement("span", ["field", "pcp-font4"], {t: 35, l: 280, w: 190, h: 33});
+		upThis.#sectInfo.delay = createElement("span", ["field", "pcp-font4"], {t: 35, l: 515, w: 190, h: 33});
+		upThis.#sectInfo.insert = createElement("span", ["field", "pcp-font4"], {t: 35, l: 746, w: 190, h: 33});
+		upThis.#sectInfo.title = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1010, w: 810, h: 33});*/
 		canvasElement.appendChild(upThis.#sectInfo.root);
 		mountElement(upThis.#sectInfo.root, [
 			upThis.#sectInfo.events,
@@ -673,7 +698,7 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.sigD,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 268, w: 30, h: 33, i: "Bar"}),
 			upThis.#sectInfo.barCount,
-			createElement("span", ["field", "field-label", "pcp-font4"], {t: 0, l: 343, w: 8, h: 33, i: "/"}),
+			upThis.#sectInfo.barDelim,
 			upThis.#sectInfo.barNote,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 390, w: 61, h: 33, i: "Tempo", a: "right"}),
 			upThis.#sectInfo.tempo,
@@ -683,14 +708,19 @@ let Cambiare = class extends RootDisplay {
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 652, w: 52, h: 33, i: "Mode"}),
 			upThis.#sectInfo.mode,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 960, w: 34, h: 33, i: "Rev"}),
+			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 0, w: 34, h: 33, i: "Rev"}),
 			upThis.#sectInfo.reverb,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1198, w: 36, h: 33, i: "Cho"}),
+			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 238, w: 36, h: 33, i: "Cho"}),
 			upThis.#sectInfo.chorus,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1438, w: 31, h: 33, i: "Var"}),
+			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 478, w: 31, h: 33, i: "Var"}),
 			upThis.#sectInfo.delay,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1673, w: 27, h: 33, i: "Ins"}),
+			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 713, w: 27, h: 33, i: "Ins"}),
 			upThis.#sectInfo.insert,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 0, w: 44, h: 33, i: "Title"}),
+			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 960, w: 44, h: 33, i: "Title"}),
 			upThis.#sectInfo.title
 		]);
 		// Begin inserting the marker section
@@ -757,7 +787,8 @@ let Cambiare = class extends RootDisplay {
 					"por": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 42}),
 					"cea": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 48}),
 					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54}),
-					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84})
+					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84}),
+					"extVis": createElement("canvas", [`field`], {l: 207, t: 1}).getContext("2d")
 				};
 				let e = upThis.#sectPart[port][part];
 				leftCache.forEach((e0) => {
@@ -769,6 +800,9 @@ let Cambiare = class extends RootDisplay {
 				e.metre.fillStyle = "#fff";
 				e.metre.textBaseline = "top";
 				e.metre.font = "20px 'PT Sans Narrow'";
+				e.extVis.canvas.width = 47;
+				e.extVis.canvas.height = 25;
+				e.extVis.fillStyle = "#fff";
 				mountElement(e.notes, [
 					e.cxt.canvas
 				]);
@@ -802,7 +836,8 @@ let Cambiare = class extends RootDisplay {
 					e.std,
 					e.msb,
 					e.prg,
-					e.lsb
+					e.lsb,
+					e.extVis.canvas
 				]);
 				mountElement(e.root, [
 					e.major,
@@ -1006,10 +1041,10 @@ let Cambiare = class extends RootDisplay {
 				};
 			} catch (err) {};
 		});
-		upThis.addEventListener("note", ({data}) => {
+		/*upThis.addEventListener("note", ({data}) => {
 			upThis.#noteEvents.push(data);
 			//console.debug(data);
-		});
+		});*/
 		upThis.addEventListener("pitch", ({data}) => {
 			upThis.#pitchEvents.push(data);
 		});

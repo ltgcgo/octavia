@@ -21,6 +21,7 @@ let RootDisplay = class extends CustomEventSource {
 	#efxList = [];
 	#titleName = "";
 	#metaRun = [];
+	#noteEvents = [];
 	#mimicStrength = new Uint8ClampedArray(128);
 	#beforeStrength = new Uint8ClampedArray(128);
 	// Used to provide tempo, tSig and bar information
@@ -230,33 +231,17 @@ let RootDisplay = class extends CustomEventSource {
 			this.#noteTime = time;
 		};
 		let events = this.#midiPool?.step(time) || [];
-		let extraPoly = 0, notes = new Set();
+		let extraPoly = 0, notes = new Set(), noteVelo = {};
+		let extraNotes = []; // Should be visualized before the final internal state!
 		let upThis = this;
 		let metaReplies = [];
 		// Reset strength for a new frame
-		this.device.getStrength().forEach((e, i) => {
-			this.#beforeStrength[i] = e;
+		upThis.device.getStrength().forEach((e, i) => {
+			upThis.#beforeStrength[i] = e;
 		});
 		upThis.device.newStrength();
 		events.forEach(function (e) {
 			let raw = e.data;
-			if (raw.type == 9) {
-				if (raw.data[1] > 0) {
-					notes.add(raw.part * 128 + raw.data[0]);
-					/*if (writeStrength[raw.part] == 0) {
-						upThis.#mimicStrength[raw.part] = raw.data[1];
-					};*/
-				} else {
-					if (notes.has(raw.part * 128 + raw.data[0])) {
-						extraPoly ++;
-					};
-				};
-			};
-			if (e.data.type == 8) {
-				if (notes.has(raw.part * 128 + raw.data[0])) {
-					extraPoly ++;
-				};
-			};
 			let reply = upThis.device.runJson(raw);
 			switch (reply?.reply) {
 				case "meta": {
@@ -268,18 +253,38 @@ let RootDisplay = class extends CustomEventSource {
 				delete reply.reply;
 			};
 		});
+		while (upThis.#noteEvents.length > 0) {
+			let raw = upThis.#noteEvents.shift(),
+			noteEnc = (raw.part << 7) | raw.note;
+			//console.debug(raw);
+			if (raw.state) {
+				notes.add(noteEnc);
+				noteVelo[noteEnc] = raw.velo;
+			} else {
+				if (notes.has(noteEnc)) {
+					extraNotes.push({
+						part: raw.part,
+						note: raw.note,
+						velo: noteVelo[noteEnc],
+						state: upThis.device.NOTE_SUSTAIN // OctaviaDevice.NOTE_SUSTAIN
+					});
+					extraPoly ++;
+				};
+			};
+		};
 		if (metaReplies?.length > 0) {
-			this.dispatchEvent("meta", metaReplies);
+			upThis.dispatchEvent("meta", metaReplies);
 		};
 		// Pass params to actual displays
-		let chInUse = this.device.getActive(); // Active channels
+		let chInUse = upThis.device.getActive(); // Active channels
 		let chKeyPr = []; // Pressed keys and their pressure
 		let chPitch = upThis.device.getPitch(); // All pitch bends
 		let chContr = upThis.device.getCcAll(); // All CC values
 		let chProgr = upThis.device.getProgram(); // All program values
 		let chType = upThis.device.getChType(); // All channel types
+		let chExt = [];
 		// Mimic strength variation
-		let writeStrength = this.device.getStrength();
+		let writeStrength = upThis.device.getStrength();
 		writeStrength.forEach(function (e, i, a) {
 			a[i] = Math.max(upThis.#beforeStrength[i], e);
 			let diff = a[i] - upThis.#mimicStrength[i];
@@ -298,11 +303,13 @@ let RootDisplay = class extends CustomEventSource {
 		chInUse.forEach(function (e, i) {
 			if (e) {
 				chKeyPr[i] = upThis.device.getVel(i);
+				chExt[i] = upThis.device.getExt(i);
 				curPoly += chKeyPr[i].size;
 			};
 		});
 		let repObj = {
 			extraPoly,
+			extraNotes,
 			curPoly,
 			chInUse,
 			chKeyPr,
@@ -310,22 +317,25 @@ let RootDisplay = class extends CustomEventSource {
 			chProgr,
 			chContr,
 			chType,
+			chExt,
 			eventCount: events.length,
-			title: this.#titleName,
-			bitmap: this.device.getBitmap(),
-			letter: this.device.getLetter(),
-			texts: this.device.getTexts(),
-			master: this.device.getMaster(),
-			mode: this.device.getMode(),
-			strength: this.#mimicStrength.slice(),
+			title: upThis.#titleName,
+			bitmap: upThis.device.getBitmap(),
+			letter: upThis.device.getLetter(),
+			texts: upThis.device.getTexts(),
+			master: upThis.device.getMaster(),
+			mode: upThis.device.getMode(),
+			strength: upThis.#mimicStrength.slice(),
 			velo: writeStrength,
-			rpn: this.device.getRpn(),
-			tSig: this.getTimeSig(),
-			tempo: this.getTempo(),
-			noteBar: this.noteBar,
-			noteBeat: this.noteBeat,
-			ace: this.device.getAce(),
-			efxSink: this.device.getEffectSink()
+			rpn: upThis.device.getRpn(),
+			tSig: upThis.getTimeSig(),
+			tempo: upThis.getTempo(),
+			noteBar: upThis.noteBar,
+			noteBeat: upThis.noteBeat,
+			ace: upThis.device.getAce(),
+			rawVelo: upThis.device.getStrength(),
+			rawPitch: upThis.device.getRawPitch(),
+			efxSink: upThis.device.getEffectSink()
 		};
 		return repObj;
 	};
@@ -361,6 +371,10 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "efxinsert2");
 		eventPassThru(upThis.device, upThis, "efxinsert3");
 		eventPassThru(upThis.device, upThis, "partefxtoggle");
+		upThis.addEventListener("note", function ({data}) {
+			upThis.#noteEvents.push(data);
+			//console.debug(data);
+		});
 		upThis.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;

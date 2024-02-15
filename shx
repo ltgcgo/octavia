@@ -1,20 +1,62 @@
 #!/bin/bash
-arg="$@"
-args=( "$@" )
-if [ "$arg" == "" ] ; then
-	echo "All available actions:"
-	ls -1 sh | while IFS= read -r file; do
-		echo "${file/.sh/}"
-	done
+# Check the current shell
+export SHX_VERSION=0.2.1
+export INVOKE_DIR=$PWD
+export CURRENT_SHELL=$(ps h -p $$ -o args='' | cut -f1 -d' ')
+if [[ "${NO_SHELL_CHECK}" == "" ]] &&
+	[[ "${CURRENT_SHELL}" != *"bash" ]] &&
+	[[ "${CURRENT_SHELL}" != *"ksh" ]] &&
+	[[ "${CURRENT_SHELL}" != *"zsh" ]]; then
+	echo "Please run with bash instead of ${CURRENT_SHELL}."
 	exit
 fi
-if [ -e "sh/$1.sh" ] ; then
-	export PATH=./:./sh/:$PATH
+# Define runner
+runner="bash"
+if [[ "${CURRENT_SHELL}" == *"bash" ]]; then
+	runner=$CURRENT_SHELL
+elif [[ "$(bash --version >/dev/null 2>/dev/null;echo $?)" == "0" ]]; then
+	printf ""
+else
+	echo -e "\033[1;33mWarning\033[0m: Not using Bash. Scripts may not work."
+fi
+# Locate the project folder
+OIFS="$IFS"
+IFS='/' read -r -a paths <<< "$PWD" 2>/dev/null || paths=('' ${(@s:/:)PWD})
+let fsPointer=$((${#paths[@]} - 1))
+IFS='/'
+while [ "$fsPointer" -ge 0 ]; do
+	fsPath="${paths[@]:0:$((fsPointer + 1))}"
+	fsPath=${fsPath:-/}
+	if [ -f "$fsPath/shx" ] && [ -d "$fsPath/sh" ] ; then
+		#echo "Switched to \"$fsPath\"."
+		cd "$fsPath"
+		break
+	#else
+		#echo "No match for \"$fsPath\"."
+	fi
+	fsPointer=$(($fsPointer - 1))
+done
+if [[ "$fsPath" == "/" ]] ; then
+	echo "No project directory is found. Quitting."
+	exit 1
+fi
+IFS="$OIFS"
+export SOURCE_DIR=$PWD
+export PATH=$PATH:./:./sh
+# Command parsing
+arg="$@"
+args=( "$@" )
+if [[ "${arg}" == "" ]] ; then
+	echo -e "\033[1;37mshx ${SHX_VERSION}\033[0m"
+	echo "All available actions:"
+	ls -1 sh | while IFS= read -r file; do
+		echo "· ${file/.sh/}"
+	done
+elif [ -e "sh/$1.sh" ] ; then
 	bash "sh/$1.sh" "${args[@]:1}"
 elif [ -e "sh/$1" ] ; then
-	export PATH=./:./sh/:$PATH
 	bash "sh/$1" "${args[@]:1}"
 else
-	echo "No action found as \"$1\". Command: \"${args[@]:1}\"".
+	echo -e "\033[1;31mError\033[0m: No action found as \"$1\". Command: shx ${args[@]:1}".
 fi
 exit

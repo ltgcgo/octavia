@@ -28,7 +28,7 @@ stSwitch.to = function (i) {
 stSwitch.forEach(function (e, i, a) {
 	stSwitchMode[i] = e.title;
 	e.addEventListener("click", function () {
-		visualizer.switchMode(e.title, true);
+		visualizer.device.switchMode(e.title, true, true);
 		stSwitch.to(i);
 	});
 });
@@ -64,6 +64,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 		let demoChoice = document.createElement("b");
 		demoChoice.innerText = e.text;
 		demoChoice.title = e.file;
+		demoChoice.standard = e.standard;
 		demoChoice.classList.on("demo");
 		stDemo.push(demoChoice);
 		stList.appendChild(demoChoice);
@@ -99,6 +100,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			};
 			audioBlob = demoBlobs[e.title].wave;
 			audioPlayer.src = URL.createObjectURL(audioBlob);
+			visualizer.device.setDetectionTargets(e.standard);
 			if (demoModes[i]?.length > 0) {
 				visualizer.switchMode(demoModes[i]);
 			};

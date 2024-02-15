@@ -5,6 +5,7 @@ PianoStr	Piano + Strings
 DblConGr	Double Concert Grand
 GrandP #	Grand Piano #
 BritPnoK	Bright Piano KSP
+StBrtPno	Stereo Bright Piano
 BriteP #	Bright Piano #
 EGndPnoK	Electric Grand Piano KSP
 HnkyTnkK	Honky Tonk KSP
@@ -319,15 +320,21 @@ DXEP+Cho	DX EP + Chorus
 RichHpsi	Rich Harpsichord
 PhaseClv	Phaser Clavichord
 Fretles!	Fretless Bass!
-Q. Klav	Q. Klavichord
 YamSteel	Mountain Steel Drums
 DinoPerc	Dino Percussion
+WetPluck	Wet Pluck Guitar
 LiteAlto	Light Alto Sax
 Air Sax	Airy Saxophone
+TenorSx!	Tenor Saxophone!
+MuteTp!2	Muted Trumpet! 2
 C Violin	Concert Violin
 C Flute	Concert Flute
 SweetAlt	Sweet Alto Sax
+MildTenr	Mild Tenor Sax
 Jazz Sax	Jazz Saxophone
+GlassTnr	Glass Tenor Sax
+FunkyTnr	Funky Tenor Sax
+OldTenor	Old Tenor Sax
 BrtTenor	Bright Tenor Sax
 BowedSaw	Bowed Sawtooth
 AmpdHarp	Amped Harmonica
