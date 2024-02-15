@@ -1376,6 +1376,10 @@ let OctaviaDevice = class extends CustomEventSource {
 						voice.name += String.fromCharCode(Math.max(e, 32));
 					});
 					voice.name = voice.name.trimRight();
+					break;
+				};
+				default: {
+					l
 				};
 			};
 		};
@@ -2845,7 +2849,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			upThis.#prg[part] = part & 127;
 			upThis.#cc[allocated.cc * part + ccToPos[0]] = 35;
-			upThis.#cc[allocated.cc * part + ccToPos[32]] = part >> 7 | 2;
+			upThis.#cc[allocated.cc * part + ccToPos[32]] = part >> 7 | 4;
 			upThis.dispatchEvent("voice", {
 				part
 			});
