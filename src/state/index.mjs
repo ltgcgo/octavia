@@ -2835,14 +2835,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([76, 112], async (msg) => {
 			// Per-part DX7+ dump should take 035, XXX, 002/003
 			let part = msg[0];
-			let voiceNameBuf = "";
 			let chOff = allocated.cc * part;
 			let extOff = allocated.ext * part;
+			let cvnOff = allocated.cvn * part;
 			upThis.#ext[extOff] = upThis.EXT_DX;
-			bnCustom;
+			upThis.#bnCustom[part] = 1;
+			let cvnView = upThis.#cvnBuffer.subarray(cvnOff, cvnOff + allocated.cvn);
+			cvnView.fill(32);
 			msg.subarray(1).forEach((e, i) => {
 				if (i < 10) {
-					voiceNameBuf += String.fromCharCode(Math.max(e, 32));
+					cvnView[i] = Math.max(e, 32);
 				} else if (i < 40) {
 					// What the heck are these?
 				} else if (i < 56) {
@@ -2863,10 +2865,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("voice", {
 				part
 			});
-			if (voiceNameBuf.length > 0) {
+			/*if (voiceNameBuf.length > 0) {
 				voiceNameBuf = voiceNameBuf.trimRight();
 				console.debug(`DX7+ CH${part + 1} dumped voice name: "${voiceNameBuf}"`);
-			};
+			};*/
 			console.debug(`DX7+ CH${part + 1} dump: %o`, msg);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
