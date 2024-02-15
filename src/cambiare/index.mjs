@@ -419,7 +419,16 @@ let Cambiare = class extends RootDisplay {
 						break;
 					};
 					case upThis.device.EXT_DX: {
-
+						let dxView = sum.chContr.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1);
+						dxView.forEach((v, i) => {
+							let x = i * 3;
+							let size = (v - 64) / 5.82;
+							if (size >= 0) {
+								e.extVis.fillRect(x, 12 - size, 2, size + 1);
+							} else {
+								e.extVis.fillRect(x, 12, 2, -1 - size);
+							};
+						});
 						break;
 					};
 				};
@@ -775,7 +784,7 @@ let Cambiare = class extends RootDisplay {
 					"cea": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 48}),
 					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54}),
 					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84}),
-					"extVis": createElement("canvas", [`field`], {l: 210, t: 1}).getContext("2d")
+					"extVis": createElement("canvas", [`field`], {l: 207, t: 1}).getContext("2d")
 				};
 				let e = upThis.#sectPart[port][part];
 				leftCache.forEach((e0) => {

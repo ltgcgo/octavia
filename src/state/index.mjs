@@ -785,7 +785,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									this.#ext[extOff] = this.EXT_VL;
 								} else if ([35, 67, 83, 99].indexOf(det.data[1]) > -1) {
 									this.#ext[extOff] = this.EXT_DX;
-									this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
+									//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 								} else {
 									this.#ext[extOff] = this.EXT_NONE;
 								};
@@ -934,7 +934,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						};
 						if (this.getExt(part)[0] == this.EXT_DX) {
-							this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
+							//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 						};
 						this.dispatchEvent("voice", {
 							part
@@ -1009,7 +1009,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 			if (this.getExt(part)[0] == this.EXT_DX) {
 				let chOff = allocated.cc * part;
-				this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
+				//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 			};
 			this.#prg[part] = det.data;
 			this.#bnCustom[part] = 0;
