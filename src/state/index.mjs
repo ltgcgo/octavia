@@ -165,7 +165,9 @@ ccAccepted = [
 aceCandidates = [
 	2,
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-	136, 130, 131, 132, 133, 134, 135, 137, 138, 139
+	136, 130, 131, 132, 133, 134, 135, 137, 138, 139,
+	142, 143, 144, 145, 146, 147, 148, 149,
+	150, 151, 152, 153, 154, 155, 156, 157
 ],
 nrpnCcMap = [33, 99, 100, 32, 102, 8, 9, 10]; // cc71 to cc78
 
@@ -2708,10 +2710,42 @@ let OctaviaDevice = class extends CustomEventSource {
 			let expectedChecksum = gsChecksum(dumpString);
 			let receivedChecksum = msg[msg.length - 1];
 			if (expectedChecksum != receivedChecksum) {
-				console.warn(`Yamaha DX7 dump SysEx checksum mismatch! Expected ${expectedChecksum}, but got ${receivedChecksum}:\n`, msg);
+				console.warn(`Yamaha DX7+ dump SysEx checksum mismatch! Expected ${expectedChecksum}, but got ${receivedChecksum}:\n`, msg);
 				return;
 			} else {
 				dxDump.run(dumpString);
+			};
+		}).add([100, 76], (msg, track, id) => {
+			// Unknown Yamaha DX7+ multipart SysEx
+			let use = msg[0] >> 4, section = msg[0] & 15, offset = msg[1];
+			switch (use) {
+				case 2: {
+					// DX7+ multipart parameter set
+					let part = upThis.chRedir(section, track, true),
+					chOff = allocated.cc * part;
+					msg.subarray(2).forEach((e, i) => {
+						let ri = i + offset;
+						if (ri < 7) {
+							// Unknown section
+						} else if (ri < 23) {
+							// 7~22 to 142~157
+							let targetCc = ri + 135;
+							upThis.allocateAce(targetCc);
+							upThis.#cc[chOff + ccToPos[targetCc]] = e;
+							upThis.dispatchEvent("cc", {
+								part,
+								cc: targetCc,
+								data: e
+							});
+						} else {
+							// Unknown section
+						};
+					});
+					break;
+				};
+				default: {
+					console.info(`Unknown DX7+ multipart: %o`, msg);
+				};
 			};
 		});
 		// DX7 Dumps
@@ -2720,6 +2754,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[allocated.cc * msg[0] + ccToPos[64]] = 0;
 			upThis.#ua.ano(msg[0]);
 			upThis.switchMode("xg");
+			upThis.resetAce();
 			console.debug(`Yamaha DX7+ reset CH${msg[0] + 1}.`);
 		}).add([56, 76, 112], async (msg) => {
 			// Per-part DX7+ dump should take 035, XXX, 002/003
