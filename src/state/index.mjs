@@ -1631,7 +1631,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[chOff + ccToPos[78]] = 64; // Vibrato Delay*/
 			upThis.#cc.subarray(chOff + ccToPos[71], chOff + ccToPos[71] + 8).fill(64);
 			// Internal reset
-			upThis.#cc.subarray(chOff + ccToPos[130], chOff + ccToPos[130] + 28).fill(64);
+			upThis.#cc.subarray(chOff + ccToPos[130], chOff + ccToPos[157] + 1).fill(64);
 			// Extra default values
 			upThis.#cc[chOff + ccToPos[91]] = 40; // Reverb
 			// RPN/NRPN to null

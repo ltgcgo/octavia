@@ -401,6 +401,7 @@ let Cambiare = class extends RootDisplay {
 				};
 				// Extensible visualizer
 				e.extVis.clearRect(0, 0, 44, 25);
+				e.extVis.fillStyle = "#fff";
 				switch (sum.chExt[part][0]) {
 					case upThis.device.EXT_VL: {
 						let mouth = (sum.chContr[chOff + ccToPos[136]] - 64) / 64 || sum.rawPitch[part] / 8192;
@@ -421,6 +422,9 @@ let Cambiare = class extends RootDisplay {
 					case upThis.device.EXT_DX: {
 						let dxView = sum.chContr.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1);
 						dxView.forEach((v, i) => {
+							if (i >= 8) {
+								e.extVis.fillStyle = `#${upThis.#accent}`;
+							};
 							let x = i * 3;
 							let size = (v - 64) / 5.82;
 							if (size >= 0) {
