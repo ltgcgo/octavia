@@ -283,6 +283,7 @@ visualizer.addEventListener("meta", function (ev) {
 let dispCanv = $e("#ymhPsr");
 let dispCtx = dispCanv.getContext("2d");
 let mixerView = false;
+let rhythmView = false;
 let tempoView = false;
 dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
@@ -303,7 +304,18 @@ dispCanv.addEventListener("mousedown", function (ev) {
 		} else if (ev.offsetX >= 1046) {
 			visualizer.setCh(ch + 1);
 		} else if (ev.offsetY < 110) {
-			mixerView = !mixerView;
+			if (mixerView && !rhythmView) {
+				mixerView = false;
+				rhythmView = true;
+			}
+			else if (rhythmView) {
+				mixerView = false;
+				rhythmView = false;
+			}
+			else {
+				mixerView = true;
+				rhythmView = false;
+			}
 		} else if (ev.offsetY > 218) {
 			tempoView = !tempoView;
 		};
@@ -350,7 +362,7 @@ let renderThread = setInterval(function () {
 		if (currentAnimation && !visualizer.demoInfo) {
 			visualizer.demoInfo = currentAnimation;
 		};
-		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId, location.hash == "#trueMode");
+		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId, location.hash == "#trueMode", rhythmView);
 		lastTime = curTime;
 	};
 }, 20);

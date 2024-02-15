@@ -23,6 +23,9 @@ let PsrDisplay = class extends RootDisplay {
 	#lastRefreshTime = 0;
 	#letterShift = 0;
 	#letterCoolDown = 0;
+	#lastFrameBar = 0;
+	#kana = "";
+	#rhythmTextBuffer = "        ";
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
@@ -53,6 +56,12 @@ let PsrDisplay = class extends RootDisplay {
 		});
 		this.addEventListener("channelactive", (ev) => {
 			this.#ch = ev.data;
+		});
+		this.addEventListener("metacommit", (ev) => {
+			let meta = ev.data;
+			if (meta.type == "SGLyrics" || meta.type == "C.Lyrics" || meta.type == "KarLyric") {
+				this.#kana = meta.data;
+			}
 		});
 	};
 	setCh(ch) {
@@ -125,7 +134,7 @@ let PsrDisplay = class extends RootDisplay {
 		});
 		ctx.resetTransform();
 	};
-	#renderDotMatrix(str, ctx, trueMode = false, offsetX, offsetY, scaleX = 8, scaleY = 8, skew = -0.15) {
+	#renderDotMatrix(str, ctx, trueMode = false, offsetX, offsetY, cursor = -1, scaleX = 8, scaleY = 8, skew = -0.15) {
 		let upThis = this;
 		let timeNow = Date.now();
 		ctx.setTransform(1, 0, skew, 1, 0, 0);
@@ -142,11 +151,16 @@ let PsrDisplay = class extends RootDisplay {
 		}
 		usedFont.getStr(str).forEach((e, i) => {
 			e.render((e, x, y) => {
-				ctx.fillStyle = e ? activePixel : inactivePixel;
+				if (y == 7 && cursor == i) {
+					ctx.fillStyle = e ? inactivePixel : activePixel;
+				} else {
+					ctx.fillStyle = e ? activePixel : inactivePixel;
+				}
 				ctx.fillRect(offsetX + (x + 6 * i) * scaleX, offsetY + y * scaleY, scaleX - 1, scaleY - 1);
 			});
 		});
 		ctx.resetTransform();
+		// Scrolling text
 		if (longString && Math.floor(timeNow / 60) != upThis.#lastRefreshTime) {
 			if (upThis.#letterCoolDown > 0) {
 				upThis.#letterCoolDown--;
@@ -163,7 +177,7 @@ let PsrDisplay = class extends RootDisplay {
 		}
 		upThis.#lastRefreshTime = Math.floor(timeNow / 60);
 	}
-	render(time, ctx, backlightColor = "#b7bfaf64", mixerView, tempoView, id = 0, trueMode = false) {
+	render(time, ctx, backlightColor = "#b7bfaf64", mixerView, tempoView, id = 0, trueMode = false, rhythmView = true) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
@@ -356,23 +370,42 @@ let PsrDisplay = class extends RootDisplay {
 		else {
 			this.#render7seg((sum.noteBar + 1).toString().padStart(3, "0"), ctx, 791, 245, 0.17, 0.17);
 		}
+		// Top 7-segment display
+		if (rhythmView) {
+			this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 112, 15, 0.24, 0.24);
+		}
+		else if (mixerView) {
+			this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+		}
+		else {
+			this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+		}
+		// Top dot matrix display
 		if (timeNow <= sum.letter.expire) {
 			let letterDisp = sum.letter.text.trim();
 			this.#renderDotMatrix(letterDisp, ctx, trueMode, 454, 32);
-			if (mixerView) {
-				this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
-			}
-			else {
-				this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
-			}
 		}
 		else {
-			if (mixerView) {
-				this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+			if (rhythmView) {
+				let currentCursorPos = Math.round(sum.noteBeat * 2 - 0.5);
+				if (sum.noteBar != upThis.#lastFrameBar) {
+					upThis.#rhythmTextBuffer = "        "; // cleat text buffer upon bar changing
+				}
+				// upThis.#rhythmTextBuffer += upThis.#kana;
+				if (upThis.#kana != "") {
+					let arr = Array.from(upThis.#rhythmTextBuffer);
+					// arr[currentCursorPos] = upThis.#kana;
+					arr.splice(currentCursorPos, upThis.#kana.length, upThis.#kana);
+					upThis.#rhythmTextBuffer = arr.join("");
+				}
+				this.#renderDotMatrix(this.#rhythmTextBuffer.slice(0, 8), ctx, trueMode, 454, 32, currentCursorPos);
+				upThis.#lastFrameBar = sum.noteBar;
+				upThis.#kana = ""; // clear lyric buffer upon each frame update
+			}
+			else if (mixerView) {
 				this.#renderDotMatrix(upThis.getChVoice(this.#ch).name, ctx, trueMode, 454, 32);
 			}
 			else {
-				this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
 				let sngTtl = upThis.songTitle;
 				while (sngTtl.indexOf("  ") > -1) {
 					sngTtl = sngTtl.replaceAll("  ", " ");
