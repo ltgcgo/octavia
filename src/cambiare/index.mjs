@@ -316,10 +316,10 @@ let Cambiare = class extends RootDisplay {
 		let targetWidth = self.innerWidth,
 		targetHeight = self.innerHeight;
 		if (aspectRatio >= targetRatio) {
-			targetZoom = Math.round(self.innerHeight / 1080 * 10000) / 10000;
+			targetZoom = Math.min(Math.round(self.innerHeight / 1080 * 10000) / 10000, 100);
 			targetWidth = Math.ceil(self.innerHeight * targetRatio);
 		} else if (aspectRatio < targetRatio) {
-			targetZoom = Math.round(self.innerWidth / 1920 * 10000) / 10000;
+			targetZoom = Math.min(Math.round(self.innerWidth / 1920 * 10000) / 10000, 100);
 			targetHeight = Math.ceil(self.innerWidth / targetRatio);
 		};
 		//console.debug(targetZoom);
