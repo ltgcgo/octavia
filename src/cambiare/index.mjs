@@ -400,7 +400,7 @@ let Cambiare = class extends RootDisplay {
 					e.pan.setAttribute("x", `84`);
 				};
 				// Extensible visualizer
-				e.extVis.clearRect(0, 0, 44, 25);
+				e.extVis.clearRect(0, 0, 47, 25);
 				e.extVis.fillStyle = "#fff";
 				switch (sum.chExt[part][0]) {
 					case upThis.device.EXT_VL: {
