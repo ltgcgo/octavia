@@ -180,7 +180,7 @@ let Cambiare = class extends RootDisplay {
 	#sectPart = [];
 	#sectMeta = {};
 	#sectPix = {};
-	#noteEvents = [];
+	//#noteEvents = [];
 	#pitchEvents = [];
 	#style = "block";
 	glyphs = new MxFont40();
@@ -442,7 +442,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#redrawNotesInternal(sum, channels);
 		// Draw every note inside extraStates
 		sum.extraNotes.forEach((ev) => {
-			//console.debug(ev);
+			console.warn(ev);
 			let {part, note, velo, state} = ev;
 			let context = upThis.#sectPart[part >> 4][part & 15].cxt;
 			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));
@@ -1025,10 +1025,10 @@ let Cambiare = class extends RootDisplay {
 				};
 			} catch (err) {};
 		});
-		upThis.addEventListener("note", ({data}) => {
+		/*upThis.addEventListener("note", ({data}) => {
 			upThis.#noteEvents.push(data);
 			//console.debug(data);
-		});
+		});*/
 		upThis.addEventListener("pitch", ({data}) => {
 			upThis.#pitchEvents.push(data);
 		});
