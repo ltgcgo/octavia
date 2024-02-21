@@ -27,7 +27,7 @@ const modeGroup = {
 	"k11": 0,
 	"05rw": 3,
 	"sg": 1,
-	"x5d": 2,
+	"x5d": 3,
 	"s90es": 0,
 	"krs": 3,
 	"motif": 0
