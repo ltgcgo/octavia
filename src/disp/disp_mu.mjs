@@ -34,7 +34,7 @@ const modeGroup = {
 };
 const number7Seg = [
 	0b1011111,
-	0b0001100,
+	0b0000011,
 	0b1110101,
 	0b1110011,
 	0b0101011,
@@ -560,7 +560,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillStyle = getLcd(isPositivePitch);
 		ctx.fillRect(765, 207, 3, 10);
 		ctx.fillRect(765, 222, 3, 10);
-		paintSevenSeg(ctx, 779, 200, 0);
+		paintSevenSeg(ctx, 779, 200, number7Seg[Math.floor(pitch / 10) || 10]);
 		paintSevenSeg(ctx, 801, 200, number7Seg[pitch % 10]);
 	};
 };
