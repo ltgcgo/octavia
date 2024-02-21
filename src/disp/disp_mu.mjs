@@ -15,6 +15,9 @@ mpaWidth = 7,
 mprHeight = 4,
 mpaHeight = 3;
 
+const exDuration = 800,
+exExhaust = 720;
+
 const modeGroup = {
 	"?": 0,
 	"gm": 0,
@@ -157,6 +160,10 @@ let MuDisplay = class extends RootDisplay {
 	#ch = 0;
 	#minCh = 0;
 	#maxCh = 0;
+	#scheduledEx = false;
+	#unresolvedEx = false;
+	#awaitEx = 0;
+	#promptEx = 0;
 	inWB = false;
 	#waveBuffer = new Uint8Array(8);
 	#panStrokes = new Uint8Array(7);
@@ -168,36 +175,40 @@ let MuDisplay = class extends RootDisplay {
 	constructor() {
 		super(new OctaviaDevice());
 		let upThis = this;
-		this.addEventListener("mode", function (ev) {
+		upThis.addEventListener("mode", function (ev) {
 			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;
 			upThis.#bmex = Date.now() + 1600;
 		});
-		this.addEventListener("channelactive", (ev) => {
-			this.#ch = ev.data;
+		upThis.addEventListener("channelactive", (ev) => {
+			upThis.#ch = ev.data;
 		});
-		this.addEventListener("channelmin", (ev) => {
+		upThis.addEventListener("channelmin", (ev) => {
 			if (ev.data >= 0) {
-				this.#minCh = ev.data + 1;
+				upThis.#minCh = ev.data + 1;
 			};
 		});
-		this.addEventListener("channelmax", (ev) => {
-			if (ev.data > this.#minCh - 1) {
-				this.#maxCh = ev.data + 1;
+		upThis.addEventListener("channelmax", (ev) => {
+			if (ev.data > upThis.#minCh - 1) {
+				upThis.#maxCh = ev.data + 1;
 			} else {
-				this.#minCh = 0;
-				this.#maxCh = 0;
+				upThis.#minCh = 0;
+				upThis.#maxCh = 0;
 			};
 		});
-		this.addEventListener("channelreset", () => {
-			this.#minCh = 0;
-			this.#maxCh = 0;
-			this.#waveBuffer.fill(0);
-			this.demoInfo = false;
+		upThis.addEventListener("channelreset", () => {
+			upThis.#minCh = 0;
+			upThis.#maxCh = 0;
+			upThis.#waveBuffer.fill(0);
+			upThis.demoInfo = false;
 		});
-		this.clockSource = this.clockSource || {
+		upThis.device.addEventListener("mupromptex", () => {
+			upThis.#scheduledEx = true;
+			console.debug(`Scheduled a SysEx prompt.`);
+		});
+		upThis.clockSource = upThis.clockSource || {
 			now: () => {
 				return Date.now() / 1000;
 			}
@@ -221,6 +232,16 @@ let MuDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
+		if (upThis.#scheduledEx) {
+			upThis.#scheduledEx = false;
+			if (timeNow - upThis.#promptEx > exExhaust) {
+				upThis.#unresolvedEx = true;
+				console.debug(`SysEx prompt submitted.`);
+			} else {
+				console.debug(`SysEx prompt too busy.`);
+			};
+			upThis.#awaitEx = timeNow;
+		};
 		// Fill with green
 		//ctx.fillStyle = "#af2";
 		ctx.fillStyle = `${backlight.grYellow}64`;
@@ -435,6 +456,11 @@ let MuDisplay = class extends RootDisplay {
 			// Use stored pic
 			useBm = this.#bmdb.slice();
 			if (timeNow >= this.#bmex) {
+				if (upThis.#unresolvedEx) {
+					upThis.#unresolvedEx = false;
+					upThis.#promptEx = timeNow;
+					console.debug(`SysEx prompt resolved.`);
+				};
 				this.#bmst = 0;
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
 				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
@@ -458,6 +484,20 @@ let MuDisplay = class extends RootDisplay {
 				};
 				if (!useBm) {
 					useBm = this.sysBm.getBm("no_abm");
+				};
+				useBm = useBm.slice();
+				let exBlink = timeNow - upThis.#promptEx;
+				if (exBlink <= exDuration) {
+					this.sysBm.getBm("sysex_m").forEach((e, i) => {
+						if (e) {
+							useBm[i] = 0;
+						};
+					});
+					this.sysBm.getBm(`sysex_${Math.floor(exBlink / exDuration * 5) & 1}`).forEach((e, i) => {
+						if (e) {
+							useBm[i] = 1;
+						};
+					});
 				};
 			} else {
 				if (this.#bmst == 2) {
