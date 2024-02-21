@@ -10,10 +10,11 @@ import {
 	activePixel
 } from "./colour.js";
 
-let mprWidth = 8,
+const mprWidth = 8,
 mpaWidth = 7,
 mprHeight = 4,
 mpaHeight = 3;
+
 let normParamPaint = function (sup, offsetX, ctx) {
 	let paramW = mprWidth * 4 - 1;
 	let paramH = mprHeight * 1.5 - 1;
@@ -56,6 +57,19 @@ let efxParamPaint = function (sup, offsetX, ctx, useWB, wbArr) {
 		ctx.lineWidth = paramH;
 		ctx.stroke();
 	};
+};
+
+// Triangle painting
+let paintTriDown = function (ctx, offsetX, offsetY, active = false) {
+	ctx.beginPath();
+	ctx.moveTo(offsetX - mpaWidth, offsetY);
+	ctx.lineTo(offsetX, offsetY + mpaWidth);
+	ctx.lineTo(offsetX + mpaWidth, offsetY);
+	ctx.closePath();
+	let fillStyle = ctx.fillStyle;
+	ctx.fillStyle = active ? activePixel : inactivePixel;
+	ctx.fill();
+	ctx.fillStyle = fillStyle;
 };
 
 Math.sum = function (...args) {
@@ -302,10 +316,10 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("VOL", 420, 254);
 		ctx.fillText("EXP", 468, 254);
 		ctx.fillText("BRT", 516, 254);
-		ctx.fillText("REV", 648, 254);
-		ctx.fillText("CHO", 696.5, 254);
-		ctx.fillText("VAR", 745, 254);
-		ctx.fillText("KEY", 801, 254);
+		ctx.fillText("REV", 643, 254);
+		ctx.fillText("CHO", 692.5, 254);
+		ctx.fillText("VAR", 741, 254);
+		ctx.fillText("KEY", 799, 254);
 		ctx.fillText("PAN", 583, 254);
 		// Show parts
 		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
@@ -402,9 +416,9 @@ let MuDisplay = class extends RootDisplay {
 		normParamPaint(sum.chContr[chOff + ccToPos[7]], 404, ctx); // vol
 		normParamPaint(sum.chContr[chOff + ccToPos[11]], 452, ctx); // exp
 		normParamPaint(sum.chContr[chOff + ccToPos[74]], 500, ctx); // bri
-		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 648, ctx, useWB, this.#waveBuffer); // rev
-		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 696, ctx, useWB, this.#waveBuffer); // cho
-		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 744, ctx, useWB, this.#waveBuffer); // var
+		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 644, ctx, useWB, this.#waveBuffer); // rev
+		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 692, ctx, useWB, this.#waveBuffer); // cho
+		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 740, ctx, useWB, this.#waveBuffer); // var
 		// Show pan
 		ctx.beginPath();
 		ctx.arc(582, 216, 34, 2.356194490192345, 7.068583470577034);
@@ -441,6 +455,18 @@ let MuDisplay = class extends RootDisplay {
 				2.356194490192345
 			][i], 8, 26)
 		};
+		// Paint down triangles
+		paintTriDown(ctx, 180, 170, false);
+		paintTriDown(ctx, 292, 170, false);
+		paintTriDown(ctx, 356, 170, true);
+		paintTriDown(ctx, 420, 170, false);
+		paintTriDown(ctx, 468, 170, false);
+		paintTriDown(ctx, 516, 170, false);
+		paintTriDown(ctx, 582, 170, false);
+		paintTriDown(ctx, 644, 170, false);
+		paintTriDown(ctx, 692, 170, false);
+		paintTriDown(ctx, 740, 170, false);
+		paintTriDown(ctx, 800, 170, false);
 	};
 };
 

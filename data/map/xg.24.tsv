@@ -340,8 +340,78 @@ BowedSaw	Bowed Sawtooth
 AmpdHarp	Amped Harmonica
 CromHarp	Chrome Harmonica
 YamaBotl	Mountain Bottle
+M-Male	Male Voice
+M-ASoft	Male Soft Adult
+M-AHusky	Male Husky Adult
+M-Enka	Male Enka
+M-Opera	Male Opera
+M-Classc	Male Classic
+M-Antiq	Male Antique
+M-DamiVo	Male Dirty Voice
+M-MidAge	Male Middle Aged
+M-Heavy	Male Heavy
+M-YngMan	Male Young Man
+M-YSoft	Male Soft Young
+M-YHusky	Male Husky Young
+M-AGO	Male AGO
+M-Idol	Male Idol
+M-Honest	Male Honest
 F-NMusic	Female New Music
+F-Weak	Female Weak
+F-Modrat	Female Moderate
+F-Enka	Female Enka
+F-Opera	Female Opera
 F-Coquet	Female Coquette
+F-Antiq	Female Antique
+F-Nose	Female Nose
+F-Chobo	Female Chobo
+F-Pops	Female Pops
+F-Soft	Female Soft Young
+F-Boyish	Female Boyish
+F-Buriko	Female Child-like
+F-Bright	Female Bright
+F-Teens	Female Teens
+F-Honest	Female Honest
+K-Boy	SG Boy
+K-Girl	SG Girl
+K-Baby	SG Baby
+NoseKid	SG Nosey Child
+Comical	SG Comical
+C-Goat	SG Goat
+C-Frog	SG Frog
+C-Crow	SG Crow
+C-Cow	SG Cow
+C-Msqito	SG Mosquito
+A-Mercry	Mercury Alien
+A-Venus	Venus Alien
+A-Mars	Mars Alien
+A-Jupitr	Jupiter Alien
+A-Saturn	Saturn Alien
+R-Mirai	Mirai Robot
+AM.Radio	Robot AM Radio
+R-HAL100	HAL100 Robot
+TinyUFO	Tiny UFO Robot
+SpSiren	Space Siren
+R-LowFi	Low-Fi Robot
+R-Kororo	Kororo Robot
+CrzyRobo	Crazy Robot
+OpenRobo	Open Robot
+R-Trmolo	Tremolo Robot
+VTrumpet	Voiced Trumpet
+VOrgan	Voiced Organ
+VSynBass	Voiced Synth Bass
+VSynth1	Voiced Synth 1
+VSynth2	Voiced Synth 2
+N-Wind	Natural Wind
+N-Wtrfal	Natural Waterfall
+N-Storm	Natural Storm
+N-Sea	Natural Sea
+WaterEFX	Water Effects
+O-Cry	SG Crying
+Dosukoi	SG Dosukoi
+O-Onchi	SG Onchi
+Unison1	SG Unison 1
+Unison2	SG Unison 2
 MM-Fall	MM-Fall SFX
 MM-Clav3	MM-Clavichord 3
 MM-Vibe2	MM-Vibraphone 2
