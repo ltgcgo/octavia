@@ -2122,6 +2122,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// GM SysEx section
 		upThis.#seUr.add([4, 1], (msg) => {
 			// Master volume
+			upThis.dispatchEvent("mupromptex");
 			upThis.#masterVol = ((msg[1] << 7) + msg[0]) / 16383 * 100;
 			upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 		}).add([4, 3], (msg) => {
@@ -2132,6 +2133,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			return (msg[1] - 64);
 		}).add([4, 5], (msg) => {
 			// Global parameter change
+			upThis.dispatchEvent("mupromptex");
 			let slotLen = msg[0], // Slotpath length, 1 means 2?
 			paramLen = msg[1], // Parameter length
 			valueLen = msg[2]; // Value length
@@ -2193,6 +2195,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				default: {
+					upThis.dispatchEvent("mupromptex");
 					let mTune = [0, 0, 0, 0];
 					let writeTune = (e, i) => {
 						// XG master fine tune
@@ -2398,6 +2401,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([76, 3], (msg) => {
 			// XG insertion effects
+			upThis.dispatchEvent("mupromptex");
 			let varSlot = msg[0], offset = msg[1];
 			let dPref = `XG Insertion ${msg[0] + 1} `;
 			msg.subarray(2).forEach((e, i) => {

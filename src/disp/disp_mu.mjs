@@ -439,8 +439,14 @@ let MuDisplay = class extends RootDisplay {
 		let useBm;
 		if (timeNow <= sum.bitmap.expire) {
 			// Use provided bitmap
+			if (upThis.#unresolvedEx) {
+				upThis.#unresolvedEx = false;
+			};
 			useBm = sum.bitmap.bitmap;
 		} else if (this.demoInfo && time > 0) {
+			if (upThis.#unresolvedEx) {
+				upThis.#unresolvedEx = false;
+			};
 			let sequence = this.demoInfo.class || "boot";
 			let stepTime = this.demoInfo.fps || 2;
 			let stepSize = this.demoInfo.size || 4;
