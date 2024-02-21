@@ -32,6 +32,26 @@ const modeGroup = {
 	"krs": 3,
 	"motif": 0
 };
+const number7Seg = [
+	0b1011111,
+	0b0001100,
+	0b1110101,
+	0b1110011,
+	0b0101011,
+	0b1111010,
+	0b1111110,
+	0b0010011,
+	0b1111111,
+	0b1111011,
+	0
+];
+
+let getBit = (number, bit) => {
+	return (number >> bit) & 1;
+};
+let getLcd = (boolean) => {
+	return boolean ? activePixel : inactivePixel;
+};
 
 let normParamPaint = function (sup, offsetX, ctx) {
 	let paramW = mprWidth * 4 - 1;
@@ -95,10 +115,19 @@ let paintTriRight = function (ctx, offsetX, offsetY, active = false) {
 	ctx.lineTo(offsetX + 8, offsetY + 5);
 	ctx.lineTo(offsetX, offsetY + 10);
 	ctx.closePath();
-	let fillStyle = ctx.fillStyle;
 	ctx.fillStyle = active ? activePixel : inactivePixel;
 	ctx.fill();
-	ctx.fillStyle = fillStyle;
+};
+let paintSevenSeg = function (ctx, offsetX, offsetY, bitMask) {
+	let width = 0, height = 0, x = 0, y = 0;
+	for (let i = 0; i < 7; i ++) {
+		ctx.fillStyle = getLcd(getBit(bitMask, i));
+		width = (i >> 2) ? 11 : 3;
+		height = (i >> 2) ? 3 : 13;
+		x = (i >> 1) ? ((i >> 2) ? 4 : 0) : 16;
+		y = [4, 22, 22, 4, 0, 18, 36][i];
+		ctx.fillRect(offsetX + x, offsetY + y, width, height);
+	};
 };
 
 Math.sum = function (...args) {
@@ -514,9 +543,8 @@ let MuDisplay = class extends RootDisplay {
 		paintTriRight(ctx, 826, 188, modeSel == 1);
 		paintTriRight(ctx, 826, 206, modeSel == 2);
 		paintTriRight(ctx, 826, 224, modeSel == 3);
-		console.debug(modeGroup[sum.mode]);
 		// MIC & LIVE
-		ctx.fillStyle = !(upThis.demoInfo && time) ? activePixel : inactivePixel;
+		ctx.fillStyle = getLcd(!(upThis.demoInfo && time));
 		ctx.fillRect(15, 153, 42, 11);
 		ctx.fillStyle = inactivePixel;
 		ctx.fillRect(15, 166, 42, 11);
@@ -526,12 +554,14 @@ let MuDisplay = class extends RootDisplay {
 		// Pitch shift
 		let pitch = upThis.device.getPitchShift(upThis.#ch),
 		isPositivePitch = pitch >= 0;
-		pitch = Math.abs(pitch);
+		pitch = Math.round(Math.abs(pitch));
 		ctx.fillStyle = activePixel;
-		ctx.fillRect(758, 218, 20, 3);
-		ctx.fillStyle = isPositivePitch ? activePixel : inactivePixel;
-		ctx.fillRect(767, 206, 3, 11);
-		ctx.fillRect(767, 222, 3, 11);
+		ctx.fillRect(757, 218, 18, 3);
+		ctx.fillStyle = getLcd(isPositivePitch);
+		ctx.fillRect(765, 207, 3, 10);
+		ctx.fillRect(765, 222, 3, 10);
+		paintSevenSeg(ctx, 779, 200, 0);
+		paintSevenSeg(ctx, 801, 200, number7Seg[pitch % 10]);
 	};
 };
 
