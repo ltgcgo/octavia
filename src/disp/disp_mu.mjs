@@ -15,6 +15,24 @@ mpaWidth = 7,
 mprHeight = 4,
 mpaHeight = 3;
 
+const modeGroup = {
+	"?": 0,
+	"gm": 0,
+	"gs": 1,
+	"xg": 0,
+	"sd": 1,
+	"g2": 0,
+	"mt32": 2,
+	"ns5r": 3,
+	"k11": 0,
+	"05rw": 3,
+	"sg": 1,
+	"x5d": 2,
+	"s90es": 0,
+	"krs": 3,
+	"motif": 0
+};
+
 let normParamPaint = function (sup, offsetX, ctx) {
 	let paramW = mprWidth * 4 - 1;
 	let paramH = mprHeight * 1.5 - 1;
@@ -65,6 +83,17 @@ let paintTriDown = function (ctx, offsetX, offsetY, active = false) {
 	ctx.moveTo(offsetX - mpaWidth, offsetY);
 	ctx.lineTo(offsetX, offsetY + mpaWidth);
 	ctx.lineTo(offsetX + mpaWidth, offsetY);
+	ctx.closePath();
+	let fillStyle = ctx.fillStyle;
+	ctx.fillStyle = active ? activePixel : inactivePixel;
+	ctx.fill();
+	ctx.fillStyle = fillStyle;
+};
+let paintTriRight = function (ctx, offsetX, offsetY, active = false) {
+	ctx.beginPath();
+	ctx.moveTo(offsetX, offsetY);
+	ctx.lineTo(offsetX + 8, offsetY + 5);
+	ctx.lineTo(offsetX, offsetY + 10);
 	ctx.closePath();
 	let fillStyle = ctx.fillStyle;
 	ctx.fillStyle = active ? activePixel : inactivePixel;
@@ -476,6 +505,16 @@ let MuDisplay = class extends RootDisplay {
 		paintTriDown(ctx, 692, 170, false);
 		paintTriDown(ctx, 740, 170, false);
 		paintTriDown(ctx, 800, 170, false);
+		// Paint right triangles
+		let modeSel = modeGroup[sum.mode];
+		if (modeSel?.constructor != Number) {
+			modeSel = -1;
+		};
+		paintTriRight(ctx, 826, 170, modeSel == 0);
+		paintTriRight(ctx, 826, 188, modeSel == 1);
+		paintTriRight(ctx, 826, 206, modeSel == 2);
+		paintTriRight(ctx, 826, 224, modeSel == 3);
+		console.debug(modeGroup[sum.mode]);
 		// MIC & LIVE
 		ctx.fillStyle = activePixel;
 		ctx.fillRect(15, 153, 42, 11);
