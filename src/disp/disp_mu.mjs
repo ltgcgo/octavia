@@ -483,7 +483,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillRect(15, 166, 42, 11);
 		ctx.fillStyle = backlight.grYellow;
 		ctx.fillText("MIC", 36, 162.5);
-		ctx.fillText("LIVE", 36, 175.5);
+		ctx.fillText("LINE", 36, 175.5);
 	};
 };
 
