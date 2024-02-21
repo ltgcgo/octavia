@@ -305,13 +305,7 @@ let MuDisplay = class extends RootDisplay {
 			};
 		};
 		// Show bottom caps
-		ctx.fillStyle = showLsb ? inactivePixel : activePixel;
-		ctx.fillText("MSB", 515, 164);
-		ctx.fillStyle = showLsb ? activePixel : inactivePixel;
-		ctx.fillText("LSB", 564, 164);
 		ctx.fillStyle = activePixel;
-		ctx.fillText("BANK", 467.5, 164);
-		ctx.fillText("PRG#", 660, 164);
 		ctx.fillText("CHANNEL     SEC     PART", 118, 254);
 		ctx.fillText("VOL", 420, 254);
 		ctx.fillText("EXP", 468, 254);
@@ -321,6 +315,21 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("VAR", 741, 254);
 		ctx.fillText("KEY", 799, 254);
 		ctx.fillText("PAN", 583, 254);
+		// Show bank
+		ctx.fillStyle = !showLsb && !rendMode ? activePixel : inactivePixel;
+		ctx.fillText("MSB", 515, 162.5);
+		ctx.fillStyle = showLsb && !rendMode ? activePixel : inactivePixel;
+		ctx.fillText("LSB", 564, 162.5);
+		ctx.fillStyle = !rendMode ? activePixel : inactivePixel;
+		ctx.fillText("BANK", 467.5, 162.5);
+		ctx.fillText("PGM#", 660, 162.5);
+		ctx.fillStyle = !showLsb && rendMode ? activePixel : inactivePixel;
+		ctx.fillText("MSB", 131, 162.5);
+		ctx.fillStyle = showLsb && rendMode ? activePixel : inactivePixel;
+		ctx.fillText("LSB", 180, 162.5);
+		ctx.fillStyle = rendMode ? activePixel : inactivePixel;
+		ctx.fillText("BANK", 83.5, 162.5);
+		ctx.fillText("PGM#", 324, 162.5);
 		// Show parts
 		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
@@ -458,7 +467,7 @@ let MuDisplay = class extends RootDisplay {
 		// Paint down triangles
 		paintTriDown(ctx, 180, 170, false);
 		paintTriDown(ctx, 292, 170, false);
-		paintTriDown(ctx, 356, 170, true);
+		paintTriDown(ctx, 356, 170, !(upThis.demoInfo && time)); // Ignore when under demo
 		paintTriDown(ctx, 420, 170, false);
 		paintTriDown(ctx, 468, 170, false);
 		paintTriDown(ctx, 516, 170, false);
