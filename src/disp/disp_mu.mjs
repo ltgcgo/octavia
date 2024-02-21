@@ -516,7 +516,7 @@ let MuDisplay = class extends RootDisplay {
 		paintTriRight(ctx, 826, 224, modeSel == 3);
 		console.debug(modeGroup[sum.mode]);
 		// MIC & LIVE
-		ctx.fillStyle = activePixel;
+		ctx.fillStyle = !(upThis.demoInfo && time) ? activePixel : inactivePixel;
 		ctx.fillRect(15, 153, 42, 11);
 		ctx.fillStyle = inactivePixel;
 		ctx.fillRect(15, 166, 42, 11);
