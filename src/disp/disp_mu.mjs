@@ -467,6 +467,14 @@ let MuDisplay = class extends RootDisplay {
 		paintTriDown(ctx, 692, 170, false);
 		paintTriDown(ctx, 740, 170, false);
 		paintTriDown(ctx, 800, 170, false);
+		// MIC & LIVE
+		ctx.fillStyle = activePixel;
+		ctx.fillRect(15, 153, 42, 11);
+		ctx.fillStyle = inactivePixel;
+		ctx.fillRect(15, 166, 42, 11);
+		ctx.fillStyle = backlight.grYellow;
+		ctx.fillText("MIC", 36, 162.5);
+		ctx.fillText("LIVE", 36, 175.5);
 	};
 };
 
