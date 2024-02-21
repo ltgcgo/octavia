@@ -2224,6 +2224,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}).add([76, 2, 1], (msg) => {
 			// XG reverb, chorus and variation
+			upThis.dispatchEvent("mupromptex");
 			let dPref = "XG ";
 			if (msg[0] < 32) {
 				// XG reverb
@@ -2445,6 +2446,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([76, 8], (msg, track) => {
 			// XG part setup
+			upThis.dispatchEvent("mupromptex");
 			let part = upThis.chRedir(msg[0], track, true),
 			id = msg[1],
 			chOff = allocated.cc * part,
@@ -2733,6 +2735,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.warn(`Unknown PLG-100SG data: ${msg}`);
 			};
 		}).add([98, 0], (msg, track, id) => {
+			upThis.dispatchEvent("mupromptex");
 			// PLG-DX native dump
 			let size = msg[0], realSize = msg.length - 5,
 			lastIndex = msg.length - 1;
@@ -2875,6 +2878,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		let sysExDrumsY = function (drumId, msg) {
 			// The Yamaha XG-style drum setup
 			//console.debug(`XG-style drum setup on set ${drumId + 1}:\n`, msg);
+			upThis.dispatchEvent("mupromptex");
 			let drumOff = drumId * allocated.dpn;
 			let note = msg[0], offset = msg[1];
 			msg.subarray(2).forEach((e, i) => {

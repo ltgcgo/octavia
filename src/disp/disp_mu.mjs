@@ -16,7 +16,7 @@ mprHeight = 4,
 mpaHeight = 3;
 
 const exDuration = 800,
-exExhaust = 720;
+exExhaust = 640;
 
 const modeGroup = {
 	"?": 0,
@@ -206,7 +206,7 @@ let MuDisplay = class extends RootDisplay {
 		});
 		upThis.device.addEventListener("mupromptex", () => {
 			upThis.#scheduledEx = true;
-			console.debug(`Scheduled a SysEx prompt.`);
+			//console.debug(`Scheduled a SysEx prompt.`);
 		});
 		upThis.clockSource = upThis.clockSource || {
 			now: () => {
@@ -236,9 +236,9 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#scheduledEx = false;
 			if (timeNow - upThis.#promptEx > exExhaust) {
 				upThis.#unresolvedEx = true;
-				console.debug(`SysEx prompt submitted.`);
+				//console.debug(`SysEx prompt submitted.`);
 			} else {
-				console.debug(`SysEx prompt too busy.`);
+				//console.debug(`SysEx prompt too busy.`);
 			};
 			upThis.#awaitEx = timeNow;
 		};
@@ -459,7 +459,7 @@ let MuDisplay = class extends RootDisplay {
 				if (upThis.#unresolvedEx) {
 					upThis.#unresolvedEx = false;
 					upThis.#promptEx = timeNow;
-					console.debug(`SysEx prompt resolved.`);
+					//console.debug(`SysEx prompt resolved.`);
 				};
 				this.#bmst = 0;
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
