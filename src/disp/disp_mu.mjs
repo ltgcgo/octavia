@@ -164,6 +164,7 @@ let MuDisplay = class extends RootDisplay {
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
+	clockSource;
 	constructor() {
 		super(new OctaviaDevice());
 		let upThis = this;
@@ -196,6 +197,11 @@ let MuDisplay = class extends RootDisplay {
 			this.#waveBuffer.fill(0);
 			this.demoInfo = false;
 		});
+		this.clockSource = this.clockSource || {
+			now: () => {
+				return Date.now() / 1000;
+			}
+		};
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -525,7 +531,7 @@ let MuDisplay = class extends RootDisplay {
 		// Paint down triangles
 		paintTriDown(ctx, 180, 170, false);
 		paintTriDown(ctx, 292, 170, false);
-		paintTriDown(ctx, 356, 170, !(upThis.demoInfo && time)); // Ignore when under demo
+		paintTriDown(ctx, 356, 170, !(upThis.demoInfo && time) && (Math.floor((time || upThis.clockSource.now()) * 10) % 4)); // Ignore when under demo
 		paintTriDown(ctx, 420, 170, false);
 		paintTriDown(ctx, 468, 170, false);
 		paintTriDown(ctx, 516, 170, false);
