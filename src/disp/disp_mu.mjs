@@ -19,7 +19,7 @@ mpaHeight = 3;
 
 const exDuration = 1000,
 exExhaust = 400,
-blinkSpeedMode = 320;
+blinkSpeedMode = 400;
 
 const modeGroup = {
 	"?": 0,
