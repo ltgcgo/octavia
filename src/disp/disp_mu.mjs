@@ -17,8 +17,8 @@ mpaWidth = 7,
 mprHeight = 4,
 mpaHeight = 3;
 
-const exDuration = 800,
-exExhaust = 320;
+const exDuration = 1000,
+exExhaust = 400;
 
 const modeGroup = {
 	"?": 0,
