@@ -18,7 +18,8 @@ mprHeight = 4,
 mpaHeight = 3;
 
 const exDuration = 1000,
-exExhaust = 400;
+exExhaust = 400,
+blinkSpeedMode = 320;
 
 const modeGroup = {
 	"?": 0,
@@ -182,7 +183,7 @@ let MuDisplay = class extends RootDisplay {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;
-			upThis.#bmex = Date.now() + 1600;
+			upThis.#bmex = Date.now() + blinkSpeedMode * 4;
 		});
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
@@ -516,7 +517,7 @@ let MuDisplay = class extends RootDisplay {
 						getDebugState() &&  console.debug(`SysEx prompt cancelled.`);
 					};
 					useBm.forEach((e, i, a) => {
-						let crit = Math.floor((this.#bmex - timeNow) / 400);
+						let crit = Math.floor((this.#bmex - timeNow) / blinkSpeedMode);
 						a[i] = crit % 2 == e;
 					});
 				};
