@@ -337,7 +337,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "krs", "s90es"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross", "s90es"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
@@ -739,7 +739,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							} else if (det.data[1] == 62) {
 								this.switchMode(this.#detect.x5 == 82 ? "x5d" : "05rw");
 							} else if (det.data[1] == 63) {
-								this.switchMode(this.modeIdx[this.#detect.ds]);
+								this.switchMode(modeIdx[this.#detect.ds]);
 							} else if (det.data[1] == 64 || det.data[1] == 127) {
 								this.switchMode("xg");
 							};
