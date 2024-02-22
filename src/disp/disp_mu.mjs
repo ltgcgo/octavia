@@ -475,10 +475,10 @@ let MuDisplay = class extends RootDisplay {
 				this.#bmst = 0;
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
 				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
-				if (sum.chType[this.#ch]) {
-					useBm = this.sysBm.getBm(`cat_drm`);
-				} else if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
+				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 					useBm = this.sysBm.getBm(`ext_${standard}`);
+				} else if (sum.chType[this.#ch]) {
+					useBm = this.sysBm.getBm(`cat_drm`);
 				} else if (["mu", "es"]. indexOf(standard) > -1) {
 					useBm = this.sysBm.getBm(`boot_3`);
 				} else if (standard == "kr") {
