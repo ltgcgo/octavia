@@ -3769,6 +3769,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}][key >> 4]();
 		}).add([54, 76, 0], (msg, track) => {
 			// X5D program dump
+			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			let name = "", msb = upThis.#detect.x5, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
@@ -3812,6 +3813,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.forceVoiceRefresh();
 		}).add([54, 77, 0], (msg, track) => {
 			// X5D combi dump
+			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
@@ -3848,6 +3850,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.debug(`X5D mode switch requested: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]} mode.`);
 		}).add([54, 85], (msg, track) => {
 			// X5D effect dump
+			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			korgFilter(msg, (e, i) => {
 				if (i > 0 && i < 3) {
@@ -3857,6 +3860,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([54, 104], (msg, track) => {
 			// X5D extended multi setup
+			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode(upThis.#detect.x5 == "81" ? "05rw" : "x5d", true);
 			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
@@ -4313,6 +4317,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Program out port setup, trap for now
 		}).add([66, 18, 1], (msg, track) => {
 			// Part setup
+			upThis.dispatchEvent("mupromptex");
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = part * allocated.cc;
 			let offset = msg[1];
@@ -4469,6 +4474,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([66, 53], (msg, track) => {
 			// Current multi dump
+			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("ns5r", true);
 			upThis.#modeKaraoke = false;
 			let efxName = "";
@@ -4617,6 +4623,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 54], (msg, track) => {
 			// All program dump
 			// Yup this one is also ported from old code
+			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("ns5r", true);
 			/*let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
@@ -4670,6 +4677,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 55], (msg, track) => {
 			// All combination dump
 			// Just modified from above
+			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("ns5r", true);
 			let name = "", msb = 88, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
@@ -4764,6 +4772,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}][msg[0]] || (() => {}))();
 		}).add([16, 0, 8, 1], (msg, track, id) => {
 			// GMega part setup
+			upThis.dispatchEvent("mupromptex");
 			let part = upThis.chRedir(msg[1], track, true),
 			chOff = allocated.cc * part,
 			rpnOff = allocated.rpn * part,
@@ -4816,6 +4825,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}][msg[0]] || (() => {}))();
 		}).add([16, 0, 9, 0], (msg, track, id) => {
 			// GMega LX system section
+			upThis.dispatchEvent("mupromptex");
 			let e = (msg[2] << 4) + msg[3];
 			let dPref = "GMLX ";
 			([() => {
@@ -4831,6 +4841,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}][msg[0]] || (() => {}))();
 		}).add([16, 0, 9, 3], (msg, track, id) => {
 			// GMega LX part setup 1
+			upThis.dispatchEvent("mupromptex");
 			let e = (msg[2] << 4) + msg[3];
 			let part = upThis.chRedir(msg[1], track, true),
 			chOff = part * allocated.cc;
@@ -4867,6 +4878,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}][msg[0]]();
 		}).add([16, 0, 9, 4], (msg, track, id) => {
 			// GMega LX part setup 2
+			upThis.dispatchEvent("mupromptex");
 			let e = (msg[2] << 4) + msg[3];
 			let part = upThis.chRedir(msg[1], track, true),
 			chOff = part * allocated.cc,
@@ -4902,17 +4914,20 @@ let OctaviaDevice = class extends CustomEventSource {
 					switch (msg[1]) {
 						case 4: {
 							// master volume
+							upThis.dispatchEvent("mupromptex");
 							upThis.#masterVol = e * 129 / 16383 * 100;
 							upThis.dispatchEvent("mastervolume", upThis.#masterVol);
 							break;
 						};
 						case 5: {
 							// master key shift, [-24, 24]
+							upThis.dispatchEvent("mupromptex");
 							(e - 64);
 							break;
 						};
 						case 6: {
 							// global reverb toggle
+							upThis.dispatchEvent("mupromptex");
 							console.debug(`SG global reverb: ${e ? "on" : "off"}`);
 							break;
 						};
@@ -4928,6 +4943,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					switch (msg[1]) {
 						case 48: {
 							// SG reverb macro
+							upThis.dispatchEvent("mupromptex");
 							console.debug(`SG reverb type: ${gsRevType[e]}`);
 							break;
 						};
@@ -4937,6 +4953,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				default: {
 					if ((msg[0] >> 4) == 1) {
 						// SG part setup
+						upThis.dispatchEvent("mupromptex");
 						let part = upThis.chRedir(msg[0] & 15, track, true);
 						if (msg[1] == 2) {
 							// SG receive channel
@@ -4958,7 +4975,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		this.#seCs.add([9], (msg, track, id) => {
 			// CASIO GZ-50M cc91 effect type set
-			console.debug(`GZ set effect: ${["stage reverb", "hall reverb", "room reverb", "chorus", "tremelo", "phaser", "rotary speaker", "enhancer", "flanger", "EQ"][msg[0]] || "off"}`);
+			upThis.dispatchEvent("mupromptex");
+			console.debug(`GZ set effect: ${["stage reverb", "hall reverb", "room reverb", "chorus", "tremolo", "phaser", "rotary speaker", "enhancer", "flanger", "EQ"][msg[0]] || "off"}`);
 		});
 		// Yamaha S90 ES or Motif ES
 		this.#seXg.add([127, 0], (msg, track, id) => {
@@ -5003,6 +5021,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}))(msg.subarray(1));
 		}).add([127, 1, 0, 58, 55], (msg, track, id) => {
 			// S90 ES bulk part setup (?)
+			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("s90es");
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = allocated.cc * part,
@@ -5101,6 +5120,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Master volume
 		})*/.add([0, 72, 18, 16, 0], (msg, track, id) => {
 			// Part setup (global)
+			upThis.dispatchEvent("mupromptex");
 			let type = msg[0] >> 5, channel = msg[0] & 31;
 			switch (type) {
 				case 0: {
