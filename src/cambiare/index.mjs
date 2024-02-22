@@ -64,7 +64,7 @@ const metaNames = {
 	"XfSongBt",
 	"XfSngIns"
 ];
-const lineDash = [[], [12, 8], [6, 3]];
+const lineDash = [[], [4, 2], [3, 2]];
 const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}];
 
 const pixelProfiles = {
@@ -163,6 +163,7 @@ let Cambiare = class extends RootDisplay {
 	#maxPoly = 0;
 	#renderRange = 1;
 	#renderPort = 0;
+	#lastFrame = 0;
 	#bufLo = new Uint8Array(1280);
 	#bufLm = new Uint8Array(1280);
 	#bufLn = new Uint8Array(1280);
@@ -274,8 +275,8 @@ let Cambiare = class extends RootDisplay {
 				};
 				context.beginPath();
 				context.moveTo(sx, (range == 4 || !isHeld) && self?.document?.mozFullScreen ? 2 : 1);
-				context.lineTo(ex, (height >> 1) + 2);
-				context.lineTo(sx, height + 2);
+				context.lineTo(ex, (height >> 1) + 1);
+				context.lineTo(sx, height);
 				context.stroke();
 				break;
 			};
@@ -548,6 +549,8 @@ let Cambiare = class extends RootDisplay {
 		upThis.#bufLm.forEach((e, i, a) => {
 			a[i] = upThis.#bufLo[i];
 		});
+		let finishNow = Date.now();
+		upThis.#lastFrame = finishNow;
 	};
 	#renderer;
 	#renderThread;
@@ -861,6 +864,7 @@ let Cambiare = class extends RootDisplay {
 		// Begin inserting the pixel render section
 		upThis.#sectPix.root = createElement("div", ["sect-pix", "boundary"], {l: 1529, t: 950, w: 379, h: 127});
 		upThis.#sectPix.cxt = createElement("canvas", [`field`]).getContext("2d");
+		upThis.#sectPix.fps = createElement("span", [`field`, `field-key`], {l: 0, w: `100%`, h: 1});
 		upThis.#sectPix.cxt.canvas.width = 379;
 		upThis.#sectPix.cxt.canvas.height = 127;
 		mountElement(upThis.#sectPix.root, [
