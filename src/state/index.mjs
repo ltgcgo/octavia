@@ -83,7 +83,8 @@ const drumMsb = [
 	127, 61, 62, 62, 105,
 	122, 122,
 	120, 127, 127
-];
+],
+drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -1597,10 +1598,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#letterDisp = "";
 		};
 		// Channel 10 to drum set
-		upThis.#cc[allocated.cc * 9] = drumMsb[0];
-		upThis.#cc[allocated.cc * 25] = drumMsb[0];
-		upThis.#cc[allocated.cc * 41] = drumMsb[0];
-		upThis.#cc[allocated.cc * 57] = drumMsb[0];
+		drumChannels.forEach((e) => {
+			upThis.#cc[allocated.cc * e] = drumMsb[0];
+		});
 		// Channel types
 		upThis.#chType.fill(upThis.CH_MELODIC);
 		upThis.#chType[9] = upThis.CH_DRUM1;
@@ -1775,6 +1775,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				upThis.dispatchEvent("mode", mode);
 				upThis.forceVoiceRefresh();
+				drumChannels.forEach((e) => {
+					upThis.dispatchEvent("voice", {
+						part: e
+					});
+				});
 			};
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
