@@ -31,7 +31,8 @@ import {
 	korgFilter,
 	korgUnpack,
 	korgPack,
-	x5dSendLevel
+	x5dSendLevel,
+	getDebugState
 } from "./utils.js";
 
 const modeIdx = [
@@ -194,9 +195,6 @@ voiceIdx.forEach((e, i) => {
 	voiceType[e] = i;
 });
 
-let getDebugState = function () {
-	return !!self.Bun || self.debugMode || false; // If run on Bun.js, output all possible logs
-};
 let sysExSplitter = function (seq) {
 	let seqArr = [];
 	let seqStart = 0;
@@ -2976,6 +2974,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		let sysExDrumsR = function (drumId, param, msg) {
 			// The Roland GS-style drum setup
 			//console.debug(`GS-style drum setup on set ${drumId + 1} param ${param}:\n`, msg);
+			upThis.dispatchEvent("mupromptex");
 			let drumOff = drumId * allocated.dpn;
 			let offset = (param << 7) + msg[0];
 			msg.subarray(1).forEach((e, i) => {
@@ -3098,6 +3097,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// TG100 pool
 		}).add([43, 0, 0], (msg, track, id) => {
 			// TG300 master setup
+			upThis.dispatchEvent("mupromptex");
 			let mTune = [0, 0, 0, 0];
 			let writeTune = (e, i) => {
 				// GS master fine tune
@@ -3142,8 +3142,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}).add([43, 1, 0], (msg, track, id) => {
 			// TG300 effect (R C V) setup
+			upThis.dispatchEvent("mupromptex");
 		}).add([43, 2], (msg, track, id) => {
 			// TG300 part setup
+			upThis.dispatchEvent("mupromptex");
 			let part = upThis.chRedir(msg[0], track, true);
 			let offset = msg[1];
 			let chOff = allocated.cc * part;
@@ -3286,6 +3288,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				default: {
+					upThis.dispatchEvent("mupromptex");
 					let mTune = [0, 0, 0, 0];
 					let writeTune = (e, i) => {
 						// GS master fine tune
@@ -3316,6 +3319,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			};
 		}).add([66, 18, 64, 1], (msg) => {
+			upThis.dispatchEvent("mupromptex");
 			// GS patch params
 			let offset = msg[0];
 			if (offset < 16) {
@@ -3403,6 +3407,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([66, 18, 64, 3], (msg) => {
 			// GS EFX
+			upThis.dispatchEvent("mupromptex");
 			let dPref = `GS EFX `;
 			let prefDesc = function (e, i) {
 				let desc = getGsEfxDesc(upThis.#efxBase.subarray(10, 12), i, e);
@@ -3515,6 +3520,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// I wanted this to also be written in a circular structure
 		// But clearly Roland hates me
 		let gsPartSec = function (msg, part, track) {
+			upThis.dispatchEvent("mupromptex");
 			let offset = msg[0],
 			chOff = allocated.cc * part,
 			rpnOff = allocated.rpn * part,

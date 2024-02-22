@@ -10,6 +10,8 @@ import {
 	activePixel
 } from "./colour.js";
 
+import {getDebugState} from "../state/utils.js";
+
 const mprWidth = 8,
 mpaWidth = 7,
 mprHeight = 4,
@@ -206,7 +208,7 @@ let MuDisplay = class extends RootDisplay {
 		});
 		upThis.device.addEventListener("mupromptex", () => {
 			upThis.#scheduledEx = true;
-			console.debug(`Scheduled a SysEx prompt.`);
+			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
 		});
 		upThis.clockSource = upThis.clockSource || {
 			now: () => {
@@ -236,9 +238,9 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#scheduledEx = false;
 			if (timeNow - upThis.#promptEx > exExhaust) {
 				upThis.#unresolvedEx = true;
-				console.debug(`SysEx prompt submitted.`);
+				getDebugState() && console.debug(`SysEx prompt submitted.`);
 			} else {
-				console.debug(`SysEx prompt too busy.`);
+				getDebugState() && console.debug(`SysEx prompt too busy.`);
 			};
 			upThis.#awaitEx = timeNow;
 		};

@@ -88,6 +88,10 @@ let x5dSendLevel = function (sendParam) {
 	};
 };
 
+let getDebugState = function () {
+	return !!self.Bun || self.debugMode || false; // If run on Bun.js, output all possible logs
+};
+
 export {
 	toDecibel,
 	gsChecksum,
@@ -95,5 +99,6 @@ export {
 	korgUnpack,
 	korgPack,
 	x5dSendLevel,
-	customInterpreter
+	customInterpreter,
+	getDebugState
 };
