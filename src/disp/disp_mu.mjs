@@ -16,7 +16,7 @@ mprHeight = 4,
 mpaHeight = 3;
 
 const exDuration = 800,
-exExhaust = 640;
+exExhaust = 320;
 
 const modeGroup = {
 	"?": 0,
@@ -206,7 +206,7 @@ let MuDisplay = class extends RootDisplay {
 		});
 		upThis.device.addEventListener("mupromptex", () => {
 			upThis.#scheduledEx = true;
-			//console.debug(`Scheduled a SysEx prompt.`);
+			console.debug(`Scheduled a SysEx prompt.`);
 		});
 		upThis.clockSource = upThis.clockSource || {
 			now: () => {
@@ -236,9 +236,9 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#scheduledEx = false;
 			if (timeNow - upThis.#promptEx > exExhaust) {
 				upThis.#unresolvedEx = true;
-				//console.debug(`SysEx prompt submitted.`);
+				console.debug(`SysEx prompt submitted.`);
 			} else {
-				//console.debug(`SysEx prompt too busy.`);
+				console.debug(`SysEx prompt too busy.`);
 			};
 			upThis.#awaitEx = timeNow;
 		};
@@ -441,11 +441,13 @@ let MuDisplay = class extends RootDisplay {
 			// Use provided bitmap
 			if (upThis.#unresolvedEx) {
 				upThis.#unresolvedEx = false;
+				getDebugState() && console.debug(`SysEx prompt cancelled.`);
 			};
 			useBm = sum.bitmap.bitmap;
 		} else if (this.demoInfo && time > 0) {
 			if (upThis.#unresolvedEx) {
 				upThis.#unresolvedEx = false;
+				getDebugState() && console.debug(`SysEx prompt cancelled.`);
 			};
 			let sequence = this.demoInfo.class || "boot";
 			let stepTime = this.demoInfo.fps || 2;
@@ -465,7 +467,7 @@ let MuDisplay = class extends RootDisplay {
 				if (upThis.#unresolvedEx) {
 					upThis.#unresolvedEx = false;
 					upThis.#promptEx = timeNow;
-					//console.debug(`SysEx prompt resolved.`);
+					getDebugState() && console.debug(`SysEx prompt resolved.`);
 				};
 				this.#bmst = 0;
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
@@ -507,6 +509,10 @@ let MuDisplay = class extends RootDisplay {
 				};
 			} else {
 				if (this.#bmst == 2) {
+					if (upThis.#unresolvedEx) {
+						upThis.#unresolvedEx = false;
+						getDebugState() &&  console.debug(`SysEx prompt cancelled.`);
+					};
 					useBm.forEach((e, i, a) => {
 						let crit = Math.floor((this.#bmex - timeNow) / 400);
 						a[i] = crit % 2 == e;
