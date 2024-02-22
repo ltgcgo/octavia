@@ -895,7 +895,7 @@ let Cambiare = class extends RootDisplay {
 			target.msb.innerText = `${voice.sid[0]}`.padStart(3, "0");
 			target.prg.innerText = `${voice.sid[1]}`.padStart(3, "0");
 			target.lsb.innerText = `${voice.sid[2]}`.padStart(3, "0");
-			console.debug(data);
+			//console.debug(data);
 		});
 		upThis.addEventListener("pitch", (ev) => {
 			let {part, pitch} = ev.data;
