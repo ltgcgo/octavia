@@ -414,7 +414,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("LSB", 180, 162.5);
 		ctx.fillStyle = rendMode ? activePixel : inactivePixel;
 		ctx.fillText("BANK", 83.5, 162.5);
-		ctx.fillText("PGM#", 324, 162.5);
+		ctx.fillText("PGM#", 276, 162.5);
 		// Show parts
 		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
