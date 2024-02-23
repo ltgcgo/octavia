@@ -32,9 +32,10 @@ let Ns5rDisplay = class extends RootDisplay {
 	element = new MxBmDef("./data/bitmaps/korg/element.tsv");
 	constructor(conf = {}) {
 		super(new OctaviaDevice(), 0.1, 0.9);
-		this.#backlight = bgWhite;
-		this.addEventListener("mode", (ev) => {
-			this.#backlight = {
+		let upThis = this;
+		upThis.#backlight = bgWhite;
+		upThis.addEventListener("mode", (ev) => {
+			upThis.#backlight = {
 				"gs": bgOrange,
 				"mt32": bgOrange,
 				"xg": bgGreen,
@@ -49,17 +50,20 @@ let Ns5rDisplay = class extends RootDisplay {
 				"s90es": bgGreen,
 				"motif": bgGreen
 			}[ev.data] || bgWhite;
-			this.#mode = ev.data;
-			this.#refreshed = true;
+			upThis.#mode = ev.data;
+			upThis.#refreshed = true;
 		});
-		this.addEventListener("screen", (ev) => {
+		upThis.addEventListener("screen", (ev) => {
 			console.debug(ev);
 			if (ev.data.type == "ns5r") {
-				this.#dumpData = ev.data.data;
-				this.#dumpExpire = Date.now() + 1600;
+				upThis.#dumpData = ev.data.data;
+				upThis.#dumpExpire = Date.now() + 1600;
 			};
 		});
-		this.useBlur = !!conf?.useBlur;
+		upThis.useBlur = !!conf?.useBlur;
+		upThis.addEventListener("channelactive", (ev) => {
+			upThis.#ch = ev.data;
+		});
 	};
 	setCh(ch) {
 		this.#ch = ch;

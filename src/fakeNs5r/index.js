@@ -10,8 +10,16 @@ import {
 import {sysexBitmap} from "../state/emitGlobal.js";
 import {SheetData} from "../basic/sheetLoad.js";
 
+import {
+	PointEvent,
+	RangeEvent,
+	TimedEvents
+} from "../../libs/lightfelt@ltgcgo/ext/timedEvents.js";
+
 let demoBlobs = {};
+let demoPerfs = {};
 let demoModes = [];
+let currentPerformance;
 demoModes[9] = "gm";
 let useMidiBus = false;
 
@@ -109,6 +117,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			};
 			stDemo.to(i);
 			visualizer.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
+			currentPerformance = demoPerfs[e.title];
+			currentPerformance?.resetIndex();
 		});
 	});
 });
@@ -239,6 +249,11 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
+		if (currentPerformance) {
+			currentPerformance.step(curTime)?.forEach((e) => {
+				visualizer.sendCmd(e.data);
+			});
+		};
 		visualizer.render(curTime, dispCtx, location.hash == "#trueMode");
 		lastTime = curTime;
 	};
@@ -249,3 +264,5 @@ getBridge().addEventListener("message", function (ev) {
 		visualizer.sendCmd(ev.data);
 	};
 });
+
+// Hardcoded performance
