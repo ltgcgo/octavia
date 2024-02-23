@@ -234,7 +234,7 @@ const allocated = {
 	drm: 8, // Drum setup slots
 	dpn: useDrumNrpn.length, // Drum setup params
 	dnc: 128, // drum note 0 to 127
-	ext: 2, // extensions
+	ext: 3, // extensions
 	efx: 7,
 	cvn: 12, // custom voice names
 	redir: 32
@@ -247,6 +247,7 @@ const overrides = {
 Extensions:
   0: part extension mode (EXT_*)
   1: VL breath mode (VLBC_*)
+  2: ACMP toggle
 */
 
 let OctaviaDevice = class extends CustomEventSource {
