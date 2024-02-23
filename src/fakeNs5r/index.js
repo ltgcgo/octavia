@@ -369,6 +369,14 @@ getBridge().addEventListener("message", function (ev) {
 	perf.push(new PointEvent(68.11, generateSwitch(11)));
 	perf.push(new PointEvent(73.58, generateSwitch(9)));
 	perf.push(new PointEvent(74.34, generateSwitch(10)));
+	perf.push(new PointEvent(80.45, generateSwitch(1)));
+	perf.push(new PointEvent(84.98, generateSwitch(0)));
+	perf.push(new PointEvent(85.74, generateSwitch(12)));
+	perf.push(new PointEvent(86.11, generateSwitch(0)));
+	perf.push(new PointEvent(86.87, generateSwitch(12)));
+	perf.push(new PointEvent(87.25, generateSwitch(0)));
+	perf.push(new PointEvent(88, generateSwitch(9)));
+	perf.push(new PointEvent(97.35, generateSwitch(8)));
 	perf.fresh();
 	demoPerfs["AGDEMO1"] = perf;
 };
