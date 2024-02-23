@@ -922,6 +922,10 @@ let OctaviaDevice = class extends CustomEventSource {
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
 								//console.debug(this.#cc[chOf + ccToPos[100]], rpnIndex, rpnOptions[this.#cc[chOff + ccToPos[100]]]);
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
+								this.dispatchEvent("pitch", {
+									part,
+									pitch: this.getPitchShift(part)
+								});
 							};
 						};
 						break;
