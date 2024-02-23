@@ -738,6 +738,8 @@ let OctaviaDevice = class extends CustomEventSource {
 									console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
 									this.switchMode("gs");
 								};
+							} else if (det.data[1] == 56) {
+								this.switchMode(this.#detect.x5 == 82 ? "x5d" : "05rw");
 							} else if (det.data[1] == 62) {
 								this.switchMode(this.#detect.x5 == 82 ? "x5d" : "05rw");
 							} else if (det.data[1] == 63) {
