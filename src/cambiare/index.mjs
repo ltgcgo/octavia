@@ -889,6 +889,12 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.addEventListener("title", (ev) => {
 			upThis.#sectInfo.title.innerText = ev.data || `No Title`;
+			/*if (self?.navigator?.mediaSession) {
+				if (!navigator.mediaSession.metadata) {
+					navigator.mediaSession.metadata = new MediaMetadata({});
+				};
+				navigator.mediaSession.metadata.title = ev.data || null;
+			};*/
 		});
 		upThis.addEventListener("voice", ({data}) => {
 			let voice = upThis.getChVoice(data.part),

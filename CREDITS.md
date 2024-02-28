@@ -41,6 +41,7 @@ Octavia will never become a reality without help from the following people.
 
 ### Miscellaneous
 * **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
+* **NiceChord** for inspiring this project.
 * **GFHK-SDGM** for helping collecting bitmaps.
 * **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI, and the upcoming Cambiare).
 * **MIDIMan** for checking bitmaps against YAMAHA MU2000.
