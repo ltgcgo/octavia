@@ -404,13 +404,14 @@ let RootDisplay = class extends CustomEventSource {
 			if (oldNomin != upThis.#noteNomin) {
 				let targetBar = curBar;
 				upThis.#noteBarOffset -= targetBar * (upThis.#noteNomin - oldNomin);
-				if (oldNomin < upThis.#noteNomin) {
-					// For example, 4/4 > 6/4
-					upThis.#noteBarOffset -= Math.ceil(upThis.#noteNomin - curBeat - 1);
-					console.debug(`Increase!`);
-				} else {
-					// For example, 6/4 > 4/4
-					upThis.#noteBarOffset += upThis.#noteNomin;
+				if (curBeat + 1 >= oldNomin) {
+					if (oldNomin < upThis.#noteNomin) {
+						// For example, 4/4 > 6/4
+						upThis.#noteBarOffset -= Math.ceil(upThis.#noteNomin - curBeat - 1);
+					} else {
+						// For example, 6/4 > 4/4
+						upThis.#noteBarOffset += upThis.#noteNomin;
+					};
 				};
 			};
 			upThis.dispatchEvent("tsig", upThis.getTimeSig());
