@@ -2719,6 +2719,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				console.info(`${dPref}Show CH${e + 1}~CH${e + 16}`);
 			};
+		}).add([73, 11, 0, 0], (msg, track) => {
+			// MU1000/2000 native channel switch
+			upThis.dispatchEvent("channelactive", msg[0]);
 		}).add([93, 3], (msg, track) => {
 			// PLG-100SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
