@@ -58,6 +58,38 @@ Tuba	00000061006100230027003f3fff7fffffffd5ffab3faba7d5637fc33f810001
 Tweet	0c001f000f8007c007c007e083f063fe31fe18c00c800f801f00118021e040f0
 Violin	30007b007b84ffc4efc0f1fefffef1c0efc4ffc47b807b0030000000060107ff
 Whistle	028007c007c00fe00fe01ef01c7018301c701ef00fe00fe005c005c003800380
+GrandP #	@GrandPno
+BriteP #	@GrandPno
+EPiano1#	@ElPiano1
+EPiano2#	@ElPiano2
+Clavi. #	@Clvichrd
+DrawOrg#	@DrawOrgn
+PercOrg#	@DrawOrgn
+RockOrg#	@DrawOrgn
+TngoAcd#	@TangoAcd
+NylonGt#	@NylonGtr
+SteelGt#	@NylonGtr
+JazzGtr#	@OvrDrvGt
+MutedGt#	@OvrDrvGt
+Ovrdriv#	@OvrDrvGt
+Dist.Gt#	@OvrDrvGt
+Acou.Ba#	@Aco.Bass
+FingrBa#	@Aco.Bass
+SlapBas#	@Aco.Bass
+SlapBa2#	@Aco.Bass
+Violin #	@Violin
+TremStr#	@Violin
+Strngs1#	@Strings1
+Strngs2#	@Strings1
+Trumpet#	@Trumpet
+Trombon#	@Trombone
+MutedTp#	@Trumpet
+BrsSect#	@Trombone
+AltoSax#	@Alto Sax
+Oboe   #	@Eng.Horn
+Flute  #	@Flute
+PanFlut#	@PanFlute
+Acou.Ba#	@Aco.Bass
 Acou.Gtr	@NylonGtr
 Acou.Tom	@Taiko
 Agogo	@TnklBell
@@ -113,7 +145,6 @@ FullOrgn	@DrawOrgn
 GhostPad	@NewAgePd
 Glocken	@Glocken
 Goblins	@Ice Rain
-GrandP #	@GrandPno
 GtrHarmo	@OvrDrvGt
 Halo Pad	@NewAgePd
 HammrPno	@EGrndPno
