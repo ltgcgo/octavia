@@ -2721,9 +2721,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}).add([73, 11, 0, 0], (msg, track) => {
 			// MU1000/2000 native channel switch
-			upThis.dispatchEvent("channelactive", msg[0]);
-			upThis.dispatchEvent("channelmin", (msg[0] >> 4) << 4);
-			upThis.dispatchEvent("channelmax", ((msg[0] >> 4) << 4) | 15);
+			let part = upThis.chRedir(msg[0], track, true);
+			let port = part >> 4;
+			upThis.#chActive[part] = 1;
+			upThis.dispatchEvent("channelactive", part);
+			upThis.dispatchEvent("channelmin", port << 4);
+			upThis.dispatchEvent("channelmax", (port << 4) | 15);
 			getDebugState() && console.debug(`MU1000 native channel switch: `, msg);
 		}).add([93, 3], (msg, track) => {
 			// PLG-100SG singing voice
