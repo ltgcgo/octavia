@@ -354,9 +354,9 @@ MSB	LSB	Name
 60	01	XG Comp+Ovdr+Dly
 61	00	XG Wah+Dist+Delay
 61	01	XG Wah+Ovdr+Delay
-62	00	XG Vin Hard Dist
-62	01	XG Vin Hard Dst+Dly
-62	02	XG Vin Soft Dist
-62	03	XG Vin Soft Dst+Dly
+62	00	XG Vintage Hard Dist
+62	01	XG Vin Hard Dist+Dly
+62	02	XG Vintage Soft Dist
+62	03	XG Vin Soft Dist+Dly
 63	00	XG Dual Rotary 1
 63	01	XG Dual Rotary 2

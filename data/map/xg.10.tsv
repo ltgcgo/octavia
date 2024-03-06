@@ -4,7 +4,9 @@ GrndPnoK	GrndPianoK
 MelloGrP	MelloGrPno
 PianoStr	PianoStrng
 DreamPno	DreamPiano
+ConGrand	Con. Grand
 DblConGr	DblConGrnd
+OldAcPno	OldAcPiano
 GrandP #	GrndPiano#
 BritPnoK	BritPianoK
 StBrtPno	StBritePno
@@ -28,6 +30,7 @@ DXLegend	DX Legend
 DXAnalog	DX Analog
 DX Kt EP	DX Koto EP
 VX EPno2	VX EPiano2
+Shirakwa	Shirakawa
 EPiano2#	El.Piano2#
 HpschrdK	HrpsichrdK
 Hpschrd2	Hrpsichrd2
@@ -84,15 +87,19 @@ TngoAcd2	TangoAcod2
 NylonGt2	Nylon Gt.2
 NylonGt3	Nylon Gt.3
 VelGtHrm	VelGtHrmnx
+DecayEsG	DecayEspGt
 NylonGt#	Nylon Gt.#
 SteelGt2	Steel Gt.2
 12StrGtr	12-Str Gt.
 Nyln&Stl	Nyln&Steel
 Stl&Body	Steel&Body
+Nashvill	Nashville
+OldSampl	Old Sample
 SteelGt#	Steel Gt.#
 MelloGtr	Mellow Gt.
 Jazz Amp	JazzGtrAmp
 OctPlate	Oct. Plate
+MidSJazz	MidSupJzGt
 NekRough	Neck.Rough
 PdlSteel	PedalSteel
 JazzGtr#	Jazz Gtr.#
@@ -100,11 +107,14 @@ ChorusGt	Chorus Gt.
 MidT.Gtr	MidToneGt.
 MidTGtSt	MidTnGtrSt
 NasalGtr	Nasal Gtr.
+Mid Hamr	Mid Hammer
 BridHamr	BridgeHamr
 Dbl Hamr	Dbl Hammer
+St. Hamr	St. Hammer
 Funk Gtr	Funk Gtr 1
 MuteStlG	MuteSteelG
 FunkGtr2	Funk Gtr 2
+Heavy Wr	HeavyWrnch
 GrvyMtGt	GroovyMtGt
 Mu.DstGt	MuteDistGt
 MutedGt#	Muted Gt.#
@@ -124,9 +134,11 @@ TwinDist	TwinDistGt
 RckRthm2	RockRthm 2
 RockRthm	RockRhythm
 Dist.Gt#	Dist. Gt.#
+AcouHarm	Acou.Harmo
 GtFeedbk	GtFeedback
 GtrHrmo2	GtrHarmo 2
 JazzRthm	JazzRhythm
+PkAcouBa	PickAcouBa
 VXUprght	VX Upright
 Acou.Ba#	Acou.Bass#
 FingrDrk	FingerBsDk
@@ -137,6 +149,7 @@ FngrBas2	FingerBas2
 Jazzy Ba	Jazzy Bass
 Mod Bass	Modul.Bass
 RezChase	Reso.Chase
+BlueBass	Blues Bass
 FW EBass	FgrW EBass
 FingrBa#	FingerBas#
 PickBas2	PickedBas2
@@ -167,6 +180,8 @@ Sqr.Bass	SquareBass
 RubberBa	RubberBass
 Fish	Fish Bass
 HardReso	HardReson.
+MnplisBa	MnplisBass
+Miami Ba	Miami Bass
 AnalogBa	AnalogBass
 RezoBass	Rezzo Bass
 MelloSBa	MelloSynBs
@@ -178,6 +193,7 @@ ModulrBa	ModularBas
 X WireBa	X WireBass
 AtkPulse	AttakPulse
 MetlBass	Metal Bass
+F.OsciBa	FrcOsciBas
 SynthAtk	SynthAttak
 SmoothBs	SmoothBass
 Oct.Bass	OctaveBass
@@ -218,8 +234,10 @@ OrcheStr	OrcheStrng
 OrchStr2	OrchStrng2
 TremOrch	Trem.Orch.
 Velo.Str	VeloString
+Stacc.Hi	StaccatoHi
 SwellStr	Swell Str.
 3 OctStr	3 Oct.Str.
+5PartStr	5-Part Str
 Strngs1#	Strings 1#
 StSlwStr	St.SlowStr
 LegatoSt	Legato Str
@@ -260,6 +278,7 @@ Warm Trp	Warm Trmpt
 Dark Trp	Dark Trmpt
 SoftDTrp	SoftDrkTrp
 Soft Trp	Soft Trmpt
+Dbl Blow	DoubleBlow
 SweetTrp	SweetTrmpt
 MlSwtTrp	Mel.SwtTrp
 NormlTrp	Normal Trp
@@ -297,8 +316,10 @@ BrsSect2	BrassSect2
 Hi Brass	High Brass
 MelloBrs	MelloBrass
 SuperBrs	SuperBrass
+CutBrass	SpBrassCut
 Tenor&Tp	Tenor&Trp
 SymphBrs	SymphBrass
+BrsSect#	BrassSect#
 QuackBrs	QuackBrass
 RezSynBr	ResoSynBrs
 PolyBras	Poly Brass
@@ -352,6 +373,7 @@ SoloSine	Solo Sine
 SineLead	Sine Lead
 Pulse Ld	Pulse Lead
 SyncLead	Sync Lead
+FMSlwSwp	FMSlwSweep
 Curse Ld	Curse Lead
 SawLead2	Saw Lead 2
 ThickSaw	Thick Saw
@@ -656,17 +678,23 @@ Air Sax	Airy Sax
 TenorSx!	Tenor Sax!
 Trumpt!2	Trumpet! 2
 MuteTp!2	MutedTrp!2
+NuViolin	New Violin
 C Violin	Con.Violin
+BowPicol	BowedPicol
 C Flute	CncrtFlute
 JazFlute	Jazz Flute
+WX Shaku	WX Shakuha
 Bamboo	Bamboo Di
+CvSoprSx	CurvSoprSx
 SoprPipe	SoprnoPipe
 SweetAlt	Sweet Alto
+AltoSax!	Alto Sax!
 MildTenr	Mild Tenor
 GlassTnr	GlassTenor
 FunkyTnr	FunkyTenor
 OldTenor	Old Tenor
 BrtTenor	BriteTenor
+Clrinet!	Clarinet!
 SoftPipe	Soft Pipe
 BowedSaw	Bowed Saw
 Squeeze	SqeezAcord
@@ -687,16 +715,3 @@ MM-Vce 4	MM-Voice 4
 DX-SLd 9	DX-SqrLd 9
 DirtySaw	Dirty Saw
 ANCowbel	AN Cowbell
-DecayEsG	DecayEspGt
-AltoSax!	Alto Sax!
-Heavy Wr	HeavyWrnch
-Dbl Blow	DoubleBlow
-CutBrass	SpBrassCut
-PkAcouBa	PickAcouBa
-CvSoprSx	CurvSoprSx
-BlueBass	Blues Bass
-AcouHarm	Acou.Harmo
-WX Shaku	WX Shakuha
-ConGrand	Con. Grand
-FMSlwSwp	FMSlwSweep
-St. Hamr	St. Hammer

@@ -2,7 +2,9 @@ ID	Name
 GrndPnoK	Grand Piano KSP
 MelloGrP	Mellow Grand Piano
 PianoStr	Piano + Strings
+ConGrand	Concert Grand Piano
 DblConGr	Double Concert Grand
+OldAcPno	Old Acoustic Piano
 GrandP #	Grand Piano #
 BritPnoK	Bright Piano KSP
 StBrtPno	Stereo Bright Piano
@@ -54,21 +56,27 @@ TngoAcd2	Tango Accordion 2
 NylonGt2	Nylon Guitar 2
 NylonGt3	Nylon Guitar 3
 VelGtHrm	Velo Guitar Harmonics
+DecayEsG	Decay Spanish Guitar
 NylonGt#	Nylon Guitar #
 SteelGt2	Steel Guitar 2
 12StrGtr	12-string Guitar
 Nyln&Stl	Nylon & Steel Guitar
 Stl&Body	Steel Guitar & Body
+Nashvill	Nashville Guitar
+OldSampl	Old Sample Guitar
 SteelGt#	Steel Guitar #
 MelloGtr	Mellow Guitar
 Jazz Amp	Jazz Guitar Amp
+MidSJazz	Mid. Super Jazz Guitar
 NekRough	Roughcaster Neck
 JazzGtr#	Jazz Guitar #
 ChorusGt	Chorus Guitar
 MidT.Gtr	Mid-tone Guitar
 MidTGtSt	Mid-tone Guitar Stereo
+Mid Hamr	Middle Hammer Guitar
 BridHamr	Bridge Hammer
 Dbl Hamr	Double Hammer
+St. Hamr	Stereo Hammer Guitar
 Funk Gtr	Funk Guitar 1
 MuteStlG	Muted Steel Guitar
 FunkGtr2	Funk Guitar 2
@@ -89,11 +97,14 @@ FeedbkG2	Feedback Guitar 2
 TwinDist	Twin Distortion Guitar
 RckRthm2	Rock Rhythm 2
 Dist.Gt#	Distortion Guitar #
+AcouHarm	Acoustic Harmonics
 GtFeedbk	Guitar Feedback
 GtrHrmo2	Guitar Harmonics 2
+PkAcouBa	Picked Acoustic Bass
 VXUprght	VX Upright Bass
 Acou.Ba#	Acoustic Bass #
 FingrDrk	Dark Fingered Bass
+FngrSlap	Fingered Slap Bass
 FngrBas2	Fingered Bass 2
 Mod Bass	Modulation Bass
 RezChase	Resonant Chase
@@ -118,11 +129,13 @@ SynBs1Dk	Dark Synth Bass 1
 FastResB	Fast Resonant Bass
 ResoBass	Resonant Bass
 HardReso	Hard Resonant Bass
+MnplisBa	Minneapolis Bass
 MelloSBa	Mellow Synth Bass
 Seq.Bass	Sequenced Bass
 ClkSynBa	Click Synth Bass
 SynBs2Dk	Dark Synth Bass 2
 SmthSynB	Smooth Synth Bass
+F.OsciBa	Forced Oscillation Bass
 ViolinSc	Violin Section
 HdVlnSec	Hard Violin Section
 SlVlnSec	Slow Violin Section
@@ -148,8 +161,11 @@ OrcheStr	Orchestral Strings
 OrchStr2	Orchestral Strings 2
 TremOrch	Tremolo Orch Strings
 Velo.Str	Velocity Strings
+Triste	Triste Strings
+Stacc.Hi	High Staccato Strings
 SwellStr	Swell Strings
 3 OctStr	3 Octave Strings
+5PartStr	5-Part Strings
 StSlwStr	Stereo Slow Strings
 LegatoSt	Legato Strings
 ChmbrStr	Chamber Strings
@@ -166,6 +182,8 @@ OrchHit2	Orchestra Hit 2
 BrsStb80	Brass Stab 80
 BriteTrp	Bright Trumpet
 SoftDTrp	Soft Dark Trumpet
+Blow	Blown Trumpet
+Dbl Blow	Double Blown Trumpet
 SweetTrp	Sweet Trumpet
 MlSwtTrp	Mellow Sweet Trumpet
 NormlTrp	Normal Trumpet
@@ -191,8 +209,10 @@ SforzBrs	Sforzando Brass
 Tp&TbSec	Trumpet & Tromb. Section
 TpTbSec2	Trumpet & Tromb. Sect. 2
 BrsSect2	Brass Section 2
+CutBrass	Super Brass Cut
 Tenor&Tp	Tenor Sax & Trumpet
 SymphBrs	Symphonic Brass
+BrsSect#	Brass Section #
 RezSynBr	Resonant Synth Brass
 SynBras3	Synth Brass 3
 AnlSforz	Analog Sforzando
@@ -220,9 +240,11 @@ Tenr&Alt	Tenor & Alto Sax
 BrthTnr2	Breathy Tenor Sax 2
 SwtTenor	Sweet Tenor Sax
 Exp.Oboe	Expressive Oboe
+Oboe   #	Oboe #
 BasClari	Bass Clarinet
 NeatBrth	Neat Breathy Flute
 BthBoehm	Breathy Boehm
+Flute  #	Flute #
 SwtPanFl	Sweet Pan Flute
 BotlLgto	Bottle Legato
 SqrLead2	Square Lead 2
@@ -231,6 +253,7 @@ HollowSq	Hollow Square
 DblOsci.	Double Oscillator
 MellowSq	Mellow Square
 SoloSine	Solo Sine Lead
+FMSlwSwp	FM Slow Sweep
 SawLead2	Sawtooth Lead 2
 ThickSaw	Thick Saw Lead
 Dyna.Saw	Dynamic Sawtooth
@@ -283,6 +306,7 @@ RvSnare2	Reverse Snare 2
 RConBaDr	Rev. Concert Bass Drum
 Rev.Tom2	Reverse Tom 2
 Voodoo	Voodoo Drums
+Glocken+	Glockenspiel +
 CutNoise	Cutting Noise
 CutNoiz2	Cutting Noise 2
 DstCutNz	Distorted Cutting Noise
@@ -322,14 +346,20 @@ PhaseClv	Phaser Clavichord
 Fretles!	Fretless Bass!
 YamSteel	Mountain Steel Drums
 DinoPerc	Dino Percussion
+EspaGtr!	Spanish Guitar!
 WetPluck	Wet Pluck Guitar
+Destiny	Destiny Guitar
 LiteAlto	Light Alto Sax
 Air Sax	Airy Saxophone
 TenorSx!	Tenor Saxophone!
 MuteTp!2	Muted Trumpet! 2
 C Violin	Concert Violin
+BowPicol	Bowed Piccolo
 C Flute	Concert Flute
+WX Shaku	WX Shakuhachi
+CvSoprSx	Curved Soprano Sax
 SweetAlt	Sweet Alto Sax
+AltoSax!	Alto Saxophone!
 MildTenr	Mild Tenor Sax
 Jazz Sax	Jazz Saxophone
 GlassTnr	Glass Tenor Sax
@@ -417,15 +447,3 @@ MM-Clav3	MM-Clavichord 3
 MM-Vibe2	MM-Vibraphone 2
 DX-SLd 9	DX Square Lead 9
 DirtySaw	Dirty Sawtooth Lead
-DecayEsG	Decay Spanish Guitar
-AltoSax!	Alto Saxophone!
-Dbl Blow	Double Blown Trumpet
-CutBrass	Super Brass Cut
-PkAcouBa	Picked Acoustic Bass
-CvSoprSx	Curved Soprano Sax
-AcouHarm	Acoustic Harmonics
-Destiny	Destiny Guitar
-WX Shaku	WX Shakuhachi
-ConGrand	Concert Grand Piano
-St. Hamr	Stereo Hammer Guitar
-FMSlwSwp	FM Slow Sweep
