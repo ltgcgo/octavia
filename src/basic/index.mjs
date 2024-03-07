@@ -208,10 +208,10 @@ let RootDisplay = class extends CustomEventSource {
 		return this.noteProgress - this.#noteBarOffset;
 	};
 	get noteBar() {
-		return Math.floor(this.noteOverall / this.#noteNomin * (this.#noteDenom / 4));
+		return Math.floor(this.noteOverall / this.#noteNomin);
 	};
 	get noteBeat() {
-		let beat = this.noteOverall * (this.#noteDenom / 4) % this.#noteNomin;
+		let beat = this.noteOverall % this.#noteNomin;
 		if (beat < 0) {
 			beat += this.#noteNomin;
 		};
