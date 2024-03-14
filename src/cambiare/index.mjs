@@ -791,7 +791,6 @@ let Cambiare = class extends RootDisplay {
 					"msb": createElement("span", [`field`, `pcp-font4`], {l: 48, t: 1, w: 27, h: 25}),
 					"prg": createElement("span", [`field`, `pcp-font4`], {l: 81, t: 1, w: 27, h: 25}),
 					"lsb": createElement("span", [`field`, `pcp-font4`], {l: 114, t: 1, w: 27, h: 25}),
-					"cc": createSVG("svg", {viewBox: "0 0 108 24", width: 108, style: `left: 146px; top: 1px; position: absolute;`}),
 					"ccVis": createElement("canvas", [`field`], {l: 146, t: 1}).getContext("2d"),
 					"extVis": createElement("canvas", [`field`], {l: 207, t: 1}).getContext("2d")
 				};
