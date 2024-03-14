@@ -350,7 +350,7 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.barDelim.style.display = "";
 			upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
 		};
-		upThis.#scrollMeta(true);
+		//upThis.#scrollMeta(true);
 		let ccCandidates = [7, 11, 1, 91, 93, 94, 74, 5, 256, 256];
 		let renderPortMax = upThis.#renderPort + upThis.#renderRange;
 		for (let part = 0; part < allocated.ch; part ++) {
@@ -792,7 +792,8 @@ let Cambiare = class extends RootDisplay {
 					"prg": createElement("span", [`field`, `pcp-font4`], {l: 81, t: 1, w: 27, h: 25}),
 					"lsb": createElement("span", [`field`, `pcp-font4`], {l: 114, t: 1, w: 27, h: 25}),
 					"ccVis": createElement("canvas", [`field`], {l: 146, t: 1}).getContext("2d"),
-					"extVis": createElement("canvas", [`field`], {l: 207, t: 1}).getContext("2d")
+					"extVis": createElement("canvas", [`field`], {l: 207, t: 1}).getContext("2d"),
+					ccUpdate: false
 				};
 				let e = upThis.#sectPart[port][part];
 				leftCache.forEach((e0) => {
@@ -1039,6 +1040,7 @@ let Cambiare = class extends RootDisplay {
 					e.prg.innerText = "";
 					e.lsb.innerText = "";
 					e.notes.style.transform = "";
+					e.ccUpdate = true;
 				};
 			} catch (err) {};
 		});
