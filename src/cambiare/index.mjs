@@ -792,7 +792,6 @@ let Cambiare = class extends RootDisplay {
 					"prg": createElement("span", [`field`, `pcp-font4`], {l: 81, t: 1, w: 27, h: 25}),
 					"lsb": createElement("span", [`field`, `pcp-font4`], {l: 114, t: 1, w: 27, h: 25}),
 					"cc": createSVG("svg", {viewBox: "0 0 108 24", width: 108, style: `left: 146px; top: 1px; position: absolute;`}),
-					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 49, height: 24, x: 59}),
 					"ccVis": createElement("canvas", [`field`], {l: 146, t: 1}).getContext("2d"),
 					"extVis": createElement("canvas", [`field`], {l: 207, t: 1}).getContext("2d")
 				};
@@ -821,14 +820,10 @@ let Cambiare = class extends RootDisplay {
 				mountElement(e.voice, [
 					e.metre.canvas
 				]);
-				mountElement(e.cc, [
-					e.pan
-				]);
 				mountElement(e.major, [
 					e.number,
 					e.voice,
-					e.ccVis.canvas,
-					e.cc
+					e.ccVis.canvas
 				]);
 				mountElement(e.minor, [
 					e.type,
