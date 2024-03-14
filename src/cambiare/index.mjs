@@ -181,6 +181,7 @@ let Cambiare = class extends RootDisplay {
 	#sectPart = [];
 	#sectMeta = {};
 	#sectPix = {};
+	eventViewMode = 0; // 0 for event count, 1 for FPS
 	//#noteEvents = [];
 	#pitchEvents = [];
 	#style = "block";
@@ -338,7 +339,6 @@ let Cambiare = class extends RootDisplay {
 		if (upThis.#maxPoly < curPoly) {
 			upThis.#maxPoly = curPoly;
 		};
-		upThis.#sectInfo.events.innerText = `${sum.eventCount}`.padStart(3, "0");
 		upThis.#sectInfo.curPoly.innerText = `${curPoly}`.padStart(3, "0");
 		upThis.#sectInfo.maxPoly.innerText = `${upThis.#maxPoly}`.padStart(3, "0");
 		if (upThis.#clockSource?.realtime) {
@@ -561,7 +561,30 @@ let Cambiare = class extends RootDisplay {
 		upThis.#bufLm.forEach((e, i, a) => {
 			a[i] = upThis.#bufLo[i];
 		});
-		let finishNow = Date.now();
+		let finishNow = (self.performance || self.Date).now();
+		switch (upThis.eventViewMode) {
+			case 0: {
+				upThis.#sectInfo.events.innerText = `${sum.eventCount}`.padStart(3, "0");
+				break;
+			};
+			case 1: {
+				let fpsCount = 1000 / (finishNow - upThis.#lastFrame);
+				if (fpsCount > 99) {
+					fpsCount = Math.round(fpsCount);
+					upThis.#sectInfo.events.innerText = `${fpsCount}`;
+				} else if (fpsCount > 9) {
+					fpsCount = Math.round(fpsCount * 10) / 10;
+					upThis.#sectInfo.events.innerText = `${Math.floor(fpsCount)}.${Math.floor(fpsCount * 10 % 10)}`;
+				} else {
+					fpsCount = Math.round(fpsCount * 100) / 100;
+					upThis.#sectInfo.events.innerText = `${Math.floor(fpsCount)}.${Math.floor(fpsCount * 100 % 100)}`;
+				};
+				break;
+			};
+			default: {
+				upThis.#sectInfo.events.innerText = ``;
+			};
+		};
 		upThis.#lastFrame = finishNow;
 	};
 	#renderer;

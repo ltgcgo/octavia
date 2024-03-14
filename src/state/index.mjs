@@ -2517,6 +2517,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.#cc[chOff + ccToPos[10]] = e || 128; // pan
 					}, false, false, () => {
 						upThis.#cc[chOff + ccToPos[128]] = e; // dry level
+						upThis.allocateAce(128);
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e; // chorus
 					}, () => {
@@ -3236,6 +3237,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// Dry level
 						upThis.#cc[chOff + ccToPos[128]] = e;
+						upThis.allocateAce(128);
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e;
 					}, () => {
@@ -5162,6 +5164,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cc[chOff + ccToPos[94]] = e;
 				}, () => {
 					upThis.#cc[chOff + ccToPos[128]] = e;
+					upThis.allocateAce(128);
 				}, () => {
 					// note shift, RPN
 				}, () => {
@@ -5378,6 +5381,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							}, 0, 0, 0, 0, 0, 0, 0, () => {
 								// Dry level
 								upThis.#cc[chOff + ccToPos[128]] = e;
+								upThis.allocateAce(128);
 							}, () => {
 								// cc93
 								upThis.#cc[chOff + ccToPos[93]] = e;
