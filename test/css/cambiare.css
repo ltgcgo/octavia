@@ -226,3 +226,7 @@ div.cambiare-canvas > div.sect-part > div.port-active,
 div.cambiare-canvas > div.sect-part div.part-active {
 	display: block;
 }
+
+rect {
+	opacity: 0.25;
+}

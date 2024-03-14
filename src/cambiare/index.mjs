@@ -357,6 +357,7 @@ let Cambiare = class extends RootDisplay {
 			chOff = part * allocated.cc,
 			e = upThis.#sectPart[port][part & 15];
 			if (sum.chInUse[part] && port >= upThis.#renderPort && port < renderPortMax) {
+				// Render CC SVGs
 				setCcSvg(e.vol, sum.chContr[chOff + ccToPos[7]]);
 				setCcSvg(e.exp, sum.chContr[chOff + ccToPos[11]]);
 				setCcSvg(e.mod, sum.chContr[chOff + ccToPos[1]]);
@@ -367,6 +368,19 @@ let Cambiare = class extends RootDisplay {
 				setCcSvg(e.por, sum.chContr[chOff + ccToPos[5]]);
 				setCcSvg(e.cea, sum.ace[0] ? sum.chContr[chOff + ccToPos[sum.ace[0]]] : 0);
 				setCcSvg(e.ceb, sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0);
+				// Render pan SVG
+				let pan = sum.chContr[chOff + ccToPos[10]];
+				e.pan.setAttribute("width", `${widthCache[pan] || 0}`);
+				if (pan < 64) {
+					e.pan.setAttribute("x", `${84 - widthCache[pan]}`);
+				} else if (pan > 127) {
+					e.pan.setAttribute("x", `60`);
+					e.pan.setAttribute("width", `48`);
+				} else {
+					e.pan.setAttribute("x", `84`);
+				};
+				// Render CC draw calls
+				// Render strength metre
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.globalCompositeOperation = "source-over";
 				if (e.metre.rWidth > e.metre.canvas.width) {
@@ -390,16 +404,6 @@ let Cambiare = class extends RootDisplay {
 				};
 				e.metre.globalCompositeOperation = "xor";
 				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
-				let pan = sum.chContr[chOff + ccToPos[10]];
-				e.pan.setAttribute("width", `${widthCache[pan] || 0}`);
-				if (pan < 64) {
-					e.pan.setAttribute("x", `${84 - widthCache[pan]}`);
-				} else if (pan > 127) {
-					e.pan.setAttribute("x", `60`);
-					e.pan.setAttribute("width", `48`);
-				} else {
-					e.pan.setAttribute("x", `84`);
-				};
 				// Extensible visualizer
 				e.extVis.clearRect(0, 0, 47, 25);
 				e.extVis.fillStyle = "#fff";
@@ -659,7 +663,7 @@ let Cambiare = class extends RootDisplay {
 		attachElement.appendChild(containerElement);
 		upThis.#container = containerElement;
 		// Insert the canvas
-		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-block"]);
+		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-block", "debug"]);
 		containerElement.appendChild(canvasElement);
 		upThis.#canvas = canvasElement;
 		// Start the resizer
@@ -791,6 +795,7 @@ let Cambiare = class extends RootDisplay {
 					"cea": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 48}),
 					"ceb": createSVG("rect", {fill: `var(--accent-color)`, width: 4, height: 24, x: 54}),
 					"pan": createSVG("rect", {fill: `var(--accent-color)`, width: 0, height: 24, x: 84}),
+					"ccVis": createElement("canvas", [`field`], {l: 146, t: 1}).getContext("2d"),
 					"extVis": createElement("canvas", [`field`], {l: 207, t: 1}).getContext("2d")
 				};
 				let e = upThis.#sectPart[port][part];
@@ -803,6 +808,9 @@ let Cambiare = class extends RootDisplay {
 				e.metre.fillStyle = "#fff";
 				e.metre.textBaseline = "top";
 				e.metre.font = "20px 'PT Sans Narrow'";
+				e.ccVis.canvas.width = 108;
+				e.ccVis.canvas.height = 25;
+				e.ccVis.fillStyle = "#fff";
 				e.extVis.canvas.width = 47;
 				e.extVis.canvas.height = 25;
 				e.extVis.fillStyle = "#fff";
@@ -832,6 +840,7 @@ let Cambiare = class extends RootDisplay {
 				mountElement(e.major, [
 					e.number,
 					e.voice,
+					e.ccVis.canvas,
 					e.cc
 				]);
 				mountElement(e.minor, [
