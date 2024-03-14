@@ -351,6 +351,7 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
 		};
 		upThis.#scrollMeta(true);
+		let ccCandidates = [7, 11, 1, 91, 93, 94, 74, 5, 256, 256];
 		let renderPortMax = upThis.#renderPort + upThis.#renderRange;
 		for (let part = 0; part < allocated.ch; part ++) {
 			let port = part >> 4,
@@ -358,7 +359,7 @@ let Cambiare = class extends RootDisplay {
 			e = upThis.#sectPart[port][part & 15];
 			if (sum.chInUse[part] && port >= upThis.#renderPort && port < renderPortMax) {
 				// Render CC SVGs
-				setCcSvg(e.vol, sum.chContr[chOff + ccToPos[7]]);
+				/*setCcSvg(e.vol, sum.chContr[chOff + ccToPos[7]]);
 				setCcSvg(e.exp, sum.chContr[chOff + ccToPos[11]]);
 				setCcSvg(e.mod, sum.chContr[chOff + ccToPos[1]]);
 				setCcSvg(e.rev, sum.chContr[chOff + ccToPos[91]]);
@@ -367,7 +368,7 @@ let Cambiare = class extends RootDisplay {
 				setCcSvg(e.brt, sum.chContr[chOff + ccToPos[74]]);
 				setCcSvg(e.por, sum.chContr[chOff + ccToPos[5]]);
 				setCcSvg(e.cea, sum.ace[0] ? sum.chContr[chOff + ccToPos[sum.ace[0]]] : 0);
-				setCcSvg(e.ceb, sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0);
+				setCcSvg(e.ceb, sum.ace[1] ? sum.chContr[chOff + ccToPos[sum.ace[1]]] : 0);*/
 				// Render pan SVG
 				let pan = sum.chContr[chOff + ccToPos[10]];
 				e.pan.setAttribute("width", `${widthCache[pan] || 0}`);
@@ -380,6 +381,21 @@ let Cambiare = class extends RootDisplay {
 					e.pan.setAttribute("x", `84`);
 				};
 				// Render CC draw calls
+				ccCandidates[8] = sum.ace[0] || 256;
+				ccCandidates[9] = sum.ace[1] || 256;
+				e.ccVis.clearRect(0, 0, 108, 25);
+				e.ccVis.fillStyle = `#${upThis.#accent}`;
+				for (let cci = 0; cci < ccCandidates.length; cci ++) {
+					let cce = ccCandidates[cci];
+					if (cce < 256) {
+						let ccValue = sum.chContr[chOff + ccToPos[cce]],
+						ccHeight = Math.round(ccValue / 12.7 * 24) / 10;
+						if (ccHeight > 0) {
+							let ccTop = 24 - ccHeight;
+							e.ccVis.fillRect(cci * 6, ccTop, 4, ccHeight);
+						};
+					};
+				};
 				// Render strength metre
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.globalCompositeOperation = "source-over";
