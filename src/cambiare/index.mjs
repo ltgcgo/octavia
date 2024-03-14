@@ -378,15 +378,16 @@ let Cambiare = class extends RootDisplay {
 				let pan = sum.chContr[chOff + ccToPos[10]] || 1,
 				panWidthCache = Math.abs(pan - 64) / 2.625;
 				if (pan < 64) {
-					e.ccVis.fillRect(84 - panWidthCache, 0, panWidthCache, 24);
+					e.ccVis.fillRect(83 - panWidthCache, 0, panWidthCache, 24);
 				} else if (pan > 127) {
 					e.ccVis.fillRect(59, 0, 49, 24);
+					e.ccVis.clearRect(60, 1, 47, 22);
 				} else {
-					e.ccVis.fillRect(85, 0, panWidthCache, 24);
+					e.ccVis.fillRect(84, 0, panWidthCache, 24);
 				};
 				// Render pan divider
 				e.ccVis.fillStyle = `#fff`;
-				e.ccVis.fillRect(84, 0, 1, 24);
+				e.ccVis.fillRect(83, 0, 1, 24);
 				// Render strength metre
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.globalCompositeOperation = "source-over";
