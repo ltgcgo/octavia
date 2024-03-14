@@ -36,19 +36,20 @@ Octavia will never become a reality without help from the following people.
 * **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
 
 ### Demo providers
+For a complete list of demo providers, please read the demo credits section.
 * **DearHoney**
 * **JayB**
 
 ### Miscellaneous
 * **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
-* **NiceChord** for inspiring this project.
-* **GFHK-SDGM** for helping collecting bitmaps.
-* **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI, and the upcoming Cambiare).
-* **MIDIMan** for checking bitmaps against YAMAHA MU2000.
-* **ValleyBell** for providing base map of PLG-150AN and PLG-150DX.
+* **NiceChord** for inspiring this project. Same as above.
+* **GFHK-SDGM** for helping collecting the bitmaps.
+* **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI and Cambiare).
+* **MIDIMan** for checking the bitmaps against a YAMAHA MU2000 module.
+* **ValleyBell** for providing the base map of PLG150-AN and PLG150-DX.
 * ~~**Werner Ogrodnik** for [Studio For All](http://studio4all.de/htmle/frameset090.html).~~
-* **youngmonkey** for [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
-* **アルゴ算法堂** for providing AKAI SG01k voice map.
+* **youngmonkey** for the [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
+* **アルゴ算法堂** for providing the AKAI SG01k voice map.
 
 ## Demo Credits
 Octavia will now dynamically load additional demos if available. [See the credits here](https://github.com/ltgcgo/midi-demo-data/blob/main/collection/octavia/list.tsv)!
