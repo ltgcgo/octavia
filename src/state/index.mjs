@@ -4243,13 +4243,20 @@ let OctaviaDevice = class extends CustomEventSource {
 			// MT-32 Timbre Memory Write
 			upThis.switchMode("mt32");
 			let offset = ((msg[0] & 1) << 7) + msg[1];
+			let patch = msg[0] >> 1, wroteName = false;
 			msg.subarray(2).forEach((e, i) => {
 				let ri = offset + i;
 				if (ri < allocated.cmt) {
 					//console.debug(`MT-32 timbre written to slot ${msg[0] >> 1}.`);
-					upThis.#cmTimbre[(msg[0] >> 1) * allocated.cmt + ri] = e;
+					upThis.#cmTimbre[patch * allocated.cmt + ri] = e;
+					wroteName = true;
 				};
 			});
+			if (wroteName) {
+				upThis.userBank.clearRange({msb: 0, lsb: 127, prg: patch});
+				let loadTsv = `MSB\tLSB\tPRG\tNME\n000\t127\t${patch}\tMT-m:${patch}`;
+				upThis.userBank.load(loadTsv, true);
+			};
 			upThis.forceVoiceRefresh();
 		}).add([22, 18, 16], (msg, track, id) => {
 			// MT-32 System Setup
