@@ -425,15 +425,15 @@ let Cambiare = class extends RootDisplay {
 							velocity = sum.rawVelo[part] / 255;
 						};
 						velocity *= 32;
-						let richness = sum.chContr[chOff + ccToPos[1]] / 127 * 10;
+						let richness = sum.chContr[chOff + ccToPos[1]] / 127 * 8;
 						e.extVis.beginPath();
 						e.extVis.moveTo(0, 12 - mouth - 3);
-						e.extVis.lineTo(11 + velocity, 12);
+						e.extVis.lineTo(7 + velocity, 12);
 						e.extVis.lineTo(0, 12 + mouth + 3);
 						e.extVis.fill();
 						e.extVis.fillStyle = `#${upThis.#accent}`;
 						e.extVis.beginPath();
-						e.extVis.ellipse(45, 12, 2, 2 + richness, 0, 0, fullRotation);
+						e.extVis.ellipse(43, 12, 4, 4 + richness, 0, 0, fullRotation);
 						e.extVis.fill();
 						//console.debug(`Painted!`);
 						break;
