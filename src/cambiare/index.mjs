@@ -9,6 +9,7 @@ const pixelBlurSpeed = 64;
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
 const blackKeys = [1, 3, 6, 8, 10],
 keyXs = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6];
+const fullRotation = 2 * Math.PI;
 const modeNames = {
 	"?": "Unset",
 	"gm": "General MIDI",
@@ -423,11 +424,16 @@ let Cambiare = class extends RootDisplay {
 						if (!velocity && sum.rawVelo[part]) {
 							velocity = sum.rawVelo[part] / 255;
 						};
-						velocity *= 36;
+						velocity *= 32;
+						let richness = sum.chContr[chOff + ccToPos[1]] / 127 * 10;
 						e.extVis.beginPath();
-						e.extVis.moveTo(3, 12 - mouth - 3);
+						e.extVis.moveTo(0, 12 - mouth - 3);
 						e.extVis.lineTo(11 + velocity, 12);
-						e.extVis.lineTo(3, 12 + mouth + 3);
+						e.extVis.lineTo(0, 12 + mouth + 3);
+						e.extVis.fill();
+						e.extVis.fillStyle = `#${upThis.#accent}`;
+						e.extVis.beginPath();
+						e.extVis.ellipse(45, 12, 2, 2 + richness, 0, 0, fullRotation);
 						e.extVis.fill();
 						//console.debug(`Painted!`);
 						break;
