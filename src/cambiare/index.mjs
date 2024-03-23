@@ -362,7 +362,7 @@ let Cambiare = class extends RootDisplay {
 				// Render CC draw calls
 				ccCandidates[8] = sum.ace[0] || 256;
 				ccCandidates[9] = sum.ace[1] || 256;
-				e.ccVis.clearRect(0, 0, 108, 25);
+				e.ccVis.clearRect(0, 0, 109, 25);
 				e.ccVis.fillStyle = `#${upThis.#accent}`;
 				for (let cci = 0; cci < ccCandidates.length; cci ++) {
 					let cce = ccCandidates[cci];
@@ -379,16 +379,16 @@ let Cambiare = class extends RootDisplay {
 				let pan = sum.chContr[chOff + ccToPos[10]] || 1,
 				panWidthCache = Math.abs(pan - 64) / 2.625;
 				if (pan < 64) {
-					e.ccVis.fillRect(83 - panWidthCache, 0, panWidthCache, 24);
+					e.ccVis.fillRect(84 - panWidthCache, 0, panWidthCache, 24);
 				} else if (pan > 127) {
-					e.ccVis.fillRect(59, 0, 49, 24);
-					e.ccVis.clearRect(60, 1, 47, 22);
+					e.ccVis.fillRect(60, 0, 49, 24);
+					e.ccVis.clearRect(61, 1, 47, 22);
 				} else {
-					e.ccVis.fillRect(84, 0, panWidthCache, 24);
+					e.ccVis.fillRect(85, 0, panWidthCache, 24);
 				};
 				// Render pan divider
 				e.ccVis.fillStyle = `#fff`;
-				e.ccVis.fillRect(83, 0, 1, 24);
+				e.ccVis.fillRect(84, 0, 1, 24);
 				// Render strength metre
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.globalCompositeOperation = "source-over";
@@ -834,7 +834,7 @@ let Cambiare = class extends RootDisplay {
 				e.metre.fillStyle = "#fff";
 				e.metre.textBaseline = "top";
 				e.metre.font = "20px 'PT Sans Narrow'";
-				e.ccVis.canvas.width = 108;
+				e.ccVis.canvas.width = 109;
 				e.ccVis.canvas.height = 25;
 				e.ccVis.fillStyle = "#fff";
 				e.extVis.canvas.width = 47;
