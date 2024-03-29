@@ -160,7 +160,7 @@ ccAccepted = [
 	16, 17, 18, 19, // General-purpose sound controllers
 	14, 15, 20, 21, 26, 28, // For some reason, used by PLG-VL
 	80, 81, // Used by KORG KROSS 2
-	129, // PLG-VL part breath mode
+	129, // PLG-VL part breath strength
 	130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, // PLG-VL part controls
 	142, 143, 144, 145, 146, 147, 148, 149, // PLG-DX carrier level
 	150, 151, 152, 153, 154, 155, 156, 157 // PLG-DX modulator level

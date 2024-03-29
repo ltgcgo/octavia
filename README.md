@@ -1,29 +1,34 @@
 # Octavia
-🎻 Event-driven multi-standard MIDI state-tracking library. Working with MIDI should be simple, while faithful and professional.
+🎻 Event-driven multi-standard MIDI state-tracking library.
 
 Made with ❤️ by Lightingale Community. Repository available on [Codeberg](https://codeberg.org/ltgc/octavia/), [GitHub](https://github.com/ltgcgo/octavia/) and [GitLab](https://gitlab.com/ltgc/oss/octavia/).
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/fa5aeaf4ba4c9b2d50e2/maintainability)](https://codeclimate.com/github/ltgcgo/octavia/maintainability)
 
+## What is Octavia?
+The MIDI landscape is a dumpster fire, at least in the FOSS world. Only proprietary software solutions respect existing MIDI standards, while the FOSS ecosystem largely ignores the conventions, with TiMidity as the single exception. Octavia aims to reach full compliance with existing MIDI standards (MT-32, GM, XG, GS, GM2 and etc.), while exposing simple yet powerful interfaces for developers to build upon.
+
+With Octavia, no longer will you worry about standard compliance. Just focus on building what's important, be it visualizers, state browsers, event routers or even realtime event translators, Octavia's got your back. Feel free to test Octavia's capabilities with all available demos.
+
 ## Why Octavia over others?
 * Free, libre and open-source, under GNU LGPL v3.0.
-* Behaves like a real MIDI module, doing most of the heavy-lifting for you.
 * Developed with Firefox and an open Web in mind.
+* Compliant to existing standards.
+* Behaves like a real MIDI module, doing most of the heavy-lifting for you.
 * Supports 8 ports, 128 channels, 512-voice polyphony maximum. More than you'll ever need.
-* Built-in support of several standards, multiple plug-in cards, and tons of devices.
-* Tells when MIDI programming errors are spotted, reducing chances of faulty programming.
+* Built-in support for multiple plug-in cards and tons of other devices.
+* Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
 * Available in JS (browser and Deno).
-* No modification required to run in Tor Browser, Bromite and LibreWolf.
+* No modification required to run in hardened forks of browsers, like Tor Browser, Cromite and LibreWolf.
 * Wide support of bank mapping and bitmaps via [`midi-db`](https://github.com/ltgcgo/midi-db).
-<!--* [Less than 20 kilobytes when compressed](docs/support/compress.md).-->
 
-## Support
-Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](docs/support/target.md) for more information.
+## Supported targets
+Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](https://kb.ltgc.cc/octavia/support/target.html) for more information.
 
 To have a general idea of how MIDI is implemented, refer to the [MIDI Implementation Chart](https://kb.ltgc.cc/octavia/support/implementation.html) and [Supported SysEx instructions](https://kb.ltgc.cc/octavia/support/sysex.html).
 
 ## Dev talks
-We're now hosting a new place to handle development talks! If you don't have a GitHub account, or just prefer to report bugs or give suggestions in a more casual way, feel free to chat with us with links below!
+We've been hosting places to handle development discussions! If you don't have a GitHub account, or just prefer to report bugs or give suggestions in a more casual way, feel free to chat with us with links below!
 
 * Fediverse (Mastodon): [@lightingale@fosstodon.org](https://fosstodon.org/@lightingale)
 * Telegram channel: [@ltgc_t](https://t.me/s/ltgc_t)
