@@ -582,6 +582,7 @@ let VoiceBank = class {
 						standard = "GS";
 					};
 				};
+
 			};
 		};
 		return {
@@ -663,7 +664,7 @@ let VoiceBank = class {
 					writeArray[(msb << 7) | lsb] = voiceObject;
 					loadCount ++;
 				} else {
-					//console.debug(`Skipped overwriting ${to[sig[0]]},${to[sig[1]]},${to[sig[2]]}: [${upThis.#bankInfo[to[sig[1]]][(to[sig[0]] << 7) + to[sig[2]]]}] to [${assign[3]}]`);
+					//console.debug(`Skipped overwriting ${msb},${prg},${lsb}: [${upThis.#bankInfo[prg][(msb << 7) | lsb]?.name}] to [${assign[3]}]`);
 				};
 				allCount ++;
 			};

@@ -121,7 +121,82 @@ bankDecoder.set("s7e", async function (blob) {
 	};
 	return voiceMap;
 });
-bankDecoder.set("pcg", async function (blob) {});
+bankDecoder.set("pcg", async function (blob) {
+	let sysexBlob = new Uint8Array(await blob.arrayBuffer());
+	let voiceMap = "MSB	LSB	PRG	NME";
+	let ptr = 100, mode = 0, headSects = 0, resume = true;
+	let sections = [], sectPtr = 0;
+	while (resume) {
+		let rwin = sysexBlob.subarray(ptr);
+		([() => {
+			resume = utf8Dec.decode(rwin.subarray(0, 4)) == "INI2";
+			headSects = rwin[15];
+			//console.error(`Section count: ${headSects}`);
+			ptr += 16;
+			mode = 1;
+		}, () => {
+			let type = utf8Dec.decode(rwin.subarray(0, 4));
+			let tipMsb = rwin[5], tipLsb = rwin[7];
+			let nameLen = rwin[11];
+			let length = readInt(rwin.subarray(12, 16));
+			let start = readInt(rwin.subarray(16, 20));
+			let entryLen = readInt(rwin.subarray(36, 40));
+			let name = utf8Dec.decode(rwin.subarray(44, 44 + nameLen));
+			sections.push({
+				type, tipMsb, tipLsb, nameLen,
+				length, start, entryLen, name
+			});
+			ptr += 64;
+			headSects --;
+			if (headSects < 1) {
+				mode = 2;
+			};
+		}, () => {
+			// Section reading mode
+			let section = sections[sectPtr];
+			let sectWin = sysexBlob.subarray(section.start, section.start + section.length);
+			switch (section.type) {
+				case "PRG1": {
+					break;
+				};
+				case "PBK1": {
+					let msb = 63, prg = (section.tipMsb ? 6 : 0) + section.tipLsb;
+					for (let i = 0; i < 128; i ++) {
+						let entryStart = i * section.entryLen;
+						let entryWin = sectWin.subarray(entryStart, entryStart + section.entryLen);
+						let name = utf8Dec.decode(entryWin.subarray(0, 24)).trimEnd().replace("InitProg", "");
+						if (name.length && prg > 5) {
+							voiceMap += `\n${(msb).toString().padStart(3, "0")}	${(prg).toString().padStart(3, "0")}	${(i).toString().padStart(3, "0")}	${name}`;
+						};
+					};
+					break;
+				};
+				case "CBK1": {
+					let msb = 63, prg = (section.tipMsb ? 3 : 0) + section.tipLsb + 10;
+					for (let i = 0; i < 128; i ++) {
+						let entryStart = i * section.entryLen;
+						let entryWin = sectWin.subarray(entryStart, entryStart + section.entryLen);
+						let name = utf8Dec.decode(entryWin.subarray(0, 24)).trimEnd().replace("InitCombi", "");
+						if (name.length && prg > 12) {
+							voiceMap += `\n${(msb).toString().padStart(3, "0")}	${(prg).toString().padStart(3, "0")}	${(i).toString().padStart(3, "0")}	${name}`;
+						};
+					};
+					break;
+				};
+			};
+			sectPtr ++;
+			if (sectPtr >= sections.length) {
+				mode = 3;
+				resume = false;
+			};
+		}][mode] || (() => {
+			resume = false;
+			//console.error(`Mode out of bound. Stopping.`);
+		}))();
+	};
+	//console.debug(voiceMap);
+	return voiceMap;
+});
 
 export {
 	bankDecoder

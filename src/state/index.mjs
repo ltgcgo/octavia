@@ -1855,7 +1855,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			case "s7e":
 			case "pcg": {
 				bankDecoder.context = this;
-				upThis.userBank.load(await bankDecoder.read(format, blob));
+				await upThis.userBank.load(await bankDecoder.read(format, blob), false);
 				break;
 			};
 		};
