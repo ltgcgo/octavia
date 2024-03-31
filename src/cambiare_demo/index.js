@@ -147,7 +147,8 @@ self.gOpenSmf = async function () {
 			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
 			break;
 		};
-		case "s7e": {
+		case "s7e":
+		case "pcg": {
 			// Load sound banks
 			visualizer.device.loadBank(ext, file);
 			break;

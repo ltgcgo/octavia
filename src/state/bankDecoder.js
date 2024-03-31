@@ -121,6 +121,7 @@ bankDecoder.set("s7e", async function (blob) {
 	};
 	return voiceMap;
 });
+bankDecoder.set("pcg", async function (blob) {});
 
 export {
 	bankDecoder

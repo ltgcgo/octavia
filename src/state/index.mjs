@@ -1842,12 +1842,18 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.userBank.clearRange({msb: 63, lsb: [24, 27]});
 				break;
 			};
+			case "pcg": {
+				upThis.userBank.clearRange({msb: 63, lsb: [6, 9]});
+				upThis.userBank.clearRange({msb: 63, lsb: [13, 16]});
+				break;
+			};
 			default: {
 				throw(new Error(`Unknown bank format ${format}`));
 			};
 		};
 		switch (format) {
-			case "s7e": {
+			case "s7e":
+			case "pcg": {
 				bankDecoder.context = this;
 				upThis.userBank.load(await bankDecoder.read(format, blob));
 				break;
