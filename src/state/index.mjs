@@ -5126,7 +5126,82 @@ let OctaviaDevice = class extends CustomEventSource {
 			(addrSet[msg[0]] || (() => {
 				console.info(`Unrecognized ${dPref}ID: ${msg[0]}.`);
 			}))(msg.subarray(1));
-		})*/.add([127, 1, 0, 58, 55], (msg, track, id) => {
+		})*/.add([127, 1, 0, 36, 54, 1], (msg, track, id) => {
+			// S90 ES Reverb
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES reverb ",
+			offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				([() => {
+					upThis.setEffectTypeRaw(0, false, (e & 15) | 112);
+				}, () => {
+					upThis.setEffectTypeRaw(0, true, e);
+				}][offset + i] || (() => {
+					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
+				}))();
+			});
+			upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+		}).add([127, 1, 0, 37, 54, 2], (msg, track, id) => {
+			// S90 ES Chorus
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES chorus ",
+			offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				([() => {
+					upThis.setEffectTypeRaw(1, false, (e & 15) | 112);
+				}, () => {
+					upThis.setEffectTypeRaw(1, true, e);
+				}][offset + i] || (() => {
+					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
+				}))();
+			});
+			upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+		}).add([127, 1, 0, 34, 54, 3], (msg, track, id) => {
+			// S90 ES Ins1
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES insert 1 ",
+			offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				([() => {
+					upThis.setEffectTypeRaw(3, false, (e & 15) | 112);
+				}, () => {
+					upThis.setEffectTypeRaw(3, true, e);
+				}][offset + i] || (() => {
+					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
+				}))();
+			});
+			upThis.dispatchEvent("efxinsert0", upThis.getEffectType(3));
+		}).add([127, 1, 0, 34, 54, 4], (msg, track, id) => {
+			// S90 ES Ins2
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES insert 2 ",
+			offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				([() => {
+					upThis.setEffectTypeRaw(4, false, (e & 15) | 112);
+				}, () => {
+					upThis.setEffectTypeRaw(4, true, e);
+				}][offset + i] || (() => {
+					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
+				}))();
+			});
+			upThis.dispatchEvent("efxinsert1", upThis.getEffectType(4));
+		}).add([127, 1, 0, 35, 54, 17], (msg, track, id) => {
+			// S90 ES Var
+			upThis.switchMode("s90es");
+			let dPref = "S90/Motif ES variation ",
+			offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				([() => {
+					upThis.setEffectTypeRaw(2, false, (e & 15) | 112);
+				}, () => {
+					upThis.setEffectTypeRaw(2, true, e);
+				}][offset + i] || (() => {
+					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
+				}))();
+			});
+			upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
+		}).add([127, 1, 0, 58, 55], (msg, track, id) => {
 			// S90 ES bulk part setup (?)
 			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("s90es");

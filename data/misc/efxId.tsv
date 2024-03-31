@@ -18,8 +18,8 @@ MSB	LSB	Name
 06	00	XG Delay LR
 07	00	XG Echo
 08	00	XG Cross Delay
-09	00	XG Early Reflect 1
-09	01	XG Early Reflect 2
+09	00	XG Early Reflection 1
+09	01	XG Early Reflection 2
 0a	00	XG Gate
 0b	00	XG Reverse Gate
 10	00	XG White Room
@@ -128,9 +128,9 @@ MSB	LSB	Name
 2c	07	AI Wet Plate
 2c	08	AI Dry Plate
 2c	09	AI Spring
-2c	0a	AI Early Reflect 1
-2c	0b	AI Early Reflect 2
-2c	0c	AI Early Reflect 3
+2c	0a	AI Early Reflection 1
+2c	0b	AI Early Reflection 2
+2c	0c	AI Early Reflection 3
 2c	0d	AI Stereo Delay
 2c	0e	AI Cross Delay
 2c	0f	AI Dual Delay
@@ -346,7 +346,7 @@ MSB	LSB	Name
 56	03	XG 2-way Rot+Amp
 57	00	XG Ensemble Detune
 58	00	XG Ambience
-5d	00	XG Talking Mod
+5d	00	XG Talking Modulator
 5e	00	XG Lo-Fi
 5f	00	XG Delay+Distortion
 5f	01	XG Delay+Overdrive
@@ -360,3 +360,133 @@ MSB	LSB	Name
 62	03	XG Vin Soft Dist+Dly
 63	00	XG Dual Rotary 1
 63	01	XG Dual Rotary 2
+70	00	ES Thru
+71	00	ES Hall 1
+71	01	ES Hall 2
+71	02	ES R3 Hall
+71	08	ES Large Hall
+71	09	ES Medium Hall
+71	10	ES Room 1
+71	11	ES Room 2
+71	12	ES Room 3
+71	13	ES R3 Room
+71	18	ES Warm Room
+71	19	ES Woody Room
+71	20	ES Stage 1
+71	21	ES Stage 2
+71	30	ES Plate
+71	31	ES R3 Plate
+71	38	ES Rich Plate
+71	40	ES White Room
+71	41	ES Tunnel
+71	42	ES Basement
+71	43	ES Canyon
+72	00	ES Delay LCR
+72	10	ES Delay LR
+72	18	ES Delay LR St.
+72	20	ES Echo
+72	30	ES Cross Delay
+72	40	ES Ctrl Delay Mono
+72	48	ES Ctrl Delay St.
+72	50	ES Tempo Dly Mono
+72	58	ES Tempo Dly St.
+72	60	ES Tempo Cross Dly
+73	00	ES Early Reflection 1
+73	01	ES Early Reflection 2
+73	10	ES Gate Reverb
+73	20	ES Reverse Gate
+74	00	ES Karaoke 1
+74	01	ES Karaoke 2
+74	02	ES Karaoke 3
+75	00	ES Chorus 1
+75	01	ES Chorus 2
+75	02	ES Chorus 3
+75	08	ES Chorus 4
+75	09	ES Chorus 5
+75	10	ES Celeste 1
+75	11	ES Celeste 2
+75	12	ES Celeste 3
+75	18	ES Celeste 4
+75	20	ES Symphonic
+75	30	ES Ensemble Detune
+76	00	ES Flanger 1
+76	01	ES Flanger 2
+76	08	ES Flanger 3
+76	10	ES V-Flanger
+76	20	ES Vintage Flanger 1
+76	21	ES Vintage Flanger 2
+76	22	ES Vintage Flanger 3
+76	50	ES Tempo Flanger
+76	60	ES Dynamic Flanger
+77	00	ES Phaser 1
+77	08	ES Phaser 2
+77	20	ES Vintg Phaser 1 S
+77	21	ES Vintg Phaser 2 S
+77	30	ES Vintg Phaser 1 M
+77	31	ES Vintg Phaser 2 M
+77	50	ES Tempo Phaser
+77	60	ES Dynamic Phaser
+78	00	ES Tremolo
+78	10	ES Auto Pan 1
+78	11	ES Auto Pan 2
+78	50	ES Rotary 1
+78	51	ES Distort+RotSp 1
+78	52	ES Overdrive+RotSp 1
+78	53	ES Amp+Rotary 1
+78	60	ES Rotary 2
+78	61	ES Distort+RotSp 2
+78	62	ES Overdrive+RotSp 2
+78	63	ES Amp+Rotary 2
+78	70	ES Dual Rotary 1
+78	71	ES Dual Rotary 2
+78	72	ES Dual Rotary 3
+79	00	ES Distortion
+79	01	ES Compress+Distort
+79	10	ES V-Distortion
+79	20	ES Overdrive
+79	30	ES Amp Simulator 1
+79	31	ES Amp Simulator 2
+79	40	ES Distort+Delay
+79	41	ES Overdrive+Delay
+7a	00	ES Compressor
+7a	20	ES Noise Gate
+7a	40	ES Comp+Dist+Delay
+7a	41	ES Comp+Ovdr+Delay
+7a	50	ES Multiband Cmp 1
+7a	51	ES Multiband Cmp 2
+7b	00	ES Pitch Change 1
+7b	01	ES Pitch Change 2
+7c	00	ES Auto Wah
+7c	01	ES Wah+Distort
+7c	02	ES Wah+Overdrive
+7c	10	ES Touch Wah
+7c	11	ES T. Wah+Distort
+7c	12	ES T. Wah+Overdrive
+7c	20	ES Vintage Wah 1
+7c	21	ES Vintage Wah 2
+7c	30	ES Vintage T. Wah 1
+7c	31	ES Vintage T. Wah 2
+7c	40	ES Wah+Dist+Delay
+7c	41	ES Wah+Ovdr+Delay
+7d	00	ES Lo-Fi
+7d	10	ES Lo-Res
+7d	20	ES Noisy
+7d	30	ES Attack Lo-Fi
+7d	50	ES Digital Turntable
+7e	00	ES Digital Scratch
+7e	10	ES Auto Synth
+7e	20	ES Tech Modulation
+7e	30	ES Jump
+7e	40	ES Isolator
+7e	50	ES Slice
+7f	00	ES 3-band EQ
+7f	01	ES 2-band EQ
+7f	10	ES Enhancer
+7f	20	ES Voice Cancel
+7f	30	ES Ambience
+7f	40	ES Talking Modulator
+7f	50	ES Beat Change
+7f	60	ES Damper Reso.
+7f	70	ES Ring Modulator
+7f	71	ES Dyna Ring Mod
+7f	72	ES Dynamic Filter
