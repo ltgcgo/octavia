@@ -5098,7 +5098,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
 				}))();
 			});
-		}).add([127, 1, 0, 0, 14], (msg, track, id) => {
+		})/*.add([127, 1, 0, 0, 14], (msg, track, id) => {
 			// S90 ES bulk dump header
 			upThis.switchMode("s90es");
 			let dPref = "S90/Motif ES bulk header ";
@@ -5120,7 +5120,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			(addrSet[msg[0]] || (() => {
 				console.info(`Unrecognized ${dPref}ID: ${msg[0]}.`);
 			}))(msg.subarray(1));
-		}).add([127, 1, 0, 58, 55], (msg, track, id) => {
+		})*/.add([127, 1, 0, 58, 55], (msg, track, id) => {
 			// S90 ES bulk part setup (?)
 			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("s90es");
