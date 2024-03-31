@@ -145,7 +145,7 @@ visualizer.addEventListener("meta", function (ev) {
 // Open the files
 let midwIndicator = $e("#openMidw");
 let audioBlob;
-const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
+const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".pcg",".PCG"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	useMidiBus = false;
