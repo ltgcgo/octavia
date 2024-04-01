@@ -5247,23 +5247,31 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					upThis.#mono[part] = e ? 0 : 1;
 				}, false, false, false, false, false, false, false, false, () => {
+					e != 100 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[7]] = e;
 				}, () => {
+					e != 64 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[10]] = e;
 				}, false, false, false, () => {
+					//e != 40 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[91]] = e;
 				}, () => {
+					e && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[93]] = e;
 				}, () => {
+					e && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[94]] = e;
 				}, () => {
+					e != 127 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[128]] = e;
 					upThis.allocateAce(128);
 				}, () => {
 					// note shift, RPN
 				}, () => {
+					e != 64 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[74]] = e;
 				}, () => {
+					e != 64 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[71]] = e;
 				}, false, () => {
 					upThis.#cc[chOff + ccToPos[65]] = e;
