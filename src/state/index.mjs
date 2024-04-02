@@ -1489,6 +1489,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 	};
+	setGsTargets(useSc = false, gsLevel = 4) {
+		if (!gsLevel) {
+			gsLevel = useSc ? 3 : 4;
+		} else if (gsLevel > 4 || gsLevel < 0) {
+			throw(new Error(`Invalid GS level ${gsLevel}`));
+			return;
+		} else if (useSc && (gsLevel >> 1) != 1) {
+			throw(new Error(`Invalid SC level ${gsLevel}`));
+		};
+		let upThis = this;
+		upThis.#detect[useSc ? "sc" : "gs"] = gsLevel;
+		upThis.forceVoiceRefresh();
+	};
 	allocateAce(cc) {
 		// Allocate active custom effect
 		// Off, cc1~cc95, CAT, velo, PB
@@ -1764,12 +1777,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#subLsb = substList[1][idx];
 				//console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
 				for (let ch = 0; ch < allocated.ch; ch ++) {
-					if (upThis.#chType[ch] > 0) {
-						//console.debug(`CH${ch + 1} (${upThis.#chType[ch]}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
-						if (upThis.#cc[ch * allocated.cc + ccToPos[0]] == drumMsb[oldMode]) {
-							// Switch drum MSBs.
-							upThis.#cc[ch * allocated.cc] = drumMsb[idx];
-						};
+					if (upThis.#chType[ch] > 0 && upThis.#modes[ch] == 0) {
+						// Switch drum MSBs.
+						upThis.#cc[ch * allocated.cc] = drumMsb[idx];
+						//console.debug(`CH${ch + 1} (${upThis.#chType[ch]}) (${upThis.getChMode(ch)}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
+						// I'll deal with this later?
 					};
 					//this.initOnReset && forced && this.#ua.ano(ch);
 				};
@@ -1931,8 +1943,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#bitmapStore[10] = new Uint8Array(512);
 		upThis.#metaSeq = new BinaryMatch();
 		upThis.#detect = {
-			"x5": 82, // The target device of X5-related functions
-			"ds": modeMap.krs // The target device of device-exclusive banks
+			"x5": 82, // X5-related functions
+			"ds": modeMap.krs, // device-exclusive banks
+			"gs": 4, // GS reset
+			"sc": 3 // GS mode set
 		};
 		/* upThis.#detect = new Proxy(upThis.#detectR, {
 			get: (real, key) => {
@@ -3376,7 +3390,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[allocated.cc * 25] = 120;
 			upThis.#cc[allocated.cc * 41] = 120;
 			upThis.#cc[allocated.cc * 57] = 120;
-			upThis.#subLsb = 3; // Use SC-88 Pro map by default
+			upThis.#subLsb = upThis.#detect.sc;
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.fill(0);
 			console.info(`GS system to ${["single", "dual"][msg[0]]} mode.`);
@@ -3386,6 +3400,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Roland GS reset
 					upThis.switchMode("gs", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.gs);
+					upThis.#subLsb = upThis.#detect.gs;
 					upThis.#cc[allocated.cc * 9] = 120;
 					upThis.#cc[allocated.cc * 25] = 120;
 					upThis.#cc[allocated.cc * 41] = 120;

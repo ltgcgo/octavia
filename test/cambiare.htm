@@ -18,13 +18,21 @@
 </head>
 <body>
 	<div class="container" x-data="{}">
-		<div class="columns is-multiline is-mobile is-vcentered">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['macos','macOS']],dumps:[[0,'All'],[1,'Once']]}">
 			<div class="column column-option"><b>Open from</b></div>
 			<div class="column column-option column-button" @click="gOpenSmf()" :active="$store.play=='smf'?'true':'false'" title="Open MIDI files, SysEx blobs or bank files.">MIDI</div>
 			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='file'?'true':'false'" title="Open synchronized audio tracks.">audio</div>
 			<div class="column column-option column-button" @click="gOpenCap()" :active="$store.sound=='mic'?'true':'false'" title="Open audio capture.">capture</div>
 			<div class="column column-option column-button" @click="gOpenLni()" :active="$store.useMidiBus" title="Reset and receive raw MIDI inputs from middleware.">line in</div>
 			<div class="column column-option column-button" @click="gOpenLno()" :active="$store.play=='lno'?'true':'false'" title="Reset and receive MIDI events emitted from middleware.">line out</div>
+			<div class="column column-option"><b>Pixel correction</b></div>
+			<template x-for="profile in profiles">
+				<div class="column column-option column-button" @click="gPixelC(profile[0])" x-text="profile[1]" :active="($store.pixelProfile||'none')==profile[0]?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>Limit Dump</b></div>
+			<template x-for="dump in dumps">
+				<div class="column column-option column-button" @click="gLimitDump(dump[0])" x-text="dump[1]" :active="($store.limitDump||0)==dump[0]?'true':'false'"></div>
+			</template>
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['sd','SD'],['krs','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
@@ -49,10 +57,18 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['macos','macOS']]}">
-			<div class="column column-option"><b>Pixel correction</b></div>
-			<template x-for="profile in profiles">
-				<div class="column column-option column-button" @click="gPixelC(profile[0])" x-text="profile[1]" :active="($store.pixelProfile||'none')==profile[0]?'true':'false'"></div>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native']],gsLvls:[[1,'SC-55'],[2,'SC-88'],[3,'SC-88 Pro'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']]}">
+			<div class="column column-option"><b>XG Level</b></div>
+			<template x-for="xgLvl in xgLvls">
+				<div class="column column-option column-button" @click="gXgLvl(xgLvl[0])" x-text="xgLvl[1]" :active="($store.xgLvl||0)==xgLvl[0]?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>GS Level</b></div>
+			<template x-for="gsLvl in gsLvls">
+				<div class="column column-option column-button" @click="gGsLvl(gsLvl[0])" x-text="gsLvl[1]" :active="($store.gsLvl||4)==gsLvl[0]?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>SC Level</b></div>
+			<template x-for="scLvl in scLvls">
+				<div class="column column-option column-button" @click="gScLvl(scLvl[0])" x-text="scLvl[1]" :active="($store.scLvl||3)==scLvl[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
