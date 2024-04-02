@@ -1583,6 +1583,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#nrpn.fill(0);
 		upThis.#rpnt.fill(0);
 		upThis.#ext.fill(0);
+		upThis.#modes.fill(0);
 		upThis.#ccCapturer.fill(0);
 		upThis.#masterVol = 100;
 		upThis.#metaTexts = [];
@@ -1692,9 +1693,33 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.switchMode("?");
 		return;
 	};
+	setPortMode(port, range, modeId) {
+		let upThis = this;
+		if (port < 0 || port >= (allocated.ch >> 4)) {
+			throw(new RangeError(`Invalid port ${port + 1}`));
+			return;
+		};
+		if (range < 1) {
+			throw(new RangeError(`Range must be a positive integer`));
+			return;
+		} else if ((port + range) >= (allocated.ch >> 4)) {
+			throw(new RangeError(`Range must be in bound`));
+			return;
+		};
+		if (port < 0 || modeId >= modeIdx.length) {
+			throw(new RangeError(`Invalid mode ID ${modeId}`));
+			return;
+		};
+		for (let part = port << 4; part < (port + range) << 4; part ++) {
+			upThis.#modes[part] = port;
+			upThis.dispatchEvent("voice", {
+				part
+			});
+		};
+	};
 	switchMode(mode, forced = false, setTarget = false) {
 		let upThis = this;
-		let idx = modeIdx.indexOf(mode);
+		let idx = modeMap[mode];
 		if (idx > -1) {
 			if (upThis.#mode == 0 || forced) {
 				let oldMode = upThis.#mode;
