@@ -312,7 +312,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#ccCapturer = new Uint8Array(allocated.ch * allocated.redir); // Redirect non-internal CCs to internal CCs
-	#mode = new Uint8Array(allocated.ch); // Per-part mode
+	#modes = new Uint8Array(allocated.ch); // Per-part mode
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cvnBuffer = new Uint8Array(allocated.ch * allocated.cvn); // Per-channel custom voice name
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
@@ -1377,12 +1377,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		return bank;
 	};
 	getChVoice(part) {
-		let voice = this.getVoice(this.#cc[part * allocated.cc + ccToPos[0]], this.#prg[part], this.#cc[part * allocated.cc + ccToPos[32]], modeIdx[this.#mode]);
-		if (this.#bnCustom[part]) {
+		let upThis = this;
+		let voice = upThis.getVoice(upThis.#cc[part * allocated.cc + ccToPos[0]], upThis.#prg[part], upThis.#cc[part * allocated.cc + ccToPos[32]], modeIdx[upThis.#modes[part] || upThis.#mode]);
+		if (upThis.#bnCustom[part]) {
 			let name = "";
-			switch (this.#mode) {
+			switch (upThis.#mode) {
 				case modeMap.mt32: {
-					this.#cmTTimbre.subarray(allocated.cmt * (part - 1), allocated.cmt * (part - 1) + 10).forEach((e) => {
+					upThis.#cmTTimbre.subarray(allocated.cmt * (part - 1), allocated.cmt * (part - 1) + 10).forEach((e) => {
 						name += String.fromCharCode(Math.max(e, 32));
 					});
 					name = name.trimRight();
@@ -1390,7 +1391,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				default: {
 					let pointer = allocated.cvn * part;
-					this.#cvnBuffer.subarray(pointer, pointer + allocated.cvn).forEach((e) => {
+					upThis.#cvnBuffer.subarray(pointer, pointer + allocated.cvn).forEach((e) => {
 						name += String.fromCharCode(Math.max(e, 32));
 					});
 					name = name.trimRight();
@@ -5541,6 +5542,82 @@ let OctaviaDevice = class extends CustomEventSource {
 		})/*.add([0, 72, 18, 17], (msg, track, id) => {
 			// Part setup (part)
 		})*/;
+		upThis.#seAi.add([0, 1, 73, 78], (msg, track, id) => {
+			upThis.switchMode("krs");
+			console.debug("Might be KORG KROSS 2 mode reset... Not sure.");
+		}).add([0, 1, 73, 117, 2, 37], (msg, track, id) => {
+			// KORG KROSS 2 BMT1 bundled multi-track dump
+			let unpacked = korgUnpack(msg);
+			console.debug(unpacked);
+			let dPref = `KROSS 2 BMT1 `
+			let trackName = "";
+			korgFilter(msg, (e, i) => {
+				if (i < 24) {
+					trackName += String.fromCharCode(Math.max(32, e));
+				} else if (i < 1276) {
+					// Trap...
+				} else {
+					// Part dump
+					let si = i - 1276;
+					let part = upThis.chRedir(Math.floor(si / 44), track, true);
+					let pi = si % 44;
+					let chOff = allocated.cc * part;
+					//console.debug(`${i} ${si} ${Math.floor(si / 44)} ${part} ${pi}`);
+					if (pi < 15) {
+						([() => {
+							e && (upThis.setChActive(part, 1));
+							upThis.#prg[part] = e;
+							//console.debug(`PRG ${part + 1} ${pi}: ${e}`)
+							upThis.dispatchEvent("voice", {
+								part
+							});
+						}, () => {
+							e && (upThis.setChActive(part, 1));
+							if (e < 9) {
+								upThis.#cc[chOff + ccToPos[0]] = 63;
+								upThis.#cc[chOff + ccToPos[32]] = e;
+							};
+							//console.debug(`LSB ${part + 1} ${pi}: ${e}`)
+							upThis.dispatchEvent("voice", {
+								part
+							});
+						}, () => {
+							// receive CH and status
+							let ch = upThis.chRedir(e & 15, track, true);
+							upThis.#chReceive[part] = ch;
+							console.info(`${dPref}CH${part + 1} receives from CH${ch + 1}`);
+						}, false, false, () => {
+							upThis.#cc[chOff + ccToPos[7]] = e;
+						}, false, () => {
+							// coarse
+						}, () => {
+							// fine
+						}, false, false, false, false, false, () => {
+							upThis.#cc[chOff + ccToPos[10]] = e;
+						}][pi] || (() => {}))();
+					} else if (pi < 36) {} else {
+						([() => {
+							upThis.#cc[chOff + ccToPos[74]] = ((e + 128) & 255) - 64;
+						}, () => {
+							upThis.#cc[chOff + ccToPos[71]] = ((e + 128) & 255) - 64;
+						}, false, false, () => {
+							upThis.#cc[chOff + ccToPos[73]] = ((e + 128) & 255) - 64;
+						}, () => {
+							upThis.#cc[chOff + ccToPos[75]] = ((e + 128) & 255) - 64;
+						}, false, () => {
+							upThis.#cc[chOff + ccToPos[72]] = ((e + 128) & 255) - 64;
+						}][pi] || (() => {}))();
+						console.debug(`${dPref}${pi} ${e}`);
+					};
+				};
+			});
+			trackName = trackName.trimRight();
+			upThis.dispatchEvent("metacommit", {
+				"type": "EORTitle",
+				"data": trackName
+			});
+			//upThis.buildRchTree();
+		});
 	};
 };
 

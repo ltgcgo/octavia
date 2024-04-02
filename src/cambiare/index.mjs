@@ -42,6 +42,7 @@ const metaNames = {
 	"Kar.Ver.": "Kar Version",
 	"SGLyrics": "SG Lyrics",
 	"TrkTitle": "Title",
+	"EORTitle": "Real Title", // Extension-overriden real title
 	"XfSngDte": "XF Date",
 	"XfSngRgn": "XF Region",
 	"XfSngCat": "XF Category",
