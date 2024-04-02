@@ -5629,8 +5629,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.debug("Might be KORG KROSS 2 mode reset... Not sure.");
 		}).add([0, 1, 73, 117, 2, 37], (msg, track, id) => {
 			// KORG KROSS 2 BMT1 bundled multi-track dump
-			let unpacked = korgUnpack(msg);
-			console.debug(unpacked);
+			/*let unpacked = korgUnpack(msg);
+			console.debug(unpacked);*/
+			upThis.switchMode("krs");
 			let dPref = `KROSS 2 BMT1 `
 			let trackName = "";
 			korgFilter(msg, (e, i) => {
@@ -5665,7 +5666,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								upThis.#cc[chOff + ccToPos[0]] = [120, 0, 56, 62][e - 20];
 								upThis.#cc[chOff + ccToPos[32]] = 0;
 							};
-							console.debug(`${dPref}CH${part + 1} LSB ${pi}: ${e}`)
+							//console.debug(`${dPref}CH${part + 1} LSB ${pi}: ${e}`)
 							upThis.dispatchEvent("voice", {
 								part
 							});
