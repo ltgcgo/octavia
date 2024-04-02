@@ -1693,6 +1693,21 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.switchMode("?");
 		return;
 	};
+	setPartMode(part, modeId) {
+		let upThis = this;
+		if (part < 0 || part >= allocated.ch) {
+			throw(new RangeError(`Invalid CH${part + 1}`));
+			return;
+		};
+		if (port < 0 || modeId >= modeIdx.length) {
+			throw(new RangeError(`Invalid mode ID ${modeId}`));
+			return;
+		};
+		upThis.#modes[part] = modeId;
+		upThis.dispatchEvent("voice", {
+			part
+		});
+	};
 	setPortMode(port, range, modeId) {
 		let upThis = this;
 		if (port < 0 || port >= (allocated.ch >> 4)) {
@@ -1711,7 +1726,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			return;
 		};
 		for (let part = port << 4; part < (port + range) << 4; part ++) {
-			upThis.#modes[part] = port;
+			upThis.#modes[part] = modeId;
 			upThis.dispatchEvent("voice", {
 				part
 			});
