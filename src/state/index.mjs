@@ -159,7 +159,7 @@ ccAccepted = [
 	12, 13, // General-purpose effect controllers
 	16, 17, 18, 19, // General-purpose sound controllers
 	14, 15, 20, 21, 26, 28, // For some reason, used by PLG-VL
-	80, 81, // Used by KORG KROSS 2
+	80, 81, 83, // Used by KORG KROSS 2
 	129, // PLG-VL part breath strength
 	130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, // PLG-VL part controls
 	142, 143, 144, 145, 146, 147, 148, 149, // PLG-DX carrier level
@@ -168,7 +168,7 @@ ccAccepted = [
 aceCandidates = [
 	2,
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-	80, 81,
+	80, 81, 83,
 	136, 130, 131, 132, 133, 134, 135, 137, 138, 139,
 	142, 143, 144, 145, 146, 147, 148, 149,
 	150, 151, 152, 153, 154, 155, 156, 157
@@ -312,6 +312,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#ccCapturer = new Uint8Array(allocated.ch * allocated.redir); // Redirect non-internal CCs to internal CCs
+	#mode = new Uint8Array(allocated.ch); // Per-part mode
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cvnBuffer = new Uint8Array(allocated.ch * allocated.cvn); // Per-channel custom voice name
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
@@ -2090,7 +2091,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			this.#metaChannel = data[0] + 1;
 		};
 		upThis.#metaRun[33] = function (data, track) {
-			//console.debug(`Track ${track} requests to get assigned to output ${data}.`);
+			getDebugState() && console.debug(`Track ${track} requests to get assigned to output ${data}.`);
 			upThis.#trkAsReq[track] = data + 1;
 		};
 		upThis.#metaRun[81] = function (data, track) {
@@ -5213,7 +5214,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = allocated.cc * part,
 			offset = msg[1];
-			let dPref = `S90/Motif ES bulk CH${part < 16 ? part + 1 : "U" + (part - 95)} `;
+			if (msg[0] > 15) {
+				part = msg[0] + 32;
+			};
+			let dPref = `Track ${track} S90/Motif ES bulk CH${part < 128 ? part + 1 : "U" + (part - 127)} `;
 			console.debug(dPref, msg);
 			if (msg[0] > 15) {
 				return;
