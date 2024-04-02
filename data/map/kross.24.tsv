@@ -1,4 +1,21 @@
 ID	Name
+BrtACClv	Bright AC Clavi.
+MelACClv	Mellow AC Clavi.
+DstACClv	Distorted AC Clavi.
+VWaACClv	Velo Wah AC Clavi.
+BrtADClv	Bright AD Clavi.
+MelADClv	Mellow AD Clavi.
+DstADClv	Distorted AD Clavi.
+VWaADClv	Velo Wah AD Clavi.
+BrtBCClv	Bright BC Clavi.
+MelBCClv	Mellow BC Clavi.
+DstBCClv	Distorted BC Clavi.
+VWaBCClv	Velo Wah BC Clavi.
+BrtBDClv	Bright BD Clavi.
+MelBDClv	Mellow BD Clavi.
+DstBDClv	Distorted BD Clavi.
+VWaBDClv	Velo Wah BD Clavi.
+T.WahClv	Touch Wah Clavi.
 LuvSngOr	Love Song E. Organ
 RkPercOr	Rock Perc E. Organ
 Cathedrl	Cathedral Choir
