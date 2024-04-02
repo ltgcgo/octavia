@@ -5655,11 +5655,14 @@ let OctaviaDevice = class extends CustomEventSource {
 							});
 						}, () => {
 							e && (upThis.setChActive(part, 1));
-							if (e < 9) {
+							if (e < 10) {
 								upThis.#cc[chOff + ccToPos[0]] = 63;
 								upThis.#cc[chOff + ccToPos[32]] = e;
+							} else if (e < 20) {
+								upThis.#cc[chOff + ccToPos[0]] = 121;
+								upThis.#cc[chOff + ccToPos[32]] = e - 10;
 							};
-							//console.debug(`LSB ${part + 1} ${pi}: ${e}`)
+							console.debug(`${dPref}CH${part + 1} LSB ${pi}: ${e}`)
 							upThis.dispatchEvent("voice", {
 								part
 							});
@@ -5689,7 +5692,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						}, false, () => {
 							upThis.#cc[chOff + ccToPos[72]] = ((e + 128) & 255) - 64;
 						}][pi] || (() => {}))();
-						console.debug(`${dPref}${pi} ${e}`);
+						//console.debug(`${dPref}${pi} ${e}`);
 					};
 				};
 			});
