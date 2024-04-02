@@ -5661,6 +5661,9 @@ let OctaviaDevice = class extends CustomEventSource {
 							} else if (e < 20) {
 								upThis.#cc[chOff + ccToPos[0]] = 121;
 								upThis.#cc[chOff + ccToPos[32]] = e - 10;
+							} else if (e < 24) {
+								upThis.#cc[chOff + ccToPos[0]] = [120, 0, 56, 62][e - 20];
+								upThis.#cc[chOff + ccToPos[32]] = 0;
 							};
 							console.debug(`${dPref}CH${part + 1} LSB ${pi}: ${e}`)
 							upThis.dispatchEvent("voice", {
