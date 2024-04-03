@@ -144,7 +144,7 @@ self.gScLvl = async function (level) {
 	Alpine.store("scLvl", level);
 };
 self.gLimitDump = async function (limit) {
-	//visualizer.device.setGsTargets(true, level);
+	visualizer.device.setDumpLimit(limit);
 	Alpine.store("limitDump", limit);
 };
 

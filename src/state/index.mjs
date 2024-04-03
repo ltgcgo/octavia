@@ -223,8 +223,10 @@ let showTrue = function (data, prefix = "", suffix = "", length = 2) {
 	return data ? `${prefix}${data.toString().padStart(length, "0")}${suffix}` : "";
 };
 
+let allocatedPorts = 8;
 const allocated = {
-	ch: 128, // channels
+	port: allocatedPorts,
+	ch: allocatedPorts << 4, // channels
 	cc: ccAccepted.length, // control changes
 	nn: 128, // notes per channel
 	pl: 512, // polyphony
@@ -274,6 +276,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	CH_DRUM6 = 7;
 	CH_DRUM7 = 8;
 	CH_DRUM8 = 9;
+	DUMP_ALL = 0;
+	DUMP_ONCE = 1;
+	DUMP_MODE = 2;
 	EXT_NONE = 0;
 	EXT_VL = 1;
 	EXT_DX = 3;
@@ -312,7 +317,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#ccCapturer = new Uint8Array(allocated.ch * allocated.redir); // Redirect non-internal CCs to internal CCs
-	#modes = new Uint8Array(allocated.ch); // Per-part mode
+	#portMode = new Uint8Array(allocated.port); // Per-port mode
+	#chMode = new Uint8Array(allocated.ch); // Per-part mode
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cvnBuffer = new Uint8Array(allocated.ch * allocated.cvn); // Per-channel custom voice name
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
@@ -322,6 +328,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	#subMsb = 0; // Allowing global bank switching
 	#subLsb = 0;
 	#detect;
+	#conf;
+	#confProxy;
 	#masterVol = 100;
 	#metaChannel = 0;
 	#noteLength = 500;
@@ -1381,7 +1389,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getChVoice(part) {
 		let upThis = this;
-		let voice = upThis.getVoice(upThis.#cc[part * allocated.cc + ccToPos[0]], upThis.#prg[part], upThis.#cc[part * allocated.cc + ccToPos[32]], modeIdx[upThis.#modes[part] || upThis.#mode]);
+		let voice = upThis.getVoice(upThis.#cc[part * allocated.cc + ccToPos[0]], upThis.#prg[part], upThis.#cc[part * allocated.cc + ccToPos[32]], upThis.getChMode(part));
 		if (upThis.#bnCustom[part]) {
 			let name = "";
 			switch (upThis.#mode) {
@@ -1483,9 +1491,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 			case modeMap.s90es: {
 				upThis.#detect.ds = modeMap.s90es;
+				upThis.#detect.smotif = modeMap.s90es;
 			};
 			case modeMap.motif: {
 				upThis.#detect.ds = modeMap.motif;
+				upThis.#detect.smotif = modeMap.motif;
 			};
 		};
 	};
@@ -1501,6 +1511,15 @@ let OctaviaDevice = class extends CustomEventSource {
 		let upThis = this;
 		upThis.#detect[useSc ? "sc" : "gs"] = gsLevel;
 		upThis.forceVoiceRefresh();
+	};
+	getConfigs() {
+		return this.#confProxy;
+	};
+	setDumpLimit(limit) {
+		if (limit > 2 || limit < 0) {
+			throw(new RangeError("Invalid dump limit."));
+		};
+		this.#conf.dumpLimit = limit;
 	};
 	allocateAce(cc) {
 		// Allocate active custom effect
@@ -1599,7 +1618,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#nrpn.fill(0);
 		upThis.#rpnt.fill(0);
 		upThis.#ext.fill(0);
-		upThis.#modes.fill(0);
+		upThis.#portMode.fill(0);
+		upThis.#chMode.fill(0);
 		upThis.#ccCapturer.fill(0);
 		upThis.#masterVol = 100;
 		upThis.#metaTexts = [];
@@ -1720,7 +1740,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new RangeError(`Invalid mode ID ${modeId}`));
 			return;
 		};
-		upThis.#modes[part] = modeId;
+		upThis.#chMode[part] = modeId;
 		upThis.dispatchEvent("voice", {
 			part
 		});
@@ -1730,9 +1750,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getChModeId(part, noFallback) {
 		if (noFallback) {
-			return this.#modes[part];
+			return this.#chMode[part] || this.#portMode[part >> 4];
 		} else {
-			return this.#modes[part] || this.#mode;
+			return this.#chMode[part] || this.#portMode[part >> 4] || this.#mode;
 		};
 	};
 	setPortMode(port, range, modeId) {
@@ -1753,11 +1773,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new RangeError(`Invalid mode ID ${modeId}`));
 			return;
 		};
-		for (let part = port << 4; part < (port + range) << 4; part ++) {
-			upThis.#modes[part] = modeId;
-			upThis.dispatchEvent("voice", {
-				part
-			});
+		for (let sect = port; sect < port + range; sect ++) {
+			upThis.#portMode[sect] = modeId;
+			for (let part = sect << 4; part < ((sect + 1) << 4); part ++) {
+				upThis.dispatchEvent("voice", {
+					part
+				});
+			};
 		};
 	};
 	switchMode(mode, forced = false, setTarget = false) {
@@ -1777,7 +1799,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#subLsb = substList[1][idx];
 				//console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
 				for (let ch = 0; ch < allocated.ch; ch ++) {
-					if (upThis.#chType[ch] > 0 && upThis.#modes[ch] == 0) {
+					if (upThis.#chType[ch] > 0 && upThis.#chMode[ch] == 0) {
 						// Switch drum MSBs.
 						upThis.#cc[ch * allocated.cc] = drumMsb[idx];
 						//console.debug(`CH${ch + 1} (${upThis.#chType[ch]}) (${upThis.getChMode(ch)}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
@@ -1945,9 +1967,16 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#detect = {
 			"x5": 82, // X5-related functions
 			"ds": modeMap.krs, // device-exclusive banks
+			"smotif": modeMap.s90es, // defaults to S90 ES
 			"gs": 4, // GS reset
 			"sc": 3 // GS mode set
 		};
+		upThis.#conf = {
+			"dumpLimit": upThis.DUMP_ALL
+		};
+		upThis.#confProxy = new Proxy(upThis.#conf, {
+			"set": () => {}
+		});
 		/* upThis.#detect = new Proxy(upThis.#detectR, {
 			get: (real, key) => {
 				return real[key];
@@ -4016,11 +4045,20 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 		}).add([54, 104], (msg, track) => {
-			// X5D extended multi setup
+			// X5D extended multi setup dump
 			upThis.dispatchEvent("mupromptex");
 			let x5Target = upThis.#detect.x5 == "81" ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, true);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
+			let port = upThis.getTrackPort(track);
+			if (upThis.#portMode[port] && upThis.#portMode[port] != modeMap[x5Target]) {
+				if (upThis.#conf.dumpLimit == upThis.DUMP_MODE) {
+					console.warn(`Dump cancelled for track ${track}. Port ${String.fromCharCode(65 + port)} mode "${modeIdx[upThis.#portMode[port]]}" mismatch, should be "${x5Target}".`);
+					return;
+				} else {
+					console.info(`Track ${track} is trying to perform a mismached mode dump on port ${String.fromCharCode(65 + port)}.`);
+				};
+			};
+			upThis.setPortMode(port, 1, modeMap[x5Target]);
 			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
 					let part = upThis.chRedir(Math.floor(i / 12), track, true),
@@ -4668,6 +4706,16 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.info(`NS5R current multi dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
 				console.debug(msg);
 			};
+			let port = upThis.getTrackPort(track);
+			if (upThis.#portMode[port] && upThis.#portMode[port] != modeMap.ns5r) {
+				if (upThis.#conf.dumpLimit == upThis.DUMP_MODE) {
+					console.warn(`Dump cancelled for track ${track}. Port ${String.fromCharCode(65 + port)} mode "${modeIdx[upThis.#portMode[port]]}" mismatch, should be "ns5r".`);
+					return;
+				} else {
+					console.info(`Track ${track} is trying to perform a mismached mode dump on port ${String.fromCharCode(65 + port)}.`);
+				};
+			};
+			upThis.setPortMode(port, 2, modeMap.ns5r);
 			// I'm lazy I just ported the old code here don't judge meee
 			korgFilter(msgData, function (e, i) {
 				switch (true) {
@@ -5304,9 +5352,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
 		}).add([127, 1, 0, 58, 55], (msg, track, id) => {
-			// S90 ES bulk part setup (?)
+			// S90 ES bulk part setup dump (?)
 			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("s90es");
+			let port = upThis.getTrackPort(track);
+			if (upThis.#portMode[port] && upThis.#portMode[port] != upThis.#detect.smotif) {
+				if (upThis.#conf.dumpLimit == upThis.DUMP_MODE) {
+					console.warn(`Dump cancelled for track ${track}. Port ${String.fromCharCode(65 + port)} mode "${modeIdx[upThis.#portMode[port]]}" mismatch, should be "${modeIdx[upThis.#detect.smotif]}".`);
+					return;
+				} else {
+					console.info(`Track ${track} is trying to perform a mismached mode dump on port ${String.fromCharCode(65 + port)}.`);
+				};
+			};
+			//upThis.setPortMode(port, 2, modeMap.s90es);
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = allocated.cc * part,
 			offset = msg[1];
@@ -5647,6 +5705,16 @@ let OctaviaDevice = class extends CustomEventSource {
 			/*let unpacked = korgUnpack(msg);
 			console.debug(unpacked);*/
 			upThis.switchMode("krs");
+			let port = upThis.getTrackPort(track);
+			if (upThis.#portMode[port] && upThis.#portMode[port] != modeMap.krs) {
+				if (upThis.#conf.dumpLimit == upThis.DUMP_MODE) {
+					console.warn(`Dump cancelled. Port ${String.fromCharCode(65 + port)} mode "${modeIdx[upThis.#portMode[port]]}" mismatch, should be "krs".`);
+					return;
+				} else {
+					console.info(`Track ${track} is trying to perform a mismached mode dump on port ${String.fromCharCode(65 + port)}.`);
+				};
+			};
+			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.krs);
 			let dPref = `KROSS 2 BMT1 `
 			let trackName = "";
 			korgFilter(msg, (e, i) => {
