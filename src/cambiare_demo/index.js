@@ -131,6 +131,22 @@ self.gPixelC = async function (profile) {
 	visualizer.setPixelProfile(profile);
 	Alpine.store("pixelProfile", profile);
 };
+self.gXgLvl = async function (level) {
+	//visualizer.device.setGsTargets(false, level);
+	Alpine.store("xgLvl", level);
+};
+self.gGsLvl = async function (level) {
+	visualizer.device.setGsTargets(false, level);
+	Alpine.store("gsLvl", level);
+};
+self.gScLvl = async function (level) {
+	visualizer.device.setGsTargets(true, level);
+	Alpine.store("scLvl", level);
+};
+self.gLimitDump = async function (limit) {
+	//visualizer.device.setGsTargets(true, level);
+	Alpine.store("limitDump", limit);
+};
 
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".mdat",".MDAT",".pcg",".PCG"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');

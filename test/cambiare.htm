@@ -18,7 +18,7 @@
 </head>
 <body>
 	<div class="container" x-data="{}">
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['macos','macOS']],dumps:[[0,'All'],[1,'Once']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['macos','macOS']],dumps:[[0,'All','Place no restrictions on dumps.'],[1,'Once','Channels can only be dumped once.'],[2,'Mode','Only dumps with the same mode as the channel are allowed.']]}">
 			<div class="column column-option"><b>Open from</b></div>
 			<div class="column column-option column-button" @click="gOpenSmf()" :active="$store.play=='smf'?'true':'false'" title="Open MIDI files, SysEx blobs or bank files.">MIDI</div>
 			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='file'?'true':'false'" title="Open synchronized audio tracks.">audio</div>
@@ -31,14 +31,14 @@
 			</template>
 			<div class="column column-option"><b>Limit Dump</b></div>
 			<template x-for="dump in dumps">
-				<div class="column column-option column-button" @click="gLimitDump(dump[0])" x-text="dump[1]" :active="($store.limitDump||0)==dump[0]?'true':'false'"></div>
+				<div class="column column-option column-button" @click="gLimitDump(dump[0])" x-text="dump[1]" :title="dump[2]" :active="($store.limitDump||0)==dump[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['sd','SD'],['krs','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
 			<div class="column column-option"><b>Set mode to</b></div>
 			<template x-for="mode in modes">
-				<div class="column column-option column-button" @click="gMode(mode[0])" x-text="mode[1]" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
+				<div class="column column-option column-button" @click="gMode(mode[0])" x-text="mode[1]" :title="`Internal ID: (${mode[0]})`" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
