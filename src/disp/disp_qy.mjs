@@ -331,7 +331,7 @@ let QyDisplay = class extends RootDisplay {
 			// Fetch voice bitmap
 			// Commit to bitmap screen
 			let useBm;
-			if (timeNow <= sum.bitmap.expire) {
+			if (timeNow < sum.bitmap.expire) {
 				// Use provided bitmap
 				useBm = sum.bitmap.bitmap;
 			} else {
