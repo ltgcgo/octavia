@@ -3623,8 +3623,14 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#bitmapExpire = Date.now() + 3200;
 					if (msg[1] == 0) {
 						// GS display page
-						upThis.#bitmapPage = Math.max(Math.min(msg[2] - 1, 9), 0);
-						getDebugState() && console.debug(`GS switch display page ${msg[2] - 1}.`);
+						if (msg[2]) {
+							upThis.#bitmapPage = Math.max(Math.min(msg[2] - 1, 9), 0);
+							getDebugState() && console.debug(`GS switch display page ${msg[2] - 1}.`);
+						} else {
+							upThis.#bitmapPage = 0;
+							upThis.#bitmapExpire = Date.now();
+							getDebugState() && console.debug(`GS disable display page.`);
+						};
 					};
 					break;
 				};
