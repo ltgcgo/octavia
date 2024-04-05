@@ -40,7 +40,7 @@ const modeIdx = [
 	"gm", "gs", "xg", "g2",
 	"mt32", "ns5r", "x5d", "05rw", "sd",
 	"k11", "sg",
-	"krs", "s90es", "motif"
+	"krs", "s90es", "motif", "trin"
 ],
 modeAdapt = {
 	"gm2": "g2",
@@ -54,7 +54,9 @@ modeAdapt = {
 	"gmega": "k11",
 	"kross 2": "krs",
 	"motif es": "motif",
-	"s90 es": "s90es"
+	"s90 es": "s90es",
+	"trinity": "trin",
+	"trrack": "trin"
 },
 voiceIdx = [
 	"melodic",
