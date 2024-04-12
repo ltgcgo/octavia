@@ -189,6 +189,9 @@ let VoiceBank = class {
 				sect = "GM-b";
 				break;
 			};
+			case 57: {
+				sect = ["yDOC", "QY10", "QY20"][args[2] - 112] || "yMxv"; // Yamaha Model Exclusive Voice
+			};
 			case 61:
 			case 120: {
 				sect = "rDrm";

@@ -18,7 +18,7 @@
 </head>
 <body>
 	<div class="container" x-data="{}">
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['macos','macOS']],dumps:[[0,'All','Place no restrictions on dumps.'],[1,'Once','Channels can only be dumped once.'],[2,'Mode','Only dumps with the same mode as the channel are allowed.']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['macos','macOS']],dumps:[[0,'All','Place no restrictions on dumps.'],[2,'Mode','Only dumps with the same mode as the channel are allowed.']]}">
 			<div class="column column-option"><b>Open from</b></div>
 			<div class="column column-option column-button" @click="gOpenSmf()" :active="$store.play=='smf'?'true':'false'" title="Open MIDI files, SysEx blobs or bank files.">MIDI</div>
 			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='file'?'true':'false'" title="Open synchronized audio tracks.">audio</div>
@@ -35,10 +35,29 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['sd','SD'],['krs','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
-			<div class="column column-option"><b>Set mode to</b></div>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['doc','DOC'],['qy10','QY10'],['qy20','QY20'],['sd','SD'],['krs','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
+			<div class="column column-option"><b>Global mode</b></div>
 			<template x-for="mode in modes">
 				<div class="column column-option column-button" @click="gMode(mode[0])" x-text="mode[1]" :title="`Internal ID: (${mode[0]})`" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
+			</template>
+			<div class="column"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native']],gsLvls:[[1,'SC-55'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']]}">
+			<div class="column column-option"><b>XG level</b></div>
+			<template x-for="xgLvl in xgLvls">
+				<div class="column column-option column-button" @click="gXgLvl(xgLvl[0])" x-text="xgLvl[1]" :active="($store.xgLvl||0)==xgLvl[0]?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>GS level</b></div>
+			<template x-for="gsLvl in gsLvls">
+				<div class="column column-option column-button" @click="gGsLvl(gsLvl[0])" x-text="gsLvl[1]" :active="($store.gsLvl||4)==gsLvl[0]?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>SC level</b></div>
+			<template x-for="scLvl in scLvls">
+				<div class="column column-option column-button" @click="gScLvl(scLvl[0])" x-text="scLvl[1]" :active="($store.scLvl||3)==scLvl[0]?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>X5 target</b></div>
+			<template x-for="x5Lvl in x5Lvls">
+				<div class="column column-option column-button" @click="gX5Lvl(x5Lvl[0])" x-text="x5Lvl[1]" :active="($store.x5Lvl||82)==x5Lvl[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
@@ -54,21 +73,6 @@
 			<div class="column column-option"><b>Note style</b></div>
 			<template x-for="style in styles">
 				<div class="column column-option column-button" @click="gStyle(style[0])" x-text="style[1]" :active="($store.noteStyle||'block')==style[0]?'true':'false'"></div>
-			</template>
-			<div class="column"></div>
-		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native']],gsLvls:[[1,'SC-55'],[2,'SC-88'],[3,'SC-88 Pro'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']]}">
-			<div class="column column-option"><b>XG Level</b></div>
-			<template x-for="xgLvl in xgLvls">
-				<div class="column column-option column-button" @click="gXgLvl(xgLvl[0])" x-text="xgLvl[1]" :active="($store.xgLvl||0)==xgLvl[0]?'true':'false'"></div>
-			</template>
-			<div class="column column-option"><b>GS Level</b></div>
-			<template x-for="gsLvl in gsLvls">
-				<div class="column column-option column-button" @click="gGsLvl(gsLvl[0])" x-text="gsLvl[1]" :active="($store.gsLvl||4)==gsLvl[0]?'true':'false'"></div>
-			</template>
-			<div class="column column-option"><b>SC Level</b></div>
-			<template x-for="scLvl in scLvls">
-				<div class="column column-option column-button" @click="gScLvl(scLvl[0])" x-text="scLvl[1]" :active="($store.scLvl||3)==scLvl[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
