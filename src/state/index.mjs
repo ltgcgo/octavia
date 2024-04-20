@@ -248,7 +248,7 @@ const allocated = {
 	efx: 7,
 	cvn: 12, // custom voice names
 	redir: 32,
-	invalid: 255
+	invalidCh: 255
 };
 const overrides = {
 	bank0: 128
@@ -292,6 +292,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	VLBC_BRTHEXPR = 1; // Breath controller or expression
 	VLBC_VELOINIT = 2; // Initial key velocity
 	VLBC_VELOALL = 3; // Initial key velocity and aftertouch
+	CH_INACTIVE = 0;
+	CH_ACTIVE = 1;
+	CH_DISABLED = 2;
 	// Values
 	#mode = 0;
 	#bitmapPage = 0;
@@ -321,7 +324,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#rpnt = new Uint8Array(allocated.ch * allocated.rpnt); // Whether or not an RPN has been written
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
 	#drum = new Uint8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
-	#drumFirstWrite = new Uint8Array(allocated.drm); // The default source part of drum sets
+	#drumFirstWrite = new Uint8Array(allocated.drm * 2); // The default source part of drum sets
 	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#ccCapturer = new Uint8Array(allocated.ch * allocated.redir); // Redirect non-internal CCs to internal CCs
@@ -599,15 +602,28 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		9: function (det) {
 			let part = det.channel;
+			let upThis = this;
 			// Note on, but should be off if velocity is 0.
+			if (upThis.getChModeId(part) == modeMap.xg) {
+				if (upThis.#chType[part] > 1) {
+					let fwData = upThis.getChDrumFirstWrite(part);
+					if (fwData[0] && fwData[1] != allocated.invalidCh && !upThis.#chActive[part]) {
+						upThis.copyChSetup(fwData[1], part);
+						upThis.dispatchEvent("voice", {
+							part
+						});
+						console.debug(`Part CH${part + 1} copied from CH${fwData[1]}.`);
+					};
+				};
+			};
 			// Set channel active
-			this.setChActive(part, 1)
+			upThis.setChActive(part, 1)
 			let rawNote = det.data[0];
 			let velocity = det.data[1];
 			if (velocity > 0) {
-				this.#ua.nOn(part, rawNote, velocity);
+				upThis.#ua.nOn(part, rawNote, velocity);
 			} else {
-				this.#ua.nOff(part, rawNote);
+				upThis.#ua.nOff(part, rawNote);
 			};
 		},
 		10: function (det) {
@@ -632,6 +648,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		11: function (det) {
 			let part = det.channel;
+			let upThis = this;
 			// Redirect CC event
 			let redirMap = this.#ccRedirMap[part],
 			redirTarget = redirMap[det.data[0]];
@@ -1023,32 +1040,43 @@ let OctaviaDevice = class extends CustomEventSource {
 					data: det.data[1]
 				});
 			};
+			if (upThis.getChModeId(part) == modeMap.xg) {
+				if (upThis.#chType[part]) {
+					upThis.setDrumFirstWrite(part);
+				};
+			};
 		},
 		12: function (det) {
 			let part = det.channel;
+			let upThis = this;
 			// Program change
-			switch (this.#mode) {
+			switch (upThis.#mode) {
 				case modeMap.s90es:
 				case modeMap.motif: {
-					det.data && (this.setChActive(part, 1));
+					det.data && (upThis.setChActive(part, 1));
 					break;
 				};
 				default: {
-					this.setChActive(part, 1);
+					upThis.setChActive(part, 1);
 				};
 			};
-			if (this.getExt(part)[0] == this.EXT_DX) {
+			if (upThis.getExt(part)[0] == upThis.EXT_DX) {
 				let chOff = allocated.cc * part;
 				//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 			};
-			this.#prg[part] = det.data;
-			this.#bnCustom[part] = 0;
+			upThis.#prg[part] = det.data;
+			upThis.#bnCustom[part] = 0;
 			if (getDebugState()) {
 				console.debug(`T:${det.track} C:${part} P:${det.data}`);
 			};
-			this.dispatchEvent("voice", {
+			upThis.dispatchEvent("voice", {
 				part
 			});
+			if (upThis.getChModeId(part) == modeMap.xg) {
+				if (upThis.#chType[part]) {
+					upThis.setDrumFirstWrite(part);
+				};
+			};
 		},
 		13: function (det) {
 			// Channel aftertouch
@@ -1668,11 +1696,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#chType[105] = upThis.CH_DRUMS;
 		upThis.#chType[121] = upThis.CH_DRUMS;
 		// Drum source channels
-		upThis.#drumFirstWrite.fill(allocated.invalid);
-		upThis.#drumFirstWrite[0] = 9;
-		upThis.#drumFirstWrite[2] = 25;
-		upThis.#drumFirstWrite[4] = 73;
-		upThis.#drumFirstWrite[6] = 89;
+		for (let ds = 0; ds < allocated.drm; ds ++) {
+			upThis.#drumFirstWrite[ds << 1] = 0; // active or not
+			upThis.#drumFirstWrite[(ds << 1) | 1] = allocated.invalidCh; // set all to invalid
+		};
 		// Reset MT-32 user patch and timbre storage
 		upThis.#cmPatch.fill(0);
 		upThis.#cmTimbre.fill(0);
@@ -1810,6 +1837,45 @@ let OctaviaDevice = class extends CustomEventSource {
 		chOff = allocated.cc * targetCh;
 		upThis.#prg[targetCh] = upThis.#prg[sourceCh];
 		upThis.#cc.set(upThis.#cc.subarray(sourceChOff, sourceChOff + allocated.cc), chOff);
+	};
+	setDrumFirstWrite(part, disable) {
+		let upThis = this;
+		let chType = upThis.#chType[part];
+		if (chType < 2) {
+			return;
+		};
+		let ds = chType - 2;
+		if (upThis.#drumFirstWrite[ds << 1]) {
+			if (disable) {
+				upThis.#drumFirstWrite[ds << 1] = 0;
+				getDebugState() && console.debug(`First write part for drum set ${ds + 1} has been reset.`);
+			} else {
+				//getDebugState() && console.debug(`Drum set ${ds + 1} has already been written by CH${upThis.#drumFirstWrite[allocated.drm | ds] + 1}.`);
+				return;
+			};
+		} else {
+			if (disable) {
+				/*getDebugState() && */console.warn(`First write part for drum set ${ds + 1} is already blank.`);
+			} else {
+				upThis.#drumFirstWrite[ds << 1] = 1;
+				upThis.#drumFirstWrite[(ds << 1) | 1] = part;
+				console.debug(`First write part for drum set ${ds + 1} is set to CH${part}.`);
+			};
+		};
+	};
+	getChDrumFirstWrite(part) {
+		let upThis = this;
+		let chType = upThis.#chType[part];
+		if (chType < 2) {
+			return;
+		};
+		let ds = chType - 2;
+		return upThis.#drumFirstWrite.subarray(ds << 1, (ds + 1) << 1);
+	};
+	getDrumFirstWrite(ds) {
+		if (ds >= 0 && ds < allocated.drm) {
+			return this.#drumFirstWrite.subarray(ds << 1, (ds + 1) << 1);
+		};
 	};
 	switchMode(mode, forced = false, setTarget = false) {
 		// The global fallback mode
@@ -2612,8 +2678,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			chOff = allocated.cc * part,
 			dPref = `XG CH${part + 1} `,
 			errMsg = `Unknown XG part address ${id}.`;
+			let setupWrite = true;
 			msg.subarray(2).forEach((e, i) => {
 				// There is a bug here, but I don't have time right now
+				setupWrite = true;
 				if (id < 1) {
 					console.debug(errMsg);
 				} else if (id < 41) {
@@ -2634,6 +2702,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							part
 						});
 					}, () => {
+						setupWrite = false;
 						let ch = upThis.chRedir(e, track, true);
 						upThis.#chReceive[part] = ch; // Rx CH
 						if (part != ch) {
@@ -2653,6 +2722,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// same note key on assign?
 					}, () => {
+						setupWrite = false;
 						upThis.setChType(part, e, modeMap.xg);
 						console.debug(`${dPref}type: ${xgPartMode[e] || e}`);
 						upThis.dispatchEvent("voice", {
@@ -2714,6 +2784,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(errMsg);
 				};
 			});
+			if (setupWrite && upThis.#chType[part] > 1) {
+				upThis.setDrumFirstWrite(part);
+			};
 		}).add([76, 9], (msg, track) => {
 			// PLG-VL Part Setup
 			let part = upThis.chRedir(msg[0], track, true),
