@@ -2617,6 +2617,15 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
+						if (!upThis.#chActive[part]) {
+							upThis.#prg[part] = upThis.#prg[ch];
+							let sourceChOff = allocated.cc * ch;
+							upThis.#cc.set(upThis.#cc.subarray(sourceChOff, sourceChOff + allocated.cc), chOff);
+							console.debug(`${dPref}copied from CH${ch + 1}.`);
+							upThis.dispatchEvent("voice", {
+								part
+							});
+						};
 					}, () => {
 						upThis.#mono[part] = +!e; // mono/poly
 					}, () => {
