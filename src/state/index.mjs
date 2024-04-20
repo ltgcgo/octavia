@@ -247,7 +247,8 @@ const allocated = {
 	ext: 3, // extensions
 	efx: 7,
 	cvn: 12, // custom voice names
-	redir: 32
+	redir: 32,
+	invalid: 255
 };
 const overrides = {
 	bank0: 128
@@ -320,6 +321,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#rpnt = new Uint8Array(allocated.ch * allocated.rpnt); // Whether or not an RPN has been written
 	#nrpn = new Int8Array(allocated.ch * useNormNrpn.length); // Normal section of NRPN registers
 	#drum = new Uint8Array(allocated.drm * allocated.dpn * allocated.dnc); // Drum setup
+	#drumFirstWrite = new Uint8Array(allocated.drm); // The default source part of drum sets
 	#efxBase = new Uint8Array(allocated.efx * 3); // Base register for EFX types
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#ccCapturer = new Uint8Array(allocated.ch * allocated.redir); // Redirect non-internal CCs to internal CCs
@@ -1665,6 +1667,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#chType[89] = upThis.CH_DRUM7;
 		upThis.#chType[105] = upThis.CH_DRUMS;
 		upThis.#chType[121] = upThis.CH_DRUMS;
+		// Drum source channels
+		upThis.#drumFirstWrite.fill(allocated.invalid);
+		upThis.#drumFirstWrite[0] = 9;
+		upThis.#drumFirstWrite[2] = 25;
+		upThis.#drumFirstWrite[4] = 73;
+		upThis.#drumFirstWrite[6] = 89;
 		// Reset MT-32 user patch and timbre storage
 		upThis.#cmPatch.fill(0);
 		upThis.#cmTimbre.fill(0);
@@ -1787,6 +1795,21 @@ let OctaviaDevice = class extends CustomEventSource {
 				});
 			};
 		};
+	};
+	copyChSetup(sourceCh, targetCh, failWhenActive) {
+		if (sourceCh == targetCh) {
+			console.warn(`Failed attempt at overwriting CH${sourceCh + 1} with its own data.`);
+			return;
+		};
+		let upThis = this;
+		if (failWhenActive && upThis.#chActive[targetCh]) {
+			console.warn(`Failed attempt at copying setup data from CH${sourceCh + 1} to CH${targetCh + 1}.`);
+			return;
+		};
+		let sourceChOff = allocated.cc * sourceCh,
+		chOff = allocated.cc * targetCh;
+		upThis.#prg[targetCh] = upThis.#prg[sourceCh];
+		upThis.#cc.set(upThis.#cc.subarray(sourceChOff, sourceChOff + allocated.cc), chOff);
 	};
 	switchMode(mode, forced = false, setTarget = false) {
 		// The global fallback mode
@@ -2618,9 +2641,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
 						if (!upThis.#chActive[part]) {
-							upThis.#prg[part] = upThis.#prg[ch];
-							let sourceChOff = allocated.cc * ch;
-							upThis.#cc.set(upThis.#cc.subarray(sourceChOff, sourceChOff + allocated.cc), chOff);
+							upThis.copyChSetup(ch, part, true);
 							console.debug(`${dPref}copied from CH${ch + 1}.`);
 							upThis.setChActive(part, 1);
 							upThis.dispatchEvent("voice", {

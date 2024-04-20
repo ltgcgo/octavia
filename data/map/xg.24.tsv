@@ -40,6 +40,7 @@ DrawOrg2	Drawbar Organ 2
 70sDrOr2	70s' Drawbar Organ 2
 DrawOrg3	Drawbar Organ 3
 ClkGspOr	Click Gospel Organ
+Mood Org	Moody Organ
 DrawOrg#	Drawbar Organ #
 70sPcOrg	70s' Percussive Org
 DetPrcOr	Detuned Perc Organ
@@ -136,6 +137,7 @@ ClkSynBa	Click Synth Bass
 SynBs2Dk	Dark Synth Bass 2
 SmthSynB	Smooth Synth Bass
 F.OsciBa	Forced Oscillation Bass
+SynthAtk	Synth Attack Bass
 ViolinSc	Violin Section
 HdVlnSec	Hard Violin Section
 SlVlnSec	Slow Violin Section
