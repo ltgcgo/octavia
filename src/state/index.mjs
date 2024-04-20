@@ -2622,6 +2622,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							let sourceChOff = allocated.cc * ch;
 							upThis.#cc.set(upThis.#cc.subarray(sourceChOff, sourceChOff + allocated.cc), chOff);
 							console.debug(`${dPref}copied from CH${ch + 1}.`);
+							upThis.setChActive(part, 1);
 							upThis.dispatchEvent("voice", {
 								part
 							});
@@ -2633,6 +2634,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						upThis.setChType(part, e, modeMap.xg);
 						console.debug(`${dPref}type: ${xgPartMode[e] || e}`);
+						upThis.dispatchEvent("voice", {
+							part
+						});
 					}, () => {
 						// coarse tune
 						upThis.#rpn[allocated.rpn * part + 3] = e;
