@@ -534,7 +534,7 @@ let MuDisplay = class extends RootDisplay {
 		};
 		// Move waveBuffer
 		let useWB = time && this.demoInfo;
-		if (useWB && Math.floor(time * 25) & 1) {
+		if (useWB && Math.floor(time * 50)) {
 			for (let i = 6; i >= 0; i --) {
 				this.#waveBuffer[i + 1] = this.#waveBuffer[i];
 			};
