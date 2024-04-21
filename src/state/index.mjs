@@ -5912,6 +5912,11 @@ let OctaviaDevice = class extends CustomEventSource {
 							let ch = upThis.chRedir(e & 15, track, true);
 							upThis.#chReceive[part] = ch;
 							console.info(`${dPref}CH${part + 1} receives from CH${ch + 1}`);
+							let enabled = (e >> 5) & 1;
+							if (!enabled) {
+								upThis.setChActive(part, 0);
+								console.debug(`KORG KROSS 2 CH${part + 1} is disabled.`);
+							};
 						}, false, false, () => {
 							upThis.#cc[chOff + ccToPos[7]] = e;
 						}, false, () => {
@@ -5919,7 +5924,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						}, () => {
 							// fine
 						}, false, false, false, false, false, () => {
-							console.debug(`${dPref}CH${part + 1} pan: ${e}`);
+							//console.debug(`${dPref}CH${part + 1} pan: ${e}`);
 							upThis.#cc[chOff + ccToPos[10]] = e || 128;
 						}][pi] || (() => {}))();
 					} else if (pi < 36) {} else {
