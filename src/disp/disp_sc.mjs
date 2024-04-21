@@ -53,6 +53,9 @@ let ScDisplay = class extends RootDisplay {
 			upThis.#sysTime = Date.now() + 800;
 			//this.device.setLetterDisplay(textArr);
 		});
+		upThis.addEventListener("channelactive", (ev) => {
+			upThis.#ch = ev.data;
+		});
 	};
 	setCh(ch) {
 		this.#ch = ch;
