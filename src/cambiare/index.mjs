@@ -173,6 +173,7 @@ let Cambiare = class extends RootDisplay {
 	#bufBo = new Uint8Array(512);
 	#bufBm = new Uint8Array(512);
 	#bufBn = new Uint8Array(512);
+	#hideCh = new Uint8Array(allocated.ch);
 	#clockSource;
 	#visualizer;
 	#container;
@@ -872,6 +873,12 @@ let Cambiare = class extends RootDisplay {
 				mountElement(upThis.#sectPart[port].root, [
 					e.root
 				]);
+				e.number.addEventListener("contextmenu", (ev) => {
+					ev.preventDefault();
+					let ch = (port << 4) | part;
+					upThis.#hideCh[ch] = +!upThis.#hideCh[ch];
+					upThis.device.setChActive(ch, +!upThis.#hideCh[ch]);
+				});
 			};
 			upThis.#sectPart.root.appendChild(upThis.#sectPart[port].root);
 		};
@@ -953,6 +960,9 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.addEventListener("channeltoggle", (ev) => {
 			let {part, active} = ev.data;
+			if (upThis.#hideCh[part] == 1) {
+				active = 0;
+			};
 			([classOff, classOn][active])(upThis.#sectPart[part >> 4][part & 15].root, [
 				`part-active`
 			]);
