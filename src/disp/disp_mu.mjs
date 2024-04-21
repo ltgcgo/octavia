@@ -302,7 +302,6 @@ let MuDisplay = class extends RootDisplay {
 			} else {
 				minCh = this.#start << 4;
 			};
-			console.debug(`${this.#start}, ${this.#range}, ${minCh}, ${maxCh}`);
 			maxCh = minCh + this.#range * 16 - 1;
 		};
 		let chOff = this.#ch * ccToPos.length;
