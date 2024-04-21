@@ -2951,7 +2951,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}).add([73, 11, 0], (msg, track) => {
 			// MU1000/2000 native channel switch
-			let dPref = `MU1000 System - channel `;
+			let dPref = `MU1000 System - channel `,
+			dPref2 = `Octavia System - channel `;
 			let offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
 				let ri = offset + i;
@@ -2959,7 +2960,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Current channel
 					upThis.setChActive(e, 1);
 					upThis.dispatchEvent("channelactive", e);
-					console.debug(`${dPref}current part: CH${e + 1}`);
+					getDebugState() && console.debug(`${dPref}current part: CH${e + 1}`);
 				}, () => {
 					// Port range
 					// set to 255 to reset to auto mode
@@ -2975,10 +2976,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					// set to 255 to reset to auto mode
 					if (e < 16) {
 						upThis.dispatchEvent("portstart", e);
-						console.debug(`${dPref}start port: ${"ABCDEFGHIJKLMNOP"[e]}`);
+						console.debug(`${dPref2}start port: ${"ABCDEFGHIJKLMNOP"[e]}`);
 					} else {
 						upThis.dispatchEvent("portstart", 255);
-						console.debug(`${dPref}start port: reset`);
+						console.debug(`${dPref2}start port: reset`);
 					};
 				}][ri] || (() => {
 					console.debug(`${dPref}unknown address: ${ri}`);
