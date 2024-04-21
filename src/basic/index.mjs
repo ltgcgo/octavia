@@ -1,7 +1,7 @@
 "use strict";
 
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
-import {ccToPos, dnToPos} from "../state/index.mjs";
+import {ccToPos, dnToPos, allocated} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {customInterpreter} from "../state/utils.js";
@@ -356,6 +356,8 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "channelactive");
 		eventPassThru(upThis.device, upThis, "channelmin");
 		eventPassThru(upThis.device, upThis, "channelmax");
+		eventPassThru(upThis.device, upThis, "channelrange");
+		eventPassThru(upThis.device, upThis, "channelstart");
 		eventPassThru(upThis.device, upThis, "channelreset");
 		eventPassThru(upThis.device, upThis, "channeltoggle");
 		eventPassThru(upThis.device, upThis, "screen");
@@ -423,5 +425,6 @@ let RootDisplay = class extends CustomEventSource {
 export {
 	RootDisplay,
 	ccToPos,
-	dnToPos
+	dnToPos,
+	allocated
 };

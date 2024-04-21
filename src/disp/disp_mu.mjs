@@ -1,6 +1,6 @@
 "use strict";
 
-import {OctaviaDevice} from "../state/index.mjs";
+import {OctaviaDevice, allocated} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
@@ -161,6 +161,8 @@ let MuDisplay = class extends RootDisplay {
 	#bmst = 0; // 0 for voice bank, 2 for standard, 1 for sysex
 	#bmex = 0; // state expiration
 	#ch = 0;
+	#range = 0;
+	#start = 255; // start port
 	#minCh = 0;
 	#maxCh = 0;
 	#scheduledEx = false;
@@ -207,6 +209,18 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#waveBuffer.fill(0);
 			upThis.demoInfo = false;
 		});
+		upThis.addEventListener("channelrange", (ev) => {
+			if (ev && ev.data != 1 << Math.log2(ev.data)) {
+				console.debug(`MU display rejected port range value ${ev.data}.`);
+			};
+			upThis.#range = ev.data;
+		});
+		upThis.addEventListener("channelstart", (ev) => {
+			if (ev != 255 && ev >= allocated.port) {
+				console.debug(`MU display rejected port range value ${ev.data}.`);
+			};
+			upThis.#start = ev.data;
+		});
 		upThis.device.addEventListener("mupromptex", () => {
 			upThis.#scheduledEx = true;
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
@@ -227,6 +241,8 @@ let MuDisplay = class extends RootDisplay {
 		super.reset();
 		this.#minCh = 0;
 		this.#maxCh = 0;
+		this.#range = 0;
+		this.#start = 255;
 		if (this.demoInfo) {
 			delete this.demoInfo;
 		};
@@ -265,8 +281,8 @@ let MuDisplay = class extends RootDisplay {
 				maxCh = i;
 			};
 		});
-		let part = minCh >> 4;
-		minCh = part << 4;
+		let port = minCh >> 4;
+		minCh = port << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
 		if (this.#ch > maxCh) {
 			this.#ch = minCh + this.#ch & 15;
@@ -279,6 +295,15 @@ let MuDisplay = class extends RootDisplay {
 		};
 		if (this.#maxCh && this.#maxCh <= 128) {
 			maxCh = this.#maxCh - 1;
+		};
+		if (this.#range) {
+			if (this.#start == 255) {
+				minCh = (Math.floor((this.#ch >> 4) / this.#range) * this.#range) << 4;
+			} else {
+				minCh = this.#start << 4;
+			};
+			console.debug(`${this.#start}, ${this.#range}, ${minCh}, ${maxCh}`);
+			maxCh = minCh + this.#range * 16 - 1;
 		};
 		let chOff = this.#ch * ccToPos.length;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),

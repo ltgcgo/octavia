@@ -2868,16 +2868,17 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([73, 0, 0], (msg, track) => {
 			// MU1000/2000 System
 			let offset = msg[0];
-			let dPref = `MU1000 System: `;
+			let dPref = `MU1000 System - `;
 			msg.subarray(1).forEach((e, i) => {
 				let ri = offset + i;
 				if (ri == 8) {
-					console.debug(`${dPref}LCD contrast set to ${e}.`);
+					console.debug(`${dPref}LCD contrast: ${e}.`);
 				} else if (ri == 18) {
 					upThis.#subLsb = e ? 126 : 0;
-					console.debug(`${dPref}bank defaults to ${e ? "MU100 Native" : "MU Basic"}.`);
+					console.debug(`${dPref}default bank: ${e ? "MU100 Native" : "MU Basic"}.`);
 				} else if (ri >= 64 && ri < 69) {
 					// Octavia custom SysEx, starts from 64 (10 before)
+					// Deprecated, do not use! Will be removed in 0.6
 					[() => {
 						upThis.dispatchEvent("channelactive", e);
 					}, () => {
@@ -2948,15 +2949,48 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				console.info(`${dPref}Show CH${e + 1}~CH${e + 16}`);
 			};
-		}).add([73, 11, 0, 0], (msg, track) => {
+		}).add([73, 11, 0], (msg, track) => {
 			// MU1000/2000 native channel switch
-			let part = upThis.chRedir(msg[0], track, true);
+			let dPref = `MU1000 System - channel `;
+			let offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				let ri = offset + i;
+				([() => {
+					// Current channel
+					upThis.setChActive(e, 1);
+					upThis.dispatchEvent("channelactive", e);
+					console.debug(`${dPref}current part: CH${e + 1}`);
+				}, () => {
+					// Port range
+					// set to 255 to reset to auto mode
+					if (e < 5) {
+						upThis.dispatchEvent("channelrange", 1 << e);
+						console.debug(`${dPref}port range: ${1 << e} port(s)`);
+					} else {
+						upThis.dispatchEvent("channelrange", 0);
+						console.debug(`${dPref}port range: reset`);
+					};
+				}, () => {
+					// Start port (custom extension)
+					// set to 255 to reset to auto mode
+					if (e < 16) {
+						upThis.dispatchEvent("channelstart", e);
+						console.debug(`${dPref}start port: ${"ABCDEFGHIJKLMNOP"[e]}`);
+					} else {
+						upThis.dispatchEvent("channelstart", 255);
+						console.debug(`${dPref}start port: reset`);
+					};
+				}][ri] || (() => {
+					console.debug(`${dPref}unknown address: ${ri}`);
+				}))();
+			});
+			/*let part = upThis.chRedir(msg[0], track, true);
 			let port = part >> 4;
 			upThis.#chActive[part] = 1;
 			upThis.dispatchEvent("channelactive", part);
 			upThis.dispatchEvent("channelmin", port << 4);
 			upThis.dispatchEvent("channelmax", (port << 4) | 15);
-			getDebugState() && console.debug(`MU1000 native channel switch: `, msg);
+			getDebugState() && console.debug(`MU1000 native channel switch: `, msg);*/
 		}).add([93, 3], (msg, track) => {
 			// PLG-100SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
