@@ -23,13 +23,14 @@ let currentPerformance;
 demoModes[9] = "gm";
 let useMidiBus = false;
 
-self.generateSwitch = function (ch = 0, min, max) {
-	let data = [67, 16, 73, 0, 0, 64, ch];
-	if (min?.constructor == Number) {
-		data.push(min);
-		if (max.constructor == Number) {
-			data.push(max);
-		};
+let generateSwitch = function (ch = 0, min, max) {
+	if (min != undefined && max == undefined) {
+		console.warn(`Invalid bounds for channel switch generation.`);
+		return;
+	};
+	let data = [67, 16, 73, 11, 0, 0, ch];
+	if (min != undefined) {
+		data.push(Math.floor(Math.log2(max - min + 1)), min);
 	};
 	return {
 		type: 15,
