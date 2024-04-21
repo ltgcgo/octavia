@@ -229,7 +229,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				});
 			});
 			// Render program info
-			let bankName = (upThis.getMapped(bankFetched.name)).slice(0, 10).padEnd(10, " ");
+			let bankName = (upThis.getMapped(bankFetched.name)).slice(0, 12).padEnd(10, " ");
 			targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 25;
 				e0.forEach((e1, i1) => {
