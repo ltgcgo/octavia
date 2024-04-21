@@ -24,6 +24,7 @@ MSB	LSB	PRG	NME
 063	002	000	Angklung
 063	002	001	StStrngs
 063	002	055	Cathedrl
+063	002	062	TakeVoix
 063	003	000	HdAltoSx
 063	003	009	MemoryLd
 063	003	025	RudeLead

@@ -31,7 +31,7 @@
 			</template>
 			<div class="column column-option"><b>Limit Dump</b></div>
 			<template x-for="dump in dumps">
-				<div class="column column-option column-button" @click="gLimitDump(dump[0])" x-text="dump[1]" :title="dump[2]" :active="($store.limitDump||0)==dump[0]?'true':'false'"></div>
+				<div class="column column-option column-button" @click="gLimitDump(dump[0])" x-text="dump[1]" :title="dump[2]" :active="($store.limitDump||2)==dump[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
@@ -72,7 +72,7 @@
 			</template>
 			<div class="column column-option"><b>Note style</b></div>
 			<template x-for="style in styles">
-				<div class="column column-option column-button" @click="gStyle(style[0])" x-text="style[1]" :active="($store.noteStyle||'block')==style[0]?'true':'false'"></div>
+				<div class="column column-option column-button" @click="gStyle(style[0])" x-text="style[1]" :active="($store.noteStyle||'comb')==style[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>

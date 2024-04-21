@@ -2067,7 +2067,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			"sc": 3 // GS mode set
 		};
 		upThis.#conf = {
-			"dumpLimit": upThis.DUMP_ALL
+			"dumpLimit": upThis.DUMP_MODE
 		};
 		upThis.#confProxy = new Proxy(upThis.#conf, {
 			"set": () => {}

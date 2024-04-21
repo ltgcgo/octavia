@@ -187,7 +187,7 @@ let Cambiare = class extends RootDisplay {
 	eventViewMode = 0; // 0 for event count, 1 for FPS
 	//#noteEvents = [];
 	#pitchEvents = [];
-	#style = "block";
+	#style = "comb";
 	glyphs = new MxFont40();
 	#drawNote(context, note, velo, state = 0, pitch = 0) {
 		// Param calculation
