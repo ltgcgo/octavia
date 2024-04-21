@@ -5919,7 +5919,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						}, () => {
 							// fine
 						}, false, false, false, false, false, () => {
-							upThis.#cc[chOff + ccToPos[10]] = e;
+							console.debug(`${dPref}CH${part + 1} pan: ${e}`);
+							upThis.#cc[chOff + ccToPos[10]] = e || 128;
 						}][pi] || (() => {}))();
 					} else if (pi < 36) {} else {
 						([() => {
