@@ -356,8 +356,8 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "channelactive");
 		eventPassThru(upThis.device, upThis, "channelmin");
 		eventPassThru(upThis.device, upThis, "channelmax");
-		eventPassThru(upThis.device, upThis, "channelrange");
-		eventPassThru(upThis.device, upThis, "channelstart");
+		eventPassThru(upThis.device, upThis, "portrange");
+		eventPassThru(upThis.device, upThis, "portstart");
 		eventPassThru(upThis.device, upThis, "channelreset");
 		eventPassThru(upThis.device, upThis, "channeltoggle");
 		eventPassThru(upThis.device, upThis, "screen");

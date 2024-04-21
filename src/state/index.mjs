@@ -2964,20 +2964,20 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Port range
 					// set to 255 to reset to auto mode
 					if (e < 5) {
-						upThis.dispatchEvent("channelrange", 1 << e);
+						upThis.dispatchEvent("portrange", 1 << e);
 						console.debug(`${dPref}port range: ${1 << e} port(s)`);
 					} else {
-						upThis.dispatchEvent("channelrange", 0);
+						upThis.dispatchEvent("portrange", 0);
 						console.debug(`${dPref}port range: reset`);
 					};
 				}, () => {
 					// Start port (custom extension)
 					// set to 255 to reset to auto mode
 					if (e < 16) {
-						upThis.dispatchEvent("channelstart", e);
+						upThis.dispatchEvent("portstart", e);
 						console.debug(`${dPref}start port: ${"ABCDEFGHIJKLMNOP"[e]}`);
 					} else {
-						upThis.dispatchEvent("channelstart", 255);
+						upThis.dispatchEvent("portstart", 255);
 						console.debug(`${dPref}start port: reset`);
 					};
 				}][ri] || (() => {

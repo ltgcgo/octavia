@@ -209,13 +209,13 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#waveBuffer.fill(0);
 			upThis.demoInfo = false;
 		});
-		upThis.addEventListener("channelrange", (ev) => {
+		upThis.addEventListener("portrange", (ev) => {
 			if (ev && ev.data != 1 << Math.log2(ev.data)) {
 				console.debug(`MU display rejected port range value ${ev.data}.`);
 			};
 			upThis.#range = ev.data;
 		});
-		upThis.addEventListener("channelstart", (ev) => {
+		upThis.addEventListener("portstart", (ev) => {
 			if (ev != 255 && ev >= allocated.port) {
 				console.debug(`MU display rejected port range value ${ev.data}.`);
 			};
