@@ -163,6 +163,7 @@ let Cambiare = class extends RootDisplay {
 	#metaMoveX = 0;
 	#metaMoveY = 0;
 	#maxPoly = 0;
+	#underlinedCh = allocated.invalidCh;
 	#renderRange = 1;
 	#renderPort = 0;
 	#lastFrame = 0;
@@ -956,6 +957,18 @@ let Cambiare = class extends RootDisplay {
 				`part-active`
 			]);
 		});
+		upThis.addEventListener("channelactive", (ev) => {
+			if (upThis.#underlinedCh < allocated.ch) {
+				let lastCh = upThis.#sectPart[upThis.#underlinedCh >> 4][upThis.#underlinedCh & 15].number;
+				classOff(lastCh, ["part-focus"]);
+			};
+			let part = ev.data;
+			if (part < allocated.ch) {
+				let newCh = upThis.#sectPart[part >> 4][part & 15].number;
+				classOn(newCh, ["part-focus"]);
+				upThis.#underlinedCh = part;
+			};
+		});
 		upThis.addEventListener("metacommit", (ev) => {
 			let meta = ev.data;
 			//console.debug(meta);
@@ -1047,6 +1060,7 @@ let Cambiare = class extends RootDisplay {
 			upThis.#metaAmend = false;
 			upThis.#metaType = "";
 			upThis.#metaLastLine = null;
+			upThis.#underlinedCh = allocated.invalidCh;
 			try {
 				// Remove all meta
 				let list = upThis.#sectMeta.view.children;
@@ -1061,7 +1075,7 @@ let Cambiare = class extends RootDisplay {
 						`part-active`
 					]);
 					classOff(e.number, [
-						`part-efx`
+						`part-efx`, `part-focus`
 					]);
 					setCanvasText(e.metre, "");
 					e.type.innerText = "";

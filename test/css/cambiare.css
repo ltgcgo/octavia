@@ -178,6 +178,9 @@ div.cambiare-canvas > div.sect-part div.part-info-minor {
 div.cambiare-canvas > div.sect-part div.part-info-major span.part-efx {
 	font-weight: bold;
 }
+div.cambiare-canvas > div.sect-part div.part-info-major span.part-focus {
+	text-decoration: underline;
+}
 div.cambiare-canvas > div.sect-part span.part-csplit {
 	top: 100%;
 	width: 1px;
