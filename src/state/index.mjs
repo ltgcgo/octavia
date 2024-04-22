@@ -2000,6 +2000,10 @@ let OctaviaDevice = class extends CustomEventSource {
 						efxDefault = [40, 4, 0, 0, 0, 0, 0, 0];
 						break;
 					};
+					case modeMap.doc: {
+						efxDefault = [24, 16, 0, 0, 0, 0, 0, 0];
+						break;
+					};
 					case modeMap.motif:
 					case modeMap.s90es: {
 						efxDefault = [113, 0, 117, 0, 114, 0, 0, 0];
@@ -3182,6 +3186,14 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.switchMode("doc", true);
 				upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.doc);
 				console.info("MIDI reset: DOC");
+			} else {
+				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
+			};
+		}).add([1, 17, 15, 89], (msg, track, id) => {
+			if (id == 115) {
+				// DOC reverb type
+				upThis.setEffectType(0, 24, msg[0] | 16);
+				upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
 			} else {
 				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
 			};

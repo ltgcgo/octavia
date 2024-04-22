@@ -35,6 +35,11 @@ MSB	LSB	Name
 18	03	KG Room 1
 18	04	KG Room 2
 18	05	KG Stage
+18	10	DOC Thru
+18	11	DOC Room
+18	12	DOC Hall 1
+18	13	DOC Hall 2
+18	14	DOC Cosmic
 20	00	GS Through
 21	00	GS Stereo EQ
 21	01	GS Spectrum
