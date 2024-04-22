@@ -6022,11 +6022,11 @@ let OctaviaDevice = class extends CustomEventSource {
 							let ch = upThis.chRedir(e & 15, track, true);
 							upThis.#chReceive[part] = ch;
 							console.info(`${dPref}CH${part + 1} receives from CH${ch + 1}`);
-							let enabled = (e >> 5) & 1;
+							/*let enabled = (e >> 5) & 1;
 							if (!enabled) {
 								upThis.setChActive(part, 0);
 								console.debug(`KORG KROSS 2 CH${part + 1} is disabled.`);
-							};
+							};*/
 						}, false, false, () => {
 							upThis.#cc[chOff + ccToPos[7]] = e;
 						}, false, () => {
