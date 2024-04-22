@@ -110,6 +110,7 @@ let classOff = function (target, classes) {
 	classes.forEach((e) => {
 		if (target.classList.contains(e)) {
 			target.classList.remove(e);
+			//console.debug(`Removed class ${e}.`);
 		};
 	});
 };
@@ -117,7 +118,10 @@ let classOn = function (target, classes) {
 	classes.forEach((e) => {
 		if (!target.classList.contains(e)) {
 			target.classList.add(e);
-		};
+			//console.debug(`Added class ${e}.`);
+		}/* else {
+			console.debug(`Failed to add class as it already exists: ${target.classList}`);
+		}*/;
 	});
 };
 
@@ -875,9 +879,11 @@ let Cambiare = class extends RootDisplay {
 				]);
 				e.number.addEventListener("contextmenu", (ev) => {
 					ev.preventDefault();
+					ev.stopImmediatePropagation();
 					let ch = (port << 4) | part;
 					upThis.#hideCh[ch] = +!upThis.#hideCh[ch];
-					upThis.device.setChActive(ch, +!upThis.#hideCh[ch]);
+					//console.debug(upThis.#hideCh[ch]);
+					[classOff, classOn][upThis.#hideCh[ch]](e.root, ['part-hidden']);
 				});
 			};
 			upThis.#sectPart.root.appendChild(upThis.#sectPart[port].root);
@@ -960,9 +966,6 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.addEventListener("channeltoggle", (ev) => {
 			let {part, active} = ev.data;
-			if (upThis.#hideCh[part] == 1) {
-				active = 0;
-			};
 			([classOff, classOn][active])(upThis.#sectPart[part >> 4][part & 15].root, [
 				`part-active`
 			]);

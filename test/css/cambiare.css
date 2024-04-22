@@ -164,8 +164,7 @@ div.cambiare-canvas.cambiare-port4 > div.sect-part > div {
 div.cambiare-canvas > div.sect-part div.part-channel {
 	height: 52px;
 	width: 100%;
-	/*display: none;*/
-	opacity: 0;
+	display: none;
 }
 div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-channel {
 	height: 26px;
@@ -229,7 +228,9 @@ div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-info-minor {
 div.cambiare-canvas > div.sect-part > div.port-active,
 div.cambiare-canvas > div.sect-part div.part-active {
 	display: block;
-	opacity: 1;
+}
+div.cambiare-canvas > div.sect-part div.part-hidden {
+	opacity: 0;
 }
 
 rect {
