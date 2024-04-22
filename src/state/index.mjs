@@ -988,7 +988,9 @@ let OctaviaDevice = class extends CustomEventSource {
 									case modeMap.xg:
 									case modeMap.gs:
 									case modeMap.sc:
-									case modeMap.mt32: {
+									case modeMap.mt32:
+									case modeMap.s90es:
+									case modeMap.motif: {
 										switch (this.#cc[chOff + ccToPos[100]]) {
 											case 1:
 											case 2: {
