@@ -3197,6 +3197,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else {
 				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
 			};
+		}).add([1, 24], (msg, track, id) => {
+			if (id == 115) {
+				// DOC global reverb depth on
+				for (let ch = 0; ch < 16; ch ++) {
+					let part = upThis.chRedir(ch, track, true);
+					upThis.#cc[part * allocated.cc + ccToPos[91]] = 127;
+				};
+				console.info("DOC Global Reverb: on");
+			} else {
+				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
+			};
 		});
 		// DX7 Dumps
 		// Placeholder until further documentation
