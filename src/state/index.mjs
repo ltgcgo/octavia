@@ -699,7 +699,8 @@ let OctaviaDevice = class extends CustomEventSource {
 				})();
 			};
 			let chOff = part * allocated.cc,
-			extOff = part * allocated.ext;
+			extOff = part * allocated.ext,
+			partMode = this.getChModeId(part);
 			// Non-store CC messages
 			switch (det.data[0]) {
 				case 96: {
@@ -983,10 +984,30 @@ let OctaviaDevice = class extends CustomEventSource {
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
 								//console.debug(this.#cc[chOf + ccToPos[100]], rpnIndex, rpnOptions[this.#cc[chOff + ccToPos[100]]]);
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
-								this.dispatchEvent("pitch", {
-									part,
-									pitch: this.getPitchShift(part)
-								});
+								switch (partMode) {
+									case modeMap.xg:
+									case modeMap.gs:
+									case modeMap.sc:
+									case modeMap.mt32: {
+										switch (this.#cc[chOff + ccToPos[100]]) {
+											case 1:
+											case 2: {
+												this.dispatchEvent("pitch", {
+													part,
+													pitch: this.getPitchShift(part)
+												});
+												break;
+											};
+										};
+										break;
+									};
+									default: {
+										this.dispatchEvent("pitch", {
+											part,
+											pitch: this.getPitchShift(part)
+										});
+									};
+								};
 							};
 						};
 						break;
