@@ -46,10 +46,19 @@ let ScDisplay = class extends RootDisplay {
 		let upThis = this;
 		upThis.useBlur = !!conf?.useBlur;
 		upThis.addEventListener("mode", function (ev) {
-			if (ev.data == "?") {
-				return;
+			switch (ev.data) {
+				case "?": {
+					return;
+					break;
+				};
+				case "sc": {
+					upThis.#sysMsg = `    Mode 1`;
+					break;
+				};
+				default: {
+					upThis.#sysMsg = `Sys:${{"?":"Init","g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motif":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`;
+				};
 			};
-			upThis.#sysMsg = `Sys:${{"?":"Init","g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motif":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`;
 			upThis.#sysTime = Date.now() + 800;
 			//this.device.setLetterDisplay(textArr);
 		});

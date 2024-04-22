@@ -88,7 +88,8 @@ let VoiceBank = class {
 				};
 				break;
 			};
-			case "gs": {
+			case "gs":
+			case "sc": {
 				if (msb == 0 && lsb < 5) {
 					args[2] = 0;
 				} else if (msb > 125 && lsb < 5 && lsb != 2) {
@@ -154,7 +155,7 @@ let VoiceBank = class {
 					sect = "SP-l"; // KAWAI GMega SP
 				} else if (args[2] == 0) {
 					sect = "GM-a";
-				} else if (mode == "gs" && args[2] < 5) {
+				} else if ((mode == "gs" || mode == "sc") && args[2] < 5) {
 					sect = "GM-a";
 				} else {
 					sect = "y";
@@ -451,7 +452,7 @@ let VoiceBank = class {
 		};
 		// End ID
 		let eid = [args[0], args[1], args[2]];
-		if ((mode == "gs" || mode == "ns5r") && ending == "^") {
+		if ((mode == "gs" || mode == "sc" || mode == "ns5r") && ending == "^") {
 			ending = " ";
 		};
 		if (msb == 127 && ending == "^") {

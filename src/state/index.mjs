@@ -37,7 +37,7 @@ import {
 
 const modeIdx = [
 	"?",
-	"gm", "gs", "xg", "g2",
+	"gm", "gs", "sc", "xg", "g2",
 	"mt32", "doc", "qy10", "qy20",
 	"ns5r", "x5d", "05rw",
 	"k11", "sg", "sd",
@@ -64,6 +64,28 @@ voiceIdx = [
 	"drum",
 	"menu"
 ];
+let modeDetailsData = { // subMsb, subLsb, drumMsb
+	"?": [0, 0, 120],
+	"gm": [0, 0, 127],
+	"gs": [0, 0, 120],
+	"sc": [0, 0, 120],
+	"xg": [0, 0, 127],
+	"g2": [0, 0, 120],
+	"mt32": [0, 127, 127],
+	"doc": [57, 112, 127],
+	"qy10": [57, 113, 127],
+	"qy20": [57, 114, 127],
+	"ns5r": [0, 0, 61],
+	"x5d": [82, 0, 62],
+	"05rw": [81, 0, 62],
+	"k11": [0, 0, 122],
+	"sg": [0, 0, 122],
+	"sd": [97, 0, 105],
+	"krs": [63, 0, 120],
+	"s90es": [63, 0, 127],
+	"motif": [63, 0, 127],
+	"trin": [63, 0, 127]
+};
 const substList = [
 	[
 		0,
@@ -336,8 +358,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
-	#subMsb = 0; // Allowing global bank switching
-	#subLsb = 0;
+	#subDb = {};
 	#detect;
 	#conf;
 	#confProxy;
@@ -366,19 +387,20 @@ let OctaviaDevice = class extends CustomEventSource {
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
 	chRedir(part, track, noConquer) {
-		if (this.#trkAsReq[track]) {
+		let upThis = this;
+		if (upThis.#trkAsReq[track]) {
 			// Allow part assigning via meta
-			let metaChosen = (this.#trkAsReq[track] - 1) * 16 + part;
+			let metaChosen = (upThis.#trkAsReq[track] - 1) * 16 + part;
 			return metaChosen;
-		} else if ([2, 3].indexOf(this.#subLsb) > -1) {
+		} else if (upThis.#mode == modeMap.sc) {
 			// Do not conquer channels if requested.
 			if (noConquer == 1) {
 				return part;
 			};
 			let shift = 0, unmet = true;
 			while (unmet) {
-				if (this.#trkRedir[part + shift] == 0) {
-					this.#trkRedir[part + shift] = track;
+				if (upThis.#trkRedir[part + shift] == 0) {
+					upThis.#trkRedir[part + shift] = track;
 					console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
 					unmet = false;
 				} else if (this.#trkRedir[part + shift] == track) {
@@ -786,7 +808,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							} else if (det.data[1] == 64 || det.data[1] == 127) {
 								this.switchMode("xg");
 							};
-						} else if (this.#mode == modeMap.gs) {
+						} else if (this.#mode == modeMap.gs || this.#mode == modeMap.sc) {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
@@ -908,7 +930,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Show RPN and NRPN
 						if (this.#dataCommit) {
 							// Commit supported NRPN values
-							if ([modeMap.xg, modeMap.gs, modeMap.ns5r].indexOf(this.#mode) < 0) {
+							if ([modeMap.xg, modeMap.gs, modeMap.sc, modeMap.ns5r].indexOf(this.#mode) < 0) {
 								console.warn(`NRPN commits are not available under "${modeIdx[this.#mode]}" mode, even when they are supported in Octavia.`);
 							};
 							let msb = this.#cc[chOff + ccToPos[99]],
@@ -1256,28 +1278,46 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getCc(channel) {
 		// Return channel CC registers
+		// Potential bug exists here
+		let upThis = this;
 		let start = channel * allocated.cc;
-		let arr = this.#cc.subarray(start, start + allocated.cc);
-		arr[ccToPos[0]] = arr[ccToPos[0]] || this.#subMsb;
-		arr[ccToPos[32]] = arr[ccToPos[32]] || this.#subLsb;
+		let arr = upThis.#cc.subarray(start, start + allocated.cc);
+		arr[ccToPos[0]] = arr[ccToPos[0]] || upThis.#subDb[upThis.getChModeId(channel)][0];
+		arr[ccToPos[32]] = arr[ccToPos[32]] || upThis.#subDb[upThis.getChModeId(channel)][1];
 		if (arr[ccToPos[0]] == overrides.bank0) {
 			arr[ccToPos[0]] = 0;
 		};
 		return arr;
 	};
 	getCcCh(channel, cc) {
+		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new Error("CC number not accepted"));
 		};
-		return this.#cc[allocated.cc * channel + ccToPos[cc]];
+		let result = upThis.#cc[allocated.cc * channel + ccToPos[cc]];
+		switch (cc) {
+			case 0: {
+				result = result || upThis.#subDb[upThis.getChModeId(channel)][0];
+				if (result == overrides.bank0) {
+					result = 0;
+				};
+				break;
+			};
+			case 32: {
+				result = result || upThis.#subDb[upThis.getChModeId(channel)][1];
+				break;
+			};
+		};
+		return result;
 	};
 	getCcAll() {
 		// Return all CC registers
-		let arr = this.#cc.slice();
+		let upThis = this;
+		let arr = upThis.#cc.slice();
 		for (let c = 0; c < allocated.ch; c ++) {
 			let chOff = c * allocated.cc;
-			arr[chOff + ccToPos[0]] = arr[chOff + ccToPos[0]] || this.#subMsb;
-			arr[chOff + ccToPos[32]] = arr[chOff + ccToPos[32]] || this.#subLsb;
+			arr[chOff + ccToPos[0]] = arr[chOff + ccToPos[0]] || upThis.#subDb[upThis.getChModeId(c)][0];
+			arr[chOff + ccToPos[32]] = arr[chOff + ccToPos[32]] || upThis.#subDb[upThis.getChModeId(c)][1];
 			if (arr[ccToPos[0]] == overrides.bank0) {
 				arr[ccToPos[0]] = 0;
 			};
@@ -1387,45 +1427,46 @@ let OctaviaDevice = class extends CustomEventSource {
 		return this.#nrpn;
 	};
 	getVoice(msbO, prgO, lsbO, mode) {
-		let msb = msbO || this.#subMsb,
+		let upThis = this;
+		let msb = msbO || upThis.#subDb[upThis.#mode][0],
 		prg = prgO,
-		lsb = lsbO || this.#subLsb;
+		lsb = lsbO || upThis.#subDb[upThis.#mode][1];
 		if (msb == overrides.bank0) {
 			msb = 0;
 		};
-		if (modeIdx[this.#mode] == "ns5r") {
+		if (modeIdx[upThis.#mode] == "ns5r") {
 			if (msb > 0 && msb < 56) {
 				lsb = 3; // Use SC-88 Pro map
 			};
 		};
-		let bank = this.userBank.get(msb, prg, lsb, mode);
-		if (modeIdx[this.#mode] == "mt32") {
+		let bank = upThis.userBank.get(msb, prg, lsb, mode);
+		if (modeIdx[upThis.#mode] == "mt32") {
 			// Reload MT-32 user bank transparently
 			if (bank.name.indexOf("MT-m:") == 0) {
 				// Device patch
 				let patch = parseInt(bank.name.slice(5)),
 				timbreOff = patch * allocated.cmt,
 				userBank = "";
-				this.#cmTimbre.subarray(timbreOff, timbreOff + 10).forEach((e) => {
+				upThis.#cmTimbre.subarray(timbreOff, timbreOff + 10).forEach((e) => {
 					if (e > 31) {
 						userBank += String.fromCharCode(e);
 					};
 				});
 				let loadTsv = `MSB\tLSB\tPRG\tNME\n0\t127\t${prg}\t${userBank}`;
 				//console.debug(loadTsv);
-				this.userBank.load(loadTsv, true);
+				upThis.userBank.load(loadTsv, true);
 				bank.name = userBank;
 				bank.ending = " ";
 			};
 		};
 		if (bank.ending != " " || !bank.name.length) {
-			bank = this.baseBank.get(msb, prg, lsb, mode);
+			bank = upThis.baseBank.get(msb, prg, lsb, mode);
 		};
 		return bank;
 	};
 	getChVoice(part) {
 		let upThis = this;
-		let voice = upThis.getVoice(upThis.#cc[part * allocated.cc + ccToPos[0]], upThis.#prg[part], upThis.#cc[part * allocated.cc + ccToPos[32]], upThis.getChMode(part));
+		let voice = upThis.getVoice(upThis.getCcCh(part, 0), upThis.#prg[part], upThis.getCcCh(part, 32), upThis.getChMode(part));
 		if (upThis.#bnCustom[part]) {
 			let name = "";
 			switch (upThis.#mode) {
@@ -1546,6 +1587,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		let upThis = this;
 		upThis.#detect[useSc ? "sc" : "gs"] = gsLevel;
+		upThis.#subDb[modeMap[useSc ? "sc" : "gs"]][1] = gsLevel;
 		upThis.forceVoiceRefresh();
 	};
 	getConfigs() {
@@ -1637,9 +1679,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Type 1 is almost-full reset
 		let upThis = this;
 		// Full reset, except the loaded banks
-		upThis.#subMsb = 0;
-		upThis.#subLsb = 0;
 		upThis.#metaChannel = 0;
+		upThis.#subDb[modeMap.xg][1] = 0;
+		upThis.dispatchEvent("banklevel", {
+			"mode": "xg",
+			"data": 0
+		});
 		//upThis.#detect.x5 = 82; // Reset to X5DR
 		//upThis.#detect.ds = modeMap.krs; // Reset to KROSS 2
 		upThis.#chActive.fill(0);
@@ -1890,8 +1935,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				upThis.#mode = idx;
 				upThis.#bitmapPage = 0; // Restore page
-				upThis.#subMsb = substList[0][idx];
-				upThis.#subLsb = substList[1][idx];
 				//console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
 				for (let ch = 0; ch < allocated.ch; ch ++) {
 					if (upThis.#chType[ch] > 0 && upThis.#chMode[ch] == 0) {
@@ -1933,7 +1976,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case modeMap.gm:
-					case modeMap.gs: {
+					case modeMap.gs:
+					case modeMap.sc: {
 						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0];
 						break;
 					};
@@ -2072,6 +2116,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#confProxy = new Proxy(upThis.#conf, {
 			"set": () => {}
 		});
+		for (let mode in modeDetailsData) {
+			let index = modeMap[mode];
+			if (index == undefined) {
+				console.debug(`SubDB build error: "${mode}" does not exist`);
+			} else {
+				upThis.#subDb[index] = new Uint8Array(modeDetailsData[mode]);
+			};
+		};
 		/* upThis.#detect = new Proxy(upThis.#detectR, {
 			get: (real, key) => {
 				return real[key];
@@ -2874,8 +2926,13 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (ri == 8) {
 					console.debug(`${dPref}LCD contrast: ${e}.`);
 				} else if (ri == 18) {
-					upThis.#subLsb = e ? 126 : 0;
+					upThis.#subDb[modeMap.xg][1] = e ? 126 : 0;
 					console.debug(`${dPref}default bank: ${e ? "MU100 Native" : "MU Basic"}.`);
+					upThis.dispatchEvent("banklevel", {
+						"mode": "xg",
+						"data": +!!e
+					});
+					upThis.forceVoiceRefresh();
 				} else if (ri >= 64 && ri < 69) {
 					// Octavia custom SysEx, starts from 64 (10 before)
 					// Deprecated, do not use! Will be removed in 0.6
@@ -3561,13 +3618,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		// GS SysEx section
 		this.#seGs.add([66, 18, 0, 0, 127], (msg, track, id) => {
 			// GS mode set
-			upThis.switchMode("gs", true);
-			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.gs);
+			upThis.switchMode("sc", true);
+			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.sc);
 			upThis.#cc[allocated.cc * 9] = 120;
 			upThis.#cc[allocated.cc * 25] = 120;
 			upThis.#cc[allocated.cc * 41] = 120;
 			upThis.#cc[allocated.cc * 57] = 120;
-			upThis.#subLsb = upThis.#detect.sc;
+			upThis.#subDb[modeMap.sc][1] = upThis.#detect.sc;
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.fill(0);
 			console.info(`GS system to ${["single", "dual"][msg[0]]} mode.`);
@@ -3577,7 +3634,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Roland GS reset
 					upThis.switchMode("gs", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.gs);
-					upThis.#subLsb = upThis.#detect.gs;
+					upThis.#subDb[modeMap.gs][1] = upThis.#detect.gs;
 					upThis.#cc[allocated.cc * 9] = 120;
 					upThis.#cc[allocated.cc * 25] = 120;
 					upThis.#cc[allocated.cc * 41] = 120;
@@ -5137,7 +5194,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.switchMode("k11", true);
 				upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.k11);
 				upThis.#modeKaraoke = false;
-				upThis.#subLsb = e ? 4 : 0;
+				upThis.#subDb[modeMap.k11][1] = e ? 4 : 0;
 				console.info("MIDI reset: GMega/K11");
 			}, () => {
 				upThis.setEffectType(0, 24, e);

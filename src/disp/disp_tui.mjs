@@ -17,6 +17,7 @@ const modeNames = {
 	"g2": "GrlMIDI2",
 	"xg": "YamahaXG",
 	"gs": "RolandGS",
+	"sc": "RolandGS",
 	"mt32": "RlndMT32",
 	"sd": "RolandSD",
 	"ag10": "KorgAG10",
@@ -25,6 +26,9 @@ const modeNames = {
 	"ns5r": "KorgNS5R",
 	"k11": "KawaiK11",
 	"sg": "AkaiPrSG",
+	"doc": "YamahDOC",
+	"qy10": "Ymh.QY10",
+	"qy20": "Ymh.QY20",
 	"krs": "KorgKros",
 	"s90es": "YmhS90ES",
 	"motif": "YmhMotif"

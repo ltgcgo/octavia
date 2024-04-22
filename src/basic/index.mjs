@@ -366,6 +366,7 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "pitch");
 		eventPassThru(upThis.device, upThis, "note");
 		eventPassThru(upThis.device, upThis, "reset");
+		eventPassThru(upThis.device, upThis, "banklevel");
 		eventPassThru(upThis.device, upThis, "efxreverb");
 		eventPassThru(upThis.device, upThis, "efxchorus");
 		eventPassThru(upThis.device, upThis, "efxdelay");

@@ -48,7 +48,7 @@ let PsrDisplay = class extends RootDisplay {
 		super(new OctaviaDevice());
 		let upThis = this;
 		this.addEventListener("mode", function (ev) {
-			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
+			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;

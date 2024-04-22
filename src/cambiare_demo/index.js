@@ -63,6 +63,17 @@ audioFilePlayer.addEventListener("ended", () => {
 visualizer.addEventListener("mode", (ev) => {
 	Alpine.store("deviceMode", ev.data);
 });
+visualizer.addEventListener("banklevel", (ev) => {
+	switch (ev.data.mode) {
+		case "xg": {
+			Alpine.store("xgLvl", ev.data.data);
+			break;
+		};
+		default: {
+			console.debug(`Unknown mode "${ev.data.mode}" for setting bank level.`);
+		};
+	};
+});
 
 const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
 let getBlobFrom = async function (filename) {
@@ -133,7 +144,12 @@ self.gPixelC = async function (profile) {
 };
 self.gXgLvl = async function (level) {
 	//visualizer.device.setGsTargets(false, level);
-	Alpine.store("xgLvl", level);
+	//Alpine.store("xgLvl", level);
+	visualizer.sendCmd({
+		type: 15,
+		track: 0,
+		data: [67, 16, 73, 0, 0, 18, level]
+	});
 };
 self.gGsLvl = async function (level) {
 	visualizer.device.setGsTargets(false, level);

@@ -16,7 +16,11 @@ const modeNames = {
 	"g2": "General MIDI 2",
 	"xg": "Yamaha XG",
 	"gs": "Roland GS",
+	"sc": "Roland GS",
 	"mt32": "Roland MT-32",
+	"doc": "Yamaha DOC",
+	"qy10": "YAMAHA QY10",
+	"qy20": "YAMAHA QY20",
 	"sd": "Roland SD",
 	"x5d": "Korg X5D",
 	"05rw": "Korg 05R/W",
@@ -634,12 +638,15 @@ let Cambiare = class extends RootDisplay {
 	};
 	setMode(mode) {
 		let upThis = this;
-		classOff(upThis.#canvas, [`cambiare-mode-gm`, `cambiare-mode-xg`, `cambiare-mode-gs`, `cambiare-mode-ns5r`, `cambiare-mode-05rw`, `cambiare-mode-x5d`, `cambiare-mode-k11`, `cambiare-mode-sg`, `cambiare-mode-g2`, `cambiare-mode-mt32`, `cambiare-mode-sd`, `cambiare-mode-krs`, `cambiare-mode-s90es`, `cambiare-mode-motif`]);
+		classOff(upThis.#canvas, [`cambiare-mode-gm`, `cambiare-mode-xg`, `cambiare-mode-gs`, `cambiare-mode-sc`, `cambiare-mode-ns5r`, `cambiare-mode-05rw`, `cambiare-mode-x5d`, `cambiare-mode-k11`, `cambiare-mode-sg`, `cambiare-mode-g2`, `cambiare-mode-mt32`, `cambiare-mode-doc`, `cambiare-mode-qy10`, `cambiare-mode-qy20`, `cambiare-mode-sd`, `cambiare-mode-krs`, `cambiare-mode-s90es`, `cambiare-mode-motif`]);
 		if (mode != "?") {
 			classOn(upThis.#canvas, [`cambiare-mode-${mode}`]);
 		};
 		upThis.#accent = {
 			"xg": "9efaa0",
+			"doc": "9efaa0",
+			"qy10": "9efaa0",
+			"qy20": "9efaa0",
 			"ns5r": "9efaa0",
 			"x5d": "9efaa0",
 			"05rw": "9efaa0",
@@ -650,6 +657,7 @@ let Cambiare = class extends RootDisplay {
 			"g2": "a1f3ff",
 			"krs": "a1f3ff",
 			"gs": "ffe1a5",
+			"sc": "ffe1a5",
 			"mt32": "ffe1a5",
 			"sd": "ffe1a5",
 			"sg": "ffdddd"

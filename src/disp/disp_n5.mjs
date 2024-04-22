@@ -37,6 +37,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		upThis.addEventListener("mode", (ev) => {
 			upThis.#backlight = {
 				"gs": bgOrange,
+				"sc": bgOrange,
 				"mt32": bgOrange,
 				"xg": bgGreen,
 				"ns5r": bgGreen,
@@ -48,7 +49,10 @@ let Ns5rDisplay = class extends RootDisplay {
 				"sg01": bgRed,
 				"sd": bgOrange,
 				"s90es": bgGreen,
-				"motif": bgGreen
+				"motif": bgGreen,
+				"doc": bgGreen,
+				"qy10": bgGreen,
+				"qy20": bgGreen
 			}[ev.data] || bgWhite;
 			upThis.#mode = ev.data;
 			upThis.#refreshed = true;
