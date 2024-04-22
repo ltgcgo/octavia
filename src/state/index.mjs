@@ -3176,6 +3176,15 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.info(`Unknown DX7+ multipart: %o`, msg);
 				};
 			};
+		}).add([1, 20], (msg, track, id) => {
+			if (id == 115) {
+				// DOC reset
+				upThis.switchMode("doc", true);
+				upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.doc);
+				console.info("MIDI reset: DOC");
+			} else {
+				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
+			};
 		});
 		// DX7 Dumps
 		// Placeholder until further documentation
