@@ -1927,7 +1927,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else {
 				upThis.#drumFirstWrite[ds << 1] = 1;
 				upThis.#drumFirstWrite[(ds << 1) | 1] = part;
-				console.debug(`First write part for drum set ${ds + 1} is set to CH${part}.`);
+				console.debug(`First write part for drum set ${ds + 1} is set to CH${part + 1}.`);
 			};
 		};
 	};
