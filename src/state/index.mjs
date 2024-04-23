@@ -104,15 +104,7 @@ const substList = [
 		0, 0, 0, 0
 	]
 ];
-const drumMsb = [
-	120,
-	127, 120, 127, 120,
-	127, 127,
-	61, 62, 62,
-	122, 122, 105,
-	120, 127, 127, 127
-],
-drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
+const drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
 const eventTypes = {
 	8: "Off",
@@ -1353,11 +1345,13 @@ let OctaviaDevice = class extends CustomEventSource {
 	getChType() {
 		return this.#chType;
 	};
-	setChType(part, type, mode = this.#mode, disableMsbSet = false) {
+	setChType(part, type, mode = 0, disableMsbSet = false) {
 		type &= 15;
-		this.#chType[part] = type;
+		let upThis = this;
+		mode = mode || upThis.getChModeId(part);
+		upThis.#chType[part] = type;
 		if (type > 0 && !disableMsbSet) {
-			this.#cc[part * allocated.cc + ccToPos[0]] = drumMsb[mode];
+			upThis.#cc[part * allocated.cc + ccToPos[0]] = upThis.#subDb[mode][2];
 		};
 	};
 	setChActive(part, active = 0) {
@@ -1751,7 +1745,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		// Channel 10 to drum set
 		drumChannels.forEach((e) => {
-			upThis.#cc[allocated.cc * e] = drumMsb[0];
+			upThis.#cc[allocated.cc * e] = upThis.#subDb[upThis.getChModeId(e)][2];
 		});
 		// Channel types
 		upThis.#chType.fill(upThis.CH_MELODIC);
@@ -1962,7 +1956,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				for (let ch = 0; ch < allocated.ch; ch ++) {
 					if (upThis.#chType[ch] > 0 && upThis.#chMode[ch] == 0) {
 						// Switch drum MSBs.
-						upThis.#cc[ch * allocated.cc] = drumMsb[idx];
+						upThis.#cc[ch * allocated.cc] = upThis.#subDb[idx][2];
 						//console.debug(`CH${ch + 1} (${upThis.#chType[ch]}) (${upThis.getChMode(ch)}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
 						// I'll deal with this later?
 					};
