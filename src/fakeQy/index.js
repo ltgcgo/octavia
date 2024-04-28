@@ -19,6 +19,7 @@ let demoBlobs = {};
 let demoPerfs = {};
 let demoModes = [];
 demoModes[9] = "gm";
+let currentPerformance;
 let useMidiBus = false;
 let demoId = 0;
 
@@ -27,6 +28,17 @@ self.genNewSwitch = function (ch = 0) {
 		type: 15,
 		track: 0,
 		data: [67, 16, 73, 11, 0, 0, ch]
+	};
+};
+self.generateString = function (text) {
+	let data = [67, 16, 76, 6, 0, 0];
+	for (let c = 0; c < text.length; c ++) {
+		data.push(text.charCodeAt(c));
+	};
+	return {
+		type: 15,
+		track: 0,
+		data
 	};
 };
 
@@ -125,6 +137,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			stDemo.to(i);
 			demoId = i;
 			visualizer.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
+			currentPerformance = demoPerfs[e.title];
+			currentPerformance?.resetIndex();
 		});
 	});
 });
@@ -250,6 +264,7 @@ self.toCh = function (ch) {
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
 	visualizer.reset();
+	currentPerformance?.resetIndex();
 	audioPlayer.currentTime = 0;
 };
 (async function () {
@@ -274,6 +289,11 @@ let renderThread = setInterval(function () {
 		// Snap the player head to normalize frames
 		//curTime = Math.round(curTime * 50 / audioPlayer.playbackRate) / 50 * audioPlayer.playbackRate;
 		self.debugTimeSource && console.debug(curTime);
+		if (currentPerformance) {
+			currentPerformance.step(curTime)?.forEach((e) => {
+				visualizer.sendCmd(e.data);
+			});
+		};
 		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId, location.hash == "#trueMode");
 		lastTime = curTime;
 	};
@@ -284,3 +304,54 @@ getBridge().addEventListener("message", function (ev) {
 		visualizer.sendCmd(ev.data);
 	};
 });
+
+{
+	// Wild Cat!!
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(1, genNewSwitch(15)));
+	perf.push(new PointEvent(5.72, genNewSwitch(12)));
+	perf.push(new PointEvent(15.37, genNewSwitch(11)));
+	perf.push(new PointEvent(15.8, genNewSwitch(10)));
+	perf.push(new PointEvent(16.24, genNewSwitch(9)));
+	perf.push(new PointEvent(16.67, genNewSwitch(8)));
+	perf.push(new PointEvent(17.11, genNewSwitch(7)));
+	perf.push(new PointEvent(17.54, genNewSwitch(6)));
+	perf.push(new PointEvent(17.98, genNewSwitch(5)));
+	perf.push(new PointEvent(18.41, genNewSwitch(4)));
+	perf.push(new PointEvent(18.85, genNewSwitch(3)));
+	perf.push(new PointEvent(19.28, genNewSwitch(2)));
+	perf.push(new PointEvent(19.72, genNewSwitch(1)));
+	perf.push(new PointEvent(26.64, genNewSwitch(3)));
+	perf.push(new PointEvent(33.62, genNewSwitch(5)));
+	perf.push(new PointEvent(40.54, genNewSwitch(7)));
+	perf.push(new PointEvent(47.52, genNewSwitch(8)));
+	perf.push(new PointEvent(54.48, genNewSwitch(11)));
+	perf.push(new PointEvent(59.62, genNewSwitch(10)));
+	perf.push(new PointEvent(61.36, genNewSwitch(9)));
+	perf.push(new PointEvent(68.38, genNewSwitch(13)));
+	perf.push(new PointEvent(71.86, genNewSwitch(12)));
+	perf.push(new PointEvent(75.34, genNewSwitch(4)));
+	perf.push(new PointEvent(87.72, genNewSwitch(1)));
+	perf.push(new PointEvent(88.18, genNewSwitch(2)));
+	perf.push(new PointEvent(88.39, genNewSwitch(3)));
+	perf.push(new PointEvent(88.61, genNewSwitch(4)));
+	perf.push(new PointEvent(88.82, genNewSwitch(5)));
+	perf.push(new PointEvent(89.04, genNewSwitch(6)));
+	perf.push(new PointEvent(89.25, genNewSwitch(0)));
+	perf.push(new PointEvent(110.16, genNewSwitch(15)));
+	perf.push(new PointEvent(117.02, genNewSwitch(12)));
+	perf.push(new PointEvent(124.04, genNewSwitch(6)));
+	perf.push(new PointEvent(127.52, genNewSwitch(5)));
+	perf.push(new PointEvent(129.26, genNewSwitch(7)));
+	perf.push(new PointEvent(131, genNewSwitch(0)));
+	perf.push(new PointEvent(137.96, generateString(" JayB - Kandi8  For XG Synthesis")));
+	perf.push(new PointEvent(139.7, generateString("Performed on                    ")));
+	perf.push(new PointEvent(140.57, generateString("Performed on        YAMAHA QY100")));
+	perf.push(new PointEvent(141.44, generateString("Composed by                     ")));
+	perf.push(new PointEvent(142.31, generateString('Johannes "JayB"         Berthold')));
+	perf.push(new PointEvent(143.18, generateString("Inspired by                     ")));
+	perf.push(new PointEvent(144.05, generateString("Inspired by          Anjunabeats")));
+	//perf.push(new PointEvent(144.92, generateString("Screen FX by       Lumiere Eleve")));
+	perf.fresh();
+	demoPerfs["KANDI8"] = perf;
+};
