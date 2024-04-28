@@ -9,11 +9,26 @@ import {
 } from "../bridge/index.mjs";
 import {SheetData} from "../basic/sheetLoad.js";
 
+import {
+	PointEvent,
+	RangeEvent,
+	TimedEvents
+} from "../../libs/lightfelt@ltgcgo/ext/timedEvents.js";
+
 let demoBlobs = {};
+let demoPerfs = {};
 let demoModes = [];
 demoModes[9] = "gm";
 let useMidiBus = false;
 let demoId = 0;
+
+self.genNewSwitch = function (ch = 0) {
+	return {
+		type: 15,
+		track: 0,
+		data: [67, 16, 73, 11, 0, 0, ch]
+	};
+};
 
 // Standard switching
 let stSwitch = $a("b.mode");

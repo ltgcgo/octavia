@@ -23,19 +23,11 @@ let currentPerformance;
 demoModes[9] = "gm";
 let useMidiBus = false;
 
-let generateSwitch = function (ch = 0, min, max) {
-	if (min != undefined && max == undefined) {
-		console.warn(`Invalid bounds for channel switch generation.`);
-		return;
-	};
-	let data = [67, 16, 73, 11, 0, 0, ch];
-	if (min != undefined) {
-		data.push(Math.floor(Math.log2(max - min + 1)), min);
-	};
+let generateSwitch = function (ch = 0) {
 	return {
 		type: 15,
 		track: 0,
-		data
+		data: [67, 16, 73, 11, 0, 0, ch]
 	};
 };
 

@@ -31,12 +31,15 @@ let QyDisplay = class extends RootDisplay {
 	constructor() {
 		super(new OctaviaDevice(), 0, 0.95);
 		let upThis = this;
-		this.addEventListener("mode", function (ev) {
+		upThis.addEventListener("mode", function (ev) {
 			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;
 			upThis.#bmex = Date.now() + 1600;
+		});
+		upThis.addEventListener("channelactive", (ev) => {
+			upThis.#ch = ev.data;
 		});
 	};
 	setCh(ch) {
