@@ -256,6 +256,9 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
+		// Snap the player head to normalize frames
+		//curTime = Math.round(curTime * 50 / audioPlayer.playbackRate) / 50 * audioPlayer.playbackRate;
+		self.debugTimeSource && console.debug(curTime);
 		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId, location.hash == "#trueMode");
 		lastTime = curTime;
 	};
