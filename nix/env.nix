@@ -19,6 +19,7 @@ pkgs.mkShell {
 		git
 		nano
 		curl
+		gnupg
 		gzip
 		zopfli
 		brotli

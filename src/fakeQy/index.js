@@ -287,8 +287,8 @@ let renderThread = setInterval(function () {
 		if (curTime < lastTime) {
 		};
 		// Snap the player head to normalize frames
-		//curTime = Math.round(curTime * 50 / audioPlayer.playbackRate) / 50 * audioPlayer.playbackRate;
 		self.debugTimeSource && console.debug(curTime);
+		curTime = Math.round(curTime * 50 / audioPlayer.playbackRate) / 50 * audioPlayer.playbackRate;
 		if (currentPerformance) {
 			currentPerformance.step(curTime)?.forEach((e) => {
 				visualizer.sendCmd(e.data);
