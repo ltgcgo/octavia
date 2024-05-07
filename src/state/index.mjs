@@ -2995,17 +2995,19 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Show all 64 channels
 						let e = upThis.chRedir(0, track, true);
 						if (upThis.#receiveRS) {
-							upThis.dispatchEvent("channelmin", e);
-							upThis.dispatchEvent("channelmax", e + 63);
+							upThis.dispatchEvent("portrange", 4);
+							upThis.dispatchEvent("portstart", e);
 						};
-						console.info(`${dPref}Show CH1~64`);
+						console.info(`${dPref}Show CH${e + 1}~CH${e + 64}`);
 						break;
 					};
 					case 3: {
 						// Show 32 channels
 						let e = upThis.chRedir(msg[1] << 5, track, true);
-						upThis.#receiveRS && upThis.dispatchEvent("channelmin", e);
-						upThis.#receiveRS && upThis.dispatchEvent("channelmax", e + 31);
+						if (upThis.#receiveRS) {
+							upThis.dispatchEvent("portrange", 2);
+							upThis.dispatchEvent("portstart", e);
+						};
 						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}`);
 						break;
 					};
@@ -3021,8 +3023,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else if (cmd < 36) {
 				let e = upThis.chRedir((cmd - 32) << 4, track, true);
 				if (upThis.#receiveRS) {
-					upThis.dispatchEvent("channelmin", e);
-					upThis.dispatchEvent("channelmax", e + 15);
+					upThis.dispatchEvent("portrange", 1);
+					upThis.dispatchEvent("portstart", e >> 4);
 					upThis.#selectPort = cmd - 32;
 				};
 				console.info(`${dPref}Show CH${e + 1}~CH${e + 16}`);

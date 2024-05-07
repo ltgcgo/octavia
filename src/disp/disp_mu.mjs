@@ -267,9 +267,9 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillStyle = `${backlight.grYellow}64`;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		// Main matrix display
-		this.#mmdb.forEach((e, i, a) => {a[i] = 0});
+		upThis.#mmdb.forEach((e, i, a) => {a[i] = 0});
 		// Part display
-		this.#pmdb.forEach((e, i, a) => {a[i] = 0});
+		upThis.#pmdb.forEach((e, i, a) => {a[i] = 0});
 		// Strength
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
@@ -285,27 +285,27 @@ let MuDisplay = class extends RootDisplay {
 		let port = minCh >> 4;
 		minCh = port << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
-		if (this.#ch > maxCh) {
-			this.#ch = minCh + this.#ch & 15;
+		if (upThis.#ch > maxCh) {
+			upThis.#ch = minCh + upThis.#ch & 15;
 		};
-		if (this.#ch < minCh) {
-			this.#ch = maxCh - 15 + (this.#ch & 15);
+		if (upThis.#ch < minCh) {
+			upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
 		};
-		if (this.#minCh && this.#minCh > 0) {
-			minCh = this.#minCh - 1;
+		if (upThis.#minCh && upThis.#minCh > 0) {
+			minCh = upThis.#minCh - 1;
 		};
-		if (this.#maxCh && this.#maxCh <= 128) {
-			maxCh = this.#maxCh - 1;
+		if (upThis.#maxCh && upThis.#maxCh <= 128) {
+			maxCh = upThis.#maxCh - 1;
 		};
-		if (this.#range) {
-			if (this.#start == 255) {
-				minCh = (Math.floor((this.#ch >> 4) / this.#range) * this.#range) << 4;
+		if (upThis.#range) {
+			if (upThis.#start == 255) {
+				minCh = (Math.floor((upThis.#ch >> 4) / upThis.#range) * upThis.#range) << 4;
 			} else {
-				minCh = this.#start << 4;
+				minCh = upThis.#start << 4;
 			};
-			maxCh = minCh + this.#range * 16 - 1;
+			maxCh = minCh + upThis.#range * 16 - 1;
 		};
-		let chOff = this.#ch * ccToPos.length;
+		let chOff = upThis.#ch * ccToPos.length;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
 		let showLsb = !sum.chContr[chOff + ccToPos[0]];
@@ -355,7 +355,7 @@ let MuDisplay = class extends RootDisplay {
 			};
 			// Render fonts
 			if (rendMode < 2) {
-				let voiceName = (upThis.getChVoice(this.#ch).name).slice(0, 8).padEnd(8, " ");
+				let voiceName = (upThis.getChVoice(upThis.#ch).name).slice(0, 8).padEnd(8, " ");
 				let bnkSel = (sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0");
 				if ([63].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
 					bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
@@ -367,7 +367,7 @@ let MuDisplay = class extends RootDisplay {
 						showLsb = true;
 					};
 				};
-				let bnkInfo = `\u0080${bnkSel}\u0081${((sum.chProgr[this.#ch] || 0) + 1).toString().padStart(3, "0")}`;
+				let bnkInfo = `\u0080${bnkSel}\u0081${((sum.chProgr[upThis.#ch] || 0) + 1).toString().padStart(3, "0")}`;
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
 					let regionX = 0, regionY = 0;
@@ -405,7 +405,7 @@ let MuDisplay = class extends RootDisplay {
 			let initOff = 71.5;
 			for (let c = -2; c < 32; c ++) {
 				ctx.fillStyle = activePixel;
-				if (c + minCh == this.#ch) {
+				if (c + minCh == upThis.#ch) {
 					ctx.fillStyle = inactivePixel;
 				};
 				let filler = "";
@@ -444,7 +444,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("BANK", 83.5, 162.5);
 		ctx.fillText("PGM#", 276, 162.5);
 		// Show parts
-		upThis.xgFont.getStr(`${(this.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[this.#ch >> 4]}${(this.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
+		upThis.xgFont.getStr(`${(upThis.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[upThis.#ch >> 4]}${(upThis.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
 			e0.forEach(function (e1, i1) {
 				let partX = i1 % 5,
@@ -472,77 +472,77 @@ let MuDisplay = class extends RootDisplay {
 				getDebugState() && console.debug(`SysEx prompt cancelled.`);
 			};
 			useBm = sum.bitmap.bitmap;
-		} else if (this.demoInfo && time > 0) {
+		} else if (upThis.demoInfo && time > 0) {
 			if (upThis.#unresolvedEx) {
 				upThis.#unresolvedEx = false;
 				getDebugState() && console.debug(`SysEx prompt cancelled.`);
 			};
-			let sequence = this.demoInfo.class || "boot";
-			let stepTime = this.demoInfo.fps || 2;
-			let stepSize = this.demoInfo.size || 4;
-			let stepOffset = this.demoInfo.offset || 0;
+			let sequence = upThis.demoInfo.class || "boot";
+			let stepTime = upThis.demoInfo.fps || 2;
+			let stepSize = upThis.demoInfo.size || 4;
+			let stepOffset = upThis.demoInfo.offset || 0;
 			let stepFrame = Math.floor((time * stepTime + stepOffset) % stepSize);
 			let stepId = `${sequence}_${stepFrame}`;
 			//console.debug(stepId);
-			useBm = this.aniBm?.getBm(stepId) || this.sysBm?.getBm(stepId) || this.sysBm?.getBm("no_abm");
+			useBm = upThis.aniBm?.getBm(stepId) || upThis.sysBm?.getBm(stepId) || upThis.sysBm?.getBm("no_abm");
 			if (!useBm) {
-				useBm = this.#bmdb.slice();
+				useBm = upThis.#bmdb.slice();
 			};
 		} else {
 			// Use stored pic
-			useBm = this.#bmdb.slice();
-			if (timeNow >= this.#bmex) {
+			useBm = upThis.#bmdb.slice();
+			if (timeNow >= upThis.#bmex) {
 				if (upThis.#unresolvedEx) {
 					upThis.#unresolvedEx = false;
 					upThis.#promptEx = timeNow;
 					getDebugState() && console.debug(`SysEx prompt resolved.`);
 				};
-				this.#bmst = 0;
-				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
-				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
+				upThis.#bmst = 0;
+				let standard = upThis.getChVoice(upThis.#ch).standard.toLowerCase();
+				useBm = upThis.voxBm.getBm(upThis.getChVoice(upThis.#ch).name) || upThis.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[upThis.#ch], 0, sum.mode).name);
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-					useBm = this.sysBm.getBm(`ext_${standard}`);
-				} else if (sum.chType[this.#ch]) {
-					useBm = this.sysBm.getBm(`cat_drm`);
+					useBm = upThis.sysBm.getBm(`ext_${standard}`);
+				} else if (sum.chType[upThis.#ch]) {
+					useBm = upThis.sysBm.getBm(`cat_drm`);
 				} else if (["mu", "es"]. indexOf(standard) > -1) {
-					useBm = this.sysBm.getBm(`boot_3`);
+					useBm = upThis.sysBm.getBm(`boot_3`);
 				} else if (standard == "kr") {
-					useBm = this.sysBm.getBm(`st_korg`);
+					useBm = upThis.sysBm.getBm(`st_korg`);
 				};
 				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56 || sum.chContr[chOff + ccToPos[0]] == 121 || (sum.chContr[chOff + ccToPos[0]] < 100 && sum.chContr[chOff + ccToPos[0]] >= 96))) {
-					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name);
+					useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
 				};
 				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 126) {
-					useBm = this.sysBm.getBm("cat_smpl");
+					useBm = upThis.sysBm.getBm("cat_smpl");
 				};
 				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 64) {
-					useBm = this.sysBm.getBm("cat_sfx");
+					useBm = upThis.sysBm.getBm("cat_sfx");
 				};
 				if (!useBm) {
-					useBm = this.sysBm.getBm("no_abm");
+					useBm = upThis.sysBm.getBm("no_abm");
 				};
 				useBm = useBm.slice();
 				let exBlink = timeNow - upThis.#promptEx;
 				if (exBlink <= exDuration) {
-					this.sysBm.getBm("sysex_m").forEach((e, i) => {
+					upThis.sysBm.getBm("sysex_m").forEach((e, i) => {
 						if (e) {
 							useBm[i] = 0;
 						};
 					});
-					this.sysBm.getBm(`sysex_${Math.floor(exBlink / exDuration * 5) & 1}`).forEach((e, i) => {
+					upThis.sysBm.getBm(`sysex_${Math.floor(exBlink / exDuration * 5) & 1}`).forEach((e, i) => {
 						if (e) {
 							useBm[i] = 1;
 						};
 					});
 				};
 			} else {
-				if (this.#bmst == 2) {
+				if (upThis.#bmst == 2) {
 					if (upThis.#unresolvedEx) {
 						upThis.#unresolvedEx = false;
 						getDebugState() &&  console.debug(`SysEx prompt cancelled.`);
 					};
 					useBm.forEach((e, i, a) => {
-						let crit = Math.floor((this.#bmex - timeNow) / blinkSpeedMode);
+						let crit = Math.floor((upThis.#bmex - timeNow) / blinkSpeedMode);
 						a[i] = crit % 2 == e;
 					});
 				};
@@ -558,20 +558,20 @@ let MuDisplay = class extends RootDisplay {
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);
 		};
 		// Move waveBuffer
-		let useWB = time && this.demoInfo;
+		let useWB = time && upThis.demoInfo;
 		if (useWB && Math.floor(time * 50)) {
 			for (let i = 6; i >= 0; i --) {
-				this.#waveBuffer[i + 1] = this.#waveBuffer[i];
+				upThis.#waveBuffer[i + 1] = upThis.#waveBuffer[i];
 			};
-			this.#waveBuffer[0] = +(sum.velo[this.#ch] > 159);
+			upThis.#waveBuffer[0] = +(sum.velo[upThis.#ch] > 159);
 		};
 		// Show param
 		normParamPaint(sum.chContr[chOff + ccToPos[7]], 404, ctx); // vol
 		normParamPaint(sum.chContr[chOff + ccToPos[11]], 452, ctx); // exp
 		normParamPaint(sum.chContr[chOff + ccToPos[74]], 500, ctx); // bri
-		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 644, ctx, useWB, this.#waveBuffer); // rev
-		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 692, ctx, useWB, this.#waveBuffer); // cho
-		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 740, ctx, useWB, this.#waveBuffer); // var
+		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 644, ctx, useWB, upThis.#waveBuffer); // rev
+		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 692, ctx, useWB, upThis.#waveBuffer); // cho
+		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 740, ctx, useWB, upThis.#waveBuffer); // var
 		// Show pan
 		ctx.beginPath();
 		ctx.arc(582, 216, 34, 2.356194490192345, 7.068583470577034);
@@ -579,23 +579,23 @@ let MuDisplay = class extends RootDisplay {
 		ctx.strokeStyle = "#000f";
 		ctx.stroke();
 		let pan = sum.chContr[chOff + ccToPos[10]];
-		this.#panStrokes.forEach((e, i, a) => {a[i] = 0});
+		upThis.#panStrokes.forEach((e, i, a) => {a[i] = 0});
 		if (pan == 0) {
-			this.#panStrokes[0] = 1;
+			upThis.#panStrokes[0] = 1;
 		} else if (pan == 64) {
-			this.#panStrokes[3] = 1;
+			upThis.#panStrokes[3] = 1;
 		} else if (pan == 128) {
-			this.#panStrokes[1] = 1;
-			this.#panStrokes[5] = 1;
+			upThis.#panStrokes[1] = 1;
+			upThis.#panStrokes[5] = 1;
 		} else if (pan < 64) {
-			this.#panStrokes[Math.floor(pan / 21)] = 1;
+			upThis.#panStrokes[Math.floor(pan / 21)] = 1;
 		} else {
-			this.#panStrokes[4 + Math.floor((pan - 65) / 21)] = 1;
+			upThis.#panStrokes[4 + Math.floor((pan - 65) / 21)] = 1;
 		};
 		ctx.lineWidth = mprHeight;
 		for (let i = 0; i < 7; i ++) {
 			ctx.strokeStyle = inactivePixel;
-			if (this.#panStrokes[i]) {
+			if (upThis.#panStrokes[i]) {
 				ctx.strokeStyle = activePixel;
 			};
 			ctx.radial(582, 216, [

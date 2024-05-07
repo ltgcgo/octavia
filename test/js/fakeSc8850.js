@@ -1,0 +1,1 @@
+../../dist/fakeSc8850.js
