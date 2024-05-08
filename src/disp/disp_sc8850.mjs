@@ -199,6 +199,12 @@ let Sc8850Display = class extends RootDisplay {
 							};
 						});
 					});
+					upThis.scSys.getBm(portWork == portNow ? "tabSel" : "tabIdle")?.render((e, x, y) => {
+						if (e) {
+							let pI = (40 * i) + x + (y + 57) * totalWidth;
+							upThis.#nmdb[pI] = upThis.#nmdb[pI] ? 0 : 255;
+						};
+					});
 				};
 				break;
 			};
@@ -280,7 +286,7 @@ let Sc8850Display = class extends RootDisplay {
 		// EFX and bank?
 		if (upThis.device.getEffectSink()[upThis.#ch]) {
 			let cx = 153, cy = 11;
-			upThis.scSys.getBm("efxOn").render((e, x, y) => {
+			upThis.scSys.getBm("efxOn")?.render((e, x, y) => {
 				if (e) {
 					upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
 				};
@@ -293,7 +299,7 @@ let Sc8850Display = class extends RootDisplay {
 				if (cc32 > 0 && cc32 < 5) {
 					let cx = 153;
 					let cy = 42 - cc32 * 5;
-					upThis.scSys.getBm("bankSel").render((e, x, y) => {
+					upThis.scSys.getBm("bankSel")?.render((e, x, y) => {
 						if (e) {
 							upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
 						};
