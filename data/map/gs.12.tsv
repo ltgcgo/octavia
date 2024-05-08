@@ -1,4 +1,5 @@
 ID	Name
+RvSnr3!!	RvSnareMenu3
 Uprt.Pno	Upright Pno.
 UprtP. w	Uprt Piano w
 MildP. w	Mild Piano w
@@ -432,12 +433,12 @@ UillPpOr	UileanPipeOr
 GmlnGong	Gamelan Gong
 StGameln	St. Gamelan
 RAMACymb	RAMA Cymbal
-RideCym!	Ride Cymb.!!
-RideBel!	Ride Bells!!
+RideCym!	RideCymbMenu
+RideBel!	RideBellMenu
 AngkRthm	Angkl Rhythm
 FngrSnap	Finger Snaps
 909 Clap	909 HandClap
-HandClp!	Hand Clap!!!
+HandClp!	HandClapMenu
 SmallTko	Small Taiko
 Kick3 !!	Kick 3 Menu
 Kick4 !!	Kick 4 Menu
@@ -458,12 +459,12 @@ Gtr.Slap	Guitar Slap
 ChrdStrk	Chord Stroke
 BiwaStrk	Biwa Stroke
 BiwaTrem	Biwa Tremolo
-AcBaNz!!	AcouBassNz!!
-DsGtNz!!	Dist.GtrNz!!
-ElGtNz!!	El.Gtr.Nz!!1
-ElGtNz!2	El.Gtr.Nz!!2
-GtStrk!!	Gtr.Stroke!!
-GtSlide!	Gtr.Slide!!!
+AcBaNz!!	AcBassNzMenu
+DsGtNz!!	DstGtrNzMenu
+ElGtNz!!	ElGtrNzMenu1
+ElGtNz!2	ElGtrNzMenu2
+GtStrk!!	GtStrokeMenu
+GtSlide!	GtrSlideMenu
 AcBaMute	AcouBaMuteNz
 AcBaTch.	AcouBaTch.Nz
 AcBaAtk.	AcouBaAtk.Nz
@@ -485,7 +486,7 @@ GtrStrk2	GtrStrokeNz2
 GtrStrk3	GtrStrokeNz3
 GtrStrk4	GtrStrokeNz4
 Fl.KClik	FluteKyClick
-BrthNz!!	Breath Nz!!!
+BrthNz!!	BreathNzMenu
 Fl. Brth	Flute Breath
 Fl.Brth2	FluteBreath2
 Fl.Brth3	FluteBreath3
