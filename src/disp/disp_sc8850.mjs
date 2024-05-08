@@ -2,7 +2,7 @@
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
-import {MxFont40} from "../basic/mxReader.js";
+import {MxFont40, MxBmDef} from "../basic/mxReader.js";
 
 import {
 	backlight,
@@ -23,6 +23,15 @@ let flipBitsInBuffer = (buf, bWidth, startX, startY, width, height) => {
 		};
 	};
 };
+let fillBitsInBuffer = (buf, bWidth, startX, startY, width, height) => {
+	let endX = startX + width, endY = startY + height;
+	for (let pY = startY; pY < endY; pY ++) {
+		let lineOff = pY * bWidth;
+		for (let pX = startX; pX < endX; pX ++) {
+			buf[lineOff + pX] = 255;
+		};
+	};
+};
 
 let Sc8850Display = class extends RootDisplay {
 	#pixelLit = 255;
@@ -38,8 +47,9 @@ let Sc8850Display = class extends RootDisplay {
 	useBlur = false;
 	font55 = new MxFont40("./data/bitmaps/sc/libre55.tsv");
 	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv");
+	scSys = new MxBmDef("./data/bitmaps/sc/system.tsv");
 	constructor(conf) {
-		super(new OctaviaDevice(), 0.25, 0.75);
+		super(new OctaviaDevice(), 0.25, 0.5);
 		let upThis = this;
 		upThis.useBlur = !!conf?.useBlur;
 		upThis.addEventListener("channelactive", (ev) => {
@@ -191,25 +201,54 @@ let Sc8850Display = class extends RootDisplay {
 		//flipBitsInBuffer(upThis.#nmdb, totalWidth, 49, 13, 5, 35);
 		// Strength calculation
 		let renderRange = 1 << rendMode,
-		strengthDivider = (256 - renderRange + 1) / (35 - renderRange + 1);
+		strengthHeight = (35 - renderRange + 1) / renderRange,
+		strengthDivider = 256 / strengthHeight;
 		sum.velo.forEach(function (e, i) {
 			if (e >= upThis.#linger[i]) {
-				upThis.#linger[i] = ((e >> 4) << 4) + 15;
+				upThis.#linger[i] = e;
 			} else {
-				let val = upThis.#linger[i] - 2;
+				let val = upThis.#linger[i] - 4 * renderRange;
 				if (val < 0) {
 					val = 0;
 				};
 				upThis.#linger[i] = val;
 			};
 		});
+		//console.debug(renderRange, strengthHeight, strengthDivider);
 		// Render meters
 		for (let i0 = 0; i0 < renderRange; i0 ++) {
 			let chStart = minCh + (i0 << 4);
 			for (let i1 = 0; i1 < 16; i1 ++) {
 				let ch = chStart + i1;
 				let strength = Math.floor(sum.strength[ch] / strengthDivider) + 1;
-				flipBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthDivider - strength, 5, strength);
+				let linger = Math.floor(upThis.#linger[ch] / strengthDivider) + 1;
+				fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - strength - i0, 5, strength);
+				fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - linger - i0, 5, 1);
+			};
+		};
+		// EFX and bank?
+		if (upThis.device.getEffectSink()[upThis.#ch]) {
+			let cx = 153, cy = 11;
+			upThis.scSys.getBm("efxOn").render((e, x, y) => {
+				if (e) {
+					upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
+				};
+			});
+		};
+		switch (upThis.device.getChMode(upThis.#ch)) {
+			case "gs":
+			case "sc": {
+				let cc32 = sum.chContr[chOff + ccToPos[32]];
+				if (cc32 > 0 && cc32 < 5) {
+					let cx = 153;
+					let cy = 42 - cc32 * 5;
+					upThis.scSys.getBm("bankSel").render((e, x, y) => {
+						if (e) {
+							upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
+						};
+					});
+				};
+				break;
 			};
 		};
 		// Guide the drawn matrix
