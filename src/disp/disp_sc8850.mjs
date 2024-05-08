@@ -2,7 +2,7 @@
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
-import {MxFont40, MxBmDef} from "../basic/mxReader.js";
+import {MxFont40, MxFont176, MxBmDef} from "../basic/mxReader.js";
 
 import {
 	backlight,
@@ -33,6 +33,22 @@ let fillBitsInBuffer = (buf, bWidth, startX, startY, width, height) => {
 	};
 };
 
+let twoLetterMode = {
+	"?": "  ",
+	"mt32": "mt",
+	"doc": "dc",
+	"qy10": "qy",
+	"qy20": "qy",
+	"ns5r": "n5",
+	"x5d": "xd",
+	"05rw": "rw",
+	"k11": "kg",
+	"krs": "kr",
+	"s90es": "es",
+	"motif": "es",
+	"trin": "tr"
+};
+
 let Sc8850Display = class extends RootDisplay {
 	#pixelLit = 255;
 	#pixelOff = 0;
@@ -44,10 +60,12 @@ let Sc8850Display = class extends RootDisplay {
 	#ch = 0;
 	#range = 0;
 	#start = 255; // start port
+	#mode = "?";
 	useBlur = false;
 	font55 = new MxFont40("./data/bitmaps/sc/libre55.tsv");
 	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv");
 	scSys = new MxBmDef("./data/bitmaps/sc/system.tsv");
+	font7a = new MxFont176("./data/bitmaps/sc/libre7a.tsv");
 	constructor(conf) {
 		super(new OctaviaDevice(), 0.25, 0.5);
 		let upThis = this;
@@ -66,6 +84,9 @@ let Sc8850Display = class extends RootDisplay {
 				console.debug(`MU display rejected port range value ${ev.data}.`);
 			};
 			upThis.#start = ev.data;
+		});
+		upThis.device.addEventListener("mode", (ev) => {
+			upThis.#mode = ev.data;
 		});
 	};
 	setCh(ch) {
@@ -86,7 +107,7 @@ let Sc8850Display = class extends RootDisplay {
 		let fullRefresh = false;
 		upThis.#nmdb.fill(0);
 		// Prepare the canvas
-		if (timeNow - upThis.#lastBg >= 15000) {
+		if (timeNow - upThis.#lastBg >= 30000) {
 			ctx.fillStyle = backlight.orange;
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			upThis.#lastBg = timeNow;
@@ -151,6 +172,16 @@ let Sc8850Display = class extends RootDisplay {
 			});
 		});
 		flipBitsInBuffer(upThis.#nmdb, totalWidth, 43, 1, 19, 8);
+		// Render voice name
+		upThis.font7a.getStr(upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ")).forEach((e0, i0) => {
+			let offsetX = i0 * 8;
+			e0.forEach((e1, i1) => {
+				let pX = (i1 % 11) + offsetX + 64, pY = Math.floor(i1 / 11);
+				if (e1) {
+					upThis.#nmdb[pY * totalWidth + pX] = 255;
+				};
+			});
+		});
 		// Render port selection
 		switch (rendMode) {
 			case 0: {
@@ -198,6 +229,26 @@ let Sc8850Display = class extends RootDisplay {
 				};
 			});
 		});
+		switch (upThis.#mode) {
+			case "?":
+			case "gs":
+			case "sc": {
+				break;
+			};
+			default: {
+				let mode = (twoLetterMode[upThis.#mode] || upThis.#mode).toUpperCase();
+				upThis.font56.getStr(mode).forEach((e0, i0) => {
+					let offsetX = i0 * 6;
+					e0.forEach((e1, i1) => {
+						let pX = (i1 % 5) + offsetX + 148, pY = Math.floor(i1 / 5) + 49;
+						if (e1) {
+							upThis.#nmdb[pY * totalWidth + pX] = 255;
+						};
+					});
+				});
+				break;
+			};
+		};
 		//flipBitsInBuffer(upThis.#nmdb, totalWidth, 49, 13, 5, 35);
 		// Strength calculation
 		let renderRange = 1 << rendMode,

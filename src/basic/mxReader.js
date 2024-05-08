@@ -41,11 +41,70 @@ let MxFont40 = class {
 				};
 				let bm = new Uint8Array(40);
 				Array.from(arr[1]).forEach(async function (e, i) {
-					let verOff = i % 2 ? 4 : 0,
-					horOff = Math.floor(i / 2),
+					let verOff = (i & 1) ? 4 : 0,
+					horOff = i >> 1,
 					proxy = parseInt(e, 16), dp = 3;
 					while (proxy > 0 || dp >= 0) {
 						let pos = (verOff + dp) * 5 + horOff;
+						bm[pos] = proxy & 1;
+						proxy = proxy >> 1;
+						dp --;
+					};
+				});
+				upThis.#fonts[codePoint] = bm;
+				loadCount ++;
+			};
+		});
+		console.debug(`Font "${source || "(internal)"}": ${allCount} total, ${loadCount} loaded.`);
+	};
+	async loadFile(fileSrc, allowOverwrite = false) {
+		let upThis = this;
+		console.debug(`Requested font file from "${fileSrc}".`);
+		await upThis.load(await (await fetch(fileSrc)).text(), allowOverwrite, fileSrc);
+		shiftLoading = false;
+	};
+	constructor(...fileSrc) {
+		shiftLoading = true;
+		(async () => {
+			// Loading order is now enforced
+			for (let i = 0; i < fileSrc.length; i ++) {
+				await this.loadFile(fileSrc[i]);
+			};
+		})();
+	};
+	getCP(codePoint) {
+		return this.#fonts[codePoint];
+	};
+	getStr(codePoint) {
+		let arr = [],
+		upThis = this;
+		Array.from(codePoint).forEach(function (e) {
+			arr.push(upThis.#fonts[e.charCodeAt(0)] || upThis.#fonts[32] || blankFont);
+		});
+		return arr;
+	};
+};
+let MxFont176 = class {
+	#fonts = [];
+	async load(text, allowOverwrite = false, source = "(internal)") {
+		let upThis = this;
+		let loadCount = 0, allCount = 0;
+		console.debug(`Font "${source || "(internal)"}": loading started.`);
+		text.split("\n").forEach(function (e, i) {
+			if (i > 0 && e?.length > 0) {
+				let arr = e.split("\t");
+				let codePoint = parseInt(arr[0], 16);
+				allCount ++;
+				if (upThis.#fonts[codePoint] && !allowOverwrite) {
+					return;
+				};
+				let bm = new Uint8Array(176);
+				Array.from(arr[1]).forEach(async function (e, i) {
+					let verOff = (i & 3) << 2,
+					horOff = i >> 2,
+					proxy = parseInt(e, 16), dp = 3;
+					while (proxy > 0 || dp >= 0) {
+						let pos = (verOff + dp) * 11 + horOff;
 						bm[pos] = proxy & 1;
 						proxy = proxy >> 1;
 						dp --;
@@ -163,6 +222,7 @@ let MxBmDef = class {
 
 export {
 	MxFont40,
+	MxFont176,
 	MxBm256,
 	MxBmDef
 };
