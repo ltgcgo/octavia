@@ -388,7 +388,7 @@ let Sc8850Display = class extends RootDisplay {
 		upThis.#dmdb.forEach((e, i) => {
 			let pX = i % totalWidth, pY = Math.floor(i / totalWidth);
 			if (fullRefresh || upThis.#omdb[i] != e) {
-				let posX = 2 + 5 * pX, posY = 2 + 5 * pY;
+				let posX = 4 + 5 * pX, posY = 4 + 5 * pY;
 				ctx.clearRect(posX, posY, 5, 5);
 				ctx.fillStyle = backlight.orange;
 				ctx.fillRect(posX, posY, 5, 5);

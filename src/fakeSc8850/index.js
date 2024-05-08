@@ -215,7 +215,7 @@ dispCanv.addEventListener("mousedown", function (ev) {
 	let ch = visualizer.getCh();
 	if (ev.offsetX < 64) {
 		visualizer.setCh(ch - 1);
-	} else if (ev.offsetX >= 801) {
+	} else if (ev.offsetX >= 744) {
 		visualizer.setCh(ch + 1);
 	};
 });
