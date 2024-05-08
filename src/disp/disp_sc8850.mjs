@@ -222,6 +222,12 @@ let Sc8850Display = class extends RootDisplay {
 							};
 						});
 					});
+					upThis.scSys.getBm(rendMode == i ? "tabSel" : "tabIdle")?.render((e, x, y) => {
+						if (e) {
+							let pI = (40 * i) + x + (y + 57) * totalWidth;
+							upThis.#nmdb[pI] = upThis.#nmdb[pI] ? 0 : 255;
+						};
+					});
 				};
 				break;
 			};
