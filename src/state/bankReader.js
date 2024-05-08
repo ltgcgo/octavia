@@ -217,7 +217,7 @@ let VoiceBank = class {
 			case 36: {
 				if (mode == "xg") {
 					sect = `${["AP", "VL", "PF", "DX", "AN"][msb & 7]}-${"abcdefgh"[lsb]}`;
-					useLsb = args[2];
+					useLsb = 3;
 				};
 				break;
 			};

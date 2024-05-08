@@ -60,7 +60,8 @@ let Sc8850Display = class extends RootDisplay {
 	#nmdb = new Uint8Array(totalPixelCount);
 	#dmdb = new Uint8Array(totalPixelCount);
 	#omdb = new Uint8Array(totalPixelCount);
-	#linger = new Uint8Array(128);
+	#linger = new Uint8Array(allocated.ch);
+	#lingerExtra = new Uint8Array(allocated.ch);
 	#ch = 0;
 	#range = 0;
 	#start = 255; // start port
@@ -111,6 +112,7 @@ let Sc8850Display = class extends RootDisplay {
 		super.reset();
 		this.#range = 0;
 		this.#start = 255;
+		this.#lingerExtra.fill(0);
 	};
 	render(time, ctx) {
 		let sum = super.render(time);
@@ -119,7 +121,7 @@ let Sc8850Display = class extends RootDisplay {
 		let fullRefresh = false;
 		upThis.#nmdb.fill(0);
 		// Prepare the canvas
-		if (timeNow - upThis.#lastBg >= 30000) {
+		if (timeNow - upThis.#lastBg >= 3600000) {
 			ctx.fillStyle = backlight.orange;
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			upThis.#lastBg = timeNow;
@@ -235,11 +237,13 @@ let Sc8850Display = class extends RootDisplay {
 				break;
 			};
 			case 1:
-			case 2: {
+			case 2:
+			case 3: {
 				let portNow = upThis.#ch >> 4;
-				for (let i = 0; i < 3; i ++) {
+				for (let i = 0; i < 4; i ++) {
 					let portOffX = i * 40 + 2, portOffY = (rendMode == i) ? 59 : 58;
-					upThis.font55.getStr(`${16 << i}CH-${"ABCDEFGH"[minCh >> 4]}`).forEach((e0, i0) => {
+					let tabText = i == 3 ? "128CH" : `${16 << i}CH-${"ABCDEFGH"[minCh >> 4]}`;
+					upThis.font55.getStr(tabText).forEach((e0, i0) => {
 						let offsetX = i0 * 6;
 						e0.forEach((e1, i1) => {
 							let pX = (i1 % 5) + offsetX + portOffX, pY = Math.floor(i1 / 5) + portOffY;
@@ -323,12 +327,17 @@ let Sc8850Display = class extends RootDisplay {
 		sum.velo.forEach(function (e, i) {
 			if (e >= upThis.#linger[i]) {
 				upThis.#linger[i] = e;
+				upThis.#lingerExtra[i] = 127;
 			} else {
-				let val = upThis.#linger[i] - 4 * renderRange;
-				if (val < 0) {
-					val = 0;
+				if (upThis.#lingerExtra[i] >> 4) {
+					upThis.#lingerExtra[i] -= 16;
+				} else {
+					let val = upThis.#linger[i] - 4 * renderRange;
+					if (val < 0) {
+						val = 0;
+					};
+					upThis.#linger[i] = val;
 				};
-				upThis.#linger[i] = val;
 			};
 		});
 		//console.debug(renderRange, strengthHeight, strengthDivider);
