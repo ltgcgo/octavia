@@ -4,6 +4,8 @@ import {OctaviaDevice, allocated} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40, MxFont176, MxBmDef} from "../basic/mxReader.js";
 
+import {getDebugState} from "../state/utils.js";
+
 import {
 	backlight,
 	inactivePixel,
@@ -11,6 +13,8 @@ import {
 	lcdPixel,
 	lcdCache
 } from "./colour.js";
+
+const exExhaust = 400, exDuration = 1000;
 
 let totalWidth = 160, totalHeight = 64, totalPixelCount = totalWidth * totalHeight;
 
@@ -62,6 +66,10 @@ let Sc8850Display = class extends RootDisplay {
 	#start = 255; // start port
 	#mode = "?";
 	useBlur = false;
+	#scheduledEx = false;
+	#unresolvedEx = false;
+	#awaitEx = 0;
+	#promptEx = 0;
 	font55 = new MxFont40("./data/bitmaps/sc/libre55.tsv");
 	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv");
 	scSys = new MxBmDef("./data/bitmaps/sc/system.tsv");
@@ -88,6 +96,10 @@ let Sc8850Display = class extends RootDisplay {
 		upThis.device.addEventListener("mode", (ev) => {
 			upThis.#mode = ev.data;
 		});
+		upThis.device.addEventListener("mupromptex", () => {
+			upThis.#scheduledEx = true;
+			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
+		});
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -112,6 +124,17 @@ let Sc8850Display = class extends RootDisplay {
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			upThis.#lastBg = timeNow;
 			fullRefresh = true;
+		};
+		// Test SysEx status
+		if (upThis.#scheduledEx) {
+			upThis.#scheduledEx = false;
+			if (timeNow - upThis.#promptEx > exExhaust) {
+				upThis.#unresolvedEx = true;
+				getDebugState() && console.debug(`SysEx prompt submitted.`);
+			} else {
+				getDebugState() && console.debug(`SysEx prompt too busy.`);
+			};
+			upThis.#awaitEx = timeNow;
 		};
 		// Channel test
 		let alreadyMin = false;
@@ -147,36 +170,39 @@ let Sc8850Display = class extends RootDisplay {
 		//console.debug(minCh, maxCh, rendMode);
 		// Render current channel
 		upThis.font56.getStr(`${"ABCDEFGH"[upThis.#ch >> 4]}${`${(upThis.#ch & 15) + 1}`.padStart(2, "0")}`).forEach((e0, i0) => {
-			let offsetX = i0 * 6;
+			let offsetX = i0 * 6 + 1;
 			e0.forEach((e1, i1) => {
-				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
+				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 3;
 				if (e1) {
 					upThis.#nmdb[pY * totalWidth + pX] = 255;
 				};
 			});
 		});
-		// Render bank info
-		let showLsb = !sum.chContr[chOff + ccToPos[0]];
-		if (upThis.getMode() == "xg") {
-			if ([32, 33, 34, 35, 36, 48, 79, 80, 81, 82, 83, 84, 95, 96, 97, 98, 99, 100].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
-				showLsb = true;
-			};
-		};
-		upThis.font56.getStr(`${`${showLsb ? sum.chContr[chOff + ccToPos[32]] : sum.chContr[chOff + ccToPos[0]]}`.padStart(3, "0")} ${`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0")}`).forEach((e0, i0) => {
-			let offsetX = i0 * 6;
+		// Render bank info and voice name
+		let voiceObject = upThis.getChVoice(upThis.#ch);
+		upThis.font56.getStr(voiceObject.bank).forEach((e0, i0) => {
+			let offsetX = i0 * 6 + 21;
 			e0.forEach((e1, i1) => {
-				let pX = (i1 % 5) + offsetX + 20, pY = Math.floor(i1 / 5) + 2;
+				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 3;
 				if (e1) {
 					upThis.#nmdb[pY * totalWidth + pX] = 255;
 				};
 			});
 		});
-		flipBitsInBuffer(upThis.#nmdb, totalWidth, 43, 1, 19, 8);
-		// Render voice name
-		upThis.font7a.getStr(upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ")).forEach((e0, i0) => {
+		upThis.font56.getStr(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0")).forEach((e0, i0) => {
+			let offsetX = i0 * 6 + 44;
+			e0.forEach((e1, i1) => {
+				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 3;
+				if (e1) {
+					upThis.#nmdb[pY * totalWidth + pX] = 255;
+				};
+			});
+		});
+		flipBitsInBuffer(upThis.#nmdb, totalWidth, 43, 2, 19, 8);
+		upThis.font7a.getStr(upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ")).forEach((e0, i0) => {
 			let offsetX = i0 * 8;
 			e0.forEach((e1, i1) => {
-				let pX = (i1 % 11) + offsetX + 64, pY = Math.floor(i1 / 11);
+				let pX = (i1 % 11) + offsetX + 64, pY = Math.floor(i1 / 11) + 1;
 				if (e1) {
 					upThis.#nmdb[pY * totalWidth + pX] = 255;
 				};
@@ -258,6 +284,34 @@ let Sc8850Display = class extends RootDisplay {
 						};
 					});
 				});
+				if (voiceObject.standard != "GM" && mode != voiceObject.standard) {
+					upThis.font56.getStr(voiceObject.standard).forEach((e0, i0) => {
+						let offsetX = i0 * 6;
+						e0.forEach((e1, i1) => {
+							let pX = (i1 % 5) + offsetX + 148, pY = Math.floor(i1 / 5) + 42;
+							if (e1) {
+								upThis.#nmdb[pY * totalWidth + pX] = 255;
+							};
+						});
+					});
+				};
+				if (upThis.#unresolvedEx) {
+					upThis.#unresolvedEx = false;
+					upThis.#promptEx = timeNow;
+					getDebugState() && console.debug(`SysEx prompt resolved.`);
+				};
+				let exBlink = timeNow - upThis.#promptEx;
+				if (exBlink <= exDuration && !(Math.floor(exBlink / exDuration * 5) & 1)) {
+					upThis.font56.getStr("Ex").forEach((e0, i0) => {
+						let offsetX = i0 * 6;
+						e0.forEach((e1, i1) => {
+							let pX = (i1 % 5) + offsetX + 148, pY = Math.floor(i1 / 5) + 35;
+							if (e1) {
+								upThis.#nmdb[pY * totalWidth + pX] = 255;
+							};
+						});
+					});
+				};
 				break;
 			};
 		};
@@ -291,7 +345,7 @@ let Sc8850Display = class extends RootDisplay {
 		};
 		// EFX and bank?
 		if (upThis.device.getEffectSink()[upThis.#ch]) {
-			let cx = 153, cy = 11;
+			let cx = 153, cy = 12;
 			upThis.scSys.getBm("efxOn")?.render((e, x, y) => {
 				if (e) {
 					upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
@@ -304,7 +358,7 @@ let Sc8850Display = class extends RootDisplay {
 				let cc32 = sum.chContr[chOff + ccToPos[32]];
 				if (cc32 > 0 && cc32 < 5) {
 					let cx = 153;
-					let cy = 42 - cc32 * 5;
+					let cy = 43 - cc32 * 5;
 					upThis.scSys.getBm("bankSel")?.render((e, x, y) => {
 						if (e) {
 							upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;

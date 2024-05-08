@@ -139,27 +139,66 @@ let VoiceBank = class {
 				break;
 			};
 		};
-		let ending = " ", sect = `M`, useLsb = 0, baseShift = 0;
+		let ending = " ", sect = `M`, bank = "", useLsb = 0, baseShift = 0;
 		// Section test
 		switch (args[0]) {
 			case 0: {
-				if (args[2] == 127) {
-					sect = "MT-a";
-				} else if (args[2] == 126) {
-					sect = "MT-b";
-				} else if (args[2] == 7) {
-					sect = "GM-k"; // KAWAI GMega LX
-				} else if (args[2] == 5) {
-					sect = "SG-a"; // AKAI SG01k
-				} else if (args[2] == 4) {
-					sect = "SP-l"; // KAWAI GMega SP
-				} else if (args[2] == 0) {
-					sect = "GM-a";
-				} else if ((mode == "gs" || mode == "sc") && args[2] < 5) {
-					sect = "GM-a";
-				} else {
-					sect = "y";
-					useLsb = 3;
+				switch (args[2]) {
+					case 127: {
+						if (mode == "xg") {
+							sect = "GM-a";
+						} else {
+							sect = "MT-a";
+							bank = "C/M";
+						};
+						break;
+					};
+					case 126: {
+						if (mode == "xg") {
+							sect = "GM-n";
+						} else {
+							sect = "MT-b";
+							bank = "C/M";
+						};
+						break;
+					};
+					case 7: {
+						sect = "GM-k"; // KAWAI GMega LX
+						bank = "GLX";
+						break;
+					};
+					case 5: {
+						sect = "SG-a"; // AKAI SG01k
+						bank = "000";
+						break;
+					};
+					case 4: {
+						if (mode == "gs" || mode == "sc") {
+							sect = "GM-a";
+							bank = "000";
+						} else {
+							sect = "SP-l"; // KAWAI GMega SP
+							bank = "C/M";
+						};
+						break;
+					};
+					case 3:
+					case 2:
+					case 1: {
+						if (mode == "gs" || mode == "sc") {
+							sect = "GM-a";
+							bank = "000";
+						};
+						break;
+					};
+					case 0: {
+						sect = "GM-a";
+						break;
+					};
+					default: {
+						sect = "y";
+						useLsb = 3;
+					};
 				};
 				break;
 			};
@@ -178,11 +217,13 @@ let VoiceBank = class {
 			case 36: {
 				if (mode == "xg") {
 					sect = `${["AP", "VL", "PF", "DX", "AN"][msb & 7]}-${"abcdefgh"[lsb]}`;
+					useLsb = args[2];
 				};
 				break;
 			};
 			case 48: {
-				sect = `yM${(args[2] >> 3).toString().padStart(2, "0")}`;
+				bank = `M${(args[2] >> 3).toString().padStart(2, "0")}`;
+				sect = `y${bank}`;
 				useLsb = 1;
 				break;
 			};
@@ -192,6 +233,7 @@ let VoiceBank = class {
 			};
 			case 57: {
 				sect = ["yDOC", "QY10", "QY20"][args[2] - 112] || "yMxv"; // Yamaha Model Exclusive Voice
+				bank = ["DOC", "QY1", "QY2"][args[2] - 112] || "057";
 			};
 			case 61:
 			case 120: {
@@ -212,10 +254,12 @@ let VoiceBank = class {
 				} else {
 					sect = `Ds`;
 				};
+				useLsb = 1;
 				break;
 			};
 			case 64: {
 				sect = "ySFX";
+				bank = "SFX";
 				break;
 			};
 			case 67: {
@@ -325,6 +369,9 @@ let VoiceBank = class {
 		};
 		if (sect.length < 4) {
 			sect += `${[msb, lsb, args[0], args[2]][useLsb] - baseShift}`.padStart(4 - sect.length, "0");
+		};
+		if (bank.length < 3) {
+			bank += `${[msb, lsb, args[0], args[2]][useLsb]}`.padStart(3 - bank.length, "0");
 		};
 		if (mode == "xg") {
 			if (msb == 0) {
@@ -599,6 +646,7 @@ let VoiceBank = class {
 			sid,
 			ending,
 			sect,
+			bank,
 			standard
 		};
 	};

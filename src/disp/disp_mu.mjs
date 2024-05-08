@@ -168,7 +168,7 @@ let MuDisplay = class extends RootDisplay {
 	#maxCh = 0;
 	#scheduledEx = false;
 	#unresolvedEx = false;
-	#awaitEx = 0;
+	//#awaitEx = 0;
 	#promptEx = 0;
 	inWB = false;
 	#waveBuffer = new Uint8Array(8);
@@ -260,7 +260,7 @@ let MuDisplay = class extends RootDisplay {
 			} else {
 				getDebugState() && console.debug(`SysEx prompt too busy.`);
 			};
-			upThis.#awaitEx = timeNow;
+			//upThis.#awaitEx = timeNow;
 		};
 		// Fill with green
 		//ctx.fillStyle = "#af2";
