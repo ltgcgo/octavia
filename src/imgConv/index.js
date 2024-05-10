@@ -14,16 +14,24 @@ eY = $e("#cutY"),
 eW = $e("#cutWidth"),
 eH = $e("#cutHeight");
 let cutX = 0, cutY = 0, cutWidth = 5, cutHeight = 8;
+let cutXMax = 0, cutYMax = 0;
+let floatyCursor = $e("#floatyCursor");
 
 let updateConstraint = () => {
-	eX.max = `${Math.max(0, imageShow.width - cutWidth)}`;
-	eY.max = `${Math.max(0, imageShow.height - cutHeight)}`;
+	cutXMax = Math.max(0, imageShow.width - cutWidth);
+	cutYMax = Math.max(0, imageShow.height - cutHeight)
+	eX.max = `${cutXMax}`;
+	eY.max = `${cutYMax}`;
 };
 let updateDraw = () => {
 	canvas.width = cutWidth;
 	canvas.height = cutHeight;
 	context.clearRect(0, 0, cutWidth, cutHeight);
 	context.drawImage(imageShow, cutX, cutY, cutWidth, cutHeight, 0, 0, cutWidth, cutHeight);
+	floatyCursor.style.top = `${imageShow.offsetTop + cutY}px`;
+	floatyCursor.style.left = `${imageShow.offsetLeft + cutX}px`;
+	floatyCursor.style.width = `${cutWidth}px`;
+	floatyCursor.style.height = `${cutHeight}px`;
 };
 let canvasToBitmap = async (context) => {
 	let imageData = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
@@ -56,9 +64,10 @@ $e("#openImage").addEventListener("click", async () => {
 	blobUrl = URL.createObjectURL(imageFile);
 	imageShow.src = blobUrl;
 });
-$e("#convertImage").addEventListener("click", async () => {
+let convertImage = async () => {
 	$e("#result").innerText = await canvasToBitmap(context);
-});
+};
+$e("#convertImage").addEventListener("click", convertImage);
 imageShow.addEventListener("load", () => {
 	updateConstraint();
 	updateDraw();
@@ -85,19 +94,42 @@ eH.onchange = function () {
 	updateConstraint();
 	updateDraw();
 };
-document.body.addEventListener("keydown", ({key}) => {
+document.body.addEventListener("keydown", async (ev) => {
+	let {key} = ev;
+	let stopIt = true;
 	switch(key) {
 		case "ArrowUp": {
+			cutY = Math.max(0, cutY - 1);
+			updateDraw();
 			break;
 		};
 		case "ArrowDown": {
+			cutY = Math.min(cutYMax, cutY + 1);
+			updateDraw();
 			break;
 		};
 		case "ArrowLeft": {
+			cutX = Math.max(0, cutX - 1);
+			updateDraw();
 			break;
 		};
 		case "ArrowRight": {
+			cutX = Math.min(cutXMax, cutX + 1);
+			updateDraw();
 			break;
 		};
+		case "Enter": {
+			await convertImage();
+			break;
+		};
+		default: {
+			stopIt = false;
+		};
+	};
+	if (stopIt) {
+		ev.preventDefault();
+		eX.value = cutX;
+		eY.value = cutY;
+		//ev.stopImmediatePropagation();
 	};
 });

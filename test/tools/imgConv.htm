@@ -6,7 +6,7 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<link rel="stylesheet" href="../css/water.min.css" />
 	<link rel="stylesheet" href="../css/fonts.css" />
-	<style>input[type=number]{display:inline-block;width:5em;}canvas{outline:0.5px solid #fff5;transform:scale(400%);transform-origin:top left;-webkit-image-rendering:crisp-edges;-moz-image-rendering:optimizeSpeed;image-rendering:pixelated;}</style>
+	<style>input[type=number]{display:inline-block;width:5em;}canvas{outline:0.5px solid #fff5;transform:scale(400%);transform-origin:top left;-webkit-image-rendering:crisp-edges;-moz-image-rendering:optimizeSpeed;image-rendering:pixelated;}#floatyCursor{outline:4px solid #f00;position:absolute;}</style>
 </head>
 <body>
 	<p>
@@ -21,6 +21,7 @@
 		<img id="imgShow"/><br/>
 		<code id="result"></code><br/><br/>
 		<canvas width="1" height="1"></canvas>
+		<span id="floatyCursor"></span>
 	</p>
 	<script src ="../js/imgConv.js"></script>
 </body>
