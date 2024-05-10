@@ -75,6 +75,7 @@ let Sc8850Display = class extends RootDisplay {
 	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv");
 	scSys = new MxBmDef("./data/bitmaps/sc/system.tsv");
 	font7a = new MxFont176("./data/bitmaps/sc/libre7a.tsv");
+	voxBm = new MxBmDef("./data/bitmaps/sc/voices.tsv");
 	constructor(conf) {
 		super(new OctaviaDevice(), 0.25, 0.5);
 		let upThis = this;
@@ -210,6 +211,9 @@ let Sc8850Display = class extends RootDisplay {
 				};
 			});
 		});
+		upThis.getChBm(upThis.#ch, voiceObject)?.render((e, x, y) => {
+			upThis.#nmdb[(y + 18) * totalWidth + x + 2] = e ? 255 : 0;
+		});
 		// Render port selection
 		switch (rendMode) {
 			case 0: {
@@ -320,7 +324,6 @@ let Sc8850Display = class extends RootDisplay {
 				break;
 			};
 		};
-		//flipBitsInBuffer(upThis.#nmdb, totalWidth, 49, 13, 5, 35);
 		// Strength calculation
 		let renderRange = 1 << rendMode,
 		strengthHeight = (35 - renderRange + 1) / renderRange,

@@ -201,11 +201,26 @@ let RootDisplay = class extends CustomEventSource {
 		let id = (msb << 8) | lsb;
 		return this.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;
 	};
-	getVoiceBitmap(voiceObject) {
-		;
+	getVoxBm(voiceObject) {
+		// Get voice bitmap
+		if (!voiceObject) {
+			throw(new Error("Voice object must be valid"));
+		};
+		let upThis = this;
+		if (!upThis.voxBm) {
+			throw(new Error("Voice bitmap repository isn't yet initialized"));
+		};
+		let result = upThis.voxBm.getBm(voiceObject.name);
+		if (!result) {
+			result = upThis.voxBm.getBm(upThis.getVoice(voiceObject.sid[0], voiceObject.sid[1], 0, voiceObject.mode).name);
+		};
+		return result;
 	};
-	getChBitmap(ch, voiceObject) {
-		;
+	getChBm(ch, voiceObject) {
+		// Get part bitmap
+		let upThis = this;
+		voiceObject = voiceObject || upThis.getChVoice(ch);
+		return upThis.getVoxBm(voiceObject);
 	};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;
