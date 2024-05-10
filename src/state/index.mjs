@@ -1443,21 +1443,28 @@ let OctaviaDevice = class extends CustomEventSource {
 	getNrpn() {
 		return this.#nrpn;
 	};
-	getVoice(msbO, prgO, lsbO, mode) {
+	getSubDb() {
+		return self?.structuredClone(this.#subDb);
+	};
+	getVoice(msbO, prgO, lsbO, mode = "?") {
 		let upThis = this;
-		let msb = msbO || upThis.#subDb[upThis.#mode][0],
+		if (!modeMap[mode]?.constructor) {
+			mode = "?";
+		};
+		let modeId = modeMap[mode];
+		let msb = msbO || upThis.#subDb[modeId][0],
 		prg = prgO,
-		lsb = lsbO || upThis.#subDb[upThis.#mode][1];
+		lsb = lsbO || upThis.#subDb[modeId][1];
 		if (msb == overrides.bank0) {
 			msb = 0;
 		};
-		if (modeIdx[upThis.#mode] == "ns5r") {
+		if (mode == "ns5r") {
 			if (msb > 0 && msb < 56) {
 				lsb = 3; // Use SC-88 Pro map
 			};
 		};
 		let bank = upThis.userBank.get(msb, prg, lsb, mode);
-		if (modeIdx[upThis.#mode] == "mt32") {
+		if (mode == "mt32") {
 			// Reload MT-32 user bank transparently
 			if (bank.name.indexOf("MT-m:") == 0) {
 				// Device patch

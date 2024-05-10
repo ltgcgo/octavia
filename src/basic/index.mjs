@@ -201,6 +201,12 @@ let RootDisplay = class extends CustomEventSource {
 		let id = (msb << 8) | lsb;
 		return this.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;
 	};
+	getVoiceBitmap(voiceObject) {
+		;
+	};
+	getChBitmap(ch, voiceObject) {
+		;
+	};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;
 	};
