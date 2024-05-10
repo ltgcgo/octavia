@@ -27,12 +27,12 @@ let flipBitsInBuffer = (buf, bWidth, startX, startY, width, height) => {
 		};
 	};
 };
-let fillBitsInBuffer = (buf, bWidth, startX, startY, width, height) => {
+let fillBitsInBuffer = (buf, bWidth, startX, startY, width, height, bit = 255) => {
 	let endX = startX + width, endY = startY + height;
 	for (let pY = startY; pY < endY; pY ++) {
 		let lineOff = pY * bWidth;
 		for (let pX = startX; pX < endX; pX ++) {
-			buf[lineOff + pX] = 255;
+			buf[lineOff + pX] = bit;
 		};
 	};
 };
@@ -274,11 +274,12 @@ let Sc8850Display = class extends RootDisplay {
 		switch (upThis.#mode) {
 			case "?":
 			case "gs":
-			case "sc": {
+			case "sc":
+			case "gm": {
 				break;
 			};
 			default: {
-				let mode = (twoLetterMode[upThis.#mode] || upThis.#mode).toUpperCase();
+				let mode = (twoLetterMode[upThis.device.getChMode(upThis.#ch)] || upThis.device.getChMode(upThis.#ch)).toUpperCase();
 				upThis.font56.getStr(mode).forEach((e0, i0) => {
 					let offsetX = i0 * 6;
 					e0.forEach((e1, i1) => {
@@ -342,14 +343,28 @@ let Sc8850Display = class extends RootDisplay {
 		});
 		//console.debug(renderRange, strengthHeight, strengthDivider);
 		// Render meters
-		for (let i0 = 0; i0 < renderRange; i0 ++) {
-			let chStart = minCh + (i0 << 4);
-			for (let i1 = 0; i1 < 16; i1 ++) {
-				let ch = chStart + i1;
-				let strength = Math.floor(sum.strength[ch] / strengthDivider) + 1;
-				let linger = Math.floor(upThis.#linger[ch] / strengthDivider) + 1;
-				fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - strength - i0, 5, strength);
-				fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - linger - i0, 5, 1);
+		if (timeNow < sum.bitmap.expire) {
+			// Actual bitmap
+			let colUnit = (sum.bitmap.bitmap.length > 256) ? 1 : 2;
+			for (let i = 0; i < 512; i += colUnit) {
+				let x = i & 31, y = i >> 5;
+				let realX = x * 3 + 49, realY = (y << 1) + 15;
+				let bit = sum.bitmap.bitmap[i >> (colUnit - 1)] ? upThis.#pixelLit : upThis.#pixelOff;
+				fillBitsInBuffer(upThis.#nmdb, totalWidth, realX, realY, 2, 2, bit);
+				if (colUnit == 2) {
+					fillBitsInBuffer(upThis.#nmdb, totalWidth, realX + 2, realY, 3, 2, bit);
+				};
+			};
+		} else {
+			for (let i0 = 0; i0 < renderRange; i0 ++) {
+				let chStart = minCh + (i0 << 4);
+				for (let i1 = 0; i1 < 16; i1 ++) {
+					let ch = chStart + i1;
+					let strength = Math.floor(sum.strength[ch] / strengthDivider) + 1;
+					let linger = Math.floor(upThis.#linger[ch] / strengthDivider) + 1;
+					fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - strength - i0, 5, strength);
+					fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - linger - i0, 5, 1);
+				};
 			};
 		};
 		// EFX and bank?

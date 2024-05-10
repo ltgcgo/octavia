@@ -362,13 +362,14 @@ let Ns5rDisplay = class extends RootDisplay {
 					};
 				};
 				// Actual bitmap
-				let colUnit = (sum.bitmap.bitmap.length == 512) ? 1 : 2;
+				let colUnit = (sum.bitmap.bitmap.length > 256) ? 1 : 2;
 				for (let i = 0; i < 512; i += colUnit) {
 					let x = i & 31, y = i >> 5;
 					let realX = x + 80, realY = y + 21;
-					this.#nmdb[realY * 144 + realX] = sum.bitmap.bitmap[i / colUnit] ? this.#pixelLit : this.#pixelOff;
+					let bit = sum.bitmap.bitmap[i >> (colUnit - 1)] ? this.#pixelLit : this.#pixelOff;
+					this.#nmdb[realY * 144 + realX] = bit;
 					if (colUnit == 2) {
-						this.#nmdb[realY * 144 + realX + 1] = sum.bitmap.bitmap[i / colUnit] ? this.#pixelLit : this.#pixelOff;
+						this.#nmdb[realY * 144 + realX + 1] = bit;
 					};
 				};
 			};
