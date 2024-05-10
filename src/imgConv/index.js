@@ -95,26 +95,26 @@ eH.onchange = function () {
 	updateDraw();
 };
 document.body.addEventListener("keydown", async (ev) => {
-	let {key} = ev;
+	let {key, shiftKey} = ev;
 	let stopIt = true;
 	switch(key) {
 		case "ArrowUp": {
-			cutY = Math.max(0, cutY - 1);
+			cutY = Math.max(0, +cutY - (shiftKey ? cutHeight : 1));
 			updateDraw();
 			break;
 		};
 		case "ArrowDown": {
-			cutY = Math.min(cutYMax, cutY + 1);
+			cutY = Math.min(cutYMax, +cutY + (shiftKey ? cutHeight : 1));
 			updateDraw();
 			break;
 		};
 		case "ArrowLeft": {
-			cutX = Math.max(0, cutX - 1);
+			cutX = Math.max(0, +cutX - (shiftKey ? cutWidth : 1));
 			updateDraw();
 			break;
 		};
 		case "ArrowRight": {
-			cutX = Math.min(cutXMax, cutX + 1);
+			cutX = Math.min(cutXMax, +cutX + (shiftKey ? cutWidth : 1));
 			updateDraw();
 			break;
 		};

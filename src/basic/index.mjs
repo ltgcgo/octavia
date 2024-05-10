@@ -229,6 +229,45 @@ let RootDisplay = class extends CustomEventSource {
 					};
 					break;
 				};
+				case "g2":
+				case "sd": {
+					switch (voiceObject.sid[0]) {
+						case 96:
+						case 97:
+						case 98:
+						case 99: {
+							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], 0, voiceObject.mode).name);
+							break;
+						};
+						case 104:
+						case 105:
+						case 106:
+						case 107: {
+							result = upThis.voxBm.getBm(upThis.getVoice(120, voiceObject.sid[1], 0, voiceObject.mode).name);
+							break;
+						};
+					};
+					break;
+				};
+				case "gs": {
+					switch (voiceObject.sid[0]) {
+						case 120: {
+							break;
+						};
+						default: {
+							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], 0, voiceObject.mode).name);
+						};
+					};
+					break;
+				};
+				default: {
+					switch (voiceObject.sid[0]) {
+						case 56: {
+							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], 0, voiceObject.mode).name);
+							break;
+						};
+					};
+				};
 			};
 		};
 		if (!result) {
