@@ -133,3 +133,4 @@ document.body.addEventListener("keydown", async (ev) => {
 		//ev.stopImmediatePropagation();
 	};
 });
+let renderThread = setInterval(updateDraw, 500);
