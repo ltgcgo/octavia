@@ -28,8 +28,8 @@ let updateDraw = () => {
 	canvas.height = cutHeight;
 	context.clearRect(0, 0, cutWidth, cutHeight);
 	context.drawImage(imageShow, cutX, cutY, cutWidth, cutHeight, 0, 0, cutWidth, cutHeight);
-	floatyCursor.style.top = `${imageShow.offsetTop + cutY}px`;
-	floatyCursor.style.left = `${imageShow.offsetLeft + cutX}px`;
+	floatyCursor.style.top = `${+imageShow.offsetTop + (+cutY)}px`;
+	floatyCursor.style.left = `${+imageShow.offsetLeft + (+cutX)}px`;
 	floatyCursor.style.width = `${cutWidth}px`;
 	floatyCursor.style.height = `${cutHeight}px`;
 };
