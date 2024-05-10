@@ -249,7 +249,8 @@ let RootDisplay = class extends CustomEventSource {
 					};
 					break;
 				};
-				case "gs": {
+				case "gs":
+				case "sc": {
 					switch (voiceObject.sid[0]) {
 						case 120: {
 							break;
