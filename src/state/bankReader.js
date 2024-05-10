@@ -647,7 +647,8 @@ let VoiceBank = class {
 			ending,
 			sect,
 			bank,
-			standard
+			standard,
+			mode
 		};
 	};
 	async load(text, allowOverwrite, name = "(internal)") {

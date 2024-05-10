@@ -212,6 +212,26 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		let result = upThis.voxBm.getBm(voiceObject.name);
 		if (!result) {
+			switch (voiceObject.mode) {
+				case "xg": {
+					switch (voiceObject.sid[0]) {
+						case 80:
+						case 81:
+						case 83:
+						case 84:
+						case 96:
+						case 97:
+						case 99:
+						case 100: {
+							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], 0, voiceObject.mode).name);
+							break;
+						};
+					};
+					break;
+				};
+			};
+		};
+		if (!result) {
 			result = upThis.voxBm.getBm(upThis.getVoice(voiceObject.sid[0], voiceObject.sid[1], 0, voiceObject.mode).name);
 		};
 		return result;
