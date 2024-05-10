@@ -6072,5 +6072,6 @@ export {
 	OctaviaDevice,
 	allocated,
 	ccToPos,
-	dnToPos
+	dnToPos,
+	overrides
 };

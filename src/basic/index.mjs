@@ -1,7 +1,7 @@
 "use strict";
 
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
-import {ccToPos, dnToPos, allocated} from "../state/index.mjs";
+import {ccToPos, dnToPos, allocated, overrides} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {customInterpreter} from "../state/utils.js";
@@ -215,6 +215,7 @@ let RootDisplay = class extends CustomEventSource {
 			switch (voiceObject.mode) {
 				case "xg": {
 					switch (voiceObject.sid[0]) {
+						case 0:
 						case 80:
 						case 81:
 						case 83:
@@ -223,7 +224,7 @@ let RootDisplay = class extends CustomEventSource {
 						case 97:
 						case 99:
 						case 100: {
-							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], 0, voiceObject.mode).name);
+							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], overrides.bank0, voiceObject.mode).name);
 							break;
 						};
 					};
@@ -250,9 +251,15 @@ let RootDisplay = class extends CustomEventSource {
 					break;
 				};
 				case "gs":
-				case "sc": {
+				case "sc":
+				case "gm": {
 					switch (voiceObject.sid[0]) {
 						case 120: {
+							break;
+						};
+						case 122:
+						case 127: {
+							result = upThis.voxBm.getBm(upThis.getVoice(120, voiceObject.sid[1], 0, voiceObject.mode).name);
 							break;
 						};
 						default: {
