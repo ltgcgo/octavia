@@ -371,7 +371,7 @@ let VoiceBank = class {
 			sect += `${[msb, lsb, args[0], args[2]][useLsb] - baseShift}`.padStart(4 - sect.length, "0");
 		};
 		if (bank.length < 3) {
-			bank += `${[msb, lsb, args[0], args[2]][useLsb]}`.padStart(3 - bank.length, "0");
+			bank += `${[msb, lsb, msb, lsb][useLsb]}`.padStart(3 - bank.length, "0");
 		};
 		if (mode == "xg") {
 			if (msb == 0) {
