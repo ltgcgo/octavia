@@ -499,14 +499,24 @@ let VoiceBank = class {
 		};
 		// End ID
 		let eid = [args[0], args[1], args[2]];
-		if ((mode == "gs" || mode == "sc" || mode == "ns5r") && ending == "^") {
-			ending = " ";
-		};
-		if (msb == 127 && ending == "^") {
-			ending = " ";
+		switch (ending) {
+			case "^": {
+				switch (mode) {
+					case "gs":
+					case "sc":
+					case "ns5r": {
+						ending = " ";
+						break;
+					};
+				};
+				if (msb == 127 && ending == "^") {
+					ending = " ";
+				};
+				break;
+			};
 		};
 		if (ending != " ") {
-			if (self.debugMode) {
+			if (mode == "krs" || self.debugMode) {
 				bankName = "";
 			};
 		};

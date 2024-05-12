@@ -1,39 +1,720 @@
 ID	Name
-BrtACClv	Bright AC Clavi.
-MelACClv	Mellow AC Clavi.
-DstACClv	Distorted AC Clavi.
-VWaACClv	Velo Wah AC Clavi.
-BrtADClv	Bright AD Clavi.
-MelADClv	Mellow AD Clavi.
-DstADClv	Distorted AD Clavi.
-VWaADClv	Velo Wah AD Clavi.
-BrtBCClv	Bright BC Clavi.
-MelBCClv	Mellow BC Clavi.
-DstBCClv	Distorted BC Clavi.
-VWaBCClv	Velo Wah BC Clavi.
-BrtBDClv	Bright BD Clavi.
-MelBDClv	Mellow BD Clavi.
-DstBDClv	Distorted BD Clavi.
-VWaBDClv	Velo Wah BD Clavi.
-T.WahClv	Touch Wah Clavi.
-LuvSngOr	Love Song E. Organ
-RkPrecOr	Rock Prec E. Organ
+KGrdPno1	Kross Grand Piano 1
+KGrdPno2	Kross Grand Piano 2
+StGrdPno	Stereo Grand Piano
+KBrtGrP1	Bright Grand Piano 1
+KBrtGrP2	Bright Grand Piano 2
+RockGrdP	Rock Grand Piano
+StgGrdP1	Stage Grand Piano 1
+StgGrdP2	Stage Grand Piano 2
+VvdGrndP	Vivid Grand Piano
+WarmGrdP	Warm Grand Piano
+DarkGrdP	Dark Grand Piano
+PopGrPno	Pop Grand Piano
+RevGrPno	Reverb Grand Piano
+StAc.Pno	Stereo Acoustic Piano
+BrtAcPno	Bright Acoustic Piano
+ChoAcPno	Chorus Acoustic Piano
+UprtPno1	Upright Piano 1
+UprtPno2	Upright Piano 2
+UprtPno3	Upright Piano 3
+BarRmPno	Bar Room Piano
+MnrlAPno	Monaural Piano
+BrtMnPno	Bright Mono Piano
+DrkMnPno	Dark Mono Piano
+BrtMnGrd	Bright Mono Grand Piano
+DrkMnGrd	Dark Mono Grand Piano
+CmpMnPno	Compr. Mono Grand Piano
+HmrMnPno	Hammer Mono Piano
+DetMnPno	Detuned Piano
+OldSGrnd	Old Story Grand Piano
+VrOldGrd	Very Old Grand Piano
+FortePno	Forte Piano
+SG1DPno1	SG-1D Piano 1
+SG1DPno2	SG-1D Piano 2
+EGrdPno1	Electric Grand Piano 1
+EGrdPno2	Electric Grand Piano 2
+ChoEGrd1	Chorused E. Grand 1
+ChoEGrd2	Chorused E. Grand 2
+Dual Pno	Dual Piano
+ChiltPno	Chill-out Piano
+SadPiano	Sad Piano
+DamprPno	Damper Piano
+PnoDubWl	Piano Dub Wheel
+LoFSPfWl	Low FS Piano Wheel
+Pno+DXEP	Piano + DX E. Piano
+AlonePno	Alone Piano
+PfDynoEP	Piano + Dyno E. Piano
+RomncePf	Romance Piano
+SparklPf	Sparkling Piano
+A.Pf+Str	Acoustic Piano + Strings
+AP+OrPd1	A. Piano + Orch. Pad 1
+AP+OrPd2	A. Piano + Orch. Pad 2
+GrdP+Str	Grand Piano + Strings
+Gr+OrPd1	Grand Pf + Orch. Pad 1
+Gr+OrPd2	Grand Pf + Orch. Pad 2
+Gr+SmStr	Grand Pf + Small Strings
+GrStrPd1	Grand Pf + String Pad 1
+GrStrPd2	Grand Pf + String Pad 2
+AP+SynPd	A. Piano + Synth Pad
+90sPiano	90’s Piano
+ToyPiano	Toy Piano
+RmcToyPf	Romance Toy Piano
+EPRBSW12	R&B Suit EP SW1/2
+63 65 00	R&B Suit EP Phaser
+63 66 00	Preamp Suit EP
+63 67 00	Distorted Suit EP SW2
+63 68 00	Dist. & Phaser Suit EP
+63 69 00	1984 Suit EP
+63 70 00	Classic Bell Suit EP
+63 71 00	Mark I Line Suit EP
+63 72 00	Mark I Silver Suit EP
+63 73 00	Tremolo Suit EP
+63 74 00	Chorus & U-Vibe Suit EP
+63 75 00	U-Vibe & Echo Suit EP
+63 76 00	Bi-Phase Suit EP MW
+63 77 00	Phaser Suit EP 1
+63 78 00	Phaser Suit EP 2
+63 79 00	Preamp & Wah Suit EP
+63 80 00	Wah Wah Suit EP
+63 81 00	BPM Delay Suit EP
+63 82 00	Mark V Suit EP
+63 83 00	Hard Suit EP
+63 84 00	Studio Dyno EP
+63 85 00	EQ / Chorus Dyno EP
+63 86 00	Chorus Dyno EP
+EPDynoEC	Exciter / Chorus Dyno EP
+63 88 00	Wah Wheel Reed EP
+63 89 00	Mellow Reed EP
+63 90 00	Tremolo Reed EP
+63 91 00	Reed EP Overdrive
+63 92 00	Rockin' Reed EP
+63 93 00	Chorus Reed EP
+63 94 00	Phaser Reed EP
+63 95 00	Pure Suit EP + Pad
+63 96 00	Bright Suit EP + Pad 1
+63 97 00	Bright Suit EP + Pad 2
+63 98 00	Hard Suit EP + DX EP
+63 99 00	Deluxe DX E. Piano 1
+63 a0 00	Deluxe DX E. Piano 2
+63 a1 00	Classic DX E. Piano 1
+63 a2 00	Classic DX E. Piano 2
+63 a3 00	Classic DX E. Piano 3
+63 a4 00	DX E. Piano + Strings
+63 a5 00	DX E. Piano + EP Pad 1
+63 a6 00	DX E. Piano + EP Pad 2
+63 a7 00	DX E. Piano + Syn Pad
+63 a8 00	FM Suitcase E. Piano
+63 a9 00	Chorus DX + Suit EP
+63 b0 00	DX EP + Dyno EP
+63 b1 00	Pad Electric Piano 1
+63 b2 00	Pad Electric Piano 2
+63 b3 00	Pad Electric Piano 3
+63 b4 00	Hybrid Phaser EP
+63 b5 00	E. Piano Pad + Synth
+63 b6 00	Super Grand
+63 b7 00	Phantom Electric Piano
+63 b8 00	Tablet E. Piano SW2
+63 b9 00	Tablet E. Harpsi. SW2
+BrtACClv	Bright AC Clavichord
+MelACClv	Mellow AC Clavichord
+DstACClv	Distorted AC Clavichord
+VWaACClv	Velo Wah AC Clavichord
+BrtADClv	Bright AD Clavichord
+MelADClv	Mellow AD Clavichord
+DstADClv	Distorted AD Clavichord
+VWaADClv	Velo Wah AD Clavichord
+BrtBCClv	Bright BC Clavichord
+MelBCClv	Mellow BC Clavichord
+DstBCClv	Distorted BC Clavichord
+VWaBCClv	Velo Wah BC Clavichord
+BrtBDClv	Bright BD Clavichord
+MelBDClv	Mellow BD Clavichord
+DstBDClv	Distorted BD Clavichord
+VWaBDClv	Velo Wah BD Clavichord
+T.WahClv	Touch Wah Clavichord
+63 09 01	Higher Ground Clavichord
+63 10 01	Superstition Clavichord
+63 11 01	Kid Charlmagne Clavi.
+63 12 01	Trampled Under Clavi.
+63 13 01	Phaser Clavichord SW1
+63 14 01	Velo Switch WS Clavi.
+63 15 01	Pure Clavichord
+63 16 01	Single Harpsicord
+63 17 01	Double Harpsicord 1
+63 18 01	Double Harpsicord 2
+63 19 01	Jazz Perc. E. Organ 1
+63 20 01	Jazz Perc. E. Organ 2
+63 21 01	Jazz Perc. E. Organ 3
+63 22 01	CX3 Percussive E. Organ
+63 23 01	Mondo Perc. E. Organ
+63 24 01	88 Percussive E. Organ
+63 25 01	Entertainer E. Organ
+63 26 01	888 Electric Organ
+63 27 01	Warm Overdriven E. Organ
+63 28 01	Bossa Electric Organ
+LuvSngOr	Love Song Electric Organ
+63 30 01	Gospel Electric Organ
+63 31 01	Compressor E. Organ
+63 32 01	Drawbars E. Organ 1 MW
+63 33 01	Drawbars E. Organ 2 MW
+63 34 01	Manual Compr. E. Organ
+63 35 01	Vibrato / Chorus E. Org
+63 36 01	800000048 E. Organ
+63 37 01	880000048 E. Organ
+63 38 01	Warm Gospel E. Organ
+63 39 01	Tremolo Electric Organ
+63 40 01	Full To Soft E. Organ
+63 41 01	Full BX3 Electric Organ
+63 42 01	Full Rock Electric Organ
+63 43 01	Vintage Electric Organ
+63 44 01	Church Electric Organ
+63 45 01	Ballad Eletric Organ
+63 46 01	Slow Blues E. Organ
+63 47 01	Fast Blues E. Organ
+63 48 01	Overdriven Rock E. Organ
+RkPrecOr	Percussive Rock E. Organ
+63 50 01	Master Rock E. Organ
+63 51 01	Gospel Perc. E. Organ
+63 52 01	M1 Organ
+63 53 01	Full Vox E. Organ
+63 54 01	Vox Tabs E. Organ SW2
+63 55 01	60's Sound E. Organ
+63 56 01	Far Pro 1 E. Organ
+63 57 01	Far Pro 1 E. Organ
+63 58 01	Combo E. Organ
+63 59 01	Follow You / Me Organ
+63 60 01	Sine Wheel Organ
+63 61 01	VS Church Organ
+63 62 01	DWGS Pop Organ
+63 63 01	DWGS Church Organ
+63 64 01	16' Sine Wheel Organ
+63 65 01	5+1/3' Sine Wheel Organ
+63 66 01	8' Sine Wheel Organ
+63 67 01	4' Sine Wheel Organ
+63 68 01	2+2/3' Sine Wheel Organ
+63 69 01	2' Sine Wheel Organ
+63 70 01	1+3/5' Sine Wheel Organ
+63 71 01	1+1/3' Sine Wheel Organ
+63 72 01	1' / Perc. Sine Wheel
+63 73 01	Medium Pipe Organ
+63 74 01	Full Pipe Organ 1
+63 75 01	Full Pipe Organ 2
+63 76 01	Mixture Pipe Organ
+63 77 01	Positive Pipe Organ
+63 78 01	Positive / Mixture Pipe
+63 79 01	Reed Pipe Organ
+63 80 01	Street Organ
+63 81 01	8'+8' Accordion
+63 82 01	8'+4' Accordion
+63 83 01	Stylish Accordion 1
+63 84 01	Stylish Accordion 2
+63 85 01	Musette + Principal
+63 86 01	Bandoneon
+63 87 01	Fisa 1
+63 88 01	Fisa 2
+63 89 01	Fisa 3
+63 90 01	Pump / Reed Organ
+63 91 01	Key Flute
+63 92 01	Ensemble Bells
+63 93 01	Puffle Bells
+63 94 01	Breathy Bells
+63 95 01	Heaven Bells
+63 96 01	Soft Ensemble Bells
+63 97 01	DWGS Bells 1
+63 98 01	DWGS Bells 2
+63 99 01	Tinkle Bells
+63 a0 01	Magic Bells
+63 a1 01	Low FS Bells
+63 a2 01	Delayed Bells
+63 a3 01	Pure Satin Bells
+63 a4 01	FM Metal Bells
+63 a5 01	FM Glass Bells 1
+63 a6 01	FM Glass Bells 2
+63 a7 01	FM Tubular Bells
+63 a8 01	FM Bells
+63 a9 01	Krystal Bells
+63 b0 01	Cathedral Bells
+63 b1 01	Tubular Bells
+63 b2 01	Toy Hand Bells
+63 b3 01	Music Box
+63 b4 01	Plated Bells
+63 b5 01	Glockenspiel
+63 b6 01	Vibraphone
+63 b7 01	Steel Tongue Drums
+63 b8 01	Steel Drums
+63 b9 01	Gamelan
+63 c0 01	Sarna Bells
+63 c1 01	Kalimba
+63 c2 01	Xylophone
+63 c3 01	Marimba
+63 c4 01	Mondo-Rimba
+63 c5 01	Skull Mallets
+63 c6 01	Tribal Mallets
+63 c7 01	Log Drums
+StStrng1	Stereo Strings 1
+StStrng2	Stereo Strings 2
+63 03 02	Lush Strings 1
+63 04 02	Lush Strings 2
+63 05 02	Bright Strings
+63 06 02	Stereo Arco Strings
+63 07 02	Legato Strings 1
+63 08 02	Legato Strings 2
+63 09 02	Symphonic Strings
+63 11 02	Platinum Strings
+63 12 02	Camera Strings
+63 13 02	Few Bows Strings
+63 14 02	Intimate Strings
+63 15 02	Arco Pop Strings
+63 16 02	Pop Strings
+63 17 02	Octave Strings
+63 18 02	Maestoso Strings
+63 19 02	Pizzicato Ensemble SW2
+63 20 02	Pizz. / Str. Quartet SW1
+63 21 02	Str. Quartet/Pizz. SW1
+63 22 02	Violin 1 SW1
+63 23 02	Violin 2 SW1
+63 24 02	Viola 1 SW1
+63 25 02	Viola 2 SW1
+63 26 02	Cello 1 SW1
+63 27 02	Cello 2 SW1
+63 28 02	Contrabass 1 SW1
+63 29 02	Contrabass 2 SW1
+63 30 02	New Age Strings
+63 31 02	Synth String Pad
+63 32 02	Pure Analog Pad
+63 33 02	Super Analog Pad
+63 34 02	Analog Strings
+63 35 02	Ana-2-Real Strings
+63 36 02	Hybrid String Pad
+63 37 02	Progressive Analog Str.
+63 38 02	Mellow MK II Strings
+63 39 02	Mellow 400S Strings
+63 40 02	C-Berlin Strings 1
+63 41 02	C-Berlin Strings 2
+63 42 02	Mixed Octave Tape Str.
+63 43 02	Dual Tape Strings
+63 44 02	Tronical Strings
+63 45 02	Stereo Aaah Voices
+63 46 02	Dynamic Aah Voices
+63 47 02	Stereo Oooh Voices
+63 48 02	L&R Airy Ooh Voices
+63 49 02	Light Ooh Voices
+63 50 02	Light Choir
+63 51 02	Choir of Angels
+63 52 02	Classical Choir
+63 53 02	Backing Vocals
+63 54 02	Twilight Choir
 Cathedrl	Cathedral Choir
+63 56 02	Splash Choir
+63 57 02	Soundtrack Choir
+63 58 02	Mixed Registers
+63 59 02	Professional Choir
+63 60 02	Morphing Voices
+63 61 02	Infinite Choir
 TakeVoix	Take Voice
+63 63 02	V. Switch Vocals
+63 64 02	Mellow Style Choir
+63 65 02	Mellow 8-Voice Choir
+63 66 02	Mellow Classic Choir
+63 67 02	Mellow Stereo Choir
+63 68 02	Vocoder Machine 1
+63 69 02	Vocoder Machine 2
+63 70 02	Vocoder Ah
+63 71 02	Fresh Vox
+63 72 02	Full Vox
+63 73 02	Arctic Voices
+63 74 02	Tranquil SW2
+VoiceDoo	Voice Doo
+63 76 02	Voxology
+63 77 02	Velo Voxster
+63 78 02	Open Brass
+63 79 02	Sharp Brass
+63 80 02	Tight Brass
+63 81 02	Big Brass
+63 82 02	Session Brass
+63 83 02	Expressive Brass
+63 85 02	Crossfade Trumpets
+63 86 02	Warm Brass
+63 87 02	Film Brass
+63 88 02	Sforzando Brass
+63 89 02	Octave Brass 1
+63 90 02	Octave Brass 2
+63 91 02	Trombone Ensemble
+63 92 02	Muted Trumpet / Trombone
+63 93 02	Muted Octave Trp / Trb
+63 94 02	French Horn Ensemble
+63 95 02	Horns & Ensemble
+63 96 02	Brass Ensemble & Tubas
+63 97 02	Orchestral Brass
+63 98 02	Sforzando Orchestra
+63 99 02	T.O.P Section
+63 a0 02	Brass & Reed
+63 a1 02	Brass & Saxophones
+63 a2 02	Brass & Octave Saxophone
+63 a3 02	Dynamic Trumpets
+63 a4 02	Octave Trumpets
+63 a5 02	4-Way Trombones
+63 a6 02	Sensitive Trumpet
+63 a7 02	Overblown Trumpet
+FlugelHr	Flugel Horn
+MutedTrb	Muted Trombone
+63 b4 02	Vibrato Flute
+63 b5 02	Silver Flute
+63 b6 02	Attack Flute
+63 b7 02	Voice Flute
+63 b9 02	Mellow MK II Flutes
+63 c1 02	Double Reed Family
+Sax Sect	Sax Section
+SftAltSx	Soft Alto Sax
+HrdAltSx	Hard Alto Sax
+SftTnrSx	Tenor Sax Soft
+HrdTnrSx	Tenor Sax Hard
+63 07 03	Zen Priest Split
+63 08 03	Spit Bottle
 MemoryLd	Memory Lead
+63 10 03	DW8000 Lead 1
+63 11 03	Espress Lead
+63 12 03	Sweet MG Lead
+63 13 03	Fat Saw Lead
+63 14 03	Glide Lead
+63 15 03	PWM Lead
+63 16 03	DW8000 Lead 2
+63 17 03	Lucky Man Lead
+63 18 03	Old Square Lead
+63 19 03	Bright Square Lead
+63 20 03	Unison Square Lead
+63 21 03	Simple Square Lead
+63 22 03	Simple Pulse Lead
+SineLead	Sine Lead
+63 24 03	Infinity Lead
 RudeLead	Rude Lead
+63 26 03	Wailing Lead
+63 27 03	Cold Water Lead
+63 28 03	Big Lead
+63 29 03	Rappers' Delight Lead
+63 30 03	The Executor Lead
+63 31 03	Anthem Lead
+63 32 03	Big Room Lead
+63 33 03	Unison Saw Lead
+63 34 03	Distorted EDM Lead
+63 35 03	EDM Voice Lead
+63 36 03	Progressive Lead
+63 37 03	Hip Hop Lead
+63 38 03	Deep Soul Lead
+63 39 03	Simple Fifth Saw Lead
+63 40 03	Vintage Lead
+63 41 03	Cheap Lead Wheel
+63 42 03	Resonant Lead
+63 43 03	Operator Lead
+63 44 03	Tom Sawyer Bass & Lead
+63 45 03	Bass & Lead Boys
+63 46 03	Fat Sync Lead
+63 47 03	MS2000 Fast Sync Lead
+63 48 03	Deep Fifth EDM Lead
+63 49 03	Eletric Piano Lead
+63 50 03	Tropical Lead 1
+63 51 03	Tropical Lead 2
+63 52 03	Noisy Stabber Neo
+63 53 03	Unison Power Synth
+63 54 03	Bold Anthem Synth
+63 55 03	Trancer Synth
+63 56 03	Anthem Trance
+63 57 03	Fast Unison Synth
+63 58 03	Leader of Trance
+63 59 03	Velo Twang
+63 60 03	Rat Chords
+63 61 03	Bold Octaves
+63 62 03	Power Pad
+63 63 03	Velo Power Pad
+63 64 03	Unison Pad
+63 65 03	Old Poly Synth 1
+63 66 03	Old Poly Synth 2
+63 67 03	Saw Ensemble Synth
+63 68 03	Chiptune Synth
+63 69 03	Disco Synth Pad
+63 70 03	Jump Synth Brass
+63 71 03	Final Synth Brass
+63 72 03	Synth Fanfare
+63 73 03	Saw Synth Brass
+63 74 03	Hyper Comped Chords
+63 75 03	Gargle Synth
+63 76 03	Olive Anthem Chords
+63 77 03	Sugar Smash Pad
+63 78 03	Cannon Poly Synth
+63 79 03	Cannon Synth E. Piano
+63 80 03	Ripper Anthem Synth
+63 81 03	Different Ways Poly
+63 82 03	Huge Planet Synth
+63 83 03	Vintage Saw Synth
+63 84 03	Detuned Poly Synth
+63 85 03	Later Progressive Lead
+63 86 03	Follow You Lead
+63 87 03	Tricky Mod. Detune Lead
+63 88 03	Oxygen Lead
+63 89 03	80's Poly Square
+63 90 03	Gliding Square Lead
+63 91 03	Pop Synth Pad
+63 92 03	Future Pad
+63 93 03	Rezbo Pad
+63 94 03	Cheap Cool 80's Poly
+63 95 03	Shynth Ex Clavichord
+63 96 03	Mean Resonant Clavichord
+63 97 03	EDM Chordplay 1
+63 98 03	EDM Chordplay 2
+63 99 03	Future Chordal
+63 a0 03	Fuzz Felt
+63 a1 03	Pro Sync
+63 a2 03	Annihilation EP
+63 a3 03	Sine Pad
+63 a4 03	Swirl Sine Pad
+63 a5 03	Synth Filter Pad
+63 a6 03	Search Pad
+63 a7 03	Dark Brass Pad
+63 a8 03	Sine On Pad
+63 a9 03	Prayer Pad
+63 b0 03	Tinkling Pad
+63 b1 03	Square Voice Pad
+63 b2 03	Square Pad
+63 b3 03	Fifth Pad
+63 b4 03	String Resonant Pad
+63 b5 03	Flashy Analog Harpy
+63 b6 03	Angelic Choir
+63 b7 03	The Pad
+63 b8 03	The EP Pads
+63 b9 03	Attacky Pad
+63 c0 03	Poppin' Pad
+63 c1 03	African Brass
+63 c2 03	80's Pad
+63 c3 03	Soft Synth Brass
+63 c4 03	Progressive Synth Brass
+63 c5 03	Matrix Crispy
+63 c6 03	Chronologie
+63 c7 03	Aero Pad
+BadDream	Bad Dream Waltzer Pad
+63 01 04	Alexa Pad
+63 02 04	Solaris Pad
+63 03 04	The X Pad
+63 04 04	Swish Pad
+63 05 04	Sweet Pad
+63 06 04	Givin' Pop
+63 07 04	Cosmic Synth Pad
+63 08 04	Synth Sweeper Pad
+63 09 04	Fine HPF Sweep
+63 10 04	Rez Down Pad
 MirrorPd	Mirrored Pad
+63 12 04	Wave Pad
+63 13 04	Meditator Pad
+63 14 04	Chant Pad
+63 15 04	1984 Split
+63 16 04	Surprising Pad
+63 17 04	Pods in the Pad
+63 18 04	Dolphin Pad
 ShmSpkPd	Shimmer Sparkle Pad
+63 20 04	Steelish Pad
+63 21 04	Widescreen Pad
+63 22 04	Flying Pad
+63 23 04	Aqua Phonics Pad
+63 24 04	Flare Pad
 PalwanPd	Palawan Pad
+63 26 04	Moon Cycles Pad
 SwirlPad	Swirl Pad
+63 28 04	New Voyage Pad
+63 29 04	Great Wall Pad
+63 30 04	Off Beat Dark Pad
+63 31 04	Off Beat Bright Pad
+63 32 04	Pump Pad
+63 33 04	Clay Pot - Vox Triplets
+63 34 04	Chilly Pulsar Love Pad
 UVibePad	U-Vibe Pad
-LocoMtiv	Loco Motiv
+63 36 04	Butterfly Pad
+63 37 04	Vox Pulse Pad
+63 38 04	BPM Flashlight Pad
+63 39 04	Emotion Pad
+LocoMtiv	Loco Motiv Pad
+63 41 04	Atmospheric Pulse
+63 42 04	Rhythm Lead
+63 43 04	LFO Fifth Wave
+63 44 04	Tone Wheel Motion
+63 45 04	Minimal Sequencer
+63 46 04	8-bit Land
+63 47 04	Dancing Voice
+63 48 04	Spectral Wave Dance
+63 49 04	Kross Wave Motion
+63 50 04	Wave Sequencer
+63 51 04	Bell Wave Sequencer
+63 52 04	Pad & Bell Wave Sequence
+63 53 04	LFO Run Pad
+NylonGt1	Nylon Guitar 1
+NylonGt2	Nylon Guitar 2
+63 56 04	Flamenco Guitar
+63 57 04	Studio Nylon Guitar
+63 58 04	Nylon Guitar & Strings
+63 59 04	Large Body A. Guitar
+63 60 04	Acoustic Guitar + Noise
+63 61 04	Dynamic Pick A. Guitar
+63 62 04	Fingered Acoustic Guitar
+63 63 04	Sitar Guitar
+63 64 04	Acoustish
+12StrGtr	12-String Guitar
+63 66 04	E. Guitar + Twin
+63 67 04	E. Guitar Dynamic 1
+63 68 04	E. Guitar Dynamic 2
+63 69 04	E. Guitar Funky
+63 70 04	E. Guitar Delay
+63 71 04	E. Guitar Crunch
+63 72 04	E. Guitar Chorus
+63 73 04	Volume Swell E. Guitar
+63 74 04	E. Guitar Tremolo
+63 75 04	E. Guitar Semi Dist.
+63 76 04	E. Guitar Rotary FX
+63 77 04	E. Guitar Tweed Phaser
+63 78 04	E. Guitar U-Vibe
+63 79 04	Auto Wah E. Guitar
+63 80 04	Screaming Tube E. Guitar
+63 81 04	Filthy E. Guitar
+63 82 04	Distorted Mute E. Guitar
+63 83 04	Distorted Wet E. Guitar
+63 84 04	Power Chord E. Guitar
+63 85 04	Vox Wah E. Guitar
+63 86 04	Jazz E. Guitar
+63 87 04	Pedal Steel E. Guitar
 PsycoGtr	Psycho Guitar
-EFngrBa4	Fingered E. Bass 4
-KikBaDcy	Kick Bass/Decay
+63 89 04	Electronica Guitar
+63 94 04	Sitar & Tambura
+63 95 04	Velo Bend Koto
+63 96 04	Harp 1
+63 97 04	Harp 2
+EFngrBa1	Fingered Electric Bass 1
+EFngrBa2	Fingered Electric Bass 2
+EFngrBa3	Fingered Electric Bass 3
+EFngrBa4	Fingered Electric Bass 4
+EPickBa1	Picked Electric Bass 1
+EPickBa2	Picked Electric Bass 2
+EPickBa3	Picked Electric Bass 3
+EPickBa4	Picked Electric Bass 4
+EPickBed	Picked Bed Electric Bass
+63 a7 04	Saturated Electric Bass
+EThmbBa1	Thumb Electric Bass
+EThmbBa2	Thumb Electric Bass
+EFrtlBa1	Fretless Electric Bass 1
+EFrtlBa2	Fretless Electric Bass 2
+EFrtlOct	Octave Fretless E. Bass
+Acou.Ba1	Acoustic Bass 1
+Acou.Ba2	Acoustic Bass 2
+Acou.Ba3	Acoustic Bass 3
+OldAc.Ba	Old Acoustic Bass
+KikBaDcy	Kick Bass / Decay
+63 b8 04	Decayed Bass
+63 b9 04	That Sub Bass Kick
+63 c0 04	Kick Bass / Gate
+63 c1 04	Deep Kick Sub Synth
+63 c2 04	Sine Bass
+63 c3 04	Deep Triangle Bass
+63 c4 04	Dark R&B Bass
+63 c5 04	Digital Bass
+63 c6 04	Boost Synth Bass
+63 c7 04	Tight Bass
+63 01 05	800DV Saw Bass
+63 02 05	Solid Bass
+63 03 05	Octave Bass
+63 04 05	Analog Funk Bass
+63 05 05	Octave MG Bass
+63 06 05	Greasy Synth Bass
+63 07 05	Velo Bark Bass
+63 08 05	Acid Synth Bass
+63 09 05	Square Bass
+63 10 05	Popin' Square Bass
+63 11 05	800DV Square Bass
+63 12 05	Growler Bass
+63 13 05	Euro 8va Sequenced Bass
+63 14 05	Hard Square Bass
+63 15 05	Detuned Euro Bass
+63 16 05	Vintage 80's Bass
+63 17 05	Snappy Fifths Bass
+63 18 05	Dub Tempest Bass
+63 19 05	Dub PsyClone Bass
+63 20 05	Ducking Bass
+63 21 05	DS Hold Bass
+63 22 05	Bass Pulse Mod Wheel
+63 23 05	Wobble Nation Bass
+63 24 05	Triplet Bass Pulse
+63 25 05	Nasty Bass
+63 26 05	Widow Bass
+63 27 05	Octave Quack Bass
+63 28 05	Ruff Blade Bass
+63 29 05	Hard Synth Bass
+63 30 05	Hard Sync Bass
+63 31 05	Organ Bass
+63 32 05	Housey Bass
+RockKit1	Rock Kit 1
+63 34 05	Rock Kit 1 Mono
+RockKit2	Rock Kit 2
+Jazz Kit	Jazz Kit
+63 37 05	Jazz Kit Mono
+63 38 05	Jazz/Brush Kit
+PowerKt1	Power Kit 1
+PowerKt2	Power Kit 2
+BasicKt1	Basic Kit 1
+BasicKt2	Basic Kit 2
+63 44 05	Jazzy Hop Kit
+63 45 05	Urban Hip Hop Kit
+63 46 05	Hip Hop Kit 1
+63 47 05	Hip Hop Kit 2
+63 48 05	Trapper Kit
+63 49 05	Electronic R&B Kit
+63 50 05	New R&B Kit
+63 52 05	Breakbeat Kit
+63 53 05	Drum'n'Bass Kit
+63 54 05	Breaks Kit
+63 55 05	Big Room Kit
+63 56 05	New EDM Kit
 DbstpKit	Dubstep Kit
+63 58 05	Moombahton Kit
 TropicKt	Tropical Kit
+63 60 05	Trance Kit
+63 61 05	House Kit
+63 62 05	Tekno Klub Kit
+63 63 05	Minimal Kit
+63 64 05	Nica/Glitch Kit
+63 65 05	Analog Kit
+63 66 05	Mad Analog Kit
+63 67 05	Tricki Kit
+63 68 05	Human Beat Box Kit
+63 69 05	Percussion Kit
+63 70 05	Orch&Ethno Kit
+63 71 05	Nippon Kit
+BD&SD!!1	Bass & Snare Drum Menu 1
+BD&SD!!2	Bass & Snare Drum Menu 2
+Cymbal!!	Cymbal Menu
+63 75 05	Saw Pizzicato
+63 76 05	Short Square Arp
+63 77 05	Bit Chips
+63 78 05	Chip Triangle
+63 79 05	Chip Square
+63 80 05	Chip Pulse 1
+63 81 05	Chip Pulse 2
+63 82 05	Analog Bell / Harp
+63 83 05	Square / Pulse Synth
+63 84 05	Comp EP. SW1/2
+63 85 05	Organ Percussion Shot
+63 86 05	Synth Mallets 5th
+63 87 05	Metallic Hitter
+63 88 05	Tropical Pizzicato
 TrpclMlt	Tropical Mallet
+63 90 05	Horn Chord Hits
+63 91 05	Disco Strings Hit
+63 92 05	Chord Set 1
+63 93 05	Chord Set 2
+63 94 05	Hip Hop Hits
+63 95 05	Trapper Hit
+63 96 05	Pizzicato Hit
+63 97 05	Power Band Hit
+63 98 05	Impact Band Hit
+63 99 05	Drama Hit Wheel
+63 a0 05	Monster Hit Wheel
+63 a1 05	Chipper Hit
+63 a2 05	Helium Voice
 YahiVoix	Yahi Voices
 NippnSet	Nippon Set
 SmGaisya	Shamisen Gaisya
@@ -41,4 +722,20 @@ SoTsgaru	Soul of Tsugaru
 ShkMondo	Shakuhachi Mondou
 KtoFuryu	Koto Furyu
 MiyabiHt	Miyabi Hit
+63 b0 05	Ring Mod Riser
+63 b1 05	Siren SFX Wheel
+63 b2 05	Monster
+63 b3 05	Crypt-on
+63 b4 05	Stereo Flange Sweep
+63 b5 05	Sonic Blast
+63 b6 05	Soundscapes
+63 b7 05	Steam Sweeps
 AndroidK	Android
+63 b9 05	New North Wind
+63 c0 05	Outside Elements
+63 c1 05	Lore of the Jungle
+63 c2 05	Mega Drum Hit
+63 c4 05	Vocoder Vel Choir
+63 c5 05	SqrSaw Vocoder
+63 c6 05	Mic & Reverb
+63 c7 05	Mic & Doubled
