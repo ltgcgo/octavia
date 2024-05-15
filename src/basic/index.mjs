@@ -224,7 +224,7 @@ let RootDisplay = class extends CustomEventSource {
 						case 97:
 						case 99:
 						case 100: {
-							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], overrides.bank0, voiceObject.mode).name);
+							result = upThis.voxBm.getBm(upThis.getVoice(overrides.bank0, voiceObject.sid[1], overrides.bank0, voiceObject.mode).name);
 							break;
 						};
 					};
@@ -237,14 +237,14 @@ let RootDisplay = class extends CustomEventSource {
 						case 97:
 						case 98:
 						case 99: {
-							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], 0, voiceObject.mode).name);
+							result = upThis.voxBm.getBm(upThis.getVoice(overrides.bank0, voiceObject.sid[1], overrides.bank0, voiceObject.mode).name);
 							break;
 						};
 						case 104:
 						case 105:
 						case 106:
 						case 107: {
-							result = upThis.voxBm.getBm(upThis.getVoice(120, voiceObject.sid[1], 0, voiceObject.mode).name);
+							result = upThis.voxBm.getBm(upThis.getVoice(120, voiceObject.sid[1], overrides.bank0, voiceObject.mode).name);
 							break;
 						};
 					};
@@ -252,6 +252,8 @@ let RootDisplay = class extends CustomEventSource {
 				};
 				case "gs":
 				case "sc":
+				case "k11":
+				case "sg":
 				case "gm": {
 					switch (voiceObject.sid[0]) {
 						case 120: {

@@ -1458,6 +1458,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (msb == overrides.bank0) {
 			msb = 0;
 		};
+		if (lsb == overrides.bank0) {
+			lsb = 0;
+		};
 		if (mode == "ns5r") {
 			if (msb > 0 && msb < 56) {
 				lsb = 3; // Use SC-88 Pro map
