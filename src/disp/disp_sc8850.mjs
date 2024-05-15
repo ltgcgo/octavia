@@ -175,7 +175,7 @@ let Sc8850Display = class extends RootDisplay {
 		upThis.font56.getStr(`${"ABCDEFGH"[upThis.#ch >> 4]}${`${(upThis.#ch & 15) + 1}`.padStart(2, "0")}`).forEach((e0, i0) => {
 			let offsetX = i0 * 6 + 1;
 			e0.forEach((e1, i1) => {
-				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 3;
+				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
 				if (e1) {
 					upThis.#nmdb[pY * totalWidth + pX] = 255;
 				};
@@ -186,26 +186,26 @@ let Sc8850Display = class extends RootDisplay {
 		upThis.font56.getStr(voiceObject.bank).forEach((e0, i0) => {
 			let offsetX = i0 * 6 + 21;
 			e0.forEach((e1, i1) => {
-				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 3;
+				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
 				if (e1) {
 					upThis.#nmdb[pY * totalWidth + pX] = 255;
 				};
 			});
 		});
 		upThis.font56.getStr(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0")).forEach((e0, i0) => {
-			let offsetX = i0 * 6 + 44;
+			let offsetX = i0 * 6 + 43;
 			e0.forEach((e1, i1) => {
-				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 3;
+				let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
 				if (e1) {
 					upThis.#nmdb[pY * totalWidth + pX] = 255;
 				};
 			});
 		});
-		flipBitsInBuffer(upThis.#nmdb, totalWidth, 43, 2, 19, 8);
+		flipBitsInBuffer(upThis.#nmdb, totalWidth, 42, 1, 19, 8);
 		upThis.font7a.getStr(upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ")).forEach((e0, i0) => {
 			let offsetX = i0 * 8;
 			e0.forEach((e1, i1) => {
-				let pX = (i1 % 11) + offsetX + 64, pY = Math.floor(i1 / 11) + 1;
+				let pX = (i1 % 11) + offsetX + 63, pY = Math.floor(i1 / 11);
 				if (e1) {
 					upThis.#nmdb[pY * totalWidth + pX] = 255;
 				};
@@ -218,7 +218,7 @@ let Sc8850Display = class extends RootDisplay {
 		switch (rendMode) {
 			case 0: {
 				let portStart = (upThis.#ch >> 6) << 2, portNow = upThis.#ch >> 4;
-				let shiftX = (portStart >> 6) & 1;
+				let shiftX = +!((portStart >> 6) & 1);
 				for (let i = 0; i < 4; i ++) {
 					let portWork = portStart + i;
 					let portOffX = i * 40 + 2 + shiftX, portOffY = (portWork == portNow) ? 59 : 58;
@@ -233,7 +233,7 @@ let Sc8850Display = class extends RootDisplay {
 					});
 					upThis.scSys.getBm(portWork == portNow ? "tabSel" : "tabIdle")?.render((e, x, y) => {
 						if (e) {
-							let pI = (40 * i) + x + (y + 57) * totalWidth;
+							let pI = (40 * i) + x + shiftX + (y + 57) * totalWidth;
 							upThis.#nmdb[pI] = upThis.#nmdb[pI] ? 0 : 255;
 						};
 					});
