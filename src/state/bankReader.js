@@ -515,11 +515,6 @@ let VoiceBank = class {
 				break;
 			};
 		};
-		if (ending != " ") {
-			if (mode == "krs" || self.debugMode) {
-				bankName = "";
-			};
-		};
 		let standard = "??";
 		switch (args[0]) {
 			case 0: {
@@ -644,6 +639,12 @@ let VoiceBank = class {
 					};
 				};
 
+			};
+		};
+		if (ending != " ") {
+			if (mode == "krs" || self.debugMode) {
+				bankName = "";
+				standard = "KR";
 			};
 		};
 		return {
