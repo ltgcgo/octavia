@@ -81,7 +81,7 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb
 	"k11": [0, 0, 122],
 	"sg": [0, 0, 122],
 	"sd": [97, 0, 105],
-	"krs": [0, 0, 120],
+	"krs": [121, 0, 120],
 	"s90es": [0, 0, 127],
 	"motif": [0, 0, 127],
 	"trin": [0, 0, 127]
