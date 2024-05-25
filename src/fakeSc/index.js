@@ -50,65 +50,6 @@ let getBlobFrom = async function (filename) {
 	};
 	console.error(`Loading of data ${filename} failed.`);
 };
-getBlobFrom(`list.tsv`).then(async (response) => {
-	await demoPool.load(await response.text());
-	//console.info(demoPool.data);
-	demoPool.data.forEach((e, i) => {
-		if (i) {
-			let space = document.createElement("span");
-			space.innerHTML = " ";
-			stList.appendChild(space);
-		} else {
-			stList.innerText = "";
-		};
-		let demoChoice = document.createElement("b");
-		demoChoice.innerText = e.text;
-		demoChoice.title = e.file;
-		demoChoice.standard = e.standard;
-		demoChoice.classList.on("demo");
-		stDemo.push(demoChoice);
-		stList.appendChild(demoChoice);
-	});
-	stDemo.to = function (i) {
-		stDemo.forEach(function (e) {
-			e.classList.off("active");
-		});
-		if (i > -1) {
-			stDemo[i].classList.on("active");
-		};
-	};
-	stDemo.forEach(function (e, i, a) {
-		e.addEventListener("click", async function () {
-			audioPlayer.pause();
-			let demoId = e.innerText.charCodeAt(0);
-			if (demoId <= 122 && demoId > 96) {
-				demoId -= 32;
-			};
-			visualizer.device.initOnReset = false;
-			visualizer.device.setLetterDisplay([76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, demoId]);
-			if (!demoBlobs[e.title]?.midi) {
-				demoBlobs[e.title] = {};
-				audioPlayer.src = "about:blank";
-				demoBlobs[e.title].midi = await (await getBlobFrom(`${e.title}.mid`)).blob();
-				demoBlobs[e.title].wave = await (await getBlobFrom(`${e.title}.opus`)).blob();
-			};
-			audioPlayer.currentTime = 0;
-			visualizer.reset();
-			visualizer.loadFile(demoBlobs[e.title].midi);
-			if (audioBlob) {
-				URL.revokeObjectURL(audioBlob);
-			};
-			audioBlob = demoBlobs[e.title].wave;
-			audioPlayer.src = URL.createObjectURL(audioBlob);
-			visualizer.device.setDetectionTargets(e.standard);
-			if (demoModes[i]?.length > 0) {
-				visualizer.switchMode(demoModes[i]);
-			};
-			visualizer.device.setLetterDisplay([76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, demoId]);
-			stDemo.to(i);
-		});
-	});
-});
 
 let title = "";
 // Start the visualizers
@@ -220,6 +161,70 @@ dispCanv.addEventListener("mousedown", function (ev) {
 		visualizer.setCh(ch - 1);
 	} else if (ev.offsetX >= 776) {
 		visualizer.setCh(ch + 1);
+	};
+});
+
+getBlobFrom(`list.tsv`).then(async (response) => {
+	await demoPool.load(await response.text());
+	//console.info(demoPool.data);
+	demoPool.data.forEach((e, i) => {
+		if (i) {
+			let space = document.createElement("span");
+			space.innerHTML = " ";
+			stList.appendChild(space);
+		} else {
+			stList.innerText = "";
+		};
+		let demoChoice = document.createElement("b");
+		demoChoice.innerText = e.text;
+		demoChoice.title = e.file;
+		demoChoice.standard = e.standard;
+		demoChoice.classList.on("demo");
+		stDemo.push(demoChoice);
+		stList.appendChild(demoChoice);
+	});
+	stDemo.to = function (i) {
+		stDemo.forEach(function (e) {
+			e.classList.off("active");
+		});
+		if (i > -1) {
+			stDemo[i].classList.on("active");
+		};
+	};
+	stDemo.forEach(function (e, i, a) {
+		e.addEventListener("click", async function () {
+			audioPlayer.pause();
+			let demoId = e.innerText.charCodeAt(0);
+			if (demoId <= 122 && demoId > 96) {
+				demoId -= 32;
+			};
+			visualizer.device.initOnReset = false;
+			visualizer.device.setLetterDisplay([76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, demoId]);
+			if (!demoBlobs[e.title]?.midi) {
+				demoBlobs[e.title] = {};
+				audioPlayer.src = "about:blank";
+				demoBlobs[e.title].midi = await (await getBlobFrom(`${e.title}.mid`)).blob();
+				demoBlobs[e.title].wave = await (await getBlobFrom(`${e.title}.opus`)).blob();
+			};
+			audioPlayer.currentTime = 0;
+			visualizer.reset();
+			visualizer.loadFile(demoBlobs[e.title].midi);
+			if (audioBlob) {
+				URL.revokeObjectURL(audioBlob);
+			};
+			audioBlob = demoBlobs[e.title].wave;
+			audioPlayer.src = URL.createObjectURL(audioBlob);
+			visualizer.device.setDetectionTargets(e.standard);
+			if (demoModes[i]?.length > 0) {
+				visualizer.switchMode(demoModes[i]);
+			};
+			visualizer.device.setLetterDisplay([76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, demoId]);
+			stDemo.to(i);
+		});
+	});
+	if (location.search.indexOf("minimal") > -1) {
+		self.scroll(0, dispCanv.offsetTop - 4);
+		midwIndicator.click();
 	};
 });
 
