@@ -2367,7 +2367,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.warn(`Unrecognized sequencer-specific byte sequence: ${seq}`);
 		};
 		upThis.#metaSeq.add([67, 0, 1], function (msg, track) {
-			//console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
+			getDebugState() && console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		});
 		// Binary match should be avoided in favour of a circular structure
