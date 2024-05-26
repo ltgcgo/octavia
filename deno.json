@@ -1,0 +1,43 @@
+{
+	"name": "@ltgcgo/octavia",
+	"version": "0.5.1.113",
+	"exports": {
+		"./basic": "./basic.mjs",
+		"./bridge": "./bridge.mjs",
+		"./cambiare": "./cambiare.mjs",
+		"./disp": "./disp.mjs",
+		"./state": "./state.mjs",
+		"./xp_basic": "./xp_basic.mjs",
+		"./xp_state": "./xp_state.mjs"
+	},
+	"publish": {
+		"exclude": [
+			"*"
+		],
+		"include": [
+			"./*.mjs"
+		]
+	},
+	"unstable": [
+		"broadcast-channel",
+		"ffi",
+		"net",
+		"webgpu"
+	],
+	"fmt": {
+		"useTabs": true,
+		"lineWidth": 200,
+		"indentWidth": 4,
+		"semiColons": true,
+		"exclude": [
+			"*"
+		]
+	},
+	"lint": {
+		"exclude": [
+			"*"
+		]
+	},
+	"nodeModulesDir": false,
+	"npmRegistry": "http://127.0.0.1:80/"
+}
