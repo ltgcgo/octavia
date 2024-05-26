@@ -1,6 +1,6 @@
 {
 	"name": "@ltgc/octavia",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"exports": {
 		"./basic": "./dist/basic.mjs",
 		"./bridge": "./dist/bridge.mjs",
@@ -11,7 +11,8 @@
 	},
 	"publish": {
 		"include": [
-			"dist/**"
+			"dist/**",
+			"README.md"
 		]
 	},
 	"unstable": [
