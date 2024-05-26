@@ -1,5 +1,5 @@
 "use strict";
 
-import * as mod from "@octavia/state";
+import * as mod from "../dist/state.mjs";
 
 export default mod;

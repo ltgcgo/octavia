@@ -1,5 +1,5 @@
 "use strict";
 
-import * as mod from "@octavia/xp_state";
+import * as mod from "../dist/xp_state.mjs";
 
 export default mod;
