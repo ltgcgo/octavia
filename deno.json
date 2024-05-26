@@ -1,6 +1,6 @@
 {
 	"name": "@ltgc/octavia",
-	"version": "0.5.1.113",
+	"version": "0.0.1",
 	"exports": {
 		"./basic": "./basic.mjs",
 		"./bridge": "./bridge.mjs",
@@ -10,12 +10,20 @@
 		"./xp_basic": "./xp_basic.mjs",
 		"./xp_state": "./xp_state.mjs"
 	},
+	"imports": {
+		"@octavia": "https://deno.land/x/octavia_deno@0.5.1.113",
+		"@octavia/basic": "https://deno.land/x/octavia_deno@0.5.1.113/basic.mjs",
+		"@octavia/bridge": "https://deno.land/x/octavia_deno@0.5.1.113/bridge.mjs",
+		"@octavia/cambiare": "https://deno.land/x/octavia_deno@0.5.1.113/cambiare.mjs",
+		"@octavia/disp": "https://deno.land/x/octavia_deno@0.5.1.113/disp.mjs",
+		"@octavia/state": "https://deno.land/x/octavia_deno@0.5.1.113/state.mjs",
+		"@octavia/xp_basic": "https://deno.land/x/octavia_deno@0.5.1.113/xp_basic.mjs",
+		"@octavia/xp_state": "https://deno.land/x/octavia_deno@0.5.1.113/xp_state.mjs"
+	},
 	"publish": {
 		"exclude": [
-			"*"
-		],
-		"include": [
-			"./*.mjs"
+			"!./*.mjs",
+			"*.json"
 		]
 	},
 	"unstable": [
