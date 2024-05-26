@@ -11,19 +11,19 @@
 		"./xp_state": "./xp_state.mjs"
 	},
 	"imports": {
-		"@octavia": "https://deno.land/x/octavia_deno@0.5.1.113",
-		"@octavia/basic": "https://deno.land/x/octavia_deno@0.5.1.113/basic.mjs",
-		"@octavia/bridge": "https://deno.land/x/octavia_deno@0.5.1.113/bridge.mjs",
-		"@octavia/cambiare": "https://deno.land/x/octavia_deno@0.5.1.113/cambiare.mjs",
-		"@octavia/disp": "https://deno.land/x/octavia_deno@0.5.1.113/disp.mjs",
-		"@octavia/state": "https://deno.land/x/octavia_deno@0.5.1.113/state.mjs",
-		"@octavia/xp_basic": "https://deno.land/x/octavia_deno@0.5.1.113/xp_basic.mjs",
-		"@octavia/xp_state": "https://deno.land/x/octavia_deno@0.5.1.113/xp_state.mjs"
+		"@octavia": "../dist",
+		"@octavia/basic": "../dist/basic.mjs",
+		"@octavia/bridge": "../dist/bridge.mjs",
+		"@octavia/cambiare": "../dist/cambiare.mjs",
+		"@octavia/disp": "../dist/disp.mjs",
+		"@octavia/state": "../dist/state.mjs",
+		"@octavia/xp_basic": "../dist/xp_basic.mjs",
+		"@octavia/xp_state": "../dist/xp_state.mjs"
 	},
 	"publish": {
-		"exclude": [
-			"!./*.mjs",
-			"*.json"
+		"include": [
+			"*.json",
+			"*.mjs"
 		]
 	},
 	"unstable": [
