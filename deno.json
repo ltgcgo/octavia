@@ -2,28 +2,16 @@
 	"name": "@ltgc/octavia",
 	"version": "0.0.1",
 	"exports": {
-		"./basic": "./basic.mjs",
-		"./bridge": "./bridge.mjs",
-		"./cambiare": "./cambiare.mjs",
-		"./disp": "./disp.mjs",
-		"./state": "./state.mjs",
-		"./xp_basic": "./xp_basic.mjs",
-		"./xp_state": "./xp_state.mjs"
-	},
-	"imports": {
-		"@octavia": "../dist",
-		"@octavia/basic": "../dist/basic.mjs",
-		"@octavia/bridge": "../dist/bridge.mjs",
-		"@octavia/cambiare": "../dist/cambiare.mjs",
-		"@octavia/disp": "../dist/disp.mjs",
-		"@octavia/state": "../dist/state.mjs",
-		"@octavia/xp_basic": "../dist/xp_basic.mjs",
-		"@octavia/xp_state": "../dist/xp_state.mjs"
+		"./basic": "./dist/basic.mjs",
+		"./bridge": "./dist/bridge.mjs",
+		"./cambiare": "./dist/cambiare.mjs",
+		"./state": "./dist/state.mjs",
+		"./xp_basic": "./dist/xp_basic.mjs",
+		"./xp_state": "./dist/xp_state.mjs"
 	},
 	"publish": {
 		"include": [
-			"*.json",
-			"*.mjs"
+			"dist/**"
 		]
 	},
 	"unstable": [

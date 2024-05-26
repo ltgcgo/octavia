@@ -5,3 +5,4 @@ dist/*.gz
 dist/*.br
 ghp/sitemap.xml
 jsr/deno.json
+dist/deno.json
