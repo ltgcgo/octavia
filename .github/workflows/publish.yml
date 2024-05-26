@@ -1,0 +1,26 @@
+name: Publish to registries
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'deno.json'
+      - 'jsr/**'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1.1.1
+
+      - name: Publish package
+        run: "./shx publish"
