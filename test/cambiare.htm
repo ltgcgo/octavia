@@ -62,7 +62,7 @@
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4}}">
-			<div class="column column-option"><b>Display mode</b></div>
+			<div class="column column-option"><b>Display style</b></div>
 			<template x-for="range in ranges">
 				<div class="column column-option column-button" @click="gRange(range[0])" x-text="range[1]" :active="($store.showRange||'port1')==range[0]?'true':'false'"></div>
 			</template>
