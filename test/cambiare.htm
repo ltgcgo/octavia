@@ -72,7 +72,7 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{styles:[['block','Block'],['comb','Comb'],['piano','Piano'],['line','Line']],frames:[[42,24,'Film'],[40,25,'PAL'],[34,30,'NTSC'],[21,48,'Film'],[20,50,'PAL (native)'],[17,60,'NTSC'],[10,100,'Modern screen'],[9,120,'Modern screen'],[7,144,'Modern screens']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{styles:[['block','Block'],['comb','Comb'],['piano','Piano'],['line','Line']],frames:[[42,24,'Film'],[40,25,'PAL'],[34,30,'NTSC'],[21,48,'Film'],[20,50,'PAL (native)'],[17,60,'NTSC'],[14,75,'Phone screen'],[12,90,'Phone screen'],[10,100,'PC screen'],[9,120,'PC screen'],[7,144,'PC screen']]}">
 			<div class="column column-option"><b>Note style</b></div>
 			<template x-for="style in styles">
 				<div class="column column-option column-button" @click="gStyle(style[0])" x-text="style[1]" :active="($store.noteStyle||'comb')==style[0]?'true':'false'"></div>
