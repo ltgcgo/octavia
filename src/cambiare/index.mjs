@@ -707,6 +707,20 @@ let Cambiare = class extends RootDisplay {
 		upThis.#renderRange = parseInt(mode.slice(4)) || 1;
 		upThis.#setPortView(true);
 	};
+	setFrameTime(frameTime = 20) {
+		let upThis = this;
+		if (upThis.#renderThread?.constructor) {
+			clearInterval(upThis.#renderThread);
+		};
+		if (frameTime < 5) {
+			frameTime = 5;
+		} else if (frameTime > 100) {
+			frameTime = 100;
+		};
+		upThis.#renderThread = setInterval(upThis.#renderer, frameTime);
+		upThis.smoothingAtk = Math.pow(0.1, frameTime / 20);
+		upThis.smoothingDcy = Math.pow(0.75, frameTime / 20);
+	};
 	attach(attachElement) {
 		let upThis = this;
 		upThis.#visualizer = attachElement;
@@ -721,7 +735,7 @@ let Cambiare = class extends RootDisplay {
 		// Start the resizer
 		self.addEventListener("resize", upThis.#resizer);
 		upThis.#resizer();
-		upThis.#renderThread = setInterval(upThis.#renderer, 20);
+		upThis.setFrameTime(20);
 		// Begin inserting the info section
 		upThis.#sectInfo.root = createElement("div", ["sect-info"]);
 		upThis.#sectInfo.events = createElement("span", ["field", "pcp-font4"], {t: 1, l: 0, w: 35, h: 33});

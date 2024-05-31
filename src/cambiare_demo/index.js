@@ -23,6 +23,13 @@ HTMLElement.prototype.$a = function (selector) {
 };
 self.Alpine = Alpine;
 
+let deriveFactor = (baseFactor, baseTime, newTime) => {
+	if (baseTime == newTime) {
+		return baseFactor;
+	};
+	return Math.pow(baseFactor, newTime / baseTime);
+};
+
 let useMidiBus = false;
 let audioFilePlayer = $e("#audioFilePlayer");
 let timeMuxer = {};
@@ -162,6 +169,10 @@ self.gScLvl = async function (level) {
 self.gLimitDump = async function (limit) {
 	visualizer.device.setDumpLimit(limit);
 	Alpine.store("limitDump", limit);
+};
+self.gFrameTime = (frameTime) => {
+	visualizer.setFrameTime(frameTime);
+	Alpine.store("frameTime", frameTime);
 };
 
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".mdat",".MDAT",".pcg",".PCG"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
