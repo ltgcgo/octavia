@@ -1,5 +1,5 @@
 ID	Name
-LayerCP1	LayeredCP1
+Str Slap	StringSlap
 GrndPnoK	GrndPianoK
 MelloGrP	MelloGrPno
 PianoStr	PianoStrng
@@ -13,6 +13,7 @@ StBrtPno	StBritePno
 BriteP #	BritPiano#
 EGndPnoK	ElGrndPnoK
 Det.CP80	DetuneCP80
+LayerCP1	LayeredCP1
 LayerCP2	LayeredCP2
 HnkyTnkK	HonkyTonkK
 EPiano1K	ElPiano 1K
@@ -500,11 +501,11 @@ BlineHrd	Hard Bline
 Prcesion	Precession
 RndmWalk	RandomWalk
 RandmRun	Random Run
+NstOrSpl	NastyOrSpl
 Malfnctn	Malfnction
 CutNoise	Cut Noise
 CutNoiz2	CutNoise 2
 DstCutNz	DstCutNoiz
-Str Slap	StringSlap
 B.Slide	Bass Slide
 P.Scrape	PickScrape
 Fl.KClik	FltKyClick
@@ -613,6 +614,7 @@ Ana.Wave	AnalogWave
 Ana.Wurl	AnalgWurly
 FngrBas!	FingerBas!
 UprghtBa	UprightBas
+Fnground	FingrdGrnd
 FlageoBa	FlageoBass
 DampBass	Damp Bass
 Fretles!	Fretless!
@@ -647,61 +649,142 @@ SpcHorse	SpaceHorse
 Suedhead	Suedehead
 EspaGtr!	EspagnGtr!
 JazzGtr!	JazzGuitr!
+JazzyGtr	Jazzy Gtr.
 WetPluck	Wet Pluck
 Comp.Gtr	Compr.Gtr.
 FunkyGtr	Funky Gtr.
 Thin Gtr	ThinGuitar
 Carlos	CarlosGtr.
 Destiny	DestinyGtr
+Ossyncro	OsciSyncro
 Sync Ld!	Sync Lead!
+Old Mini	Old MiniLd
+Fat Mini	Fat MiniLd
+Parlopho	Parlophone
 SimpleSy	SimpleSyn.
-SlitMinu	Slit.Minu.
+Choronic	ChoronicLd
+SlitMinu	SlitMinute
 SynHarmo	SynthHarmo
 Syn.Skex	Synth Skex
 Reso.Sqr	ResoSquare
 Wurli Ld	Wurli Lead
 FlatLead	Flat Lead
+ChalPuls	ChalPulsLd
 Pluck Ld	Pluck Lead
 Brassyn	BrassSynth
 AcoSynLd	Acou.SynLd
+LyricOff	Lyrics Off
+Claribo	Claribone
 Binafone	Binaphone
+MokoPipe	Moko Pipe
+Persinet	PersianClr
+PicoPipe	Pico Pipe
+Softblow	SoftBlowSx
 AlbaPipe	Alba Pipe
+Edgeopho	Edgeophone
 BaClari!	BassClari!
 WX Clari	WXClarinet
 WX JzGtr	WX JazzGtr
 Shakuha!	Shakhachi!
 LipClari	LipClarint
+Floboe	Fluid Oboe
+Sintax	Sintax Sax
+Eastern	EasternShk
 SprnoSx!	SopranoSx!
 LiteAlto	Light Alto
 Trombon!	Trombone!
+BtlFlute	BottlFlute
 Air Sax	Airy Sax
 TenorSx!	Tenor Sax!
+Coca	Coca PFlu.
+JetLpBow	JetLipBow
+Viol Inn	Violin Inn
+MuteCone	Muted Cone
+BrethBow	BreathyBow
 Trumpt!2	Trumpet! 2
+FluglHr!	FlugelHrn!
+Jazz Trp	JazzTrumpt
+JazzTrp2	JazzTrump2
+WXTrumpt	WX Trumpet
+MuteTrp!	MutedTrpt!
 MuteTp!2	MutedTrp!2
+MelTrmbn	MelTrombon
+NerzoBrs	NerzoBrass
+FrchHrn!	FrenchHrn!
+FrHorn!2	FrnchHrn!2
+Nu Horne	New Horne
+WX Horn	WX Fr Horn
 NuViolin	New Violin
 C Violin	Con.Violin
+BrtVioln	BriteVioln
+MutedVln	MutedVioln
+BrtViola	BriteViola
+Vla Outt	Viola Outt
+Eleanor	EleanorCel
+Nu Cello	New Cello
+Contrair	ContrairBa
+DoublBow	DoublBowCB
+Picolo!2	Piccolo! 2
 BowPicol	BowedPicol
 C Flute	CncrtFlute
+C Flute2	Con.Flute2
 JazFlute	Jazz Flute
+OakFlute	Oak Flute
+BtlFlut2	BotlFlute2
+Rzde.Flt	Rzde.Flute
+Nz Flute	NoisyFlute
 WX Shaku	WX Shakuha
+PanPicol	PanPiccolo
 Bamboo	Bamboo Di
+Andean	AndesQuena
+SoftReed	Soft Reed
+NuSoprSx	NewSoprSax
 CvSoprSx	CurvSoprSx
 SoprPipe	SoprnoPipe
+LiteSopr	LiteSoprno
+AnaSprno	AnalogSopr
+NuAltoSx	NewAltoSax
 SweetAlt	Sweet Alto
 AltoSax!	Alto Sax!
+HarpAlto	Harp Alto
+HarpAlt2	Harp Alto2
+GlassAlt	Glass Alto
+Wack Sax	Wacky Sax
+NuTenrSx	New Tenor
 MildTenr	Mild Tenor
 GlassTnr	GlassTenor
 FunkyTnr	FunkyTenor
 OldTenor	Old Tenor
 BrtTenor	BriteTenor
+BariSax!	Bari. Sax!
+VoxoSaxo	Voxo Saxo.
+Oboe!2	Oboe! 2
+OboeWhi.	Oboe Whi.
+DblReedy	DoublReedy
+TripleRd	TriplReedy
+EngHorn!	Eng. Horn!
 Clrinet!	Clarinet!
+LitePipe	Light Pipe
+HyperCla	HyperClari
+Clrint!2	Clarinet!2
+IslePipe	Isle Pipe
+ThaiReed	Thai Reed
+Recordr!	Recorder!
+Claricrd	Clarichord
 SoftPipe	Soft Pipe
 BowedSaw	Bowed Saw
+MizuHorn	Water Horn
+Pico Str	PicoString
+Sylophon	Sylophone
+Bowed Ld	Bowed Lead
 Squeeze	SqeezAcord
 MouthKey	Mouth Key
-AmpdHarp	AmpdHarmnc
-CromHarp	ChromHrmnc
+AmpdHarp	AmpedHarmo
+CromHarp	ChromHarmo
+WahUpHrp	WahUpHarmo
 YamaBotl	YamaBottle
+CrumBon	CrumTrombn
+ReedWin	Reedy Wind
 M-ASoft	M-AdltSoft
 M-AHusky	M-AdtHusky
 F-NMusic	F-NewMusic

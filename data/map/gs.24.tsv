@@ -1,5 +1,4 @@
 ID	Name
-RvSnr3!!	Reverse Snare Menu 3
 Uprt.Pno	Upright Piano
 Piano 1w	Grand Piano w
 UprtP. w	Upright Piano w
@@ -68,7 +67,7 @@ ChoAcord	Chorus Accordion
 HrdAcord	Hard Accordion
 SftAcord	Soft Accordion
 BscBHrmo	Basic Blues Harmonica
-SplBHrmo	Suppl. Blues Harmonica
+SplBHrmo	Supplem. Blues Harmonica
 TngoAcd2	Bandoneon 2
 Bndoneon	Bandoneon
 NylonGt3	Nylon Guitar o
@@ -360,6 +359,7 @@ Rev Kick	Reverse Kick
 RevConBD	Rev. Concert Bass Drum
 Rev.Tom	Reverse Tom
 Rev.Tom2	Reverse Tom 2
+RvSnr3!!	Reverse Snare Menu 3
 CutNoise	Cutting Noise
 CutNoiz2	Cutting Noise 2
 DstCutNz	Distorted Cutting Noise
@@ -425,7 +425,9 @@ Standrd3	Standard Kit 3
 StdrdL/R	Standard Kit L/R
 Anal.Kt2	Analog Kit 2
 Brush2LR	Brush Kit 2 L/R
+CymbalKt	Cymbal & Claps Kit
 GamlnKt2	Gamelan Kit 2
 RyFX Kit	Rhythm FX Kit
 RyFX2 Kt	Rhythm FX Kit 2
 RyFX3 Kt	Rhythm FX Kit 3
+CymblKt2	Cymbal & Claps Kit 2

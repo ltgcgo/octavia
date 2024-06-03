@@ -308,6 +308,7 @@ RvSnare2	Reverse Snare 2
 RConBaDr	Rev. Concert Bass Drum
 Rev.Tom2	Reverse Tom 2
 Voodoo	Voodoo Drums
+NstOrSpl	Split Nasty Organ
 Glocken+	Glockenspiel +
 CutNoise	Cutting Noise
 CutNoiz2	Cutting Noise 2
@@ -345,34 +346,92 @@ ChorTine	Chorused E. Tine
 DXEP+Cho	DX EP + Chorus
 RichHpsi	Rich Harpsichord
 PhaseClv	Phaser Clavichord
+ClavBass	Clavichord Bass
+New Slap	New Slap Bass
+Buzz Saw	Buzzy Saw Lead
+OsciLead	Oscillated Lead
+FngrBas!	Fingered Bass!
+Fnground	Fingered Ground
 Fretles!	Fretless Bass!
+Fretls!2	Fretless Bass! 2
+YamaBass	Mountain Bass
+PlsClav!	Pulse Clavichord!
+MuteHrBa	Muted Heart Bass
 YamSteel	Mountain Steel Drums
 DinoPerc	Dino Percussion
 EspaGtr!	Spanish Guitar!
-WetPluck	Wet Pluck Guitar
+L7 Pluck	L7 Plucked Guitar
+WetPluck	Wet Plucked Guitar
+Comp.Gtr	Compression Guitar
+Carlos	Carlos Guitar
 Destiny	Destiny Guitar
+Ossyncro	Oscillated Synchro
+Old Mini	Old Mini Lead
+Fat Mini	Fat Mini Lead
+Choronic	Choronic Lead
+SynHarmo	Synth Harmonica
+Reso.Sqr	Resonant Square
+ChalPuls	Chalk Pulse Lead
 AcoSynLd	Acoustic Synth Lead
+Persinet	Persian Clarinet
+Softblow	Soft Blown Sax
+BaClari!	Bass Clarinet!
+WX JzGtr	WX Jazz Guitar
+Sintax	Sintax Saxophone
+Eastern	Eastern Shakuhachi
 LiteAlto	Light Alto Sax
 Air Sax	Airy Saxophone
 TenorSx!	Tenor Saxophone!
+Coca	Coca Pan Flute
+JetLpBow	Jet Lip Bowed Fiddle
+MuteCone	Muted Trumpet Cone
+JazzTrp2	Jazz Trumpet 2
+MuteTrp!	Muted Trumpet!
 MuteTp!2	Muted Trumpet! 2
+MelTrmbn	Mellow Trombone
+FrHorn!2	French Horn! 2
+Nu Horne	New French Horn
+WX Horn	WX French Horn
 C Violin	Concert Violin
+BrtVioln	Bright Violin
+Eleanor	Eleanor Cello
+Contrair	Contrair Bass
+DoublBow	Double Bowed Contrabass
 BowPicol	Bowed Piccolo
 C Flute	Concert Flute
+C Flute2	Concert Flute 2
+BtlFlut2	Bottle Flute 2
 WX Shaku	WX Shakuhachi
+PanPicol	Pan Piccolo
+NuSoprSx	New Soprano Sax
 CvSoprSx	Curved Soprano Sax
+LiteSopr	Light Soprano Sax
+AnaSprno	Analog Soprano Sax
 SweetAlt	Sweet Alto Sax
 AltoSax!	Alto Saxophone!
+HarpAlto	Harp Alto Sax
+HarpAlt2	Harp Alto Sax 2
+GlassAlt	Glassy Alto Sax
+Acid Sax	Acid Saxophone
+Wack Sax	Wacky Saxophone
+NuTenrSx	New Tenor Sax
 MildTenr	Mild Tenor Sax
 Jazz Sax	Jazz Saxophone
-GlassTnr	Glass Tenor Sax
+GlassTnr	Glassy Tenor Sax
 FunkyTnr	Funky Tenor Sax
 OldTenor	Old Tenor Sax
 BrtTenor	Bright Tenor Sax
+BariSax!	Baritone Sax!
+VoxoSaxo	Voxo Saxophone
+EngHorn!	English Horn!
+HyperCla	Hyper Clarinet
 BowedSaw	Bowed Sawtooth
+Squeeze	Squeeze Accordion
 AmpdHarp	Amped Harmonica
 CromHarp	Chrome Harmonica
+WahUpHrp	Wah Up Harmonica
 YamaBotl	Mountain Bottle
+CrumBon	Crum Trombone
 M-Male	Male Voice
 M-ASoft	Male Soft Adult
 M-AHusky	Male Husky Adult

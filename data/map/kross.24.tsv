@@ -1,66 +1,5 @@
 ID	Name
 KGrdPno1	Kross Grand Piano 1
-KGrdPno2	Kross Grand Piano 2
-StGrdPno	Stereo Grand Piano
-KBrtGrP1	Bright Grand Piano 1
-KBrtGrP2	Bright Grand Piano 2
-RockGrdP	Rock Grand Piano
-StgGrdP1	Stage Grand Piano 1
-StgGrdP2	Stage Grand Piano 2
-VvdGrndP	Vivid Grand Piano
-WarmGrdP	Warm Grand Piano
-DarkGrdP	Dark Grand Piano
-PopGrPno	Pop Grand Piano
-RevGrPno	Reverb Grand Piano
-StAc.Pno	Stereo Acoustic Piano
-BrtAcPno	Bright Acoustic Piano
-ChoAcPno	Chorus Acoustic Piano
-UprtPno1	Upright Piano 1
-UprtPno2	Upright Piano 2
-UprtPno3	Upright Piano 3
-BarRmPno	Bar Room Piano
-MnrlAPno	Monaural Piano
-BrtMnPno	Bright Mono Piano
-DrkMnPno	Dark Mono Piano
-BrtMnGrd	Bright Mono Grand Piano
-DrkMnGrd	Dark Mono Grand Piano
-CmpMnPno	Compr. Mono Grand Piano
-HmrMnPno	Hammer Mono Piano
-DetMnPno	Detuned Piano
-OldSGrnd	Old Story Grand Piano
-VrOldGrd	Very Old Grand Piano
-FortePno	Forte Piano
-SG1DPno1	SG-1D Piano 1
-SG1DPno2	SG-1D Piano 2
-EGrdPno1	Electric Grand Piano 1
-EGrdPno2	Electric Grand Piano 2
-ChoEGrd1	Chorused E. Grand 1
-ChoEGrd2	Chorused E. Grand 2
-Dual Pno	Dual Piano
-ChiltPno	Chill-out Piano
-SadPiano	Sad Piano
-DamprPno	Damper Piano
-PnoDubWl	Piano Dub Wheel
-LoFSPfWl	Low FS Piano Wheel
-Pno+DXEP	Piano + DX E. Piano
-AlonePno	Alone Piano
-PfDynoEP	Piano + Dyno E. Piano
-RomncePf	Romance Piano
-SparklPf	Sparkling Piano
-A.Pf+Str	Acoustic Piano + Strings
-AP+OrPd1	A. Piano + Orch. Pad 1
-AP+OrPd2	A. Piano + Orch. Pad 2
-GrdP+Str	Grand Piano + Strings
-Gr+OrPd1	Grand Pf + Orch. Pad 1
-Gr+OrPd2	Grand Pf + Orch. Pad 2
-Gr+SmStr	Grand Pf + Small Strings
-GrStrPd1	Grand Pf + String Pad 1
-GrStrPd2	Grand Pf + String Pad 2
-AP+SynPd	A. Piano + Synth Pad
-90sPiano	90’s Piano
-ToyPiano	Toy Piano
-RmcToyPf	Romance Toy Piano
-EPRBSW12	R&B Suit EP SW1/2
 63 65 00	R&B Suit EP Phaser
 63 66 00	Preamp Suit EP
 63 67 00	Distorted Suit EP SW2
@@ -83,7 +22,6 @@ EPRBSW12	R&B Suit EP SW1/2
 63 84 00	Studio Dyno EP
 63 85 00	EQ / Chorus Dyno EP
 63 86 00	Chorus Dyno EP
-EPDynoEC	Exciter / Chorus Dyno EP
 63 88 00	Wah Wheel Reed EP
 63 89 00	Mellow Reed EP
 63 90 00	Tremolo Reed EP
@@ -116,23 +54,6 @@ EPDynoEC	Exciter / Chorus Dyno EP
 63 b7 00	Phantom Electric Piano
 63 b8 00	Tablet E. Piano SW2
 63 b9 00	Tablet E. Harpsi. SW2
-BrtACClv	Bright AC Clavichord
-MelACClv	Mellow AC Clavichord
-DstACClv	Distorted AC Clavichord
-VWaACClv	Velo Wah AC Clavichord
-BrtADClv	Bright AD Clavichord
-MelADClv	Mellow AD Clavichord
-DstADClv	Distorted AD Clavichord
-VWaADClv	Velo Wah AD Clavichord
-BrtBCClv	Bright BC Clavichord
-MelBCClv	Mellow BC Clavichord
-DstBCClv	Distorted BC Clavichord
-VWaBCClv	Velo Wah BC Clavichord
-BrtBDClv	Bright BD Clavichord
-MelBDClv	Mellow BD Clavichord
-DstBDClv	Distorted BD Clavichord
-VWaBDClv	Velo Wah BD Clavichord
-T.WahClv	Touch Wah Clavichord
 63 09 01	Higher Ground Clavichord
 63 10 01	Superstition Clavichord
 63 11 01	Kid Charlmagne Clavi.
@@ -153,7 +74,6 @@ T.WahClv	Touch Wah Clavichord
 63 26 01	888 Electric Organ
 63 27 01	Warm Overdriven E. Organ
 63 28 01	Bossa Electric Organ
-LuvSngOr	Love Song Electric Organ
 63 30 01	Gospel Electric Organ
 63 31 01	Compressor E. Organ
 63 32 01	Drawbars E. Organ 1 MW
@@ -173,7 +93,6 @@ LuvSngOr	Love Song Electric Organ
 63 46 01	Slow Blues E. Organ
 63 47 01	Fast Blues E. Organ
 63 48 01	Overdriven Rock E. Organ
-RkPrecOr	Percussive Rock E. Organ
 63 50 01	Master Rock E. Organ
 63 51 01	Gospel Perc. E. Organ
 63 52 01	M1 Organ
@@ -252,8 +171,6 @@ RkPrecOr	Percussive Rock E. Organ
 63 c5 01	Skull Mallets
 63 c6 01	Tribal Mallets
 63 c7 01	Log Drums
-StStrng1	Stereo Strings 1
-StStrng2	Stereo Strings 2
 63 03 02	Lush Strings 1
 63 04 02	Lush Strings 2
 63 05 02	Bright Strings
@@ -305,14 +222,12 @@ StStrng2	Stereo Strings 2
 63 52 02	Classical Choir
 63 53 02	Backing Vocals
 63 54 02	Twilight Choir
-Cathedrl	Cathedral Choir
 63 56 02	Splash Choir
 63 57 02	Soundtrack Choir
 63 58 02	Mixed Registers
 63 59 02	Professional Choir
 63 60 02	Morphing Voices
 63 61 02	Infinite Choir
-TakeVoix	Take Voice
 63 63 02	V. Switch Vocals
 63 64 02	Mellow Style Choir
 63 65 02	Mellow 8-Voice Choir
@@ -325,7 +240,6 @@ TakeVoix	Take Voice
 63 72 02	Full Vox
 63 73 02	Arctic Voices
 63 74 02	Tranquil SW2
-VoiceDoo	Voice Doo
 63 76 02	Voxology
 63 77 02	Velo Voxster
 63 78 02	Open Brass
@@ -357,22 +271,14 @@ VoiceDoo	Voice Doo
 63 a5 02	4-Way Trombones
 63 a6 02	Sensitive Trumpet
 63 a7 02	Overblown Trumpet
-FlugelHr	Flugel Horn
-MutedTrb	Muted Trombone
 63 b4 02	Vibrato Flute
 63 b5 02	Silver Flute
 63 b6 02	Attack Flute
 63 b7 02	Voice Flute
 63 b9 02	Mellow MK II Flutes
 63 c1 02	Double Reed Family
-Sax Sect	Sax Section
-SftAltSx	Soft Alto Sax
-HrdAltSx	Hard Alto Sax
-SftTnrSx	Tenor Sax Soft
-HrdTnrSx	Tenor Sax Hard
 63 07 03	Zen Priest Split
 63 08 03	Spit Bottle
-MemoryLd	Memory Lead
 63 10 03	DW8000 Lead 1
 63 11 03	Espress Lead
 63 12 03	Sweet MG Lead
@@ -386,9 +292,7 @@ MemoryLd	Memory Lead
 63 20 03	Unison Square Lead
 63 21 03	Simple Square Lead
 63 22 03	Simple Pulse Lead
-SineLead	Sine Lead
 63 24 03	Infinity Lead
-RudeLead	Rude Lead
 63 26 03	Wailing Lead
 63 27 03	Cold Water Lead
 63 28 03	Big Lead
@@ -491,7 +395,6 @@ RudeLead	Rude Lead
 63 c5 03	Matrix Crispy
 63 c6 03	Chronologie
 63 c7 03	Aero Pad
-BadDream	Bad Dream Waltzer Pad
 63 01 04	Alexa Pad
 63 02 04	Solaris Pad
 63 03 04	The X Pad
@@ -502,7 +405,6 @@ BadDream	Bad Dream Waltzer Pad
 63 08 04	Synth Sweeper Pad
 63 09 04	Fine HPF Sweep
 63 10 04	Rez Down Pad
-MirrorPd	Mirrored Pad
 63 12 04	Wave Pad
 63 13 04	Meditator Pad
 63 14 04	Chant Pad
@@ -510,15 +412,12 @@ MirrorPd	Mirrored Pad
 63 16 04	Surprising Pad
 63 17 04	Pods in the Pad
 63 18 04	Dolphin Pad
-ShmSpkPd	Shimmer Sparkle Pad
 63 20 04	Steelish Pad
 63 21 04	Widescreen Pad
 63 22 04	Flying Pad
 63 23 04	Aqua Phonics Pad
 63 24 04	Flare Pad
-PalwanPd	Palawan Pad
 63 26 04	Moon Cycles Pad
-SwirlPad	Swirl Pad
 63 28 04	New Voyage Pad
 63 29 04	Great Wall Pad
 63 30 04	Off Beat Dark Pad
@@ -526,12 +425,10 @@ SwirlPad	Swirl Pad
 63 32 04	Pump Pad
 63 33 04	Clay Pot - Vox Triplets
 63 34 04	Chilly Pulsar Love Pad
-UVibePad	U-Vibe Pad
 63 36 04	Butterfly Pad
 63 37 04	Vox Pulse Pad
 63 38 04	BPM Flashlight Pad
 63 39 04	Emotion Pad
-LocoMtiv	Loco Motiv Pad
 63 41 04	Atmospheric Pulse
 63 42 04	Rhythm Lead
 63 43 04	LFO Fifth Wave
@@ -545,8 +442,6 @@ LocoMtiv	Loco Motiv Pad
 63 51 04	Bell Wave Sequencer
 63 52 04	Pad & Bell Wave Sequence
 63 53 04	LFO Run Pad
-NylonGt1	Nylon Guitar 1
-NylonGt2	Nylon Guitar 2
 63 56 04	Flamenco Guitar
 63 57 04	Studio Nylon Guitar
 63 58 04	Nylon Guitar & Strings
@@ -556,7 +451,6 @@ NylonGt2	Nylon Guitar 2
 63 62 04	Fingered Acoustic Guitar
 63 63 04	Sitar Guitar
 63 64 04	Acoustish
-12StrGtr	12-String Guitar
 63 66 04	E. Guitar + Twin
 63 67 04	E. Guitar Dynamic 1
 63 68 04	E. Guitar Dynamic 2
@@ -579,32 +473,12 @@ NylonGt2	Nylon Guitar 2
 63 85 04	Vox Wah E. Guitar
 63 86 04	Jazz E. Guitar
 63 87 04	Pedal Steel E. Guitar
-PsycoGtr	Psycho Guitar
 63 89 04	Electronica Guitar
 63 94 04	Sitar & Tambura
 63 95 04	Velo Bend Koto
 63 96 04	Harp 1
 63 97 04	Harp 2
-EFngrBa1	Fingered Electric Bass 1
-EFngrBa2	Fingered Electric Bass 2
-EFngrBa3	Fingered Electric Bass 3
-EFngrBa4	Fingered Electric Bass 4
-EPickBa1	Picked Electric Bass 1
-EPickBa2	Picked Electric Bass 2
-EPickBa3	Picked Electric Bass 3
-EPickBa4	Picked Electric Bass 4
-EPickBed	Picked Bed Electric Bass
 63 a7 04	Saturated Electric Bass
-EThmbBa1	Thumb Electric Bass
-EThmbBa2	Thumb Electric Bass
-EFrtlBa1	Fretless Electric Bass 1
-EFrtlBa2	Fretless Electric Bass 2
-EFrtlOct	Octave Fretless E. Bass
-Acou.Ba1	Acoustic Bass 1
-Acou.Ba2	Acoustic Bass 2
-Acou.Ba3	Acoustic Bass 3
-OldAc.Ba	Old Acoustic Bass
-KikBaDcy	Kick Bass / Decay
 63 b8 04	Decayed Bass
 63 b9 04	That Sub Bass Kick
 63 c0 04	Kick Bass / Gate
@@ -647,16 +521,9 @@ KikBaDcy	Kick Bass / Decay
 63 30 05	Hard Sync Bass
 63 31 05	Organ Bass
 63 32 05	Housey Bass
-RockKit1	Rock Kit 1
 63 34 05	Rock Kit 1 Mono
-RockKit2	Rock Kit 2
-Jazz Kit	Jazz Kit
 63 37 05	Jazz Kit Mono
 63 38 05	Jazz/Brush Kit
-PowerKt1	Power Kit 1
-PowerKt2	Power Kit 2
-BasicKt1	Basic Kit 1
-BasicKt2	Basic Kit 2
 63 44 05	Jazzy Hop Kit
 63 45 05	Urban Hip Hop Kit
 63 46 05	Hip Hop Kit 1
@@ -669,9 +536,7 @@ BasicKt2	Basic Kit 2
 63 54 05	Breaks Kit
 63 55 05	Big Room Kit
 63 56 05	New EDM Kit
-DbstpKit	Dubstep Kit
 63 58 05	Moombahton Kit
-TropicKt	Tropical Kit
 63 60 05	Trance Kit
 63 61 05	House Kit
 63 62 05	Tekno Klub Kit
@@ -684,9 +549,6 @@ TropicKt	Tropical Kit
 63 69 05	Percussion Kit
 63 70 05	Orch&Ethno Kit
 63 71 05	Nippon Kit
-BD&SD!!1	Bass & Snare Drum Menu 1
-BD&SD!!2	Bass & Snare Drum Menu 2
-Cymbal!!	Cymbal Menu
 63 75 05	Saw Pizzicato
 63 76 05	Short Square Arp
 63 77 05	Bit Chips
@@ -701,7 +563,6 @@ Cymbal!!	Cymbal Menu
 63 86 05	Synth Mallets 5th
 63 87 05	Metallic Hitter
 63 88 05	Tropical Pizzicato
-TrpclMlt	Tropical Mallet
 63 90 05	Horn Chord Hits
 63 91 05	Disco Strings Hit
 63 92 05	Chord Set 1
@@ -715,13 +576,6 @@ TrpclMlt	Tropical Mallet
 63 a0 05	Monster Hit Wheel
 63 a1 05	Chipper Hit
 63 a2 05	Helium Voice
-YahiVoix	Yahi Voices
-NippnSet	Nippon Set
-SmGaisya	Shamisen Gaisya
-SoTsgaru	Soul of Tsugaru
-ShkMondo	Shakuhachi Mondou
-KtoFuryu	Koto Furyu
-MiyabiHt	Miyabi Hit
 63 b0 05	Ring Mod Riser
 63 b1 05	Siren SFX Wheel
 63 b2 05	Monster
@@ -730,7 +584,6 @@ MiyabiHt	Miyabi Hit
 63 b5 05	Sonic Blast
 63 b6 05	Soundscapes
 63 b7 05	Steam Sweeps
-AndroidK	Android
 63 b9 05	New North Wind
 63 c0 05	Outside Elements
 63 c1 05	Lore of the Jungle
@@ -739,3 +592,150 @@ AndroidK	Android
 63 c5 05	SqrSaw Vocoder
 63 c6 05	Mic & Reverb
 63 c7 05	Mic & Doubled
+KGrdPno2	Kross Grand Piano 2
+StGrdPno	Stereo Grand Piano
+KBrtGrP1	Bright Grand Piano 1
+KBrtGrP2	Bright Grand Piano 2
+RockGrdP	Rock Grand Piano
+StgGrdP1	Stage Grand Piano 1
+StgGrdP2	Stage Grand Piano 2
+VvdGrndP	Vivid Grand Piano
+WarmGrdP	Warm Grand Piano
+DarkGrdP	Dark Grand Piano
+PopGrPno	Pop Grand Piano
+RevGrPno	Reverb Grand Piano
+StAc.Pno	Stereo Acoustic Piano
+BrtAcPno	Bright Acoustic Piano
+ChoAcPno	Chorus Acoustic Piano
+UprtPno1	Upright Piano 1
+UprtPno2	Upright Piano 2
+UprtPno3	Upright Piano 3
+BarRmPno	Bar Room Piano
+MnrlAPno	Monaural Piano
+BrtMnPno	Bright Mono Piano
+DrkMnPno	Dark Mono Piano
+BrtMnGrd	Bright Mono Grand Piano
+DrkMnGrd	Dark Mono Grand Piano
+CmpMnPno	Compr. Mono Grand Piano
+HmrMnPno	Hammer Mono Piano
+DetMnPno	Detuned Piano
+OldSGrnd	Old Story Grand Piano
+VrOldGrd	Very Old Grand Piano
+FortePno	Forte Piano
+SG1DPno1	SG-1D Piano 1
+SG1DPno2	SG-1D Piano 2
+EGrdPno1	Electric Grand Piano 1
+EGrdPno2	Electric Grand Piano 2
+ChoEGrd1	Chorused E. Grand 1
+ChoEGrd2	Chorused E. Grand 2
+Dual Pno	Dual Piano
+ChiltPno	Chill-out Piano
+SadPiano	Sad Piano
+DamprPno	Damper Piano
+PnoDubWl	Piano Dub Wheel
+LoFSPfWl	Low FS Piano Wheel
+Pno+DXEP	Piano + DX E. Piano
+AlonePno	Alone Piano
+PfDynoEP	Piano + Dyno E. Piano
+RomncePf	Romance Piano
+SparklPf	Sparkling Piano
+A.Pf+Str	Acoustic Piano + Strings
+AP+OrPd1	A. Piano + Orch. Pad 1
+AP+OrPd2	A. Piano + Orch. Pad 2
+GrdP+Str	Grand Piano + Strings
+Gr+OrPd1	Grand Pf + Orch. Pad 1
+Gr+OrPd2	Grand Pf + Orch. Pad 2
+Gr+SmStr	Grand Pf + Small Strings
+GrStrPd1	Grand Pf + String Pad 1
+GrStrPd2	Grand Pf + String Pad 2
+AP+SynPd	A. Piano + Synth Pad
+90sPiano	90’s Piano
+ToyPiano	Toy Piano
+RmcToyPf	Romance Toy Piano
+EPRBSW12	R&B Suit EP SW1/2
+EPDynoEC	Exciter / Chorus Dyno EP
+BrtACClv	Bright AC Clavichord
+MelACClv	Mellow AC Clavichord
+DstACClv	Distorted AC Clavichord
+VWaACClv	Velo Wah AC Clavichord
+BrtADClv	Bright AD Clavichord
+MelADClv	Mellow AD Clavichord
+DstADClv	Distorted AD Clavichord
+VWaADClv	Velo Wah AD Clavichord
+BrtBCClv	Bright BC Clavichord
+MelBCClv	Mellow BC Clavichord
+DstBCClv	Distorted BC Clavichord
+VWaBCClv	Velo Wah BC Clavichord
+BrtBDClv	Bright BD Clavichord
+MelBDClv	Mellow BD Clavichord
+DstBDClv	Distorted BD Clavichord
+VWaBDClv	Velo Wah BD Clavichord
+T.WahClv	Touch Wah Clavichord
+LuvSngOr	Love Song Electric Organ
+RkPrecOr	Percussive Rock E. Organ
+StStrng1	Stereo Strings 1
+StStrng2	Stereo Strings 2
+Cathedrl	Cathedral Choir
+TakeVoix	Take Voice
+VoiceDoo	Voice Doo
+FlugelHr	Flugel Horn
+MutedTrb	Muted Trombone
+Sax Sect	Sax Section
+SftAltSx	Soft Alto Sax
+HrdAltSx	Hard Alto Sax
+SftTnrSx	Tenor Sax Soft
+HrdTnrSx	Tenor Sax Hard
+MemoryLd	Memory Lead
+SineLead	Sine Lead
+RudeLead	Rude Lead
+BadDream	Bad Dream Waltzer Pad
+MirrorPd	Mirrored Pad
+ShmSpkPd	Shimmer Sparkle Pad
+PalwanPd	Palawan Pad
+SwirlPad	Swirl Pad
+UVibePad	U-Vibe Pad
+LocoMtiv	Loco Motiv Pad
+NylonGt1	Nylon Guitar 1
+NylonGt2	Nylon Guitar 2
+12StrGtr	12-String Guitar
+PsycoGtr	Psycho Guitar
+EFngrBa1	Fingered Electric Bass 1
+EFngrBa2	Fingered Electric Bass 2
+EFngrBa3	Fingered Electric Bass 3
+EFngrBa4	Fingered Electric Bass 4
+EPickBa1	Picked Electric Bass 1
+EPickBa2	Picked Electric Bass 2
+EPickBa3	Picked Electric Bass 3
+EPickBa4	Picked Electric Bass 4
+EPickBed	Picked Bed Electric Bass
+EThmbBa1	Thumb Electric Bass
+EThmbBa2	Thumb Electric Bass
+EFrtlBa1	Fretless Electric Bass 1
+EFrtlBa2	Fretless Electric Bass 2
+EFrtlOct	Octave Fretless E. Bass
+Acou.Ba1	Acoustic Bass 1
+Acou.Ba2	Acoustic Bass 2
+Acou.Ba3	Acoustic Bass 3
+OldAc.Ba	Old Acoustic Bass
+KikBaDcy	Kick Bass / Decay
+RockKit1	Rock Kit 1
+RockKit2	Rock Kit 2
+Jazz Kit	Jazz Kit
+PowerKt1	Power Kit 1
+PowerKt2	Power Kit 2
+BasicKt1	Basic Kit 1
+BasicKt2	Basic Kit 2
+DbstpKit	Dubstep Kit
+TropicKt	Tropical Kit
+BD&SD!!1	Bass & Snare Drum Menu 1
+BD&SD!!2	Bass & Snare Drum Menu 2
+Cymbal!!	Cymbal Menu
+TrpclMlt	Tropical Mallet
+YahiVoix	Yahi Voices
+NippnSet	Nippon Set
+SmGaisya	Shamisen Gaisya
+SoTsgaru	Soul of Tsugaru
+ShkMondo	Shakuhachi Mondou
+KtoFuryu	Koto Furyu
+MiyabiHt	Miyabi Hit
+AndroidK	Android
