@@ -356,7 +356,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-150vl", "plg-150pf", "plg-150dx", "plg-150an", "plg-150dr", "plg-100sg", "kross", "s90es"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
@@ -3065,9 +3065,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("channelmax", (port << 4) | 15);
 			getDebugState() && console.debug(`MU1000 native channel switch: `, msg);*/
 		}).add([93, 3], (msg, track) => {
-			// PLG-100SG singing voice
+			// PLG-SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
-			dPref = `PLG-100SG CH${part + 1} `,
+			dPref = `PLG-SG CH${part + 1} `,
 			timeNow = Date.now();
 			if (msg[1] == 0) {
 				// Vocal information
@@ -3097,7 +3097,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(`${dPref}vocals: ${vocal}`);
 				};
 			} else {
-				console.warn(`Unknown PLG-100SG data: ${msg}`);
+				console.warn(`Unknown PLG-SG data: ${msg}`);
 			};
 		}).add([98, 0], (msg, track, id) => {
 			upThis.dispatchEvent("mupromptex");
