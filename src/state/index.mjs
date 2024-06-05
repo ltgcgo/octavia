@@ -306,7 +306,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
 	#chType = new Uint8Array(allocated.ch); // Types of channels
 	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
-	#ace = new Uint8Array(allocated.ace); // 4 active custom effects
+	#ace = new Uint8Array(allocated.ch * allocated.ace); // 4 active custom effects
 	#prg = new Uint8Array(allocated.ch);
 	#velo = new Uint8Array(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
@@ -753,7 +753,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else {
 				// ACE allocation
 				if (aceCandidates.indexOf(det.data[0]) > -1) {
-					this.allocateAce(det.data[0]);
+					this.allocateAce(part, det.data[0]);
 				};
 				// Stored CC messages
 				switch (det.data[0]) {
@@ -1608,31 +1608,56 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		this.#conf.dumpLimit = limit;
 	};
-	allocateAce(cc) {
+	allocateAce(part = 0, cc) {
 		// Allocate active custom effect
 		// Off, cc1~cc95, CAT, velo, PB
+		let upThis = this;
 		if (!cc || (cc < 128 && cc > 95)) {
 			console.warn(`cc${cc} cannot be allocated as an active custom effect.`);
 			return;
 		};
-		let continueScan = true, pointer = 0;
+		let continueScan = true, pointer = 0, aceOff = allocated.ace * part;
 		while (continueScan && pointer < allocated.ace) {
-			if (this.#ace[pointer] == cc) {
+			if (upThis.#ace[pointer + aceOff] == cc) {
 				continueScan = false;
-			} else if (!this.#ace[pointer]) {
+			} else if (!upThis.#ace[pointer + aceOff]) {
 				continueScan = false;
-				this.#ace[pointer] = cc;
-				console.info(`Allocated cc${cc} to ACE slot ${pointer}.`);
+				upThis.#ace[pointer + aceOff] = cc;
+				console.info(`Allocated cc${cc} to ACE slot ${pointer} in CH${part + 1}.`);
 			};
 			pointer ++;
 		};
 		if (pointer >= allocated.ace) {
-			console.warn(`ACE slots are full.`);
+			console.warn(`ACE slots are full in CH${part + 1}.`);
 		};
 	};
-	releaseAce(cc) {
-		let continueScan = true, pointer = 0;
-		while (continueScan && pointer < allocated.ace) {
+	allocateAceAll(cc) {
+		let upThis = this;
+		if (!cc || (cc < 128 && cc > 95)) {
+			console.warn(`cc${cc} cannot be allocated as an active custom effect.`);
+			return;
+		};
+		for (let part = 0; part < allocated.ch; part ++) {
+			let continueScan = true, pointer = 0, aceOff = allocated.ace * part;
+			while (continueScan && pointer < allocated.ace) {
+				if (upThis.#ace[pointer + aceOff] == cc) {
+					continueScan = false;
+				} else if (!upThis.#ace[pointer + aceOff]) {
+					continueScan = false;
+					upThis.#ace[pointer + aceOff] = cc;
+					console.info(`Allocated cc${cc} to ACE slot ${pointer}.`);
+				};
+				pointer ++;
+			};
+			if (pointer >= allocated.ace) {
+				console.warn(`ACE slots are full in CH${part + 1}.`);
+			};
+		};
+	};
+	releaseAce(part = 0, cc) {
+		// Waiting rewrite
+		let continueScan = true, pointer = allocated.ace * part, maxPointer = pointer + allocated.ace;
+		while (continueScan && pointer < maxPointer) {
 			if (this.#ace[pointer] == cc) {
 				this.#ace[pointer] = 0;
 				continueScan = false;
@@ -1640,7 +1665,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			pointer ++;
 		};
 		if (continueScan) {
-			getDebugState() && console.debug(`No ACE slot was allocated to cc${cc}.`);
+			getDebugState() && console.debug(`No ACE slot was allocated to cc${cc} in CH${part + 1}.`);
 		};
 	};
 	resetAce() {
@@ -1651,18 +1676,18 @@ let OctaviaDevice = class extends CustomEventSource {
 	getAce() {
 		return this.#ace;
 	};
-	getChAce(part, aceSlot) {
+	getChAce(part = 0, aceSlot = 0) {
 		// Get channel ACE value
 		if (aceSlot < 0 || aceSlot >= allocated.ace) {
 			throw(new RangeError(`No such ACE slot`));
 		};
-		let cc = this.#ace[aceSlot];
+		let cc = this.#ace[allocated.ace * part + aceSlot];
 		if (!cc) {
 			return 0;
 		} else if (ccAccepted.indexOf(cc) >= 0) {
 			return this.#cc[part * allocated.cc + ccToPos[cc]];
 		} else {
-			throw(new Error(`Invalid ACE source: ${cc}`));
+			throw(new Error(`Invalid ACE source in CH${part + 1}: ${cc}`));
 		};
 	};
 	initDrums() {
@@ -2807,7 +2832,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.#cc[chOff + ccToPos[10]] = e || 128; // pan
 					}, false, false, () => {
 						upThis.#cc[chOff + ccToPos[128]] = e; // dry level
-						upThis.allocateAce(128);
+						upThis.allocateAce(part, 128);
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e; // chorus
 					}, () => {
@@ -2891,7 +2916,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								if (ri < 23) {
 									console.debug(`${dPref}${pType} control source: ${getVlCtrlSrc(e)}`);
 									if (e && e < 96) {
-										upThis.allocateAce(130 + pId);
+										upThis.allocateAce(part, 130 + pId);
 									};
 									upThis.#ccCapturer[allocated.redir * part + pId + 2] = e;
 									upThis.buildRccMap();
@@ -3132,7 +3157,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// 11~26 to 142~157
 					let targetCc = ri + 131;
 					if (!opt?.noAce) {
-						upThis.allocateAce(targetCc);
+						upThis.allocateAce(part, targetCc);
 					};
 					upThis.#cc[chOff + ccToPos[targetCc]] = e;
 					upThis.dispatchEvent("cc", {
@@ -3174,7 +3199,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (ri < 23) {
 							// 7~22 to 142~157
 							let targetCc = ri + 135;
-							upThis.allocateAce(targetCc);
+							upThis.allocateAce(part, targetCc);
 							upThis.#cc[chOff + ccToPos[targetCc]] = e;
 							upThis.dispatchEvent("cc", {
 								part,
@@ -3601,7 +3626,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// Dry level
 						upThis.#cc[chOff + ccToPos[128]] = e;
-						upThis.allocateAce(128);
+						upThis.allocateAce(part, 128);
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e;
 					}, () => {
@@ -3837,14 +3862,14 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, false, () => {
 					console.debug(`${dPref}1 source: ${e}`);
 					if (e && e < 96) {
-						upThis.allocateAce(e);
+						upThis.allocateAceAll(e);
 					};
 				}, () => {
 					console.debug(`${dPref}1 depth: ${e - 64}`);
 				}, () => {
 					console.debug(`${dPref}2 source: ${e}`);
 					if (e && e < 96) {
-						upThis.allocateAce(e);
+						upThis.allocateAceAll(e);
 					};
 				}, () => {
 					console.debug(`${dPref}2 depth: ${e - 64}`);
@@ -5676,7 +5701,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					e != 127 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[128]] = e;
-					upThis.allocateAce(128);
+					upThis.allocateAce(part, 128);
 				}, () => {
 					// note shift, RPN
 				}, () => {

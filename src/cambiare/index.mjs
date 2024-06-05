@@ -368,11 +368,12 @@ let Cambiare = class extends RootDisplay {
 		for (let part = 0; part < allocated.ch; part ++) {
 			let port = part >> 4,
 			chOff = part * allocated.cc,
+			aceOff = part * allocated.ace,
 			e = upThis.#sectPart[port][part & 15];
 			if (sum.chInUse[part] && port >= upThis.#renderPort && port < renderPortMax) {
 				// Render CC draw calls
-				ccCandidates[8] = sum.ace[0] || 256;
-				ccCandidates[9] = sum.ace[1] || 256;
+				ccCandidates[8] = sum.ace[aceOff + 0] || 256;
+				ccCandidates[9] = sum.ace[aceOff + 1] || 256;
 				e.ccVis.clearRect(0, 0, 109, 25);
 				e.ccVis.fillStyle = `#${upThis.#accent}`;
 				for (let cci = 0; cci < ccCandidates.length; cci ++) {
