@@ -308,13 +308,13 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
 	#ace = new Uint8Array(allocated.ch * allocated.ace); // 4 active custom effects
 	#prg = new Uint8Array(allocated.ch);
-	#velo = new Uint8Array(allocated.ch * allocated.nn); // 64 channels. 128 velocity registers
+	#velo = new Uint8Array(allocated.ch * allocated.nn); // 128 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
 	#poly = new Uint16Array(allocated.pl); // 512 polyphony allowed
 	#polyState = new Uint8Array(allocated.pl); // State of each active voice.
 	#pitch = new Int16Array(allocated.ch); // Pitch for channels, from -8192 to 8191
 	#rawStrength = new Uint8Array(allocated.ch);
-	#dataCommit = 0; // 0 for RPN, 1 for NRPN
+	#dataCommit = new Uint8Array(allocated.ch); // 0 for RPN, 1 for NRPN
 	#ext = new Uint8Array(allocated.ch * allocated.ext); // Extension configs
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
 	#rpnt = new Uint8Array(allocated.ch * allocated.rpnt); // Whether or not an RPN has been written
@@ -349,8 +349,6 @@ let OctaviaDevice = class extends CustomEventSource {
 	#vlSysBreathMode = 1; // PLG-VL system breath mode
 	#receiveTree;
 	#ccRedirMap = new Array(allocated.ch);
-	// Temporary EFX storage
-	#gsEfxSto = new Uint8Array(2);
 	// Metadata text events
 	#metaTexts = [];
 	// GS Track Occupation
@@ -903,7 +901,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case 6: {
 						// Show RPN and NRPN
-						if (this.#dataCommit) {
+						if (this.#dataCommit[part]) {
 							// Commit supported NRPN values
 							if ([modeMap.xg, modeMap.gs, modeMap.sc, modeMap.ns5r].indexOf(this.#mode) < 0) {
 								console.warn(`NRPN commits are not available under "${modeIdx[this.#mode]}" mode, even when they are supported in Octavia.`);
@@ -1009,7 +1007,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case 38: {
 						// Show RPN and NRPN
-						if (!this.#dataCommit) {
+						if (!this.#dataCommit[part]) {
 							// Commit supported RPN values
 							let rpnIndex = useRpnMap[this.#cc[chOff + 100]],
 							rpnIndex2 = rpnOptions[this.#cc[chOff + 100]];
@@ -1018,8 +1016,6 @@ let OctaviaDevice = class extends CustomEventSource {
 								this.#rpn[part * allocated.rpn + rpnIndex + 1] = det.data[1];
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
 							};
-						} else {
-							//console.debug(`${part + 1} LSB ${det.data[1]} ${this.#dataCommit ? "NRPN" : "RPN"} ${this.#dataCommit ? this.#cc[chOff + 99] : this.#cc[chOff + 101]} ${this.#dataCommit ? this.#cc[chOff + 98] : this.#cc[chOff + 100]}`);
 						};
 						break;
 					};
@@ -1043,12 +1039,12 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case 98:
 					case 99: {
-						this.#dataCommit = 1;
+						this.#dataCommit[part] = 1;
 						break;
 					};
 					case 100:
 					case 101: {
-						this.#dataCommit = 0;
+						this.#dataCommit[part] = 0;
 						break;
 					};
 				};
@@ -1645,7 +1641,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (!upThis.#ace[pointer + aceOff]) {
 					continueScan = false;
 					upThis.#ace[pointer + aceOff] = cc;
-					console.info(`Allocated cc${cc} to ACE slot ${pointer}.`);
+					//console.info(`Allocated cc${cc} to ACE slot ${pointer}.`);
 				};
 				pointer ++;
 			};
