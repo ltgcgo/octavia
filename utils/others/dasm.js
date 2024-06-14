@@ -12,4 +12,4 @@ WritableStream.prototype.from = async function (asyncIt) {
 };
 
 let stream = streamDisassemble((await Deno.open(Deno.args[0])).readable);
-await Deno.stdout.writable.from(stream);
+await (await Deno.open(Deno.args[1], {"write": true, "create": true})).writable.from(stream);
