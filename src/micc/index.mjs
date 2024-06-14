@@ -53,7 +53,7 @@ let streamDisassemble = function (source) {
 	nextState = 0, // transient state
 	finalState = 0, // final state to jump to
 	intValue = 0;
-	let extLen = 0, startNextSect = false;
+	let extLen = 0, startNextSect = false, part = 0;
 	let trackIndex = 0;
 	let sink = new ReadableStream({
 		"pull": async (controller) => {
@@ -139,6 +139,11 @@ let streamDisassemble = function (source) {
 						intValue = intValue << 7;
 						intValue |= e & 127;
 						if (e < 128 || i >= 3) {
+							console.error(`VLV read done: ${intValue}.`);
+							if (i) {
+								console.error(`This is a multi-byte VLV read.`);
+								ptr += i;
+							};
 							state = nextState;
 							if (startNextSect) {
 								ptrStart = ptr + 1;
@@ -218,6 +223,7 @@ let streamDisassemble = function (source) {
 								};
 								default: {
 									state = e >> 4;
+									part = e & 15;
 									ptrStart = ptr + 1;
 								};
 							};
@@ -236,6 +242,7 @@ let streamDisassemble = function (source) {
 						state = 2;
 						nextState = 17;
 						startNextSect = true;
+						ptrStart = ptr + 1;
 						break;
 					};
 					case 15: {
@@ -246,6 +253,7 @@ let streamDisassemble = function (source) {
 						nextState = 17;
 						ptr --;
 						startNextSect = true;
+						ptrStart = ptr + 1;
 						break;
 					};
 					case 16: {
@@ -256,6 +264,7 @@ let streamDisassemble = function (source) {
 						nextState = 17;
 						ptr --;
 						startNextSect = true;
+						ptrStart = ptr + 1;
 						break;
 					};
 					case 17: {
@@ -285,7 +294,7 @@ let streamDisassemble = function (source) {
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tnd ${e}`));
+							controller.send(u8Enc.encode(`\tnd ${part.toString(16)} ${e}`));
 						};
 						break;
 					};
@@ -298,7 +307,7 @@ let streamDisassemble = function (source) {
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tna ${e}`));
+							controller.send(u8Enc.encode(`\tna ${part.toString(16)} ${e}`));
 						};
 						break;
 					};
@@ -311,7 +320,7 @@ let streamDisassemble = function (source) {
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tpa ${e}`));
+							controller.send(u8Enc.encode(`\tpa ${part.toString(16)} ${e}`));
 						};
 						break;
 					};
@@ -324,14 +333,14 @@ let streamDisassemble = function (source) {
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tcc ${e}`));
+							controller.send(u8Enc.encode(`\tcc ${part.toString(16)} ${e}`));
 						};
 						break;
 					};
 					case 12: {
 						// Program change
 						console.error(`Program change!`);
-						controller.send(u8Enc.encode(`\tpc ${e}\n`));
+						controller.send(u8Enc.encode(`\tpc ${part.toString(16)} ${e}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
 						break;
@@ -339,7 +348,7 @@ let streamDisassemble = function (source) {
 					case 13: {
 						// Channel aftertouch (CAT)
 						console.error(`Channel AT!`);
-						controller.send(u8Enc.encode(`\tca ${e}\n`));
+						controller.send(u8Enc.encode(`\tca ${part.toString(16)} ${e}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
 						break;
@@ -353,7 +362,9 @@ let streamDisassemble = function (source) {
 						};
 						intValue |= e << (i << 3);
 						if (i) {
-							controller.send(u8Enc.encode(`\tpb ${intValue - 8192}\n`));
+							controller.send(u8Enc.encode(`\tpb ${part.toString(16)} ${intValue - 8192}\n`));
+							state = 5;
+							ptrStart = ptr + 1;
 						};
 						break;
 					};
