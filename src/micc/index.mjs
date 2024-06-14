@@ -61,29 +61,29 @@ let streamDisassemble = function (source) {
 			while (controller.unsent) {
 				// Chunk read handling
 				if (!chunk || ptr >= chunk.length) {
-					//console.info(`[Reader]  Reading a new chunk.`);
+					console.debug(`[Reader]  Reading a new chunk.`);
 					let {value, done} = await reader.read();
 					if (chunk) {
 						totalPtr += chunk.length;
-						//console.info(`[Reader]  Submitted the last chunk.`);
+						console.debug(`[Reader]  Submitted the last chunk.`);
 					};
 					ptr = 0;
 					chunk = value;
 					if (done) {
-						//console.info(`[Reader]  All chunks have been read.`);
+						console.debug(`[Reader]  All chunks have been read.`);
 						controller.close();
 						return;
 					};
 				};
 				let e = chunk[ptr];
-				//console.info(`${`${e}`.padStart(3, "0")}-${e.toString(16).padStart(2, "0")}(${String.fromCharCode(Math.max(32, e))}) L: ${ptr - ptrStart}, S: ${ptrStart}, I: ${ptr}, TS: ${totalPtr + ptrStart}, TI: ${totalPtr + ptr}, TL: ${chunk.length} [${state}]`);
+				console.debug(`${`${e}`.padStart(3, "0")}-${e.toString(16).padStart(2, "0")}(${String.fromCharCode(Math.max(32, e))}) L: ${ptr - ptrStart}, S: ${ptrStart}, I: ${ptr}, TS: ${totalPtr + ptrStart}, TI: ${totalPtr + ptr}, TL: ${chunk.length} [${state}]`);
 				switch (state) {
 					case 0: { // Chunk marker search
-						//console.info("Searching for chunk markers...");
+						console.debug("Searching for chunk markers...");
 						strBuf += String.fromCharCode(e);
 						switch (strBuf) {
 							case "MThd": {
-								//console.info("MIDI Header chunk!");
+								console.debug("MIDI Header chunk!");
 								controller.send(u8Enc.encode(`:hd\n`));
 								state = 1;
 								nextState = 3;
@@ -93,7 +93,7 @@ let streamDisassemble = function (source) {
 								break;
 							};
 							case "MTrk": {
-								//console.info("MIDI Track chunk!");
+								console.debug("MIDI Track chunk!");
 								trackIndex ++;
 								controller.send(u8Enc.encode(`:tr#${trackIndex}\n`));
 								state = 1;
@@ -113,7 +113,7 @@ let streamDisassemble = function (source) {
 					};
 					case 1: {
 						// 32-bit length int read
-						//console.info(`Reading uint32...`);
+						console.debug(`Reading uint32...`);
 						let i = ptr - ptrStart;
 						if (!i) {
 							intValue = 0;
@@ -131,7 +131,7 @@ let streamDisassemble = function (source) {
 					};
 					case 2: {
 						// VLV int read
-						//console.info(`Reading VLV...`);
+						console.debug(`Reading VLV...`);
 						let i = ptr - ptrStart;
 						if (!i) {
 							intValue = 0;
@@ -139,10 +139,10 @@ let streamDisassemble = function (source) {
 						intValue = intValue << 7;
 						intValue |= e & 127;
 						if (e < 128 || i >= 3) {
-							//console.info(`VLV read done: ${intValue}.`);
+							console.debug(`VLV read done: ${intValue}.`);
 							if (i) {
-								//console.info(`This is a multi-byte VLV read.`);
-								ptr += i;
+								console.debug(`This is a multi-byte VLV read.`);
+								ptr ++;
 							};
 							state = nextState;
 							if (startNextSect) {
@@ -155,7 +155,7 @@ let streamDisassemble = function (source) {
 					};
 					case 3: {
 						// Write length
-						//console.info(`Writing length...`);
+						console.debug(`Writing length...`);
 						controller.send(u8Enc.encode(`\tln ${intValue}\n`));
 						state = finalState;
 						ptrStart = ptr + 1;
@@ -163,7 +163,7 @@ let streamDisassemble = function (source) {
 					};
 					case 4: {
 						// MIDI head read
-						//console.info(`Reading MThd...`);
+						console.debug(`Reading MThd...`);
 						let i = ptr - ptrStart;
 						if (!(i & 1)) {
 							intValue = 0;
@@ -197,7 +197,7 @@ let streamDisassemble = function (source) {
 					};
 					case 5: {
 						// Read delta time
-						//console.info(`Reading delta time...`);
+						console.debug(`Reading delta time...`);
 						state = 2;
 						nextState = 6;
 						ptr --;
@@ -207,7 +207,7 @@ let streamDisassemble = function (source) {
 						// Write delta time and jump to different event types
 						let i = ptr - ptrStart;
 						if (i) {
-							//console.info(`Reading event type...`);
+							console.debug(`Reading event type...`);
 							switch (e) {
 								case 240: {
 									state = 15;
@@ -228,7 +228,7 @@ let streamDisassemble = function (source) {
 								};
 							};
 						} else {
-							//console.info(`Delta time: ${intValue}`);
+							console.debug(`Delta time: ${intValue}`);
 							if (intValue) {
 								controller.send(u8Enc.encode(`\tdt ${intValue}\n`));
 							};
@@ -237,7 +237,7 @@ let streamDisassemble = function (source) {
 					};
 					case 7: {
 						// Meta event init, jump to 17 for full reads
-						//console.info(`Reading meta...`);
+						console.debug(`Reading meta...`);
 						controller.send(u8Enc.encode(`\tmt ${e}`));
 						state = 2;
 						nextState = 17;
@@ -247,7 +247,7 @@ let streamDisassemble = function (source) {
 					};
 					case 15: {
 						// SysEx event init, jump to 17 for full reads
-						//console.info(`Reading SysEx...`);
+						console.debug(`Reading SysEx...`);
 						controller.send(u8Enc.encode(`\tse`));
 						state = 2;
 						nextState = 17;
@@ -258,7 +258,7 @@ let streamDisassemble = function (source) {
 					};
 					case 16: {
 						// SysEx multi-segment event init, jump to 17 for full reads
-						//console.info(`Reading SysEx multi-segment...`);
+						console.debug(`Reading SysEx multi-segment...`);
 						controller.send(u8Enc.encode(`\tsc`));
 						state = 2;
 						nextState = 17;
@@ -272,12 +272,14 @@ let streamDisassemble = function (source) {
 						let i = ptr - ptrStart;
 						if (i == 0) {
 							extLen = intValue;
-							//console.info(`Extension length: ${extLen}`);
+							console.debug(`Extension length: ${extLen}`);
 							controller.send(u8Enc.encode(` ${extLen}`));
 						};
 						if (i < 0) {} else if (i < extLen) {
+							console.debug(`Multi-byte sequence read.`);
 							controller.send(u8Enc.encode(` ${e.toString(16).padStart(2, "0")}`));
 						} else {
+							console.debug(`Multi-byte read end.`);
 							controller.send(u8Enc.encode(`\n`));
 							ptr --;
 							state = 5;
@@ -287,7 +289,7 @@ let streamDisassemble = function (source) {
 					};
 					case 8: {
 						// Note off
-						//console.info(`Note off!`);
+						console.debug(`Note off!`);
 						let i = ptr - ptrStart;
 						if (i) {
 							controller.send(u8Enc.encode(` ${e}\n`));
@@ -300,7 +302,7 @@ let streamDisassemble = function (source) {
 					};
 					case 9: {
 						// Note on
-						//console.info(`Note on!`);
+						console.debug(`Note on!`);
 						let i = ptr - ptrStart;
 						if (i) {
 							controller.send(u8Enc.encode(` ${e}\n`));
@@ -313,7 +315,7 @@ let streamDisassemble = function (source) {
 					};
 					case 10: {
 						// Note aftertouch (PAT)
-						//console.info(`Note AT!`);
+						console.debug(`Note AT!`);
 						let i = ptr - ptrStart;
 						if (i) {
 							controller.send(u8Enc.encode(` ${e}\n`));
@@ -326,7 +328,7 @@ let streamDisassemble = function (source) {
 					};
 					case 11: {
 						// Control change
-						//console.info(`Control change!`);
+						console.debug(`Control change!`);
 						let i = ptr - ptrStart;
 						if (i) {
 							controller.send(u8Enc.encode(` ${e}\n`));
@@ -339,7 +341,7 @@ let streamDisassemble = function (source) {
 					};
 					case 12: {
 						// Program change
-						//console.info(`Program change!`);
+						console.debug(`Program change!`);
 						controller.send(u8Enc.encode(`\tpc ${part.toString(16)} ${e}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
@@ -347,7 +349,7 @@ let streamDisassemble = function (source) {
 					};
 					case 13: {
 						// Channel aftertouch (CAT)
-						//console.info(`Channel AT!`);
+						console.debug(`Channel AT!`);
 						controller.send(u8Enc.encode(`\tca ${part.toString(16)} ${e}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
@@ -355,7 +357,7 @@ let streamDisassemble = function (source) {
 					};
 					case 14: {
 						// Pitch bend
-						//console.info(`Pitch bend!`);
+						console.debug(`Pitch bend!`);
 						let i = ptr - ptrStart;
 						if (!i) {
 							intValue = 0;
@@ -369,13 +371,13 @@ let streamDisassemble = function (source) {
 						break;
 					};
 					default: {
-						//console.info("Unhandled state.");
+						console.debug("Unhandled state.");
 						controller.close();
 					};
 				};
 				ptr ++;
 			};
-			//console.info("Data pulled.");
+			console.debug("Data pulled.");
 		}
 	}, new ByteLengthQueuingStrategy({"highWaterMark": 256}));
 	return sink;
