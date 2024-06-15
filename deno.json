@@ -1,6 +1,9 @@
 {
 	"name": "@ltgc/octavia",
-	"version": "0.0.3",
+	"version": "0.0.4",
+	"dependencies": {
+		"@ltgc/rochelle": "jsr:@ltgcgo/rochelle@^0.2.0"
+	},
 	"exports": {
 		"./basic": "./dist/basic.mjs",
 		"./bridge": "./dist/bridge.mjs",

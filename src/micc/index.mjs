@@ -2,6 +2,8 @@
 
 // Music Instructions Compiler Collection
 
+import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
+
 let u8Enc = new TextEncoder();
 
 let readVLV = function (buffer) {
@@ -57,7 +59,7 @@ let streamDisassemble = function (source) {
 	intValue = 0;
 	let extLen = 0, startNextSect = false, part = 0;
 	let trackIndex = 0;
-	let sink = new ReadableStream({
+	return new ReadableStream({
 		"pull": async (controller) => {
 			controller.unsent = true;
 			while (controller.unsent) {
@@ -409,9 +411,17 @@ let streamDisassemble = function (source) {
 			//console.info("Data pulled.");
 		}
 	}, new ByteLengthQueuingStrategy({"highWaterMark": 256}));
-	return sink;
+};
+
+let streamAssemble = function (source) {
+	return new ReadableStream({
+		"pull": async (controller) => {
+			//
+		}
+	}, new ByteLengthQueuingStrategy({"highWaterMark": 256}));
 };
 
 export {
-	streamDisassemble
+	streamDisassemble,
+	streamAssemble
 };
