@@ -13,8 +13,11 @@ WritableStream.prototype.from = async function (asyncIt) {
 };
 
 console.info(`Reading MIDI assembly...`);
-let stream = TextReader.readRaw((await Deno.open(Deno.args[0])).readable);
+let stream = TextReader.feed((await Deno.open(Deno.args[0])).readable);
 console.info(`Streaming contents to the assembler...`);
-await Deno.stdout.writable.from(stream);
+//await Deno.stdout.writable.from(stream);
+for await (const e of stream) {
+	console.debug(e);
+};
 //await (await Deno.open(Deno.args[1], {"write": true, "createNew": true})).writable.from(stream);
 console.info(`Assembly finished.`);

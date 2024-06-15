@@ -17,4 +17,4 @@ Only files ending in `.mjs` are meant to be used as a library. Files prefixed wi
 * `state.mjs`: MIDI processing core.
 * `basic.mjs`: The bare minimum to get you started on writing visualizers. Requires `state.mjs`.
 * `cambiare.mjs`: Batteries-included full-blown visualizer as a module.
-* `micc.mjs`: Assembler and disassembler for standard MIDI files.
+* `micc.mjs`: The streaming assembler and disassembler for standard MIDI files.
