@@ -325,7 +325,7 @@ let streamDisassemble = function (source) {
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tof ${part.toString(16)} ${e}`));
+							controller.send(u8Enc.encode(`\tof ${`${part}`.padStart(2, "0")} ${e}`));
 						};
 						break;
 					};
@@ -338,7 +338,7 @@ let streamDisassemble = function (source) {
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\ton ${part.toString(16)} ${e}`));
+							controller.send(u8Enc.encode(`\ton ${`${part}`.padStart(2, "0")} ${e}`));
 						};
 						break;
 					};
@@ -351,7 +351,7 @@ let streamDisassemble = function (source) {
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tpa ${part.toString(16)} ${e}`));
+							controller.send(u8Enc.encode(`\tpa ${`${part}`.padStart(2, "0")} ${e}`));
 						};
 						break;
 					};
@@ -364,14 +364,14 @@ let streamDisassemble = function (source) {
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tcc ${part.toString(16)} ${e}`));
+							controller.send(u8Enc.encode(`\tcc ${`${part}`.padStart(2, "0")} ${e}`));
 						};
 						break;
 					};
 					case 12: {
 						// Program change
 						//console.info(`Program change!`);
-						controller.send(u8Enc.encode(`\tpc ${part.toString(16)} ${e}\n`));
+						controller.send(u8Enc.encode(`\tpc ${`${part}`.padStart(2, "0")} ${e}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
 						break;
@@ -379,7 +379,7 @@ let streamDisassemble = function (source) {
 					case 13: {
 						// Channel aftertouch (CAT)
 						//console.info(`Channel AT!`);
-						controller.send(u8Enc.encode(`\tca ${part.toString(16)} ${e}\n`));
+						controller.send(u8Enc.encode(`\tca ${`${part}`.padStart(2, "0")} ${e}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
 						break;
@@ -393,7 +393,7 @@ let streamDisassemble = function (source) {
 						};
 						intValue |= e << (i << 3);
 						if (i) {
-							controller.send(u8Enc.encode(`\tpb ${part.toString(16)} ${intValue - 8192}\n`));
+							controller.send(u8Enc.encode(`\tpb ${`${part}`.padStart(2, "0")} ${intValue - 8192}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						};

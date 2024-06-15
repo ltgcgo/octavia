@@ -16,7 +16,7 @@ let TextReader = class {
 	static SPLIT_UTF_8 = 0;
 	static SPLIT_UTF_16_LE = 1;
 	static SPLIT_UTF_16_BE = 2;
-	static feedRaw(stream, splitMode = 0) {
+	static lineRaw(stream, splitMode = 0) {
 		if (splitMode?.constructor != Number ||
 			splitMode < 0 ||
 			splitMode >= encodings.length) {
@@ -136,7 +136,7 @@ let TextReader = class {
 		}, new ByteLengthQueuingStrategy({"highWaterMark": 256}));
 		return sink;
 	};
-	static feed(stream, splitMode = 0, label) {
+	static line(stream, splitMode = 0, label) {
 		let rawStream = this.feedRaw(stream, splitMode).getReader();
 		let decoder = new TextDecoder(label || encodings[splitMode]);
 		return new ReadableStream({
