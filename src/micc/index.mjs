@@ -42,7 +42,7 @@ let readUintBE = function (buffer, byteLength) {
 	return result;
 };
 
-ReadableStreamDefaultController.prototype.send = function (data) {
+ReadableStreamDefaultController.prototype.send = ReadableStreamDefaultController.prototype.send || function (data) {
 	this.unsent = false;
 	this.enqueue(data);
 };
