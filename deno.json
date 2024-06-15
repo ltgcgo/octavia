@@ -1,7 +1,7 @@
 {
 	"name": "@ltgc/octavia",
-	"version": "0.0.4",
-	"dependencies": {
+	"version": "0.0.3",
+	"imports": {
 		"@ltgc/rochelle": "jsr:@ltgcgo/rochelle@^0.2.0"
 	},
 	"exports": {
