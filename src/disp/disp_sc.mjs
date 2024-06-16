@@ -35,7 +35,8 @@ let ScDisplay = class extends RootDisplay {
 	#tmdb = new Uint8Array(665); // Text display
 	#pmdb = new Uint8Array(735); // Param display
 	#bmdb = new Uint8Array(256); // Bitmap display
-	#linger = new Uint8Array(128);
+	#linger = new Uint16Array(128);
+	#keep = new Uint8Array(128);
 	#ch = 0;
 	#lastBg = 0;
 	#countBg = 0;
@@ -53,6 +54,22 @@ let ScDisplay = class extends RootDisplay {
 				};
 				case "sc": {
 					upThis.#sysMsg = `    Mode 1`;
+					break;
+				};
+				case "gm": {
+					upThis.#sysMsg = `GM System On`;
+					break;
+				};
+				case "g2": {
+					upThis.#sysMsg = `GM2 System On`;
+					break;
+				};
+				case "gs": {
+					upThis.#sysMsg = `GS Reset`;
+					break;
+				};
+				case "xg": {
+					upThis.#sysMsg = `XG System On`;
 					break;
 				};
 				default: {
@@ -97,7 +114,7 @@ let ScDisplay = class extends RootDisplay {
 			ctx.fillText("MIDI CH", 154, 233);
 			ctx.textAlign = "center";
 			for (let c = 1; c <= 16; c ++) {
-				ctx.fillText(`${c}`.padStart(2, "0"), 308 + cmpHeightX * c, 300);
+				ctx.fillText(`${c}`, 308 + cmpHeightX * c, 300);
 			};
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = "#000";
@@ -226,7 +243,16 @@ let ScDisplay = class extends RootDisplay {
 							break;
 						};
 						default: {
-							infoTxt += upThis.device.getMode() == "gs" ? " " : "+";
+							switch (upThis.device.getMode()) {
+								case "gs":
+								case "sc": {
+									infoTxt += " ";
+									break;
+								};
+								default: {
+									infoTxt += "+";
+								};
+							};
 						};
 					};
 					break;
@@ -315,10 +341,13 @@ let ScDisplay = class extends RootDisplay {
 		rendPos = 0;
 		// Strength calculation
 		sum.velo.forEach(function (e, i) {
-			if (e >= upThis.#linger[i]) {
-				upThis.#linger[i] = ((e >> 4) << 4) + 15;
+			if (e > upThis.#linger[i] >> 8) {
+				upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
+				upThis.#keep[i] = 56;
+			} else if (upThis.#keep[i] > 16) {
+				upThis.#keep[i] --;
 			} else {
-				let val = upThis.#linger[i] - 2;
+				let val = upThis.#linger[i] - (384 << rendMode);
 				if (val < 0) {
 					val = 0;
 				};
@@ -337,7 +366,7 @@ let ScDisplay = class extends RootDisplay {
 			for (let c = minCh; c <= maxCh; c ++) {
 				let rendPart = rendPos >> 4;
 				let strSmooth = sum.strength[c] >> (4 + rendMode),
-				lingered = upThis.#linger[c] >> (4 + rendMode);
+				lingered = upThis.#linger[c] >> (12 + rendMode);
 				if (rendMode == 2) {
 					let offY = 4 * (3 - rendPart);
 					for (let d = 3 - strSmooth; d < 4; d ++) {
@@ -363,7 +392,7 @@ let ScDisplay = class extends RootDisplay {
 			if (upThis.#dmdb[i] != e) {
 				if (upThis.useBlur) {
 					let diff = e - upThis.#dmdb[i],
-					cap = 48;
+					cap = 72;
 					if (Math.abs(diff) > cap) {
 						upThis.#dmdb[i] += Math.sign(diff) * cap;
 					} else {
