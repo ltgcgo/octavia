@@ -316,16 +316,23 @@ getBridge().addEventListener("message", function (ev) {
 {
 	// Moonlight Picnic
 	let perf = new TimedEvents();
+	perf.push(new PointEvent(1.611, genDispType(0, 0)));
 	perf.push(new PointEvent(1.611, genNewSwitch(11)));
 	perf.push(new PointEvent(8.053, genNewSwitch(0)));
 	perf.push(new PointEvent(12.884, genNewSwitch(5)));
+	perf.push(new PointEvent(14.495, genDispType(4)));
 	perf.push(new PointEvent(14.495, genNewSwitch(12)));
+	perf.push(new PointEvent(17.313, genDispType(0)));
+	perf.push(new PointEvent(17.716, genDispType(4)));
+	perf.push(new PointEvent(20.534, genDispType(6, 3)));
 	perf.push(new PointEvent(20.534, genNewSwitch(13)));
 	perf.push(new PointEvent(32.21, genNewSwitch(3)));
 	perf.push(new PointEvent(33.821, genNewSwitch(13)));
+	perf.push(new PointEvent(46.705, genDispType(0)));
 	perf.push(new PointEvent(46.705, genNewSwitch(6)));
 	perf.push(new PointEvent(57.979, genNewSwitch(14)));
 	perf.push(new PointEvent(59.589, genNewSwitch(6)));
+	perf.push(new PointEvent(69.252, genDispType(5)));
 	perf.push(new PointEvent(69.252, genNewSwitch(11)));
 	perf.push(new PointEvent(75.695, genNewSwitch(12)));
 	perf.push(new PointEvent(82.942, genNewSwitch(13)));
