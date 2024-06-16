@@ -343,3 +343,48 @@ getBridge().addEventListener("message", function (ev) {
 	perf.fresh();
 	demoPerfs["MOON_L"] = perf;
 };
+{
+	// Low Flying
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(2.608, genDispType(4, 1)));
+	perf.push(new PointEvent(2.608, genNewSwitch(3)));
+	perf.push(new PointEvent(18.259, genNewSwitch(2)));
+	perf.push(new PointEvent(20.867, genNewSwitch(1)));
+	perf.push(new PointEvent(23.476, genDispType(1, 0)));
+	perf.push(new PointEvent(23.476, genNewSwitch(8)));
+	perf.push(new PointEvent(28.693, genNewSwitch(7)));
+	perf.push(new PointEvent(33.909, genNewSwitch(8)));
+	perf.push(new PointEvent(39.126, genNewSwitch(9)));
+	perf.push(new PointEvent(44.343, genNewSwitch(6)));
+	perf.push(new PointEvent(49.56, genNewSwitch(5)));
+	perf.push(new PointEvent(54.777, genDispType(0, 2)));
+	perf.push(new PointEvent(54.777, genNewSwitch(6)));
+	perf.push(new PointEvent(65.21, genDispType(5, 0)));
+	perf.push(new PointEvent(65.21, genNewSwitch(3)));
+	perf.push(new PointEvent(86.078, genDispType(2, 2)));
+	perf.push(new PointEvent(86.078, genNewSwitch(12)));
+	perf.push(new PointEvent(96.511, genNewSwitch(3)));
+	perf.push(new PointEvent(99.12, genNewSwitch(10)));
+	perf.push(new PointEvent(101.728, genNewSwitch(3)));
+	perf.push(new PointEvent(106.945, genDispType(0, 0)));
+	perf.push(new PointEvent(109.553, genNewSwitch(6)));
+	perf.push(new PointEvent(112.162, genNewSwitch(3)));
+	perf.push(new PointEvent(127.812, genDispType(0, 1)));
+	perf.push(new PointEvent(127.812, genNewSwitch(6)));
+	perf.fresh();
+	demoPerfs["LOW_FLY"] = perf;
+};
+{
+	// Suplex Hold
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(1.611, genDispType(0, 0)));
+	perf.fresh();
+	demoPerfs["SUPLEX"] = perf;
+};
+{
+	// Monopoly
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(1.611, genDispType(0, 0)));
+	perf.fresh();
+	demoPerfs["MONOPOLY"] = perf;
+};
