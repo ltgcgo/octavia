@@ -391,7 +391,8 @@ getBridge().addEventListener("message", function (ev) {
 {
 	// Monopoly
 	let perf = new TimedEvents();
-	perf.push(new PointEvent(1.611, genDispType(0, 0)));
+	perf.push(new PointEvent(52.064, genDispType(0, 3)));
+	perf.push(new PointEvent(70.447, genDispType(0, 1)));
 	perf.fresh();
 	demoPerfs["MONOPOLY"] = perf;
 };
