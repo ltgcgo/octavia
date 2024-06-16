@@ -6,9 +6,8 @@ import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs
 import {
 	toJson,
 	fromJson,
-	getBridge,
-	SimpleMidiEventEmitter
-} from "../bridge/index.mjs";
+	getBridge
+} from "../bridge/index.old.mjs";
 
 let globalAudioCtx;
 let getGAC = function () {
@@ -97,7 +96,6 @@ midiInSel.forEach((e, i) => {
 	self.midiAccess = await navigator.requestMIDIAccess({"sysex": true, "software": true});
 	self.fromJson = fromJson;
 	self.toJson = toJson;
-	self.MEE = SimpleMidiEventEmitter;
 	midiAccess.addEventListener("statechange", (ev) => {
 		console.debug(ev.port);
 	});
