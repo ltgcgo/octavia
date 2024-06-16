@@ -406,19 +406,50 @@ let ScDisplay = class extends RootDisplay {
 				switch (rendMode) {
 					case 2: {
 						let offY = 4 * (3 - rendPart);
-						if (scConf.showBar) {
-							for (let d = 3 - strSmooth; d < 4; d ++) {
-								useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+						if (scConf.invBar) {
+							if (scConf.showBar) {
+								for (let d = strSmooth; d >= 0; d --) {
+									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+								};
+							} else {
+								useBm[(rendPos & 15) + ((strSmooth + offY) << 4)] = upThis.#pixelLit;
+							};
+						} else {
+							if (scConf.showBar) {
+								for (let d = 3 - strSmooth; d < 4; d ++) {
+									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+								};
+							} else {
+								useBm[(rendPos & 15) + ((3 - strSmooth + offY) << 4)] = upThis.#pixelLit;
 							};
 						};
 						break;
 					};
 					case 1: {
 						let offY = 8 * (1 - rendPart);
-						if (scConf.invBar) {} else {
+						if (scConf.invBar) {
+							if (scConf.showBar) {
+								for (let d = strSmooth; d >= 0; d --) {
+									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+								};
+							} else {
+								useBm[(rendPos & 15) + (offY << 4)] = upThis.#pixelLit;
+								if (strSmooth) {
+									useBm[(rendPos & 15) + ((strSmooth + offY) << 4)] = upThis.#pixelLit;
+								};
+							};
+							if (scConf.peakHold && lingered) {
+								useBm[(rendPos & 15) + ((lingered + offY) << 4)] = upThis.#pixelLit;
+							};
+						} else {
 							if (scConf.showBar) {
 								for (let d = 7 - strSmooth; d < 8; d ++) {
 									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+								};
+							} else {
+								useBm[(rendPos & 15) + ((7 + offY) << 4)] = upThis.#pixelLit;
+								if (strSmooth) {
+									useBm[(rendPos & 15) + ((7 - strSmooth + offY) << 4)] = upThis.#pixelLit;
 								};
 							};
 							if (scConf.peakHold && lingered) {
@@ -435,6 +466,9 @@ let ScDisplay = class extends RootDisplay {
 								};
 							} else {
 								useBm[(rendPos & 15)] = upThis.#pixelLit;
+								if (strSmooth) {
+									useBm[(rendPos & 15) + (strSmooth << 4)] = upThis.#pixelLit;
+								};
 							};
 							if (scConf.peakHold && lingered) {
 								useBm[rendPos + (lingered << 4)] = upThis.#pixelLit;
@@ -446,6 +480,9 @@ let ScDisplay = class extends RootDisplay {
 								};
 							} else {
 								useBm[(rendPos & 15) + 240] = upThis.#pixelLit;
+								if (strSmooth) {
+									useBm[(rendPos & 15) + ((15 - strSmooth) << 4)] = upThis.#pixelLit;
+								};
 							};
 							if (scConf.peakHold && lingered) {
 								useBm[rendPos + ((15 - lingered) << 4)] = upThis.#pixelLit;
