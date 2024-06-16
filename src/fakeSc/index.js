@@ -377,7 +377,14 @@ getBridge().addEventListener("message", function (ev) {
 {
 	// Suplex Hold
 	let perf = new TimedEvents();
-	perf.push(new PointEvent(1.611, genDispType(0, 0)));
+	perf.push(new PointEvent(7, genDispType(0, 0)));
+	perf.push(new PointEvent(14.72, genDispType(6)));
+	perf.push(new PointEvent(20.08, genDispType(0)));
+	perf.push(new PointEvent(24.93, genDispType(4)));
+	perf.push(new PointEvent(34.67, genDispType(0)));
+	perf.push(new PointEvent(49.71, genDispType(0, 1)));
+	perf.push(new PointEvent(102.5, genDispType(0, 0)));
+	perf.push(new PointEvent(110.9, genDispType(4)));
 	perf.fresh();
 	demoPerfs["SUPLEX"] = perf;
 };

@@ -375,14 +375,12 @@ let ScDisplay = class extends RootDisplay {
 						};
 						break;
 					};
-					case 2: {
+					default: {
 						val = 0;
 						break;
 					};
 				};
-				if (scConf.peakHold) {
-					upThis.#linger[i] = val;
-				};
+				upThis.#linger[i] = val;
 			};
 			if (scConf.peakHold == 3) {
 				//console.debug(`Tendency: ${Math.sign((upThis.#linger[i] >> 8) - upThis.#lingerOld[i])}`);
