@@ -36,6 +36,8 @@ let ScDisplay = class extends RootDisplay {
 	#pmdb = new Uint8Array(735); // Param display
 	#bmdb = new Uint8Array(256); // Bitmap display
 	#linger = new Uint16Array(128);
+	#lingerOld = new Uint8Array(128);
+	#peak = new Uint16Array(128);
 	#keep = new Uint8Array(128);
 	#ch = 0;
 	#lastBg = 0;
@@ -94,6 +96,7 @@ let ScDisplay = class extends RootDisplay {
 		let upThis = this;
 		let timeNow = Date.now();
 		let fullRefresh = false;
+		let scConf = upThis.device.modelEx.sc;
 		upThis.#nmdb.fill(0);
 		// Fill with orange
 		if (upThis.#countBg < 4 && timeNow - upThis.#lastBg >= 4000) {
@@ -170,7 +173,7 @@ let ScDisplay = class extends RootDisplay {
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
 		if (upThis.#ch > maxCh) {
-			upThis.#ch = minCh + upThis.#ch & 15;
+			upThis.#ch = minCh + (upThis.#ch & 15);
 		};
 		if (upThis.#ch < minCh) {
 			upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
@@ -295,7 +298,7 @@ let ScDisplay = class extends RootDisplay {
 		};
 		// Assemble text
 		let paramText = "";
-		paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}${(upThis.#ch % 16 + 1).toString().padStart(2, "0")}`;
+		paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}${((upThis.#ch & 15) + 1).toString().padStart(2, "0")}`;
 		paramText += sum.chContr[chOff + ccToPos[7]].toString().padStart(3, " ");
 		paramText += sum.chContr[chOff + ccToPos[91]].toString().padStart(3, " ");
 		let cPit = upThis.device.getPitchShift(upThis.#ch);
@@ -341,17 +344,50 @@ let ScDisplay = class extends RootDisplay {
 		rendPos = 0;
 		// Strength calculation
 		sum.velo.forEach(function (e, i) {
+			upThis.#lingerOld[i] = upThis.#linger[i] >> 8;
 			if (e > upThis.#linger[i] >> 8) {
-				upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
+				if (scConf.peakHold == 3) {
+					upThis.#linger[i] = ((e >> 4) << 4) << 8;
+				} else {
+					upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
+				};
 				upThis.#keep[i] = 56;
-			} else if (upThis.#keep[i] > 16) {
+			} else if (upThis.#keep[i] > 15) {
 				upThis.#keep[i] --;
 			} else {
-				let val = upThis.#linger[i] - (384 << rendMode);
-				if (val < 0) {
-					val = 0;
+				let val;
+				switch (scConf.peakHold) {
+					case 1:
+					case 3: {
+						val = upThis.#linger[i] - (384 << rendMode);
+						if (val < 0) {
+							val = 0;
+						};
+						break;
+					};
+					case 2: {
+						val = 0;
+						break;
+					};
 				};
-				upThis.#linger[i] = val;
+				if (scConf.peakHold) {
+					upThis.#linger[i] = val;
+				};
+			};
+			if (scConf.peakHold == 3) {
+				if (upThis.#keep[i] < 16 && upThis.#peak[i] && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {
+					let val = upThis.#peak[i];
+					val += (384 << rendMode);
+					if (val < 65536) {
+						upThis.#peak[i] = val;
+					} else {
+						upThis.#peak[i] = 0;
+					};
+				} else {
+					upThis.#peak[i] = upThis.#linger[i];
+				};
+			} else {
+				upThis.#peak[i] = upThis.#linger[i];
 			};
 		});
 		let useBm = upThis.#nmdb.subarray(1400, 1656);
@@ -366,25 +402,64 @@ let ScDisplay = class extends RootDisplay {
 			for (let c = minCh; c <= maxCh; c ++) {
 				let rendPart = rendPos >> 4;
 				let strSmooth = sum.strength[c] >> (4 + rendMode),
-				lingered = upThis.#linger[c] >> (12 + rendMode);
-				if (rendMode == 2) {
-					let offY = 4 * (3 - rendPart);
-					for (let d = 3 - strSmooth; d < 4; d ++) {
-						useBm[rendPos % 16 + (d + offY) * 16] = upThis.#pixelLit;
+				lingered = upThis.#peak[c] >> (12 + rendMode);
+				switch (rendMode) {
+					case 2: {
+						let offY = 4 * (3 - rendPart);
+						if (scConf.showBar) {
+							for (let d = 3 - strSmooth; d < 4; d ++) {
+								useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+							};
+						};
+						break;
 					};
-				} else if (rendMode == 1) {
-					let offY = 8 * (1 - rendPart);
-					for (let d = 7 - strSmooth; d < 8; d ++) {
-						useBm[rendPos % 16 + (d + offY) * 16] = upThis.#pixelLit;
+					case 1: {
+						let offY = 8 * (1 - rendPart);
+						if (scConf.invBar) {} else {
+							if (scConf.showBar) {
+								for (let d = 7 - strSmooth; d < 8; d ++) {
+									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+								};
+							};
+							if (scConf.peakHold && lingered) {
+								useBm[(rendPos & 15) + ((7 - lingered + offY) << 4)] = upThis.#pixelLit;
+							};
+						};
+						break;
 					};
-					useBm[rendPos % 16 + (7 - lingered + offY) * 16] = upThis.#pixelLit;
-				} else {
-					for (let d = 15 - strSmooth; d < 16; d ++) {
-						useBm[rendPos % 16 + d * 16] = upThis.#pixelLit;
+					case 0: {
+						if (scConf.invBar) {
+							if (scConf.showBar) {
+								for (let d = strSmooth; d >= 0; d --) {
+									useBm[(rendPos & 15) + (d << 4)] = upThis.#pixelLit;
+								};
+							} else {
+								useBm[(rendPos & 15)] = upThis.#pixelLit;
+							};
+							if (scConf.peakHold && lingered) {
+								useBm[rendPos + (lingered << 4)] = upThis.#pixelLit;
+							};
+						} else {
+							if (scConf.showBar) {
+								for (let d = 15 - strSmooth; d < 16; d ++) {
+									useBm[(rendPos & 15) + (d << 4)] = upThis.#pixelLit;
+								};
+							} else {
+								useBm[(rendPos & 15) + 240] = upThis.#pixelLit;
+							};
+							if (scConf.peakHold && lingered) {
+								useBm[rendPos + ((15 - lingered) << 4)] = upThis.#pixelLit;
+							};
+						};
+						break;
 					};
-					useBm[rendPos + (15 - lingered) * 16] = upThis.#pixelLit;
 				};
 				rendPos ++;
+			};
+			if (scConf.invDisp) {
+				for (let i = 0; i < useBm.length; i ++) {
+					useBm[i] = upThis.#pixelLit - useBm[i];
+				};
 			};
 		};
 		// Guide the drawn matrix
@@ -432,7 +507,7 @@ let ScDisplay = class extends RootDisplay {
 				} else {
 					// Bitmap display
 					let i = oi - 1400;
-					let pixelX = i % 16,
+					let pixelX = i & 15,
 					pixelY = Math.floor(i / 16);
 					startX = pdaX + 302 + pixelX * cmpHeightX;
 					startY = pdaY + 71 + pixelY * cmpHeightY;

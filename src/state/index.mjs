@@ -333,6 +333,14 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
 	#subDb = {};
+	modelEx = {
+		"sc": {
+			"showBar": true,
+			"invBar": false,
+			"invDisp": false,
+			"peakHold": 1
+		}
+	};
 	#detect;
 	#conf;
 	#confProxy;
@@ -1788,6 +1796,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.aiEfxName = "";
 		// Reset MT-32 user bank
 		upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
+		// Reset SC-exclusive params
+		upThis.modelEx.sc.showBar = true;
+		upThis.modelEx.sc.invBar = false;
+		upThis.modelEx.sc.invDisp = false;
+		upThis.modelEx.sc.peakHold = 1;
 		for (let ch = 0; ch < allocated.ch; ch ++) {
 			let chOff = ch * allocated.cc;
 			// Reset to full
