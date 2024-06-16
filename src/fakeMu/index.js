@@ -131,6 +131,8 @@ $e("#openMidi").addEventListener("click", async function () {
 			visualizer.reset();
 			visualizer.loadFile(file);
 			visualizer.device.initOnReset = false;
+			currentPerformance?.resetIndex();
+			currentPerformance = undefined;
 		};
 	};
 });
