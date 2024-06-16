@@ -7,9 +7,9 @@
 
 const encodings = ["utf-8", "utf-16", "utf-16be"];
 
-ReadableStreamDefaultController.prototype.send = ReadableStreamDefaultController.prototype.send || function (data) {
-	this.unsent = false;
-	this.enqueue(data);
+let commitData = (controller, data) => {
+	controller.unsent = false;
+	controller.enqueue(data);
 };
 
 let TextReader = class {
@@ -40,7 +40,7 @@ let TextReader = class {
 						if (ptr > lastPtr) {
 							bufferBuilder.push(chunk.subarray(lastPtr));
 							lastPtr = 0;
-							console.error(`Read a new chunk.`);
+							//console.debug(`Read a new chunk.`);
 						};
 						// Read a new chunk
 						let {value, done} = await reader.read();
@@ -51,7 +51,7 @@ let TextReader = class {
 					};
 					if (chunk) {
 						// Continue the read operation
-						console.error(`Read byte at chunk pointer ${ptr}.`);
+						////console.debug(`Read byte at chunk pointer ${ptr}.`);
 						let e = chunk[ptr];
 						let commitNow = false;
 						switch (e) {
@@ -70,7 +70,7 @@ let TextReader = class {
 						};
 						if (commitNow) {
 							if (bufferBuilder.length) {
-								console.error(`Building a multi-part buffer.`);
+								//console.debug(`Building a multi-part buffer. ${ptr}`);
 								// Add buffer
 								bufferBuilder.push(chunk.subarray(lastPtr, ptr));
 								// Calculate buffer size
@@ -86,30 +86,30 @@ let TextReader = class {
 									mergedPtr += bufferBuilder[i].length;
 								};
 								// Commit buffer
-								controller.send(mergedBuffer);
+								commitData(controller, mergedBuffer);
 								// Clear buffer
 								bufferBuilder = [];
-								console.error(`Multi-part buffer write finished.`);
+								//console.debug(`Multi-part buffer write finished. ${ptr}`);
 							} else {
 								// Just commit the current segment
-								controller.send(chunk.subarray(lastPtr, ptr));
-								console.error(`Single buffer write finished.`);
+								commitData(controller, chunk.subarray(lastPtr, ptr));
+								//console.debug(`Single buffer write finished. ${ptr}`);
 							};
 							lastPtr = ptr + 1;
 						};
 						lastUnit = e;
 					} else {
-						console.error(`No reading available.`);
+						//console.debug(`No reading available. ${ptr}`);
 					};
 					if (finished) {
-						console.error(`Stream finished.`);
+						//console.debug(`Stream finished.`);
 						// Detect remaining buffer
 						if (lastPtr != ptr) {
 							bufferBuilder.push(chunk.subarray(lastPtr, ptr));
 						};
 						// Commit all remaining buffer
 						if (bufferBuilder.length) {
-							console.error(`Building a multi-part buffer.`);
+							//console.debug(`Building a multi-part buffer.`);
 							// Calculate buffer size
 							let mergeLen = 0;
 							for (let i = 0; i < bufferBuilder.length; i ++) {
@@ -123,8 +123,8 @@ let TextReader = class {
 								mergedPtr += bufferBuilder[i].length;
 							};
 							// Commit buffer
-							controller.send(mergedBuffer);
-							console.error(`Multi-part buffer write finished.`);
+							commitData(controller, mergedBuffer);
+							//console.debug(`Multi-part buffer write finished.`);
 						}
 						// Close the stream
 						controller.unsent = false;
@@ -137,7 +137,7 @@ let TextReader = class {
 		return sink;
 	};
 	static line(stream, splitMode = 0, label) {
-		let rawStream = this.feedRaw(stream, splitMode).getReader();
+		let rawStream = this.lineRaw(stream, splitMode).getReader();
 		let decoder = new TextDecoder(label || encodings[splitMode]);
 		return new ReadableStream({
 			"pull": async (controller) => {

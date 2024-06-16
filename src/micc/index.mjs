@@ -44,9 +44,9 @@ let readUintBE = function (buffer, byteLength) {
 	return result;
 };
 
-ReadableStreamDefaultController.prototype.send = ReadableStreamDefaultController.prototype.send || function (data) {
-	this.unsent = false;
-	this.enqueue(data);
+let commitData = (controller, data) => {
+	controller.unsent = false;
+	controller.enqueue(data);
 };
 
 let streamDisassemble = function (source) {
@@ -99,7 +99,7 @@ let streamDisassemble = function (source) {
 						switch (strBuf) {
 							case "MThd": {
 								//console.info("MIDI Header chunk!");
-								controller.send(u8Enc.encode(`:hd\n`));
+								commitData(controller, u8Enc.encode(`:hd\n`));
 								state = 1;
 								nextState = 3;
 								finalState = 4;
@@ -111,7 +111,7 @@ let streamDisassemble = function (source) {
 							case "MTrk": {
 								//console.info("MIDI Track chunk!");
 								trackIndex ++;
-								controller.send(u8Enc.encode(`:tr#${trackIndex}\n`));
+								commitData(controller, u8Enc.encode(`:tr#${trackIndex}\n`));
 								state = 1;
 								nextState = 3;
 								finalState = 5;
@@ -177,7 +177,7 @@ let streamDisassemble = function (source) {
 					case 3: {
 						// Write length
 						//console.info(`Writing length...`);
-						controller.send(u8Enc.encode(`\tln ${intValue}\n`));
+						commitData(controller, u8Enc.encode(`\tln ${intValue}\n`));
 						state = finalState;
 						ptrStart = ptr + 1;
 						sectStart = ptrStart + totalPtr;
@@ -197,18 +197,18 @@ let streamDisassemble = function (source) {
 						if (i & 1) {
 							switch (i >> 1) {
 								case 0: {
-									controller.send(u8Enc.encode(`\tft ${intValue}\n`));
+									commitData(controller, u8Enc.encode(`\tft ${intValue}\n`));
 									break;
 								};
 								case 1: {
-									controller.send(u8Enc.encode(`\ttc ${intValue}\n`));
+									commitData(controller, u8Enc.encode(`\ttc ${intValue}\n`));
 									break;
 								};
 								case 2: {
 									if (intValue < 32768) {
-										controller.send(u8Enc.encode(`\tdv ${intValue}\n`));
+										commitData(controller, u8Enc.encode(`\tdv ${intValue}\n`));
 									} else {
-										controller.send(u8Enc.encode(`\ttd ${intValue}\n`));
+										commitData(controller, u8Enc.encode(`\ttd ${intValue}\n`));
 									};
 									state = 0;
 									ptrStart = ptr + 1;
@@ -234,7 +234,7 @@ let streamDisassemble = function (source) {
 						if (i) {
 							if (intValue) {
 								//console.info(`Delta time: ${intValue} (raced)`);
-								controller.send(u8Enc.encode(`\tdt ${intValue}\n`));
+								commitData(controller, u8Enc.encode(`\tdt ${intValue}\n`));
 								intValue = 0;
 							};
 							//console.info(`Reading event type...`);
@@ -260,7 +260,7 @@ let streamDisassemble = function (source) {
 						} else {
 							//console.info(`Delta time: ${intValue}`);
 							if (intValue) {
-								controller.send(u8Enc.encode(`\tdt ${intValue}\n`));
+								commitData(controller, u8Enc.encode(`\tdt ${intValue}\n`));
 							};
 							intValue = 0;
 						};
@@ -269,7 +269,7 @@ let streamDisassemble = function (source) {
 					case 7: {
 						// Meta event init, jump to 17 for full reads
 						//console.info(`Reading meta...`);
-						controller.send(u8Enc.encode(`\tmt ${e}`));
+						commitData(controller, u8Enc.encode(`\tmt ${e}`));
 						state = 2;
 						nextState = 17;
 						startNextSect = true;
@@ -279,7 +279,7 @@ let streamDisassemble = function (source) {
 					case 15: {
 						// SysEx event init, jump to 17 for full reads
 						//console.info(`Reading SysEx...`);
-						controller.send(u8Enc.encode(`\tse`));
+						commitData(controller, u8Enc.encode(`\tse`));
 						state = 2;
 						nextState = 17;
 						ptr --;
@@ -290,7 +290,7 @@ let streamDisassemble = function (source) {
 					case 16: {
 						// SysEx multi-segment event init, jump to 17 for full reads
 						//console.info(`Reading SysEx multi-segment...`);
-						controller.send(u8Enc.encode(`\tsc`));
+						commitData(controller, u8Enc.encode(`\tsc`));
 						state = 2;
 						nextState = 17;
 						ptr --;
@@ -304,14 +304,14 @@ let streamDisassemble = function (source) {
 						if (i == 0) {
 							extLen = intValue;
 							//console.info(`Extension length: ${extLen}`);
-							controller.send(u8Enc.encode(` (${extLen})`));
+							commitData(controller, u8Enc.encode(` (${extLen})`));
 						};
 						if (i < 0) {} else if (i < extLen) {
 							//console.info(`Multi-byte sequence read.`);
-							controller.send(u8Enc.encode(` ${e.toString(16).padStart(2, "0")}`));
+							commitData(controller, u8Enc.encode(` ${e.toString(16).padStart(2, "0")}`));
 						} else {
 							//console.info(`Multi-byte read end.`);
-							controller.send(u8Enc.encode(`\n`));
+							commitData(controller, u8Enc.encode(`\n`));
 							ptr --;
 							state = 5;
 							ptrStart = ptr + 1;
@@ -323,11 +323,11 @@ let streamDisassemble = function (source) {
 						//console.info(`Note off!`);
 						let i = ptr - ptrStart;
 						if (i) {
-							controller.send(u8Enc.encode(` ${e}\n`));
+							commitData(controller, u8Enc.encode(` ${e}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tof ${`${part}`.padStart(2, "0")} ${e}`));
+							commitData(controller, u8Enc.encode(`\tof ${`${part}`.padStart(2, "0")} ${e}`));
 						};
 						break;
 					};
@@ -336,11 +336,11 @@ let streamDisassemble = function (source) {
 						//console.info(`Note on!`);
 						let i = ptr - ptrStart;
 						if (i) {
-							controller.send(u8Enc.encode(` ${e}\n`));
+							commitData(controller, u8Enc.encode(` ${e}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\ton ${`${part}`.padStart(2, "0")} ${e}`));
+							commitData(controller, u8Enc.encode(`\ton ${`${part}`.padStart(2, "0")} ${e}`));
 						};
 						break;
 					};
@@ -349,11 +349,11 @@ let streamDisassemble = function (source) {
 						//console.info(`Note AT!`);
 						let i = ptr - ptrStart;
 						if (i) {
-							controller.send(u8Enc.encode(` ${e}\n`));
+							commitData(controller, u8Enc.encode(` ${e}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tpa ${`${part}`.padStart(2, "0")} ${e}`));
+							commitData(controller, u8Enc.encode(`\tpa ${`${part}`.padStart(2, "0")} ${e}`));
 						};
 						break;
 					};
@@ -362,18 +362,18 @@ let streamDisassemble = function (source) {
 						//console.info(`Control change!`);
 						let i = ptr - ptrStart;
 						if (i) {
-							controller.send(u8Enc.encode(` ${e}\n`));
+							commitData(controller, u8Enc.encode(` ${e}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							controller.send(u8Enc.encode(`\tcc ${`${part}`.padStart(2, "0")} ${e}`));
+							commitData(controller, u8Enc.encode(`\tcc ${`${part}`.padStart(2, "0")} ${e}`));
 						};
 						break;
 					};
 					case 12: {
 						// Program change
 						//console.info(`Program change!`);
-						controller.send(u8Enc.encode(`\tpc ${`${part}`.padStart(2, "0")} ${e}\n`));
+						commitData(controller, u8Enc.encode(`\tpc ${`${part}`.padStart(2, "0")} ${e}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
 						break;
@@ -381,7 +381,7 @@ let streamDisassemble = function (source) {
 					case 13: {
 						// Channel aftertouch (CAT)
 						//console.info(`Channel AT!`);
-						controller.send(u8Enc.encode(`\tca ${`${part}`.padStart(2, "0")} ${e}\n`));
+						commitData(controller, u8Enc.encode(`\tca ${`${part}`.padStart(2, "0")} ${e}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
 						break;
@@ -395,7 +395,7 @@ let streamDisassemble = function (source) {
 						};
 						intValue |= e << (i << 3);
 						if (i) {
-							controller.send(u8Enc.encode(`\tpb ${`${part}`.padStart(2, "0")} ${intValue - 8192}\n`));
+							commitData(controller, u8Enc.encode(`\tpb ${`${part}`.padStart(2, "0")} ${intValue - 8192}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						};
@@ -414,11 +414,22 @@ let streamDisassemble = function (source) {
 };
 
 let streamAssemble = function (source) {
+	let lineReader = TextReader.line(source).getReader();
+	let lineIdx = 0;
+	let chunk, finished = false;
 	return new ReadableStream({
 		"pull": async (controller) => {
-			//
+			let {value, done} = await lineReader.read();
+			if (value) {
+				//
+			};
+			if (done) {
+				controller.close();
+			} else {
+				lineIdx ++;
+			};
 		}
-	}, new ByteLengthQueuingStrategy({"highWaterMark": 256}));
+	});
 };
 
 export {
