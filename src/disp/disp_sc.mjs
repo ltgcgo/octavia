@@ -1,6 +1,6 @@
 "use strict";
 
-import {OctaviaDevice} from "../state/index.mjs";
+import {OctaviaDevice, allocated} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
 import {MxFont40} from "../basic/mxReader.js";
 
@@ -35,10 +35,11 @@ let ScDisplay = class extends RootDisplay {
 	#tmdb = new Uint8Array(665); // Text display
 	#pmdb = new Uint8Array(735); // Param display
 	#bmdb = new Uint8Array(256); // Bitmap display
-	#linger = new Uint16Array(128);
-	#lingerOld = new Uint8Array(128);
-	#peak = new Uint16Array(128);
-	#keep = new Uint8Array(128);
+	#linger = new Uint16Array(allocated.ch);
+	#lingerOld = new Uint8Array(allocated.ch);
+	#peak = new Uint16Array(allocated.ch);
+	#keep = new Uint8Array(allocated.ch);
+	#rtOn = new Float64Array(allocated.ch);
 	#ch = 0;
 	#lastBg = 0;
 	#countBg = 0;
@@ -83,6 +84,11 @@ let ScDisplay = class extends RootDisplay {
 		});
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
+		});
+		upThis.addEventListener("note", ({data}) => {
+			if (data.state == 3) {
+				upThis.#rtOn[data.part] = Date.now();
+			};
 		});
 	};
 	setCh(ch) {
@@ -310,9 +316,11 @@ let ScDisplay = class extends RootDisplay {
 		paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, "0");
 		let cPan = sum.chContr[chOff + ccToPos[10]];
 		if (cPan == 64) {
-			paramText += "C  ";
+			paramText += "C 0";
 		} else if (cPan == 128) {
 			paramText += "RND";
+		} else if (cPan < 1) {
+			paramText += "L63";
 		} else {
 			if (cPan > 64) {
 				paramText += "R";
@@ -345,13 +353,15 @@ let ScDisplay = class extends RootDisplay {
 		// Strength calculation
 		sum.velo.forEach(function (e, i) {
 			upThis.#lingerOld[i] = upThis.#linger[i] >> 8;
-			if (e > upThis.#linger[i] >> 8) {
+			if (((e >> 4) << 4) > upThis.#linger[i] >> 8) {
 				if (scConf.peakHold == 3) {
 					upThis.#linger[i] = ((e >> 4) << 4) << 8;
 				} else {
 					upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
 				};
-				upThis.#keep[i] = 56;
+				if (scConf.peakHold != 3 || timeNow - upThis.#rtOn[i] < 200) {
+					upThis.#keep[i] = 56;
+				};
 			} else if (upThis.#keep[i] > 15) {
 				upThis.#keep[i] --;
 			} else {
@@ -375,13 +385,17 @@ let ScDisplay = class extends RootDisplay {
 				};
 			};
 			if (scConf.peakHold == 3) {
-				if (upThis.#keep[i] < 16 && upThis.#peak[i] && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {
-					let val = upThis.#peak[i];
-					val += (384 << rendMode);
-					if (val < 65536) {
-						upThis.#peak[i] = val;
-					} else {
-						upThis.#peak[i] = 0;
+				//console.debug(`Tendency: ${Math.sign((upThis.#linger[i] >> 8) - upThis.#lingerOld[i])}`);
+				if (upThis.#keep[i] < 16) {
+					if (upThis.#peak[i] != 0 && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {
+						//console.debug(`Float!`);
+						let val = upThis.#peak[i];
+						val += (384 << rendMode);
+						if (val < 65536) {
+							upThis.#peak[i] = val;
+						} else {
+							upThis.#peak[i] = 0;
+						};
 					};
 				} else {
 					upThis.#peak[i] = upThis.#linger[i];
