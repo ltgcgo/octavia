@@ -3901,6 +3901,23 @@ let OctaviaDevice = class extends CustomEventSource {
 					//getDebugState() && console.debug(`GS display text "${upThis.#letterDisp}".`);
 					break;
 				};
+				case 8: {
+					let offset = msg[1];
+					let scConf = upThis.modelEx.sc;
+					console.debug("HORNY DEE");
+					msg.subarray(2).forEach((e, i) => {
+						([() => {
+							scConf.showBar = !(e & 1);
+							scConf.invBar = (e >> 1) & 1;
+							scConf.invDisp = (e >> 2) & 1;
+						}, () => {
+							scConf.peakHold = e < 4 ? e : 1;
+						}][i + offset] || (() => {
+							console.debug(`Unsupported GS display type SysEx.`);
+						}))();
+					});
+					break;
+				};
 				case 32: {
 					upThis.#bitmapExpire = Date.now() + 3200;
 					if (msg[1] == 0) {
