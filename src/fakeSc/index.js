@@ -9,10 +9,39 @@ import {
 } from "../bridge/index.mjs";
 import {SheetData} from "../basic/sheetLoad.js";
 
+import {
+	PointEvent,
+	RangeEvent,
+	TimedEvents
+} from "../../libs/lightfelt@ltgcgo/ext/timedEvents.js";
+import {gsChecksum} from "../state/utils.js";
+
 let demoBlobs = {};
 let demoModes = [];
 demoModes[9] = "gm";
+let demoPerfs = {};
+let currentPerformance;
 let useMidiBus = false;
+
+self.genNewSwitch = function (ch = 0) {
+	return {
+		type: 15,
+		track: 0,
+		data: [67, 16, 73, 11, 0, 0, ch]
+	};
+};
+self.genDispType = function (type = 0, peakHold) {
+	let data = [65, 16, 69, 18, 16, 8, 0, type & 7];
+	if (peakHold?.constructor) {
+		data.push(peakHold);
+	};
+	data.push(gsChecksum(data.slice(4)));
+	return {
+		type: 15,
+		track: 0,
+		data
+	};
+};
 
 // Standard switching
 let stSwitch = $a("b.mode");
@@ -220,6 +249,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			};
 			visualizer.device.setLetterDisplay([76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, demoId]);
 			stDemo.to(i);
+			currentPerformance = demoPerfs[e.title];
+			currentPerformance?.resetIndex();
 		});
 	});
 	if (location.search.indexOf("minimal") > -1) {
@@ -232,6 +263,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
 	visualizer.reset();
+	currentPerformance?.resetIndex();
 	audioPlayer.currentTime = 0;
 };
 (async function () {
@@ -265,6 +297,11 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
+		if (currentPerformance) {
+			currentPerformance.step(curTime)?.forEach((e) => {
+				visualizer.sendCmd(e.data);
+			});
+		};
 		visualizer.render(curTime, dispCtx);
 		lastTime = curTime;
 	};
@@ -275,3 +312,25 @@ getBridge().addEventListener("message", function (ev) {
 		visualizer.sendCmd(ev.data);
 	};
 });
+
+{
+	// Moonlight Picnic
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(1.611, genNewSwitch(11)));
+	perf.push(new PointEvent(8.053, genNewSwitch(0)));
+	perf.push(new PointEvent(12.884, genNewSwitch(5)));
+	perf.push(new PointEvent(14.495, genNewSwitch(12)));
+	perf.push(new PointEvent(20.534, genNewSwitch(13)));
+	perf.push(new PointEvent(32.21, genNewSwitch(3)));
+	perf.push(new PointEvent(33.821, genNewSwitch(13)));
+	perf.push(new PointEvent(46.705, genNewSwitch(6)));
+	perf.push(new PointEvent(57.979, genNewSwitch(14)));
+	perf.push(new PointEvent(59.589, genNewSwitch(6)));
+	perf.push(new PointEvent(69.252, genNewSwitch(11)));
+	perf.push(new PointEvent(75.695, genNewSwitch(12)));
+	perf.push(new PointEvent(82.942, genNewSwitch(13)));
+	perf.push(new PointEvent(86.968, genNewSwitch(15)));
+	perf.push(new PointEvent(89.384, genNewSwitch(0)));
+	perf.fresh();
+	demoPerfs["MOON_L"] = perf;
+};

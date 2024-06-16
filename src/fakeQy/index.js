@@ -306,7 +306,7 @@ getBridge().addEventListener("message", function (ev) {
 });
 
 {
-	// Wild Cat!!
+	// Kandi8
 	let perf = new TimedEvents();
 	perf.push(new PointEvent(1, genNewSwitch(15)));
 	perf.push(new PointEvent(5.72, genNewSwitch(12)));

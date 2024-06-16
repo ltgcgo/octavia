@@ -3904,7 +3904,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 8: {
 					let offset = msg[1];
 					let scConf = upThis.modelEx.sc;
-					console.debug("HORNY DEE");
+					//console.debug("HORNY DEE");
 					msg.subarray(2).forEach((e, i) => {
 						([() => {
 							scConf.showBar = !(e & 1);
