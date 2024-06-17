@@ -1371,8 +1371,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		let notes = new Map();
 		let upThis = this;
 		upThis.#poly.forEach(function (e, i) {
-			let realCh = Math.floor(e / 128),
-			realNote = e % 128;
+			let realCh = e >> 7,
+			realNote = e & 127;
 			if (channel == realCh && upThis.#velo[e] > 0) {
 				notes.set(realNote, {
 					v: upThis.#velo[e], // Short for velocity
