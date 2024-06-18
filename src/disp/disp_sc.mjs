@@ -39,7 +39,7 @@ let ScDisplay = class extends RootDisplay {
 	#lingerOld = new Uint8Array(allocated.ch);
 	#peak = new Uint16Array(allocated.ch);
 	#keep = new Uint8Array(allocated.ch);
-	#rtOn = new Float64Array(allocated.ch);
+	#noteOn = new Uint8Array(allocated.ch);
 	#ch = 0;
 	#lastBg = 0;
 	#countBg = 0;
@@ -87,7 +87,7 @@ let ScDisplay = class extends RootDisplay {
 		});
 		upThis.addEventListener("note", ({data}) => {
 			if (data.state == 3) {
-				upThis.#rtOn[data.part] = Date.now();
+				upThis.#noteOn[data.part] = 10;
 			};
 		});
 	};
@@ -353,13 +353,14 @@ let ScDisplay = class extends RootDisplay {
 		// Strength calculation
 		sum.velo.forEach(function (e, i) {
 			upThis.#lingerOld[i] = upThis.#linger[i] >> 8;
+			upThis.#noteOn[i] --;
 			if (((e >> 4) << 4) > upThis.#linger[i] >> 8) {
 				if (scConf.peakHold == 3) {
 					upThis.#linger[i] = ((e >> 4) << 4) << 8;
 				} else {
 					upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
 				};
-				if (scConf.peakHold != 3 || timeNow - upThis.#rtOn[i] < 200) {
+				if (scConf.peakHold != 3 || upThis.#noteOn[i] > 0) {
 					upThis.#keep[i] = 56;
 				};
 			} else if (upThis.#keep[i] > 15) {
