@@ -123,6 +123,8 @@ let ScDisplay = class extends RootDisplay {
 			ctx.fillText("KEY SHIFT", 21, 233);
 			ctx.fillText("MIDI CH", 154, 233);
 			ctx.textAlign = "center";
+			ctx.font = '600 16px "Arial Web"';
+			ctx.textRendering = "auto";
 			for (let c = 1; c <= 16; c ++) {
 				ctx.fillText(`${c}`, 308 + cmpHeightX * c, 300);
 			};

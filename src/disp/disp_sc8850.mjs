@@ -120,6 +120,7 @@ let Sc8850Display = class extends RootDisplay {
 		let upThis = this;
 		let timeNow = Date.now();
 		let fullRefresh = false;
+		let scConf = upThis.device.modelEx.sc;
 		upThis.#nmdb.fill(0);
 		// Prepare the canvas
 		if (timeNow - upThis.#lastBg >= 3600000) {
@@ -333,12 +334,31 @@ let Sc8850Display = class extends RootDisplay {
 				upThis.#linger[i] = e;
 				upThis.#lingerExtra[i] = 127;
 			} else {
-				if (upThis.#lingerExtra[i] >> 4) {
-					upThis.#lingerExtra[i] -= 16;
+				let shouldKeep = upThis.#lingerExtra[i] >> 4;
+				if (shouldKeep) {
+					upThis.#lingerExtra[i] -= 6;
 				} else {
-					let val = upThis.#linger[i] - 4 * renderRange;
-					if (val < 0) {
-						val = 0;
+					let val;
+					switch (scConf.peakHold) {
+						case 3: {
+							val = upThis.#linger[i] + 2 * renderRange;
+							if (val > 255) {
+								val = 0;
+							};
+							break;
+						};
+						case 2: {
+							val = 0;
+							break;
+						};
+						case 1:
+						case 0: {
+							val = upThis.#linger[i] - 4 * renderRange;
+							if (val < 0) {
+								val = 0;
+							};
+							break;
+						};
 					};
 					upThis.#linger[i] = val;
 				};
@@ -364,10 +384,41 @@ let Sc8850Display = class extends RootDisplay {
 				for (let i1 = 0; i1 < 16; i1 ++) {
 					let ch = chStart + i1;
 					let strength = Math.floor(sum.strength[ch] / strengthDivider) + 1;
-					let linger = Math.floor(upThis.#linger[ch] / strengthDivider) + 1;
-					fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - strength - i0, 5, strength);
-					fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - linger - i0, 5, 1);
+					if (scConf.showBar) {
+						if (scConf.invBar) {
+							fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 13 + i0 * strengthHeight + i0, 5, strength);
+						} else {
+							fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - strength - i0, 5, strength);
+						};
+					} else {
+						if (scConf.invBar) {
+							fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 12 + i0 * strengthHeight + strength + i0, 5, 1);
+							if (strength) {
+								fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 13 + i0, 5, 1);
+							};
+						} else {
+							fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - strength - i0, 5, 1);
+							if (strength) {
+								fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 47 - i0, 5, 1);
+							};
+						};
+					};
+					if (scConf.peakHold) {
+						let linger = Math.floor(upThis.#linger[ch] / strengthDivider) + 1;
+						if (scConf.invBar) {
+							if (linger) {
+								fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 12 + i0 * strengthHeight + linger + i0, 5, 1);
+							};
+						} else {
+							if (linger) {
+								fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 48 - i0 * strengthHeight - linger - i0, 5, 1);
+							};
+						};
+					};
 				};
+			};
+			if (scConf.invDisp) {
+				flipBitsInBuffer(upThis.#nmdb, totalWidth, 48, 12, 97, 44);
 			};
 		};
 		// EFX and bank?
