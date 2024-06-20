@@ -372,7 +372,7 @@ let Sc8850Display = class extends RootDisplay {
 		};
 		// EFX and bank?
 		if (upThis.device.getEffectSink()[upThis.#ch]) {
-			let cx = 153, cy = 12;
+			let cx = 153, cy = 19;
 			upThis.scSys.getBm("efxOn")?.render((e, x, y) => {
 				if (e) {
 					upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
@@ -385,7 +385,7 @@ let Sc8850Display = class extends RootDisplay {
 				let cc32 = sum.chContr[chOff + ccToPos[32]];
 				if (cc32 > 0 && cc32 < 5) {
 					let cx = 153;
-					let cy = 43 - cc32 * 5;
+					let cy = 48 - cc32 * 5;
 					upThis.scSys.getBm("bankSel")?.render((e, x, y) => {
 						if (e) {
 							upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
