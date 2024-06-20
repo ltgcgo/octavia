@@ -23,14 +23,14 @@ let demoPerfs = {};
 let currentPerformance;
 let useMidiBus = false;
 
-self.genNewSwitch = function (ch = 0) {
+let genNewSwitch = function (ch = 0) {
 	return {
 		type: 15,
 		track: 0,
 		data: [67, 16, 73, 11, 0, 0, ch]
 	};
 };
-self.genDispType = function (type = 0, peakHold) {
+let genDispType = function (type = 0, peakHold) {
 	let data = [65, 16, 69, 18, 16, 8, 0, type & 7];
 	if (peakHold?.constructor) {
 		data.push(peakHold);
