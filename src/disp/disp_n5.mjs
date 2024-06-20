@@ -386,7 +386,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			ctx.fillStyle = this.#backlight.replace("64", "");
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			ctx.textAlign = "center";
-			ctx.font = '11px "Arial Web"';
+			ctx.font = '11px "Jost"';
 			ctx.fillStyle = "#000e";
 			ctx.fillText("MIDI. CH", 58, 10);
 			ctx.fillText("VOL", 153.5 + (+trueMode * 12), 10);

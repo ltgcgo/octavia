@@ -105,14 +105,15 @@ let ScDisplay = class extends RootDisplay {
 		let scConf = upThis.device.modelEx.sc;
 		upThis.#nmdb.fill(0);
 		// Fill with orange
-		if (upThis.#countBg < 4 && timeNow - upThis.#lastBg >= 4000) {
+		if (upThis.#countBg < 10 && timeNow - upThis.#lastBg >= 1000) {
 			ctx.fillStyle = bgOrange.slice(0, 7);
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			upThis.#lastBg = timeNow;
 			// Show text
 			ctx.fillStyle = "#000";
 			ctx.textAlign = "left";
-			ctx.font = '16px "Arial Web"';
+			ctx.font = '600 16px "Nunito Sans"';
+			ctx.textRendering = "geometricPrecision";
 			ctx.fillText("PART", 21, 20);
 			ctx.fillText("INSTRUMENT", 154, 20);
 			ctx.fillText("LEVEL", 21, 91);

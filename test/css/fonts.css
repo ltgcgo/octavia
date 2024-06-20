@@ -24,3 +24,18 @@
 	font-weight: 700;
 	src: url("../font/PTSansNarrow_b.woff2") format("woff2");
 }
+@font-face {
+	font-family: "Public Sans";
+	font-display: swap;
+	src: url("../font/PublicSans.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Nunito Sans";
+	font-display: swap;
+	src: local("Numito Sans"), url("../font/NunitoSans.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Jost";
+	font-display: swap;
+	src: local("Jost"), url("../font/Jost.woff2") format("woff2");
+}
