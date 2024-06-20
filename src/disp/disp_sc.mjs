@@ -311,10 +311,12 @@ let ScDisplay = class extends RootDisplay {
 		let cPit = upThis.device.getPitchShift(upThis.#ch);
 		if (cPit < 0) {
 			paramText += "-";
+		} else if (cPit == 0) {
+			paramText += "±";
 		} else {
 			paramText += "+";
 		};
-		paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, "0");
+		paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, " ");
 		let cPan = sum.chContr[chOff + ccToPos[10]];
 		if (cPan == 64) {
 			paramText += "C 0";
