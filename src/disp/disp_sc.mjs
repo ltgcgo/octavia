@@ -356,7 +356,9 @@ let ScDisplay = class extends RootDisplay {
 		// Strength calculation
 		sum.velo.forEach(function (e, i) {
 			upThis.#lingerOld[i] = upThis.#linger[i] >> 8;
-			upThis.#noteOn[i] --;
+			if (upThis.#noteOn[i]) {
+				upThis.#noteOn[i] --;
+			};
 			if (((e >> 4) << 4) > upThis.#linger[i] >> 8) {
 				if (scConf.peakHold == 3) {
 					upThis.#linger[i] = ((e >> 4) << 4) << 8;
