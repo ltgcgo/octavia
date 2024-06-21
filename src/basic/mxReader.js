@@ -51,6 +51,8 @@ let MxFont40 = class {
 						dp --;
 					};
 				});
+				bm.width = 5;
+				bm.height = 8;
 				upThis.#fonts[codePoint] = bm;
 				loadCount ++;
 			};
@@ -82,6 +84,12 @@ let MxFont40 = class {
 			arr.push(upThis.#fonts[e.charCodeAt(0)] || upThis.#fonts[32] || blankFont);
 		});
 		return arr;
+	};
+	keys() {
+		return Object.keys(this.#fonts);
+	};
+	data(key) {
+		return this.#fonts[key];
 	};
 };
 let MxFont176 = class {
@@ -110,6 +118,8 @@ let MxFont176 = class {
 						dp --;
 					};
 				});
+				bm.width = 11;
+				bm.height = 16;
 				upThis.#fonts[codePoint] = bm;
 				loadCount ++;
 			};
@@ -142,13 +152,18 @@ let MxFont176 = class {
 		});
 		return arr;
 	};
+	keys() {
+		return Object.keys(this.#fonts);
+	};
+	data(key) {
+		return this.#fonts[key];
+	};
 };
 let MxBm256 = class {
 	#bm = {};
-	async loadFile(fileSrc) {
+	async load(text) {
 		let upThis = this;
-		console.debug(`Requested fixed 256 bitmap file from "${fileSrc}".`);
-		(await (await fetch(fileSrc)).text()).split("\n").forEach(function (e, i) {
+		text.split("\n").forEach(function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
 				if (arr[1][0] != "@") {
@@ -163,6 +178,8 @@ let MxBm256 = class {
 							dp --;
 						};
 					});
+					bm.width = 16;
+					bm.height = 16;
 					upThis.#bm[arr[0]] = bm;
 				} else {
 					upThis.#bm[arr[0]] = upThis.#bm[arr[1].slice(1)];
@@ -170,19 +187,33 @@ let MxBm256 = class {
 			};
 		});
 	};
-	constructor(fileSrc) {
-		this.loadFile(fileSrc);
+	async loadFile(fileSrc) {
+		let upThis = this;
+		console.debug(`Requested fixed 256 bitmap file from "${fileSrc}".`);
+		await upThis.load(await (await fetch(fileSrc)).text());
+	};
+	constructor(...fileSrc) {
+		(async () => {
+			for (let i = 0; i < fileSrc.length; i ++) {
+				await this.loadFile(fileSrc[i]);
+			};
+		})();
 	};
 	getBm(rscNme) {
 		return this.#bm[rscNme]?.slice();
 	};
+	keys() {
+		return Object.keys(this.#bm);
+	};
+	data(key) {
+		return this.#bm[key];
+	};
 };
 let MxBmDef = class {
 	#bm = {};
-	async loadFile(fileSrc) {
+	async load(text) {
 		let upThis = this;
-		console.debug(`Requested pre-defined bitmap file from "${fileSrc}".`);
-		(await (await fetch(fileSrc)).text()).split("\n").forEach(function (e, i) {
+		text.split("\n").forEach(function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
 				if (arr[1][0] != "@") {
@@ -210,13 +241,28 @@ let MxBmDef = class {
 				};
 			};
 		});
+	};
+	async loadFile(fileSrc) {
+		let upThis = this;
+		console.debug(`Requested pre-defined bitmap file from "${fileSrc}".`);
+		await upThis.load(await (await fetch(fileSrc)).text());
 		self.mxDef = upThis;
 	};
-	constructor(fileSrc) {
-		this.loadFile(fileSrc);
+	constructor(...fileSrc) {
+		(async () => {
+			for (let i = 0; i < fileSrc.length; i ++) {
+				await this.loadFile(fileSrc[i]);
+			};
+		})();
 	};
 	getBm(rscNme) {
 		return this.#bm[rscNme];
+	};
+	keys() {
+		return Object.keys(this.#bm);
+	};
+	data(key) {
+		return this.#bm[key];
 	};
 };
 

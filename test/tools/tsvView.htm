@@ -6,28 +6,38 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<link rel="stylesheet" href="../css/water.min.css" />
 	<link rel="stylesheet" href="../css/fonts.css" />
-	<style>input[type=number]{display:inline-block;width:5em;}canvas{outline:0.5px solid #fff5;transform:scale(100%);transform-origin:top left;-webkit-image-rendering:crisp-edges;-moz-image-rendering:optimizeSpeed;image-rendering:pixelated;}select{display:unset !important}</style>
+	<style>input[type=number]{display:inline-block;width:5em;}canvas{outline:4px solid #fff5;transform:scale(100%);transform-origin:top left;-webkit-image-rendering:crisp-edges;-moz-image-rendering:optimizeSpeed;image-rendering:pixelated;background:url('../img/cheque.webp');background-position:top left}select{display:unset !important}</style>
 </head>
 <body>
 	<p>
 		<b id="openImage">Open TSV</b>.
-		<b id="convertImage">Show me the bitmaps!</b>
+		<b id="renderImage">Show me the bitmap now!</b>.
 	</p>
 	<p>
-		<b>Canvas parameters:</b> <input type="number" id="cutWidth" min="1" max="128" value="5"></input> (width) <input type="number" id="cutHeight" min="1" max="128" value="7"></input>(height)<br/>
-		<b>Padding parameters:</b> <input type="number" id="cutY" min="1" value="1"></input> (columns) <input type="number" id="cutX" min="1" value="1"></input>(rows)<br/>
-		<b>Loader type:</b> <select name="deer-chips" id="loaderType">
+		<b>Canvas parameters:</b> <input type="number" id="cutW" min="1" max="128" value="5"></input> (width) <input type="number" id="cutH" min="1" max="128" value="7"></input>(height)<br/>
+		<b>Padding parameters:</b> <input type="number" id="segY" min="1" value="1"></input> (columns) <input type="number" id="segX" min="1" value="1"></input>(rows)<br/>
+		<b>Loader type:</b> <select name="deer-chips" id="loaderType" as="number">
 			<option value="0">Variable</option>
 			<option value="1">Display (2:1, 256)</option>
 			<option value="2">Font (5x8)</option>
 			<option value="3">Font (11x16)</option>
 		</select>
-		<b>Pixel size:</b> <select name="deer-crisps" id="pixelSize">
+		<b>Pixel size:</b> <select name="deer-crisps" id="pixelSize" as="number">
 			<option value="1">1px</option>
 			<option value="2">2px</option>
 			<option value="3">3px</option>
 			<option value="4">4px</option>
 		</select>
-		<b>Max source pixel width:</b> <input type="number" id="cutWidth" min="256" max="16384" value="1024"></input><br/>
+		<b>Max source pixel width:</b> <input type="number" id="maxSW" min="256" max="8192" value="1024"></input><br/>
+		<b>Render type:</b> <select name="snek-chips" id="renderType" as="number">
+			<option value="0">Single</option>
+			<option value="1">Sprite</option>
+		</select>
+		<b>Resource ID:</b> <select name="snek-crisps" id="chosenId">
+		</select><br/>
 	</p>
+	<p>
+		<canvas id="deerChips" width="40" height="40" />
+	</p>
+	<script src ="../js/tsvView.js"></script>
 </body>
