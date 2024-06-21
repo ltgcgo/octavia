@@ -65,6 +65,7 @@ let renderImage = function () {
 				let data = resourceViewer.data(rsrcID.data || resourceViewer.keys()[0]);
 				canvas.width = data.width * pxSize.data;
 				canvas.height = data.height * pxSize.data;
+				console.debug(data);
 				if (loadType.data == 1) {
 					canvas.width = canvas.width << 1;
 				};
@@ -105,13 +106,14 @@ let loadResource = async () => {
 			};
 			rsrcID.appendChild(newChoice);
 		});
-		renderImage();
+		//renderImage();
 	};
 };
 $e("#openImage").addEventListener("mouseup", async () => {
 	resourceBlob = await (await fileOpen(propsTsv)).text();
 	await loadResource();
 });
+loadType.addEventListener("change", loadResource);
 
 rType.addEventListener("change", renderImage);
 rsrcID.addEventListener("change", renderImage);
