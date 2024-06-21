@@ -65,6 +65,9 @@ let renderImage = function () {
 				let data = resourceViewer.data(rsrcID.data || resourceViewer.keys()[0]);
 				canvas.width = data.width * pxSize.data;
 				canvas.height = data.height * pxSize.data;
+				if (loadType.data == 1) {
+					canvas.width = canvas.width << 1;
+				};
 				if (data) {
 					renderSect(data, 0, 0, data.width, data.height, pxSize.data, loadType.data == 1);
 				};
