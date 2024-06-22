@@ -65,7 +65,6 @@ let renderImage = function () {
 				let data = resourceViewer.data(rsrcID.data || resourceViewer.keys()[0]);
 				canvas.width = data.width * pxSize.data;
 				canvas.height = data.height * pxSize.data;
-				console.debug(data);
 				if (loadType.data == 1) {
 					canvas.width = canvas.width << 1;
 				};
@@ -106,7 +105,7 @@ let loadResource = async () => {
 			};
 			rsrcID.appendChild(newChoice);
 		});
-		//renderImage();
+		renderImage();
 	};
 };
 $e("#openImage").addEventListener("mouseup", async () => {
@@ -124,6 +123,25 @@ document.addEventListener("keydown", (ev) => {
 		case "Enter": {
 			renderImage();
 			break;
+		};
+		case "ArrowDown":
+		case "ArrowRight": {
+			if (rsrcID.selectedIndex + 1 < rsrcID.options.length) {
+				rsrcID.selectedIndex ++;
+				rsrcID.dispatchEvent(new Event("change"));
+			};
+			break;
+		};
+		case "ArrowUp":
+		case "ArrowLeft": {
+			if (rsrcID.selectedIndex > 0) {
+				rsrcID.selectedIndex --;
+				rsrcID.dispatchEvent(new Event("change"));
+			};
+			break;
+		};
+		default: {
+			console.debug(`Unknown key "${ev.key}".`);
 		};
 	};
 });
