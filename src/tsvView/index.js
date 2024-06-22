@@ -14,6 +14,24 @@ const propsTsv = JSON.parse(`{"extensions":[".tsv",".TSV"],"startIn":"pictures",
 
 let cpReflects = Array.from(` !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}`);
 cpReflects.push("~→", "←");
+let cpOverride = {};
+cpOverride[0xa4] = "€¤";
+cpOverride[0x378] = "¤";
+cpOverride[0xa6] = "Š¦";
+cpOverride[0x379] = "¦";
+cpOverride[0xa8] = "š¨";
+cpOverride[0x380] = "¨";
+cpOverride[0xad] = "-";
+cpOverride[0xb4] = "Ž´";
+cpOverride[0x381] = "´";
+cpOverride[0xb8] = "ž¸";
+cpOverride[0x382] = "¸";
+cpOverride[0xbc] = "Œ¼";
+cpOverride[0x383] = "¼";
+cpOverride[0xbd] = "œ½";
+cpOverride[0x38b] = "½";
+cpOverride[0xbe] = "Ÿ¾";
+cpOverride[0x38d] = "¾";
 
 let selectValueConverter = function (ev) {
 	switch (this.as) {
@@ -94,8 +112,12 @@ let loadResource = async () => {
 				case 3: {
 					let num = parseInt(e);
 					newChoice.appendChild(document.createTextNode(`${num.toString(16).padStart(4, "0")}(${e})`));
-					if (num > 32 && num < 128) {
+					if (num < 33) {} else if (num < 128) {
 						newChoice.appendChild(document.createTextNode(`: ${cpReflects[num - 32]}`));
+					} else if (num < 161) {} else if (num < 0x5d0) {
+						newChoice.appendChild(document.createTextNode(`: ${cpOverride[num] || String.fromCodePoint(num)}`));
+					} else if (num < 0x5ef) {} else {
+						newChoice.appendChild(document.createTextNode(`: ${cpOverride[num] || String.fromCodePoint(num)}`));
 					};
 					break;
 				};
