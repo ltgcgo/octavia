@@ -289,7 +289,67 @@ let RootDisplay = class extends CustomEventSource {
 		// Get part bitmap
 		let upThis = this;
 		voiceObject = voiceObject || upThis.getChVoice(ch);
-		return upThis.getVoxBm(voiceObject);
+		let data = upThis.getVoxBm(voiceObject);
+		if (!data) {
+			if (!upThis.sysBm) {
+				return;
+			};
+			switch (voiceObject.mode) {
+				case "xg": {
+					switch (voiceObject.sid[0]) {
+						case 126: {
+							if (voiceObject.sid[1] >> 1 == 56) {
+								data = upThis.sysBm.getBm("cat_smpl");
+							};
+							break;
+						};
+						case 16: {
+							data = upThis.sysBm.getBm("cat_smpl");
+							break;
+						};
+						case 64:
+						case 67: {
+							data = upThis.sysBm.getBm("cat_sfx");
+							break;
+						};
+						case 32:
+						case 33:
+						case 34:
+						case 35:
+						case 36:
+						case 48:
+						case 82: {
+							data = upThis.sysBm.getBm("cat_xg");
+							break;
+						};
+					};
+					break;
+				};
+				default: {
+					switch (voiceObject.sid[0]) {
+						case 63:
+						case 32:
+						case 33:
+						case 34:
+						case 35:
+						case 36:
+						case 48:
+						case 82: {
+							data = upThis.sysBm.getBm("cat_mex");
+							break;
+						};
+					};
+				};
+			};
+		};
+		if (!data) {
+			if (upThis.device.getChType()[ch]) {
+				data = upThis.sysBm.getBm("cat_drm");
+			} else {
+				data = upThis.sysBm.getBm("no_vox");
+			};
+		};
+		return data;
 	};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;

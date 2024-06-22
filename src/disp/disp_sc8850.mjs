@@ -73,7 +73,7 @@ let Sc8850Display = class extends RootDisplay {
 	#promptEx = 0;
 	font55 = new MxFont40("./data/bitmaps/sc/libre55.tsv");
 	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv");
-	scSys = new MxBmDef("./data/bitmaps/sc/system.tsv");
+	sysBm = new MxBmDef("./data/bitmaps/sc/system.tsv");
 	font7a = new MxFont176("./data/bitmaps/sc/libre7a.tsv");
 	voxBm = new MxBmDef("./data/bitmaps/sc/voices.tsv");
 	constructor(conf) {
@@ -232,7 +232,7 @@ let Sc8850Display = class extends RootDisplay {
 							};
 						});
 					});
-					upThis.scSys.getBm(portWork == portNow ? "tabSel" : "tabIdle")?.render((e, x, y) => {
+					upThis.sysBm.getBm(portWork == portNow ? "tabSel" : "tabIdle")?.render((e, x, y) => {
 						if (e) {
 							let pI = (40 * i) + x + shiftX + (y + 57) * totalWidth;
 							upThis.#nmdb[pI] = upThis.#nmdb[pI] ? 0 : 255;
@@ -257,7 +257,7 @@ let Sc8850Display = class extends RootDisplay {
 							};
 						});
 					});
-					upThis.scSys.getBm(rendMode == i ? "tabSel" : "tabIdle")?.render((e, x, y) => {
+					upThis.sysBm.getBm(rendMode == i ? "tabSel" : "tabIdle")?.render((e, x, y) => {
 						if (e) {
 							let pI = (40 * i) + x + (y + 57) * totalWidth;
 							upThis.#nmdb[pI] = upThis.#nmdb[pI] ? 0 : 255;
@@ -424,7 +424,7 @@ let Sc8850Display = class extends RootDisplay {
 		// EFX and bank?
 		if (upThis.device.getEffectSink()[upThis.#ch]) {
 			let cx = 153, cy = 19;
-			upThis.scSys.getBm("efxOn")?.render((e, x, y) => {
+			upThis.sysBm.getBm("efxOn")?.render((e, x, y) => {
 				if (e) {
 					upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
 				};
@@ -437,7 +437,7 @@ let Sc8850Display = class extends RootDisplay {
 				if (cc32 > 0 && cc32 < 5) {
 					let cx = 153;
 					let cy = 48 - cc32 * 5;
-					upThis.scSys.getBm("bankSel")?.render((e, x, y) => {
+					upThis.sysBm.getBm("bankSel")?.render((e, x, y) => {
 						if (e) {
 							upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
 						};

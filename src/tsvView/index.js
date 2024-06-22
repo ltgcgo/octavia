@@ -119,6 +119,7 @@ rsrcID.addEventListener("change", renderImage);
 pxSize.addEventListener("change", renderImage);
 $e("#renderImage").addEventListener("mouseup", renderImage);
 document.addEventListener("keydown", (ev) => {
+	let intercepted = true;
 	switch (ev.key) {
 		case "Enter": {
 			renderImage();
@@ -141,7 +142,11 @@ document.addEventListener("keydown", (ev) => {
 			break;
 		};
 		default: {
+			intercepted = false;
 			console.debug(`Unknown key "${ev.key}".`);
 		};
+	};
+	if (intercepted) {
+		ev.preventDefault();
 	};
 });
