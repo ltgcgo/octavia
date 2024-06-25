@@ -105,11 +105,12 @@ let Sc8850Display = class extends RootDisplay {
 			upThis.#scheduledEx = true;
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
 		});
-		upThis.bootBm.load(`RsrcName\tBitmap\nboot_mr\t009e003efffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ffffffffffffffffe3ffffffffffffffffffe0007fffffffffffffff8ffffffffffffffffffe0000fffffe3ffffffffffffffffffffffffffff01e01fffff8ffffffffffffffffffffffffffff03ff07f83f007c0787e187f01ffffffffffffff83ffe0f003803800e1f8e3e003fffffffffffffe1fff83838787c18187c70f0607fffffffffffff07ffe0c3f3e3e1f861e3c787e1fffffffffffffc3fff863fff0f1fe1871e1c7f87ffffffffffffe0fffc10fffc787f8e18f8e1fe3fffffffffffff83fff0c7fff1e3fe3847e38ff8fffffffffffffe0fff831fff878ff0e03f0e3fc3fffffffffffffc1ff81c7f3e3e3f8781fc78fe1ffffffffffffff00f01f06070f8301e0fe1e0c07fffffffffffffe0000fe003c7e000f83f8f8003ffffffffffffffc000ffc07e1fe063e1fc3f818fffffffffffffffe01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff`);
+		upThis.bootBm.load(`RsrcName\tBitmap\nboot_mr\t009e003efffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ffffffffffffffffe3ffffffffffffffffffe0007fffffffffffffff8ffffffffffffffffffe0000fffffe3ffffffffffffffffffffffffffff01e01fffff8ffffffffffffffffffffffffffff03ff07f83f007c0787e187f01ffffffffffffff83ffe0f003803800e1f8e3e003fffffffffffffe1fff83838787c18187c70f0607fffffffffffff07ffe0c3f3e3e1f861e3c787e1fffffffffffffc3fff863fff0f1fe1871e1c7f87ffffffffffffe0fffc10fffc787f8e18f8e1fe3fffffffffffff83fff0c7fff1e3fe3847e38ff8fffffffffffffe0fff831fff878ff0e03f0e3fc3fffffffffffffc1ff81c7f3e3e3f8781fc78fe1ffffffffffffff00f01f06070f8301e0fe1e0c07fffffffffffffe0000fe003c7e000f83f8f8003ffffffffffffffc000ffc07e1fe063e1fc3f818fffffffffffffffe01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\nbs_0\t000700073880000000000\nbs_1\t000700073888081020000\nbs_2\t0007000738080810288e0\nbs_3\t00070007388a0c18288e0\nbs_4\t00070007000a0c18288e0\nbs_5\t0007000700020408088e0\nbs_6\t000700070002040808000\nbs_7\t000700070000000000000`);
 		(async () => {
-			await Promise.all([upThis.font55.loaded.wait(), upThis.font56.loaded.wait(), upThis.font7a.loaded.wait(), upThis.sysBm.loaded.wait()]);
-			console.debug(`Required assets are all loaded.`);
+			await Promise.all([upThis.font55.loaded.wait(), upThis.font56.loaded.wait(), upThis.font7a.loaded.wait()]);
 			upThis.#booted = 1;
+			await Promise.all([upThis.sysBm.loaded.wait(), upThis.voxBm.loaded.wait()]);
+			upThis.#booted = 2;
 		})();
 	};
 	setCh(ch) {
@@ -139,7 +140,7 @@ let Sc8850Display = class extends RootDisplay {
 			fullRefresh = true;
 		};
 		// Booted?
-		if (upThis.#booted == 1 && upThis.#bootFrame > 49) {
+		if (upThis.#booted > 0 && upThis.#bootFrame > 49) {
 			// Test SysEx status
 			if (upThis.#scheduledEx) {
 				upThis.#scheduledEx = false;
@@ -464,6 +465,19 @@ let Sc8850Display = class extends RootDisplay {
 					upThis.#nmdb[x + 1 + (y + 1) * 160] = e ? 255 : 0;
 				});
 				upThis.#bootFrame ++;
+			};
+		};
+		if (upThis.#bootFrame > 49 && upThis.#booted < 2) {
+			let bootImage = upThis.bootBm?.getBm(`bs_${((upThis.#bootFrame - 50) >> 3) & 7}`);
+			if (bootImage) {
+				bootImage.render((e, x, y) => {
+					if (e) {
+						upThis.#nmdb[x + 151 + (y + 11) * 160] = upThis.#nmdb[x + 152 + (y + 11) * 160] ? 0 : 255;
+					};
+				});
+				if (upThis.#booted) {
+					upThis.#bootFrame ++;
+				};
 			};
 		};
 		// Guide the drawn matrix
