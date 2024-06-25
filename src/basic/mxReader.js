@@ -1,5 +1,7 @@
 "use strict";
 
+import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.mjs";
+
 let blankFont = new Uint8Array(40);
 
 let shiftIndex = 0, shiftLoading, shiftLoader = setInterval(() => {
@@ -27,6 +29,7 @@ Uint8Array.prototype.render = function (receiveFunc) {
 
 let MxFont40 = class {
 	#fonts = [];
+	loaded = new MiniSignal();
 	async load(text, allowOverwrite = false, source = "(internal)") {
 		let upThis = this;
 		let loadCount = 0, allCount = 0;
@@ -57,6 +60,9 @@ let MxFont40 = class {
 				loadCount ++;
 			};
 		});
+		if (!upThis.loaded.finished) {
+			upThis.loaded.finish();
+		};
 		console.debug(`Font "${source || "(internal)"}": ${allCount} total, ${loadCount} loaded.`);
 	};
 	async loadFile(fileSrc, allowOverwrite = false) {
@@ -94,6 +100,7 @@ let MxFont40 = class {
 };
 let MxFont176 = class {
 	#fonts = [];
+	loaded = new MiniSignal();
 	async load(text, allowOverwrite = false, source = "(internal)") {
 		let upThis = this;
 		let loadCount = 0, allCount = 0;
@@ -124,6 +131,9 @@ let MxFont176 = class {
 				loadCount ++;
 			};
 		});
+		if (!upThis.loaded.finished) {
+			upThis.loaded.finish();
+		};
 		console.debug(`Font "${source || "(internal)"}": ${allCount} total, ${loadCount} loaded.`);
 	};
 	async loadFile(fileSrc, allowOverwrite = false) {
@@ -161,6 +171,7 @@ let MxFont176 = class {
 };
 let MxBm256 = class {
 	#bm = {};
+	loaded = new MiniSignal();
 	async load(text) {
 		let upThis = this;
 		text.split("\n").forEach(function (e, i) {
@@ -186,6 +197,9 @@ let MxBm256 = class {
 				};
 			};
 		});
+		if (!upThis.loaded.finished) {
+			upThis.loaded.finish();
+		};
 	};
 	async loadFile(fileSrc) {
 		let upThis = this;
@@ -211,6 +225,7 @@ let MxBm256 = class {
 };
 let MxBmDef = class {
 	#bm = {};
+	loaded = new MiniSignal();
 	async load(text) {
 		let upThis = this;
 		text.split("\n").forEach(function (e, i) {
@@ -241,6 +256,9 @@ let MxBmDef = class {
 				};
 			};
 		});
+		if (!upThis.loaded.finished) {
+			upThis.loaded.finish();
+		};
 	};
 	async loadFile(fileSrc) {
 		let upThis = this;
