@@ -27,6 +27,9 @@ let Ns5rDisplay = class extends RootDisplay {
 	#refreshed = true;
 	#lastTrue = false;
 	useBlur = false; // Pixel blur will only activate if this is enabled
+	#bootFrame = 0;
+	#refreshFrame = 0;
+	bootBm = new MxBmDef();
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	element = new MxBmDef("./data/bitmaps/korg/element.tsv");
@@ -68,6 +71,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
 		});
+		upThis.bootBm.load("RsrcName\tBitmap\nboot_0\t0052001aff0ff07ff83fff81fc0fffc3fc7fff8ffff07f83fff0ff1fffe3fffc1fe0fffc3fcffffcffff87f83fff0ff3ffff3fdfe1ff0fffc3fcffffcfe3f87fc3fff0ff3fc7f3f8fe1ff0fffc3fcfe0fcfe3f87fe3fff0ff3f83f3f8fe1ff8fffc3fcfe0fcff7f07fe3ffffff3f83f3fffc1fbcffffffcfe0fcfffe07ef3ffffff3f83f3ffe01fbcffffffcfe0fcfffe07e7bffffff3f83f3fffe1f9effffffcfe0fcfe7f87e7bfff0ff3f83f3f9fe1f8ffffc3fcfe0fcfe7f87e3ffff0ff3f83f3f9fe1f8ffffc3fcff1fcfe7fc7e1ffff0ff3ffff3f8ff1f87fffc3fcffffcfe3fc7e1ffff0ff3ffff3f8ff1f83fffc3fc7fff8fe3fe7e0ffff0ff1fffe3f8ff9f83fffc3fc1ffe0fe1fe7e07f\nboot_1\t005f001a07c00f803fe001fff81fffe01fc01f01fff003fff07ffff03f803e07fff007ffe0fffff07f807c1ffff00fff81ffffe0ff01f83f8ff03fff03f00fe1fe03f0fc07e07c0007c00fc7fe07c1f807c0f8001f801f8ffc0f83f00f83f0003f003f1ff81f07f00007ff007e007e3ef87e0ff8000fff80f801fc7df0fc0ffc001fff81f01ff1fbf1f00ffe007fff07ffffe3f3e3e00fff00fc7f0fffff87c7c7c00fff01f07e1ffffe0f8fdf8007ff0000fc3ffff01f0fbe0003fe0000f87c3f807e1ffc0001fe0003f1f81f00fc1ff80000fc0007e3f03f01f03ff0fc01f8f80fc7e03f03e07fe1f803f1f81f0f807e07c07f83f00fc3f07e3f007e1f80ff03f83f83f3f87e00fc3f00fe07fffe07ffe0fc01f87c01fc07fff807ffc1f801f8f803f807ffe007fe03e003f1f003e003ff0007f00fc003f0");
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -76,6 +80,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		return this.#ch;
 	};
 	#renderParamBox(startX, value) {
+		let upThis = this;
 		// Draw the lever rest
 		for (let p = 0; p < 180; p ++) {
 			let pX = p % 12, pY = Math.floor(p / 12);
@@ -84,13 +89,13 @@ let Ns5rDisplay = class extends RootDisplay {
 				(pY == 14 && pX > 0) ||
 				(pY == 13)
 			) {
-				this.#nmdb[pY * 144 + pX + startX] = this.#pixelLit;
+				upThis.#nmdb[pY * 144 + pX + startX] = upThis.#pixelLit;
 			} else if (pY > 0 && pY < 13) {
 				if (
 					pX == 0 || pX > 9 ||
 					(pX == 5 && pY > 1 && pY < 12)
 				) {
-					this.#nmdb[pY * 144 + pX + startX] = this.#pixelLit;
+					upThis.#nmdb[pY * 144 + pX + startX] = upThis.#pixelLit;
 				};
 			};
 		};
@@ -100,13 +105,14 @@ let Ns5rDisplay = class extends RootDisplay {
 			let pX = c % 7, pY = Math.floor(c / 7),
 			pcY = pY + (9 - convertedValue);
 			if (pY != 1 || pX == 0 || pX == 6) {
-				this.#nmdb[pcY * 144 + pX + startX + 2] = this.#pixelLit;
+				upThis.#nmdb[pcY * 144 + pX + startX + 2] = upThis.#pixelLit;
 			} else {
-				this.#nmdb[pcY * 144 + pX + startX + 2] = this.#pixelOff;
+				upThis.#nmdb[pcY * 144 + pX + startX + 2] = upThis.#pixelOff;
 			};
 		};
 	};
 	#renderLine(srcX, srcY, diffX, diffY) {
+		let upThis = this;
 		//console.debug(diffX, diffY);
 		srcX = (srcX < 0 ? Math.ceil : Math.floor)(srcX);
 		srcY = (srcY < 0 ? Math.ceil : Math.floor)(srcY);
@@ -116,27 +122,28 @@ let Ns5rDisplay = class extends RootDisplay {
 			let theta = diffX / diffY;
 			if (diffY < 0) {
 				for (let p = 0; p >= diffY; p --) {
-					this.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = this.#pixelLit;
+					upThis.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = upThis.#pixelLit;
 				};
 			} else {
 				for (let p = 0; p <= diffY; p ++) {
-					this.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = this.#pixelLit;
+					upThis.#nmdb[Math.round(theta * p + srcX) + (srcY + p) * 144] = upThis.#pixelLit;
 				};
 			};
 		} else {
 			let theta = diffY / diffX;
 			if (diffX < 0) {
 				for (let p = 0; p >= diffX; p --) {
-					this.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = this.#pixelLit;
+					upThis.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = upThis.#pixelLit;
 				};
 			} else {
 				for (let p = 0; p <= diffX; p ++) {
-					this.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = this.#pixelLit;
+					upThis.#nmdb[Math.round(theta * p + srcY) * 144 + srcX + p] = upThis.#pixelLit;
 				};
 			};
 		};
 	};
 	#renderCompass(startX, startY, value) {
+		let upThis = this;
 		let radius = 7, circleStep = 40;
 		for (let c = 0; c < circleStep; c ++) {
 			let angle = Math.PI * c * 2 / circleStep;
@@ -144,7 +151,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			drawX = Math.sign(intX) * Math.round(Math.abs(intX));
 			let intY = radius * Math.cos(angle),
 			drawY = Math.sign(intY) * Math.round(Math.abs(intY));
-			this.#nmdb[(drawY + startY) * 144 + drawX + startX] = this.#pixelLit;
+			upThis.#nmdb[(drawY + startY) * 144 + drawX + startX] = upThis.#pixelLit;
 		};
 		if (value < 128) {
 			let normAngle = Math.floor(value / 9.85) * 22.5;
@@ -156,15 +163,21 @@ let Ns5rDisplay = class extends RootDisplay {
 				drawY = Math.round(c * deltaY);
 				this.#nmdb[(drawY + startY) * 144 + drawX + startX] = this.#pixelLit;
 			}; */
-			this.#renderLine(startX, startY, deltaX * lineStep, deltaY * lineStep);
+			upThis.#renderLine(startX, startY, deltaX * lineStep, deltaY * lineStep);
 		} else {
-			this.#nmdb[(startY) * 144 + startX] = this.#pixelLit;
+			upThis.#nmdb[(startY) * 144 + startX] = upThis.#pixelLit;
 		};
 	};
 	render(time, ctx, trueMode) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
+		if (upThis.#refreshFrame < 500) {
+			if (upThis.#refreshFrame % 50 == 0) {
+				upThis.#refreshed = true;
+			};
+			upThis.#refreshFrame ++;
+		};
 		// Channel test
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
@@ -180,47 +193,66 @@ let Ns5rDisplay = class extends RootDisplay {
 		let part = minCh >> 4;
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
-		if (this.#ch > maxCh) {
-			this.#ch = minCh + this.#ch & 15;
+		if (upThis.#ch > maxCh) {
+			upThis.#ch = minCh + upThis.#ch & 15;
 		};
-		if (this.#ch < minCh) {
-			this.#ch = maxCh - 15 + (this.#ch & 15);
+		if (upThis.#ch < minCh) {
+			upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
 		};
-		let chOff = this.#ch * ccToPos.length;
-		if (timeNow < this.#dumpExpire) {
-			this.#dumpData?.forEach((e, i) => {
-				this.#nmdb[i] = e ? this.#pixelLit : this.#pixelOff;
+		let chOff = upThis.#ch * ccToPos.length;
+		if (timeNow < upThis.#dumpExpire) {
+			upThis.#dumpData?.forEach((e, i) => {
+				upThis.#nmdb[i] = e ? upThis.#pixelLit : upThis.#pixelOff;
 			});
+		} else if (upThis.#bootFrame < 200) {
+			let frame = upThis.#bootFrame * 642 >> 16 ? 1 : 0;
+			let data = upThis.bootBm.getBm(`boot_${frame}`);
+			if (data) {
+				data.render((e, x, y) => {
+					let innerFrame = upThis.#bootFrame;
+					innerFrame -= frame * 100;
+					if (frame) {
+						if ((Math.abs(y - 13) << 2) < innerFrame) {
+							upThis.#nmdb[x + 25 + (y + 6) * 144] = e ? 255 : 0;
+						};
+					} else {
+						if (innerFrame) {} else {
+							upThis.#nmdb[x + 31 + (y + 6) * 144] = e ? 255 : 0;
+						};
+					};
+				});
+				upThis.#bootFrame ++;
+			};
 		} else {
 			// Clear out the current working display buffer.
-			this.#nmdb.forEach((e, i, a) => {a[i] = this.#pixelOff});
+			upThis.#nmdb.forEach((e, i, a) => {a[i] = upThis.#pixelOff});
 			// Screen buffer write begin.
 			// Determine the used font
-			let targetFont = trueMode ? this.trueFont : this.xgFont;
+			let targetFont = trueMode ? upThis.trueFont : upThis.xgFont;
 			// Show current channel
-			targetFont.getStr(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+			targetFont.getStr(`${"ABCDEFGH"[upThis.#ch >> 4]}${((upThis.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 1;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5);
-					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
+					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 				});
 			});
 			// Show current pitch shift
-			let cPit = this.device.getPitchShift(this.#ch);
+			let cPit = upThis.device.getPitchShift(upThis.#ch);
 			targetFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 1;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 8;
-					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
+					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 				});
 			});
 			// Render bank background
-			let bankFetched = upThis.getChVoice(this.#ch), bankInfo = bankFetched.sect;
+			let bankFetched = upThis.getChVoice(upThis.#ch), bankInfo = bankFetched.sect;
 			for (let bankSect = 0; bankSect < 225; bankSect ++) {
 				let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
-				this.#nmdb[pixY * 144 + pixX] = this.#pixelLit;
+				upThis.#nmdb[pixY * 144 + pixX] = upThis.#pixelLit;
 			};
 			targetFont.getStr(bankInfo).forEach((e0, i0) => {
 				let secX = i0 * 6 + 1;
@@ -228,18 +260,18 @@ let Ns5rDisplay = class extends RootDisplay {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 16;
 					if (e1) {
-						this.#nmdb[charY * 144 + secX + charX] = this.#pixelOff;
+						upThis.#nmdb[charY * 144 + secX + charX] = upThis.#pixelOff;
 					};
 				});
 			});
 			// Render program info
 			let bankName = (upThis.getMapped(bankFetched.name)).slice(0, 12).padEnd(10, " ");
-			targetFont.getStr(`:${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")}`).forEach((e0, i0) => {
+			targetFont.getStr(`:${(sum.chProgr[upThis.#ch] + 1).toString().padStart(3, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 25;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 16;
-					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
+					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 				});
 			});
 			targetFont.getStr(bankName).forEach((e0, i0) => {
@@ -247,16 +279,16 @@ let Ns5rDisplay = class extends RootDisplay {
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 16;
-					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
+					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 				});
 			})
 			// Render current channel
-			targetFont.getStr(`${this.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
+			targetFont.getStr(`${upThis.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
 				let secX = i0 * 6;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + 32;
-					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
+					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 				});
 			});
 			// Render channel strength
@@ -274,13 +306,13 @@ let Ns5rDisplay = class extends RootDisplay {
 				};
 				for (let c = Math.floor(e / showReduction); c >= 0; c --) {
 					let pixX = (i % 32) * 4 + 12 + ((i >> 5) & 1) + 1, pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
-					this.#nmdb[pixY * 144 + pixX] = this.#pixelLit;
-					this.#nmdb[pixY * 144 + pixX + 1] = this.#pixelLit;
-					this.#nmdb[pixY * 144 + pixX + 2] = this.#pixelLit;
+					upThis.#nmdb[pixY * 144 + pixX] = upThis.#pixelLit;
+					upThis.#nmdb[pixY * 144 + pixX + 1] = upThis.#pixelLit;
+					upThis.#nmdb[pixY * 144 + pixX + 2] = upThis.#pixelLit;
 				};
 			};
 			// Render effect types
-			let efxShow = this.device.aiEfxName.slice(0, 7 + +trueMode) || "Rev/Cho";
+			let efxShow = upThis.device.aiEfxName.slice(0, 7 + +trueMode) || "Rev/Cho";
 			targetFont.getStr(trueMode ? `Fx A:001${efxShow}` : `FxA:001${efxShow}`).forEach((e0, i0) => {
 				let lineChars = trueMode ? 8 : 7;
 				let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
@@ -288,7 +320,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
 					charY = Math.floor(i1 / 5) + secY;
-					this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
+					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 				});
 			});
 			// Render letter displays
@@ -303,10 +335,10 @@ let Ns5rDisplay = class extends RootDisplay {
 						(y == 18) ||
 						(y == 19 && x > 0)
 					) {
-						this.#nmdb[y * 144 + x + xShift] = this.#pixelLit;
+						upThis.#nmdb[y * 144 + x + xShift] = upThis.#pixelLit;
 					};
 					if (y > 0 && y < 18) {
-						this.#nmdb[y * 144 + x + xShift] = +(x < 1 || x > 97) ? this.#pixelLit : this.#pixelOff;
+						upThis.#nmdb[y * 144 + x + xShift] = +(x < 1 || x > 97) ? upThis.#pixelLit : upThis.#pixelOff;
 					};
 				};
 				// Actual text
@@ -316,31 +348,31 @@ let Ns5rDisplay = class extends RootDisplay {
 					e0.forEach((e1, i1) => {
 						let charX = i1 % 5,
 						charY = Math.floor(i1 / 5) + secY;
-						this.#nmdb[charY * 144 + secX + charX] = e1 ? this.#pixelLit : this.#pixelOff;
+						upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 					});
 				});
 			} else {
 				// Render params only when it's not covered
 				let xShift = trueMode ? 2 : 0;
-				this.#renderParamBox(20 + xShift, sum.chContr[chOff + ccToPos[7]]);
-				this.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
+				upThis.#renderParamBox(20 + xShift, sum.chContr[chOff + ccToPos[7]]);
+				upThis.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
 				if (trueMode) {
 					if (sum.chContr[chOff + ccToPos[10]] < 128) {
-						this.element.getBm(`Pan_${Math.floor(sum.chContr[chOff + ccToPos[10]] / 9.85)}`)?.render((e, x, y) => {
-							this.#nmdb[y * 144 + x + 48] = e ? this.#pixelLit : this.#pixelOff;
+						upThis.element.getBm(`Pan_${Math.floor(sum.chContr[chOff + ccToPos[10]] / 9.85)}`)?.render((e, x, y) => {
+							upThis.#nmdb[y * 144 + x + 48] = e ? upThis.#pixelLit : upThis.#pixelOff;
 						});
 					} else {
-						this.element.getBm("PanRndm")?.render((e, x, y) => {
-							this.#nmdb[y * 144 + x + 48] = e ? this.#pixelLit : this.#pixelOff;
+						upThis.element.getBm("PanRndm")?.render((e, x, y) => {
+							upThis.#nmdb[y * 144 + x + 48] = e ? upThis.#pixelLit : upThis.#pixelOff;
 						});
 					};
 				} else {
-					this.#renderCompass(53, 7, sum.chContr[chOff + ccToPos[10]]);
+					upThis.#renderCompass(53, 7, sum.chContr[chOff + ccToPos[10]]);
 				};
-				this.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[91]]);
-				this.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[93]]);
+				upThis.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[91]]);
+				upThis.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[93]]);
 				if (!trueMode) {
-					this.#renderParamBox(88, sum.chContr[chOff + ccToPos[74]]);
+					upThis.#renderParamBox(88, sum.chContr[chOff + ccToPos[74]]);
 				};
 			};
 			// Render bitmap displays
@@ -355,10 +387,10 @@ let Ns5rDisplay = class extends RootDisplay {
 						(y == 19) ||
 						(y == 20 && x > 0)
 					) {
-						this.#nmdb[realY * 144 + realX] = this.#pixelLit;
+						upThis.#nmdb[realY * 144 + realX] = upThis.#pixelLit;
 					};
 					if (y > 0 && y < 19) {
-						this.#nmdb[realY * 144 + realX] = +(x < 1 || x > 34) ? this.#pixelLit : this.#pixelOff;
+						upThis.#nmdb[realY * 144 + realX] = +(x < 1 || x > 34) ? upThis.#pixelLit : upThis.#pixelOff;
 					};
 				};
 				// Actual bitmap
@@ -366,10 +398,10 @@ let Ns5rDisplay = class extends RootDisplay {
 				for (let i = 0; i < 512; i += colUnit) {
 					let x = i & 31, y = i >> 5;
 					let realX = x + 80, realY = y + 21;
-					let bit = sum.bitmap.bitmap[i >> (colUnit - 1)] ? this.#pixelLit : this.#pixelOff;
-					this.#nmdb[realY * 144 + realX] = bit;
+					let bit = sum.bitmap.bitmap[i >> (colUnit - 1)] ? upThis.#pixelLit : upThis.#pixelOff;
+					upThis.#nmdb[realY * 144 + realX] = bit;
 					if (colUnit == 2) {
-						this.#nmdb[realY * 144 + realX + 1] = bit;
+						upThis.#nmdb[realY * 144 + realX + 1] = bit;
 					};
 				};
 			};
@@ -377,16 +409,16 @@ let Ns5rDisplay = class extends RootDisplay {
 		// Screen buffer write finish.
 		// Determine if full render is required.
 		let drawPixMode = false;
-		if (this.#lastTrue != trueMode) {
-			this.#refreshed = true;
+		if (upThis.#lastTrue != trueMode) {
+			upThis.#refreshed = true;
 		};
-		if (this.#refreshed) {
+		if (upThis.#refreshed) {
 			// Full render required.
 			// Clear all pixels.
-			ctx.fillStyle = this.#backlight.replace("64", "");
+			ctx.fillStyle = upThis.#backlight.replace("64", "");
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 			ctx.textAlign = "center";
-			ctx.font = '11px "Jost"';
+			ctx.font = '12px "Jost"';
 			ctx.fillStyle = "#000e";
 			ctx.fillText("MIDI. CH", 58, 10);
 			ctx.fillText("VOL", 153.5 + (+trueMode * 12), 10);
@@ -413,36 +445,36 @@ let Ns5rDisplay = class extends RootDisplay {
 				};
 			};
 			drawPixMode = true;
-			this.#refreshed = false;
+			upThis.#refreshed = false;
 		};
 		// Transitional
-		this.#nmdb.forEach((e, i) => {
-			if (this.useBlur) {
-				let diff = e - this.#dmdb[i],
+		upThis.#nmdb.forEach((e, i) => {
+			if (upThis.useBlur) {
+				let diff = e - upThis.#dmdb[i],
 				cap = 48;
 				if (Math.abs(diff) > cap) {
-					this.#dmdb[i] += Math.sign(diff) * cap;
+					upThis.#dmdb[i] += Math.sign(diff) * cap;
 				} else if (diff != 0) {
-					this.#dmdb[i] = e;
+					upThis.#dmdb[i] = e;
 				};
 			} else {
-				if (this.#dmdb[i] != e) {
-					this.#dmdb[i] = e;
+				if (upThis.#dmdb[i] != e) {
+					upThis.#dmdb[i] = e;
 				};
 			};
 		});
 		// Commit to display accordingly.
-		this.#dmdb.forEach((e, i) => {
+		upThis.#dmdb.forEach((e, i) => {
 			let pixX = i % 144, pixY = Math.floor(i / 144);
-			let hasDifference = this.#omdb[i] != e;
+			let hasDifference = upThis.#omdb[i] != e;
 			if (!drawPixMode && hasDifference) {
-				ctx.fillStyle = this.#backlight.slice(0, 7);
+				ctx.fillStyle = upThis.#backlight.slice(0, 7);
 				ctx.fillRect(6 * pixX + 1, 12 + 6 * pixY, 6, 6);
 			};
 			if (drawPixMode || hasDifference) {
-				if (e >= this.#pixelLit) {
+				if (e >= upThis.#pixelLit) {
 					ctx.fillStyle = lcdCache.black[4];
-				} else if (e <= this.#pixelOff) {
+				} else if (e <= upThis.#pixelOff) {
 					ctx.fillStyle = lcdCache.black[3];
 				} else {
 					ctx.fillStyle = `${lcdPixel.black}${(Math.ceil(e * lcdPixel.range / 255) + lcdPixel.inactive).toString(16)}`;
@@ -454,12 +486,12 @@ let Ns5rDisplay = class extends RootDisplay {
 			};
 		});
 		// Commit to old display buffer.
-		this.#dmdb.forEach((e, i) => {
-			if (this.#omdb[i] != e) {
-				this.#omdb[i] = e;
+		upThis.#dmdb.forEach((e, i) => {
+			if (upThis.#omdb[i] != e) {
+				upThis.#omdb[i] = e;
 			};
 		});
-		this.#lastTrue = trueMode;
+		upThis.#lastTrue = trueMode;
 	};
 };
 
