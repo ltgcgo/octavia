@@ -2,7 +2,7 @@
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
 import {RootDisplay, ccToPos} from "../basic/index.mjs";
-import {MxFont40} from "../basic/mxReader.js";
+import {MxFont40, MxBmDef} from "../basic/mxReader.js";
 
 import {
 	bgOrange,
@@ -11,6 +11,8 @@ import {
 	lcdPixel,
 	lcdCache
 } from "./colour.js";
+
+const textMultiTable = [0, 95, 190, 285, 380, 475, 570];
 
 let cmpWidth = 7,
 mspWidth = 6,
@@ -32,9 +34,9 @@ let ScDisplay = class extends RootDisplay {
 	#nmdb = new Uint8Array(1656);
 	#dmdb = new Uint8Array(1656);
 	#omdb = new Uint8Array(1656);
-	#tmdb = new Uint8Array(665); // Text display
-	#pmdb = new Uint8Array(735); // Param display
-	#bmdb = new Uint8Array(256); // Bitmap display
+	#tmdb; // Text display
+	#pmdb; // Param display
+	#bmdb; // Bitmap display
 	#linger = new Uint16Array(allocated.ch);
 	#lingerOld = new Uint8Array(allocated.ch);
 	#peak = new Uint16Array(allocated.ch);
@@ -44,11 +46,17 @@ let ScDisplay = class extends RootDisplay {
 	#lastBg = 0;
 	#countBg = 0;
 	useBlur = false;
+	#bootFrame = 0;
+	#booted = 0;
+	bootBm = new MxBmDef();
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	constructor(conf) {
 		super(new OctaviaDevice(), 0, 0.875);
 		let upThis = this;
 		upThis.useBlur = !!conf?.useBlur;
+		upThis.#tmdb = upThis.#nmdb.subarray(0, 665);
+		upThis.#pmdb = upThis.#nmdb.subarray(665, 1400);
+		upThis.#bmdb = upThis.#nmdb.subarray(1400, 1656);
 		upThis.addEventListener("mode", function (ev) {
 			switch (ev.data) {
 				case "?": {
@@ -89,6 +97,10 @@ let ScDisplay = class extends RootDisplay {
 			if (data.state == 3) {
 				upThis.#noteOn[data.part] = 10;
 			};
+		});
+		upThis.bootBm.load("RsrcName\tBitmap\nboot\t002a000c71c0e38f003ef87df3e008a211448802080451220082011448803c8338e3ea67a0df7cf3bc28045120c90a0114482262884512089fbe1f7c823dc7038e2086\ntext\t005f001f000000880080008000000000000001b00100030000000000000002a71a70020000000000000005514d10040000000000000008a28be008000000000000001145140010000000000000002271e700700000000000000000000000000000000071c8bc8befbc01e88089ce1d145b45111044041131b1121208aa8a222088082262a222241155e44479e00e5405444448228a0888828002a98888889145141111048005531111211c72281c23e880f140227387000000000000000000000000c1c880f00780600000f00001911101101000400c01100000423202202070801802271cb1045407803911000007910594089808800be200600a3e7a1311101100140430c01241140672203c03c71c60002271e8000000000000000000000000f0001020000001e89efbe881100020000f30041140441b02271ce18b2260082280882a079144811944000e28e11e5408a2890222798002202220881145124444130004404441103c71c31c89c000f08f08fa200");
+		upThis.xgFont.loaded.wait().then(() => {
+			upThis.#booted = 1;
 		});
 	};
 	setCh(ch) {
@@ -166,356 +178,381 @@ let ScDisplay = class extends RootDisplay {
 		// Universal offset
 		let pdaX = 22,
 		pdaY = 24;
-		// Channel test
-		let alreadyMin = false;
-		let minCh = 0, maxCh = 0;
-		sum.chInUse.forEach(function (e, i) {
-			if (e) {
-				if (!alreadyMin) {
-					alreadyMin = true;
-					minCh = i;
-				};
-				maxCh = i;
-			};
-		});
-		let part = minCh >> 4;
-		minCh = part << 4;
-		maxCh = ((maxCh >> 4) << 4) + 15;
-		if (upThis.#ch > maxCh) {
-			upThis.#ch = minCh + (upThis.#ch & 15);
-		};
-		if (upThis.#ch < minCh) {
-			upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
-		};
-		let chOff = upThis.#ch * ccToPos.length;
-		// Text matrix display
-		let infoTxt, isTextNull = sum.letter.text.trim();
-		while (isTextNull.indexOf("  ") > -1) {
-			isTextNull = isTextNull.replaceAll("  ", " ");
-		};
-		if (timeNow <= upThis.#sysTime) {
-			upThis.xgFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
-				e0.forEach(function (e1, i1) {
-					let pX = i0 * 6 + i1 % 5,
-					pY = Math.floor(i1 / 5);
-					upThis.#nmdb[pY * 95 + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
-				});
-			});
-		} else if (timeNow <= sum.letter.expire && (sum.mode != "gs" || sum.letter.text?.length <= 16)) {
-			infoTxt = isTextNull;
-			let original = sum.letter.text,
-			leftTrim = original.length - original.trimLeft().length,
-			rightTrim = original.length - original.trimRight().length;
-			if (original.length > 16 && original.length > infoTxt.length && infoTxt.length < 16) {
-				if (leftTrim > 0) {
-					while(infoTxt.length < 15) {
-						infoTxt = ` ${infoTxt} `;
-					};
-					if (infoTxt.length < 16) {
-						if (leftTrim < rightTrim) {
-							infoTxt = ` ${infoTxt}`;
-						} else {
-							infoTxt = `${infoTxt} `;
-						};
+		if (upThis.#bootFrame < 50) {
+			upThis.#bootFrame ++;
+		} else if (upThis.#bootFrame < 250 || upThis.#booted < 1) {
+			let data = upThis.bootBm.getBm("boot");
+			if (data) {
+				let sX = (upThis.#bootFrame - 68) >> 2;
+				sX = Math.max(-6, Math.min(27, sX));
+				console.debug(sX);
+				for (let i = 0; i < 224; i ++) {
+					let pX = i & 15, pY = i >> 4;
+					let dX = pX + sX;
+					if (dX >= 0 && dX < data.width) {
+						upThis.#bmdb[pX + ((pY + 2) << 4)] = data[dX + pY * data.width] ? 255 : 0;
 					};
 				};
-			} else if (original.length <= 16) {
-				infoTxt = original;
-			};
-			let xShift = 0;
-			if (infoTxt.length > 16) {
-				xShift = Math.floor((sum.letter.expire - timeNow) / 33) - 96;
-				let maxShift = (infoTxt.length - 16) * -6;
-				if (xShift < maxShift) {
-					xShift = maxShift;
-				} else if (xShift > 0) {
-					xShift = 0;
-				};
-			};
-			//console.debug(`"${infoTxt}"`);
-			upThis.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
-				e0.forEach(function (e1, i1) {
-					let pX = i0 * 6 + i1 % 5 + xShift,
-					pY = Math.floor(i1 / 5);
-					if (pX >= 0 && pX < 95) {
-						upThis.#nmdb[pY * 95 + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+				let textData = upThis.bootBm.getBm("text"), textY = Math.min(3, ((upThis.#bootFrame - 50) * 1639) >> 16) << 3;
+				for (let pX = 0; pX < 95; pX ++) {
+					for (let pY = 0; pY < 7; pY ++) {
+						upThis.#tmdb[pX + textMultiTable[pY]] = textData[pX + (pY + textY) * 95] ? 255 : 0;
 					};
-				});
-			});
+				};
+				upThis.#bootFrame ++;
+			};
 		} else {
-			infoTxt = `${sum.chProgr[upThis.#ch] + 1}`.padStart(3, "0");
-			switch (sum.chContr[chOff + ccToPos[0]]) {
-				case 0: {
-					switch (sum.chContr[chOff + ccToPos[32]]) {
-						case 0:
-						case 125:
-						case 126:
-						case 127: {
-							infoTxt += " ";
-							break;
+			// Channel test
+			let alreadyMin = false;
+			let minCh = 0, maxCh = 0;
+			sum.chInUse.forEach(function (e, i) {
+				if (e) {
+					if (!alreadyMin) {
+						alreadyMin = true;
+						minCh = i;
+					};
+					maxCh = i;
+				};
+			});
+			let part = minCh >> 4;
+			minCh = part << 4;
+			maxCh = ((maxCh >> 4) << 4) + 15;
+			if (upThis.#ch > maxCh) {
+				upThis.#ch = minCh + (upThis.#ch & 15);
+			};
+			if (upThis.#ch < minCh) {
+				upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
+			};
+			let chOff = upThis.#ch * ccToPos.length;
+			// Text matrix display
+			let infoTxt, isTextNull = sum.letter.text.trim();
+			while (isTextNull.indexOf("  ") > -1) {
+				isTextNull = isTextNull.replaceAll("  ", " ");
+			};
+			if (timeNow <= upThis.#sysTime) {
+				upThis.xgFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
+					e0.forEach(function (e1, i1) {
+						let pX = i0 * 6 + i1 % 5,
+						pY = Math.floor(i1 / 5);
+						upThis.#nmdb[textMultiTable[pY] + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
+				});
+			} else if (timeNow <= sum.letter.expire && (sum.mode != "gs" || sum.letter.text?.length <= 16)) {
+				infoTxt = isTextNull;
+				let original = sum.letter.text,
+				leftTrim = original.length - original.trimLeft().length,
+				rightTrim = original.length - original.trimRight().length;
+				if (original.length > 16 && original.length > infoTxt.length && infoTxt.length < 16) {
+					if (leftTrim > 0) {
+						while(infoTxt.length < 15) {
+							infoTxt = ` ${infoTxt} `;
 						};
-						default: {
-							switch (upThis.device.getMode()) {
-								case "gs":
-								case "sc": {
-									infoTxt += " ";
-									break;
-								};
-								default: {
-									infoTxt += "+";
-								};
+						if (infoTxt.length < 16) {
+							if (leftTrim < rightTrim) {
+								infoTxt = ` ${infoTxt}`;
+							} else {
+								infoTxt = `${infoTxt} `;
 							};
 						};
 					};
-					break;
+				} else if (original.length <= 16) {
+					infoTxt = original;
 				};
-				case 56:
-				case 61:
-				case 62:
-				case 120:
-				case 122:
-				case 126:
-				case 127: {
-					infoTxt += " ";
-					break;
+				let xShift = 0;
+				if (infoTxt.length > 16) {
+					xShift = Math.floor((sum.letter.expire - timeNow) / 33) - 96;
+					let maxShift = (infoTxt.length - 16) * -6;
+					if (xShift < maxShift) {
+						xShift = maxShift;
+					} else if (xShift > 0) {
+						xShift = 0;
+					};
 				};
-				default: {
-					infoTxt += "+";
-				};
-			};
-			infoTxt += upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ");
-			let timeOff = 0;
-			if (sum.mode == "gs" && sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
-				let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
-				let critOff = sum.letter.set + (critTxt.length - 16) * 300
-				if (timeNow < critOff) {
-					infoTxt = critTxt;
-					timeOff = critOff - timeNow;
-				};
-			};
-			if (timeOff) {
-				let textWindow = infoTxt.length - Math.floor(timeOff / 300);
-				infoTxt = infoTxt.slice(Math.max(0, textWindow - 16), Math.max(16, textWindow));
-			};
-			upThis.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
-				e0.forEach(function (e1, i1) {
-					let pX = i0 * 6 + i1 % 5,
-					pY = Math.floor(i1 / 5);
-					upThis.#nmdb[pY * 95 + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
-				});
-			});
-		};
-		// Assemble text
-		let paramText = "";
-		paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}${((upThis.#ch & 15) + 1).toString().padStart(2, "0")}`;
-		paramText += sum.chContr[chOff + ccToPos[7]].toString().padStart(3, " ");
-		paramText += sum.chContr[chOff + ccToPos[91]].toString().padStart(3, " ");
-		let cPit = upThis.device.getPitchShift(upThis.#ch);
-		if (cPit < 0) {
-			paramText += "-";
-		} else if (cPit == 0) {
-			paramText += "±";
-		} else {
-			paramText += "+";
-		};
-		paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, " ");
-		let cPan = sum.chContr[chOff + ccToPos[10]];
-		if (cPan == 64) {
-			paramText += "C 0";
-		} else if (cPan == 128) {
-			paramText += "RND";
-		} else if (cPan < 1) {
-			paramText += "L63";
-		} else {
-			if (cPan > 64) {
-				paramText += "R";
-			} else {
-				paramText += "L";
-			};
-			paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
-		};
-		paramText += sum.chContr[chOff + ccToPos[93]].toString().padStart(3, " ");
-		let chSource = upThis.device.getChSource()[upThis.#ch];
-		if (chSource < 128) {
-			paramText += "ABCDEFGH"[chSource >> 4];
-			paramText += ((chSource & 15) + 1).toString().padStart(2, "0");
-		} else {
-			paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}--`;
-		};
-		// Render fonts
-		upThis.xgFont.getStr(paramText).forEach(function (e0, i0) {
-			e0.forEach(function (e1, i1) {
-				let pX = Math.floor(i0 / 3) * 90 + i0 * 5 + i1 % 5,
-				pY = Math.floor(i1 / 5);
-				if (pY < 7) {
-					upThis.#nmdb[pY * 15 + pX + 665] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
-				};
-			});
-		});
-		// Bitmap display
-		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
-		rendPos = 0;
-		// Strength calculation
-		sum.velo.forEach(function (e, i) {
-			upThis.#lingerOld[i] = upThis.#linger[i] >> 8;
-			if (upThis.#noteOn[i]) {
-				upThis.#noteOn[i] --;
-			};
-			if (((e >> 4) << 4) > upThis.#linger[i] >> 8) {
-				if (scConf.peakHold == 3) {
-					upThis.#linger[i] = ((e >> 4) << 4) << 8;
-				} else {
-					upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
-				};
-				if (scConf.peakHold != 3 || upThis.#noteOn[i] > 0) {
-					upThis.#keep[i] = 56;
-				};
-			} else if (upThis.#keep[i] > 15) {
-				upThis.#keep[i] --;
-			} else {
-				let val;
-				switch (scConf.peakHold) {
-					case 1:
-					case 3: {
-						val = upThis.#linger[i] - (384 << rendMode);
-						if (val < 0) {
-							val = 0;
+				//console.debug(`"${infoTxt}"`);
+				upThis.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
+					e0.forEach(function (e1, i1) {
+						let pX = i0 * 6 + i1 % 5 + xShift,
+						pY = Math.floor(i1 / 5);
+						if (pX >= 0 && pX < 95) {
+							upThis.#nmdb[textMultiTable[pY] + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 						};
+					});
+				});
+			} else {
+				infoTxt = `${sum.chProgr[upThis.#ch] + 1}`.padStart(3, "0");
+				switch (sum.chContr[chOff + ccToPos[0]]) {
+					case 0: {
+						switch (sum.chContr[chOff + ccToPos[32]]) {
+							case 0:
+							case 125:
+							case 126:
+							case 127: {
+								infoTxt += " ";
+								break;
+							};
+							default: {
+								switch (upThis.device.getMode()) {
+									case "gs":
+									case "sc": {
+										infoTxt += " ";
+										break;
+									};
+									default: {
+										infoTxt += "+";
+									};
+								};
+							};
+						};
+						break;
+					};
+					case 56:
+					case 61:
+					case 62:
+					case 120:
+					case 122:
+					case 126:
+					case 127: {
+						infoTxt += " ";
 						break;
 					};
 					default: {
-						val = 0;
-						break;
+						infoTxt += "+";
 					};
 				};
-				upThis.#linger[i] = val;
+				infoTxt += upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ");
+				let timeOff = 0;
+				if (sum.mode == "gs" && sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
+					let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
+					let critOff = sum.letter.set + (critTxt.length - 16) * 300
+					if (timeNow < critOff) {
+						infoTxt = critTxt;
+						timeOff = critOff - timeNow;
+					};
+				};
+				if (timeOff) {
+					let textWindow = infoTxt.length - Math.floor(timeOff / 300);
+					infoTxt = infoTxt.slice(Math.max(0, textWindow - 16), Math.max(16, textWindow));
+				};
+				upThis.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
+					e0.forEach(function (e1, i1) {
+						let pX = i0 * 6 + i1 % 5,
+						pY = Math.floor(i1 / 5);
+						upThis.#nmdb[textMultiTable[pY] + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
+				});
 			};
-			if (scConf.peakHold == 3) {
-				//console.debug(`Tendency: ${Math.sign((upThis.#linger[i] >> 8) - upThis.#lingerOld[i])}`);
-				if (upThis.#keep[i] < 16) {
-					if (upThis.#peak[i] != 0 && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {
-						//console.debug(`Float!`);
-						let val = upThis.#peak[i];
-						val += (384 << rendMode);
-						if (val < 65536) {
-							upThis.#peak[i] = val;
-						} else {
-							upThis.#peak[i] = 0;
+			// Assemble text
+			let paramText = "";
+			paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}${((upThis.#ch & 15) + 1).toString().padStart(2, "0")}`;
+			paramText += sum.chContr[chOff + ccToPos[7]].toString().padStart(3, " ");
+			paramText += sum.chContr[chOff + ccToPos[91]].toString().padStart(3, " ");
+			let cPit = upThis.device.getPitchShift(upThis.#ch);
+			if (cPit < 0) {
+				paramText += "-";
+			} else if (cPit == 0) {
+				paramText += "±";
+			} else {
+				paramText += "+";
+			};
+			paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, " ");
+			let cPan = sum.chContr[chOff + ccToPos[10]];
+			if (cPan == 64) {
+				paramText += "C 0";
+			} else if (cPan == 128) {
+				paramText += "RND";
+			} else if (cPan < 1) {
+				paramText += "L63";
+			} else {
+				if (cPan > 64) {
+					paramText += "R";
+				} else {
+					paramText += "L";
+				};
+				paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
+			};
+			paramText += sum.chContr[chOff + ccToPos[93]].toString().padStart(3, " ");
+			let chSource = upThis.device.getChSource()[upThis.#ch];
+			if (chSource < 128) {
+				paramText += "ABCDEFGH"[chSource >> 4];
+				paramText += ((chSource & 15) + 1).toString().padStart(2, "0");
+			} else {
+				paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}--`;
+			};
+			// Render fonts
+			upThis.xgFont.getStr(paramText).forEach(function (e0, i0) {
+				e0.forEach(function (e1, i1) {
+					let pX = Math.floor(i0 / 3) * 90 + i0 * 5 + i1 % 5,
+					pY = Math.floor(i1 / 5);
+					if (pY < 7) {
+						upThis.#nmdb[pY * 15 + pX + 665] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					};
+				});
+			});
+			// Bitmap display
+			let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
+			rendPos = 0;
+			// Strength calculation
+			sum.velo.forEach(function (e, i) {
+				upThis.#lingerOld[i] = upThis.#linger[i] >> 8;
+				if (upThis.#noteOn[i]) {
+					upThis.#noteOn[i] --;
+				};
+				if (((e >> 4) << 4) > upThis.#linger[i] >> 8) {
+					if (scConf.peakHold == 3) {
+						upThis.#linger[i] = ((e >> 4) << 4) << 8;
+					} else {
+						upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
+					};
+					if (scConf.peakHold != 3 || upThis.#noteOn[i] > 0) {
+						upThis.#keep[i] = 56;
+					};
+				} else if (upThis.#keep[i] > 15) {
+					upThis.#keep[i] --;
+				} else {
+					let val;
+					switch (scConf.peakHold) {
+						case 1:
+						case 3: {
+							val = upThis.#linger[i] - (384 << rendMode);
+							if (val < 0) {
+								val = 0;
+							};
+							break;
 						};
+						default: {
+							val = 0;
+							break;
+						};
+					};
+					upThis.#linger[i] = val;
+				};
+				if (scConf.peakHold == 3) {
+					//console.debug(`Tendency: ${Math.sign((upThis.#linger[i] >> 8) - upThis.#lingerOld[i])}`);
+					if (upThis.#keep[i] < 16) {
+						if (upThis.#peak[i] != 0 && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {
+							//console.debug(`Float!`);
+							let val = upThis.#peak[i];
+							val += (384 << rendMode);
+							if (val < 65536) {
+								upThis.#peak[i] = val;
+							} else {
+								upThis.#peak[i] = 0;
+							};
+						};
+					} else {
+						upThis.#peak[i] = upThis.#linger[i];
 					};
 				} else {
 					upThis.#peak[i] = upThis.#linger[i];
 				};
-			} else {
-				upThis.#peak[i] = upThis.#linger[i];
-			};
-		});
-		let useBm = upThis.#nmdb.subarray(1400, 1656);
-		if (timeNow <= sum.bitmap.expire) {
-			sum.bitmap.bitmap.forEach((e, i) => {
-				if (e) {
-					useBm[i] = upThis.#pixelLit;
-				};
 			});
-		} else {
-			let rendPos = 0;
-			for (let c = minCh; c <= maxCh; c ++) {
-				let rendPart = rendPos >> 4;
-				let strSmooth = sum.strength[c] >> (4 + rendMode),
-				lingered = upThis.#peak[c] >> (12 + rendMode);
-				switch (rendMode) {
-					case 2: {
-						let offY = 4 * (3 - rendPart);
-						if (scConf.invBar) {
-							if (scConf.showBar) {
-								for (let d = strSmooth; d >= 0; d --) {
-									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
-								};
-							} else {
-								useBm[(rendPos & 15) + ((strSmooth + offY) << 4)] = upThis.#pixelLit;
-							};
-						} else {
-							if (scConf.showBar) {
-								for (let d = 3 - strSmooth; d < 4; d ++) {
-									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
-								};
-							} else {
-								useBm[(rendPos & 15) + ((3 - strSmooth + offY) << 4)] = upThis.#pixelLit;
-							};
-						};
-						break;
+			let useBm = upThis.#nmdb.subarray(1400, 1656);
+			if (timeNow <= sum.bitmap.expire) {
+				sum.bitmap.bitmap.forEach((e, i) => {
+					if (e) {
+						useBm[i] = upThis.#pixelLit;
 					};
-					case 1: {
-						let offY = 8 * (1 - rendPart);
-						if (scConf.invBar) {
-							if (scConf.showBar) {
-								for (let d = strSmooth; d >= 0; d --) {
-									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
-								};
-							} else {
-								useBm[(rendPos & 15) + (offY << 4)] = upThis.#pixelLit;
-								if (strSmooth) {
+				});
+			} else {
+				let rendPos = 0;
+				for (let c = minCh; c <= maxCh; c ++) {
+					let rendPart = rendPos >> 4;
+					let strSmooth = sum.strength[c] >> (4 + rendMode),
+					lingered = upThis.#peak[c] >> (12 + rendMode);
+					switch (rendMode) {
+						case 2: {
+							let offY = 4 * (3 - rendPart);
+							if (scConf.invBar) {
+								if (scConf.showBar) {
+									for (let d = strSmooth; d >= 0; d --) {
+										useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+									};
+								} else {
 									useBm[(rendPos & 15) + ((strSmooth + offY) << 4)] = upThis.#pixelLit;
 								};
-							};
-							if (scConf.peakHold && lingered) {
-								useBm[(rendPos & 15) + ((lingered + offY) << 4)] = upThis.#pixelLit;
-							};
-						} else {
-							if (scConf.showBar) {
-								for (let d = 7 - strSmooth; d < 8; d ++) {
-									useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
-								};
 							} else {
-								useBm[(rendPos & 15) + ((7 + offY) << 4)] = upThis.#pixelLit;
-								if (strSmooth) {
-									useBm[(rendPos & 15) + ((7 - strSmooth + offY) << 4)] = upThis.#pixelLit;
+								if (scConf.showBar) {
+									for (let d = 3 - strSmooth; d < 4; d ++) {
+										useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+									};
+								} else {
+									useBm[(rendPos & 15) + ((3 - strSmooth + offY) << 4)] = upThis.#pixelLit;
 								};
 							};
-							if (scConf.peakHold && lingered) {
-								useBm[(rendPos & 15) + ((7 - lingered + offY) << 4)] = upThis.#pixelLit;
-							};
+							break;
 						};
-						break;
-					};
-					case 0: {
-						if (scConf.invBar) {
-							if (scConf.showBar) {
-								for (let d = strSmooth; d >= 0; d --) {
-									useBm[(rendPos & 15) + (d << 4)] = upThis.#pixelLit;
+						case 1: {
+							let offY = 8 * (1 - rendPart);
+							if (scConf.invBar) {
+								if (scConf.showBar) {
+									for (let d = strSmooth; d >= 0; d --) {
+										useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+									};
+								} else {
+									useBm[(rendPos & 15) + (offY << 4)] = upThis.#pixelLit;
+									if (strSmooth) {
+										useBm[(rendPos & 15) + ((strSmooth + offY) << 4)] = upThis.#pixelLit;
+									};
+								};
+								if (scConf.peakHold && lingered) {
+									useBm[(rendPos & 15) + ((lingered + offY) << 4)] = upThis.#pixelLit;
 								};
 							} else {
-								useBm[(rendPos & 15)] = upThis.#pixelLit;
-								if (strSmooth) {
-									useBm[(rendPos & 15) + (strSmooth << 4)] = upThis.#pixelLit;
+								if (scConf.showBar) {
+									for (let d = 7 - strSmooth; d < 8; d ++) {
+										useBm[(rendPos & 15) + ((d + offY) << 4)] = upThis.#pixelLit;
+									};
+								} else {
+									useBm[(rendPos & 15) + ((7 + offY) << 4)] = upThis.#pixelLit;
+									if (strSmooth) {
+										useBm[(rendPos & 15) + ((7 - strSmooth + offY) << 4)] = upThis.#pixelLit;
+									};
+								};
+								if (scConf.peakHold && lingered) {
+									useBm[(rendPos & 15) + ((7 - lingered + offY) << 4)] = upThis.#pixelLit;
 								};
 							};
-							if (scConf.peakHold && lingered) {
-								useBm[rendPos + (lingered << 4)] = upThis.#pixelLit;
-							};
-						} else {
-							if (scConf.showBar) {
-								for (let d = 15 - strSmooth; d < 16; d ++) {
-									useBm[(rendPos & 15) + (d << 4)] = upThis.#pixelLit;
-								};
-							} else {
-								useBm[(rendPos & 15) + 240] = upThis.#pixelLit;
-								if (strSmooth) {
-									useBm[(rendPos & 15) + ((15 - strSmooth) << 4)] = upThis.#pixelLit;
-								};
-							};
-							if (scConf.peakHold && lingered) {
-								useBm[rendPos + ((15 - lingered) << 4)] = upThis.#pixelLit;
-							};
+							break;
 						};
-						break;
+						case 0: {
+							if (scConf.invBar) {
+								if (scConf.showBar) {
+									for (let d = strSmooth; d >= 0; d --) {
+										useBm[(rendPos & 15) + (d << 4)] = upThis.#pixelLit;
+									};
+								} else {
+									useBm[(rendPos & 15)] = upThis.#pixelLit;
+									if (strSmooth) {
+										useBm[(rendPos & 15) + (strSmooth << 4)] = upThis.#pixelLit;
+									};
+								};
+								if (scConf.peakHold && lingered) {
+									useBm[rendPos + (lingered << 4)] = upThis.#pixelLit;
+								};
+							} else {
+								if (scConf.showBar) {
+									for (let d = 15 - strSmooth; d < 16; d ++) {
+										useBm[(rendPos & 15) + (d << 4)] = upThis.#pixelLit;
+									};
+								} else {
+									useBm[(rendPos & 15) + 240] = upThis.#pixelLit;
+									if (strSmooth) {
+										useBm[(rendPos & 15) + ((15 - strSmooth) << 4)] = upThis.#pixelLit;
+									};
+								};
+								if (scConf.peakHold && lingered) {
+									useBm[rendPos + ((15 - lingered) << 4)] = upThis.#pixelLit;
+								};
+							};
+							break;
+						};
 					};
+					rendPos ++;
 				};
-				rendPos ++;
-			};
-			if (scConf.invDisp) {
-				for (let i = 0; i < useBm.length; i ++) {
-					useBm[i] = upThis.#pixelLit - useBm[i];
+				if (scConf.invDisp) {
+					for (let i = 0; i < useBm.length; i ++) {
+						useBm[i] = upThis.#pixelLit - useBm[i];
+					};
 				};
 			};
 		};
@@ -524,7 +561,7 @@ let ScDisplay = class extends RootDisplay {
 			if (upThis.#dmdb[i] != e) {
 				if (upThis.useBlur) {
 					let diff = e - upThis.#dmdb[i],
-					cap = 72;
+					cap = 80;
 					if (Math.abs(diff) > cap) {
 						upThis.#dmdb[i] += Math.sign(diff) * cap;
 					} else {
