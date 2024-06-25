@@ -28,6 +28,7 @@ let Ns5rDisplay = class extends RootDisplay {
 	#lastTrue = false;
 	useBlur = false; // Pixel blur will only activate if this is enabled
 	#bootFrame = 0;
+	#booted = 0;
 	#refreshFrame = 0;
 	bootBm = new MxBmDef();
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
@@ -71,7 +72,11 @@ let Ns5rDisplay = class extends RootDisplay {
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
 		});
-		upThis.bootBm.load("RsrcName\tBitmap\nboot_0\t0052001aff0ff07ff83fff81fc0fffc3fc7fff8ffff07f83fff0ff1fffe3fffc1fe0fffc3fcffffcffff87f83fff0ff3ffff3fdfe1ff0fffc3fcffffcfe3f87fc3fff0ff3fc7f3f8fe1ff0fffc3fcfe0fcfe3f87fe3fff0ff3f83f3f8fe1ff8fffc3fcfe0fcff7f07fe3ffffff3f83f3fffc1fbcffffffcfe0fcfffe07ef3ffffff3f83f3ffe01fbcffffffcfe0fcfffe07e7bffffff3f83f3fffe1f9effffffcfe0fcfe7f87e7bfff0ff3f83f3f9fe1f8ffffc3fcfe0fcfe7f87e3ffff0ff3f83f3f9fe1f8ffffc3fcff1fcfe7fc7e1ffff0ff3ffff3f8ff1f87fffc3fcffffcfe3fc7e1ffff0ff3ffff3f8ff1f83fffc3fc7fff8fe3fe7e0ffff0ff1fffe3f8ff9f83fffc3fc1ffe0fe1fe7e07f\nboot_1\t005f001a07c00f803fe001fff81fffe01fc01f01fff003fff07ffff03f803e07fff007ffe0fffff07f807c1ffff00fff81ffffe0ff01f83f8ff03fff03f00fe1fe03f0fc07e07c0007c00fc7fe07c1f807c0f8001f801f8ffc0f83f00f83f0003f003f1ff81f07f00007ff007e007e3ef87e0ff8000fff80f801fc7df0fc0ffc001fff81f01ff1fbf1f00ffe007fff07ffffe3f3e3e00fff00fc7f0fffff87c7c7c00fff01f07e1ffffe0f8fdf8007ff0000fc3ffff01f0fbe0003fe0000f87c3f807e1ffc0001fe0003f1f81f00fc1ff80000fc0007e3f03f01f03ff0fc01f8f80fc7e03f03e07fe1f803f1f81f0f807e07c07f83f00fc3f07e3f007e1f80ff03f83f83f3f87e00fc3f00fe07fffe07ffe0fc01f87c01fc07fff807ffc1f801f8f803f807ffe007fe03e003f1f003e003ff0007f00fc003f0");
+		upThis.bootBm.load("RsrcName\tBitmap\nboot_0\t0052001aff0ff07ff83fff81fc0fffc3fc7fff8ffff07f83fff0ff1fffe3fffc1fe0fffc3fcffffcffff87f83fff0ff3ffff3fdfe1ff0fffc3fcffffcfe3f87fc3fff0ff3fc7f3f8fe1ff0fffc3fcfe0fcfe3f87fe3fff0ff3f83f3f8fe1ff8fffc3fcfe0fcff7f07fe3ffffff3f83f3fffc1fbcffffffcfe0fcfffe07ef3ffffff3f83f3ffe01fbcffffffcfe0fcfffe07e7bffffff3f83f3fffe1f9effffffcfe0fcfe7f87e7bfff0ff3f83f3f9fe1f8ffffc3fcfe0fcfe7f87e3ffff0ff3f83f3f9fe1f8ffffc3fcff1fcfe7fc7e1ffff0ff3ffff3f8ff1f87fffc3fcffffcfe3fc7e1ffff0ff3ffff3f8ff1f83fffc3fc7fff8fe3fe7e0ffff0ff1fffe3f8ff9f83fffc3fc1ffe0fe1fe7e07f\nboot_1\t005f001a07c00f803fe001fff81fffe01fc01f01fff003fff07ffff03f803e07fff007ffe0fffff07f807c1ffff00fff81ffffe0ff01f83f8ff03fff03f00fe1fe03f0fc07e07c0007c00fc7fe07c1f807c0f8001f801f8ffc0f83f00f83f0003f003f1ff81f07f00007ff007e007e3ef87e0ff8000fff80f801fc7df0fc0ffc001fff81f01ff1fbf1f00ffe007fff07ffffe3f3e3e00fff00fc7f0fffff87c7c7c00fff01f07e1ffffe0f8fdf8007ff0000fc3ffff01f0fbe0003fe0000f87c3f807e1ffc0001fe0003f1f81f00fc1ff80000fc0007e3f03f01f03ff0fc01f8f80fc7e03f03e07fe1f803f1f81f0f807e07c07f83f00fc3f07e3f007e1f80ff03f83f83f3f87e00fc3f00fe07fffe07ffe0fc01f87c01fc07fff807ffc1f801f8f803f807ffe007fe03e003f1f003e003ff0007f00fc003f0\nbs_0\t000700073880000000000\nbs_1\t000700073888081020000\nbs_2\t0007000738080810288e0\nbs_3\t00070007388a0c18288e0\nbs_4\t00070007000a0c18288e0\nbs_5\t0007000700020408088e0\nbs_6\t000700070002040808000\nbs_7\t000700070000000000000");
+		(async () => {
+			await Promise.all([upThis.xgFont.loaded.wait(), upThis.trueFont.loaded.wait(), upThis.element.loaded.wait()]);
+			upThis.#booted = 1;
+		})();
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -204,23 +209,29 @@ let Ns5rDisplay = class extends RootDisplay {
 			upThis.#dumpData?.forEach((e, i) => {
 				upThis.#nmdb[i] = e ? upThis.#pixelLit : upThis.#pixelOff;
 			});
-		} else if (upThis.#bootFrame < 200) {
-			let frame = upThis.#bootFrame * 642 >> 16 ? 1 : 0;
+		} else if (upThis.#bootFrame < 200 || upThis.#booted < 1) {
+			let frame = upThis.#bootFrame > 100 ? 1 : 0;
 			let data = upThis.bootBm.getBm(`boot_${frame}`);
 			if (data) {
-				data.render((e, x, y) => {
-					let innerFrame = upThis.#bootFrame;
-					innerFrame -= frame * 100;
-					if (frame) {
-						if ((Math.abs(y - 13) << 2) < innerFrame) {
-							upThis.#nmdb[x + 25 + (y + 6) * 144] = e ? 255 : 0;
+				if (upThis.#bootFrame < 200) {
+					data.render((e, x, y) => {
+						let innerFrame = upThis.#bootFrame;
+						innerFrame -= frame * 100;
+						if (frame) {
+							if ((Math.abs(y - 13) << 2) < innerFrame) {
+								upThis.#nmdb[x + 25 + (y + 6) * 144] = e ? 255 : 0;
+							};
+						} else {
+							if (innerFrame) {} else {
+								upThis.#nmdb[x + 31 + (y + 6) * 144] = e ? 255 : 0;
+							};
 						};
-					} else {
-						if (innerFrame) {} else {
-							upThis.#nmdb[x + 31 + (y + 6) * 144] = e ? 255 : 0;
-						};
-					};
-				});
+					});
+				} else {
+					upThis.bootBm.getBm(`bs_${((upThis.#bootFrame - 200) >> 3) & 7}`)?.render((e, x, y) => {
+						upThis.#nmdb[x + 136 + (y + 16) * 144] = e ? 255 : 0;
+					});
+				};
 				upThis.#bootFrame ++;
 			};
 		} else {
