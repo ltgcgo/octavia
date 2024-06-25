@@ -21,6 +21,8 @@ const exDuration = 1000,
 exExhaust = 400,
 blinkSpeedMode = 400;
 
+const blank256Buffer = new Uint8Array(256);
+
 const modeGroup = {
 	"?": 0,
 	"gm": 0,
@@ -173,6 +175,9 @@ let MuDisplay = class extends RootDisplay {
 	inWB = false;
 	#waveBuffer = new Uint8Array(8);
 	#panStrokes = new Uint8Array(7);
+	#booted = 0;
+	#bootFrame = 0;
+	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
@@ -231,6 +236,10 @@ let MuDisplay = class extends RootDisplay {
 				return Date.now() / 1000;
 			}
 		};
+		(async () => {
+			await Promise.all([upThis.trueFont.loaded.wait(), upThis.xgFont.loaded.wait(), upThis.sysBm.loaded.wait(), upThis.aniBm.loaded.wait()]);
+			upThis.#booted = 1;
+		})();
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -252,6 +261,14 @@ let MuDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
+		// Fill with green
+		//ctx.fillStyle = "#af2";
+		ctx.fillStyle = `${backlight.grYellow}64`;
+		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		// Main matrix display
+		upThis.#mmdb.fill(0);
+		// Part display
+		upThis.#pmdb.fill(0);
 		if (upThis.#scheduledEx) {
 			upThis.#scheduledEx = false;
 			if (timeNow - upThis.#promptEx > exExhaust) {
@@ -262,14 +279,6 @@ let MuDisplay = class extends RootDisplay {
 			};
 			//upThis.#awaitEx = timeNow;
 		};
-		// Fill with green
-		//ctx.fillStyle = "#af2";
-		ctx.fillStyle = `${backlight.grYellow}64`;
-		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-		// Main matrix display
-		upThis.#mmdb.forEach((e, i, a) => {a[i] = 0});
-		// Part display
-		upThis.#pmdb.forEach((e, i, a) => {a[i] = 0});
 		// Strength
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
@@ -522,7 +531,7 @@ let MuDisplay = class extends RootDisplay {
 				if (!useBm) {
 					useBm = upThis.sysBm.getBm("no_abm");
 				};
-				useBm = useBm.slice();
+				useBm = useBm?.slice() || blank256Buffer;
 				let exBlink = timeNow - upThis.#promptEx;
 				if (exBlink <= exDuration) {
 					upThis.sysBm.getBm("sysex_m").forEach((e, i) => {

@@ -335,7 +335,7 @@ let ScDisplay = class extends RootDisplay {
 				let timeOff = 0;
 				if (sum.mode == "gs" && sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
 					let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
-					let critOff = sum.letter.set + (critTxt.length - 16) * 300
+					let critOff = sum.letter.set + (critTxt.length - 16) * 300;
 					if (timeNow < critOff) {
 						infoTxt = critTxt;
 						timeOff = critOff - timeNow;
