@@ -140,7 +140,7 @@ let Sc8850Display = class extends RootDisplay {
 			fullRefresh = true;
 		};
 		// Booted?
-		if (upThis.#booted > 0 && upThis.#bootFrame > 49) {
+		if (upThis.#booted > 0 && upThis.#bootFrame > 99) {
 			// Test SysEx status
 			if (upThis.#scheduledEx) {
 				upThis.#scheduledEx = false;
@@ -458,7 +458,7 @@ let Sc8850Display = class extends RootDisplay {
 					break;
 				};
 			};
-		} else {
+		} else if (upThis.#bootFrame > 49) {
 			let bootImage = upThis.bootBm?.getBm("boot_mr");
 			if (bootImage) {
 				bootImage.render((e, x, y) => {
@@ -466,8 +466,10 @@ let Sc8850Display = class extends RootDisplay {
 				});
 				upThis.#bootFrame ++;
 			};
+		} else {
+			upThis.#bootFrame ++;
 		};
-		if (upThis.#bootFrame > 49 && upThis.#booted < 2) {
+		if (upThis.#bootFrame > 99 && upThis.#booted < 2) {
 			let bootImage = upThis.bootBm?.getBm(`bs_${((upThis.#bootFrame - 50) >> 3) & 7}`);
 			if (bootImage) {
 				bootImage.render((e, x, y) => {

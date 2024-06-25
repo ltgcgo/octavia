@@ -209,13 +209,13 @@ let Ns5rDisplay = class extends RootDisplay {
 			upThis.#dumpData?.forEach((e, i) => {
 				upThis.#nmdb[i] = e ? upThis.#pixelLit : upThis.#pixelOff;
 			});
-		} else if (upThis.#bootFrame < 200 || upThis.#booted < 1) {
-			let frame = upThis.#bootFrame > 100 ? 1 : 0;
+		} else if (upThis.#bootFrame < 250 || upThis.#booted < 1) {
+			let frame = upThis.#bootFrame > 150 ? 1 : 0;
 			let data = upThis.bootBm.getBm(`boot_${frame}`);
 			if (data) {
-				if (upThis.#bootFrame < 200) {
+				if (upThis.#bootFrame < 50) {} else if (upThis.#bootFrame < 250) {
 					data.render((e, x, y) => {
-						let innerFrame = upThis.#bootFrame;
+						let innerFrame = upThis.#bootFrame - 50;
 						innerFrame -= frame * 100;
 						if (frame) {
 							if ((Math.abs(y - 13) << 2) < innerFrame) {
