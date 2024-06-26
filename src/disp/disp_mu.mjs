@@ -445,7 +445,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("LSB", 564, 162.5);
 		ctx.fillStyle = !rendMode ? activePixel : inactivePixel;
 		ctx.fillText("BANK", 467.5, 162.5);
-		ctx.fillText("PGM♯", 660, 162.5);
+		ctx.fillText("PGM#", 660, 162.5);
 		ctx.fillStyle = !showLsb && rendMode ? activePixel : inactivePixel;
 		ctx.fillText("MSB", 131, 162.5);
 		ctx.fillStyle = showLsb && rendMode ? activePixel : inactivePixel;
