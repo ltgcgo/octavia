@@ -30,6 +30,11 @@
 	src: url("../font/PublicSans.woff2") format("woff2");
 }
 @font-face {
+	font-family: "Work Sans";
+	font-display: swap;
+	src: url("../font/WorkSans.woff2") format("woff2");
+}
+@font-face {
 	font-family: "Nunito Sans";
 	font-display: swap;
 	src: local("Numito Sans"), url("../font/NunitoSans.woff2") format("woff2");
