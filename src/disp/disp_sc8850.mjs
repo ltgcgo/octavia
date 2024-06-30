@@ -136,6 +136,16 @@ let Sc8850Display = class extends RootDisplay {
 		if (timeNow - upThis.#lastBg >= 3600000) {
 			ctx.fillStyle = backlight.orange;
 			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			// Show text
+			ctx.fillStyle = "#000";
+			ctx.textAlign = "left";
+			ctx.font = '300 14px "Work Sans"';
+			ctx.textRendering = "geometricPrecision";
+			ctx.fillText("EFX", 808, 122);
+			ctx.fillText("8850", 808, 166);
+			ctx.fillText("Pro", 808, 192);
+			ctx.fillText("88", 808, 217);
+			ctx.fillText("55", 808, 242);
 			upThis.#lastBg = timeNow;
 			fullRefresh = true;
 		};
