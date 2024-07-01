@@ -248,7 +248,7 @@ let ScDisplay = class extends RootDisplay {
 						upThis.#nmdb[textMultiTable[pY] + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 					});
 				});
-			} else if (timeNow <= sum.letter.expire && (sum.mode != "gs" || sum.letter.text?.length <= 16)) {
+			} else if (timeNow <= sum.letter.expire && ((sum.mode != "gs" && sum.mode != "sc") || sum.letter.text?.length <= 16)) {
 				infoTxt = isTextNull;
 				let original = sum.letter.text,
 				leftTrim = original.length - original.trimLeft().length,
@@ -332,12 +332,14 @@ let ScDisplay = class extends RootDisplay {
 				};
 				infoTxt += upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ");
 				let timeOff = 0;
-				if (sum.mode == "gs" && sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
-					let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
-					let critOff = sum.letter.set + (critTxt.length - 16) * 300;
-					if (timeNow < critOff) {
-						infoTxt = critTxt;
-						timeOff = critOff - timeNow;
+				if (sum.mode == "gs" || sum.mode == "sc") {
+					if (sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
+						let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
+						let critOff = sum.letter.set + (critTxt.length - 16) * 300;
+						if (timeNow < critOff) {
+							infoTxt = critTxt;
+							timeOff = critOff - timeNow;
+						};
 					};
 				};
 				if (timeOff) {
