@@ -203,6 +203,7 @@ let Cambiare = class extends RootDisplay {
 	#pitchEvents = [];
 	#style = "comb";
 	glyphs = new MxFont40();
+	panStyle = 3; // Block, Pin, Arc, Dash
 	#drawNote(context, note, velo, state = 0, pitch = 0) {
 		// Param calculation
 		let upThis = this;
@@ -394,38 +395,71 @@ let Cambiare = class extends RootDisplay {
 						};
 					};
 				};
-				// Calculate pan
-				let pan = sum.chContr[chOff + ccToPos[10]] || 1,
-				panDegreeCache = (pan + 125) * 0.024933275, // - 64 + 3 * 63
-				panRotateCache = (pan - 64) * 0.024933275;
-				e.ccVis.beginPath();
-				// Render pan needle
-				if (pan > 127) {
-					e.ccVis.arc(84.5, 22.5, 21.5, 0, piMulti[2], true);
-					e.ccVis.stroke();
-				} else {
-					if (pan < 64) {
-						e.ccVis.arc(84.5, 22.5, 21.5, piMulti[3], panDegreeCache, true);
-						e.ccVis.stroke();
-					} else if (pan > 64) {
-						e.ccVis.arc(84.5, 22.5, 21.5, piMulti[3], panDegreeCache);
-						e.ccVis.stroke();
+				let pan = sum.chContr[chOff + ccToPos[10]] || 1;
+				switch (upThis.panStyle) {
+					case 7:
+					case 6:
+					case 5:
+					case 3:
+					case 2:
+					case 1: {
+						// Calculate pan
+						let panDegreeCache = (pan + 125) * 0.024933275, // - 64 + 3 * 63
+						panRotateCache = (pan - 64) * 0.024933275;
+						e.ccVis.beginPath();
+						// Render pan needle
+						if (pan > 127) {
+							if ((upThis.panStyle >> 1) & 1) {
+								e.ccVis.arc(84.5, 22.5, 21.5, 0, piMulti[2], true);
+								e.ccVis.stroke();
+							};
+						} else {
+							if ((upThis.panStyle >> 1) & 1) {
+								if (pan < 64) {
+									e.ccVis.arc(84.5, 22.5, 21.5, piMulti[3], panDegreeCache, true);
+									e.ccVis.stroke();
+								} else if (pan > 64) {
+									e.ccVis.arc(84.5, 22.5, 21.5, piMulti[3], panDegreeCache);
+									e.ccVis.stroke();
+								};
+							};
+							if (upThis.panStyle & 1) {
+								e.ccVis.strokeStyle = `#fff`;
+								e.ccVis.lineWidth = upThis.panStyle >> 2 ? 1 : 3;
+								e.ccVis.beginPath();
+								e.ccVis.moveTo(84.5, 22.5);
+								if (pan == 64) {
+									e.ccVis.lineTo(84.5, 4);
+								} else {
+									e.ccVis.lineTo(84.5 + 18 * Math.sin(panRotateCache), 22.5 - 18.5 * Math.cos(panRotateCache));
+								};
+								e.ccVis.stroke();
+							};
+						};
+						if ((upThis.panStyle >> 2) & 1) {
+							e.ccVis.fillStyle = `#fff`;
+							e.ccVis.beginPath();
+							e.ccVis.arc(84.5, 22.5, 2.5, 0, piMulti[4]);
+							e.ccVis.fill();
+						};
+						break;
 					};
-					e.ccVis.strokeStyle = `#fff`;
-					e.ccVis.lineWidth = 1;
-					e.ccVis.beginPath();
-					e.ccVis.moveTo(84.5, 22.5);
-					if (pan == 64) {
-						e.ccVis.lineTo(84.5, 4);
-					} else {
-						e.ccVis.lineTo(84.5 + 18 * Math.sin(panRotateCache), 22.5 - 18.5 * Math.cos(panRotateCache));
+					default: {
+						// Calculate pan
+						let panWidthCache = Math.abs(pan - 64) / 2.625;
+						if (pan < 64) {
+							e.ccVis.fillRect(84 - panWidthCache, 0, panWidthCache, 24);
+						} else if (pan > 127) {
+							e.ccVis.fillRect(60, 0, 49, 24);
+							e.ccVis.clearRect(61, 1, 47, 22);
+						} else {
+							e.ccVis.fillRect(85, 0, panWidthCache, 24);
+						};
+						// Render pan divider
+						e.ccVis.fillStyle = `#fff`;
+						e.ccVis.fillRect(84, 0, 1, 24);
 					};
-					e.ccVis.stroke();
 				};
-				e.ccVis.fillStyle = `#fff`;
-				e.ccVis.beginPath();
-				e.ccVis.arc(84.5, 22.5, 2.5, 0, piMulti[4]);
-				e.ccVis.fill();
 				// Render strength metre
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.globalCompositeOperation = "source-over";
