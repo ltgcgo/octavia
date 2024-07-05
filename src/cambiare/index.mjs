@@ -6,6 +6,7 @@ import {MxFont40} from "../basic/mxReader.js";
 
 const targetRatio = 16 / 9;
 const pixelBlurSpeed = 64;
+const piMulti = new Float64Array(5);
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
 const blackKeys = [1, 3, 6, 8, 10],
 keyXs = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6];
@@ -83,6 +84,10 @@ const pixelProfiles = {
 		"font7": [0, 0]
 	}
 };
+
+piMulti.forEach((e, i, a) => {
+	a[i] = Math.PI * i / 2;
+});
 
 let createElement = function (tag, classes, details = {}) {
 	let target = document.createElement(tag);
@@ -376,6 +381,8 @@ let Cambiare = class extends RootDisplay {
 				ccCandidates[9] = sum.ace[aceOff + 1] || 256;
 				e.ccVis.clearRect(0, 0, 109, 25);
 				e.ccVis.fillStyle = `#${upThis.#accent}`;
+				e.ccVis.strokeStyle = `#${upThis.#accent}`;
+				e.ccVis.lineWidth = 2;
 				for (let cci = 0; cci < ccCandidates.length; cci ++) {
 					let cce = ccCandidates[cci];
 					if (cce < 256) {
@@ -387,20 +394,38 @@ let Cambiare = class extends RootDisplay {
 						};
 					};
 				};
-				// Render pan
+				// Calculate pan
 				let pan = sum.chContr[chOff + ccToPos[10]] || 1,
-				panWidthCache = Math.abs(pan - 64) / 2.625;
-				if (pan < 64) {
-					e.ccVis.fillRect(84 - panWidthCache, 0, panWidthCache, 24);
-				} else if (pan > 127) {
-					e.ccVis.fillRect(60, 0, 49, 24);
-					e.ccVis.clearRect(61, 1, 47, 22);
+				panDegreeCache = (pan + 125) * 0.024933275, // - 64 + 3 * 63
+				panRotateCache = (pan - 64) * 0.024933275;
+				e.ccVis.beginPath();
+				// Render pan needle
+				if (pan > 127) {
+					e.ccVis.arc(84.5, 22.5, 21.5, 0, piMulti[2], true);
+					e.ccVis.stroke();
 				} else {
-					e.ccVis.fillRect(85, 0, panWidthCache, 24);
+					if (pan < 64) {
+						e.ccVis.arc(84.5, 22.5, 21.5, piMulti[3], panDegreeCache, true);
+						e.ccVis.stroke();
+					} else if (pan > 64) {
+						e.ccVis.arc(84.5, 22.5, 21.5, piMulti[3], panDegreeCache);
+						e.ccVis.stroke();
+					};
+					e.ccVis.strokeStyle = `#fff`;
+					e.ccVis.lineWidth = 1;
+					e.ccVis.beginPath();
+					e.ccVis.moveTo(84.5, 22);
+					if (pan == 64) {
+						e.ccVis.lineTo(84.5, 4);
+					} else {
+						e.ccVis.lineTo(84.5 + 18 * Math.sin(panRotateCache), 22 - 18 * Math.cos(panRotateCache));
+					};
+					e.ccVis.stroke();
 				};
-				// Render pan divider
 				e.ccVis.fillStyle = `#fff`;
-				e.ccVis.fillRect(84, 0, 1, 24);
+				e.ccVis.beginPath();
+				e.ccVis.arc(84.5, 22.5, 2.5, 0, piMulti[4]);
+				e.ccVis.fill();
 				// Render strength metre
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.globalCompositeOperation = "source-over";
