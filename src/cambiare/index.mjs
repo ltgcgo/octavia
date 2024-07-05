@@ -414,11 +414,11 @@ let Cambiare = class extends RootDisplay {
 					e.ccVis.strokeStyle = `#fff`;
 					e.ccVis.lineWidth = 1;
 					e.ccVis.beginPath();
-					e.ccVis.moveTo(84.5, 22);
+					e.ccVis.moveTo(84.5, 22.5);
 					if (pan == 64) {
 						e.ccVis.lineTo(84.5, 4);
 					} else {
-						e.ccVis.lineTo(84.5 + 18 * Math.sin(panRotateCache), 22 - 18 * Math.cos(panRotateCache));
+						e.ccVis.lineTo(84.5 + 18 * Math.sin(panRotateCache), 22.5 - 18.5 * Math.cos(panRotateCache));
 					};
 					e.ccVis.stroke();
 				};
