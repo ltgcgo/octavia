@@ -1,15 +1,15 @@
 ID	Name
 Uprt.Pno	Upright Piano
-Piano 1w	Grand Piano w
-UprtP. w	Upright Piano w
+Piano 1w	Grand Piano (wide)
+UprtP. w	Upright Piano (wide)
 EuropePf	European Piano
 PianoStr	Piano + Strings 1
 Pno+Str2	Piano + Strings 2
 DreamP.2	Dream Piano 2
-Piano 2w	Bright Piano w
-EGRhode1	EG + Rhodes 1
-EGRhode2	EG + Rhodes 2
-Piano 3w	Electric Grand w
+Piano 2w	Bright Piano (wide)
+EGRhode1	E. Guitar + Rhodes 1
+EGRhode2	E. Guitar + Rhodes 2
+Piano 3w	Electric Grand (wide)
 Old Uprt	Old Upright Piano
 StSoftEP	Stereo Soft EP
 ChorusEP	Chorus E. Piano
@@ -17,13 +17,13 @@ SilntRho	Silent Rhodes
 Dst.EPno	Distorted E. Piano
 60sElPno	60s' Electric Piano
 MelRhode	Mellow Rhodes
-ElPno 2v	Electric Piano 2v
+ElPno 2v	Electric Piano 2 (wide)
 HardFMEP	DX Hard
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
 CplHapsi	Coupled Harpsichord
-Harpsi.w	Harpsichord w
-Harpsi.o	Harpsichord o
+Harpsi.w	Harpsichord (wide)
+Harpsi.o	Harpsichord (open)
 SynHapsi	Synth Harpsichord
 AtkClavi	Attack Clavichord
 AtkClv.2	Attack Clavichord 2
@@ -41,10 +41,10 @@ St.MusBx	Stereo Music Box
 HardVibr	Hard Vibraphone
 Pop Vibr	Pop Vibraphone
 ChchBel2	Church Bell 2
-TubBel w	Tubular Bell w
+TubBel w	Tubular Bell (wide)
 DetDrwOr	Detuned Organ
 TremDrOr	Tremolo Organ
-Organ. o	Drawbar Organ o
+Organ. o	Drawbar Organ (open)
 60sDrOrg	60s' Drawbar Organ 1
 60sDrOr2	60s' Drawbar Organ 2
 60sDrOr3	60s' Drawbar Organ 3
@@ -70,7 +70,7 @@ BscBHrmo	Basic Blues Harmonica
 SplBHrmo	Supplem. Blues Harmonica
 TngoAcd2	Bandoneon 2
 Bndoneon	Bandoneon
-NylonGt3	Nylon Guitar o
+NylonGt3	Nylon Guitar (open)
 VelGtHrm	Velo Harmonics
 NylonGt2	Nylon Guitar 2
 LequintG	Lequint Guitar

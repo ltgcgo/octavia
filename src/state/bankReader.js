@@ -9,6 +9,11 @@ const noVoxStdPool = {
 	"s90es": "ES",
 	"motif": "ES"
 };
+const noVoxCatPool = {
+	"krs": "Kr",
+	"s90es": "SE",
+	"motif": "ME"
+};
 
 let halfHex = function (n) {
 	let segA = Math.floor(n / 10), segB = n % 10;
@@ -653,7 +658,6 @@ let VoiceBank = class {
 						standard = "GS";
 					};
 				};
-
 			};
 		};
 		if (ending != " ") {
@@ -673,7 +677,7 @@ let VoiceBank = class {
 			};
 		};
 		return {
-			name: bankName || `${halfHex(msb || 0)} ${halfHex(prg || 0)} ${halfHex(lsb || 0)}`,
+			name: bankName || `${noVoxCatPool[mode]}${halfHex(msb || 0)}${halfHex(prg || 0)}${halfHex(lsb || 0)}`,
 			poly: bankPoly,
 			type: bankType,
 			drum: bankDrum,
@@ -739,17 +743,23 @@ let VoiceBank = class {
 				});
 				upThis.#bankInfo[prg] = upThis.#bankInfo[prg] || [];
 				let writeArray = upThis.#bankInfo[prg];
+				let voiceObject = {
+					msb,
+					prg,
+					lsb,
+					name,
+					poly,
+					type,
+					drum
+				};
+				/*if (loadCount > 889 && loadCount < 910) {
+					console.debug(e);
+					console.debug(voiceObject);
+				};*/
 				if (!writeArray[(msb << 8) | lsb] || allowOverwrite) {
-					let voiceObject = {
-						msb,
-						prg,
-						lsb,
-						name,
-						poly,
-						type,
-						drum
-					};
-					//console.debug(voiceObject);
+					/*if (msb == 63 && lsb == 32) {
+						console.debug(`Voice object written to voice pool.`);
+					};*/
 					writeArray[(msb << 8) | lsb] = voiceObject;
 					loadCount ++;
 				} else {
