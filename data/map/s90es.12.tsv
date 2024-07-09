@@ -1,12 +1,211 @@
 ID	Name
 NaturalS	Natural S700
+Dave's B	Dave's B Org
+YamaEP's	Yamaha EPnos
+Vintg'74	Vintage'74EP
+Greasy	Greasy Organ
 ElegantS	Elegant S700
 Bright S	Bright S700
+Intimate	IntimateS700
 FulGrand	FullGrandPno
+Ragtime	RagtimeHonky
 HousePno	House Piano
+78rpmPno	78rpm Piano
 BaladKey	Ballad Keys
+80sLayer	80's Layered
+BladStak	Ballad Stack
+Pno&Str	Piano & Strs
+Pno&Ooh	Piano & Oohs
+Digi.Grd	Digi. Grand
+CP80&EP	CP80 & E. Pno
+DynoStrt	DynoStraight
+ChrsDyno	ChorusedDyno
+ChrsHard	ChorusedHard
+80th Bst	80th BoostEP
+R&B Soft	Soft R&B Pno
+HrdVintg	Hard Vintage
+PhaseVin	Phaser Vintg
+SoftCase	Soft Case EP
+Early70s	Early 70'sEP
 Sweetnes	Sweetness EP
+VintgFas	Phased Vintg
+EarlyFsn	Early Fusion
+VintgCas	CasedVintage
+Contempo	Contempo EP
+E.PnoPad	E. Piano Pad
+BelChors	Bell Chorus
+FM E.Pno	FM E. Piano
+BalladEP	Ballad E. Pf
+SparkTne	Sparkle Tine
+Anal.Pno	Analog Piano
+Anal.EP	Analog E. Pf
+WurlTrem	Trem. Wurli
+WurliAmp	Amped Wurli
+VintgClv	Vintage Clav
+SuperClv	Super Clavi.
+St.Clavi	StereoClavi.
+HollwClv	HollowClavi.
+NuPhasin	NewPhasinClv
+PulseClv	Pulse Clavi.
+TouchClv	Touch Clavi.
+Marimbl1	Marimbell 1
+Marimbl2	Marimbell 2
+Tibetan	Tibetan Bell
+VbrBowMW	BowedVibr.MW
+BazrBels	Bazaar Bells
+MstcBowl	Mystic Bowl
+Twinkle	Twinkle Bell
+StickBel	Stick Bells
+ChorsBel	Chorus Bells
+StackBel	Stack Bells
+BelChiff	Bell Chiffon
+NoisyBel	Noisy Bells
+J-Pop	J-Pop Bells
+SynStlDr	SynSteelDrum
+WoodBell	Wooden Bells
+IslndBel	Island Bells
+Log&Drum	Log & Drums
+TmpBlGlk	Tmp/Bl/Glock
+VelOrPrc	VeloPercOrgn
+PetitOrg	Petit Organ
+Imprompt	ImpromptuOrg
+MixtureO	Mixture Org.
+St. Paul	St. Paul Org
+FlutyPpe	Flutey Pipes
+St.Peter	St. Peter Or
+TradiOrg	Tradi. Organ
+SundayOr	Sunday Organ
+BrthPipe	Breathy Pipe
+Medieval	Medieval Org
+PreludeO	Prelude Orgn
+AmpedOrg	Amped Organ
+VintageC	Vintage C.Or
+2nd Perc	2ndPercOrgan
+1685&13	16+8+5 & 1/3
+JazzyOr1	Jazzy Organ1
+JazzyOr2	Jazzy Organ2
+SwishieO	Swishie Org.
+MellowPp	Mellow Pipes
+Nu Shade	NewShadeOrgn
+Cool Cat	Cool Cat Org
+FluteyOr	Flutey Organ
+LeftMnl.	LeftManualOr
+DrawCtrl	DrawbarCntrl
+GospSplt	GosplSplitOr
+SoulemnO	SoulemnOrgan
+FullyOrg	Fully Organ
+Progress	ProgressyOrg
+CrunchyO	Crunchy Org.
+RockyOrg	Rocky Organ
+DistFull	DistFullOrgn
+EarlyBrd	EarlyBirdOrg
+AnaDrwOr	AnalgDrawbar
+PaddyOrg	Paddy Organ
+MellowOr	Mellow Organ
+RezDrwOr	RezDrawOrgan
+PantherO	Panther Org.
+SawCombo	SawComboOrg.
+CompactO	CompactOrgan
+Espa.Gtr	Spanish Gtr.
+Nyln+Hrm	Nylon+Harm.
+SimpStlG	SimplSteelGt
+StlCmprG	SteelCmprsGt
+MuteSliG	Mute&SlideGt
+Ac&HrmGt	Acou&HarmGtr
+StlSwtch	SteelSwtchGt
+MegaStlG	MegaSteelGtr
+Mega12St	Mega12StrGtr
+JazzyPik	JazzyPickGtr
+JazGtMel	JazzGtr.Melo
+VeloJazz	VeloJazzGtr.
+2CoilAm1	2CoilAmpGtr1
+2CoilAm2	2CoilAmpGtr2
+DistantG	Distant Gtr.
+AltRockr	AltRockerGt.
+RotatrGt	Rotater Gtr.
+Baby Gtr	Baby Guitar
+MegaClnG	MegaCleanGtr
+OvrDrivn	OverDrivenGt
+Dyna.Amp	DynamicAmpGt
+DriveGtr	Drive Guitar
+SnekFngr	Snake Finger
+Feedbker	FeedbackerGt
+KilrWhmy	KillerWhammy
+Vuduman	Voodooman Gt
+CrunchyG	Crunchy Gtr.
+SmallAmp	SmallAmpGtr.
+LatnLuvr	LatinLoverGt
+StillBlu	StillBlueGtr
+59 Combo	59 Combo Gtr
+OvrDaTop	Over The Top
+Beater	Beater Gtr.
+MegaAcBs	MegaAcouBass
+FngrPkBs	FingrPikBass
+PrecFW	Prec FW Bass
+RndWound	RoundWoundBs
+ActivePk	ActivePickBs
+GnarlyBa	Gnarly Bass
+PkBsFgDs	PikBsFngrDst
+MegaFgHm	MegaFingrHrm
+SlpSwtch	SlapSwitchBs
+MegaFngr	MegaFingerBs
+MegaSlap	MegaSlapBass
+PickOpen	OpenPickBass
+PickPull	PullPickBass
+PkMuteDr	MutedDryPick
+NewPikBs	NewPickedBas
+MegaPkBs	MegaPickedBs
+FrtlsDry	Fretless Dry
+FrtlSolo	FretlessSolo
+MegaFrtl	Mega Fretles
+SoloStr1	Solo Str. 1
+SoloStr2	Solo Str. 2
+SolSpict	SoloSpiccato
+2SoloStr	2 Solo Str.
+CelloEns	CelloEnsembl
+ViolaEns	ViolaEnsembl
+ViolnEns	ViolnEnsembl
+CtrbSect	Contra.Sect.
+SmolSec1	Small Sect 1
+SmolSec2	Small Sect 2
+MediumEn	MediumStrEns
+SpicLine	Spicca.Lines
+BkGround	BackGrndStr.
+Hophead	Hophead Str.
+Hole Str	Hole Strings
+Velo Str	Velo Strings
+Big Strs	Big Strings
+BeautyHp	Beauty Harp
+Ste.Harp	Stereo Harp
+Pizz.Ens	PizzEnsemble
+PizzSect	Pizz.Section
+Oct.Pizz	Octave Pizz.
+Orch.Pl	OrchstralPlk
+VeloFall	Velo Fall Br
+SoprnoSx	Soprano Sax
+SprnoSft	Soft Soprano
+Alto Vib	Vibrato Alto
+VeloAlto	Velo Alto Sx
+TenrSoft	SoftTenorSax
+Hip Bari	Hip Baritone
+SmthOboe	Smooth Oboe
+DblRdQrt	DblReedQuart
+C Flute	ConcertFlute
+SwtFlute	Sweet Flute
+BluzDist	Bluz Distort
+Campfire	CampfireHrmo
+TootsHrp	Tootsy Harmo
+WoodyHrp	Woody Harmo.
+NomadGtr	Nomad Guitar
 ChrchOoh	Church Oohs
+Paradies	Paradies Pad
+SmthBlue	SmoothBluePd
+FrozenVx	Frozen Voice
+Soft RnB	Soft RnBLead
+SimpleBa	Simple Bass
+Fat Sine	Fat Sine Bas
+OneVoice	OneVoiceBass
+Fundmntl	Fundamental
 PWM Perc	PWM Percuss.
 HyperStd	HyperStandKt
 DryStdKt	DryStndrdKit
@@ -53,9 +252,20 @@ BlyDance	BellyDanceKt
 DanceSnr	Dance Snares
 Spec.SFX	Special SFX
 SynthSFX	SyntheticSFX
+SlwSuckr	SlowSuckrStr
+BigBrtBr	BigBrightBrs
 BackPdMW	Back Pad MW
+RezAtkLd	RezAttakLead
+Dark Uni	DarkUni.Bass
+Mini Sub	Mini SubBass
 SinglOsc	Single Osci.
 Wave Pan	Wave Panner
+TrncHook	TranceHookLd
+MaydayLd	Mayday Lead
 TrncMelo	Trance Melod
 TranceBa	Trance Bass
+DeepPtBa	DeepPointBas
+AmbiBite	Ambient Bite
+ShneChrd	Shine Chords
 PolyTrnc	Poly Trance
+ChordzLd	Chordz Lead

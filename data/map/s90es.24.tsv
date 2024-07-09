@@ -1,6 +1,161 @@
 ID	Name
+Dave's B	Dave's B Organ
+YamaEP's	Yamaha E. Pianos
+Vintg'74	Vintage '74 EP
+Intimate	Intimate S700
 FulGrand	Full Grand Piano
+Ragtime	Ragtime Honkytonk
+80sLayer	80's Layered EP
+BladStak	Ballad Stack EP
+Pno&Str	Piano & Strings
+Digi.Grd	Digital Grand
+CP80&EP	CP80 & E. Piano
+DynoStrt	Straight Dyno EP
+ChrsDyno	Chorused Dyno EP
+ChrsHard	Chorused Hard EP
+80th Bst	80th Boost EP
+R&B Soft	Soft R&B Piano
+HrdVintg	Hard Vintage EP
+PhaseVin	Phaser Vintage EP
+Early70s	Early 70's EP
 Sweetnes	Sweetness E. Piano
+VintgFas	Phased Vintage EP
+EarlyFsn	Early Fusion EP
+VintgCas	Cased Vintage EP
+Contempo	Contemporary EP
+BalladEP	Ballad E. Piano
+SparkTne	Sparkling Tines
+Anal.EP	Analog E. Piano
+WurlTrem	Tremolo Wurli EP
+WurliAmp	Amped Wurli EP
+VintgClv	Vintage Clavichord
+SuperClv	Super Clavichord
+St.Clavi	Stereo Clavichord
+HollwClv	Hollow Clavichord
+NuPhasin	New Phasing Clavichord
+PulseClv	Pulse Clavichord
+TouchClv	Touch Clavichord
+Tibetan	Tibetan Bells
+VbrBowMW	Bowed Vibraphone MW
+Twinkle	Twinkle Bells
+ChorsBel	Chorused Bells
+SynStlDr	Synth Steel Drum
+TmpBlGlk	Timpani / Bell / Glocken
+VelOrPrc	Velo Percussion Organ
+Imprompt	Impromptu Organ
+MixtureO	Mixture Organ
+St. Paul	St. Paul Organ
+St.Peter	St. Peter Organ
+TradiOrg	Traditional Organ
+BrthPipe	Breathy Pipes
+Medieval	Medieval Organ
+PreludeO	Prelude Organ
+VintageC	Vintage Church Organ
+2nd Perc	2nd Percussion Organ
+1685&13	16+8+5 & 1/3
+JazzyOr1	Jazzy Organ 1
+JazzyOr2	Jazzy Organ 2
+SwishieO	Swishie Organ
+Nu Shade	New Shade Organ
+Cool Cat	Cool Cat Organ
+LeftMnl.	Left Manual Organ
+DrawCtrl	Drawbar Control Organ
+GospSplt	Split Gospel Organ
+SoulemnO	Soulemn Organ
+Progress	Progressy Organ
+CrunchyO	Crunchy Organ
+DistFull	Distorted Full Organ
+EarlyBrd	Early Bird Organ
+AnaDrwOr	Analog Drawbar Organ
+RezDrwOr	Resonant Drawbar Organ
+PantherO	Panther Organ
+SawCombo	Sawtooth Combo Organ
+CompactO	Compact Organ
+Espa.Gtr	Spanish Guitar
+Nyln+Hrm	Nylon Guitar + Harmonics
+SimpStlG	Simple Steel Guitar
+StlCmprG	Steel Compression Guitar
+MuteSliG	Muted & Slide Guitar
+Ac&HrmGt	Acoustic & Harmonics Gt.
+StlSwtch	Steel Switch Guitar
+MegaStlG	Mega Steel Guitar
+Mega12St	Mega 12-String Guitar
+JazzyPik	Picked Jazzy Guitar
+JazGtMel	Mellow Jazzy Guitar
+VeloJazz	Velo Jazz Guitar
+2CoilAm1	2-Coil Amped Guitar 1
+2CoilAm2	2-Coil Amped Guitar 2
+DistantG	Distant Guitar
+AltRockr	Alt Rocker Guitar
+RotatrGt	Rotater Guitar
+MegaClnG	Mega Clean Guitar
+OvrDrivn	Over Driven Guitar
+Dyna.Amp	Dynamic Amped Guitar
+SnekFngr	Snake Finger Guitar
+Feedbker	Feedbacker Guitar
+KilrWhmy	Killer Whammy Guitar
+Vuduman	Voodooman Guitar
+CrunchyG	Crunchy Guitar
+SmallAmp	Small Amped Guitar
+LatnLuvr	Latin Lover Guitar
+StillBlu	Still Blue Guitar
+59 Combo	59 Combo Guitar
+OvrDaTop	Over The Top Guitar
+Beater	Beater Guitar
+MegaAcBs	Mega Acoustic Bass
+FngrPkBs	Fingered Picked Bass
+RndWound	Round Wound Bass
+ActivePk	Active Picked Bs
+PkBsFgDs	Picked Bass Finger Dist.
+MegaFgHm	Mega Fingered Harmonics
+SlpSwtch	Slap Switch Bass
+MegaFngr	Mega Fingered Bass
+MegaSlap	Mega Slap Bass
+PickOpen	Open Picked Bass
+PickPull	Pull Picked Bass
+PkMuteDr	Muted Dry Picked Bass
+NewPikBs	New Picked Bass
+MegaPkBs	Mega Picked Bass
+FrtlsDry	Dry Fretless Bass
+FrtlSolo	Solo Fretless Bass
+MegaFrtl	Mega Fretless Bass
+SoloStr1	Solo Strings 1
+SoloStr2	Solo Strings 2
+SolSpict	Solo Spiccato Strings
+2SoloStr	2 Solo Strings
+CelloEns	Cello Ensemble
+ViolaEns	Viola Ensemble
+ViolnEns	Violin Ensemble
+CtrbSect	Contrabass Section
+SmolSec1	Small String Section 1
+SmolSec2	Small String Section 2
+MediumEn	Medium String Ensemble
+SpicLine	Spiccato Lines
+BkGround	Back Ground Strings
+Hophead	Hophead Strings
+Pizz.Ens	Pizzicato Ensemble
+PizzSect	Pizzicato Section
+Oct.Pizz	Octave Pizzicato
+Orch.Pl	Orchstral Plucks
+VeloFall	Velo Fall Brass
+SprnoSft	Soft Soprano Sax
+Alto Vib	Vibrato Alto Sax
+VeloAlto	Velo Alto Sax
+TenrSoft	Soft Tenor Sax
+Hip Bari	Hip Baritone Sax
+DblRdQrt	Double Reed Quarter
+C Flute	Concert Flute
+BluzDist	Bluz Distortion
+Campfire	Campfire Harmonica
+TootsHrp	Tootsy Harmonica
+WoodyHrp	Woody Harmonica
+NomadGtr	Nomadic Guitar
+SmthBlue	Smooth Blue Pad
+FrozenVx	Frozen Voices
+Whisperr	Whisperer Pad
+Soft RnB	Soft RnB Lead
+OneVoice	One Voice Bass
+Fundmntl	Fundamental Bass
 PWM Perc	PWM Percussion
 HyperStd	Hyper Standard Kit
 DryStdKt	Dry Standard Kit
@@ -35,6 +190,14 @@ SynPopKt	Synth Pop Kit
 ArabMxKt	Arabic Mix Kit
 BlyDance	Belly Dance Kit
 SynthSFX	Synthetic SFX Kit
+SlwSuckr	Slow Sucker Strings
+BigBrtBr	Big Bright Brass
+RezAtkLd	Resonant Attack Lead
+Dark Uni	Dark Universe Bass
+Mini Sub	Mini Sub Bass
 SinglOsc	Single Oscillator
+TrncHook	Trance Hook Lead
 TrncMelo	Trance Melody
+DeepPtBa	Deep Point Bass
 PolyTrnc	Poly Trance Lead
+ChordzLd	Chordz Lead
