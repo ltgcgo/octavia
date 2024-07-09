@@ -4,6 +4,12 @@ import {ccToPos} from "../state/index.mjs";
 
 const sgCrit = ["MSB", "PRG", "LSB", "NME", "ELC", "DRM"];
 
+const noVoxStdPool = {
+	"krs": "KR",
+	"s90es": "ES",
+	"motif": "ES"
+};
+
 let halfHex = function (n) {
 	let segA = Math.floor(n / 10), segB = n % 10;
 	return `${segA.toString(16)}${segB}`;
@@ -11,6 +17,9 @@ let halfHex = function (n) {
 
 let VoiceBank = class {
 	#bankInfo;
+	get bankInfo() {
+		return this.#bankInfo;
+	};
 	strictMode = false;
 	get(msb = 0, prg = 0, lsb = 0, mode) {
 		let sid = [msb, prg, lsb];
@@ -119,6 +128,9 @@ let VoiceBank = class {
 				break;
 			};
 			case "s90es": {
+				if (msb == 0) {
+					break;
+				};
 				if (lsb < 8) {
 					args[2] += 17;
 				} else if (lsb < 32) {
@@ -129,6 +141,9 @@ let VoiceBank = class {
 				break;
 			};
 			case "motif": {
+				if (msb == 0) {
+					break;
+				};
 				if (lsb < 8) {
 					args[2] += 28;
 				} else if (lsb < 32) {
@@ -396,11 +411,11 @@ let VoiceBank = class {
 		let iid = [args[0], args[1], args[2]];
 		// Bank read
 		while (!(bankName?.length >= 0)) {
-			bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]]?.name;
+			bankName = this.#bankInfo[args[1] || 0][(args[0] << 8) + args[2]]?.name;
 			//console.debug("Result of the current round of bank fetch: ", bankName);
 			//console.debug(`${args}`);
 			if (bankName) {
-				let bankObject = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
+				let bankObject = this.#bankInfo[args[1] || 0][(args[0] << 8) + args[2]];
 				bankPoly = bankObject?.poly || bankPoly;
 				bankType = bankObject?.type || bankType;
 				bankDrum = bankObject?.drum;
@@ -412,7 +427,7 @@ let VoiceBank = class {
 					}; */
 					if (args[0] == 0 && args[1] == 0 && args[2] == 0) {
 						bankName = "Unloaded";
-					} else if (!this.#bankInfo[args[1] || 0][args[0] << 7]) {
+					} else if (!this.#bankInfo[args[1] || 0][args[0] << 8]) {
 						if (msb == 48) {
 							args[0] = 0;
 							args[2] = 0;
@@ -451,10 +466,10 @@ let VoiceBank = class {
 							} else {
 								args[1] %= 7;
 							};
-							bankName = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]]?.name;
+							bankName = this.#bankInfo[args[1] || 0][(args[0] << 8) + args[2]]?.name;
 							if (bankName) {
 								ending = " ";
-								let bankObject = this.#bankInfo[args[1] || 0][(args[0] << 7) + args[2]];
+								let bankObject = this.#bankInfo[args[1] || 0][(args[0] << 8) + args[2]];
 								bankPoly = bankObject?.poly || bankPoly;
 								bankType = bankObject?.type || bankType;
 								bankDrum = bankObject?.drum;
@@ -642,9 +657,19 @@ let VoiceBank = class {
 			};
 		};
 		if (ending != " ") {
-			if (mode == "krs" || self.debugMode) {
-				bankName = "";
-				standard = "KR";
+			switch (mode) {
+				case "krs":
+				case "s90es":
+				case "motif": {
+					bankName = "";
+					standard = noVoxStdPool[mode];
+					break;
+				};
+				default: {
+					if (self.debugMode) {
+						bankName = "";
+					};
+				};
 			};
 		};
 		return {
@@ -714,7 +739,7 @@ let VoiceBank = class {
 				});
 				upThis.#bankInfo[prg] = upThis.#bankInfo[prg] || [];
 				let writeArray = upThis.#bankInfo[prg];
-				if (!writeArray[(msb << 7) | lsb] || allowOverwrite) {
+				if (!writeArray[(msb << 8) | lsb] || allowOverwrite) {
 					let voiceObject = {
 						msb,
 						prg,
@@ -725,10 +750,10 @@ let VoiceBank = class {
 						drum
 					};
 					//console.debug(voiceObject);
-					writeArray[(msb << 7) | lsb] = voiceObject;
+					writeArray[(msb << 8) | lsb] = voiceObject;
 					loadCount ++;
 				} else {
-					//console.debug(`Skipped overwriting ${msb},${prg},${lsb}: [${upThis.#bankInfo[prg][(msb << 7) | lsb]?.name}] to [${assign[3]}]`);
+					//console.debug(`Skipped overwriting ${msb},${prg},${lsb}: [${upThis.#bankInfo[prg][(msb << 8) | lsb]?.name}] to [${assign[3]}]`);
 				};
 				allCount ++;
 			};
@@ -742,7 +767,7 @@ let VoiceBank = class {
 		msb = options.msb != undefined ? (options.msb.constructor == Array ? options.msb : [options.msb, options.msb]) : [0, 127],
 		lsb = options.lsb != undefined ? (options.lsb.constructor == Array ? options.lsb : [options.lsb, options.lsb]) : [0, 127];
 		for (let cMsb = msb[0]; cMsb <= msb[1]; cMsb ++) {
-			let precalMsb = cMsb << 7;
+			let precalMsb = cMsb << 8;
 			for (let cLsb = lsb[0]; cLsb <= lsb[1]; cLsb ++) {
 				let precalBnk = precalMsb + cLsb;
 				for (let cPrg = prg[0]; cPrg <= prg[1]; cPrg ++) {
