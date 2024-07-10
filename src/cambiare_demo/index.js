@@ -332,9 +332,9 @@ document.body.addEventListener("keydown", async (ev) => {
 			case "z": {
 				// Show time signature
 				let roundedBeat = Math.floor(visualizer.noteBeat * 2) / 2;
-				let roundedTime = (visualizer.noteBar * visualizer.getTimeSig()[0] + roundedBeat) * 60 / visualizer.getTempo() + visualizer.noteOffset;
+				let roundedTime = (visualizer.noteBar * visualizer.getTimeSig()[0] + roundedBeat + visualizer.noteOffset) * 60 / visualizer.getTempo();
 				//visualizer.getTimeSig()
-				console.info(`Requested rounded note progress: ${visualizer.noteBar + 1}/${roundedBeat + 1}, ${Math.round(roundedTime * 1000) / 1000}s`);
+				console.info(`Requested rounded note progress: ${visualizer.noteBar + 1}/${roundedBeat + 1}, ${Math.round(roundedTime * 1000) / 1000}s (${Math.round(timeMuxer.currentTime * 1000) / 1000}s)`);
 				break;
 			};
 			default: {

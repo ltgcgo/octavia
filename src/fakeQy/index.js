@@ -360,6 +360,7 @@ getBridge().addEventListener("message", function (ev) {
 {
 	// Kandi8
 	let perf = new TimedEvents();
+	perf.push(new PointEvent(4, genNewSwitch(13)));
 	perf.fresh();
 	demoPerfs["HORIZON"] = perf;
 };
