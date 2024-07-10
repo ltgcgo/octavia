@@ -329,6 +329,14 @@ document.body.addEventListener("keydown", async (ev) => {
 				// Accelerate
 				break;
 			};
+			case "z": {
+				// Show time signature
+				let roundedBeat = Math.floor(visualizer.noteBeat * 2) / 2;
+				let roundedTime = (visualizer.noteBar * visualizer.getTimeSig()[0] + roundedBeat) * 60 / visualizer.getTempo() + visualizer.noteOffset;
+				//visualizer.getTimeSig()
+				console.info(`Requested rounded note progress: ${visualizer.noteBar + 1}/${roundedBeat + 1}, ${Math.round(roundedTime * 1000) / 1000}s`);
+				break;
+			};
 			default: {
 				preventKey = false;
 				self.debugMode && console.debug(`Unknown key "${key}" pressed.`);

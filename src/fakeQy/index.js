@@ -357,3 +357,9 @@ getBridge().addEventListener("message", function (ev) {
 	perf.fresh();
 	demoPerfs["KANDI8"] = perf;
 };
+{
+	// Kandi8
+	let perf = new TimedEvents();
+	perf.fresh();
+	demoPerfs["HORIZON"] = perf;
+};

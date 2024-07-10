@@ -367,6 +367,9 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		return beat;
 	};
+	get noteOffset() {
+		return this.#noteBarOffset;
+	};
 	getTimeSig() {
 		return [this.#noteNomin, this.#noteDenom];
 	};
