@@ -108,6 +108,7 @@ let Sc8850Display = class extends RootDisplay {
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
 		});
 		upThis.device.addEventListener("reset", (ev) => {
+			upThis.#dumpExpire = 0;
 			upThis.#bmdb.fill(0);
 		});
 		upThis.device.addEventListener("screen", (ev) => {
