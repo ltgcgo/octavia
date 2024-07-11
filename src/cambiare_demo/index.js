@@ -178,6 +178,10 @@ self.gPanStyle = (panStyle) => {
 	visualizer.panStyle = panStyle;
 	Alpine.store("panStyle", panStyle);
 };
+self.gSetScheme = (scheme) => {
+	visualizer.setScheme(scheme);
+	Alpine.store("scheme", scheme);
+};
 
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".mdat",".MDAT",".pcg",".PCG"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');

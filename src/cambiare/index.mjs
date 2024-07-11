@@ -85,6 +85,27 @@ const pixelProfiles = {
 	}
 };
 
+const modeColourPool = {
+	"xg": ["9efaa0", "006415"],
+	"doc": ["9efaa0", "006415"],
+	"qy10": ["9efaa0", "006415"],
+	"qy20": ["9efaa0", "006415"],
+	"ns5r": ["9efaa0", "006415"],
+	"x5d": ["9efaa0", "006415"],
+	"05rw": ["9efaa0", "006415"],
+	"k11": ["9efaa0", "006415"],
+	"s90es": ["9efaa0", "006415"],
+	"motif": ["9efaa0", "006415"],
+	"gm": ["a1f3ff", "005e88"],
+	"g2": ["a1f3ff", "005e88"],
+	"krs": ["a1f3ff", "005e88"],
+	"gs": ["ffe1a5", "804e00"],
+	"sc": ["ffe1a5", "804e00"],
+	"mt32": ["ffe1a5", "804e00"],
+	"sd": ["ffe1a5", "804e00"],
+	"sg": ["ffdddd", "990022"]
+};
+
 piMulti.forEach((e, i, a) => {
 	a[i] = Math.PI * i / 2;
 });
@@ -180,6 +201,7 @@ let Cambiare = class extends RootDisplay {
 	#renderRange = 1;
 	#renderPort = 0;
 	#lastFrame = 0;
+	#scheme = 0;
 	#bufLo = new Uint8Array(1280);
 	#bufLm = new Uint8Array(1280);
 	#bufLn = new Uint8Array(1280);
@@ -193,6 +215,8 @@ let Cambiare = class extends RootDisplay {
 	#canvas;
 	#pixelProfile;
 	#accent = "fcdaff";
+	#foreground = "ffffff";
+	#mode = "?";
 	#sectInfo = {};
 	#sectMark = {};
 	#sectPart = [];
@@ -241,7 +265,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Colours
-		context.fillStyle = `#${isBlackKey ? (upThis.#accent) : "ffffff"}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
+		context.fillStyle = `#${isBlackKey ? (upThis.#accent) : (upThis.#foreground)}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
 		context.strokeStyle = context.fillStyle;
 		context.lineWidth = range == 1 ? 4 : 2;
 		context.lineDashOffset = 0;
@@ -424,7 +448,7 @@ let Cambiare = class extends RootDisplay {
 								};
 							};
 							if (upThis.panStyle & 1) {
-								e.ccVis.strokeStyle = `#fff`;
+								e.ccVis.strokeStyle = `#${upThis.#foreground}`;
 								e.ccVis.lineWidth = upThis.panStyle >> 2 ? 1 : 3;
 								e.ccVis.beginPath();
 								e.ccVis.moveTo(84.5, 22.5);
@@ -437,7 +461,7 @@ let Cambiare = class extends RootDisplay {
 							};
 						};
 						if ((upThis.panStyle >> 2) & 1) {
-							e.ccVis.fillStyle = `#fff`;
+							e.ccVis.fillStyle = `#${upThis.#foreground}`;
 							e.ccVis.beginPath();
 							e.ccVis.arc(84.5, 22.5, 2.5, 0, piMulti[4]);
 							e.ccVis.fill();
@@ -456,12 +480,13 @@ let Cambiare = class extends RootDisplay {
 							e.ccVis.fillRect(85, 0, panWidthCache, 24);
 						};
 						// Render pan divider
-						e.ccVis.fillStyle = `#fff`;
+						e.ccVis.fillStyle = `#${upThis.#foreground}`;
 						e.ccVis.fillRect(84, 0, 1, 24);
 					};
 				};
 				// Render strength metre
 				e.metre.clearRect(0, 0, 121, 25);
+				e.metre.fillStyle = `#${upThis.#foreground}`;
 				e.metre.globalCompositeOperation = "source-over";
 				if (e.metre.rWidth > e.metre.canvas.width) {
 					if (e.metre.rNew) {
@@ -486,7 +511,7 @@ let Cambiare = class extends RootDisplay {
 				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
 				// Extensible visualizer
 				e.extVis.clearRect(0, 0, 47, 25);
-				e.extVis.fillStyle = "#fff";
+				e.extVis.fillStyle = `#${upThis.#foreground}`;
 				switch (sum.chExt[part][0]) {
 					case upThis.device.EXT_VL: {
 						let mouth = (sum.chContr[chOff + ccToPos[136]] - 64) / 64 || sum.rawPitch[part] / 8192;
@@ -603,7 +628,7 @@ let Cambiare = class extends RootDisplay {
 			if (upThis.#bufBm[i] != e) {
 				ccxt.clearRect(252 + (x << 2), y << 2, 3, 3);
 				if (e) {
-					ccxt.fillStyle = `#ffffff${e.toString(16).padStart(2, "0")}`;
+					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
 					ccxt.fillRect(252 + (x << 2), y << 2, 3, 3);
 				};
 			} else if (self.debugMode) {
@@ -620,7 +645,7 @@ let Cambiare = class extends RootDisplay {
 			if (upThis.#bufLm[i] != e) {
 				ccxt.clearRect(x << 2, (y | 16) << 2, 3, 3);
 				if (e) {
-					ccxt.fillStyle = `#ffffff${e.toString(16).padStart(2, "0")}`;
+					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
 					ccxt.fillRect(x << 2, (y | 16) << 2, 3, 3);
 				};
 			} else if (self.debugMode) {
@@ -702,26 +727,15 @@ let Cambiare = class extends RootDisplay {
 		if (mode != "?") {
 			classOn(upThis.#canvas, [`cambiare-mode-${mode}`]);
 		};
-		upThis.#accent = {
-			"xg": "9efaa0",
-			"doc": "9efaa0",
-			"qy10": "9efaa0",
-			"qy20": "9efaa0",
-			"ns5r": "9efaa0",
-			"x5d": "9efaa0",
-			"05rw": "9efaa0",
-			"k11": "9efaa0",
-			"s90es": "9efaa0",
-			"motif": "9efaa0",
-			"gm": "a1f3ff",
-			"g2": "a1f3ff",
-			"krs": "a1f3ff",
-			"gs": "ffe1a5",
-			"sc": "ffe1a5",
-			"mt32": "ffe1a5",
-			"sd": "ffe1a5",
-			"sg": "ffdddd"
-		}[mode] || "fcdaff";
+		upThis.#mode = mode;
+		upThis.#accent = (modeColourPool[mode] || ["fcdaff", "742b81"])[upThis.#scheme];
+	};
+	setScheme(scheme = 0) {
+		let upThis = this;
+		upThis.#scheme = scheme ? 1 : 0;
+		upThis.#foreground = ["ffffff", "000000"][upThis.#scheme];
+		[classOff, classOn][upThis.#scheme](upThis.#canvas, [`cambiare-scheme-light`]);
+		upThis.#accent = (modeColourPool[upThis.#mode] || ["fcdaff", "742b81"])[upThis.#scheme];
 	};
 	#setPortView(canvasUpdate) {
 		let upThis = this;
@@ -920,15 +934,14 @@ let Cambiare = class extends RootDisplay {
 				e.notes.appendChild(createElement("span", [`field`, `part-csplit`, `part-cdive`], {l: 0, w: `100%`, h: 1}));
 				e.metre.canvas.width = 121;
 				e.metre.canvas.height = 25;
-				e.metre.fillStyle = "#fff";
 				e.metre.textBaseline = "top";
 				e.metre.font = "20px 'PT Sans Narrow'";
 				e.ccVis.canvas.width = 109;
 				e.ccVis.canvas.height = 25;
-				e.ccVis.fillStyle = "#fff";
+				e.ccVis.fillStyle = `#${upThis.#foreground}`;
 				e.extVis.canvas.width = 47;
 				e.extVis.canvas.height = 25;
-				e.extVis.fillStyle = "#fff";
+				e.extVis.fillStyle = `#${upThis.#foreground}`;
 				mountElement(e.notes, [
 					e.cxt.canvas
 				]);

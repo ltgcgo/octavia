@@ -23,17 +23,64 @@ div.cambiare-canvas .pcp-font4 {
 div.cambiare-canvas .pcp-font7 {
 	transform: var(--pcp-font7);
 }
-div.cambiare-canvas.cambiare-mode-xg, div.cambiare-canvas.cambiare-mode-doc, div.cambiare-canvas.cambiare-mode-qy10, div.cambiare-canvas.cambiare-mode-qy20, div.cambiare-canvas.cambiare-mode-ns5r, div.cambiare-canvas.cambiare-mode-x5d, div.cambiare-canvas.cambiare-mode-05rw, div.cambiare-canvas.cambiare-mode-k11, div.cambiare-canvas.cambiare-mode-s90es, div.cambiare-canvas.cambiare-mode-motif {
+div.cambiare-canvas.cambiare-scheme-light {
+	--background-color: #fff;
+	--foreground-color: #000;
+	--accent-color: #742b81;
+	--white-keys: var(--foreground-color);
+	--black-keys: var(--accent-color);
+}
+div.cambiare-canvas.cambiare-mode-xg,
+div.cambiare-canvas.cambiare-mode-doc,
+div.cambiare-canvas.cambiare-mode-qy10,
+div.cambiare-canvas.cambiare-mode-qy20,
+div.cambiare-canvas.cambiare-mode-ns5r,
+div.cambiare-canvas.cambiare-mode-x5d,
+div.cambiare-canvas.cambiare-mode-05rw,
+div.cambiare-canvas.cambiare-mode-k11,
+div.cambiare-canvas.cambiare-mode-s90es,
+div.cambiare-canvas.cambiare-mode-motif {
 	--accent-color: #9efaa0;
 }
-div.cambiare-canvas.cambiare-mode-gm, div.cambiare-canvas.cambiare-mode-g2, div.cambiare-canvas.cambiare-mode-krs {
+div.cambiare-canvas.cambiare-mode-gm,
+div.cambiare-canvas.cambiare-mode-g2,
+div.cambiare-canvas.cambiare-mode-krs {
 	--accent-color: #a1f3ff;
 }
-div.cambiare-canvas.cambiare-mode-gs, div.cambiare-canvas.cambiare-mode-sc, div.cambiare-canvas.cambiare-mode-mt32, div.cambiare-canvas.cambiare-mode-sd {
+div.cambiare-canvas.cambiare-mode-gs,
+div.cambiare-canvas.cambiare-mode-sc,
+div.cambiare-canvas.cambiare-mode-mt32,
+div.cambiare-canvas.cambiare-mode-sd {
 	--accent-color: #ffe1a5;
 }
 div.cambiare-canvas.cambiare-mode-sg {
 	--accent-color: #fdd;
+}
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-xg,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-doc,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-qy10,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-qy20,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-ns5r,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-x5d,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-05rw,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-k11,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-s90es,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-motif {
+	--accent-color: #006415;
+}
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gm,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-g2,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-krs {
+	--accent-color: #005e88;
+}
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gs,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sc,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-mt32,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sd {
+	--accent-color: #804e00;
+}
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sg {
+	--accent-color: #902;
 }
 
 div.cambiare div.cambiare-canvas {
