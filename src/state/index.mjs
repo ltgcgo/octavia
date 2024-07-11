@@ -3973,6 +3973,38 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			};
+		}).add([69, 18, 32], (msg, track, id) => {
+			// SC-8850 screen dump (partial)
+			let bundleId = msg[0], boundOff = msg[1], workArr = msg.subarray(2);
+			if (bundleId >> 4) {
+				console.warn(`SC-8850 partial screen dump out of bounds: invalid bundle.\n`, msg);
+				return;
+			};
+			let desiredByteTail = boundOff + workArr.length,
+			desiredLengthHead = boundOff * 6 - ((boundOff * 2428 >> 16) << 1),
+			desiredLengthTail = desiredByteTail * 6 - ((desiredByteTail * 2428 >> 16) << 1); // That's an integer division of 27, then a multiple of 2.
+			if (desiredLengthHead >= 640) {
+				console.warn(`SC-8850 partial screen dump out of bounds: invalid buffer range.\n`, msg);
+				return;
+			};
+			if (desiredLengthTail > 640) {
+				console.info(`SC-8850 partial screen dump out of bounds: invalid buffer end, automatically restricted.\n`, msg);
+				desiredLengthTail = 640;
+			};
+			let screenBuffer = new Uint8Array(desiredLengthTail - desiredLengthHead);
+			workArr.forEach((e, i) => {
+				let ri = i + boundOff;
+				let isLineEnd = ((ri * 2428 & 65535) * 27 >> 16) == 26;
+				let pi = ri * 6 - ((ri * 2428 >> 16) << 1);
+				let bi = isLineEnd ? 2 : 0;
+				while (bi < 6) {
+					screenBuffer[pi + (5 - bi)] = (e >> bi) & 1;
+					bi ++;
+				};
+			});
+			let byteOffset = bundleId * 108 + boundOff,
+			offset = byteOffset * 6 - ((byteOffset * 2428 >> 16) << 1); // Used for emitting events than for internal processing.
+			upThis.dispatchEvent("screen", {type: "sc8850", offset, data: screenBuffer});
 		});
 		// GS Part setup
 		// I wanted this to also be written in a circular structure

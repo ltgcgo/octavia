@@ -60,6 +60,7 @@ let Sc8850Display = class extends RootDisplay {
 	#nmdb = new Uint8Array(totalPixelCount);
 	#dmdb = new Uint8Array(totalPixelCount);
 	#omdb = new Uint8Array(totalPixelCount);
+	#bmdb = new Uint8Array(totalPixelCount);
 	#linger = new Uint8Array(allocated.ch);
 	#lingerExtra = new Uint8Array(allocated.ch);
 	#ch = 0;
@@ -71,6 +72,7 @@ let Sc8850Display = class extends RootDisplay {
 	#unresolvedEx = false;
 	#awaitEx = 0;
 	#promptEx = 0;
+	#dumpExpire = 0;
 	#booted = 0;
 	#bootFrame = 0;
 	font55 = new MxFont40("./data/bitmaps/sc/libre55.tsv");
@@ -105,6 +107,18 @@ let Sc8850Display = class extends RootDisplay {
 			upThis.#scheduledEx = true;
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
 		});
+		upThis.device.addEventListener("reset", (ev) => {
+			upThis.#bmdb.fill(0);
+		});
+		upThis.device.addEventListener("screen", (ev) => {
+			let data = ev.data;
+			if (data.type == "sc8850") {
+				for (let i = 0; i < data.data.length; i ++) {
+					upThis.#bmdb[data.offset + i] = data.data[i] ? 255 : 0;
+				};
+			};
+			upThis.#dumpExpire = Date.now() + 5000;
+		});
 		upThis.bootBm.load(`RsrcName\tBitmap\nboot_mr\t009e003efffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ffffffffffffffffe3ffffffffffffffffffe0007fffffffffffffff8ffffffffffffffffffe0000fffffe3ffffffffffffffffffffffffffff01e01fffff8ffffffffffffffffffffffffffff03ff07f83f007c0787e187f01ffffffffffffff83ffe0f003803800e1f8e3e003fffffffffffffe1fff83838787c18187c70f0607fffffffffffff07ffe0c3f3e3e1f861e3c787e1fffffffffffffc3fff863fff0f1fe1871e1c7f87ffffffffffffe0fffc10fffc787f8e18f8e1fe3fffffffffffff83fff0c7fff1e3fe3847e38ff8fffffffffffffe0fff831fff878ff0e03f0e3fc3fffffffffffffc1ff81c7f3e3e3f8781fc78fe1ffffffffffffff00f01f06070f8301e0fe1e0c07fffffffffffffe0000fe003c7e000f83f8f8003ffffffffffffffc000ffc07e1fe063e1fc3f818fffffffffffffffe01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\nbs_0\t000700073880000000000\nbs_1\t000700073888081020000\nbs_2\t0007000738080810288e0\nbs_3\t00070007388a0c18288e0\nbs_4\t00070007000a0c18288e0\nbs_5\t0007000700020408088e0\nbs_6\t000700070002040808000\nbs_7\t000700070000000000000`);
 		(async () => {
 			await Promise.all([upThis.font55.loaded.wait(), upThis.font56.loaded.wait(), upThis.font7a.loaded.wait()]);
@@ -131,7 +145,9 @@ let Sc8850Display = class extends RootDisplay {
 		let timeNow = Date.now();
 		let fullRefresh = false;
 		let scConf = upThis.device.modelEx.sc;
-		upThis.#nmdb.fill(0);
+		if (timeNow >= upThis.#dumpExpire) {
+			upThis.#nmdb.fill(0);
+		};
 		// Prepare the canvas
 		if (timeNow - upThis.#lastBg >= 3600000) {
 			ctx.fillStyle = backlight.orange;
@@ -152,7 +168,9 @@ let Sc8850Display = class extends RootDisplay {
 			fullRefresh = true;
 		};
 		// Booted?
-		if (upThis.#booted > 0 && upThis.#bootFrame > 99) {
+		if (timeNow < upThis.#dumpExpire) {
+			upThis.#nmdb.set(upThis.#bmdb);
+		} else if (upThis.#booted > 0 && upThis.#bootFrame > 99) {
 			// Test SysEx status
 			if (upThis.#scheduledEx) {
 				upThis.#scheduledEx = false;
