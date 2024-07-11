@@ -7,7 +7,7 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 
 > **Warning**
 > 
-> Octavia may work on Node.js, but support for it is never intended. Apart from browsers, only [Deno](https://deno.land/) and [Javy](https://github.com/bytecodealliance/javy) are supported.
+> Octavia may work on Node.js, but support for it is never intended. Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. There is no plan to ever support runtimes that offers non-ES compliance with Node.js ecosystem, like Node.js or Bun, and issues raised from those runtimes will be ignored, unless reproducible from other runtimes as well.
 > 
 > Octavia is only ever published to [Deno Deploy](https://deno.land/x/octavia_deno) and [JSR](https://jsr.io/@ltgc/octavia). If you see Octavia published to other registries, report those fake packages immediately as they may contain malware.
 
