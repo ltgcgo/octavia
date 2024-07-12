@@ -1408,7 +1408,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// 0 to 127
 		let upThis = this;
 		this.#poly.forEach(function (e) {
-			let channel = Math.floor(e / 128);
+			let channel = e >> 7;
 			if (upThis.#velo[e] > upThis.#rawStrength[channel]) {
 				upThis.#rawStrength[channel] = upThis.#velo[e];
 			};
