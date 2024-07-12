@@ -188,6 +188,17 @@ let setCanvasText = function (context, text) {
 	context.rWidth = measured.width;
 };
 
+HTMLElement.prototype.setTextRaw = function (text) {
+	let textNode;
+	if (this.childNodes[0]?.nodeType == 3) {
+		textNode = this.childNodes[0];
+		textNode.data = text;
+	} else {
+		textNode = document.createTextNode(text);
+		this.prepend(textNode);
+	};
+};
+
 let Cambiare = class extends RootDisplay {
 	#metaMaxLine = 128;
 	#metaAmend = false;
@@ -381,16 +392,16 @@ let Cambiare = class extends RootDisplay {
 		if (upThis.#maxPoly < curPoly) {
 			upThis.#maxPoly = curPoly;
 		};
-		upThis.#sectInfo.curPoly.innerText = `${curPoly}`.padStart(3, "0");
-		upThis.#sectInfo.maxPoly.innerText = `${upThis.#maxPoly}`.padStart(3, "0");
+		upThis.#sectInfo.curPoly.setTextRaw(`${curPoly}`.padStart(3, "0"));
+		upThis.#sectInfo.maxPoly.setTextRaw(`${upThis.#maxPoly}`.padStart(3, "0"));
 		if (upThis.#clockSource?.realtime) {
-			upThis.#sectInfo.barCount.innerText = "LINE";
+			upThis.#sectInfo.barCount.setTextRaw("LINE");
 			upThis.#sectInfo.barDelim.style.display = "none";
-			upThis.#sectInfo.barNote.innerText = "IN";
+			upThis.#sectInfo.barNote.setTextRaw("IN");
 		} else {
-			upThis.#sectInfo.barCount.innerText = sum.noteBar + 1;
+			upThis.#sectInfo.barCount.setTextRaw(sum.noteBar + 1);
 			upThis.#sectInfo.barDelim.style.display = "";
-			upThis.#sectInfo.barNote.innerText = Math.floor(sum.noteBeat) + 1;
+			upThis.#sectInfo.barNote.setTextRaw(Math.floor(sum.noteBeat) + 1);
 		};
 		//upThis.#scrollMeta(true);
 		let ccCandidates = [7, 11, 1, 91, 93, 94, 74, 5, 256, 256];
@@ -412,7 +423,7 @@ let Cambiare = class extends RootDisplay {
 					let cce = ccCandidates[cci];
 					if (cce < 256) {
 						let ccValue = sum.chContr[chOff + ccToPos[cce]],
-						ccHeight = Math.round(ccValue / 12.7 * 24) / 10;
+						ccHeight = ccValue * 24 / 127;
 						if (ccHeight > 0) {
 							let ccTop = 24 - ccHeight;
 							e.ccVis.fillRect(cci * 6, ccTop, 4, ccHeight);
@@ -666,25 +677,25 @@ let Cambiare = class extends RootDisplay {
 		let finishNow = (self.performance || self.Date).now();
 		switch (upThis.eventViewMode) {
 			case 0: {
-				upThis.#sectInfo.events.innerText = `${sum.eventCount}`.padStart(3, "0");
+				upThis.#sectInfo.events.setTextRaw(`${sum.eventCount}`.padStart(3, "0"));
 				break;
 			};
 			case 1: {
 				let fpsCount = 1000 / (finishNow - upThis.#lastFrame);
 				if (fpsCount > 99) {
 					fpsCount = Math.round(fpsCount);
-					upThis.#sectInfo.events.innerText = `${fpsCount}`;
+					upThis.#sectInfo.events.setTextRaw(`${fpsCount}`);
 				} else if (fpsCount > 9) {
 					fpsCount = Math.round(fpsCount * 10) / 10;
-					upThis.#sectInfo.events.innerText = `${Math.floor(fpsCount)}.${Math.floor(fpsCount * 10 % 10)}`;
+					upThis.#sectInfo.events.setTextRaw(`${Math.floor(fpsCount)}.${Math.floor(fpsCount * 10 % 10)}`);
 				} else {
 					fpsCount = Math.round(fpsCount * 100) / 100;
-					upThis.#sectInfo.events.innerText = `${Math.floor(fpsCount)}.${Math.floor(fpsCount * 100 % 100)}`;
+					upThis.#sectInfo.events.setTextRaw(`${Math.floor(fpsCount)}.${Math.floor(fpsCount * 100 % 100)}`);
 				};
 				break;
 			};
 			default: {
-				upThis.#sectInfo.events.innerText = ``;
+				upThis.#sectInfo.events.setTextRaw(``);
 			};
 		};
 		upThis.#lastFrame = finishNow;
@@ -1003,22 +1014,22 @@ let Cambiare = class extends RootDisplay {
 		canvasElement.appendChild(upThis.#sectPix.root);
 		// Opportunistic value refreshing
 		upThis.addEventListener("mode", (ev) => {
-			upThis.#sectInfo.mode.innerText = `${modeNames[ev.data]}`;
+			upThis.#sectInfo.mode.setTextRaw(`${modeNames[ev.data]}`);
 			upThis.setMode(ev.data);
 		});
 		upThis.addEventListener("mastervolume", (ev) => {
 			let cramVolume = Math.round(ev.data * 100) / 100;
-			upThis.#sectInfo.volume.innerText = `${Math.floor(cramVolume)}.${`${Math.floor((cramVolume % 1) * 100)}`.padStart(2, "0")}`;
+			upThis.#sectInfo.volume.setTextRaw(`${Math.floor(cramVolume)}.${`${Math.floor((cramVolume % 1) * 100)}`.padStart(2, "0")}`);
 		});
 		upThis.addEventListener("tempo", (ev) => {
 			let cramTempo = Math.round(ev.data * 100);
-			upThis.#sectInfo.tempo.innerText = `${Math.floor(cramTempo / 100)}.${`${Math.floor(cramTempo % 100)}`.padStart(2, "0")}`;
+			upThis.#sectInfo.tempo.setTextRaw(`${Math.floor(cramTempo / 100)}.${`${Math.floor(cramTempo % 100)}`.padStart(2, "0")}`);
 		});
 		upThis.addEventListener("tsig", (ev) => {
 			[upThis.#sectInfo.sigN.innerText, upThis.#sectInfo.sigD.innerText] = ev.data;
 		});
 		upThis.addEventListener("title", (ev) => {
-			upThis.#sectInfo.title.innerText = ev.data || `No Title`;
+			upThis.#sectInfo.title.setTextRaw(ev.data || `No Title`);
 			/*if (self?.navigator?.mediaSession) {
 				if (!navigator.mediaSession.metadata) {
 					navigator.mediaSession.metadata = new MediaMetadata({});
@@ -1030,11 +1041,11 @@ let Cambiare = class extends RootDisplay {
 			let voice = upThis.getChVoice(data.part),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
 			setCanvasText(target.metre, upThis.getMapped(voice.name));
-			target.type.innerText = chTypes[upThis.device.getChType()[data.part]];
-			target.std.innerText = voice.standard;
-			target.msb.innerText = `${voice.sid[0]}`.padStart(3, "0");
-			target.prg.innerText = `${voice.sid[1]}`.padStart(3, "0");
-			target.lsb.innerText = `${voice.sid[2]}`.padStart(3, "0");
+			target.type.setTextRaw(chTypes[upThis.device.getChType()[data.part]]);
+			target.std.setTextRaw(voice.standard);
+			target.msb.setTextRaw(`${voice.sid[0]}`.padStart(3, "0"));
+			target.prg.setTextRaw(`${voice.sid[1]}`.padStart(3, "0"));
+			target.lsb.setTextRaw(`${voice.sid[2]}`.padStart(3, "0"));
 			//console.debug(data);
 		});
 		upThis.addEventListener("pitch", (ev) => {
@@ -1042,16 +1053,16 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectPart[part >> 4][part & 15].notes.style.transform = `translateX(${pitch / 1.28}%)`;
 		});
 		upThis.addEventListener("efxreverb", (ev) => {
-			upThis.#sectInfo.reverb.innerText = upThis.getEfx(ev.data);
+			upThis.#sectInfo.reverb.setTextRaw(upThis.getEfx(ev.data));
 		});
 		upThis.addEventListener("efxchorus", (ev) => {
-			upThis.#sectInfo.chorus.innerText = upThis.getEfx(ev.data);
+			upThis.#sectInfo.chorus.setTextRaw(upThis.getEfx(ev.data));
 		});
 		upThis.addEventListener("efxdelay", (ev) => {
-			upThis.#sectInfo.delay.innerText = upThis.getEfx(ev.data);
+			upThis.#sectInfo.delay.setTextRaw(upThis.getEfx(ev.data));
 		});
 		upThis.addEventListener("efxinsert0", (ev) => {
-			upThis.#sectInfo.insert.innerText = upThis.getEfx(ev.data);
+			upThis.#sectInfo.insert.setTextRaw(upThis.getEfx(ev.data));
 		});
 		upThis.addEventListener("partefxtoggle", (ev) => {
 			let {part, active} = ev.data;
@@ -1186,11 +1197,11 @@ let Cambiare = class extends RootDisplay {
 						`part-efx`, `part-focus`
 					]);
 					setCanvasText(e.metre, "");
-					e.type.innerText = "";
-					e.std.innerText = "";
-					e.msb.innerText = "";
-					e.prg.innerText = "";
-					e.lsb.innerText = "";
+					e.type.setTextRaw("");
+					e.std.setTextRaw("");
+					e.msb.setTextRaw("");
+					e.prg.setTextRaw("");
+					e.lsb.setTextRaw("");
 					e.notes.style.transform = "";
 					e.ccUpdate = true;
 				};
