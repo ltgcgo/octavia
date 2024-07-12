@@ -424,12 +424,12 @@ let QyDisplay = class extends RootDisplay {
 				if (sum.chInUse[rch]) {
 					let cVelo = Math.floor(sum.strength[rch] / 51);
 					upThis.#renderFill(31 + 12 * tch, preCalY + 11 - cVelo, 9, cVelo + 1);
-					if (this.#ch == rch) {
-						textTarget = 0;
-						upThis.#renderFill(31 + 12 * tch, preCalY, 9, 5);
-						if (mixerView) {
-							upThis.#renderFill(30 + 12 * tch, preCalY + 14, 13, 8);
-						};
+				};
+				if (this.#ch == rch) {
+					textTarget = 0;
+					upThis.#renderFill(31 + 12 * tch, preCalY, 9, 5);
+					if (mixerView) {
+						upThis.#renderFill(30 + 12 * tch, preCalY + 14, 13, 8);
 					};
 				};
 				if (rch < 19) {
