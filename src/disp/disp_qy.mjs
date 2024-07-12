@@ -416,18 +416,20 @@ let QyDisplay = class extends RootDisplay {
 				};
 			};
 			for (let tch = 0; tch < 8; tch ++) { // target channel
-				let rch = curSeg * 8 + tch,
+				let rch = (curSeg << 3) + tch,
 				textTarget = 1;
 				upThis.qyRsrc.getBm("CTabOff")?.render((e, x, y) => {
 					upThis.#nmdb[preCal + 12 * tch + x + y * 128] = e;
 				});
-				let cVelo = Math.floor(sum.strength[rch] / 51);
-				upThis.#renderFill(31 + 12 * tch, preCalY + 11 - cVelo, 9, cVelo + 1);
-				if (this.#ch == rch) {
-					textTarget = 0;
-					upThis.#renderFill(31 + 12 * tch, preCalY, 9, 5);
-					if (mixerView) {
-						upThis.#renderFill(30 + 12 * tch, preCalY + 14, 13, 8);
+				if (sum.chInUse[rch]) {
+					let cVelo = Math.floor(sum.strength[rch] / 51);
+					upThis.#renderFill(31 + 12 * tch, preCalY + 11 - cVelo, 9, cVelo + 1);
+					if (this.#ch == rch) {
+						textTarget = 0;
+						upThis.#renderFill(31 + 12 * tch, preCalY, 9, 5);
+						if (mixerView) {
+							upThis.#renderFill(30 + 12 * tch, preCalY + 14, 13, 8);
+						};
 					};
 				};
 				if (rch < 19) {

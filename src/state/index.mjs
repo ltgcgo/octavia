@@ -3983,7 +3983,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let desiredByteTail = boundOff + workArr.length,
 			desiredLengthHead = boundOff * 6 - ((boundOff * 2428 >> 16) << 1),
 			desiredLengthTail = desiredByteTail * 6 - ((desiredByteTail * 2428 >> 16) << 1); // That's an integer division of 27, then a multiple of 2.
-			if (desiredLengthHead >= 640) {
+			if (desiredLengthHead > 640) {
 				console.warn(`SC-8850 partial screen dump out of bounds: invalid buffer range.\n`, msg);
 				return;
 			};
@@ -4005,6 +4005,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let byteOffset = bundleId * 108 + boundOff,
 			offset = byteOffset * 6 - ((byteOffset * 2428 >> 16) << 1); // Used for emitting events than for internal processing.
 			upThis.dispatchEvent("screen", {type: "sc8850", offset, data: screenBuffer});
+			getDebugState() && console.debug(`SC-8850 screen dump: bundle ${bundleId + 1}, range ${desiredLengthHead}~${desiredLengthTail}`);
 		});
 		// GS Part setup
 		// I wanted this to also be written in a circular structure
