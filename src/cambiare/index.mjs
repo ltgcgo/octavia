@@ -6,7 +6,7 @@ import {MxFont40} from "../basic/mxReader.js";
 
 const targetRatio = 16 / 9;
 const pixelBlurSpeed = 64;
-const piMulti = new Float64Array(5);
+const piMulti = new Float64Array(25); // 0~360, 90 deg -> 15 deg
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
 const blackKeys = [1, 3, 6, 8, 10],
 keyXs = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6];
@@ -107,7 +107,7 @@ const modeColourPool = {
 };
 
 piMulti.forEach((e, i, a) => {
-	a[i] = Math.PI * i / 2;
+	a[i] = Math.PI * i / 12;
 });
 
 let createElement = function (tag, classes, details = {}) {
@@ -450,16 +450,16 @@ let Cambiare = class extends RootDisplay {
 						// Render pan needle
 						if (pan > 127) {
 							if ((upThis.panStyle >> 1) & 1) {
-								e.ccVis.arc(84.5, 22.5, 21.5, 0, piMulti[2], true);
+								e.ccVis.arc(84.5, 22.5, 21.5, 0, piMulti[12], true);
 								e.ccVis.stroke();
 							};
 						} else {
 							if ((upThis.panStyle >> 1) & 1) {
 								if (pan < 64) {
-									e.ccVis.arc(84.5, 22.5, 21.5, piMulti[3], panDegreeCache, true);
+									e.ccVis.arc(84.5, 22.5, 21.5, piMulti[18], panDegreeCache, true);
 									e.ccVis.stroke();
 								} else if (pan > 64) {
-									e.ccVis.arc(84.5, 22.5, 21.5, piMulti[3], panDegreeCache);
+									e.ccVis.arc(84.5, 22.5, 21.5, piMulti[18], panDegreeCache);
 									e.ccVis.stroke();
 								};
 							};
