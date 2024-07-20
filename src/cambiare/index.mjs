@@ -6,7 +6,7 @@ import {MxFont40} from "../basic/mxReader.js";
 
 const targetRatio = 16 / 9;
 const pixelBlurSpeed = 64;
-const piMulti = new Float64Array(25); // 0~360, 90 deg -> 15 deg
+const piMulti = new Float64Array(49); // 0~360, 90 deg -> 15 deg
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
 const blackKeys = [1, 3, 6, 8, 10],
 keyXs = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6];
@@ -243,7 +243,7 @@ let Cambiare = class extends RootDisplay {
 	#pitchEvents = [];
 	#style = "comb";
 	glyphs = new MxFont40();
-	panStyle = 3; // Block, Pin, Arc, Dash
+	panStyle = 11; // Block, Pin, Arc, Dash
 	#drawNote(context, note, velo, state = 0, pitch = 0) {
 		// Param calculation
 		let upThis = this;
@@ -480,6 +480,50 @@ let Cambiare = class extends RootDisplay {
 							e.ccVis.fillStyle = `#${upThis.#foreground}`;
 							e.ccVis.beginPath();
 							e.ccVis.arc(84.5, 22.5, 2.5, 0, piMulti[4]);
+							e.ccVis.fill();
+						};
+						break;
+					};
+					case 11:
+					case 10:
+					case 9: {
+						// Calculate pan
+						let panDegreeCache = (pan + 77) * 0.033244367, // - 64 + 3 * 63
+						panRotateCache = (pan - 64) * 0.033244367;
+						e.ccVis.beginPath();
+						// Render pan needle
+						if (pan > 127) {
+							if ((upThis.panStyle >> 1) & 1) {
+								e.ccVis.arc(84.5, 16.5, 15.5, piMulti[26], piMulti[34], true);
+								e.ccVis.stroke();
+							};
+						} else {
+							if ((upThis.panStyle >> 1) & 1) {
+								if (pan < 64) {
+									e.ccVis.arc(84.5, 16.5, 15.5, piMulti[18], panDegreeCache, true);
+									e.ccVis.stroke();
+								} else if (pan > 64) {
+									e.ccVis.arc(84.5, 16.5, 15.5, piMulti[18], panDegreeCache);
+									e.ccVis.stroke();
+								};
+							};
+							if (upThis.panStyle & 1) {
+								e.ccVis.strokeStyle = `#${upThis.#foreground}`;
+								e.ccVis.lineWidth = 3;
+								e.ccVis.beginPath();
+								e.ccVis.moveTo(84.5, 16.5);
+								if (pan == 64) {
+									e.ccVis.lineTo(84.5, 4);
+								} else {
+									e.ccVis.lineTo(84.5 + 11.5 * Math.sin(panRotateCache), 16.5 - 11.5 * Math.cos(panRotateCache));
+								};
+								e.ccVis.stroke();
+							};
+						};
+						if ((upThis.panStyle & 1) == 0 || pan >> 7) {
+							e.ccVis.fillStyle = `#${upThis.#foreground}`;
+							e.ccVis.beginPath();
+							e.ccVis.arc(84.5, 16.5, 2.5, 0, piMulti[24]);
 							e.ccVis.fill();
 						};
 						break;

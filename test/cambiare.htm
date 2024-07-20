@@ -79,7 +79,7 @@
 			</template>
 			<div class="column column-option"><b>Pan style</b></div>
 			<template x-for="pan in pans">
-				<div class="column column-option column-button" @click="gPanStyle(pan[0])" x-text="pan[1]" :active="($store.panStyle??3)==pan[0]?'true':'false'"></div>
+				<div class="column column-option column-button" @click="gPanStyle(pan[0])" x-text="pan[1]" :active="($store.panStyle??11)==pan[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
