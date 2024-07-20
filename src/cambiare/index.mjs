@@ -200,6 +200,7 @@ HTMLElement.prototype.setTextRaw = function (text) {
 };
 
 let Cambiare = class extends RootDisplay {
+	#metaGcLine = 16;
 	#metaMaxLine = 128;
 	#metaAmend = false;
 	#metaType = "";
@@ -208,6 +209,9 @@ let Cambiare = class extends RootDisplay {
 	#metaMoveX = 0;
 	#metaMoveY = 0;
 	#maxPoly = 0;
+	#metaGcThread;
+	#metaGcAt = 0;
+	#metaGcScheduled = false;
 	#underlinedCh = allocated.invalidCh;
 	#renderRange = 1;
 	#renderPort = 0;
@@ -1132,6 +1136,10 @@ let Cambiare = class extends RootDisplay {
 					metaLineType,
 					upThis.#metaLastLine
 				]);
+				if (upThis.#sectMeta.view.children.length > upThis.#metaGcLine) {
+					upThis.#metaGcAt = Date.now() + 1000;
+					upThis.#metaGcScheduled = 1;
+				};
 				while (upThis.#sectMeta.view.children.length > upThis.#metaMaxLine) {
 					upThis.#sectMeta.view.children[0].remove();
 				};
@@ -1141,6 +1149,38 @@ let Cambiare = class extends RootDisplay {
 			upThis.#scrollMeta();
 		});
 		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
+		upThis.#metaGcThread = setInterval(async () => {
+			let timeNow = Date.now();
+			if (upThis.#metaGcScheduled == 0) {
+				return;
+			};
+			switch (upThis.#metaGcScheduled) {
+				case 1: {
+					if (timeNow < upThis.#metaGcAt) {
+						break;
+					};
+					upThis.#sectMeta.view.style.transition = "none";
+					let gcCount = 0;
+					while (upThis.#sectMeta.view.children.length > upThis.#metaGcLine) {
+						upThis.#sectMeta.view.children[0].remove();
+						gcCount ++;
+					};
+					upThis.#scrollMeta();
+					console.debug(`Meta garbage collector removed ${gcCount} events.`);
+					upThis.#metaGcScheduled = 2;
+					break;
+				};
+				case 2: {
+					if (timeNow < upThis.#metaGcAt + 100) {
+						break;
+					};
+					upThis.#sectMeta.view.style.transition = "";
+					console.debug(`Meta garbage collector restored meta animation.`);
+					upThis.#metaGcScheduled = 0;
+					break;
+				};
+			};
+		}, 100);
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
 		upThis.dispatchEvent("tempo", 120);
@@ -1161,6 +1201,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#container = undefined;
 		upThis.#visualizer = undefined;
 		clearInterval(upThis.#renderThread);
+		clearInterval(upThis.#metaGcThread);
 	};
 	constructor(attachElement, clockSource) {
 		super(new OctaviaDevice, 0.1, 0.75);
