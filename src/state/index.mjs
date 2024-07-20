@@ -6143,5 +6143,6 @@ export {
 	allocated,
 	ccToPos,
 	dnToPos,
-	overrides
+	overrides,
+	getDebugState
 };

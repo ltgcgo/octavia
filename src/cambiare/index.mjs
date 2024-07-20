@@ -1,6 +1,6 @@
 "use strict";
 
-import {OctaviaDevice, allocated, ccToPos} from "../state/index.mjs";
+import {OctaviaDevice, allocated, ccToPos, getDebugState} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40} from "../basic/mxReader.js";
 
@@ -646,7 +646,7 @@ let Cambiare = class extends RootDisplay {
 					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
 					ccxt.fillRect(252 + (x << 2), y << 2, 3, 3);
 				};
-			} else if (self.debugMode) {
+			} else if (getDebugState()) {
 				ccxt.clearRect(252 + (x << 2), y << 2, 3, 3);
 				if (e) {
 					ccxt.fillStyle = `#ff0000${e.toString(16).padStart(2, "0")}`;
@@ -663,7 +663,7 @@ let Cambiare = class extends RootDisplay {
 					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
 					ccxt.fillRect(x << 2, (y | 16) << 2, 3, 3);
 				};
-			} else if (self.debugMode) {
+			} else if (getDebugState()) {
 				ccxt.clearRect(x << 2, (y | 16) << 2, 3, 3);
 				if (e) {
 					ccxt.fillStyle = `#ff0000${e.toString(16).padStart(2, "0")}`;
@@ -1166,7 +1166,7 @@ let Cambiare = class extends RootDisplay {
 						gcCount ++;
 					};
 					upThis.#scrollMeta();
-					console.debug(`Meta garbage collector removed ${gcCount} events.`);
+					getDebugState() && console.debug(`Meta garbage collector removed ${gcCount} events.`);
 					upThis.#metaGcScheduled = 2;
 					break;
 				};
@@ -1175,7 +1175,7 @@ let Cambiare = class extends RootDisplay {
 						break;
 					};
 					upThis.#sectMeta.view.style.transition = "";
-					console.debug(`Meta garbage collector restored meta animation.`);
+					getDebugState() && console.debug(`Meta garbage collector restored meta animation.`);
 					upThis.#metaGcScheduled = 0;
 					break;
 				};
