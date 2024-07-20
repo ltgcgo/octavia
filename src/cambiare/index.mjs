@@ -200,7 +200,8 @@ HTMLElement.prototype.setTextRaw = function (text) {
 };
 
 let Cambiare = class extends RootDisplay {
-	#metaGcLine = 16;
+	#metaGcLine = 32;
+	#metaGcStart = 64;
 	#metaMaxLine = 128;
 	#metaAmend = false;
 	#metaType = "";
@@ -1136,7 +1137,7 @@ let Cambiare = class extends RootDisplay {
 					metaLineType,
 					upThis.#metaLastLine
 				]);
-				if (upThis.#sectMeta.view.children.length > upThis.#metaGcLine) {
+				if (upThis.#sectMeta.view.children.length > upThis.#metaGcStart) {
 					upThis.#metaGcAt = Date.now() + 1000;
 					upThis.#metaGcScheduled = 1;
 				};
