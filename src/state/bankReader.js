@@ -677,7 +677,7 @@ let VoiceBank = class {
 			};
 		};
 		return {
-			name: bankName || `${noVoxCatPool[mode]}${halfHex(msb || 0)}${halfHex(prg || 0)}${halfHex(lsb || 0)}`,
+			name: bankName || `${noVoxCatPool[mode] || mode.toUpperCase()}${halfHex(msb || 0)}${halfHex(prg || 0)}${halfHex(lsb || 0)}`,
 			poly: bankPoly,
 			type: bankType,
 			drum: bankDrum,

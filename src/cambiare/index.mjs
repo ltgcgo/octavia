@@ -200,7 +200,7 @@ HTMLElement.prototype.setTextRaw = function (text) {
 };
 
 let Cambiare = class extends RootDisplay {
-	#metaGcLine = 32;
+	#metaGcLine = 16;
 	#metaGcStart = 64;
 	#metaMaxLine = 128;
 	#metaAmend = false;
@@ -1138,7 +1138,7 @@ let Cambiare = class extends RootDisplay {
 					upThis.#metaLastLine
 				]);
 				if (upThis.#sectMeta.view.children.length > upThis.#metaGcStart) {
-					upThis.#metaGcAt = Date.now() + 1000;
+					upThis.#metaGcAt = Date.now() + 250;
 					upThis.#metaGcScheduled = 1;
 				};
 				while (upThis.#sectMeta.view.children.length > upThis.#metaMaxLine) {
@@ -1181,7 +1181,7 @@ let Cambiare = class extends RootDisplay {
 					break;
 				};
 			};
-		}, 100);
+		}, 40);
 		upThis.dispatchEvent("mode", "?");
 		upThis.dispatchEvent("mastervolume", 100);
 		upThis.dispatchEvent("tempo", 120);
