@@ -201,7 +201,7 @@ HTMLElement.prototype.setTextRaw = function (text) {
 
 let Cambiare = class extends RootDisplay {
 	#metaGcLine = 16;
-	#metaGcStart = 64;
+	#metaGcStart = 32;
 	#metaMaxLine = 128;
 	#metaAmend = false;
 	#metaType = "";
@@ -1138,7 +1138,10 @@ let Cambiare = class extends RootDisplay {
 					upThis.#metaLastLine
 				]);
 				if (upThis.#sectMeta.view.children.length > upThis.#metaGcStart) {
-					upThis.#metaGcAt = Date.now() + 250;
+					upThis.#metaGcAt = Date.now() + 500;
+					if (upThis.#metaGcScheduled == 0) {
+						console.debug(`Meta event garbage collector triggered.`);
+					};
 					upThis.#metaGcScheduled = 1;
 				};
 				while (upThis.#sectMeta.view.children.length > upThis.#metaMaxLine) {
@@ -1167,7 +1170,7 @@ let Cambiare = class extends RootDisplay {
 						gcCount ++;
 					};
 					upThis.#scrollMeta();
-					getDebugState() && console.debug(`Meta garbage collector removed ${gcCount} events.`);
+					console.debug(`Meta event garbage collector removed ${gcCount} events.`);
 					upThis.#metaGcScheduled = 2;
 					break;
 				};
@@ -1176,7 +1179,7 @@ let Cambiare = class extends RootDisplay {
 						break;
 					};
 					upThis.#sectMeta.view.style.transition = "";
-					getDebugState() && console.debug(`Meta garbage collector restored meta animation.`);
+					getDebugState() && console.debug(`Meta event garbage collector restored meta animation.`);
 					upThis.#metaGcScheduled = 0;
 					break;
 				};

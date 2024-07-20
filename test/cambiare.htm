@@ -72,7 +72,7 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{styles:[['block','Block'],['comb','Comb'],['piano','Piano'],['line','Line']],pans:[[0,'Block'],[1,'Pin'],[2,'Arc'],[3,'Dash'],[5,'Needle'],[6,'Sector'],[7,'Hand']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{styles:[['block','Block'],['comb','Comb'],['piano','Piano'],['line','Line']],pans:[[0,'Block'],[9,'Wide'],[10,'Fan'],[11,'Knob'],[1,'Pin'],[2,'Arc'],[3,'Dash'],[5,'Needle'],[6,'Sector'],[7,'Hand']]}">
 			<div class="column column-option"><b>Note style</b></div>
 			<template x-for="style in styles">
 				<div class="column column-option column-button" @click="gStyle(style[0])" x-text="style[1]" :active="($store.noteStyle||'comb')==style[0]?'true':'false'"></div>
