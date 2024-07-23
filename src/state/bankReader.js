@@ -2,7 +2,7 @@
 
 import {ccToPos} from "../state/index.mjs";
 
-const sgCrit = ["MSB", "PRG", "LSB", "NME", "ELC", "DRM"];
+const sgCrit = ["MSB", "PRG", "LSB", "NME", "ELC", "DRM", "LVL"];
 
 const noVoxStdPool = {
 	"krs": "KR",
