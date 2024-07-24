@@ -210,6 +210,7 @@ let Cambiare = class extends RootDisplay {
 	#metaMoveX = 0;
 	#metaMoveY = 0;
 	#maxPoly = 0;
+	#maxPolyEC = 0;
 	#metaGcThread;
 	#metaGcAt = 0;
 	#metaGcScheduled = false;
@@ -239,6 +240,7 @@ let Cambiare = class extends RootDisplay {
 	#sectMeta = {};
 	#sectPix = {};
 	eventViewMode = 0; // 0 for event count, 1 for FPS
+	useElementCount = true;
 	//#noteEvents = [];
 	#pitchEvents = [];
 	#style = "comb";
@@ -394,11 +396,15 @@ let Cambiare = class extends RootDisplay {
 		sum = upThis.render(clock),
 		timeNow = Date.now();
 		let curPoly = sum.curPoly + sum.extraPoly;
+		let curPolyEC = sum.curPolyEC + sum.extraPolyEC;
 		if (upThis.#maxPoly < curPoly) {
 			upThis.#maxPoly = curPoly;
 		};
-		upThis.#sectInfo.curPoly.setTextRaw(`${curPoly}`.padStart(3, "0"));
-		upThis.#sectInfo.maxPoly.setTextRaw(`${upThis.#maxPoly}`.padStart(3, "0"));
+		if (upThis.#maxPolyEC < curPolyEC) {
+			upThis.#maxPolyEC = curPolyEC;
+		};
+		upThis.#sectInfo.curPoly.setTextRaw(`${upThis.useElementCount ? curPolyEC : curPoly}`.padStart(3, "0"));
+		upThis.#sectInfo.maxPoly.setTextRaw(`${upThis.useElementCount ? upThis.#maxPolyEC : upThis.#maxPoly}`.padStart(3, "0"));
 		if (upThis.#clockSource?.realtime) {
 			upThis.#sectInfo.barCount.setTextRaw("LINE");
 			upThis.#sectInfo.barDelim.style.display = "none";

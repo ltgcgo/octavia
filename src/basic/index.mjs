@@ -31,6 +31,9 @@ let RootDisplay = class extends CustomEventSource {
 	#noteDenom = 4;
 	#noteBarOffset = 0;
 	#noteTime = 0;
+	// A cache for providing fast poly calculation
+	#voiceCache = new Array(allocated.ch);
+	#polyCache = new Uint8Array(allocated.ch);
 	smoothingAtk = 0;
 	smoothingDcy = 0;
 	reset() {
@@ -384,7 +387,8 @@ let RootDisplay = class extends CustomEventSource {
 			this.#noteTime = time;
 		};
 		let events = this.#midiPool?.step(time) || [];
-		let extraPoly = 0, notes = new Set(), noteVelo = {};
+		let extraPoly = 0, extraPolyEC = 0,
+		notes = new Set(), noteVelo = {};
 		let extraNotes = []; // Should be visualized before the final internal state!
 		let upThis = this;
 		let metaReplies = [];
@@ -422,6 +426,7 @@ let RootDisplay = class extends CustomEventSource {
 						state: upThis.device.NOTE_SUSTAIN // OctaviaDevice.NOTE_SUSTAIN
 					});
 					extraPoly ++;
+					extraPolyEC	+= upThis.#polyCache[raw.part];
 				};
 			};
 		};
@@ -452,18 +457,21 @@ let RootDisplay = class extends CustomEventSource {
 				upThis.#mimicStrength[i] += Math.floor(diff - (diff * (upThis.smoothingDcy ** rlsPower)));
 			};
 		});
-		let curPoly = 0;
+		let curPoly = 0, curPolyEC = 0;
 		chInUse.forEach(function (e, i) {
 			if (e) {
 				chKeyPr[i] = upThis.device.getVel(i);
 				chExt[i] = upThis.device.getExt(i);
 				curPoly += chKeyPr[i].size;
+				curPolyEC += chKeyPr[i].size * upThis.#polyCache[i];
 			};
 		});
 		let repObj = {
 			extraPoly,
+			extraPolyEC,
 			extraNotes,
 			curPoly,
+			curPolyEC,
 			chInUse,
 			chKeyPr,
 			chPitch,
@@ -532,6 +540,15 @@ let RootDisplay = class extends CustomEventSource {
 			upThis.#noteEvents.push(data);
 			//console.debug(data);
 		});
+		upThis.addEventListener("voice", ({data}) => {
+			let voice = upThis.getChVoice(data.part);
+			upThis.#voiceCache[data.part] = voice;
+			upThis.#polyCache[data.part] = voice.poly ?? 1;
+		});
+		upThis.addEventListener("reset", ({data}) => {
+			upThis.#polyCache.fill(1);
+		});
+		upThis.#polyCache.fill(1);
 		upThis.#metaRun[3] = function (type, data) {
 			if (upThis.#titleName?.length < 1) {
 				upThis.#titleName = data;
