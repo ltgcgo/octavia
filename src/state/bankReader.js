@@ -95,7 +95,9 @@ let VoiceBank = class {
 					case 126:
 					case 127: {
 						if (lsb == 126) {
-							args[2] = 0; // MU100 Native restore
+							if (msb == 127 && prg == 0) {} else {
+								args[2] = 0; // MU100 Native restore
+							};
 						};
 						break;
 					};
@@ -727,11 +729,12 @@ let VoiceBank = class {
 							break;
 						};
 						case sig[4]: {
-							e1 = parseInt(e1)
+							e1 = parseInt(e1);
 							if (e1 < 16) {
 								poly = e1 + 1;
 							} else {
 								type = (e1 & 15) + 1;
+								poly = type;
 							};
 							break;
 						};
