@@ -1271,6 +1271,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.setPixelProfile("none");
 		upThis.addEventListener("reset", () => {
 			upThis.#maxPoly = 0;
+			upThis.#maxPolyEC = 0;
 			upThis.#metaAmend = false;
 			upThis.#metaType = "";
 			upThis.#metaLastLine = null;
