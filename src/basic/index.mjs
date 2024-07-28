@@ -379,6 +379,10 @@ let RootDisplay = class extends CustomEventSource {
 	getTempo() {
 		return this.#noteTempo;
 	};
+	eachVoice(iter) {
+		let upThis = this;
+		upThis.#voiceCache.forEach(iter);
+	};
 	sendCmd(raw) {
 		this.device.runJson(raw);
 	};

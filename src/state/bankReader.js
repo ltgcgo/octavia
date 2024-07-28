@@ -29,7 +29,7 @@ let VoiceBank = class {
 	get(msb = 0, prg = 0, lsb = 0, mode) {
 		let sid = [msb, prg, lsb];
 		let bankName;
-		let bankPoly = 1, bankType = 0, bankDrum;
+		let bankPoly = 1, bankType = 0, bankDrum, bankLevel;
 		let args = Array.from(arguments);
 		switch (mode) {
 			case "xg": {
@@ -426,6 +426,7 @@ let VoiceBank = class {
 				bankPoly = bankObject?.poly || bankPoly;
 				bankType = bankObject?.type || bankType;
 				bankDrum = bankObject?.drum;
+				bankLevel = bankObject?.level;
 			} else {
 				if (!this.strictMode) {
 					/* if (mode != "gs" && mode != "ns5r") {
@@ -480,6 +481,7 @@ let VoiceBank = class {
 								bankPoly = bankObject?.poly || bankPoly;
 								bankType = bankObject?.type || bankType;
 								bankDrum = bankObject?.drum;
+								bankLevel = bankObject?.level;
 							} else {
 								bankName = "";
 								ending = "*";
@@ -683,6 +685,7 @@ let VoiceBank = class {
 			poly: bankPoly,
 			type: bankType,
 			drum: bankDrum,
+			level: bankLevel,
 			iid,
 			eid,
 			sid,
@@ -709,7 +712,7 @@ let VoiceBank = class {
 					debugger;
 				};
 			} else {
-				let msb = 0, prg = 0, lsb = 0, name, poly = 1, type = 0, drum;
+				let msb = 0, prg = 0, lsb = 0, name, poly = 1, type = 0, level, drum;
 				assign.forEach(async function (e1, i1) {
 					switch (i1) {
 						case sig[0]: {
@@ -742,6 +745,12 @@ let VoiceBank = class {
 							drum = e1;
 							break;
 						};
+						case sig[6]: {
+							if (e1?.constructor) {
+								level = parseInt(e1);
+							};
+							break;
+						};
 					};
 				});
 				upThis.#bankInfo[prg] = upThis.#bankInfo[prg] || [];
@@ -753,7 +762,8 @@ let VoiceBank = class {
 					name,
 					poly,
 					type,
-					drum
+					drum,
+					level
 				};
 				/*if (loadCount > 889 && loadCount < 910) {
 					console.debug(e);
