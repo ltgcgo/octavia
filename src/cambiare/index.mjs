@@ -291,7 +291,7 @@ let Cambiare = class extends RootDisplay {
 		switch (upThis.#style) {
 			case "block": {
 				let h = context.canvas.height - 1;
-				context.fillRect(sx, 1, dx, h);
+				context.fillRect(sx, 0, dx, h);
 				if (isHeld) {
 					context.clearRect(sx + border, border + 1, dx - (border << 1), h - (border << 1));
 				};
@@ -299,14 +299,14 @@ let Cambiare = class extends RootDisplay {
 			};
 			case "comb": {
 				let h = (isBlackKey ? Math.round((context.canvas.height << 1) / 3) : context.canvas.height) - 1;
-				context.fillRect(sx, 1, dx, h);
+				context.fillRect(sx, 0, dx, h);
 				if (isHeld) {
 					context.clearRect(sx + border, border + 1, dx - (border << 1), h - (border << 1));
 				};
 				break;
 			};
 			case "piano": {
-				let sh = (isBlackKey ? 0 : context.canvas.height >> 1) + 1,
+				let sh = (isBlackKey ? 0 : context.canvas.height >> 1),
 				dh = (context.canvas.height >> 1) - 1;
 				context.fillRect(sx, sh, dx, dh);
 				if (isHeld) {
@@ -335,7 +335,7 @@ let Cambiare = class extends RootDisplay {
 					};
 				};
 				context.beginPath();
-				context.moveTo(sx, (range == 4 || !isHeld) && self?.document?.mozFullScreen ? 2 : 1);
+				context.moveTo(sx, (range == 4 || !isHeld) && self?.document?.mozFullScreen ? 1 : 0);
 				context.lineTo(ex, (height >> 1) + 1);
 				context.lineTo(sx, height);
 				context.stroke();
