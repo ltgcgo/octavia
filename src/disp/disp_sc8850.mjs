@@ -474,7 +474,7 @@ let Sc8850Display = class extends RootDisplay {
 						break;
 					};
 					default: {
-						fillBitsInBuffer(upThis.#nmdb, totalWidth, 48, 48, 97, 15, 0);
+						fillBitsInBuffer(upThis.#nmdb, totalWidth, 48, 57, 97, 6, 0);
 						//fillBitsInBuffer(upThis.#nmdb, totalWidth, 47, 47, 99, 1, 255);
 						fillBitsInBuffer(upThis.#nmdb, totalWidth, 47, 63, 99, 1, 255);
 						fillBitsInBuffer(upThis.#nmdb, totalWidth, 47, 47, 1, 16, 255);
