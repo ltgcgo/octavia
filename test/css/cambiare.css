@@ -231,13 +231,13 @@ div.cambiare-canvas > div.sect-part div.part-info-major span.part-focus {
 div.cambiare-canvas > div.sect-part span.part-csplit {
 	top: 100%;
 	width: 1px;
-	height: calc(33% - 1px);
+	height: calc(33% - 2px);
 	opacity: 0.5;
 	background: var(--accent-color);
-	transform: translateY(-100%);
+	transform: translateY(calc(-100% - 1px));
 }
 div.cambiare-canvas > div.sect-part span.part-cdive {
-	transform: translateY(0);
+	transform: translateY(-1px);
 }
 div.cambiare-canvas > div.sect-part span.part-note-black {
 	--white-keys: var(--black-keys);
@@ -260,6 +260,7 @@ div.cambiare-canvas > div.sect-part div.part-keys {
 	left: 256px;
 	width: calc(100% - 256px);
 	height: 100%;
+	overflow: hidden;
 }
 div.cambiare-canvas > div.sect-part div.part-keyboard {
 	height: 100%;
