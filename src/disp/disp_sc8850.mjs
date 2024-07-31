@@ -310,15 +310,17 @@ let Sc8850Display = class extends RootDisplay {
 					break;
 				};
 			};
-			upThis.font56.getStr("123456789\x80\x81\x82\x83\x84\x85\x86").forEach((e0, i0) => {
-				let offsetX = i0 * 6;
-				e0.forEach((e1, i1) => {
-					let pX = (i1 % 5) + offsetX + 49, pY = Math.floor(i1 / 5) + 49;
-					if (e1) {
-						upThis.#nmdb[pY * totalWidth + pX] = 255;
-					};
+			if (timeNow >= sum.letter.expire) {
+				upThis.font56.getStr("123456789\x80\x81\x82\x83\x84\x85\x86").forEach((e0, i0) => {
+					let offsetX = i0 * 6;
+					e0.forEach((e1, i1) => {
+						let pX = (i1 % 5) + offsetX + 49, pY = Math.floor(i1 / 5) + 49;
+						if (e1) {
+							upThis.#nmdb[pY * totalWidth + pX] = 255;
+						};
+					});
 				});
-			});
+			};
 			switch (upThis.#mode) {
 				case "?":
 				case "gs":
@@ -462,6 +464,31 @@ let Sc8850Display = class extends RootDisplay {
 				};
 				if (scConf.invDisp) {
 					flipBitsInBuffer(upThis.#nmdb, totalWidth, 48, 12, 97, 44);
+				};
+			};
+			// Letter display
+			if (timeNow < sum.letter.expire) {
+				switch (upThis.#mode) {
+					case "gs":
+					case "sc": {
+						break;
+					};
+					default: {
+						fillBitsInBuffer(upThis.#nmdb, totalWidth, 48, 48, 97, 15, 0);
+						//fillBitsInBuffer(upThis.#nmdb, totalWidth, 47, 47, 99, 1, 255);
+						fillBitsInBuffer(upThis.#nmdb, totalWidth, 47, 63, 99, 1, 255);
+						fillBitsInBuffer(upThis.#nmdb, totalWidth, 47, 47, 1, 16, 255);
+						fillBitsInBuffer(upThis.#nmdb, totalWidth, 145, 47, 1, 16, 255);
+						upThis.font56.getStr(sum.letter.text).forEach((e0, i0) => {
+							let offsetX = (i0 & 15) * 6;
+							e0.forEach((e1, i1) => {
+								let pX = (i1 % 5) + offsetX + 49, pY = Math.floor(i1 / 5) + 49 + 7 * (i0 >> 4);
+								if (e1) {
+									upThis.#nmdb[pY * totalWidth + pX] = 255;
+								};
+							});
+						});
+					};
 				};
 			};
 			// EFX and bank?
