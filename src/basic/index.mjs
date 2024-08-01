@@ -125,7 +125,7 @@ let RootDisplay = class extends CustomEventSource {
 				});
 			};
 		});
-		console.debug(`Voice names: ${allCount} total, ${loadCount} loaded, ${prioCount} overridden by priority.`);
+		console.debug(`Voice names: ${allCount} total, ${loadCount} loaded (${loadCount - prioCount} + ${prioCount}).`);
 		upThis?.device.forceVoiceRefresh();
 	};
 	async loadMapPaths(paths) {

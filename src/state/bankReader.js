@@ -696,11 +696,11 @@ let VoiceBank = class {
 			mode
 		};
 	};
-	async load(text, allowOverwrite, name = "(internal)") {
+	async load(text, allowOverwrite, name = "(internal)", priority) {
 		let upThis = this;
 		let sig = []; // Significance
-		let loadCount = 0, allCount = 0;
-		text.split("\n").forEach(function (e, i) {
+		let loadCount = 0, allCount = 0, prioCount = 0;
+		text.split("\n").forEach(async function (e, i) {
 			let assign = e.split("\t"), to = [];
 			if (i == 0) {
 				assign.forEach(function (e0, i0) {
@@ -763,13 +763,19 @@ let VoiceBank = class {
 					poly,
 					type,
 					drum,
-					level
+					level,
+					priority
 				};
 				/*if (loadCount > 889 && loadCount < 910) {
 					console.debug(e);
 					console.debug(voiceObject);
 				};*/
-				if (!writeArray[(msb << 8) | lsb] || allowOverwrite) {
+				let overwriteByPriority = false;
+				if (priority < writeArray[(msb << 8) | lsb]?.priority) {
+					overwriteByPriority = true;
+					prioCount ++;
+				};
+				if (!writeArray[(msb << 8) | lsb] || overwriteByPriority || allowOverwrite) {
 					/*if (msb == 63 && lsb == 32) {
 						console.debug(`Voice object written to voice pool.`);
 					};*/
@@ -782,7 +788,7 @@ let VoiceBank = class {
 			};
 		});
 		if (!allowOverwrite) {
-			console.debug(`Map "${name}": ${allCount} total, ${loadCount} loaded.`);
+			console.debug(`Map "${name}": ${allCount} total, ${loadCount} loaded (${loadCount - prioCount} + ${prioCount}).`);
 		};
 	};
 	clearRange(options) {
@@ -808,9 +814,9 @@ let VoiceBank = class {
 	async loadFiles(...type) {
 		this.init();
 		let upThis = this;
-		type.forEach(async function (e) {
+		type.forEach(async function (e, i) {
 			try {
-				upThis.load(await (await fetch(`./data/bank/${e}.tsv`)).text(), false, e);
+				upThis.load(await (await fetch(`./data/bank/${e}.tsv`)).text(), false, e, i);
 			} catch (err) {
 				console.error(`Failed loading "${e}.tsv".`);
 			};
