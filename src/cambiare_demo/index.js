@@ -266,25 +266,27 @@ let demoPool = new SheetData();
 	demoPool.load(await (await getBlobFrom(`list.tsv`)).text());
 	Alpine.store("demo", demoPool.data);
 	visualizer.loadEfx(await(await fetch(`./data/misc/efxId.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gm.24.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gm.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gm.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/ns5r.24.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/ns5r.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/ns5r.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/xg.24.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/xg.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/xg.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gs.24.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gs.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gs.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/sd.24.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/sd.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/sd.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/s90es.24.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/s90es.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/s90es.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/kross.24.tsv`)).text());
+	visualizer.loadMapPaths([
+		`./data/map/gm.24.tsv`,
+		`./data/map/ns5r.24.tsv`,
+		`./data/map/xg.24.tsv`,
+		`./data/map/gs.24.tsv`,
+		`./data/map/sd.24.tsv`,
+		`./data/map/s90es.24.tsv`,
+		`./data/map/kross.24.tsv`,
+		`./data/map/gm.12.tsv`,
+		`./data/map/ns5r.12.tsv`,
+		`./data/map/xg.12.tsv`,
+		`./data/map/gs.12.tsv`,
+		`./data/map/sd.12.tsv`,
+		`./data/map/s90es.12.tsv`,
+		`./data/map/gm.10.tsv`,
+		`./data/map/ns5r.10.tsv`,
+		`./data/map/xg.10.tsv`,
+		`./data/map/gs.10.tsv`,
+		`./data/map/sd.10.tsv`,
+		`./data/map/s90es.10.tsv`
+	]);
 	await visualizer.glyphs.loadFile("./data/bitmaps/xg/font.tsv");
 })();
 

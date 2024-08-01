@@ -63,10 +63,10 @@ let RootDisplay = class extends CustomEventSource {
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
 	};
-	async loadMap(text, overwrite) {
+	async loadMap(text, overwrite, priority) {
 		// Load the voice ID to voice name map
 		let upThis = this;
-		let loadCount = 0, allCount = 0;
+		let loadCount = 0, allCount = 0, prioCount = 0;
 		let fields = 0, fieldId, fieldNme;
 		text.split(`\n`).forEach((e, i) => {
 			if (!e) {
@@ -90,8 +90,16 @@ let RootDisplay = class extends CustomEventSource {
 						};
 					};
 				});
-				if (!upThis.#mapList[id] || overwrite) {
-					upThis.#mapList[id] = name;
+				let overwriteByPriority = false;
+				if (upThis.#mapList[id]?.priority > priority) {
+					overwriteByPriority = true;
+					prioCount ++;
+				};
+				if (!upThis.#mapList[id] || overwriteByPriority || overwrite) {
+					upThis.#mapList[id] = {
+						name,
+						priority
+					};
 					loadCount ++;
 				} else {
 					self.debugMode && console.debug(`Voice "${name}" (${id}) seems to be in conflict with (${upThis.#mapList[id]}).`);
@@ -117,8 +125,15 @@ let RootDisplay = class extends CustomEventSource {
 				});
 			};
 		});
-		console.debug(`Voice names: ${allCount} total, ${loadCount} loaded.`);
+		console.debug(`Voice names: ${allCount} total, ${loadCount} loaded, ${prioCount} overridden by priority.`);
 		upThis?.device.forceVoiceRefresh();
+	};
+	async loadMapPaths(paths) {
+		let upThis = this;
+		paths.forEach(async (e, i) => {
+			// Lower the index, higher the priority
+			upThis.loadMap(await (await fetch(e)).text(), 0, i);
+		});
 	};
 	async loadEfx(text, overwrite) {
 		// Load the EFX map
@@ -198,7 +213,7 @@ let RootDisplay = class extends CustomEventSource {
 		return this.device.getChVoice(ch);
 	};
 	getMapped(id) {
-		return this.#mapList[id] || id;
+		return this.#mapList[id]?.name || id;
 	};
 	getEfx([msb, lsb]) {
 		let id = (msb << 8) | lsb;
