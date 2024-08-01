@@ -895,9 +895,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								break;
 							};
 						};
-						this.dispatchEvent("voice", {
+						/* this.dispatchEvent("voice", {
 							part
-						});
+						}); */
 						break;
 					};
 					case 2: {
@@ -1009,9 +1009,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (this.getExt(part)[0] == this.EXT_DX) {
 							//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 						};
-						this.dispatchEvent("voice", {
+						/*this.dispatchEvent("voice", {
 							part
-						});
+						});*/
 						break;
 					};
 					case 38: {
