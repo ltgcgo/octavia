@@ -285,18 +285,20 @@ audioPlayer.onended = function () {
 	audioBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
-	visualizer.loadMap(await(await fetch(`./data/map/gm.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gm.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/ns5r.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/ns5r.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/xg.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/xg.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gs.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/gs.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/sd.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/sd.10.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/s90es.12.tsv`)).text());
-	visualizer.loadMap(await(await fetch(`./data/map/s90es.10.tsv`)).text());
+	visualizer.loadMapPaths([
+		`./data/map/gm.12.tsv`,
+		`./data/map/ns5r.12.tsv`,
+		`./data/map/xg.12.tsv`,
+		`./data/map/gs.12.tsv`,
+		`./data/map/sd.12.tsv`,
+		`./data/map/s90es.12.tsv`,
+		`./data/map/gm.10.tsv`,
+		`./data/map/ns5r.10.tsv`,
+		`./data/map/xg.10.tsv`,
+		`./data/map/gs.10.tsv`,
+		`./data/map/sd.10.tsv`,
+		`./data/map/s90es.10.tsv`
+	]);
 })();
 let lastTime = 0;
 let renderThread = setInterval(function () {
