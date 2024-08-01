@@ -363,7 +363,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm", "gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm2", "xg", "gs", "ns5r", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es"); // Load all possible voice banks
 	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";

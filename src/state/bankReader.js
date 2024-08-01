@@ -810,12 +810,7 @@ let VoiceBank = class {
 		let upThis = this;
 		type.forEach(async function (e) {
 			try {
-				await fetch(`./data/bank/${e}.tsv`).then(function (response) {
-					//console.debug(`Parsing voice map "${e}".`);
-					return response.text();
-				}).then((text) => {
-					upThis.load(text, false, e);
-				});
+				upThis.load(await (await fetch(`./data/bank/${e}.tsv`)).text(), false, e);
 			} catch (err) {
 				console.error(`Failed loading "${e}.tsv".`);
 			};
