@@ -700,7 +700,7 @@ let VoiceBank = class {
 		let upThis = this;
 		let sig = []; // Significance
 		let loadCount = 0, allCount = 0, prioCount = 0;
-		text.split("\n").forEach(async function (e, i) {
+		text.split("\n").forEach(function (e, i) {
 			let assign = e.split("\t"), to = [];
 			if (i == 0) {
 				assign.forEach(function (e0, i0) {
@@ -713,7 +713,7 @@ let VoiceBank = class {
 				};
 			} else {
 				let msb = 0, prg = 0, lsb = 0, name, poly = 1, type = 0, level, drum;
-				assign.forEach(async function (e1, i1) {
+				assign.forEach(function (e1, i1) {
 					switch (i1) {
 						case sig[0]: {
 							msb = parseInt(e1);
