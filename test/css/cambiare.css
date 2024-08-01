@@ -237,7 +237,7 @@ div.cambiare-canvas > div.sect-part span.part-csplit {
 	transform: translateY(calc(-100% - 1px));
 }
 div.cambiare-canvas > div.sect-part span.part-csplit:nth-child(6) {
-	opacity: 0.8;
+	opacity: 1;
 }
 div.cambiare-canvas > div.sect-part span.part-cdive {
 	transform: translateY(-1px);

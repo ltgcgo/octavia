@@ -293,7 +293,7 @@ let Cambiare = class extends RootDisplay {
 				let h = context.canvas.height - 1;
 				context.fillRect(sx, 0, dx, h);
 				if (isHeld) {
-					context.clearRect(sx + border, border + 1, dx - (border << 1), h - (border << 1));
+					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
 				};
 				break;
 			};
@@ -301,7 +301,7 @@ let Cambiare = class extends RootDisplay {
 				let h = (isBlackKey ? Math.round((context.canvas.height << 1) / 3) : context.canvas.height) - 1;
 				context.fillRect(sx, 0, dx, h);
 				if (isHeld) {
-					context.clearRect(sx + border, border + 1, dx - (border << 1), h - (border << 1));
+					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
 				};
 				break;
 			};
