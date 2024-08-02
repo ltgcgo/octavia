@@ -1108,8 +1108,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 			upThis.#prg[part] = det.data;
 			upThis.#bnCustom[part] = 0;
-			upThis.#prg[(1 << allocated.chShift) | part] = upThis.#cc[ccOffTable[part] + ccToPos[0]];
-			upThis.#prg[(2 << allocated.chShift) | part] = upThis.#cc[ccOffTable[part] + ccToPos[32]];
+			upThis.pushChPrimitives(part);
 			if (getDebugState()) {
 				console.debug(`T:${det.track} C:${part} P:${det.data}`);
 			};
@@ -1304,11 +1303,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		let upThis = this;
 		let start = channel * allocated.cc;
 		let arr = upThis.#cc.subarray(start, start + allocated.cc);
-		arr[ccToPos[0]] = arr[ccToPos[0]] || upThis.#subDb[upThis.getChModeId(channel)][0];
+		/* arr[ccToPos[0]] = arr[ccToPos[0]] || upThis.#subDb[upThis.getChModeId(channel)][0];
 		arr[ccToPos[32]] = arr[ccToPos[32]] || upThis.#subDb[upThis.getChModeId(channel)][1];
 		if (arr[ccToPos[0]] == overrides.bank0) {
 			arr[ccToPos[0]] = 0;
-		};
+		}; */
 		return arr;
 	};
 	getCcCh(channel, cc) {
@@ -1317,7 +1316,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new Error("CC number not accepted"));
 		};
 		let result = upThis.#cc[allocated.cc * channel + ccToPos[cc]];
-		switch (cc) {
+		/* switch (cc) {
 			case 0: {
 				result = result || upThis.#subDb[upThis.getChModeId(channel)][0];
 				if (result == overrides.bank0) {
@@ -1329,21 +1328,21 @@ let OctaviaDevice = class extends CustomEventSource {
 				result = result || upThis.#subDb[upThis.getChModeId(channel)][1];
 				break;
 			};
-		};
+		}; */
 		return result;
 	};
 	getCcAll() {
 		// Return all CC registers
 		let upThis = this;
 		let arr = upThis.#cc.slice();
-		for (let c = 0; c < allocated.ch; c ++) {
+		/* for (let c = 0; c < allocated.ch; c ++) {
 			let chOff = c * allocated.cc;
 			arr[chOff + ccToPos[0]] = arr[chOff + ccToPos[0]] || upThis.#subDb[upThis.getChModeId(c)][0];
 			arr[chOff + ccToPos[32]] = arr[chOff + ccToPos[32]] || upThis.#subDb[upThis.getChModeId(c)][1];
 			if (arr[ccToPos[0]] == overrides.bank0) {
 				arr[ccToPos[0]] = 0;
 			};
-		};
+		}; */
 		return arr;
 	};
 	getChSource() {
@@ -1505,6 +1504,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		primBuf[0] = upThis.#prg[(1 << allocated.chShift) | part];
 		primBuf[2] = upThis.#prg[(2 << allocated.chShift) | part];
 		return primBuf;
+	};
+	pushChPrimitives(part) {
+		let upThis = this;
+		upThis.#prg[(1 << allocated.chShift) | part] = upThis.#cc[ccOffTable[part] + ccToPos[0]];
+		upThis.#prg[(2 << allocated.chShift) | part] = upThis.#cc[ccOffTable[part] + ccToPos[32]];
 	};
 	getChVoice(part) {
 		let upThis = this;
