@@ -258,16 +258,23 @@ const overrides = {
 const ccOffTable = new Uint16Array(allocated.ch);
 const rpnOffTable = new Uint16Array(allocated.ch);
 const nrpnOffTable = new Uint16Array(allocated.ch);
-const dNrpnOffTable = new Uint16Array(allocated.ch);
 const aceOffTable = new Uint16Array(allocated.ch);
 const extOffTable = new Uint16Array(allocated.ch);
+const dNrpnOffTable = new Array(allocated.drm);
 for (let i = 0; i < allocated.ch; i ++) {
 	ccOffTable[i] = i * allocated.cc;
 	rpnOffTable[i] = i * allocated.rpn;
 	nrpnOffTable[i] = i * allocated.nrpn;
-	dNrpnOffTable[i] = i * allocated.dpn;
+	//dNrpnOffTable[i] = i * allocated.dpn;
 	aceOffTable[i] = i * allocated.ace;
 	extOffTable[i] = i * allocated.ext;
+};
+for (let i0 = 0; i0 < allocated.drm; i0 ++) {
+	dNrpnOffTable[i0] = new Uint16Array(allocated.dpn);
+	let drumOff0 = i0 * allocated.dpn * allocated.dnc;
+	for (let i1 = 0; i1 < allocated.dpn; i1 ++) {
+		dNrpnOffTable[i0][i1] = drumOff0 + i1 * allocated.dnc;
+	};
 };
 
 /*
