@@ -1358,6 +1358,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#chType[part] = type;
 		if (type > 0 && !disableMsbSet) {
 			upThis.#cc[part * allocated.cc + ccToPos[0]] = upThis.#subDb[mode][2];
+			upThis.pushChPrimitives(part);
 		};
 	};
 	setChActive(part, active = 0) {
@@ -1497,12 +1498,22 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		return bank;
 	};
-	getChPrimitives(part) {
+	getChPrimitives(part, useSubDb) {
 		let upThis = this;
 		let primBuf = new Uint8Array(3);
 		primBuf[1] = upThis.#prg[part];
 		primBuf[0] = upThis.#prg[(1 << allocated.chShift) | part];
 		primBuf[2] = upThis.#prg[(2 << allocated.chShift) | part];
+		if (useSubDb) {
+			primBuf[0] = primBuf[0] || upThis.#subDb[upThis.getChModeId(part)][0];
+			primBuf[2] = primBuf[2] || upThis.#subDb[upThis.getChModeId(part)][1];
+		};
+		if (primBuf[0] == overrides.bank0) {
+			primBuf[0] = 0;
+		};
+		if (primBuf[2] == overrides.bank0) {
+			primBuf[2] = 0;
+		};
 		return primBuf;
 	};
 	pushChPrimitives(part) {
