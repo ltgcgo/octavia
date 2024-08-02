@@ -134,6 +134,13 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case "05rw":
+			case "x5d": {
+				if (msb && msb < 56) {
+					args[0] = 56;
+				};
+				break;
+			};
 			case "s90es": {
 				if (msb == 0) {
 					break;
