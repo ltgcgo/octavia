@@ -291,9 +291,10 @@ let ScDisplay = class extends RootDisplay {
 				});
 			} else {
 				infoTxt = `${sum.chProgr[upThis.#ch] + 1}`.padStart(3, "0");
-				switch (sum.chContr[chOff + ccToPos[0]]) {
+				let primBuf = upThis.device.getChPrimitives(upThis.#ch);
+				switch (primBuf[0]) {
 					case 0: {
-						switch (sum.chContr[chOff + ccToPos[32]]) {
+						switch (primBuf[2]) {
 							case 0:
 							case 125:
 							case 126:

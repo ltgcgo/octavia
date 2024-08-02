@@ -196,13 +196,14 @@ let QyDisplay = class extends RootDisplay {
 			upThis.#renderFill(20, 53, 8, 1);
 			upThis.#renderFill(29, 24, 1, 40);
 			// Bank info
-			let voiceInfo = upThis.getChVoice(this.#ch);
-			usedFont.getStr(`${(sum.chProgr[this.#ch] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || sum.chContr[chOff] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
+			let voiceInfo = upThis.getChVoice(upThis.#ch);
+			let primBuf = upThis.device.getChPrimitives(upThis.#ch);
+			usedFont.getStr(`${(sum.chProgr[upThis.#ch] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || primBuf[0] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
 				e.render((e, x, y) => {
 						upThis.#nmdb[55 + x + i * 6 + (y << 7)] = e;
 				});
 			});
-			let curCat = upThis.#getCat(this.#ch, sum.chContr[this.#ch * ccToPos.length], sum.chProgr[this.#ch]),
+			let curCat = upThis.#getCat(upThis.#ch, sum.chContr[upThis.#ch * ccToPos.length], sum.chProgr[upThis.#ch]),
 			curCatBm = upThis.qyRsrc.getBm(`Vox_${curCat}`);
 			if (curCatBm) {
 				curCatBm.render((e, x, y) => {
@@ -318,9 +319,10 @@ let QyDisplay = class extends RootDisplay {
 				upThis.#nmdb[6253 + x + (y << 7)] = e;
 			});
 			// Bank info
+			let primBuf = upThis.device.getChPrimitives(upThis.#ch);
 			{
 				let voiceName = upThis.getChVoice(this.#ch);
-				usedFont.getStr(`${sum.chContr[chOff + ccToPos[0]].toString().padStart(3, "0")} ${sum.chProgr[this.#ch].toString().padStart(3, "0")} ${sum.chContr[chOff + ccToPos[32]].toString().padStart(3, "0")}`).forEach((e, i) => {
+				usedFont.getStr(`${primBuf[0].toString().padStart(3, "0")} ${primBuf[1].toString().padStart(3, "0")} ${primBuf[2].toString().padStart(3, "0")}`).forEach((e, i) => {
 					e.render((e, x, y) => {
 						upThis.#nmdb[6145 + 6 * i + x + (y << 7)] = e;
 					});
