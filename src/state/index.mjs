@@ -247,6 +247,7 @@ const allocated = {
 	efx: 7,
 	cvn: 12, // custom voice names
 	redir: 32,
+	vxPrim: 3,
 	invalidCh: 255
 };
 const overrides = {
@@ -326,7 +327,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#chType = new Uint8Array(allocated.ch); // Types of channels
 	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
 	#ace = new Uint8Array(allocated.ch * allocated.ace); // 4 active custom effects
-	#prg = new Uint8Array(allocated.ch * 3); // segmented by channels; (part) for program, (allocated.ch | part) for cc0, (2 * allocated.ch | part) for cc32
+	#prg = new Uint8Array(allocated.ch * allocated.vxPrim); // segmented by channels; (part) for program, (allocated.ch | part) for cc0, (2 * allocated.ch | part) for cc32
 	#velo = new Uint8Array(allocated.ch * allocated.nn); // 128 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
 	#poly = new Uint16Array(allocated.pl); // 512 polyphony allowed
@@ -1498,22 +1499,48 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		return bank;
 	};
+	getChPrimitive(part, component, useSubDb) {
+		/*
+		Valid component values:
+		0: Program number
+		1: cc0/Bank MSB
+		2: cc32/Bank LSB
+		*/
+		if (component >= allocated.vxPrim || component?.constructor != Number) {
+			throw(new RangeError(`Invalid voice primitive component "${component}"`));
+			return;
+		};
+		if (part >= allocated.ch) {
+			throw(new RangeError(`Invalid part "CH${part + 1}"`));
+			return;
+		};
+		let upThis = this;
+		let result = upThis.#prg[(component << allocated.chShift) | part];
+		switch (component) {
+			case 1:
+			case 2: {
+				if (useSubDb) {
+					result = result || upThis.#subDb[upThis.getChModeId(part)][component - 1];
+				};
+				if (result == overrides.bank0) {
+					result = 0;
+				};
+				break;
+			};
+		};
+		return result;
+	};
 	getChPrimitives(part, useSubDb) {
+		/*
+		Unlike OctaviaDevice.getChPrimitive(),
+		this method lays out the primitives in the order listed below:
+		cc0/Bank MSB, program number, cc32/Bank LSB
+		*/
 		let upThis = this;
 		let primBuf = new Uint8Array(3);
 		primBuf[1] = upThis.#prg[part];
-		primBuf[0] = upThis.#prg[(1 << allocated.chShift) | part];
-		primBuf[2] = upThis.#prg[(2 << allocated.chShift) | part];
-		if (useSubDb) {
-			primBuf[0] = primBuf[0] || upThis.#subDb[upThis.getChModeId(part)][0];
-			primBuf[2] = primBuf[2] || upThis.#subDb[upThis.getChModeId(part)][1];
-		};
-		if (primBuf[0] == overrides.bank0) {
-			primBuf[0] = 0;
-		};
-		if (primBuf[2] == overrides.bank0) {
-			primBuf[2] = 0;
-		};
+		primBuf[0] = upThis.getChPrimitive(part, 1, useSubDb);
+		primBuf[2] = upThis.getChPrimitive(part, 2, useSubDb);
 		return primBuf;
 	};
 	pushChPrimitives(part) {
@@ -1969,6 +1996,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		chOff = allocated.cc * targetCh;
 		upThis.#prg[targetCh] = upThis.#prg[sourceCh];
 		upThis.#cc.set(upThis.#cc.subarray(sourceChOff, sourceChOff + allocated.cc), chOff);
+		upThis.pushChPrimitives(targetCh);
 	};
 	setDrumFirstWrite(part, disable) {
 		let upThis = this;
@@ -2029,6 +2057,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.#cc[ch * allocated.cc] = upThis.#subDb[idx][2];
 						//console.debug(`CH${ch + 1} (${upThis.#chType[ch]}) (${upThis.getChMode(ch)}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
 						// I'll deal with this later?
+						upThis.pushChPrimitives(ch);
 					};
 					//this.initOnReset && forced && this.#ua.ano(ch);
 				};
@@ -2040,6 +2069,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (!upThis.#chActive[ch]) {
 								upThis.#prg[ch] = e;
 								upThis.#cc[ch * allocated.cc + ccToPos[91]] = 127;
+								upThis.pushChPrimitives(ch);
 							};
 						});
 						for (let part = 1; part < 10; part ++) {
@@ -2831,16 +2861,19 @@ let OctaviaDevice = class extends CustomEventSource {
 					// CC manipulation can be further shrunk
 					([() => {
 						upThis.#cc[chOff + ccToPos[0]] = e; // MSB
+						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
 					}, () => {
 						upThis.#cc[chOff + ccToPos[32]] = e; // LSB
+						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
 					}, () => {
 						upThis.#prg[part] = e; // program
+						//upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
@@ -3337,6 +3370,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#prg[part] = part & 127;
 			upThis.#cc[allocated.cc * part + ccToPos[0]] = 35;
 			upThis.#cc[allocated.cc * part + ccToPos[32]] = part >> 7 | 4;
+			upThis.pushChPrimitives(part);
 			upThis.dispatchEvent("voice", {
 				part
 			});
@@ -3626,16 +3660,19 @@ let OctaviaDevice = class extends CustomEventSource {
 						// element reserve
 					}, () => {
 						upThis.#cc[chOff + ccToPos[0]] = e;
+						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
 					}, () => {
 						upThis.#cc[chOff + ccToPos[32]] = e;
+						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
 					}, () => {
 						upThis.#prg[part] = e;
+						//upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
@@ -4064,8 +4101,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				msg.subarray(1).forEach((e, i) => {
 					[() => {
 						upThis.#cc[chOff + ccToPos[0]] = e; // MSB
+						upThis.pushChPrimitives(part);
 					}, () => {
 						upThis.#prg[part] = e; // program
+						//upThis.pushChPrimitives(part);
 					}, () => {
 						let ch = 0;
 						if (e < 16) {
@@ -4281,6 +4320,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#prg[part] = korgDrums[e - 229] || 0;
 					upThis.#cc[chOff + ccToPos[0]] = 62;
 				};
+				upThis.pushChPrimitives(part);
 				upThis.dispatchEvent("voice", {
 					part
 				});
@@ -4460,6 +4500,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (e > 0) {
 								upThis.setChActive(part, 1);
 							};
+							upThis.pushChPrimitives(part);
 							upThis.dispatchEvent("voice", {
 								part
 							});
@@ -4510,6 +4551,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							//upThis.#cc[chOff] = (e & 3) ? 82 : 56;
 							if (!upThis.#chType[part]) {
 								upThis.#cc[chOff + ccToPos[0]] = (e >> 6) ? 56 : upThis.#detect.x5;
+								upThis.pushChPrimitives(part);
 								upThis.dispatchEvent("voice", {
 									part
 								});
@@ -4933,10 +4975,13 @@ let OctaviaDevice = class extends CustomEventSource {
 					// MSB, LSB, PRG
 					[() => {
 						upThis.#cc[chOff + ccToPos[0]] = e || overrides.bank0;
+						upThis.pushChPrimitives(part);
 					}, () => {
 						upThis.#cc[chOff + ccToPos[32]] = e;
+						upThis.pushChPrimitives(part);
 					}, () => {
 						upThis.#prg[part] = e;
+						//upThis.pushChPrimitives(part);
 					}][c]();
 					upThis.dispatchEvent("voice", {
 						part
@@ -5115,6 +5160,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							case 0: {
 								// MSB Bank
 								upThis.#cc[chOff + ccToPos[0]] = e;
+								upThis.pushChPrimitives(part);
 								// Needs an MSB = 125 for XG fallback
 								upThis.dispatchEvent("voice", {
 									part
@@ -5127,6 +5173,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								if (!e && !upThis.#cc[chOff + ccToPos[0]]) {
 									upThis.#cc[chOff + ccToPos[0]] = overrides.bank0;
 								};
+								upThis.pushChPrimitives(part);
 								upThis.dispatchEvent("voice", {
 									part
 								});
@@ -5138,6 +5185,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								if (e > 0) {
 									upThis.setChActive(part, 1);
 								};
+								//upThis.pushChPrimitives(part);
 								upThis.dispatchEvent("voice", {
 									part
 								});
@@ -5413,6 +5461,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.setChType(part, upThis.CH_DRUMS, modeMap.k11);
 					upThis.#prg[part] = e - 128;
 				};
+				upThis.pushChPrimitives(part);
 				upThis.dispatchEvent("voice", {
 					part
 				});
@@ -5497,6 +5546,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cc[chOff + ccToPos[32]] = 0;
 					upThis.#prg[part] = e - 160;
 				};
+				upThis.pushChPrimitives(part);
 				upThis.dispatchEvent("voice", {
 					part
 				});
@@ -5767,19 +5817,24 @@ let OctaviaDevice = class extends CustomEventSource {
 			msg.subarray(2).forEach((e, i) => {
 				([() => {
 					upThis.#cc[chOff + ccToPos[0]] = e;
+					upThis.pushChPrimitives(part);
 					upThis.dispatchEvent("voice", {
 						part
 					});
 				}, () => {
 					e && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[32]] = e;
-					upThis.setChType(part, ([32, 40].indexOf(e) > -1) ? upThis.CH_DRUMS : upThis.CH_MELODIC, upThis.#mode, true);
+					if (upThis.getChPrimitive(part, 1) == 63) {
+						upThis.setChType(part, ([32, 40].indexOf(e) > -1) ? upThis.CH_DRUMS : upThis.CH_MELODIC, upThis.#mode, true);
+					};
+					upThis.pushChPrimitives(part);
 					upThis.dispatchEvent("voice", {
 						part
 					});
 				}, () => {
 					e && (upThis.setChActive(part, 1));
 					upThis.#prg[part] = e;
+					//upThis.pushChPrimitives(part);
 					upThis.dispatchEvent("voice", {
 						part
 					});
@@ -5967,18 +6022,21 @@ let OctaviaDevice = class extends CustomEventSource {
 										};
 									};
 								};
+								upThis.pushChPrimitives(part);
 								upThis.dispatchEvent("voice", {
 									part
 								});
 							}, () => {
 								// cc32
 								upThis.#cc[chOff + ccToPos[32]] = e;
+								upThis.pushChPrimitives(part);
 								upThis.dispatchEvent("voice", {
 									part
 								});
 							}, () => {
 								// PC#
 								upThis.#prg[part] = e;
+								//upThis.pushChPrimitives(part);
 								upThis.dispatchEvent("voice", {
 									part
 								});
@@ -6137,6 +6195,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								upThis.#cc[chOff + ccToPos[0]] = [120, 0, 56, 62][e - 20];
 								upThis.#cc[chOff + ccToPos[32]] = 0;
 							};
+							upThis.pushChPrimitives(part);
 							//console.debug(`${dPref}CH${part + 1} LSB ${pi}: ${e}`)
 							upThis.dispatchEvent("voice", {
 								part
