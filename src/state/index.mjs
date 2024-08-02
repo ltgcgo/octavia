@@ -1108,6 +1108,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 			upThis.#prg[part] = det.data;
 			upThis.#bnCustom[part] = 0;
+			upThis.#prg[(1 << allocated.chShift) | part] = upThis.#cc[ccOffTable[part] + ccToPos[0]];
+			upThis.#prg[(2 << allocated.chShift) | part] = upThis.#cc[ccOffTable[part] + ccToPos[32]];
 			if (getDebugState()) {
 				console.debug(`T:${det.track} C:${part} P:${det.data}`);
 			};
