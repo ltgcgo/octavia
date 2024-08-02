@@ -4465,6 +4465,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 10: {
 							// Control filter
 							//upThis.#cc[chOff] = (e & 3) ? 82 : 56;
+							if (!upThis.#chType[part]) {
+								upThis.#cc[chOff + ccToPos[0]] = (e >> 6) ? 56 : upThis.#detect.x5;
+								upThis.dispatchEvent("voice", {
+									part
+								});
+							};
 							break;
 						};
 						case 11: {
