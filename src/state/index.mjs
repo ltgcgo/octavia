@@ -230,6 +230,7 @@ let allocatedPorts = 8;
 const allocated = {
 	port: allocatedPorts,
 	ch: allocatedPorts << 4, // channels
+	chShift: Math.ceil(Math.log2(allocatedPorts)) + 4,
 	cc: ccAccepted.length, // control changes
 	nn: 128, // notes per channel
 	pl: 512, // polyphony
@@ -308,7 +309,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#chType = new Uint8Array(allocated.ch); // Types of channels
 	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
 	#ace = new Uint8Array(allocated.ch * allocated.ace); // 4 active custom effects
-	#prg = new Uint8Array(allocated.ch);
+	#prg = new Uint8Array(allocated.ch * 3); // segmented by channels; (part) for program, (allocated.ch | part) for cc0, (2 * allocated.ch | part) for cc32
 	#velo = new Uint8Array(allocated.ch * allocated.nn); // 128 channels. 128 velocity registers
 	#mono = new Uint8Array(allocated.ch); // Mono/poly mode
 	#poly = new Uint16Array(allocated.pl); // 512 polyphony allowed
@@ -1478,9 +1479,17 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		return bank;
 	};
+	getChPrimitives(part) {
+		let upThis = this;
+		let primBuf = new Uint8Array(3);
+		primBuf[1] = upThis.#prg[part];
+		primBuf[0] = upThis.#prg[(1 << allocated.chShift) | part];
+		primBuf[2] = upThis.#prg[(2 << allocated.chShift) | part];
+		return primBuf;
+	};
 	getChVoice(part) {
 		let upThis = this;
-		let voice = upThis.getVoice(upThis.getCcCh(part, 0), upThis.#prg[part], upThis.getCcCh(part, 32), upThis.getChMode(part));
+		let voice = upThis.getVoice(...upThis.getChPrimitives(part), upThis.getChMode(part));
 		if (upThis.#bnCustom[part]) {
 			let name = "";
 			switch (upThis.#mode) {
