@@ -82,7 +82,7 @@ const pixelProfiles = {
 	},
 	"macos": {
 		"font4": [2, 0],
-		"cfont4": [2, 0],
+		"cfont4": [1, 0],
 		"font7": [0, 0]
 	},
 	"chromium": {
