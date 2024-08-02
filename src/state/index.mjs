@@ -238,6 +238,7 @@ const allocated = {
 	cmt: 14, // C/M timbre storage size
 	rpn: 6,
 	rpnt: 4, // the real size of RPN registers
+	nrpn: useNormNrpn.length,
 	ace: 8, // active custom effect
 	drm: 8, // Drum setup slots
 	dpn: useDrumNrpn.length, // Drum setup params
@@ -250,6 +251,22 @@ const allocated = {
 };
 const overrides = {
 	bank0: 128
+};
+
+// Lookup tables
+const ccOffTable = new Uint16Array(allocated.ch);
+const rpnOffTable = new Uint16Array(allocated.ch);
+const nrpnOffTable = new Uint16Array(allocated.ch);
+const dNrpnOffTable = new Uint16Array(allocated.ch);
+const aceOffTable = new Uint16Array(allocated.ch);
+const extOffTable = new Uint16Array(allocated.ch);
+for (let i = 0; i < allocated.ch; i ++) {
+	ccOffTable[i] = i * allocated.cc;
+	rpnOffTable[i] = i * allocated.rpn;
+	nrpnOffTable[i] = i * allocated.nrpn;
+	dNrpnOffTable[i] = i * allocated.dpn;
+	aceOffTable[i] = i * allocated.ace;
+	extOffTable[i] = i * allocated.ext;
 };
 
 /*
