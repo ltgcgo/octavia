@@ -18,7 +18,7 @@
 </head>
 <body>
 	<div class="container" x-data="{}">
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['macos','macOS']],dumps:[[0,'All','Place no restrictions on dumps.'],[2,'Mode','Only dumps with the same mode as the channel are allowed.']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['chromium','Chromium'],['macos','macOS']],dumps:[[0,'All','Place no restrictions on dumps.'],[2,'Mode','Only dumps with the same mode as the channel are allowed.']]}">
 			<div class="column column-option"><b>Open from</b></div>
 			<div class="column column-option column-button" @click="gOpenSmf()" :active="$store.play=='smf'?'true':'false'" title="Open MIDI files, SysEx blobs or bank files.">MIDI</div>
 			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='file'?'true':'false'" title="Open synchronized audio tracks.">audio</div>

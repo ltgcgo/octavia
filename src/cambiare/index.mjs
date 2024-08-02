@@ -77,11 +77,18 @@ const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}]
 const pixelProfiles = {
 	"none": {
 		"font4": [0, 0], // y, x
+		"cfont4": [0, 0],
 		"font7": [0, 0]
 	},
 	"macos": {
 		"font4": [2, 0],
+		"cfont4": [2, 0],
 		"font7": [0, 0]
+	},
+	"chromium": {
+		"font4": [1, 0],
+		"cfont4": [0, 0],
+		"font7": [1, 0]
 	}
 };
 
@@ -566,12 +573,12 @@ let Cambiare = class extends RootDisplay {
 					if (offsetX > 0) {
 						offsetX = 0;
 					};
-					e.metre.fillText(e.metre.innerText, offsetX, 3 + upThis.#pixelProfile.font4[0]);
+					e.metre.fillText(e.metre.innerText, offsetX, 3 + upThis.#pixelProfile.cfont4[0]);
 					if (Math.abs(offsetX) > runBoundary) {
-						e.metre.fillText(e.metre.innerText, offsetX + e.metre.rWidth + runPadding, 3 + upThis.#pixelProfile.font4[0]);
+						e.metre.fillText(e.metre.innerText, offsetX + e.metre.rWidth + runPadding, 3 + upThis.#pixelProfile.cfont4[0]);
 					};
 				} else {
-					e.metre.fillText(e.metre.innerText, 0, 3 + upThis.#pixelProfile.font4[0]);
+					e.metre.fillText(e.metre.innerText, 0, 3 + upThis.#pixelProfile.cfont4[0]);
 				};
 				e.metre.globalCompositeOperation = "xor";
 				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
