@@ -364,7 +364,8 @@ let MuDisplay = class extends RootDisplay {
 			};
 			// Render fonts
 			if (rendMode < 2) {
-				let voiceName = (upThis.getChVoice(upThis.#ch).name).slice(0, 8).padEnd(8, " ");
+				let voiceObj = upThis.getChVoice(upThis.#ch),
+				voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " ");
 				let bnkSel = (sum.chContr[chOff + ccToPos[0]] == 64 ? "SFX" : sum.chContr[chOff + ccToPos[0]] || sum.chContr[chOff + ccToPos[32]] || 0).toString().padStart(3, "0");
 				if ([63].indexOf(sum.chContr[chOff + ccToPos[0]]) > -1) {
 					bnkSel = `${sum.chContr[chOff + ccToPos[32]] || 0}`.padStart(3, "0");
@@ -376,7 +377,7 @@ let MuDisplay = class extends RootDisplay {
 						showLsb = true;
 					};
 				};
-				let bnkInfo = `\u0080${bnkSel}\u0081${((sum.chProgr[upThis.#ch] || 0) + 1).toString().padStart(3, "0")}`;
+				let bnkInfo = `\u0080${voiceObj.bank}\u0081${((sum.chProgr[upThis.#ch] || 0) + 1).toString().padStart(3, "0")}`;
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
 					let regionX = 0, regionY = 0;
