@@ -594,7 +594,7 @@ let Cambiare = class extends RootDisplay {
 							velocity = sum.rawStrength[part] * sum.chContr[chOff + ccToPos[11]] / 16129;
 						};
 						velocity *= 32;
-						let breathNoise = sum.chContr[chOff + ccToPos[1]] / 127 * 8;
+						let breathNoise = 0 /*sum.chContr[chOff + ccToPos[1]] / 127 * 8*/;
 						e.extVis.beginPath();
 						e.extVis.moveTo(0, 12 - mouth - 3);
 						e.extVis.lineTo(7 + velocity, 12);
