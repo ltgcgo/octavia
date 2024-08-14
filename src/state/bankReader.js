@@ -55,14 +55,20 @@ let VoiceBank = class {
 						args[2] += 4; // PLG-150AP redirection
 						break;
 					};
-					case 33:
+					case 33: {
+						if (lsb > 125 || lsb == 3) {
+							args[2] = 0; // cc reset
+						};
+						args[2] += 5; // PLG-150VL redirection
+						break;
+					};
 					case 34: // I guess this is for PF, but I'm not sure
 					case 35:
 					case 36: {
 						if (lsb > 125) {
 							args[2] = 0; // cc reset
 						};
-						args[2] += 5; // PLG-150VL/DX/AN redirection
+						args[2] += 5; // PLG-150DX/AN redirection
 						break;
 					};
 					case 79:
