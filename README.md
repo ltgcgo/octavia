@@ -58,3 +58,6 @@ You can help with Octavia's development, by doing any of the following, or more.
 * Participate in programming (read the docs for further info).
 * Reward the developers some donation.
 * Spread the word about Octavia.
+
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/ltgcgo/octavia.svg?variant=adaptive)](https://starchart.cc/ltgcgo/octavia)
