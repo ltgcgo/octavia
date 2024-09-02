@@ -503,7 +503,7 @@ let Sc8850Display = class extends RootDisplay {
 			switch (upThis.device.getChMode(upThis.#ch)) {
 				case "gs":
 				case "sc": {
-					let cc32 = sum.chContr[chOff + ccToPos[32]];
+					let cc32 = upThis.getChPrimitive(upThis.#ch, 2, true);
 					if (cc32 > 0 && cc32 < 5) {
 						let cx = 153;
 						let cy = 48 - cc32 * 5;

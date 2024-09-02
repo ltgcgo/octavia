@@ -1461,6 +1461,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	getSubDb() {
 		return self?.structuredClone(this.#subDb);
 	};
+	getDetect() {
+		return self?.structuredClone(this.#detect);
+	};
 	getVoice(msbO, prgO, lsbO, mode = "?") {
 		let upThis = this;
 		if (!modeMap[mode]?.constructor) {

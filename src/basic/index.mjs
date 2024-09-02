@@ -212,6 +212,12 @@ let RootDisplay = class extends CustomEventSource {
 	getChVoice(ch) {
 		return this.device.getChVoice(ch);
 	};
+	getChPrimitive(ch, component, useSubDb) {
+		return this.device.getChPrimitive(ch, component, useSubDb);
+	};
+	getChPrimitives(ch, useSubDb) {
+		return this.device.getChPrimitives(ch, useSubDb);
+	};
 	getMapped(id) {
 		return this.#mapList[id]?.name || id;
 	};
