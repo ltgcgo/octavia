@@ -238,7 +238,7 @@ let Sc8850Display = class extends RootDisplay {
 					scLetterMode = timeNow < sum.letter.expire ? 1 : 0;
 					//console.debug(`SC constant: ${sum.letter.expire - timeNow}`);
 				} else {
-					let scLetterDuration = sum.letter.set + Math.min(18 + sum.letter.text.length, 50) * 300;
+					let scLetterDuration = sum.letter.set + Math.min(19 + sum.letter.text.length, 51) * 300;
 					scLetterMode = timeNow < scLetterDuration ? 2 : 0;
 					//console.debug(`SC variable: ${scLetterDuration - timeNow}`);
 				};
@@ -273,22 +273,30 @@ let Sc8850Display = class extends RootDisplay {
 					});
 				});
 			} else {
+				let displayText;
 				switch (scLetterMode) {
 					case 1: {
-						upThis.font7a.getStr(sum.letter.text).forEach((e0, i0) => {
-							let offsetX = i0 * 8;
-							e0.forEach((e1, i1) => {
-								let pX = (i1 % 11) + offsetX + 31, pY = Math.floor(i1 / 11);
-								if (e1) {
-									upThis.#nmdb[pY * totalWidth + pX] = 255;
-								};
-							});
-						});
+						displayText = sum.letter.text;
 						break;
 					};
 					case 2: {
+						let voiceNamePadded = upThis.getMapped(voiceObject.name).padEnd(12, " ");
+						displayText = `    ${voiceNamePadded}<${sum.letter.text}<    ${voiceNamePadded}`;
+						let cutoffStart = (Math.floor((timeNow - sum.letter.set) / 300), );
+						displayText = displayText.substring(cutoffStart, cutoffStart + 16);
 						break;
 					};
+				};
+				if (scLetterMode != 0) {
+					upThis.font7a.getStr(displayText).forEach((e0, i0) => {
+						let offsetX = i0 * 8;
+						e0.forEach((e1, i1) => {
+							let pX = (i1 % 11) + offsetX + 31, pY = Math.floor(i1 / 11);
+							if (e1) {
+								upThis.#nmdb[pY * totalWidth + pX] = 255;
+							};
+						});
+					});
 				};
 			};
 			upThis.getChBm(upThis.#ch, voiceObject)?.render((e, x, y) => {
