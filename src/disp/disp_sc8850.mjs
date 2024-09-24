@@ -75,6 +75,7 @@ let Sc8850Display = class extends RootDisplay {
 	#dumpExpire = 0;
 	#booted = 0;
 	#bootFrame = 0;
+	#letterMode;
 	font55 = new MxFont40("./data/bitmaps/sc/libre55.tsv");
 	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv");
 	bootBm = new MxBmDef();
@@ -119,6 +120,9 @@ let Sc8850Display = class extends RootDisplay {
 				};
 			};
 			upThis.#dumpExpire = Date.now() + 5000;
+		});
+		upThis.device.addEventListener("letter", (ev) => {
+			upThis.#letterMode = upThis.#mode;
 		});
 		upThis.bootBm.load(`RsrcName\tBitmap\nboot_mr\t009e003efffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ffffffffffffffffe3ffffffffffffffffffe0007fffffffffffffff8ffffffffffffffffffe0000fffffe3ffffffffffffffffffffffffffff01e01fffff8ffffffffffffffffffffffffffff03ff07f83f007c0787e187f01ffffffffffffff83ffe0f003803800e1f8e3e003fffffffffffffe1fff83838787c18187c70f0607fffffffffffff07ffe0c3f3e3e1f861e3c787e1fffffffffffffc3fff863fff0f1fe1871e1c7f87ffffffffffffe0fffc10fffc787f8e18f8e1fe3fffffffffffff83fff0c7fff1e3fe3847e38ff8fffffffffffffe0fff831fff878ff0e03f0e3fc3fffffffffffffc1ff81c7f3e3e3f8781fc78fe1ffffffffffffff00f01f06070f8301e0fe1e0c07fffffffffffffe0000fe003c7e000f83f8f8003ffffffffffffffc000ffc07e1fe063e1fc3f818fffffffffffffffe01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\nbs_0\t000700073880000000000\nbs_1\t000700073888081020000\nbs_2\t0007000738080810288e0\nbs_3\t00070007388a0c18288e0\nbs_4\t00070007000a0c18288e0\nbs_5\t0007000700020408088e0\nbs_6\t000700070002040808000\nbs_7\t000700070000000000000`);
 		(async () => {
@@ -227,34 +231,66 @@ let Sc8850Display = class extends RootDisplay {
 			});
 			// Render bank info and voice name
 			let voiceObject = upThis.getChVoice(upThis.#ch);
-			upThis.font56.getStr(voiceObject.bank).forEach((e0, i0) => {
-				let offsetX = i0 * 6 + 21;
-				e0.forEach((e1, i1) => {
-					let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
-					if (e1) {
-						upThis.#nmdb[pY * totalWidth + pX] = 255;
-					};
+			let scLetterNative = upThis.#letterMode == "gs" || upThis.#letterMode == "sc";
+			let scLetterMode = 0;
+			if (scLetterNative && (sum.letter.set <= timeNow && timeNow < sum.letter.set + 15000)) {
+				if (sum.letter.text.length <= 16) {
+					scLetterMode = timeNow < sum.letter.expire ? 1 : 0;
+					//console.debug(`SC constant: ${sum.letter.expire - timeNow}`);
+				} else {
+					let scLetterDuration = sum.letter.set + Math.min(18 + sum.letter.text.length, 50) * 300;
+					scLetterMode = timeNow < scLetterDuration ? 2 : 0;
+					//console.debug(`SC variable: ${scLetterDuration - timeNow}`);
+				};
+			};
+			if (!scLetterNative || scLetterMode == 0) {
+				upThis.font56.getStr(voiceObject.bank).forEach((e0, i0) => {
+					let offsetX = i0 * 6 + 21;
+					e0.forEach((e1, i1) => {
+						let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
+						if (e1) {
+							upThis.#nmdb[pY * totalWidth + pX] = 255;
+						};
+					});
 				});
-			});
-			upThis.font56.getStr(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0")).forEach((e0, i0) => {
-				let offsetX = i0 * 6 + 43;
-				e0.forEach((e1, i1) => {
-					let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
-					if (e1) {
-						upThis.#nmdb[pY * totalWidth + pX] = 255;
-					};
+				upThis.font56.getStr(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0")).forEach((e0, i0) => {
+					let offsetX = i0 * 6 + 43;
+					e0.forEach((e1, i1) => {
+						let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
+						if (e1) {
+							upThis.#nmdb[pY * totalWidth + pX] = 255;
+						};
+					});
 				});
-			});
-			flipBitsInBuffer(upThis.#nmdb, totalWidth, 42, 1, 19, 8);
-			upThis.font7a.getStr(upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ")).forEach((e0, i0) => {
-				let offsetX = i0 * 8;
-				e0.forEach((e1, i1) => {
-					let pX = (i1 % 11) + offsetX + 63, pY = Math.floor(i1 / 11);
-					if (e1) {
-						upThis.#nmdb[pY * totalWidth + pX] = 255;
-					};
+				flipBitsInBuffer(upThis.#nmdb, totalWidth, 42, 1, 19, 8);
+				upThis.font7a.getStr(upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ")).forEach((e0, i0) => {
+					let offsetX = i0 * 8;
+					e0.forEach((e1, i1) => {
+						let pX = (i1 % 11) + offsetX + 63, pY = Math.floor(i1 / 11);
+						if (e1) {
+							upThis.#nmdb[pY * totalWidth + pX] = 255;
+						};
+					});
 				});
-			});
+			} else {
+				switch (scLetterMode) {
+					case 1: {
+						upThis.font7a.getStr(sum.letter.text).forEach((e0, i0) => {
+							let offsetX = i0 * 8;
+							e0.forEach((e1, i1) => {
+								let pX = (i1 % 11) + offsetX + 31, pY = Math.floor(i1 / 11);
+								if (e1) {
+									upThis.#nmdb[pY * totalWidth + pX] = 255;
+								};
+							});
+						});
+						break;
+					};
+					case 2: {
+						break;
+					};
+				};
+			};
 			upThis.getChBm(upThis.#ch, voiceObject)?.render((e, x, y) => {
 				upThis.#nmdb[(y + 18) * totalWidth + x + 2] = e ? 255 : 0;
 			});
@@ -310,7 +346,7 @@ let Sc8850Display = class extends RootDisplay {
 					break;
 				};
 			};
-			if (timeNow >= sum.letter.expire || (upThis.#mode == "gs" || upThis.#mode == "sc")) {
+			if (timeNow >= sum.letter.expire || (upThis.#letterMode == "gs" || upThis.#letterMode == "sc")) {
 				upThis.font56.getStr("123456789\x80\x81\x82\x83\x84\x85\x86").forEach((e0, i0) => {
 					let offsetX = i0 * 6;
 					e0.forEach((e1, i1) => {
@@ -468,7 +504,7 @@ let Sc8850Display = class extends RootDisplay {
 			};
 			// Letter display
 			if (timeNow < sum.letter.expire) {
-				switch (upThis.#mode) {
+				switch (upThis.#letterMode) {
 					case "gs":
 					case "sc": {
 						break;

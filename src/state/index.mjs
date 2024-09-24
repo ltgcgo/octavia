@@ -1630,6 +1630,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		upThis.#letterSet = Date.now();
 		upThis.#letterExpire = Date.now() + delay;
+		upThis.dispatchEvent("letter");
 		//upThis.#letterDisp = upThis.#letterDisp.padEnd(16, " ");
 		if (invalidCp) {
 			invalidCp = Array.from(invalidCp);
