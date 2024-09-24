@@ -310,7 +310,7 @@ let Sc8850Display = class extends RootDisplay {
 					break;
 				};
 			};
-			if (timeNow >= sum.letter.expire) {
+			if (timeNow >= sum.letter.expire || (upThis.#mode == "gs" || upThis.#mode == "sc")) {
 				upThis.font56.getStr("123456789\x80\x81\x82\x83\x84\x85\x86").forEach((e0, i0) => {
 					let offsetX = i0 * 6;
 					e0.forEach((e1, i1) => {
