@@ -46,6 +46,8 @@ jobs:
         uses: denoland/setup-deno@v1.1.1
       - name: Build Octavia files
         run: "./shx build"
+      - name: Build Windows XP-compatible Octavia files
+        run: "./shx babel"
       - name: Generate simple sitemap
         run: "./shx sitemap"
       - name: Upload bundled artifact

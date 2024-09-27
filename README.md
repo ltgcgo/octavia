@@ -6,9 +6,15 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 [![Maintainability](https://api.codeclimate.com/v1/badges/fa5aeaf4ba4c9b2d50e2/maintainability)](https://codeclimate.com/github/ltgcgo/octavia/maintainability)
 
 > **Warning**
-> 
+>
+> Due to a critical bug affecting the SysEx processing flow (#55), Octavia is planned to have a major rewrite. The rewrite may happen at any time once version 0.5.2 is fully released.
+>
+> **If you're accessing the online version, it is advised to [use the stable branch instead](https://gh.ltgc.cc/octavia-stable/) in case of a massive break.** If you can see the address bar already at `/octavia-stable/` or you're running a local development build, ignore the warning.
+
+> **Warning**
+>
 > Octavia may work on Node.js, but support for it is never intended. Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. There is no plan to ever support runtimes that offers non-ES compliance with Node.js ecosystem, like Node.js or Bun, and issues raised from those runtimes will be ignored, unless reproducible from other runtimes as well.
-> 
+>
 > Octavia is only ever published to [Deno Deploy](https://deno.land/x/octavia_deno) and [JSR](https://jsr.io/@ltgc/octavia). If you see Octavia published to other registries, report those fake packages immediately as they may contain malware.
 
 ## What is Octavia?
