@@ -9,6 +9,7 @@ on:
 
 jobs:
   publish:
+    if: github.repository == 'ltgcgo/octavia'
     runs-on: ubuntu-latest
 
     permissions:
