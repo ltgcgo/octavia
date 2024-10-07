@@ -1340,20 +1340,21 @@ let OctaviaDevice = class extends CustomEventSource {
 		}; */
 		return result;
 	};
-	setCcCh(part, cc, value, emitEvent = false) {
+	setCcCh(part = 0, cc, value) {
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new Error("CC number not accepted"));
 		};
-		let data = value & 255;
-		upThis.#cc[ccOffTable[channel] + ccToPos[cc]] = data;
-		if (emitEvent) {
-			upThis.dispatchEvent("cc", {
-				part,
-				cc: targetCc,
-				data
-			});
+		if (value?.constructor != Number) {
+			throw(new TypeError("Expected numbers for value"));
 		};
+		let data = value & 255;
+		upThis.#cc[ccOffTable[part] + ccToPos[cc]] = data;
+		upThis.dispatchEvent("cc", {
+			part,
+			cc: targetCc,
+			data
+		});
 	};
 	getCcAll() {
 		// Return all CC registers
@@ -1368,6 +1369,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}; */
 		return arr;
+	};
+	resetCc(part) {
+		// Placeholder until CC write state is ready
+	};
+	resetCcCh(part, cc) {
+		return;
+		// Placeholder until CC write state is ready
+	};
+	resetCcAll() {
+		return;
+		// Placeholder until CC write state is ready
 	};
 	getChSource() {
 		return this.#chReceive;
