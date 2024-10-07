@@ -706,7 +706,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				})();
 			};
-			let chOff = part * allocated.cc,
+			let chOff = ccOffTable[part],
 			extOff = part * allocated.ext,
 			partMode = this.getChModeId(part);
 			// Non-store CC messages
@@ -1112,7 +1112,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			};
 			if (upThis.getExt(part)[0] == upThis.EXT_DX) {
-				let chOff = allocated.cc * part;
+				let chOff = ccOffTable[part];
 				//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 			};
 			upThis.#prg[part] = det.data;
@@ -2032,8 +2032,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.warn(`Failed attempt at copying setup data from CH${sourceCh + 1} to CH${targetCh + 1}.`);
 			return;
 		};
-		let sourceChOff = allocated.cc * sourceCh,
-		chOff = allocated.cc * targetCh;
+		let sourceChOff = ccOffTable[sourceCh],
+		chOff = ccOffTable[targetCh];
 		upThis.#prg[targetCh] = upThis.#prg[sourceCh];
 		upThis.#cc.set(upThis.#cc.subarray(sourceChOff, sourceChOff + allocated.cc), chOff);
 		upThis.pushChPrimitives(targetCh);
@@ -2094,7 +2094,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				for (let ch = 0; ch < allocated.ch; ch ++) {
 					if (upThis.#chType[ch] > 0 && upThis.#chMode[ch] == 0) {
 						// Switch drum MSBs.
-						upThis.#cc[ch * allocated.cc] = upThis.#subDb[idx][2];
+						upThis.setCcCh(ch, 0, upThis.#subDb[idx][2]);
 						//console.debug(`CH${ch + 1} (${upThis.#chType[ch]}) (${upThis.getChMode(ch)}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
 						// I'll deal with this later?
 						upThis.pushChPrimitives(ch);
@@ -2108,7 +2108,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							let ch = i + 1;
 							if (!upThis.#chActive[ch]) {
 								upThis.#prg[ch] = e;
-								upThis.#cc[ch * allocated.cc + ccToPos[91]] = 127;
+								upThis.setCcCh(ch, 91, 127);
 								upThis.pushChPrimitives(ch);
 							};
 						});
@@ -2888,7 +2888,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("mupromptex");
 			let part = upThis.chRedir(msg[0], track, true),
 			id = msg[1],
-			chOff = allocated.cc * part,
+			chOff = ccOffTable[part],
 			dPref = `XG CH${part + 1} `,
 			errMsg = `Unknown XG part address ${id}.`;
 			let setupWrite = true;
@@ -3007,7 +3007,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// PLG-VL Part Setup
 			let part = upThis.chRedir(msg[0], track, true),
 			id = msg[1],
-			chOff = allocated.cc * part;
+			chOff = ccOffTable[part];
 			let dPref = `PLG-VL CH${part + 1} `;
 			msg.subarray(2).forEach((e, i) => {
 				let ri = i + id;
@@ -3270,7 +3270,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([98, 96], (msg, track, id, opt) => {
 			// PLG-DX multi-part param set
 			let part = upThis.chRedir(msg[0], track, true);
-			let chOff = allocated.cc * part;
+			let chOff = ccOffTable[part];
 			let offset = msg[1];
 			msg.subarray(2).forEach((e, i) => {
 				let ri = offset + i;
@@ -3317,7 +3317,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 2: {
 					// DX7+ multipart parameter set
 					let part = upThis.chRedir(section, track, true),
-					chOff = allocated.cc * part;
+					chOff = ccOffTable[part];
 					msg.subarray(2).forEach((e, i) => {
 						let ri = i + offset;
 						if (ri < 7) {
@@ -3364,7 +3364,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				// DOC global reverb depth on
 				for (let ch = 0; ch < 16; ch ++) {
 					let part = upThis.chRedir(ch, track, true);
-					upThis.#cc[part * allocated.cc + ccToPos[91]] = 127;
+					upThis.setCcCh(part, 91, 127);
 				};
 				console.info("DOC Global Reverb: on");
 			} else {
@@ -3374,7 +3374,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// DX7 Dumps
 		// Placeholder until further documentation
 		dxDump.add([14, 31], (msg, track, id) => {
-			upThis.#cc[allocated.cc * msg[0] + ccToPos[64]] = 0;
+			upThis.setCcCh(msg[0], 64, 0);
 			upThis.#ua.ano(msg[0]);
 			upThis.switchMode("xg");
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
@@ -3383,8 +3383,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([76, 112], async (msg) => {
 			// Per-part DX7+ dump should take 035, XXX, 002/003
 			let part = msg[0];
-			let chOff = allocated.cc * part;
-			let extOff = allocated.ext * part;
+			let chOff = ccOffTable[part];
+			let extOff = extOffTable[part];
 			let cvnOff = allocated.cvn * part;
 			upThis.#ext[extOff] = upThis.EXT_DX;
 			upThis.#bnCustom[part] = 1;
@@ -3408,8 +3408,8 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 			upThis.#prg[part] = part & 127;
-			upThis.#cc[allocated.cc * part + ccToPos[0]] = 35;
-			upThis.#cc[allocated.cc * part + ccToPos[32]] = part >> 7 | 4;
+			upThis.setCcCh(part, 0, 35);
+			upThis.setCcCh(part, 32, part >> 7 | 4);
 			upThis.pushChPrimitives(part);
 			upThis.dispatchEvent("voice", {
 				part
@@ -3692,7 +3692,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("mupromptex");
 			let part = upThis.chRedir(msg[0], track, true);
 			let offset = msg[1];
-			let chOff = allocated.cc * part;
+			let chOff = ccOffTable[part];
 			let dPref = `TG300 CH${part + 1} `;
 			msg.subarray(2).forEach((e, i) => {
 				if (i < 5) {
@@ -3818,10 +3818,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			// GS mode set
 			upThis.switchMode("sc", true);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.sc);
-			upThis.#cc[allocated.cc * 9] = 120;
-			upThis.#cc[allocated.cc * 25] = 120;
-			upThis.#cc[allocated.cc * 41] = 120;
-			upThis.#cc[allocated.cc * 57] = 120;
+			// MUST REVISIT AND UPDATE!!!
+			upThis.setCcCh(9, 0, 120);
+			upThis.setCcCh(25, 0, 120);
+			upThis.setCcCh(41, 0, 120);
+			upThis.setCcCh(57, 0, 120);
 			upThis.#subDb[modeMap.sc][1] = upThis.#detect.sc;
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.fill(0);
@@ -3833,10 +3834,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.switchMode("gs", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.gs);
 					upThis.#subDb[modeMap.gs][1] = upThis.#detect.gs;
-					upThis.#cc[allocated.cc * 9] = 120;
-					upThis.#cc[allocated.cc * 25] = 120;
-					upThis.#cc[allocated.cc * 41] = 120;
-					upThis.#cc[allocated.cc * 57] = 120;
+					upThis.setCcCh(9, 0, 120);
+					upThis.setCcCh(25, 0, 120);
+					upThis.setCcCh(41, 0, 120);
+					upThis.setCcCh(57, 0, 120);
 					upThis.#modeKaraoke = false;
 					upThis.#trkRedir.fill(0);
 					console.info("MIDI reset: GS");
@@ -4133,8 +4134,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		let gsPartSec = function (msg, part, track) {
 			upThis.dispatchEvent("mupromptex");
 			let offset = msg[0],
-			chOff = allocated.cc * part,
-			rpnOff = allocated.rpn * part,
+			chOff = ccOffTable[part],
+			rpnOff = rpnOffTable[part],
 			dPref = `GS CH${part + 1} `;
 			if (offset < 3) {
 				// Program, MSB and receive channel
@@ -4236,7 +4237,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				msg.subarray(1).forEach((e, i) => {
 					[() => {
 						// GS part LSB
-						upThis.#cc[allocated.cc * part + ccToPos[32]] = e;
+						upThis.setCcCh(part, 32, e);
 					}, () => {// GS part fallback LSB
 					}][offset + i]();
 				});
@@ -4343,7 +4344,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let key = (msg[1] << 7) + msg[0],
 			e = (msg[3] << 7) + msg[2],
 			part = upThis.chRedir(key & 15, track, true),
-			chOff = allocated.cc * part;
+			chOff = ccOffTable[part];
 			[() => {
 				// Program change
 				if (e < 1) {
@@ -4524,7 +4525,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
 					let part = upThis.chRedir(Math.floor(i / 12), track, true),
-					chOff = part * allocated.cc;
+					chOff = ccOffTable[part];
 					switch (i % 12) {
 						case 0: {
 							// Program change
@@ -4663,12 +4664,12 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#rpnt[allocated.rpnt * part] = 1;
 				}, false
 				, () => {
-					upThis.#cc[allocated.cc * part + ccToPos[91]] = e ? 127 : 0;
+					upThis.setCcCh(part, 91, e ? 127 : 0);
 				}, false
 				, () => {
-					upThis.#cc[allocated.cc * part + ccToPos[7]] = e;
+					upThis.setCcCh(part, 7, e);
 				}, () => {
-					upThis.#cc[allocated.cc * part + ccToPos[10]] = Math.ceil(e * 9.05);
+					upThis.setCcCh(part, 10, Math.ceil(e * 9.05));
 				}][ri] || (() => {}))();
 			});
 			//console.debug(`MT-32 CH${part + 1} Patch: ${msg}`);
@@ -4787,12 +4788,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.#rpnt[allocated.rpnt * part] = 1;
 					}, false
 					, () => {
-						upThis.#cc[allocated.cc * part + ccToPos[91]] = e ? 127 : 0;
+						upThis.setCcCh(part, 91, e ? 127 : 0);
 					}, false
 					, () => {
-						upThis.#cc[allocated.cc * part + ccToPos[7]] = e;
+						upThis.setCcCh(part, 7, e);
 					}, () => {
-						upThis.#cc[allocated.cc * part + ccToPos[10]] = Math.ceil(e * 9.05);
+						upThis.setCcCh(part, 10, Math.ceil(e * 9.05));
 					}][ptr] || (() => {}))();
 				});
 			};
@@ -5006,7 +5007,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Part setup
 			upThis.dispatchEvent("mupromptex");
 			let part = upThis.chRedir(msg[0], track, true),
-			chOff = part * allocated.cc;
+			chOff = ccOffTable[part];
 			let offset = msg[1];
 			let dPref = `NS5R CH${part + 1} `;
 			msg.subarray(2).forEach((e, i) => {
@@ -5195,7 +5196,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					case i < 2944: {
 						// 32 part setup params, 2944 bytes
 						let part = upThis.chRedir(Math.floor(i / 92), track, true),
-						chOff = part * allocated.cc;
+						chOff = ccOffTable[part];
 						switch (i % 92) {
 							case 0: {
 								// MSB Bank
@@ -5486,8 +5487,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			// GMega part setup
 			upThis.dispatchEvent("mupromptex");
 			let part = upThis.chRedir(msg[1], track, true),
-			chOff = allocated.cc * part,
-			rpnOff = allocated.rpn * part,
+			chOff = ccOffTable[part],
+			rpnOff = rpnOffTable[part],
 			e = (msg[3] << 4) + msg[4];
 			let dPref = `K11 CH${part + 1} `;
 			([() => {
@@ -5565,7 +5566,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("mupromptex");
 			let e = (msg[2] << 4) + msg[3];
 			let part = upThis.chRedir(msg[1], track, true),
-			chOff = part * allocated.cc;
+			chOff = ccOffTable[part];
 			[() => {
 				if (e < 128) {
 					// Melodic voice
@@ -5603,8 +5604,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("mupromptex");
 			let e = (msg[2] << 4) + msg[3];
 			let part = upThis.chRedir(msg[1], track, true),
-			chOff = part * allocated.cc,
-			rpnOff = part * allocated.rpn;
+			chOff = ccOffTable[part],
+			rpnOff = rpnOffTable[part];
 			let dPref = `GMLX CH${part + 1} `;
 			[() => {
 				upThis.setChActive(part, e); // toggle channel
@@ -5700,7 +5701,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						} else if (msg[1] == 19) {
 							// SG part level
-							upThis.#cc[allocated.cc * part + ccToPos[7]] = e;
+							upThis.setCcCh(part, 7, e);
 						};
 					} else {
 						console.warn(`Unknown AKAI SG SysEx: ${msg}`);
@@ -5844,7 +5845,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 			//upThis.setPortMode(port, 2, modeMap.s90es);
 			let part = upThis.chRedir(msg[0], track, true),
-			chOff = allocated.cc * part,
+			chOff = ccOffTable[part],
 			offset = msg[1];
 			if (msg[0] > 15) {
 				part = msg[0] + 32;
@@ -6031,7 +6032,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 1: {
 					// Global part param setup
 					let part = upThis.chRedir(channel, track, true),
-					offset = msg[1], chOff = part * allocated.cc;
+					offset = msg[1], chOff = ccOffTable[part];
 					//console.debug(`Unknown SD-90 CH${part + 1} setup param message:\n%o`, msg);
 					msg.subarray(2).forEach((e, i) => {
 						let pointer = offset + i;
@@ -6213,7 +6214,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let si = i - 1276;
 					let part = upThis.chRedir(Math.floor(si / 44), track, true);
 					let pi = si % 44;
-					let chOff = allocated.cc * part;
+					let chOff = ccOffTable[part];
 					//console.debug(`${i} ${si} ${Math.floor(si / 44)} ${part} ${pi}`);
 					if (pi < 15) {
 						([() => {
