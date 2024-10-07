@@ -1306,11 +1306,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		//};
 		return result;
 	};
-	getCc(channel) {
+	getCc(part) {
 		// Return channel CC registers
 		// Potential bug exists here
 		let upThis = this;
-		let start = channel * allocated.cc;
+		let start = ccOffTable[channel];
 		let arr = upThis.#cc.subarray(start, start + allocated.cc);
 		/* arr[ccToPos[0]] = arr[ccToPos[0]] || upThis.#subDb[upThis.getChModeId(channel)][0];
 		arr[ccToPos[32]] = arr[ccToPos[32]] || upThis.#subDb[upThis.getChModeId(channel)][1];
@@ -1319,12 +1319,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		}; */
 		return arr;
 	};
-	getCcCh(channel, cc) {
+	getCcCh(part, cc) {
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new Error("CC number not accepted"));
 		};
-		let result = upThis.#cc[allocated.cc * channel + ccToPos[cc]];
+		let result = upThis.#cc[ccOffTable[channel] + ccToPos[cc]];
 		/* switch (cc) {
 			case 0: {
 				result = result || upThis.#subDb[upThis.getChModeId(channel)][0];
@@ -1339,6 +1339,21 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}; */
 		return result;
+	};
+	setCcCh(part, cc, value, emitEvent = false) {
+		let upThis = this;
+		if (ccAccepted.indexOf(cc) < 0) {
+			throw(new Error("CC number not accepted"));
+		};
+		let data = value & 255;
+		upThis.#cc[ccOffTable[channel] + ccToPos[cc]] = data;
+		if (emitEvent) {
+			upThis.dispatchEvent("cc", {
+				part,
+				cc: targetCc,
+				data
+			});
+		};
 	};
 	getCcAll() {
 		// Return all CC registers
