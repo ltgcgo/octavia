@@ -591,14 +591,13 @@ let MuDisplay = class extends RootDisplay {
 		ctx.strokeStyle = "#000f";
 		ctx.stroke();
 		let pan = sum.chContr[chOff + ccToPos[10]];
-		upThis.#panStrokes.forEach((e, i, a) => {a[i] = 0});
+		upThis.#panStrokes.fill(0);
 		if (pan == 0) {
 			upThis.#panStrokes[0] = 1;
 		} else if (pan == 64) {
 			upThis.#panStrokes[3] = 1;
 		} else if (pan == 128) {
-			upThis.#panStrokes[1] = 1;
-			upThis.#panStrokes[5] = 1;
+			// Real MU doesn't show anything for random panning
 		} else if (pan < 64) {
 			upThis.#panStrokes[Math.floor(pan / 21)] = 1;
 		} else {
