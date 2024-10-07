@@ -1584,8 +1584,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	pushChPrimitives(part) {
 		let upThis = this;
-		upThis.#prg[(1 << allocated.chShift) | part] = upThis.#cc[ccOffTable[part] + ccToPos[0]];
-		upThis.#prg[(2 << allocated.chShift) | part] = upThis.#cc[ccOffTable[part] + ccToPos[32]];
+		upThis.#prg[(1 << allocated.chShift) | part] = upThis.getCcCh(part, 0);
+		upThis.#prg[(2 << allocated.chShift) | part] = upThis.getCcCh(part, 32);
 	};
 	getChVoice(part) {
 		let upThis = this;
@@ -1800,7 +1800,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (!cc) {
 			return 0;
 		} else if (ccAccepted.indexOf(cc) >= 0) {
-			return this.#cc[part * allocated.cc + ccToPos[cc]];
+			return this.getCcCh(part, cc);
 		} else {
 			throw(new Error(`Invalid ACE source in CH${part + 1}: ${cc}`));
 		};
@@ -1877,7 +1877,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		// Channel 10 to drum set
 		drumChannels.forEach((e) => {
-			upThis.#cc[allocated.cc * e] = upThis.#subDb[upThis.getChModeId(e)][2];
+			upThis.setCcCh(e, 0, upThis.#subDb[upThis.getChModeId(e)][2]);
 		});
 		// Channel types
 		upThis.#chType.fill(upThis.CH_MELODIC);
@@ -1913,7 +1913,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.modelEx.sc.invDisp = false;
 		upThis.modelEx.sc.peakHold = 1;
 		for (let ch = 0; ch < allocated.ch; ch ++) {
-			let chOff = ch * allocated.cc;
+			let chOff = ccOffTable[ch];
 			// Reset to full
 			upThis.#cc[chOff + ccToPos[7]] = 100; // Volume
 			upThis.#cc[chOff + ccToPos[11]] = 127; // Expression
