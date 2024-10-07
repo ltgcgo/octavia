@@ -450,7 +450,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let rawNote = part * 128 + note;
 			let polyIdx = this.#poly.lastIndexOf(rawNote);
 			if (polyIdx > -1) {
-				if (this.#cc[allocated.cc * part + ccToPos[64]] > 63) {
+				if (this.getCcCh(part, 64) >> 6) {
 					// Held by cc64
 					this.#polyState[polyIdx] = this.NOTE_HELD;
 					this.dispatchEvent("note", {
@@ -459,7 +459,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						velo: this.#velo[rawNote],
 						state: this.NOTE_HELD
 					});
-				} else if (this.#cc[allocated.cc * part + ccToPos[66]] > 63 && this.#polyState[polyIdx] == this.NOTE_SOSTENUTO_SUSTAIN) {
+				} else if ((this.getCcCh(part, 66) >> 6) && this.#polyState[polyIdx] == this.NOTE_SOSTENUTO_SUSTAIN) {
 					// Held by cc66
 					this.#polyState[polyIdx] = this.NOTE_SOSTENUTO_HELD;
 					this.dispatchEvent("note", {
@@ -475,7 +475,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let breathMode = this.getExt(part)[1];
 					if (breathMode == this.VLBC_VELOINIT ||
 						breathMode == this.VLBC_VELOALL) {
-						this.#cc[allocated.cc * part + ccToPos[129]] = 0;
+						this.setCcCh(part, 129, 0);
 					};
 					this.dispatchEvent("note", {
 						part,
@@ -519,7 +519,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				let breathMode = this.getExt(part)[1];
 				if (breathMode == this.VLBC_VELOINIT ||
 					breathMode == this.VLBC_VELOALL) {
-					this.#cc[allocated.cc * part + ccToPos[129]] = velo;
+					this.setCcCh(part, 129, velo);
 				};
 				this.dispatchEvent("note", {
 					part,
@@ -666,7 +666,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#velo[rawNote] = data[1];
 				let breathMode = this.getExt(part)[1];
 				if (breathMode == this.VLBC_VELOALL) {
-					this.#cc[allocated.cc * part + ccToPos[129]] = data[1];
+					this.setCcCh(part, 129, data[1]);
 				};
 				this.dispatchEvent("note", {
 					part,
@@ -931,7 +931,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Breath for VL and more!
 						let breathMode = this.getExt(part)[1];
 						if (breathMode == this.VLBC_BRTHEXPR) {
-							this.#cc[chOff + ccToPos[129]] = det.data[1];
+							this.setCcCh(part, 129, det.data[1]);
 						};
 						break;
 					};
@@ -1324,7 +1324,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new Error("CC number not accepted"));
 		};
-		let result = upThis.#cc[ccOffTable[channel] + ccToPos[cc]];
+		let result = upThis.#cc[ccOffTable[part] + ccToPos[cc]];
 		/* switch (cc) {
 			case 0: {
 				result = result || upThis.#subDb[upThis.getChModeId(channel)][0];
@@ -1352,7 +1352,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#cc[ccOffTable[part] + ccToPos[cc]] = data;
 		upThis.dispatchEvent("cc", {
 			part,
-			cc: targetCc,
+			cc,
 			data
 		});
 	};
@@ -1393,7 +1393,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		mode = mode || upThis.getChModeId(part);
 		upThis.#chType[part] = type;
 		if (type > 0 && !disableMsbSet) {
-			upThis.#cc[part * allocated.cc + ccToPos[0]] = upThis.#subDb[mode][2];
+			upThis.setCcCh(part, 0, upThis.#subDb[mode][2]);
 			upThis.pushChPrimitives(part);
 		};
 	};
@@ -1476,7 +1476,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Should later become 0 to 65535
 		let str = [], upThis = this;
 		this.getRawStrength().forEach(function (e, i) {
-			str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * upThis.#masterVol / 803288);
+			//str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * upThis.#masterVol / 803288);
+			str[i] = Math.floor(e * upThis.getCcCh(i, 7) * upThis.getCcCh(i, 11) * upThis.#masterVol / 803288);
 		});
 		return str;
 	};
