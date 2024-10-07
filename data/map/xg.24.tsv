@@ -360,17 +360,23 @@ ChorTine	Chorused E. Tine
 DXEP+Cho	DX EP + Chorus
 RichHpsi	Rich Harpsichord
 PhaseClv	Phaser Clavichord
-ClavBass	Clavichord Bass
+ClavBass	Clavinet Bass
 New Slap	New Slap Bass
+Cybastrg	Cyber Strings
 Buzz Saw	Buzzy Saw Lead
 OsciLead	Oscillated Lead
+Ana.Wurl	Analog Wurly E. Piano
 FngrBas!	Fingered Bass!
 Fnground	Fingered Ground
+Birdland	Birdland Bass
 Fretles!	Fretless Bass!
 Fretls!2	Fretless Bass! 2
 YamaBass	Mountain Bass
-PlsClav!	Pulse Clavichord!
+PlsClav!	Pulse Clavinet Bass!
 MuteHrBa	Muted Heart Bass
+Chamlion	Chamelion Synth Bass
+Para.Syn	Para. Synth Bass
+AttakSyn	Attack Synth Bass
 YamSteel	Mountain Steel Drums
 DinoPerc	Dino Percussion
 EspaGtr!	Spanish Guitar!
@@ -383,10 +389,13 @@ Ossyncro	Oscillated Synchro
 Old Mini	Old Mini Lead
 Fat Mini	Fat Mini Lead
 Choronic	Choronic Lead
-SynHarmo	Synth Harmonica
+SynHarmo	Synth Harmonics
 Reso.Sqr	Resonant Square
+Wurli Ld	Wurli E. Piano Lead
 ChalPuls	Chalk Pulse Lead
 AcoSynLd	Acoustic Synth Lead
+Digitron	Digitron Lead
+LyricOff	Lyrics Off Lead
 Persinet	Persian Clarinet
 Softblow	Soft Blown Sax
 BaClari!	Bass Clarinet!
@@ -431,6 +440,8 @@ Wack Sax	Wacky Saxophone
 NuTenrSx	New Tenor Sax
 MildTenr	Mild Tenor Sax
 Jazz Sax	Jazz Saxophone
+TenorSub	Sub Tenor Sax
+BellMike	Bell Mike Sax
 GlassTnr	Glassy Tenor Sax
 FunkyTnr	Funky Tenor Sax
 OldTenor	Old Tenor Sax
@@ -440,6 +451,7 @@ VoxoSaxo	Voxo Saxophone
 EngHorn!	English Horn!
 HyperCla	Hyper Clarinet
 BowedSaw	Bowed Sawtooth
+Ophelia	Ophelia Synth
 Squeeze	Squeeze Accordion
 AmpdHarp	Amped Harmonica
 CromHarp	Chrome Harmonica

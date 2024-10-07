@@ -482,12 +482,16 @@ RichHpsi	Rich Harpsi.
 PhaseClv	PhaserClavi.
 VintLead	Vintage Lead
 Gtr Hero	Guitar Hero
+Whizzer	Whizzer Bass
 SimpleBa	Simple Bass
-ClavBass	Clavi. Bass
+ClavBass	ClavinetBass
 New Slap	New SlapBass
+Cybastrg	Cyber String
 Buzz Saw	Buzzy Saw Ld
+Zub Zub	Zub Zub Lead
 OsciLead	OscilateLead
 SqrLead!	Square Lead!
+BiggerSy	Bigger Synth
 AnaSquid	Analog Squid
 SharpSyn	Sharp Synth
 Ana.Wave	Analog Wave
@@ -495,6 +499,7 @@ Ana.Wurl	Analog Wurly
 FngrBas!	FingeredBas!
 UprghtBa	Upright Bass
 Fnground	FingrdGround
+Birdland	BirdlandBass
 FlageoBa	Flageo Bass
 Fretles!	FretlessBas!
 Fretls!2	FretlesBas!2
@@ -507,12 +512,15 @@ BuzzerBa	Buzzer Bass
 MuteHrBa	MutedHrtBass
 Tek.Bass	Techno Bass!
 TranzBas	Trance Bass
-Para.Syn	Para. Synth
-AttakSyn	Attack Synth
+Chamlion	ChamelionBas
+Para.Syn	Para.SynthBa
+AttakSyn	AttackSynBas
 Q. Klav	Q. Klavinet
 India	Indian Sitar
 YamSteel	YamaStlDrums
 Stung St	Stung String
+Formula	Formula Car
+Devil	Devil's Ring
 SpcHorse	Space Horse
 EspaGtr!	Spanish Gtr!
 JazzGtr!	Jazz Guitar!
@@ -520,8 +528,11 @@ JazzyGtr	Jazzy Guitar
 L7 Pluck	L7PluckedGtr
 WetPluck	WetPluckdGtr
 Comp.Gtr	Compress.Gtr
+FunkyGtr	Funky Guitar
 Thin Gtr	Thin Guitar
+Carlos	Carlos Gtr.
 Destiny	Destiny Gtr.
+Grunge	Grunge Lead
 Ossyncro	Osci.Synchro
 Old Mini	Old MiniLead
 Fat Mini	Fat MiniLead
@@ -533,6 +544,8 @@ Reso.Sqr	Reso. Square
 ChalPuls	ChalkPulseLd
 Brassyn	Brass Synth
 AcoSynLd	Acou.SynthLd
+Digitron	DigitronLead
+Rezzawi	Rezzawi Lead
 Persinet	PersianClari
 Softblow	SoftBlowSax
 BaClari!	BassClarint!
@@ -586,6 +599,8 @@ HarpAlto	Harp AltoSax
 HarpAlt2	HarpAltoSax2
 GlassAlt	Glassy Alto
 NuTenrSx	New Tenor Sx
+TenorSub	Sub Tenor Sx
+BellMike	Bell Mike Sx
 GlassTnr	Glassy Tenor
 FunkyTnr	Funky Tenor
 BrtTenor	Bright Tenor
@@ -595,6 +610,8 @@ TripleRd	Triple Reedy
 EngHorn!	EnglishHorn!
 HyperCla	HyperClarint
 Clrint!2	Clarinet! 2
+Lonely	Lonely Synth
+Ophelia	OpheliaSynth
 Pico Str	Pico String
 Squeeze	SqueezeAcord
 AmpdHarp	Amped Harmo.

@@ -639,6 +639,7 @@ VintLead	Vintage Ld
 SpaceZoo	Space Zoo
 Gtr Hero	GuitarHero
 StoneHng	Stonehenge
+Whizzer	WhizzerBas
 SimpleBa	SimpleBass
 ClavBass	Clavi.Bass
 SuperBas	Super Bass
@@ -646,8 +647,11 @@ New Slap	NewSlapBas
 RockPigs	Rock Pigs
 Cybastrg	Cybastring
 Buzz Saw	Buzzy Saw
+Zub Zub	ZubZubLead
+BlueLead	Blue Lead
 OsciLead	Oscil.Lead
 SqrLead!	Square Ld!
+BiggerSy	BiggerSyn.
 AnaSquid	AnalgSquid
 SharpSyn	SharpSynth
 Ana.Wave	AnalogWave
@@ -655,6 +659,7 @@ Ana.Wurl	AnalgWurly
 FngrBas!	FingerBas!
 UprghtBa	UprightBas
 Fnground	FingrdGrnd
+Birdland	BirdlandBs
 FlageoBa	FlageoBass
 DampBass	Damp Bass
 Fretles!	Fretless!
@@ -685,6 +690,8 @@ YamSteel	Yama Steel
 Stung St	StungStrng
 Waterfon	Waterphone
 DinoPerc	Dino Perc.
+Formula	FormulaCar
+Devil	Devil's
 SpcHorse	SpaceHorse
 Suedhead	Suedehead
 EspaGtr!	EspagnGtr!
@@ -696,6 +703,7 @@ FunkyGtr	Funky Gtr.
 Thin Gtr	ThinGuitar
 Carlos	CarlosGtr.
 Destiny	DestinyGtr
+Grunge	GrungeLead
 Ossyncro	OsciSyncro
 Sync Ld!	Sync Lead!
 Old Mini	Old MiniLd
@@ -713,7 +721,9 @@ ChalPuls	ChalPulsLd
 Pluck Ld	Pluck Lead
 Brassyn	BrassSynth
 AcoSynLd	Acou.SynLd
+Digitron	DigitronLd
 LyricOff	Lyrics Off
+Rezzawi	Rezzawi Ld
 Claribo	Claribone
 Binafone	Binaphone
 MokoPipe	Moko Pipe
