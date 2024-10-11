@@ -6156,9 +6156,17 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (upThis.#chType[part]) {
 								// Drums
 								upThis.#cc[chOff + ccToPos[0]] = 104 | e;
+								upThis.pushChPrimitives(part);
+								upThis.dispatchEvent("voice", {
+									part
+								});
 							} else {
 								// Melodic
 								upThis.#cc[chOff + ccToPos[0]] = 96 | e;
+								upThis.pushChPrimitives(part);
+								upThis.dispatchEvent("voice", {
+									part
+								});
 							};
 							upThis.dispatchEvent("voice", {
 								part
