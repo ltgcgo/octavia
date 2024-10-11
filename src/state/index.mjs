@@ -40,7 +40,7 @@ const modeIdx = [
 	"gm", "gs", "sc", "xg", "g2",
 	"mt32", "doc", "qy10", "qy20",
 	"ns5r", "x5d", "05rw",
-	"k11", "sg", "sd",
+	"k11", "sg", "sd", "pa",
 	"krs", "s90es", "motif", "trin"
 ],
 modeAdapt = {
