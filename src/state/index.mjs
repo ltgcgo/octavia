@@ -1111,10 +1111,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.setChActive(part, 1);
 				};
 			};
-			if (upThis.getExt(part)[0] == upThis.EXT_DX) {
+			/* if (upThis.getExt(part)[0] == upThis.EXT_DX) {
 				let chOff = ccOffTable[part];
 				//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
-			};
+			}; */
 			upThis.#prg[part] = det.data;
 			upThis.#bnCustom[part] = 0;
 			upThis.pushChPrimitives(part);

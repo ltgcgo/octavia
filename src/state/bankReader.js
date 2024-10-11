@@ -122,8 +122,31 @@ let VoiceBank = class {
 				};
 				break;
 			};
-			case "g2":
 			case "sd": {
+				switch (msb) {
+					case 121: {
+						args[0] = 96;
+						break;
+					};
+					case 120: {
+						args[0] = 104;
+						break;
+					};
+				};
+				if ((args[0] >> 1) == 40) {
+					args[2] |= 16;
+				} else if (args[0] > 95 && args[0] < 100) {
+					args[2] |= 16;
+					if (prg >> 4 == 7) {
+						args[0] = 96;
+					};
+				};
+				break;
+			};
+			case "g2": {
+				// Should only be present under SD mode
+				// However before non-resetting mode switches are available
+				// This is the only way
 				if ((msb >> 1) == 40) {
 					args[2] |= 16;
 				} else if (msb > 95 && msb < 100) {
