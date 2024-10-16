@@ -1,5 +1,6 @@
 ID	Name
-Str Slap	StringSlap
+ClvchrdK	ClvichordK
+ClvinetK	Clavinet K
 GrndPnoK	GrndPianoK
 MelloGrP	MelloGrPno
 PianoStr	PianoStrng
@@ -36,12 +37,11 @@ EPiano2#	El.Piano2#
 HpschrdK	HrpsichrdK
 Hpschrd2	Hrpsichrd2
 Hpschrd3	Hrpsichrd3
-ClvchrdK	ClvichordK
 ClaviWah	ClvchrdWah
 PulseClv	PulseClavi
 PiercClv	PierceClav
 SupClavi	SuperClavi
-Clavi. #	Clavichrd#
+Clavi. #	Clavinet #
 FM Celst	FM Celesta
 S. Orgel	SmallOrgel
 VibrafnK	VibrafoneK
@@ -545,6 +545,7 @@ Glocken+	Glocken +
 CutNoise	Cut Noise
 CutNoiz2	CutNoise 2
 DstCutNz	DstCutNoiz
+Str.Slap	StringSlap
 B.Slide	Bass Slide
 P.Scrape	PickScrape
 Fl.KClik	FltKyClick

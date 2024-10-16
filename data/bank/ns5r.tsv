@@ -6,7 +6,7 @@ MSB	PRG	LSB	NME	ELC
 000	004	000	ElPiano1	0
 000	005	000	ElPiano2	0
 000	006	000	Hrpschrd	0
-000	007	000	Clvichrd	0
+000	007	000	Clavinet	0
 000	008	000	Celesta	0
 000	009	000	Glocken	0
 000	010	000	MusicBox	0
@@ -134,7 +134,7 @@ MSB	PRG	LSB	NME	ELC
 056	004	000	New Tine	0
 056	005	000	Digi.Pno	0
 056	006	000	Hrpschrd	0
-056	007	000	Clvichrd	0
+056	007	000	Clavinet	0
 056	008	000	Celesta	0
 056	009	000	Glocken	0
 056	010	000	MusicBox	0

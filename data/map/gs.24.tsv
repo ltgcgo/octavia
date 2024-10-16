@@ -25,18 +25,19 @@ CplHapsi	Coupled Harpsichord
 Harpsi.w	Harpsichord (wide)
 Harpsi.o	Harpsichord (open)
 SynHapsi	Synth Harpsichord
-AtkClavi	Attack Clavichord
-AtkClv.2	Attack Clavichord 2
-Comp Clv	Compression Clavichord
-Reso Clv	Resonant Clavichord
-PhaseClv	Phase Clavichord
-AnaClavi	Analog Clavichord
-JP8 Clv1	JP8 Clavichord 1
-JP8 Clv2	JP8 Clavichord 2
-SyRngClv	Synth Ring Clavi.
+AtkClavi	Attack Clavinet
+AtkClv.2	Attack Clavinet 2
+Comp Clv	Compression Clavinet
+Reso Clv	Resonant Clavinet
+PhaseClv	Phased Clavinet
+AnaClavi	Analog Clavinet
+JP8 Clv1	JP8 Clavinet 1
+JP8 Clv2	JP8 Clavinet 2
+SyRngClv	Synth Ring Clavinet
 SyDstClv	Synth Distorted Clavi.
-JP8k Clv	JP8000 Clavichord
-PulseClv	Pulse Clavichord
+JP8k Clv	JP8000 Clavinet
+PulseClv	Pulse Clavinet
+Clavi. o	Clavinet (open)
 St.MusBx	Stereo Music Box
 HardVibr	Hard Vibraphone
 Pop Vibr	Pop Vibraphone

@@ -367,3 +367,4 @@ getBridge().addEventListener("message", function (ev) {
 
 Alpine.start();
 self.visualizer = visualizer;
+self.gOpenLni();

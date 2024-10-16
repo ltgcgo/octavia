@@ -6,7 +6,7 @@ MSB	PRG	LSB	NME
 000	004	000	ElPiano1
 000	005	000	ElPiano2
 000	006	000	Hrpschrd
-000	007	000	Clvichrd
+000	007	000	Clavinet
 000	008	000	Celesta
 000	009	000	Glocken
 000	010	000	MusicBox
@@ -171,7 +171,7 @@ MSB	PRG	LSB	NME
 121	006	001	Hpschrd3
 121	006	002	HpschrdK
 121	006	003	Hpschrd2
-121	007	000	Clvichrd
+121	007	000	Clavinet
 121	007	001	PlsClavi
 121	008	000	Celesta
 121	009	000	Glocken

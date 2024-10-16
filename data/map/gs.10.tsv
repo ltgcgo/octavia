@@ -1,4 +1,6 @@
 ID	Name
+Clvchrd2	Clavi. 2
+Clvinet2	Clavi. 2
 Uprt.Pno	UprightPno
 Mild Pno	Mild Piano
 UprtP. w	UprtPno. w
@@ -41,7 +43,6 @@ CplHapsi	CoupleHpsi
 Harpsi.w	Harpsi. w
 Harpsi.o	Harpsi. o
 SynHapsi	Syn.Harpsi
-Clvchrd2	Clavi. 2
 AtkClavi	Atk Clavi.
 AtkClv.2	AtkClavi 2
 Comp Clv	Comp Clav.
@@ -54,6 +55,7 @@ SyRngClv	SynRingClv
 SyDstClv	SynDistClv
 JP8k Clv	JP8000 Clv
 PulseClv	Pulse Clv.
+Clavi. o	Clavinet o
 PopCelst	Pop Celest
 MusicBx2	MusicBox 2
 St.MusBx	StMusicBox

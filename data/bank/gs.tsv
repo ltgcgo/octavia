@@ -54,8 +54,8 @@ LSB	PRG	MSB	NME
 000	006	016	Harpsi.w
 000	006	024	Harpsi.o
 003	006	032	SynHapsi
-000	007	000	Clvichrd
-004	007	001	Clvchrd2
+000	007	000	Clavinet
+004	007	001	Clvinet2
 004	007	002	AtkClavi
 004	007	003	AtkClv.2
 003	007	008	Comp Clv

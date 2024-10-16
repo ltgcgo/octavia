@@ -1,4 +1,6 @@
 ID	Name
+ClvchrdK	Clavichord KSP
+ClvinetK	Clavinet KSP
 GrndPnoK	Grand Piano KSP
 MelloGrP	Mellow Grand Piano
 PianoStr	Piano + Strings
@@ -24,11 +26,11 @@ EPiano2#	Electric Piano 2 #
 HpschrdK	Harpsichord KSP
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
-ClvchrdK	Clavichord KSP
-ClaviWah	Wah Clavichord
-PulseClv	Pulse Clavichord
-PiercClv	Pierce Clavichord
-SupClavi	Super Clavichord
+ClaviWah	Wah Clavinet
+PulseClv	Pulse Clavinet
+PiercClv	Pierce Clavinet
+SupClavi	Super Clavinet
+Clavi. #	Clavinet #
 VibrafnK	Vibraphone KSP
 HardVibr	Hard Vibraphone
 DetDrwOr	Detuned Drawbar Organ
@@ -67,7 +69,7 @@ Nashvill	Nashville Guitar
 OldSampl	Old Sample Guitar
 SteelGt#	Steel Guitar #
 MelloGtr	Mellow Guitar
-Jazz Amp	Jazz Guitar Amp
+Jazz Amp	Amped Jazz Guitar
 MidSJazz	Mid. Super Jazz Guitar
 NekRough	Roughcaster Neck
 JazzGtr#	Jazz Guitar #
