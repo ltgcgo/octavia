@@ -700,3 +700,31 @@ getBridge().addEventListener("message", function (ev) {
 	perf.fresh();
 	demoPerfs["LOW_FLY"] = perf;
 };
+
+{
+	// Monopoly
+	let perf = new TimedEvents();
+	perf.push(new PointEvent(2.026, genNewSwitch(3)));
+	perf.push(new PointEvent(10.328, genNewSwitch(4)));
+	perf.push(new PointEvent(18.646, genNewSwitch(5)));
+	perf.push(new PointEvent(26.984, genNewSwitch(8)));
+	perf.push(new PointEvent(35.292, genNewSwitch(3)));
+	perf.push(new PointEvent(39.445, genNewSwitch(4)));
+	perf.push(new PointEvent(43.598, genNewSwitch(5)));
+	perf.push(new PointEvent(47.764, genNewSwitch(2)));
+	perf.push(new PointEvent(51.898, genDispType(0, 3)));
+	perf.push(new PointEvent(51.898, genNewSwitch(14)));
+	perf.push(new PointEvent(56.064, genNewSwitch(15)));
+	perf.push(new PointEvent(60.203, genNewSwitch(1)));
+	perf.push(new PointEvent(64.369, genNewSwitch(9)));
+	perf.push(new PointEvent(68.509, genNewSwitch(0)));
+	perf.push(new PointEvent(70.57, genDispType(0, 1)));
+	perf.push(new PointEvent(70.663, genNewSwitch(3)));
+	perf.push(new PointEvent(74.735, genNewSwitch(4)));
+	perf.push(new PointEvent(78.902, genNewSwitch(5)));
+	perf.push(new PointEvent(83.066, genNewSwitch(1)));
+	perf.push(new PointEvent(87.231, genNewSwitch(9)));
+	perf.push(new PointEvent(91.384, genNewSwitch(2)));
+	perf.fresh();
+	demoPerfs["MONOPOLY"] = perf;
+};
