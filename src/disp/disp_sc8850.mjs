@@ -428,10 +428,10 @@ let Sc8850Display = class extends RootDisplay {
 			strengthHeight = (35 - renderRange + 1) / renderRange,
 			strengthDivider = 256 / strengthHeight;
 			sum.velo.forEach(function (e, i) {
-				if (upThis.#lingerPress[i]) {
+				if (scConf.peakHold == 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
 					upThis.#lingerExtra[i] = 127;
-					if (scConf.peakHold == 3 && e < upThis.#linger[i]) {
+					if (e < upThis.#linger[i]) {
 						upThis.#linger[i] = e;
 					};
 				};
