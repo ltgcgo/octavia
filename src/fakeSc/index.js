@@ -394,6 +394,8 @@ getBridge().addEventListener("message", function (ev) {
 	perf.push(new PointEvent(39.02, genNewSwitch(2)));
 	perf.push(new PointEvent(40.77, genNewSwitch(3)));
 	perf.push(new PointEvent(42.62, genNewSwitch(9)));
+	perf.push(new PointEvent(46.34, genNewSwitch(0)));
+	perf.push(new PointEvent(48.18, genNewSwitch(1)));
 	perf.push(new PointEvent(49.71, genDispType(0, 1)));
 	perf.push(new PointEvent(49.84, genNewSwitch(6)));
 	perf.push(new PointEvent(52.51, genNewSwitch(7)));
