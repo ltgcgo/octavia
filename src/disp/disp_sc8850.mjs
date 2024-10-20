@@ -431,13 +431,15 @@ let Sc8850Display = class extends RootDisplay {
 				if (scConf.peakHold == 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
 					upThis.#lingerExtra[i] = 127;
-					if (e < upThis.#linger[i]) {
+					if (e != upThis.#linger[i]) {
 						upThis.#linger[i] = e;
 					};
 				};
 				if (e > upThis.#linger[i]) {
-					upThis.#linger[i] = e;
-					upThis.#lingerExtra[i] = 127;
+					if (scConf.peakHold != 3 && upThis.#lingerPress[i]) {
+						upThis.#linger[i] = e;
+						upThis.#lingerExtra[i] = 127;
+					};
 				} else {
 					let shouldKeep = upThis.#lingerExtra[i] >> 4;
 					if (shouldKeep) {
