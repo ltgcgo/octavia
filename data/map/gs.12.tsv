@@ -103,8 +103,8 @@ SftAcord	Soft Accord.
 Harmo. 2	Harmonica 2
 BscBHrmo	BasicB.Harmo
 SplBHrmo	SupplB.Harmo
-TngoAcd2	Bandoneon 2
-Bndoneon	Bandoneon 3
+Bandonn2	Bandoneon 2
+Bandonn3	Bandoneon 3
 VelGtHrm	Velo Harmnix
 LequintG	Lequint Gt.
 12StrGtr	12Str Guitar
@@ -370,6 +370,7 @@ Fat&Prky	Fat & Perky
 JP8BaLd1	JP8 Bs Lead1
 JP8BaLd2	JP8 Bs Lead2
 SH-5BaLd	SH-5 Bs.Lead
+NewAgePd	New Age Pad
 BelHeavn	Bell Heaven
 ThickMtx	Thick Matrix
 RotarStr	RotaryString

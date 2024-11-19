@@ -133,8 +133,9 @@ SftAcord	SoftAccord
 Harmo. 2	Harmonica2
 BscBHrmo	BasicBHrmo
 SplBHrmo	SupplBHrmo
-TngoAcd2	Bandoneon2
-Bndoneon	Bandoneon3
+Bndoneon	Bandoneon
+Bandonn2	Bandoneon2
+Bandonn3	Bandoneon3
 NylonGt3	Nylon Gt.o
 VelGtHrm	VeloHarmnx
 NylonGt2	Nylon Gt.2
@@ -511,7 +512,7 @@ JP8BaLd1	JP8BassLd1
 JP8BaLd2	JP8BassLd2
 SH-5BaLd	SH-5 Bs.Ld
 Fantasy2	Fantasia 2
-Fantasy1	NewAge Pad
+NewAgePd	NewAge Pad
 BelHeavn	BellHeaven
 ThickPad	Thick Pad
 ThickMtx	ThickMatrx

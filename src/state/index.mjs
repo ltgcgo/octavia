@@ -1526,7 +1526,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						userBank += String.fromCharCode(e);
 					};
 				});
-				let loadTsv = `MSB\tLSB\tPRG\tNME\n0\t127\t${prg}\t${userBank}`;
+				let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${prg}\t${userBank}`;
 				//console.debug(loadTsv);
 				upThis.userBank.load(loadTsv, true);
 				bank.name = userBank;
@@ -4843,7 +4843,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							name = upThis.baseBank.get(0, e + (timbreGroup << 6), 127, "mt32").name;
 						};
 						upThis.userBank.clearRange({msb: 0, lsb: 127, prg: patch});
-						let loadTsv = `MSB\tLSB\tPRG\tNME\n000\t127\t${patch}\t${name}`;
+						let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${patch}\t${name}`;
 						//console.debug(loadTsv);
 						upThis.userBank.load(loadTsv, true);
 					};
@@ -4865,7 +4865,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			if (wroteName) {
 				upThis.userBank.clearRange({msb: 0, lsb: 127, prg: patch});
-				let loadTsv = `MSB\tLSB\tPRG\tNME\n000\t127\t${patch}\tMT-m:${patch}`;
+				let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${patch}\tMT-m:${patch}`;
 				upThis.userBank.load(loadTsv, true);
 			};
 			upThis.forceVoiceRefresh();

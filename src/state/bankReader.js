@@ -26,7 +26,7 @@ let VoiceBank = class {
 		return this.#bankInfo;
 	};
 	strictMode = false;
-	get(msb = 0, prg = 0, lsb = 0, mode) {
+	get(msb = 0, prg = 0, lsb = 0, mode, preferredHint = 0) {
 		let sid = [msb, prg, lsb];
 		let bankName;
 		let bankPoly = 1, bankType = 0, bankDrum, bankLevel;
@@ -113,12 +113,19 @@ let VoiceBank = class {
 			case "gs":
 			case "sc": {
 				if (msb == 0 && lsb < 5) {
-					args[2] = 0;
+					//args[2] = 0;
+					args[0] = 49;
 				} else if (msb > 125 && lsb < 5 && lsb != 2) {
 					// Temporary fix for C/M bank under SC-55 mode
 					// SC-88 do care incorrect LSB selection
 					args[2] = msb;
-					args[0] = 0;
+					args[0] = 49;
+				};
+				break;
+			};
+			case "mt32": {
+				if (msb == 0) {
+					args[0] = 49;
 				};
 				break;
 			};
@@ -203,21 +210,21 @@ let VoiceBank = class {
 			case 0: {
 				switch (args[2]) {
 					case 127: {
-						if (mode == "xg") {
+						//if (mode == "xg") {
 							sect = "GM-a";
-						} else {
+						/*} else {
 							sect = "MT-a";
 							bank = "C/M";
-						};
+						};*/
 						break;
 					};
 					case 126: {
-						if (mode == "xg") {
+						// if (mode == "xg") {
 							sect = "GM-n";
-						} else {
+						/*} else {
 							sect = "MT-b";
-							bank = "C/M";
-						};
+							bank = "C-M";
+						}; */
 						break;
 					};
 					case 7: {
@@ -283,6 +290,16 @@ let VoiceBank = class {
 				bank = `M${(args[2] >> 3).toString().padStart(2, "0")}`;
 				sect = `y${bank}`;
 				useLsb = 1;
+				break;
+			};
+			case 49: {
+				if (args[2] >> 1 == 63) {
+					sect = `MT-${"ba"[args[2] & 1]}`;
+					bank = `C${"-/"[args[2] & 1]}M`;
+				} else {
+					sect = "GM-a";
+					bank = "000";
+				};
 				break;
 			};
 			case 56: {
@@ -584,8 +601,6 @@ let VoiceBank = class {
 					standard = "KG";
 				} else if (args[2] < 126) {
 					standard = "XG";
-				} else if (args[2] == 127) {
-					standard = "MT";
 				};
 				break;
 			};
@@ -602,6 +617,14 @@ let VoiceBank = class {
 			};
 			case 48: {
 				standard = "MU"; // MU-100 Native
+				break;
+			};
+			case 49: {
+				if (args[2] >> 1 == 63) {
+					standard = "MT";
+				} else if (args[2] < 5) {
+					standard = "GM";
+				};
 				break;
 			};
 			case 56: {
