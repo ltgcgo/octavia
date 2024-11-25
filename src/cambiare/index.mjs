@@ -861,8 +861,8 @@ let Cambiare = class extends RootDisplay {
 		};
 		if (frameTime < 5) {
 			frameTime = 5;
-		} else if (frameTime > 100) {
-			frameTime = 100;
+		} else if (frameTime > 500) {
+			frameTime = 500;
 		};
 		upThis.#renderThread = setInterval(upThis.#renderer, frameTime);
 		upThis.smoothingAtk = Math.pow(0.1, frameTime / 20);
