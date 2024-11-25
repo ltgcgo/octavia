@@ -513,7 +513,23 @@ let MuDisplay = class extends RootDisplay {
 				let standard = upThis.getChVoice(upThis.#ch).standard.toLowerCase();
 				useBm = upThis.voxBm.getBm(upThis.getChVoice(upThis.#ch).name) || upThis.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[upThis.#ch], 0, sum.mode).name);
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-					useBm = upThis.sysBm.getBm(`ext_${standard}`);
+					switch ((sum.chContr[chOff] + ccToPos[0]) >> 4) {
+						case 2: {
+							// Internal
+							useBm = upThis.sysBm.getBm(`ext_${standard}I`);
+							break;
+						};
+						case 6: {
+							// XG-proxy (XG-B)
+							useBm = upThis.sysBm.getBm(`ext_${standard}P`);
+							break;
+						};
+						default: {
+							// Should be XG Non-proxy (XG-A)
+							useBm = upThis.sysBm.getBm(`ext_${standard}`);
+							break;
+						};
+					};
 				} else if (sum.chType[upThis.#ch]) {
 					useBm = upThis.sysBm.getBm(`cat_drm`);
 				} else if (["mu", "es"]. indexOf(standard) > -1) {
