@@ -87,7 +87,7 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{frames:[[42,24,'Film'],[40,25,'PAL'],[34,30,'NTSC'],[21,48,'Film'],[20,50,'PAL (native)'],[17,60,'NTSC'],[14,75,'Phone screen'],[12,90,'Phone screen'],[10,100,'PC screen'],[9,120,'PC screen'],[7,144,'PC screen']],schemes:[[0,'Dark'],[1,'Light']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{frames:[[500,2,'Economic'],[100,10,'Economic'],[42,24,'Film'],[40,25,'PAL'],[34,30,'NTSC'],[21,48,'Film'],[20,50,'PAL (native)'],[17,60,'NTSC'],[14,75,'Phone screen'],[12,90,'Phone screen'],[10,100,'PC screen'],[9,120,'PC screen'],[7,144,'PC screen']],schemes:[[0,'Dark'],[1,'Light']]}">
 			<div class="column column-option"><b>Colour scheme</b></div>
 			<template x-for="scheme in schemes">
 				<div class="column column-option column-button" @click="gSetScheme(scheme[0])" x-text="scheme[1]" :active="($store.scheme||0)==scheme[0]?'true':'false'"></div>

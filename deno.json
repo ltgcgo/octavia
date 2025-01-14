@@ -38,6 +38,6 @@
 			"*"
 		]
 	},
-	"nodeModulesDir": false,
+	"nodeModulesDir": "none",
 	"npmRegistry": "http://127.0.0.1:80/"
 }

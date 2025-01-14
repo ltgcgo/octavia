@@ -178,7 +178,7 @@ aceCandidates = [
 ],
 nrpnCcMap = [33, 102, 99, 32, 100, 8, 9, 10]; // cc71 to cc78
 
-const korgDrums = [0, 16, 25, 32, 40, 64, 24, 48];
+const korgDrums = [0, 16, 25, 40, 32, 64, 24, 48];
 
 let modeMap = {};
 modeIdx.forEach((e, i) => {
