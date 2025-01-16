@@ -9,3 +9,5 @@ dist/deno.json
 .docker_name
 .zcompdump
 .zsh_history
+src/identity/identity.bin
+src/identity/identity.txt
