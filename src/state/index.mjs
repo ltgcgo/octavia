@@ -332,7 +332,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
 	#chType = new Uint8Array(allocated.ch); // Types of channels
-	#cc = new Uint8Array(allocated.ch * allocated.cc); // 64 channels, 128 controllers
+	#cc = new Uint8Array((allocated.ch * allocated.cc) << 1); // 64 channels, 128 controllers, all with write state tracks which utilizes the upper half of the space
 	#ace = new Uint8Array(allocated.ch * allocated.ace); // 4 active custom effects
 	#prg = new Uint8Array(allocated.ch * allocated.vxPrim); // segmented by channels; (part) for program, (allocated.ch | part) for cc0, (2 * allocated.ch | part) for cc32
 	#velo = new Uint8Array(allocated.ch * allocated.nn); // 128 channels. 128 velocity registers
@@ -800,7 +800,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
-									det.data[1] = this.#cc[chOff];
+									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getCcCh(part, 0)*/;
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
@@ -1115,6 +1115,14 @@ let OctaviaDevice = class extends CustomEventSource {
 				let chOff = ccOffTable[part];
 				//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 			}; */
+			let chOff = ccOffTable[part];
+			switch (upThis.getExt(part)[0]) {
+				case upThis.EXT_VL: {
+					// Force reset actual VL breath strength
+					upThis.setCcCh(part, 129, 127);
+					break;
+				};
+			};
 			upThis.#prg[part] = det.data;
 			upThis.#bnCustom[part] = 0;
 			upThis.pushChPrimitives(part);
