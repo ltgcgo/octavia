@@ -250,6 +250,7 @@ const allocated = {
 	vxPrim: 3,
 	invalidCh: 255
 };
+allocated.chcc = allocated.cc * allocated.ch;
 const overrides = {
 	bank0: 128
 };
@@ -332,7 +333,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
 	#chType = new Uint8Array(allocated.ch); // Types of channels
-	#cc = new Uint8Array((allocated.ch * allocated.cc) << 1); // 64 channels, 128 controllers, all with write state tracks which utilizes the upper half of the space
+	#cc = new Uint8Array(allocated.chcc << 1); // 64 channels, 128 controllers, all with write state tracks which utilizes the upper half of the space
 	#ace = new Uint8Array(allocated.ch * allocated.ace); // 4 active custom effects
 	#prg = new Uint8Array(allocated.ch * allocated.vxPrim); // segmented by channels; (part) for program, (allocated.ch | part) for cc0, (2 * allocated.ch | part) for cc32
 	#velo = new Uint8Array(allocated.ch * allocated.nn); // 128 channels. 128 velocity registers
@@ -706,8 +707,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				})();
 			};
-			let chOff = ccOffTable[part],
-			extOff = part * allocated.ext,
+			let extOff = part * allocated.ext,
 			partMode = this.getChModeId(part);
 			// Non-store CC messages
 			switch (det.data[0]) {
@@ -745,6 +745,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#cc[chOff + ccToPos[100]] = 127;
 					this.#cc[chOff + ccToPos[99]] = 127;
 					this.#cc[chOff + ccToPos[98]] = 127;
+					//upThis.resetCcCh
 					return;
 					break;
 				};
@@ -821,7 +822,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
-									det.data[1] = this.#cc[chOff];
+									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getCcCh(part, 0)*/;
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
@@ -942,12 +943,12 @@ let OctaviaDevice = class extends CustomEventSource {
 							if ([modeMap.xg, modeMap.gs, modeMap.sc, modeMap.ns5r].indexOf(this.#mode) < 0) {
 								console.warn(`NRPN commits are not available under "${modeIdx[this.#mode]}" mode, even when they are supported in Octavia.`);
 							};
-							let msb = this.#cc[chOff + ccToPos[99]],
-							lsb = this.#cc[chOff + ccToPos[98]];
+							let msb = this.getCcCh(part, 99),
+							lsb = this.getCcCh(part, 98);
 							if (msb == 1) {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
-									this.#cc[chOff + ccToPos[71 + toCc]] = det.data[1];
+									this.setCcCh(part, 71 + toCc, det.data[1]);
 									getDebugState() && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
 									this.dispatchEvent("cc", {
 										part,
@@ -984,10 +985,10 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						} else {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.#cc[chOff + ccToPos[100]]],
-							rpnIndex2 = rpnOptions[this.#cc[chOff + ccToPos[100]]];
-							if (this.#cc[chOff + ccToPos[101]] == 0 && rpnIndex != undefined) {
-								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.#cc[chOff + ccToPos[100]]} commit: ${det.data[1]}`);
+							let rpnIndex = useRpnMap[this.getCcCh(part, 100)],
+							rpnIndex2 = rpnOptions[this.getCcCh(part, 100)];
+							if (this.getCcCh(part, 101) == 0 && rpnIndex != undefined) {
+								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.getCcCh(part, 100)} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
 								//console.debug(this.#cc[chOf + ccToPos[100]], rpnIndex, rpnOptions[this.#cc[chOff + ccToPos[100]]]);
@@ -999,7 +1000,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									case modeMap.mt32:
 									case modeMap.s90es:
 									case modeMap.motif: {
-										switch (this.#cc[chOff + ccToPos[100]]) {
+										switch (this.getCcCh(part, 100)) {
 											case 1:
 											case 2: {
 												this.dispatchEvent("pitch", {
@@ -1045,9 +1046,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Show RPN and NRPN
 						if (!this.#dataCommit[part]) {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.#cc[chOff + 100]],
-							rpnIndex2 = rpnOptions[this.#cc[chOff + 100]];
-							if (this.#cc[chOff + 101] == 0 && rpnIndex != undefined) {
+							let rpnIndex = useRpnMap[this.getCcCh(part, 100)],
+							rpnIndex2 = rpnOptions[this.getCcCh(part, 100)];
+							if (this.getCcCh(part, 101) == 0 && rpnIndex != undefined) {
 								// This section is potentially unsafe
 								this.#rpn[part * allocated.rpn + rpnIndex + 1] = det.data[1];
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
@@ -1084,7 +1085,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 				};
-				this.#cc[chOff + ccToPos[det.data[0]]] = det.data[1];
+				this.setCcCh(part, det.data[0], det.data[1]);
 				this.dispatchEvent("cc", {
 					part,
 					cc: det.data[0],
@@ -1357,7 +1358,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new TypeError("Expected numbers for value"));
 		};
 		let data = value & 255;
-		upThis.#cc[ccOffTable[part] + ccToPos[cc]] = data;
+		let posCache = ccOffTable[part] + ccToPos[cc];
+		upThis.#cc[posCache] = data;
+		upThis.#cc[posCache + allocated.chcc] = 1;
 		upThis.dispatchEvent("cc", {
 			part,
 			cc,
@@ -1381,13 +1384,23 @@ let OctaviaDevice = class extends CustomEventSource {
 	resetCc(part) {
 		// Placeholder until CC write state is ready
 	};
-	resetCcCh(part, cc) {
+	resetCcCh(part, cc, value) {
+		let upThis = this;
+		if (value?.constructor) {
+			upThis.setCcCh(part, cc, value);
+		};
+		upThis.#cc[ccOffTable[part] + ccToPos[cc] + allocated.chcc] = 0;
 		return;
-		// Placeholder until CC write state is ready
 	};
 	resetCcAll() {
 		return;
 		// Placeholder until CC write state is ready
+	};
+	isChCcWritten(part, cc) {
+		if (ccAccepted.indexOf(cc) < 0) {
+			throw(new Error("CC number not accepted"));
+		};
+		return upThis.#cc[ccOffTable[part] + ccToPos[cc] + allocated.chcc];
 	};
 	getChSource() {
 		return this.#chReceive;
