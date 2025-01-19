@@ -1,6 +1,6 @@
 id	mode	name
 x5dr	x5d	KORG X5DR (v1.12)
-ns5r	ns5r	KORG NS5R (v1.07)
+ns5r	ns5r	KORG NS5R/NX5R (v1.07)
 mu15	xg	YAMAHA MU15
 mu50	xg	YAMAHA MU50
 mu80	xg	YAMAHA MU80 (unknown)
@@ -15,3 +15,10 @@ mu1k	xg	YAMAHA MU1000
 mu2k	xg	YAMAHA MU2000
 qy70	xg	YAMAHA QY70
 qy100	xg	YAMAHA QY100
+qs300	xg	YAMAHA QS300
+vl70m	xg	YAMAHA VL-70m
+dx200	xg	YAMAHA DX200
+an200	xg	YAMAHA AN200
+cbxt3	xg	YAMAHA CBX-T3
+cbxk1	xg	YAMAHA CBX-K1XG
+sk1xg	xg	YAMAHA SK1-XG
