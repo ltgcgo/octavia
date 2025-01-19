@@ -730,22 +730,20 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Reset controllers
 					this.#ua.ano(part);
 					this.#pitch[part] = 0;
-					//let chOff = part * allocated.cc;
 					// Reset to zero
-					this.#cc[chOff + ccToPos[1]] = 0; // Modulation
-					this.#cc[chOff + ccToPos[5]] = 0; // Portamento Time
-					this.#cc[chOff + ccToPos[64]] = 0; // Sustain
-					this.#cc[chOff + ccToPos[65]] = 0; // Portamento
-					this.#cc[chOff + ccToPos[66]] = 0; // Sostenuto
-					this.#cc[chOff + ccToPos[67]] = 0; // Soft Pedal
+					upThis.resetCcCh(part, 1, 0); // Modulation
+					upThis.resetCcCh(part, 5, 0); // Portamento Time
+					upThis.resetCcCh(part, 64, 0); // Sustain
+					upThis.resetCcCh(part, 65, 0); // Portamento
+					upThis.resetCcCh(part, 66, 0); // Sostenuto
+					upThis.resetCcCh(part, 67, 0); // Soft Pedal
 					// Reset to full
-					this.#cc[chOff + ccToPos[11]] = 127; // Expression
+					upThis.resetCcCh(part, 11, 127); // Expression
 					// RPN/NRPN to null
-					this.#cc[chOff + ccToPos[101]] = 127;
-					this.#cc[chOff + ccToPos[100]] = 127;
-					this.#cc[chOff + ccToPos[99]] = 127;
-					this.#cc[chOff + ccToPos[98]] = 127;
-					//upThis.resetCcCh
+					upThis.resetCcCh(part, 101, 127);
+					upThis.resetCcCh(part, 100, 127);
+					upThis.resetCcCh(part, 99, 127);
+					upThis.resetCcCh(part, 98, 127);
 					return;
 					break;
 				};
@@ -991,7 +989,6 @@ let OctaviaDevice = class extends CustomEventSource {
 								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.getCcCh(part, 100)} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
-								//console.debug(this.#cc[chOf + ccToPos[100]], rpnIndex, rpnOptions[this.#cc[chOff + ccToPos[100]]]);
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
 								switch (partMode) {
 									case modeMap.xg:
@@ -1497,7 +1494,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Should later become 0 to 65535
 		let str = [], upThis = this;
 		this.getRawStrength().forEach(function (e, i) {
-			//str[i] = Math.floor(e * upThis.#cc[i * allocated.cc + ccToPos[7]] * upThis.#cc[i * allocated.cc + ccToPos[11]] * upThis.#masterVol / 803288);
 			str[i] = Math.floor(e * upThis.getCcCh(i, 7) * upThis.getCcCh(i, 11) * upThis.#masterVol / 803288);
 		});
 		return str;
@@ -2921,13 +2917,13 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (id < 41) {
 					// CC manipulation can be further shrunk
 					([() => {
-						upThis.#cc[chOff + ccToPos[0]] = e; // MSB
+						upThis.setCcCh(part, 0, e); // MSB
 						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
 					}, () => {
-						upThis.#cc[chOff + ccToPos[32]] = e; // LSB
+						upThis.setCcCh(part, 32, e); // MSB
 						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
@@ -2974,40 +2970,40 @@ let OctaviaDevice = class extends CustomEventSource {
 							pitch: upThis.getPitchShift(part)
 						});
 					}, false, false, () => {
-						upThis.#cc[chOff + ccToPos[7]] = e; // volume
+						upThis.setCcCh(part, 7, e); // volume
 					}, false, false, () => {
-						upThis.#cc[chOff + ccToPos[10]] = e || 128; // pan
+						upThis.setCcCh(part, 10, e || 128); // pan
 					}, false, false, () => {
-						upThis.#cc[chOff + ccToPos[128]] = e; // dry level
+						upThis.setCcCh(part, 128, e); // dry level
 						upThis.allocateAce(part, 128);
 					}, () => {
-						upThis.#cc[chOff + ccToPos[93]] = e; // chorus
+						upThis.setCcCh(part, 93, e); // chorus
 					}, () => {
-						upThis.#cc[chOff + ccToPos[91]] = e; // reverb
+						upThis.setCcCh(part, 91, e); // reverb
 					}, () => {
-						upThis.#cc[chOff + ccToPos[94]] = e; // variation
+						upThis.setCcCh(part, 94, e); // variation
 					}, () => {
-						upThis.#cc[chOff + ccToPos[76]] = e; // vib rate
+						upThis.setCcCh(part, 76, e); // vib rate
 					}, () => {
-						upThis.#cc[chOff + ccToPos[77]] = e; // vib depth
+						upThis.setCcCh(part, 77, e); // vib depth
 					}, () => {
-						upThis.#cc[chOff + ccToPos[78]] = e; // vib delay
+						upThis.setCcCh(part, 78, e); // vib delay
 					}, () => {
-						upThis.#cc[chOff + ccToPos[74]] = e; // brightness
+						upThis.setCcCh(part, 74, e); // brightness
 					}, () => {
-						upThis.#cc[chOff + ccToPos[71]] = e; // resonance
+						upThis.setCcCh(part, 71, e); // resonance
 					}, () => {
-						upThis.#cc[chOff + ccToPos[73]] = e; // attack
+						upThis.setCcCh(part, 73, e); // attack
 					}, () => {
-						upThis.#cc[chOff + ccToPos[75]] = e; // decay
+						upThis.setCcCh(part, 75, e); // decay
 					}, () => {
-						upThis.#cc[chOff + ccToPos[72]] = e; // release
+						upThis.setCcCh(part, 72, e); // release
 					}][id + i - 1] || (() => {}))();
 				} else if (id < 48) {
 					console.debug(errMsg);
 				} else if (id < 111) {
 					if (id > 102 && id < 105) {
-						upThis.#cc[chOff + ccToPos[[5, 65][id & 1]]] = e; // portamento
+						upThis.setCcCh(part, [5, 65][id & 1], e); // portamento
 					};
 				} else if (id < 114) {
 					console.debug(errMsg);
@@ -3073,7 +3069,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								};
 							} else {
 								console.debug(`${dPref}${pType} depth: ${e - 64}`);
-								upThis.#cc[chOff + ccToPos[130 + pId]] = e;
+								upThis.setCcCh(part, 130 + pId, e);
 							};
 						};
 					};
@@ -3306,7 +3302,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (!opt?.noAce) {
 						upThis.allocateAce(part, targetCc);
 					};
-					upThis.#cc[chOff + ccToPos[targetCc]] = e;
+					upThis.setCcCh(part, targetCc, e);
 					upThis.dispatchEvent("cc", {
 						part,
 						cc: targetCc,
@@ -3347,7 +3343,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// 7~22 to 142~157
 							let targetCc = ri + 135;
 							upThis.allocateAce(part, targetCc);
-							upThis.#cc[chOff + ccToPos[targetCc]] = e;
+							upThis.setCcCh(part, targetCc, e);
 							upThis.dispatchEvent("cc", {
 								part,
 								cc: targetCc,
@@ -3420,7 +3416,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// An educated guess that these are operator levels
 					// 40~55 to 142~157
 					let targetCc = i + 102;
-					upThis.#cc[chOff + ccToPos[targetCc]] = e;
+					upThis.setCcCh(part, targetCc, e);
 					upThis.dispatchEvent("cc", {
 						part,
 						cc: targetCc,
@@ -3720,13 +3716,13 @@ let OctaviaDevice = class extends CustomEventSource {
 					([() => {
 						// element reserve
 					}, () => {
-						upThis.#cc[chOff + ccToPos[0]] = e;
+						upThis.setCcCh(part, 0, e);
 						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
 					}, () => {
-						upThis.#cc[chOff + ccToPos[32]] = e;
+						upThis.setCcCh(part, 32, e);
 						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
@@ -3763,11 +3759,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// absolute detune
 					}, () => {
-						upThis.#cc[chOff + ccToPos[7]] = e;
+						upThis.setCcCh(part, 7, e);
 					}, false
 					, false
 					, () => {
-						upThis.#cc[chOff + ccToPos[10]] = e || 128;
+						upThis.setCcCh(part, 10, e || 128);
 					}, false
 					, false
 					, () => {
