@@ -1117,7 +1117,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (upThis.getExt(part)[0]) {
 				case upThis.EXT_VL: {
 					// Force reset actual VL breath strength
-					upThis.setCcCh(part, 129, 127);
+					// Turns out it's not valid
+					//upThis.setCcCh(part, 129, 127);
 					break;
 				};
 			};
