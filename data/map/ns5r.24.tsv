@@ -35,6 +35,8 @@ Ambi.Vox	Ambient Voice
 BassHrmo	Bass/Harmonics
 SymphoBr	Symphonic Brass
 Horn Ens	Horn Ensemble
+MutedEns	Muted Ensemble
+FeedbkGt	Feedback Guitar
 GlockBel	Glockenspiel Bells
 FatRezBa	Fat Resonant Bass
 BreathVx	Breathy Voice
@@ -51,7 +53,6 @@ ChromeBa	Chromium Bass
 RShkhchi	Real Shakuhachi
 TrumpEns	Trumpet Ensemble
 VelFlugl	Velo Flugel Horn
-FeedbkGt	Feedback Guitar
 EthncVln	Ethnic Violin
 SoprnoVx	Soprano Voice
 Pno&Str	Piano & Strings
@@ -60,4 +61,3 @@ WarmTrom	Warm Trombone
 Chro.Rez	Chrome Resonance
 7th Wave	The 7th Wave
 OldKlmba	Old Kalimba
-MutedEns	Muted Ensemble

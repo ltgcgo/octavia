@@ -1,6 +1,5 @@
 ID	Name
 ClvchrdK	Clavichord KSP
-ClvinetK	Clavinet KSP
 GrndPnoK	Grand Piano KSP
 MelloGrP	Mellow Grand Piano
 PianoStr	Piano + Strings
@@ -26,6 +25,7 @@ EPiano2#	Electric Piano 2 #
 HpschrdK	Harpsichord KSP
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
+ClvinetK	Clavinet KSP
 ClaviWah	Wah Clavinet
 PulseClv	Pulse Clavinet
 PiercClv	Pierce Clavinet
@@ -267,6 +267,8 @@ DoublSaw	Double Sawtooth Lead
 Dim Saw	Dim Sawtooth Lead
 PulseSaw	Pulse Sawtooth Ld
 VeloLead	Velocity Lead
+Str8Puls	Straight Pulse
+ModulSaw	Modular Sawtooth Lead
 SimplSaw	Simple Sawtooth
 SeqAnal.	Sequenced Analog Lead
 ElecPrim	Electric Primtive
@@ -369,22 +371,26 @@ Buzz Saw	Buzzy Saw Lead
 OsciLead	Oscillated Lead
 Ana.Wurl	Analog Wurly E. Piano
 FngrBas!	Fingered Bass!
-Fnground	Fingered Ground
+Fnground	Grounded Fingered Bass
+Fnground	Grounded Fingered Bass
 Birdland	Birdland Bass
 Fretles!	Fretless Bass!
 Fretls!2	Fretless Bass! 2
-YamaBass	Mountain Bass
+RockBass	Overdriven Rock Bass
 PlsClav!	Pulse Clavinet Bass!
 MuteHrBa	Muted Heart Bass
 Chamlion	Chamelion Synth Bass
-Para.Syn	Para. Synth Bass
+Para.Syn	Parallel Synth Bass
 AttakSyn	Attack Synth Bass
 YamSteel	Mountain Steel Drums
 DinoPerc	Dino Percussion
+Formula	Formula Car Engine
+Jurassic	Jurassic Dino
+Devil	Devil's Ringing
 EspaGtr!	Spanish Guitar!
 L7 Pluck	L7 Plucked Guitar
 WetPluck	Wet Plucked Guitar
-Comp.Gtr	Compression Guitar
+Comp.Gtr	Compressed Guitar
 Carlos	Carlos Guitar
 Destiny	Destiny Guitar
 Ossyncro	Oscillated Synchro
@@ -537,3 +543,4 @@ MM-Clav3	MM-Clavichord 3
 MM-Vibe2	MM-Vibraphone 2
 DX-SLd 9	DX Square Lead 9
 DirtySaw	Dirty Sawtooth Lead
+Dist5th	Distorted Fifth

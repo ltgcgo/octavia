@@ -1,6 +1,5 @@
 ID	Name
 ClvchrdK	Clavichord K
-ClvinetK	Clavinet K.
 GrndPnoK	GrandPiano K
 MelloGrP	MellowGrdPno
 PianoStr	PianoStrings
@@ -34,6 +33,7 @@ EPiano2#	El. Piano 2#
 HpschrdK	HarpsichordK
 Hpschrd2	Harpsichord2
 Hpschrd3	Harpsichord3
+ClvinetK	Clavinet K.
 ClaviWah	Wah Clavinet
 PulseClv	Pulse Clavi.
 PiercClv	Pierce Clavi
@@ -331,6 +331,8 @@ Dim Saw	Dim Saw Lead
 PulseSaw	Pulse Saw Ld
 Dr. Lead	Doctor Lead
 VeloLead	VelocityLead
+Str8Puls	StraightPuls
+ModulSaw	Modular Saw.
 SimplSaw	Simple Saw.
 SeqAnal.	Seq. Analog
 NoviceLd	Novice Lead
@@ -488,6 +490,7 @@ SimpleBa	Simple Bass
 ClavBass	ClavinetBass
 New Slap	New SlapBass
 Cybastrg	Cyber String
+Wynth	Windy Synth
 Buzz Saw	Buzzy Saw Ld
 Zub Zub	Zub Zub Lead
 OsciLead	OscilateLead
@@ -499,13 +502,16 @@ Ana.Wave	Analog Wave
 Ana.Wurl	Analog Wurly
 FngrBas!	FingeredBas!
 UprghtBa	Upright Bass
-Fnground	FingrdGround
+Fnground	GroundFingrd
 Birdland	BirdlandBass
 FlageoBa	Flageo Bass
 Fretles!	FretlessBas!
 Fretls!2	FretlesBas!2
-SmooBass	Smooth Bass
-YamaBass	MountainBass
+ThumBass	Thumped Bass
+RockBass	OD Rock Bass
+SmooBass	Smooth Bass!
+YamaBass	Yamaha Bass
+Bass Cab	Bass Cabinet
 FruitBas	Fruity Bass
 SqrBass!	Square Bass!
 PlsClav!	Pulse Clavi!
@@ -521,6 +527,7 @@ India	Indian Sitar
 YamSteel	YamaStlDrums
 Stung St	Stung String
 Formula	Formula Car
+Jurassic	JurassicDino
 Devil	Devil's Ring
 SpcHorse	Space Horse
 EspaGtr!	Spanish Gtr!
@@ -629,3 +636,6 @@ MM-Clav3	MM-Clavi. 3
 MM-Vibe2	MM-Vibrafn.2
 MM-Vce 4	MM-Voices 4
 DX-SLd 9	DX-SquareLd9
+J.Hammer	Jack Hammer
+RadioNz	Radio Noise
+Dist5th	Distorted5th

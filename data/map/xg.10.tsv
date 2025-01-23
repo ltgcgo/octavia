@@ -1,6 +1,5 @@
 ID	Name
 ClvchrdK	ClvichordK
-ClvinetK	Clavinet K
 GrndPnoK	GrndPianoK
 MelloGrP	MelloGrPno
 PianoStr	PianoStrng
@@ -37,6 +36,7 @@ EPiano2#	El.Piano2#
 HpschrdK	HrpsichrdK
 Hpschrd2	Hrpsichrd2
 Hpschrd3	Hrpsichrd3
+ClvinetK	Clavinet K
 ClaviWah	ClvchrdWah
 PulseClv	PulseClavi
 PiercClv	PierceClav
@@ -134,6 +134,7 @@ FeedbkG2	FeedbackG2
 TwinDist	TwinDistGt
 RckRthm2	RockRthm 2
 RockRthm	RockRhythm
+Bite +	Bite Plus
 Dist.Gt#	Dist. Gt.#
 AcouHarm	Acou.Harmo
 GtFeedbk	GtFeedback
@@ -388,6 +389,8 @@ Dim Saw	Dim Saw Ld
 PulseSaw	Pulse Saw
 Dr. Lead	DoctorLead
 VeloLead	Velo. Lead
+Str8Puls	StraitPuls
+ModulSaw	ModularSaw
 SimplSaw	Simple Saw
 SeqAnal.	Seq.Analog
 NoviceLd	NoviceLead
@@ -647,6 +650,7 @@ SuperBas	Super Bass
 New Slap	NewSlapBas
 RockPigs	Rock Pigs
 Cybastrg	Cybastring
+Wynth	WindySynth
 Buzz Saw	Buzzy Saw
 Zub Zub	ZubZubLead
 BlueLead	Blue Lead
@@ -659,17 +663,18 @@ Ana.Wave	AnalogWave
 Ana.Wurl	AnalgWurly
 FngrBas!	FingerBas!
 UprghtBa	UprightBas
-Fnground	FingrdGrnd
+Fnground	GrndFingrd
 Birdland	BirdlandBs
 FlageoBa	FlageoBass
 DampBass	Damp Bass
 Fretles!	Fretless!
 Fretls!2	Fretless!2
-ThumBass	Thumb Bass
+ThumBass	Thump Bass
 RockBass	Rock Bass
-SmooBass	SmoothBass
+SmooBass	SmoothBas!
 WarmBass	Warm Bass
-YamaBass	Yama Bass
+YamaBass	YamahaBass
+Bass Cab	Bass Cab.
 FruitBas	FruityBass
 AcidBas!	Acid Bass!
 SqrBass!	SquareBas!
@@ -692,6 +697,7 @@ Stung St	StungStrng
 Waterfon	Waterphone
 DinoPerc	Dino Perc.
 Formula	FormulaCar
+Jurassic	JurassicDn
 Devil	Devil's
 SpcHorse	SpaceHorse
 Suedhead	Suedehead
@@ -848,4 +854,9 @@ MM-Vibe2	MM-Vibra.2
 MM-Vce 4	MM-Voice 4
 DX-SLd 9	DX-SqrLd 9
 DirtySaw	Dirty Saw
+J.Hammer	JackHammer
 ANCowbel	AN Cowbell
+RadioNz	RadioNoise
+FreeEdge	Free Edge
+Dist5th	Dist.Fifth
+HardNoiz	Hard Noise

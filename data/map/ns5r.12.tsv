@@ -82,6 +82,11 @@ SteamBrs	Steam Brass
 PrieDawn	Prarie Dawn
 RotaryOr	Rotary Organ
 Horn Ens	HornEnsemble
+MutedEns	Muted Ensem.
+FeedbkGt	Feedback Gtr
+ArcoAttk	Arco Attack
+SynBass3	Synth Bass 3
+SwtReeds	Sweet Reeds
 PpeDream	Pipe Dreams
 Big Strs	Big Strings
 AsiaJung	Asian Jungle
@@ -106,7 +111,6 @@ FreshWav	Fresh Waves
 LandnPad	Landing Pad
 Dyno Str	Dyno String
 Chrunchr	Chruncher Gt
-SynBass3	Synth Bass 3
 RezWaves	Reso. Waves
 ClickOrg	Click Organ
 St. Horn	Stereo Horn
@@ -123,13 +127,11 @@ SyTronic	Synth Tronic
 TrumpEns	Trump Ensem.
 Ice Man	The Ice Man
 VelFlugl	VeloFlugelHr
-FeedbkGt	Feedback Gtr
 DrillMe!	[DrillMe!]
 EthncVln	Ethnic Violn
 GreekGtr	Greek Guitar
 SoprnoVx	SopranoVoice
 ChunkaPk	Chunka Pick
-ArcoAttk	Arco Attack
 CicadaBg	Cicada Bugs
 Pno&Str	Piano&String
 SpectrEP	Spectrum EP
@@ -140,7 +142,6 @@ WarmTrom	WarmTrombone
 HolwBody	Hollow Body
 HdBamboo	Hard Bamboo
 BrsSynth	Brass Synth
-SwtReeds	Sweet Reeds
 MalletEP	Mallet EP
 Elec.Arc	Electric Ac.
 VuduSong	Voodoo Song
@@ -149,4 +150,3 @@ DreamBel	Dream Bells
 Chro.Rez	Chrome Reso.
 7th Wave	The 7th Wave
 OldKlmba	Old Kalimba
-MutedEns	Muted Ensem.

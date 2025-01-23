@@ -138,6 +138,15 @@ SteamBrs	SteamBrass
 PrieDawn	PrarieDawn
 RotaryOr	Rotary Org
 SuprTine	Super Tine
+Choir LR	Choir L+R
+Mr. Gong	[Mr. Gong]
+BigOrgan	Big Organ
+MutedEns	Muted Ens.
+FeedbkGt	FeedbackGt
+ArcoAttk	ArcoAttack
+Mr.Clean	Mr. Clean
+SynBass3	SynthBass3
+SwtReeds	SweetReeds
 PpeDream	PipeDreams
 Big Strs	BigStrings
 AsiaJung	Asian Jung
@@ -170,12 +179,10 @@ Log&Bell	Logs&Bells
 90s Bass	90's Bass
 FreshWav	FreshWaves
 MIDI Grd	MIDI Grand
-Mr. Gong	[Mr. Gong]
 LandnPad	LandingPad
 Dyno Str	DynoString
 Chrunchr	Chruncher
 StarFire	Star Fire
-SynBass3	SynthBass3
 RezWaves	Reso Waves
 Manimals	[Manimals]
 ClickOrg	ClickOrgan
@@ -205,12 +212,10 @@ Natives!	[Natives!]
 DynoTine	Dyno Tines
 VelFlugl	VeloFlugel
 PolkaBox	Polka Box
-FeedbkGt	FeedbackGt
 SwissBox	Swiss Box
 Arbesque	Arabesque
 DrillMe!	[DrillMe!]
 Univrs.X	Universe X
-BigOrgan	Big Organ
 EthncVln	EthnoVioln
 R. Sitar	Real Sitar
 GreekGtr	Greek Gtr.
@@ -220,13 +225,10 @@ SoprnoVx	SopranoVox
 Solo Syn	Solo Synth
 Jet Star	[Jet Star]
 ChunkaPk	ChunkaPick
-ArcoAttk	ArcoAttack
 HighWire	High Wire
 CicadaBg	CicadaBugs
 Pno&Str	Piano&Str
 SpectrEP	SpectrumEP
-Mr.Clean	Mr. Clean
-Choir LR	Choir L+R
 CmpThing	CompThing!
 TunedDrm	TunedDrums
 TibetBel	TibetBells
@@ -238,7 +240,6 @@ TechBass	Tech Bass
 Cmposure	Composure
 BrsSynth	BrassSynth
 EchoTbla	Echo Tabla
-SwtReeds	SweetReeds
 MalletEP	Mallet EP
 Elec.Arc	ElectricAc
 HyprWave	Hyper:Wave
@@ -255,4 +256,3 @@ MarkTree	Mark Trees
 7th Wave	The7thWave
 Mega Syn	Mega Synth
 OldKlmba	OldKalimba
-MutedEns	Muted Ens.
