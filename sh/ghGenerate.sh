@@ -7,7 +7,7 @@ echo "$(date +"%s")" > build-time.txt
 cp -Lrv ghp ghp-gz
 cp -Lrv ghp ghp-br
 cd ghp
-tar cvf ../pages-build.tar *
+tar cvhf ../pages-build.tar *
 cd ..
 zopfli --i1 -v pages-build.tar
 rm -v pages-build.tar
