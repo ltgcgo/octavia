@@ -21,7 +21,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -50,6 +50,22 @@ jobs:
         run: "./shx babel"
       - name: Generate simple sitemap
         run: "./shx sitemap"
+      - name: "Build deployable static pages artifact"
+        run: "bash sh/ghGenerate.sh"
+      - name: "Rewrite release"
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          artifacts: "pages-build.tar.gz,pages-build-gz.tar,pages-build-br.tar,build-time.txt"
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          makeLatest: false
+          prerelease: true
+          removeArtifacts: true
+          replacesArtifacts: true
+          name: "Latest page build"
+          tag: "pages-build"
       - name: Upload bundled artifact
         uses: actions/upload-pages-artifact@v3
         with:
