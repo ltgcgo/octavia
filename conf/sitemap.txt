@@ -6,4 +6,8 @@
 /test/fakeNs5r.htm
 /test/fakeQy.htm
 /test/fakePsr.htm
+/test/fakeSc8850.htm
 /test/cambiare.htm
+/test/tools/index.htm
+/test/tools/imgConv.htm
+/test/tools/tsvView.htm
