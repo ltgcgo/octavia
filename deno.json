@@ -9,6 +9,7 @@
 		"./bridge": "./dist/bridge.mjs",
 		"./cambiare": "./dist/cambiare.mjs",
 		"./state": "./dist/state.mjs",
+		"./disp": "./dist/disp.mjs",
 		"./xp_basic": "./dist/xp_basic.mjs",
 		"./xp_state": "./dist/xp_state.mjs"
 	},

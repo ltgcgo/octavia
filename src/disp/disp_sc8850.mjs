@@ -291,7 +291,7 @@ let Sc8850Display = class extends RootDisplay {
 					case 2: {
 						let voiceNamePadded = upThis.getMapped(voiceObject.name).padEnd(12, " ");
 						displayText = `    ${voiceNamePadded}<${sum.letter.text}<    ${voiceNamePadded}`;
-						let cutoffStart = (Math.floor((timeNow - sum.letter.set) / 300), );
+						let cutoffStart = Math.floor((timeNow - sum.letter.set) / 300);
 						displayText = displayText.substring(cutoffStart, cutoffStart + 16);
 						break;
 					};
