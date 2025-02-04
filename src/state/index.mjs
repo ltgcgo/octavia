@@ -1604,6 +1604,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		let upThis = this;
 		upThis.#prg[(1 << allocated.chShift) | part] = upThis.getCcCh(part, 0);
 		upThis.#prg[(2 << allocated.chShift) | part] = upThis.getCcCh(part, 32);
+		upThis.dispatchEvent("voice", {
+			part
+		});
 	};
 	getChVoice(part) {
 		let upThis = this;
@@ -2039,6 +2042,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				});
 			};
 		};
+		//console.debug(upThis.#portMode);
 	};
 	copyChSetup(sourceCh, targetCh, failWhenActive) {
 		if (sourceCh == targetCh) {
@@ -2101,19 +2105,20 @@ let OctaviaDevice = class extends CustomEventSource {
 		let idx = modeMap[mode];
 		if (idx > -1) {
 			if (upThis.#mode == 0 || forced) {
-				let oldMode = upThis.#mode;
+				//let oldMode = upThis.#mode;
 				if (upThis.initOnReset && forced) {
 					this.init(1);
-					oldMode = modeMap["?"];
+					//oldMode = modeMap["?"];
 				};
 				upThis.#mode = idx;
 				upThis.#bitmapPage = 0; // Restore page
 				//console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
 				for (let ch = 0; ch < allocated.ch; ch ++) {
-					if (upThis.#chType[ch] > 0 && upThis.#chMode[ch] == 0) {
+					let oldMode = upThis.getChModeId(ch, true)
+					if (upThis.#chType[ch] > 0 && oldMode == modeMap["?"]) {
 						// Switch drum MSBs.
 						upThis.setCcCh(ch, 0, upThis.#subDb[idx][2]);
-						//console.debug(`CH${ch + 1} (${upThis.#chType[ch]}) (${upThis.getChMode(ch)}), ${modeIdx[oldMode]} (${drumMsb[oldMode]}) -> ${modeIdx[idx]} (${drumMsb[idx]})`);
+						getDebugState() && console.debug(`CH${ch + 1} (${upThis.#chType[ch]}) (${upThis.getChMode(ch)}), ${modeIdx[oldMode]} (${upThis.#subDb[oldMode][2]}) -> ${modeIdx[idx]} (${upThis.#subDb[idx][2]})`);
 						// I'll deal with this later?
 						upThis.pushChPrimitives(ch);
 					};
@@ -2200,11 +2205,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				upThis.dispatchEvent("mode", mode);
 				upThis.forceVoiceRefresh();
-				drumChannels.forEach((e) => {
+				/*drumChannels.forEach((e) => {
 					upThis.dispatchEvent("voice", {
 						part: e
 					});
-				});
+				});*/
 			};
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
