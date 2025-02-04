@@ -451,7 +451,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let rawNote = part * 128 + note;
 			let polyIdx = this.#poly.lastIndexOf(rawNote);
 			if (polyIdx > -1) {
-				if (this.getCcCh(part, 64) >> 6) {
+				if (this.getChCc(part, 64) >> 6) {
 					// Held by cc64
 					this.#polyState[polyIdx] = this.NOTE_HELD;
 					this.dispatchEvent("note", {
@@ -460,7 +460,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						velo: this.#velo[rawNote],
 						state: this.NOTE_HELD
 					});
-				} else if ((this.getCcCh(part, 66) >> 6) && this.#polyState[polyIdx] == this.NOTE_SOSTENUTO_SUSTAIN) {
+				} else if ((this.getChCc(part, 66) >> 6) && this.#polyState[polyIdx] == this.NOTE_SOSTENUTO_SUSTAIN) {
 					// Held by cc66
 					this.#polyState[polyIdx] = this.NOTE_SOSTENUTO_HELD;
 					this.dispatchEvent("note", {
@@ -476,7 +476,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let breathMode = this.getExt(part)[1];
 					if (breathMode == this.VLBC_VELOINIT ||
 						breathMode == this.VLBC_VELOALL) {
-						this.setCcCh(part, 129, 0);
+						this.setChCc(part, 129, 0);
 					};
 					this.dispatchEvent("note", {
 						part,
@@ -520,7 +520,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				let breathMode = this.getExt(part)[1];
 				if (breathMode == this.VLBC_VELOINIT ||
 					breathMode == this.VLBC_VELOALL) {
-					this.setCcCh(part, 129, velo);
+					this.setChCc(part, 129, velo);
 				};
 				this.dispatchEvent("note", {
 					part,
@@ -667,7 +667,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.#velo[rawNote] = data[1];
 				let breathMode = this.getExt(part)[1];
 				if (breathMode == this.VLBC_VELOALL) {
-					this.setCcCh(part, 129, data[1]);
+					this.setChCc(part, 129, data[1]);
 				};
 				this.dispatchEvent("note", {
 					part,
@@ -731,19 +731,19 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#ua.ano(part);
 					this.#pitch[part] = 0;
 					// Reset to zero
-					upThis.resetCcCh(part, 1, 0); // Modulation
-					upThis.resetCcCh(part, 5, 0); // Portamento Time
-					upThis.resetCcCh(part, 64, 0); // Sustain
-					upThis.resetCcCh(part, 65, 0); // Portamento
-					upThis.resetCcCh(part, 66, 0); // Sostenuto
-					upThis.resetCcCh(part, 67, 0); // Soft Pedal
+					upThis.resetChCc(part, 1, 0); // Modulation
+					upThis.resetChCc(part, 5, 0); // Portamento Time
+					upThis.resetChCc(part, 64, 0); // Sustain
+					upThis.resetChCc(part, 65, 0); // Portamento
+					upThis.resetChCc(part, 66, 0); // Sostenuto
+					upThis.resetChCc(part, 67, 0); // Soft Pedal
 					// Reset to full
-					upThis.resetCcCh(part, 11, 127); // Expression
+					upThis.resetChCc(part, 11, 127); // Expression
 					// RPN/NRPN to null
-					upThis.resetCcCh(part, 101, 127);
-					upThis.resetCcCh(part, 100, 127);
-					upThis.resetCcCh(part, 99, 127);
-					upThis.resetCcCh(part, 98, 127);
+					upThis.resetChCc(part, 101, 127);
+					upThis.resetChCc(part, 100, 127);
+					upThis.resetChCc(part, 99, 127);
+					upThis.resetChCc(part, 98, 127);
 					return;
 					break;
 				};
@@ -799,7 +799,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
-									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getCcCh(part, 0)*/;
+									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getChCc(part, 0)*/;
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
@@ -820,7 +820,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
-									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getCcCh(part, 0)*/;
+									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getChCc(part, 0)*/;
 									det.data[1] = 120;
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
@@ -874,9 +874,9 @@ let OctaviaDevice = class extends CustomEventSource {
 									};
 								} else if ([80, 81, 82, 83].indexOf(det.data[1]) > -1) {
 									/*let voiceObject = this.getVoice(
-										this.getCcCh(part, 0),
+										this.getChCc(part, 0),
 										this.#prg[part],
-										this.getCcCh(part, 32),
+										this.getChCc(part, 32),
 										modeIdx[this.#mode]
 									);
 									console.debug(voiceObject);
@@ -930,7 +930,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Breath for VL and more!
 						let breathMode = this.getExt(part)[1];
 						if (breathMode == this.VLBC_BRTHEXPR) {
-							this.setCcCh(part, 129, det.data[1]);
+							this.setChCc(part, 129, det.data[1]);
 						};
 						break;
 					};
@@ -941,12 +941,12 @@ let OctaviaDevice = class extends CustomEventSource {
 							if ([modeMap.xg, modeMap.gs, modeMap.sc, modeMap.ns5r].indexOf(this.#mode) < 0) {
 								console.warn(`NRPN commits are not available under "${modeIdx[this.#mode]}" mode, even when they are supported in Octavia.`);
 							};
-							let msb = this.getCcCh(part, 99),
-							lsb = this.getCcCh(part, 98);
+							let msb = this.getChCc(part, 99),
+							lsb = this.getChCc(part, 98);
 							if (msb == 1) {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
-									this.setCcCh(part, 71 + toCc, det.data[1]);
+									this.setChCc(part, 71 + toCc, det.data[1]);
 									getDebugState() && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
 									this.dispatchEvent("cc", {
 										part,
@@ -983,10 +983,10 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						} else {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.getCcCh(part, 100)],
-							rpnIndex2 = rpnOptions[this.getCcCh(part, 100)];
-							if (this.getCcCh(part, 101) == 0 && rpnIndex != undefined) {
-								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.getCcCh(part, 100)} commit: ${det.data[1]}`);
+							let rpnIndex = useRpnMap[this.getChCc(part, 100)],
+							rpnIndex2 = rpnOptions[this.getChCc(part, 100)];
+							if (this.getChCc(part, 101) == 0 && rpnIndex != undefined) {
+								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.getChCc(part, 100)} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
@@ -997,7 +997,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									case modeMap.mt32:
 									case modeMap.s90es:
 									case modeMap.motif: {
-										switch (this.getCcCh(part, 100)) {
+										switch (this.getChCc(part, 100)) {
 											case 1:
 											case 2: {
 												this.dispatchEvent("pitch", {
@@ -1043,9 +1043,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Show RPN and NRPN
 						if (!this.#dataCommit[part]) {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.getCcCh(part, 100)],
-							rpnIndex2 = rpnOptions[this.getCcCh(part, 100)];
-							if (this.getCcCh(part, 101) == 0 && rpnIndex != undefined) {
+							let rpnIndex = useRpnMap[this.getChCc(part, 100)],
+							rpnIndex2 = rpnOptions[this.getChCc(part, 100)];
+							if (this.getChCc(part, 101) == 0 && rpnIndex != undefined) {
 								// This section is potentially unsafe
 								this.#rpn[part * allocated.rpn + rpnIndex + 1] = det.data[1];
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
@@ -1082,7 +1082,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 				};
-				this.setCcCh(part, det.data[0], det.data[1]);
+				this.setChCc(part, det.data[0], det.data[1]);
 				this.dispatchEvent("cc", {
 					part,
 					cc: det.data[0],
@@ -1118,7 +1118,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case upThis.EXT_VL: {
 					// Force reset actual VL breath strength
 					// Turns out it's not valid
-					//upThis.setCcCh(part, 129, 127);
+					//upThis.setChCc(part, 129, 127);
 					break;
 				};
 			};
@@ -1326,7 +1326,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}; */
 		return arr;
 	};
-	getCcCh(part, cc) {
+	getChCc(part, cc) {
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new Error("CC number not accepted"));
@@ -1347,7 +1347,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}; */
 		return result;
 	};
-	setCcCh(part = 0, cc, value) {
+	setChCc(part = 0, cc, value) {
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new Error("CC number not accepted"));
@@ -1382,10 +1382,10 @@ let OctaviaDevice = class extends CustomEventSource {
 	resetCc(part) {
 		// Placeholder until CC write state is ready
 	};
-	resetCcCh(part, cc, value) {
+	resetChCc(part, cc, value) {
 		let upThis = this;
 		if (value?.constructor) {
-			upThis.setCcCh(part, cc, value);
+			upThis.setChCc(part, cc, value);
 		};
 		upThis.#cc[ccOffTable[part] + ccToPos[cc] + allocated.chcc] = 0;
 		return;
@@ -1412,7 +1412,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		mode = mode || upThis.getChModeId(part);
 		upThis.#chType[part] = type;
 		if (type > 0 && !disableMsbSet) {
-			upThis.setCcCh(part, 0, upThis.#subDb[mode][2]);
+			upThis.setChCc(part, 0, upThis.#subDb[mode][2]);
 			upThis.pushChPrimitives(part);
 		};
 	};
@@ -1495,7 +1495,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Should later become 0 to 65535
 		let str = [], upThis = this;
 		this.getRawStrength().forEach(function (e, i) {
-			str[i] = Math.floor(e * upThis.getCcCh(i, 7) * upThis.getCcCh(i, 11) * upThis.#masterVol / 803288);
+			str[i] = Math.floor(e * upThis.getChCc(i, 7) * upThis.getChCc(i, 11) * upThis.#masterVol / 803288);
 		});
 		return str;
 	};
@@ -1602,8 +1602,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	pushChPrimitives(part) {
 		let upThis = this;
-		upThis.#prg[(1 << allocated.chShift) | part] = upThis.getCcCh(part, 0);
-		upThis.#prg[(2 << allocated.chShift) | part] = upThis.getCcCh(part, 32);
+		upThis.#prg[(1 << allocated.chShift) | part] = upThis.getChCc(part, 0);
+		upThis.#prg[(2 << allocated.chShift) | part] = upThis.getChCc(part, 32);
 		upThis.dispatchEvent("voice", {
 			part
 		});
@@ -1821,7 +1821,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (!cc) {
 			return 0;
 		} else if (ccAccepted.indexOf(cc) >= 0) {
-			return this.getCcCh(part, cc);
+			return this.getChCc(part, cc);
 		} else {
 			throw(new Error(`Invalid ACE source in CH${part + 1}: ${cc}`));
 		};
@@ -1898,7 +1898,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		// Channel 10 to drum set
 		drumChannels.forEach((e) => {
-			upThis.setCcCh(e, 0, upThis.#subDb[upThis.getChModeId(e)][2]);
+			upThis.setChCc(e, 0, upThis.#subDb[upThis.getChModeId(e)][2]);
 		});
 		// Channel types
 		upThis.#chType.fill(upThis.CH_MELODIC);
@@ -2117,7 +2117,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let oldMode = upThis.getChModeId(ch, true)
 					if (upThis.#chType[ch] > 0 && oldMode == modeMap["?"]) {
 						// Switch drum MSBs.
-						upThis.setCcCh(ch, 0, upThis.#subDb[idx][2]);
+						upThis.setChCc(ch, 0, upThis.#subDb[idx][2]);
 						getDebugState() && console.debug(`CH${ch + 1} (${upThis.#chType[ch]}) (${upThis.getChMode(ch)}), ${modeIdx[oldMode]} (${upThis.#subDb[oldMode][2]}) -> ${modeIdx[idx]} (${upThis.#subDb[idx][2]})`);
 						// I'll deal with this later?
 						upThis.pushChPrimitives(ch);
@@ -2131,7 +2131,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							let ch = i + 1;
 							if (!upThis.#chActive[ch]) {
 								upThis.#prg[ch] = e;
-								upThis.setCcCh(ch, 91, 127);
+								upThis.setChCc(ch, 91, 127);
 								upThis.pushChPrimitives(ch);
 							};
 						});
@@ -2923,13 +2923,13 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (id < 41) {
 					// CC manipulation can be further shrunk
 					([() => {
-						upThis.setCcCh(part, 0, e); // MSB
+						upThis.setChCc(part, 0, e); // MSB
 						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
 					}, () => {
-						upThis.setCcCh(part, 32, e); // MSB
+						upThis.setChCc(part, 32, e); // MSB
 						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
@@ -2976,40 +2976,40 @@ let OctaviaDevice = class extends CustomEventSource {
 							pitch: upThis.getPitchShift(part)
 						});
 					}, false, false, () => {
-						upThis.setCcCh(part, 7, e); // volume
+						upThis.setChCc(part, 7, e); // volume
 					}, false, false, () => {
-						upThis.setCcCh(part, 10, e || 128); // pan
+						upThis.setChCc(part, 10, e || 128); // pan
 					}, false, false, () => {
-						upThis.setCcCh(part, 128, e); // dry level
+						upThis.setChCc(part, 128, e); // dry level
 						upThis.allocateAce(part, 128);
 					}, () => {
-						upThis.setCcCh(part, 93, e); // chorus
+						upThis.setChCc(part, 93, e); // chorus
 					}, () => {
-						upThis.setCcCh(part, 91, e); // reverb
+						upThis.setChCc(part, 91, e); // reverb
 					}, () => {
-						upThis.setCcCh(part, 94, e); // variation
+						upThis.setChCc(part, 94, e); // variation
 					}, () => {
-						upThis.setCcCh(part, 76, e); // vib rate
+						upThis.setChCc(part, 76, e); // vib rate
 					}, () => {
-						upThis.setCcCh(part, 77, e); // vib depth
+						upThis.setChCc(part, 77, e); // vib depth
 					}, () => {
-						upThis.setCcCh(part, 78, e); // vib delay
+						upThis.setChCc(part, 78, e); // vib delay
 					}, () => {
-						upThis.setCcCh(part, 74, e); // brightness
+						upThis.setChCc(part, 74, e); // brightness
 					}, () => {
-						upThis.setCcCh(part, 71, e); // resonance
+						upThis.setChCc(part, 71, e); // resonance
 					}, () => {
-						upThis.setCcCh(part, 73, e); // attack
+						upThis.setChCc(part, 73, e); // attack
 					}, () => {
-						upThis.setCcCh(part, 75, e); // decay
+						upThis.setChCc(part, 75, e); // decay
 					}, () => {
-						upThis.setCcCh(part, 72, e); // release
+						upThis.setChCc(part, 72, e); // release
 					}][id + i - 1] || (() => {}))();
 				} else if (id < 48) {
 					console.debug(errMsg);
 				} else if (id < 111) {
 					if (id > 102 && id < 105) {
-						upThis.setCcCh(part, [5, 65][id & 1], e); // portamento
+						upThis.setChCc(part, [5, 65][id & 1], e); // portamento
 					};
 				} else if (id < 114) {
 					console.debug(errMsg);
@@ -3075,7 +3075,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								};
 							} else {
 								console.debug(`${dPref}${pType} depth: ${e - 64}`);
-								upThis.setCcCh(part, 130 + pId, e);
+								upThis.setChCc(part, 130 + pId, e);
 							};
 						};
 					};
@@ -3308,7 +3308,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (!opt?.noAce) {
 						upThis.allocateAce(part, targetCc);
 					};
-					upThis.setCcCh(part, targetCc, e);
+					upThis.setChCc(part, targetCc, e);
 					upThis.dispatchEvent("cc", {
 						part,
 						cc: targetCc,
@@ -3349,7 +3349,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// 7~22 to 142~157
 							let targetCc = ri + 135;
 							upThis.allocateAce(part, targetCc);
-							upThis.setCcCh(part, targetCc, e);
+							upThis.setChCc(part, targetCc, e);
 							upThis.dispatchEvent("cc", {
 								part,
 								cc: targetCc,
@@ -3387,7 +3387,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				// DOC global reverb depth on
 				for (let ch = 0; ch < 16; ch ++) {
 					let part = upThis.chRedir(ch, track, true);
-					upThis.setCcCh(part, 91, 127);
+					upThis.setChCc(part, 91, 127);
 				};
 				console.info("DOC Global Reverb: on");
 			} else {
@@ -3397,7 +3397,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// DX7 Dumps
 		// Placeholder until further documentation
 		dxDump.add([14, 31], (msg, track, id) => {
-			upThis.setCcCh(msg[0], 64, 0);
+			upThis.setChCc(msg[0], 64, 0);
 			upThis.#ua.ano(msg[0]);
 			upThis.switchMode("xg");
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
@@ -3422,7 +3422,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// An educated guess that these are operator levels
 					// 40~55 to 142~157
 					let targetCc = i + 102;
-					upThis.setCcCh(part, targetCc, e);
+					upThis.setChCc(part, targetCc, e);
 					upThis.dispatchEvent("cc", {
 						part,
 						cc: targetCc,
@@ -3431,8 +3431,8 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			});
 			upThis.#prg[part] = part & 127;
-			upThis.setCcCh(part, 0, 35);
-			upThis.setCcCh(part, 32, part >> 7 | 4);
+			upThis.setChCc(part, 0, 35);
+			upThis.setChCc(part, 32, part >> 7 | 4);
 			upThis.pushChPrimitives(part);
 			upThis.dispatchEvent("voice", {
 				part
@@ -3722,13 +3722,13 @@ let OctaviaDevice = class extends CustomEventSource {
 					([() => {
 						// element reserve
 					}, () => {
-						upThis.setCcCh(part, 0, e);
+						upThis.setChCc(part, 0, e);
 						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
 						});
 					}, () => {
-						upThis.setCcCh(part, 32, e);
+						upThis.setChCc(part, 32, e);
 						upThis.pushChPrimitives(part);
 						upThis.dispatchEvent("voice", {
 							part
@@ -3765,11 +3765,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// absolute detune
 					}, () => {
-						upThis.setCcCh(part, 7, e);
+						upThis.setChCc(part, 7, e);
 					}, false
 					, false
 					, () => {
-						upThis.setCcCh(part, 10, e || 128);
+						upThis.setChCc(part, 10, e || 128);
 					}, false
 					, false
 					, () => {
@@ -3842,10 +3842,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("sc", true);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.sc);
 			// MUST REVISIT AND UPDATE!!!
-			upThis.setCcCh(9, 0, 120);
-			upThis.setCcCh(25, 0, 120);
-			upThis.setCcCh(41, 0, 120);
-			upThis.setCcCh(57, 0, 120);
+			upThis.setChCc(9, 0, 120);
+			upThis.setChCc(25, 0, 120);
+			upThis.setChCc(41, 0, 120);
+			upThis.setChCc(57, 0, 120);
 			upThis.#subDb[modeMap.sc][1] = upThis.#detect.sc;
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.fill(0);
@@ -3857,10 +3857,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.switchMode("gs", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.gs);
 					upThis.#subDb[modeMap.gs][1] = upThis.#detect.gs;
-					upThis.setCcCh(9, 0, 120);
-					upThis.setCcCh(25, 0, 120);
-					upThis.setCcCh(41, 0, 120);
-					upThis.setCcCh(57, 0, 120);
+					upThis.setChCc(9, 0, 120);
+					upThis.setChCc(25, 0, 120);
+					upThis.setChCc(41, 0, 120);
+					upThis.setChCc(57, 0, 120);
 					upThis.#modeKaraoke = false;
 					upThis.#trkRedir.fill(0);
 					console.info("MIDI reset: GS");
@@ -4260,7 +4260,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				msg.subarray(1).forEach((e, i) => {
 					[() => {
 						// GS part LSB
-						upThis.setCcCh(part, 32, e);
+						upThis.setChCc(part, 32, e);
 					}, () => {// GS part fallback LSB
 					}][offset + i]();
 				});
@@ -4687,12 +4687,12 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#rpnt[allocated.rpnt * part] = 1;
 				}, false
 				, () => {
-					upThis.setCcCh(part, 91, e ? 127 : 0);
+					upThis.setChCc(part, 91, e ? 127 : 0);
 				}, false
 				, () => {
-					upThis.setCcCh(part, 7, e);
+					upThis.setChCc(part, 7, e);
 				}, () => {
-					upThis.setCcCh(part, 10, Math.ceil(e * 9.05));
+					upThis.setChCc(part, 10, Math.ceil(e * 9.05));
 				}][ri] || (() => {}))();
 			});
 			//console.debug(`MT-32 CH${part + 1} Patch: ${msg}`);
@@ -4811,12 +4811,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.#rpnt[allocated.rpnt * part] = 1;
 					}, false
 					, () => {
-						upThis.setCcCh(part, 91, e ? 127 : 0);
+						upThis.setChCc(part, 91, e ? 127 : 0);
 					}, false
 					, () => {
-						upThis.setCcCh(part, 7, e);
+						upThis.setChCc(part, 7, e);
 					}, () => {
-						upThis.setCcCh(part, 10, Math.ceil(e * 9.05));
+						upThis.setChCc(part, 10, Math.ceil(e * 9.05));
 					}][ptr] || (() => {}))();
 				});
 			};
@@ -5724,7 +5724,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 						} else if (msg[1] == 19) {
 							// SG part level
-							upThis.setCcCh(part, 7, e);
+							upThis.setChCc(part, 7, e);
 						};
 					} else {
 						console.warn(`Unknown AKAI SG SysEx: ${msg}`);
