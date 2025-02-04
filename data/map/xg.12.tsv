@@ -94,10 +94,10 @@ ChorusGt	Chorus Gtr.
 MidT.Gtr	MidToneGtr.
 MidTGtSt	MidToneGtrSt
 NasalGtr	Nasal Guitar
-Mid Hamr	MiddleHammer
-BridHamr	BridgeHammer
-Dbl Hamr	Doubl Hammer
-St. Hamr	StereoHammer
+HammrMid	MiddleHammer
+HammrBrg	BridgeHammer
+HammrDbl	Doubl Hammer
+HammrSt.	StereoHammer
 Funk Gtr	Funk Gtr. 1
 MuteStlG	MutedSteelGt
 FunkGtr2	Funk Guitar2
@@ -238,9 +238,10 @@ BrsStb80	Brass Stab80
 BriteTrp	BriteTrumpet
 Warm Trp	Warm Trumpet
 Dark Trp	Dark Trumpet
-SoftDTrp	SoftDarkTrp.
+SftDkTrp	SoftDarkTrp.
 Soft Trp	Soft Trumpet
-Dbl Blow	Double Blow
+BlownTrp	BlownTrumpet
+DblBlwTp	Double Blown
 SweetTrp	SweetTrumpet
 MlSwtTrp	Mel.SweetTrp
 NormlTrp	Normal Trmpt

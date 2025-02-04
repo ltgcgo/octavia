@@ -76,10 +76,10 @@ JazzGtr#	Jazz Guitar #
 ChorusGt	Chorus Guitar
 MidT.Gtr	Mid-tone Guitar
 MidTGtSt	Mid-tone Guitar Stereo
-Mid Hamr	Middle Hammer Guitar
-BridHamr	Bridge Hammer
-Dbl Hamr	Double Hammer
-St. Hamr	Stereo Hammer Guitar
+HammrMid	Middle Hammer Guitar
+HammrBrg	Bridge Hammer
+HammrDbl	Double Hammer
+HammrSt.	Stereo Hammer Guitar
 Funk Gtr	Funk Guitar 1
 MuteStlG	Muted Steel Guitar
 FunkGtr2	Funk Guitar 2
@@ -185,9 +185,9 @@ SynVoix2	Synth Voice 2
 OrchHit2	Orchestra Hit 2
 BrsStb80	Brass Stab 80
 BriteTrp	Bright Trumpet
-SoftDTrp	Soft Dark Trumpet
-Blow	Blown Trumpet
-Dbl Blow	Double Blown Trumpet
+SftDkTrp	Soft Dark Trumpet
+BlownTrp	Blown Trumpet
+DblBlwTp	Double Blown Trumpet
 SweetTrp	Sweet Trumpet
 MlSwtTrp	Mellow Sweet Trumpet
 NormlTrp	Normal Trumpet

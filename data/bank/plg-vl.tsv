@@ -145,7 +145,7 @@ MSB	PRG	LSB	NME	VXP
 033	015	006	BrethBow	yVl:BrethBow
 033	016	006	Trumpt!2	yVl:Trumpt!2
 033	017	006	FluglHr!	yVl:FluglHr!
-033	018	006	Cornet	yVl:Cornet
+033	018	006	Cornet!	yVl:Cornet!
 033	019	006	Jazz Trp	yVl:Jazz Trp
 033	020	006	JazzTrp2	yVl:JazzTrp2
 033	021	006	Flumpet	yVl:Flumpet
@@ -293,7 +293,7 @@ MSB	PRG	LSB	NME	VXP
 097	056	112	Trumpet!	yVl:Trumpet!
 097	056	113	Trumpt!2	yVl:Trumpt!2
 097	056	114	FluglHr!	yVl:FluglHr!
-097	056	115	Cornet	yVl:Cornet
+097	056	115	Cornet!	yVl:Cornet!
 097	057	112	Trombon!	yVl:Trombon!
 097	057	113	MelTrmbn	yVl:MelTrmbn
 097	058	112	Tuba!	yVl:Tuba!

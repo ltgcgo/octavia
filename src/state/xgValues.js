@@ -180,8 +180,8 @@ re,れ
 ro,ろ
 ry,り!
 wa,わ
-wi,うぃ
-we,うぇ
+wi,ゐ
+we,ゑ
 wo,を
 nga,か゚
 ngi,き゚
@@ -237,7 +237,7 @@ py,ぴ!
 !yo,ょ
 ya,や
 yu,ゆ
-ye,いぇ
+ye,𛀁
 yo,よ
 !a,ゃ
 !u,ゅ

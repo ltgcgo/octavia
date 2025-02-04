@@ -108,10 +108,10 @@ ChorusGt	Chorus Gt.
 MidT.Gtr	MidToneGt.
 MidTGtSt	MidTnGtrSt
 NasalGtr	Nasal Gtr.
-Mid Hamr	Mid Hammer
-BridHamr	BridgeHamr
-Dbl Hamr	Dbl Hammer
-St. Hamr	St. Hammer
+HammrMid	Mid Hammer
+HammrBrg	BridgeHamr
+HammrDbl	Dbl Hammer
+HammrSt.	St. Hammer
 Funk Gtr	Funk Gtr 1
 MuteStlG	MuteSteelG
 FunkGtr2	Funk Gtr 2
@@ -194,7 +194,7 @@ SmthSynB	SmthSynBas
 ModulrBa	ModularBas
 X WireBa	X WireBass
 AtkPulse	AttakPulse
-MetlBass	Metal Bass
+MetalBas	Metal Bass
 F.OsciBa	FrcOsciBas
 SynthAtk	SynthAttak
 SmoothBs	SmoothBass
@@ -263,6 +263,7 @@ MelChoir	MelloChoir
 ChoirStr	Choir Str.
 StereoAh	Stereo Aah
 VoiceDoo	Voice Doo
+VoiceHmm	Voice Hmm
 StereoOh	Stereo Ooh
 SynVoix2	Syn.Voice2
 AnalgVox	AnalgVoice
@@ -278,9 +279,10 @@ Trumpet2	Trumpet 2
 BriteTrp	Bright Trp
 Warm Trp	Warm Trmpt
 Dark Trp	Dark Trmpt
-SoftDTrp	SoftDrkTrp
+SftDkTrp	SoftDrkTrp
 Soft Trp	Soft Trmpt
-Dbl Blow	DoubleBlow
+BlownTrp	BlownTrmpt
+DblBlwTp	DblBlowTrp
 SweetTrp	SweetTrmpt
 MlSwtTrp	Mel.SwtTrp
 NormlTrp	Normal Trp
