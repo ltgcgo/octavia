@@ -537,6 +537,7 @@ let RootDisplay = class extends CustomEventSource {
 				(upThis.#metaRun[e.meta] || console.debug).call(upThis, e.meta, e.data);
 			});
 		});
+		// This is asking for trouble
 		eventPassThru(upThis.device, upThis, "mode");
 		eventPassThru(upThis.device, upThis, "mastervolume");
 		eventPassThru(upThis.device, upThis, "channelactive");
@@ -561,6 +562,7 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "efxinsert2");
 		eventPassThru(upThis.device, upThis, "efxinsert3");
 		eventPassThru(upThis.device, upThis, "partefxtoggle");
+		eventPassThru(upThis.device, upThis, "chmode");
 		upThis.addEventListener("note", function ({data}) {
 			upThis.#noteEvents.push(data);
 			//console.debug(data);

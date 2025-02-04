@@ -39,21 +39,39 @@ div.cambiare-canvas.cambiare-mode-x5d,
 div.cambiare-canvas.cambiare-mode-05rw,
 div.cambiare-canvas.cambiare-mode-k11,
 div.cambiare-canvas.cambiare-mode-s90es,
-div.cambiare-canvas.cambiare-mode-motif {
+div.cambiare-canvas.cambiare-mode-motif,
+div.cambiare-canvas div.part-channel.part-mode-xg,
+div.cambiare-canvas div.part-channel.part-mode-doc,
+div.cambiare-canvas div.part-channel.part-mode-qy10,
+div.cambiare-canvas div.part-channel.part-mode-qy20,
+div.cambiare-canvas div.part-channel.part-mode-ns5r,
+div.cambiare-canvas div.part-channel.part-mode-x5d,
+div.cambiare-canvas div.part-channel.part-mode-05rw,
+div.cambiare-canvas div.part-channel.part-mode-k11,
+div.cambiare-canvas div.part-channel.part-mode-s90es,
+div.cambiare-canvas div.part-channel.part-mode-motif {
 	--accent-color: #9efaa0;
 }
 div.cambiare-canvas.cambiare-mode-gm,
 div.cambiare-canvas.cambiare-mode-g2,
-div.cambiare-canvas.cambiare-mode-krs {
+div.cambiare-canvas.cambiare-mode-krs,
+div.cambiare-canvas div.part-channel.part-mode-gm,
+div.cambiare-canvas div.part-channel.part-mode-g2,
+div.cambiare-canvas div.part-channel.part-mode-krs {
 	--accent-color: #a1f3ff;
 }
 div.cambiare-canvas.cambiare-mode-gs,
 div.cambiare-canvas.cambiare-mode-sc,
 div.cambiare-canvas.cambiare-mode-mt32,
-div.cambiare-canvas.cambiare-mode-sd {
+div.cambiare-canvas.cambiare-mode-sd,
+div.cambiare-canvas div.part-channel.part-mode-gs,
+div.cambiare-canvas div.part-channel.part-mode-sc,
+div.cambiare-canvas div.part-channel.part-mode-mt32,
+div.cambiare-canvas div.part-channel.part-mode-sd {
 	--accent-color: #ffe1a5;
 }
-div.cambiare-canvas.cambiare-mode-sg {
+div.cambiare-canvas.cambiare-mode-sg,
+div.cambiare-canvas div.part-channel.part-mode-sg {
 	--accent-color: #fdd;
 }
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-xg,
@@ -65,21 +83,39 @@ div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-x5d,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-05rw,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-k11,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-s90es,
-div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-motif {
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-motif,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-xg,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-doc,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-qy10,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-qy20,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-ns5r,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-x5d,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-05rw,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-k11,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-s90es,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-motif {
 	--accent-color: #006415;
 }
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gm,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-g2,
-div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-krs {
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-krs,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-gm,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-g2,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-krs {
 	--accent-color: #005e88;
 }
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gs,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sc,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-mt32,
-div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sd {
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sd,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-gs,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sc,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-mt32,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sd {
 	--accent-color: #804e00;
 }
-div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sg {
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sg,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sg {
 	--accent-color: #902;
 }
 

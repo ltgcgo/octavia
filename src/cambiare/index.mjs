@@ -112,6 +112,10 @@ const modeColourPool = {
 	"sd": ["ffe1a5", "804e00"],
 	"sg": ["ffdddd", "990022"]
 };
+/*const modeGlobalClasses = [];
+for (let mode in modeNames) {
+	modeGlobalClasses.push(`cambiare-mode-${mode}`);
+};*/
 
 piMulti.forEach((e, i, a) => {
 	a[i] = Math.PI * i / 12;
@@ -239,6 +243,8 @@ let Cambiare = class extends RootDisplay {
 	#canvas;
 	#pixelProfile;
 	#accent = "fcdaff";
+	#chAccent = new Array(allocated.ch);
+	#chMode = new Array(allocated.ch);
 	#foreground = "ffffff";
 	#mode = "?";
 	#sectInfo = {};
@@ -253,7 +259,7 @@ let Cambiare = class extends RootDisplay {
 	#style = "comb";
 	glyphs = new MxFont40();
 	panStyle = 11; // Block, Pin, Arc, Dash
-	#drawNote(context, note, velo, state = 0, pitch = 0) {
+	#drawNote(context, note, velo, state = 0, pitch = 0, part) {
 		// Param calculation
 		let upThis = this;
 		let {width, height} = context.canvas;
@@ -290,7 +296,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Colours
-		context.fillStyle = `#${isBlackKey ? (upThis.#accent) : (upThis.#foreground)}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
+		context.fillStyle = `#${isBlackKey ? (upThis.getChAccent(part)) : (upThis.#foreground)}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
 		context.strokeStyle = context.fillStyle;
 		context.lineWidth = range == 1 ? 4 : 2;
 		context.lineDashOffset = 0;
@@ -360,7 +366,7 @@ let Cambiare = class extends RootDisplay {
 				let context = upThis.#sectPart[part >> 4][part & 15].cxt;
 				context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 				sum.chKeyPr[part].forEach(({v, s}, note) => {
-					upThis.#drawNote(context, note, v, s, upThis.device.getPitchShift(part));
+					upThis.#drawNote(context, note, v, s, upThis.device.getPitchShift(part), part);
 				});
 			};
 		});
@@ -429,13 +435,13 @@ let Cambiare = class extends RootDisplay {
 			chOff = part * allocated.cc,
 			aceOff = part * allocated.ace,
 			e = upThis.#sectPart[port][part & 15];
-			if (sum.chInUse[part] && port >= upThis.#renderPort && port < renderPortMax) {
+			if (visualizer.device.getActive()[part] && port >= upThis.#renderPort && port < renderPortMax) {
 				// Render CC draw calls
 				ccCandidates[8] = sum.ace[aceOff + 0] || 256;
 				ccCandidates[9] = sum.ace[aceOff + 1] || 256;
 				e.ccVis.clearRect(0, 0, 109, 25);
-				e.ccVis.fillStyle = `#${upThis.#accent}`;
-				e.ccVis.strokeStyle = `#${upThis.#accent}`;
+				e.ccVis.fillStyle = `#${upThis.getChAccent(part)}`;
+				e.ccVis.strokeStyle = `#${upThis.getChAccent(part)}`;
 				e.ccVis.lineWidth = 2;
 				for (let cci = 0; cci < ccCandidates.length; cci ++) {
 					let cce = ccCandidates[cci];
@@ -601,7 +607,7 @@ let Cambiare = class extends RootDisplay {
 						e.extVis.lineTo(7 + velocity, 12);
 						e.extVis.lineTo(0, 12 + mouth + 3);
 						e.extVis.fill();
-						e.extVis.fillStyle = `#${upThis.#accent}`;
+						e.extVis.fillStyle = `#${upThis.getChAccent(part)}`;
 						e.extVis.beginPath();
 						e.extVis.ellipse(43, 12, 4, 4 + breathNoise, 0, 0, fullRotation);
 						e.extVis.fill();
@@ -612,7 +618,7 @@ let Cambiare = class extends RootDisplay {
 						let dxView = sum.chContr.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1);
 						dxView.forEach((v, i) => {
 							if (i >= 8) {
-								e.extVis.fillStyle = `#${upThis.#accent}`;
+								e.extVis.fillStyle = `#${upThis.getChAccent(part)}`;
 							};
 							let x = i * 3;
 							let size = (v - 64) / 5.82;
@@ -650,7 +656,7 @@ let Cambiare = class extends RootDisplay {
 		sum.extraNotes.forEach((ev) => {
 			let {part, note, velo, state} = ev;
 			let context = upThis.#sectPart[part >> 4][part & 15].cxt;
-			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part));
+			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part), part);
 			//console.debug(part, note);
 		});
 		// Write to the new pixel display buffers
@@ -775,6 +781,24 @@ let Cambiare = class extends RootDisplay {
 		classOff(upThis.#canvas, [`cambiare-style-block`, `cambiare-style-comb`, `cambiare-style-piano`, `cambiare-style-line`]);
 		classOn(upThis.#canvas, [`cambiare-style-${value}`]);
 	};
+	getChMode(part = 0, disableFallback) {
+		if (part >= allocated.ch) {
+			throw(new RangeError("Invalid part number"));
+		};
+		let upThis = this;
+		if (disableFallback) {
+			return upThis.#chMode[part];
+		} else {
+			return upThis.#chMode[part] ?? upThis.#mode;
+		};
+	};
+	getChAccent(part = 0) {
+		if (part >= allocated.ch) {
+			throw(new RangeError("Invalid part number"));
+		};
+		let upThis = this;
+		return upThis.#chAccent[part] ?? upThis.#accent;
+	};
 	setClockSource(clockSource) {
 		this.#clockSource = clockSource;
 	};
@@ -797,12 +821,30 @@ let Cambiare = class extends RootDisplay {
 	};
 	setMode(mode) {
 		let upThis = this;
-		classOff(upThis.#canvas, [`cambiare-mode-gm`, `cambiare-mode-xg`, `cambiare-mode-gs`, `cambiare-mode-sc`, `cambiare-mode-ns5r`, `cambiare-mode-05rw`, `cambiare-mode-x5d`, `cambiare-mode-k11`, `cambiare-mode-sg`, `cambiare-mode-g2`, `cambiare-mode-mt32`, `cambiare-mode-doc`, `cambiare-mode-qy10`, `cambiare-mode-qy20`, `cambiare-mode-sd`, `cambiare-mode-krs`, `cambiare-mode-s90es`, `cambiare-mode-motif`]);
-		if (mode != "?") {
-			classOn(upThis.#canvas, [`cambiare-mode-${mode}`]);
-		};
 		upThis.#mode = mode;
 		upThis.#accent = (modeColourPool[mode] || ["fcdaff", "742b81"])[upThis.#scheme];
+		//classOff(upThis.#canvas, modeGlobalClasses);
+		for (let className of upThis.#canvas.classList) {
+			if (className.substring(0, 14) === "cambiare-mode-") {
+				upThis.#canvas.classList.remove(className);
+			};
+		};
+		if (mode != "?") {
+			upThis.#canvas.classList.add(`cambiare-mode-${mode}`);
+		};
+	};
+	setChMode(part, mode) {
+		let upThis = this;
+		upThis.#chMode[part] = mode;
+		let partViewer = upThis.#sectPart[part >> 4][part & 15];
+		for (let className of partViewer.root.classList) {
+			if (className.substring(0, 10) == "part-mode-") {
+				partViewer.root.classList.remove(className);
+			};
+		};
+		if (mode != "?") {
+			partViewer.root.classList.add(`part-mode-${mode}`);
+		};
 	};
 	setScheme(scheme = 0) {
 		let upThis = this;
@@ -810,6 +852,17 @@ let Cambiare = class extends RootDisplay {
 		upThis.#foreground = ["ffffff", "000000"][upThis.#scheme];
 		[classOff, classOn][upThis.#scheme](upThis.#canvas, [`cambiare-scheme-light`]);
 		upThis.#accent = (modeColourPool[upThis.#mode] || ["fcdaff", "742b81"])[upThis.#scheme];
+		for (let part = 0; part < allocated.ch; part ++) {
+			if (upThis.device.getChActive(part) === 0) {
+				continue;
+			};
+			if (upThis.#chAccent[part]) {
+				let targetColour = modeColourPool[upThis.#chMode[part]];
+				if (targetColour) {
+					upThis.#chAccent[part] = targetColour[upThis.#scheme];
+				};
+			};
+		};
 	};
 	#setPortView(canvasUpdate) {
 		let upThis = this;
@@ -1270,6 +1323,8 @@ let Cambiare = class extends RootDisplay {
 		let upThis = this;
 		upThis.#resizer = upThis.#resizerSrc.bind(this);
 		upThis.#renderer = upThis.#rendererSrc.bind(this);
+		upThis.#chAccent.fill(null);
+		upThis.#chMode.fill(null);
 		if (attachElement) {
 			upThis.attach(attachElement);
 		};
@@ -1284,6 +1339,8 @@ let Cambiare = class extends RootDisplay {
 			upThis.#metaType = "";
 			upThis.#metaLastLine = null;
 			upThis.#underlinedCh = allocated.invalidCh;
+			upThis.#chAccent.fill(null);
+			upThis.#chMode.fill(null);
 			try {
 				// Remove all meta
 				let list = upThis.#sectMeta.view.children;
@@ -1315,6 +1372,18 @@ let Cambiare = class extends RootDisplay {
 			upThis.#noteEvents.push(data);
 			//console.debug(data);
 		});*/
+		upThis.addEventListener("chmode", ({data}) => {
+			let {part, mode} = data;
+			/* classOn(upThis.#sectPart[part >> 4][part & 15]?.root, [
+				`part-mode-${mode}`
+			]); */
+			upThis.setChMode(part, mode);
+			let resultColour = modeColourPool[mode];
+			if (resultColour) {
+				upThis.#chAccent[part] = resultColour[upThis.#scheme];
+			};
+			console.debug(part, mode);
+		});
 		upThis.addEventListener("pitch", ({data}) => {
 			upThis.#pitchEvents.push(data);
 		});

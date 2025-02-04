@@ -1313,11 +1313,18 @@ let OctaviaDevice = class extends CustomEventSource {
 		//};
 		return result;
 	};
+	getChActive(part) {
+		return this.#chActive[part];
+	};
 	getCc(part) {
 		// Return channel CC registers
 		// Potential bug exists here
+		if (typeof part !== "number" || part < 0 || part >= allocated.ch) {
+			throw(new RangeError(`Invalid part number: CH${part + 1}`));
+			return;
+		};
 		let upThis = this;
-		let start = ccOffTable[channel];
+		let start = ccOffTable[part];
 		let arr = upThis.#cc.subarray(start, start + allocated.cc);
 		/* arr[ccToPos[0]] = arr[ccToPos[0]] || upThis.#subDb[upThis.getChModeId(channel)][0];
 		arr[ccToPos[32]] = arr[ccToPos[32]] || upThis.#subDb[upThis.getChModeId(channel)][1];
@@ -1359,6 +1366,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		let posCache = ccOffTable[part] + ccToPos[cc];
 		upThis.#cc[posCache] = data;
 		upThis.#cc[posCache + allocated.chcc] = 1;
+		if (part == 9) {
+			console.debug(part, cc, value);
+		};
 		upThis.dispatchEvent("cc", {
 			part,
 			cc,
@@ -1567,8 +1577,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new RangeError(`Invalid voice primitive component "${component}"`));
 			return;
 		};
-		if (part >= allocated.ch) {
-			throw(new RangeError(`Invalid part "CH${part + 1}"`));
+		if (typeof part !== "number" || part < 0 || part >= allocated.ch) {
+			throw(new RangeError(`Invalid part number: CH${part + 1}`));
 			return;
 		};
 		let upThis = this;
@@ -1993,8 +2003,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	setChMode(part, modeId) {
 		// Per-channel mode
 		let upThis = this;
-		if (part < 0 || part >= allocated.ch) {
-			throw(new RangeError(`Invalid CH${part + 1}`));
+		if (typeof part !== "number" || part < 0 || part >= allocated.ch) {
+			throw(new RangeError(`Invalid part number: CH${part + 1}`));
 			return;
 		};
 		if (port < 0 || modeId >= modeIdx.length) {
@@ -2002,6 +2012,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			return;
 		};
 		upThis.#chMode[part] = modeId;
+		upThis.dispatchEvent("chmode", {
+			part,
+			id: modeId,
+			mode: modeIdx[modeId]
+		});
 		upThis.dispatchEvent("voice", {
 			part
 		});
@@ -2037,6 +2052,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		for (let sect = port; sect < port + range; sect ++) {
 			upThis.#portMode[sect] = modeId;
 			for (let part = sect << 4; part < ((sect + 1) << 4); part ++) {
+				upThis.dispatchEvent("chmode", {
+					part,
+					id: modeId,
+					mode: modeIdx[modeId]
+				});
 				upThis.dispatchEvent("voice", {
 					part
 				});
