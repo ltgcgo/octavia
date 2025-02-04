@@ -1382,7 +1382,7 @@ let Cambiare = class extends RootDisplay {
 			if (resultColour) {
 				upThis.#chAccent[part] = resultColour[upThis.#scheme];
 			};
-			console.debug(part, mode);
+			//console.debug(part, mode);
 		});
 		upThis.addEventListener("pitch", ({data}) => {
 			upThis.#pitchEvents.push(data);

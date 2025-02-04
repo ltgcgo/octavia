@@ -1366,9 +1366,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		let posCache = ccOffTable[part] + ccToPos[cc];
 		upThis.#cc[posCache] = data;
 		upThis.#cc[posCache + allocated.chcc] = 1;
-		if (part == 9) {
-			console.debug(part, cc, value);
-		};
 		upThis.dispatchEvent("cc", {
 			part,
 			cc,
@@ -3862,10 +3859,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.switchMode("sc", true);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.sc);
 			// MUST REVISIT AND UPDATE!!!
-			upThis.setChCc(9, 0, 120);
+			/*upThis.setChCc(9, 0, 120);
 			upThis.setChCc(25, 0, 120);
 			upThis.setChCc(41, 0, 120);
-			upThis.setChCc(57, 0, 120);
+			upThis.setChCc(57, 0, 120);*/
 			upThis.#subDb[modeMap.sc][1] = upThis.#detect.sc;
 			upThis.#modeKaraoke = false;
 			upThis.#trkRedir.fill(0);
@@ -3877,10 +3874,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.switchMode("gs", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.gs);
 					upThis.#subDb[modeMap.gs][1] = upThis.#detect.gs;
-					upThis.setChCc(9, 0, 120);
+					/*upThis.setChCc(9, 0, 120);
 					upThis.setChCc(25, 0, 120);
 					upThis.setChCc(41, 0, 120);
-					upThis.setChCc(57, 0, 120);
+					upThis.setChCc(57, 0, 120);*/
 					upThis.#modeKaraoke = false;
 					upThis.#trkRedir.fill(0);
 					console.info("MIDI reset: GS");
