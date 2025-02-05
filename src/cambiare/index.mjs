@@ -1365,6 +1365,11 @@ let Cambiare = class extends RootDisplay {
 					classOff(e.number, [
 						`part-efx`, `part-focus`
 					]);
+					for (let className of e.root.classList) {
+						if (className.substring(0, 10) == "part-mode-") {
+							e.root.classList.remove(className);
+						};
+					};
 					setCanvasText(e.metre, "");
 					e.type.setTextRaw("");
 					e.std.setTextRaw("");
