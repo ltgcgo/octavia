@@ -14,6 +14,9 @@ import {
 	xgDelOffset,
 	xgNormFreq,
 	xgLfoFreq,
+	xfEncLabels,
+	xfSongParts,
+	xfVocalists,
 	getSgKana,
 	getXgRevTime,
 	getXgDelayOffset,
@@ -2527,18 +2530,26 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		};
 		upThis.#metaRun[5] = function (data) {
-			if (data.trim() == "") {
-				upThis.dispatchEvent("metacommit", {
-					"type": "C.Lyrics",
-					"data": "",
-					"amend": false
-				});
-			} else {
-				upThis.dispatchEvent("metacommit", {
-					"type": "C.Lyrics",
-					"data": data,
-					"amend": true
-				});
+			switch (upThis.#modeKaraoke) {
+				case upThis.KARAOKE_XF: {
+					break;
+				};
+				default: {
+					if (data.trim() == "") {
+						upThis.dispatchEvent("metacommit", {
+							"type": "C.Lyrics",
+							"data": "",
+							"amend": false
+						});
+					} else {
+						upThis.dispatchEvent("metacommit", {
+							"type": "C.Lyrics",
+							"data": data,
+							"amend": true
+						});
+					};
+					break;
+				};
 			};
 		};
 		upThis.#metaRun[6] = function (data) {
@@ -2548,10 +2559,70 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		};
 		upThis.#metaRun[7] = function (data) {
-			upThis.dispatchEvent("metacommit", {
-				"type": "CuePoint",
-				"data": data
-			});
+			switch(data[0]) {
+				case "$": {
+					if (data.substring(1, 5) == "Lyrc") {
+						// XF karaoke lyrics trigger & config
+						upThis.#modeKaraoke = upThis.KARAOKE_XF;
+						let xfKarLConf = data.substring(6).split(":");
+						let xfMelodyCh = xfKarLConf[0].replaceAll(" ", "").split(",");
+						xfMelodyCh.forEach((e, i, a) => {
+							a[i] = parseInt(e) - 1;
+						});
+						let xfLabel = xfEncLabels[xfKarLConf[2].substring(0, 2).toLowerCase()];
+						upThis.dispatchEvent("metacommit", {
+							"type": "XfMeloCh",
+							"data": `CH${xfKarLConf[0].replaceAll(" ", "").split(",").join(", CH")}`,
+							"parsed": xfMelodyCh
+						});
+						upThis.dispatchEvent("metacommit", {
+							"type": "XfLyrOff",
+							"data": xfKarLConf[1],
+							"parsed": parseInt(xfKarLConf[1])
+						});
+						upThis.dispatchEvent("metacommit", {
+							"type": "XfLyrEnc",
+							"data": xfLabel[1],
+							"parsed": xfLabel[0]
+						});
+					} else {
+						upThis.dispatchEvent("metacommit", {
+							"type": "CuePoint",
+							"data": data
+						});
+					};
+					break;
+				};
+				case "#": {
+					// XF scene number cue
+					upThis.dispatchEvent("metacommit", {
+						"type": "XfScneNo",
+						"data": data.substring(1)
+					});
+					break;
+				};
+				case "&": {
+					if (data.length == 2) {
+						// XF song part cue
+						upThis.dispatchEvent("metacommit", {
+							"type": "XfSngPrt",
+							"data": xfSongParts[data[1]] || `Unknown "${data[1]}"`
+						});
+					} else {
+						upThis.dispatchEvent("metacommit", {
+							"type": "CuePoint",
+							"data": data
+						});
+					};
+					break;
+				};
+				default: {
+					upThis.dispatchEvent("metacommit", {
+						"type": "CuePoint",
+						"data": data
+					});
+				};
+			};
 		};
 		upThis.#metaRun[32] = function (data) {
 			upThis.#metaChannel = data[0] + 1;

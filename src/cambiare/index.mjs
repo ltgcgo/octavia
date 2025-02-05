@@ -69,7 +69,12 @@ const metaNames = {
 	"XfKarLrc": "XK Lyricist",
 	"XfKarArr": "XK Arranger",
 	"XfKarPer": "XK Perform.",
-	"XfKarPrg": "XK Program."
+	"XfKarPrg": "XK Program.",
+	"XfScneNo": "XF Scene #",
+	"XfMeloCh": "XF Melody",
+	"XfLyrOff": "XF L. Offset",
+	"XfLyrEnc": "XF L. Lang.",
+	"XfSngPrt": "XF Part"
 }, metaBlocklist = [
 	"XfSongBt",
 	"XfSngIns"

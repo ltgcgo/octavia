@@ -301,6 +301,34 @@ let getVlCtrlSrc = function (ctrlNo) {
 	};
 };
 
+let xfEncLabels = {
+	"u8": ["utf-8"], // Custom extension
+	"l1": ["l9", "Pan-Latin"],
+	"jp": ["sjis", "Japanese"],
+	"kr": ["iso-2022-kr", "Korean"], // Cannot be decoded by JS runtimes
+	"hz": ["gb18030", "Simplified Chinese"],
+	"b5": ["big5", "Traditional Chinese"],
+	"cy": ["koi8", "Cyrillic"],
+	"vn": ["tcvn-5773-1993", "Vietnamese"] // Cannot be decoded by JS runtimes
+};
+let xfSongParts = {
+	"m": "Male",
+	"f": "Female",
+	"c": "Chorus",
+	"s": "Solo",
+	"p": "Plural",
+	"w": "Words",
+	"x": "Non-vocal"
+};
+let xfVocalists = {
+	"f1": "Female Solo",
+	"m1": "Male Solo",
+	"fm": "Female & Male",
+	"fp": "Female Chorus",
+	"mp": "Male Chorus",
+	"no": "Instrumental"
+};
+
 export {
 	xgEffType,
 	xgPartMode,
@@ -308,6 +336,9 @@ export {
 	xgDelOffset,
 	xgNormFreq,
 	xgLfoFreq,
+	xfEncLabels,
+	xfSongParts,
+	xfVocalists,
 	getSgKana,
 	getXgRevTime,
 	getXgDelayOffset,
