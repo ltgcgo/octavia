@@ -658,7 +658,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.dispatchEvent("voice", {
 							part
 						});
-						console.debug(`Part CH${part + 1} copied from CH${fwData[1]}.`);
+						console.debug(`Part CH${part + 1} copied from CH${fwData[1] + 1}.`);
 					};
 				};
 			};
