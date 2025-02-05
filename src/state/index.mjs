@@ -364,6 +364,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#efxTo = new Uint8Array(allocated.ch); // Define EFX targets for each channel
 	#ccCapturer = new Uint8Array(allocated.ch * allocated.redir); // Redirect non-internal CCs to internal CCs
 	#portMode = new Uint8Array(allocated.port); // Per-port mode
+	#portModeInitial = new Uint8Array(allocated.port); // Which port has received the port mode sets?
 	#chMode = new Uint8Array(allocated.ch); // Per-part mode
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cvnBuffer = new Uint8Array(allocated.ch * allocated.cvn); // Per-channel custom voice name
@@ -1888,6 +1889,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#rpnt.fill(0);
 		upThis.#ext.fill(0);
 		upThis.#portMode.fill(0);
+		upThis.#portModeInitial.fill(0);
 		upThis.#chMode.fill(0);
 		upThis.#ccCapturer.fill(0);
 		upThis.#masterVol = 100;
@@ -2057,7 +2059,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new RangeError(`Invalid mode ID ${modeId}`));
 			return;
 		};
+		upThis.#portModeInitial[port] = modeId; // Leaves room for improvement with scenarios needing different devices on different ports, but with same standard. Examples include JayB's Micro Sequencing.
 		for (let sect = port; sect < port + range; sect ++) {
+			let initializedModeOnPort = upThis.#portModeInitial[sect];
+			if (range > 1 && initializedModeOnPort !== 0 && initializedModeOnPort !== modeId) {
+				break;
+			};
 			upThis.#portMode[sect] = modeId;
 			for (let part = sect << 4; part < ((sect + 1) << 4); part ++) {
 				upThis.dispatchEvent("chmode", {
@@ -2070,6 +2077,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				});
 			};
 		};
+		//console.debug(upThis.#portModeInitial);
 		//console.debug(upThis.#portMode);
 	};
 	copyChSetup(sourceCh, targetCh, failWhenActive) {
@@ -4019,7 +4027,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 127: {
 					// Roland GS reset
 					upThis.switchMode("gs", true);
-					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.gs);
+					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.gs);
 					upThis.#subDb[modeMap.gs][1] = upThis.#detect.gs;
 					/*upThis.setChCc(9, 0, 120);
 					upThis.setChCc(25, 0, 120);
