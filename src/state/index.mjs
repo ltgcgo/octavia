@@ -2529,9 +2529,65 @@ let OctaviaDevice = class extends CustomEventSource {
 				"data": data
 			});
 		};
+		let xfNewEventMasked = false;
 		upThis.#metaRun[5] = function (data) {
 			switch (upThis.#modeKaraoke) {
 				case upThis.KARAOKE_XF: {
+					// Stateful XF lyrics parser
+					let textBuffer = "";
+					for (let e of data) {
+						switch (e) {
+							case "^": { // Space
+								textBuffer += " ";
+								break;
+							};
+							case ">": { // Tab, ignored in Octavia
+								break;
+							};
+							case "<": { // New page, treated as new event in Octavia
+								upThis.dispatchEvent("metacommit", {
+									"type": "KarLyric",
+									"data": textBuffer,
+									"mask": xfNewEventMasked,
+									"amend": false
+								});
+								textBuffer = "";
+								xfNewEventMasked = false;
+								break;
+							};
+							case "/": // Line break
+							case "%": { // Secondary line break, tread the same here
+								upThis.dispatchEvent("metacommit", {
+									"type": "KarLyric",
+									"data": textBuffer,
+									"mask": false,
+									"amend": true
+								});
+								upThis.dispatchEvent("metacommit", {
+									"type": "KarLyric",
+									"data": "",
+									"mask": true,
+									"amend": false
+								});
+								textBuffer = "";
+								xfNewEventMasked = true;
+								break;
+							};
+							default: {
+								textBuffer += e;
+							};
+						};
+					};
+					if (textBuffer.length > 0) {
+						// Normal append
+						upThis.dispatchEvent("metacommit", {
+							"type": "KarLyric",
+							"data": textBuffer,
+							"mask": xfNewEventMasked,
+							"amend": true
+						});
+						xfNewEventMasked = false;
+					};
 					break;
 				};
 				default: {
@@ -2585,6 +2641,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							"data": xfLabel[1],
 							"parsed": xfLabel[0]
 						});
+						xfNewEventMasked = false;
 					} else {
 						upThis.dispatchEvent("metacommit", {
 							"type": "CuePoint",
@@ -2608,6 +2665,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							"type": "XfSngPrt",
 							"data": xfSongParts[data[1]] || `Unknown "${data[1]}"`
 						});
+						xfNewEventMasked = false;
 					} else {
 						upThis.dispatchEvent("metacommit", {
 							"type": "CuePoint",
@@ -2754,7 +2812,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Yamaha XG reset
 					upThis.switchMode("xg", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.xg);
-					upThis.#modeKaraoke = upThis.KARAOKE_NONE;
+					upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 					console.info("MIDI reset: XG");
 					break;
 				};

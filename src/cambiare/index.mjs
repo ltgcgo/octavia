@@ -42,12 +42,12 @@ const metaNames = {
 	"C.Marker": "Marker",
 	"CuePoint": "Cue Point",
 	"Instrmnt": "Instrument",
-	"Kar.Info": "Kar Info",
+	"Kar.Info": "Kar. Info",
 	"Kar.Mode": "Karaoke",
 	"Kar.Lang": "Language",
-	"KarTitle": "Kar Title",
-	"KarLyric": "Kar Lyrics",
-	"Kar.Ver.": "Kar Version",
+	"KarTitle": "Kar. Title",
+	"KarLyric": "Kar. Lyrics",
+	"Kar.Ver.": "Kar. Version",
 	"SGLyrics": "SG Lyrics",
 	"TrkTitle": "Title",
 	"EORTitle": "Real Title", // Extension-overriden real title
@@ -72,9 +72,9 @@ const metaNames = {
 	"XfKarPrg": "XK Program.",
 	"XfScneNo": "XF Scene #",
 	"XfMeloCh": "XF Melody",
-	"XfLyrOff": "XF L. Offset",
-	"XfLyrEnc": "XF L. Lang.",
-	"XfSngPrt": "XF Part"
+	"XfLyrOff": "XL Offset",
+	"XfLyrEnc": "XL Lang.",
+	"XfSngPrt": "XL Part"
 }, metaBlocklist = [
 	"XfSongBt",
 	"XfSngIns"
