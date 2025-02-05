@@ -387,7 +387,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	#masterVol = 100;
 	#metaChannel = 0;
 	#noteLength = 500;
-	#convertLastSyllable = 0;
+	#sgConvertLastSyllable = 0;
+	#sgRunningLineLength = 0;
+	#sgMaxLineLength = 32;
 	#letterDisp = "";
 	#letterExpire = 0;
 	#letterSet = 0;
@@ -1895,7 +1897,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#masterVol = 100;
 		upThis.#metaTexts = [];
 		upThis.#noteLength = 500;
-		upThis.#convertLastSyllable = 0;
+		upThis.#sgConvertLastSyllable = 0;
+		upThis.#sgRunningLineLength = 0;
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
 		upThis.#bitmap.fill(0);
@@ -3426,19 +3429,26 @@ let OctaviaDevice = class extends CustomEventSource {
 						length += e * 13; // 7.5ms
 					};
 				});
-				if (timeNow >= upThis.#convertLastSyllable) {
-					this.dispatchEvent("metacommit", {
+				if (
+					timeNow >= upThis.#sgConvertLastSyllable ||
+					upThis.#sgRunningLineLength >= upThis.#sgMaxLineLength
+				) {
+					upThis.dispatchEvent("metacommit", {
 						"type": "SGLyrics",
 						"data": "",
 						"amend": false
 					});
+					//console.debug(`Splitted at length: ${upThis.#sgRunningLineLength}`);
+					upThis.#sgRunningLineLength = 0;
 				};
-				this.dispatchEvent("metacommit", {
+				upThis.dispatchEvent("metacommit", {
 					"type": "SGLyrics",
 					"data": `${getSgKana(vocal)}`,
 					"amend": true
 				});
-				upThis.#convertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
+				upThis.#sgRunningLineLength ++;
+				//console.debug(`Running length: ${upThis.#sgRunningLineLength}`);
+				upThis.#sgConvertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
 				if (getDebugState()) {
 					console.debug(`${dPref}vocals: ${vocal}`);
 				};
