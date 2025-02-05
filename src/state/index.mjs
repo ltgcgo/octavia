@@ -2359,16 +2359,16 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Normal text
 			switch (data.slice(0, 2)) {
 				case "@I": {
-					this.#modeKaraoke = true;
-					this.dispatchEvent("metacommit", {
+					upThis.#modeKaraoke = true;
+					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Info",
 						"data": data.slice(2)?.trimLeft()
 					});
 					break;
 				};
 				case "@K": {
-					this.#modeKaraoke = true;
-					this.dispatchEvent("metacommit", {
+					upThis.#modeKaraoke = true;
+					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Mode",
 						"data": data.slice(2)?.trimLeft()
 					});
@@ -2376,24 +2376,24 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case "@L": {
-					this.#modeKaraoke = true;
-					this.dispatchEvent("metacommit", {
+					upThis.#modeKaraoke = true;
+					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Lang",
 						"data": data.slice(2)?.trimLeft()
 					});
 					break;
 				};
 				case "@T": {
-					this.#modeKaraoke = true;
-					this.dispatchEvent("metacommit", {
+					upThis.#modeKaraoke = true;
+					upThis.dispatchEvent("metacommit", {
 						"type": "KarTitle",
 						"data": data.slice(2)?.trimLeft()
 					});
 					break;
 				};
 				case "@V": {
-					this.#modeKaraoke = true;
-					this.dispatchEvent("metacommit", {
+					upThis.#modeKaraoke = true;
+					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Ver.",
 						"data": data.slice(2)?.trimLeft()
 					});
@@ -2405,7 +2405,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					switch (dataArr[0]) {
 						case "hd": {
 							dataArr.slice(1).forEach((e, i) => {
-								e.length && this.dispatchEvent("metacommit", {
+								e.length && upThis.dispatchEvent("metacommit", {
 									"type": [
 										"XfSngDte", "XfSngRgn", "XfSngCat", "XfSongBt",
 										"XfSngIns", "XfSngVoc", "XfSngCmp", "XfSngLrc",
@@ -2418,7 +2418,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						case "ln": {
 							dataArr.slice(1).forEach((e, i) => {
-								e.length && this.dispatchEvent("metacommit", {
+								e.length && upThis.dispatchEvent("metacommit", {
 									"type": [
 										"XfKarLng", "XfKarNme", "XfKarCmp", "XfKarLrc",
 										"XfKarArr", "XfKarPer", "XfKarPrg"
@@ -2429,7 +2429,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							break;
 						};
 						default: {
-							this.dispatchEvent("metacommit", {
+							upThis.dispatchEvent("metacommit", {
 								"type": "XfUnData",
 								"data": data
 							});
@@ -2438,28 +2438,28 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				default: {
-					if (this.#modeKaraoke) {
+					if (upThis.#modeKaraoke) {
 						if (data[0] == "\\") {
 							// New section
-							this.dispatchEvent("metacommit", {
+							upThis.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": "",
 								"amend": false
 							});
-							this.dispatchEvent("metacommit", {
+							upThis.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": data.slice(1),
 								"amend": true
 							});
 						} else if (data[0] == "/") {
 							// New line
-							this.dispatchEvent("metacommit", {
+							upThis.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": "",
 								"mask": true,
 								"amend": false
 							});
-							this.dispatchEvent("metacommit", {
+							upThis.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": data.slice(1),
 								"mask": true,
@@ -2468,7 +2468,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else {
 							// Normal append
 							//this.#metaTexts[0] += data;
-							this.dispatchEvent("metacommit", {
+							upThis.dispatchEvent("metacommit", {
 								"type": "KarLyric",
 								"data": data,
 								"amend": true
@@ -2477,7 +2477,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					} else {
 						//this.#metaTexts[0] = data;
 						data.split("\n").forEach((e, i) => {
-							this.dispatchEvent("metacommit", {
+							upThis.dispatchEvent("metacommit", {
 								"type": "Cmn.Text",
 								"data": e,
 								"mask": i != 0
@@ -2488,15 +2488,15 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		upThis.#metaRun[2] = function (data) {
-			this.dispatchEvent("metacommit", {
+			upThis.dispatchEvent("metacommit", {
 				"type": "Copyrite",
 				"data": data
 			});
 		};
 		upThis.#metaRun[3] = function (data, track) {
 			// Filter overly annoying meta events
-			if (track < 1 && this.#metaChannel < 1) {
-				this.dispatchEvent("metacommit", {
+			if (track < 1 && upThis.#metaChannel < 1) {
+				upThis.dispatchEvent("metacommit", {
 					"type": "TrkTitle",
 					"data": data
 				});
@@ -2506,20 +2506,20 @@ let OctaviaDevice = class extends CustomEventSource {
 			//if (track < 1 && this.#metaChannel < 1) {
 				//this.#metaTexts.unshift(`${showTrue(this.#metaChannel, "", " ")}Instrmnt: ${data}`);
 			//};
-			this.dispatchEvent("metacommit", {
+			upThis.dispatchEvent("metacommit", {
 				"type": "Instrmnt",
 				"data": data
 			});
 		};
 		upThis.#metaRun[5] = function (data) {
 			if (data.trim() == "") {
-				this.dispatchEvent("metacommit", {
+				upThis.dispatchEvent("metacommit", {
 					"type": "C.Lyrics",
 					"data": "",
 					"amend": false
 				});
 			} else {
-				this.dispatchEvent("metacommit", {
+				upThis.dispatchEvent("metacommit", {
 					"type": "C.Lyrics",
 					"data": data,
 					"amend": true
@@ -2527,19 +2527,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		upThis.#metaRun[6] = function (data) {
-			this.dispatchEvent("metacommit", {
+			upThis.dispatchEvent("metacommit", {
 				"type": "C.Marker",
 				"data": data
 			});
 		};
 		upThis.#metaRun[7] = function (data) {
-			this.dispatchEvent("metacommit", {
+			upThis.dispatchEvent("metacommit", {
 				"type": "CuePoint",
 				"data": data
 			});
 		};
 		upThis.#metaRun[32] = function (data) {
-			this.#metaChannel = data[0] + 1;
+			upThis.#metaChannel = data[0] + 1;
 		};
 		upThis.#metaRun[33] = function (data, track) {
 			getDebugState() && console.debug(`Track ${track} requests to get assigned to output ${data}.`);

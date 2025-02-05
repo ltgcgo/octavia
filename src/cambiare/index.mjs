@@ -57,7 +57,7 @@ const metaNames = {
 	"XfSongBt": "XF Beat",
 	"XfSngIns": "XF Instr.",
 	"XfSngVoc": "XF Vocalist",
-	"XfSngCmp": "XF Composer",
+	"XfSngCmp": "XF Compose",
 	"XfSngLrc": "XF Lyricist",
 	"XfSngArr": "XF Arranger",
 	"XfSngPer": "XF Perform.",
