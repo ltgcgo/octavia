@@ -390,6 +390,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#sgConvertLastSyllable = 0;
 	#sgRunningLineLength = 0;
 	#sgMaxLineLength = 32;
+	#sgSplittedMask = false;
 	#letterDisp = "";
 	#letterExpire = 0;
 	#letterSet = 0;
@@ -1899,6 +1900,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#noteLength = 500;
 		upThis.#sgConvertLastSyllable = 0;
 		upThis.#sgRunningLineLength = 0;
+		upThis.#sgSplittedMask = false;
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
 		upThis.#bitmap.fill(0);
@@ -3439,14 +3441,17 @@ let OctaviaDevice = class extends CustomEventSource {
 						"amend": false
 					});
 					//console.debug(`Splitted at length: ${upThis.#sgRunningLineLength}`);
+					upThis.#sgSplittedMask = timeNow < upThis.#sgConvertLastSyllable;
 					upThis.#sgRunningLineLength = 0;
 				};
 				upThis.dispatchEvent("metacommit", {
 					"type": "SGLyrics",
 					"data": `${getSgKana(vocal)}`,
-					"amend": true
+					"amend": true,
+					"mask": upThis.#sgSplittedMask
 				});
 				upThis.#sgRunningLineLength ++;
+				upThis.#sgSplittedMask = false;
 				//console.debug(`Running length: ${upThis.#sgRunningLineLength}`);
 				upThis.#sgConvertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
 				if (getDebugState()) {
