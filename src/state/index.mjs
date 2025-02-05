@@ -300,6 +300,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	NOTE_SOSTENUTO_DECAY = 9;
 	NOTE_SOSTENUTO_SUSTAIN = 10;
 	NOTE_SOSTENUTO_HELD = 11;
+	NOTE_MUTED_RECOVERABLE = 16;
 	CH_MELODIC = 0;
 	CH_DRUMS = 1;
 	CH_DRUM1 = 2;
@@ -316,12 +317,16 @@ let OctaviaDevice = class extends CustomEventSource {
 	EXT_NONE = 0;
 	EXT_VL = 1;
 	EXT_DX = 3;
+	VLBC_SYSTEM = 0; // Follow system
 	VLBC_BRTHEXPR = 1; // Breath controller or expression
 	VLBC_VELOINIT = 2; // Initial key velocity
 	VLBC_VELOALL = 3; // Initial key velocity and aftertouch
 	CH_INACTIVE = 0;
 	CH_ACTIVE = 1;
 	CH_DISABLED = 2;
+	KARAOKE_NONE = 0;
+	KARAOKE_TEXT = 1; // Repurposed text events as karaoke lyrics
+	KARAOKE_XF = 2; // Yamaha XF karaoke lyrics
 	// Values
 	#mode = 0;
 	#bitmapPage = 0;
@@ -384,7 +389,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#letterSet = 0;
 	#selectPort = 0;
 	#receiveRS = true; // Receive remote switch
-	#modeKaraoke = false;
+	#modeKaraoke = 0;
 	#vlSysBreathMode = 1; // PLG-VL system breath mode
 	#receiveTree;
 	#ccRedirMap = new Array(allocated.ch);
@@ -1889,7 +1894,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
 		upThis.#bitmap.fill(0);
-		upThis.#modeKaraoke = false;
+		upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 		upThis.#selectPort = 0;
 		upThis.#receiveRS = true;
 		upThis.initDrums();
@@ -2359,7 +2364,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Normal text
 			switch (data.slice(0, 2)) {
 				case "@I": {
-					upThis.#modeKaraoke = true;
+					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Info",
 						"data": data.slice(2)?.trimLeft()
@@ -2367,7 +2372,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case "@K": {
-					upThis.#modeKaraoke = true;
+					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Mode",
 						"data": data.slice(2)?.trimLeft()
@@ -2376,7 +2381,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case "@L": {
-					upThis.#modeKaraoke = true;
+					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Lang",
 						"data": data.slice(2)?.trimLeft()
@@ -2384,7 +2389,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case "@T": {
-					upThis.#modeKaraoke = true;
+					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "KarTitle",
 						"data": data.slice(2)?.trimLeft()
@@ -2392,7 +2397,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				case "@V": {
-					upThis.#modeKaraoke = true;
+					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Ver.",
 						"data": data.slice(2)?.trimLeft()
@@ -2438,51 +2443,61 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				default: {
-					if (upThis.#modeKaraoke) {
-						if (data[0] == "\\") {
-							// New section
-							upThis.dispatchEvent("metacommit", {
-								"type": "KarLyric",
-								"data": "",
-								"amend": false
-							});
-							upThis.dispatchEvent("metacommit", {
-								"type": "KarLyric",
-								"data": data.slice(1),
-								"amend": true
-							});
-						} else if (data[0] == "/") {
-							// New line
-							upThis.dispatchEvent("metacommit", {
-								"type": "KarLyric",
-								"data": "",
-								"mask": true,
-								"amend": false
-							});
-							upThis.dispatchEvent("metacommit", {
-								"type": "KarLyric",
-								"data": data.slice(1),
-								"mask": true,
-								"amend": true
-							});
-						} else {
-							// Normal append
-							//this.#metaTexts[0] += data;
-							upThis.dispatchEvent("metacommit", {
-								"type": "KarLyric",
-								"data": data,
-								"amend": true
+					switch (upThis.#modeKaraoke) {
+						case upThis.KARAOKE_TEXT: {
+							switch (data[0]) {
+								case "\\": {
+									// New section
+									upThis.dispatchEvent("metacommit", {
+										"type": "KarLyric",
+										"data": "",
+										"amend": false
+									});
+									upThis.dispatchEvent("metacommit", {
+										"type": "KarLyric",
+										"data": data.slice(1),
+										"amend": true
+									});
+									break;
+								};
+								case "/": {
+									// New line
+									upThis.dispatchEvent("metacommit", {
+										"type": "KarLyric",
+										"data": "",
+										"mask": true,
+										"amend": false
+									});
+									upThis.dispatchEvent("metacommit", {
+										"type": "KarLyric",
+										"data": data.slice(1),
+										"mask": true,
+										"amend": true
+									});
+									break;
+								};
+								default: {
+									// Normal append
+									//this.#metaTexts[0] += data;
+									upThis.dispatchEvent("metacommit", {
+										"type": "KarLyric",
+										"data": data,
+										"amend": true
+									});
+								};
+							};
+							break;
+						};
+						default: {
+							//this.#metaTexts[0] = data;
+							data.split("\n").forEach((e, i) => {
+								upThis.dispatchEvent("metacommit", {
+									"type": "Cmn.Text",
+									"data": e,
+									"mask": i != 0
+								});
 							});
 						};
-					} else {
-						//this.#metaTexts[0] = data;
-						data.split("\n").forEach((e, i) => {
-							upThis.dispatchEvent("metacommit", {
-								"type": "Cmn.Text",
-								"data": e,
-								"mask": i != 0
-							});
-						});
 					};
 				};
 			};
@@ -2590,7 +2605,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// General MIDI reset.
 			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], true);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[["gm", "?", "g2"][msg[0] - 1]]);
-			upThis.#modeKaraoke = upThis.#modeKaraoke || false;
+			upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 			console.info(`MIDI reset: ${["GM", "Init", "GM2"][msg[0] - 1]}`);
 			if (msg[0] == 2) {
 				upThis.init();
@@ -2668,7 +2683,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Yamaha XG reset
 					upThis.switchMode("xg", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.xg);
-					upThis.#modeKaraoke = false;
+					upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 					console.info("MIDI reset: XG");
 					break;
 				};
@@ -3867,7 +3882,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.setChCc(41, 0, 120);
 			upThis.setChCc(57, 0, 120);*/
 			upThis.#subDb[modeMap.sc][1] = upThis.#detect.sc;
-			upThis.#modeKaraoke = false;
+			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			upThis.#trkRedir.fill(0);
 			console.info(`GS system to ${["single", "dual"][msg[0]]} mode.`);
 		}).add([66, 18, 64, 0], (msg, track, id) => {
@@ -3881,7 +3896,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.setChCc(25, 0, 120);
 					upThis.setChCc(41, 0, 120);
 					upThis.setChCc(57, 0, 120);*/
-					upThis.#modeKaraoke = false;
+					upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 					upThis.#trkRedir.fill(0);
 					console.info("MIDI reset: GS");
 					break;
@@ -4664,7 +4679,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// MT-32 reset all params
 			upThis.switchMode("mt32", true);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.mt32);
-			upThis.#modeKaraoke = false;
+			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
 			console.info("MIDI reset: MT-32");
 		}).add([22, 18, 0], (msg, track, id) => {
@@ -4984,14 +4999,14 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Mode switch
 			upThis.switchMode("ns5r", true);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.ns5r);
-			upThis.#modeKaraoke = false;
+			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			console.debug(`NS5R mode switch requested: ${["global", "multi", "prog edit", "comb edit", "drum edit", "effect edit"][msg[0]]} mode.`);
 		}).add([66, 1], (msg, track) => {
 			// Map switch
 			let n5Target = ["ns5r", "05rw"][msg[0]];
 			upThis.switchMode(n5Target, true);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap[n5Target]);
-			upThis.#modeKaraoke = false;
+			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 		}).add([66, 18, 0, 0], (msg, track) => {
 			// Master setup
 			let offset = msg[0];
@@ -5001,7 +5016,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 127: { // GS reset for NS5R
 					upThis.switchMode("ns5r", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.ns5r);
-					upThis.#modeKaraoke = false;
+					upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 					break;
 				};
 				case 125: {// drum reset
@@ -5193,7 +5208,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 52], (msg, track) => {
 			// Currect effect dump
 			upThis.switchMode("ns5r");
-			upThis.#modeKaraoke = false;
+			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			//console.debug(`Dumped raw data: ${korgUnpack(msg).join(", ")}`);
 			let efxName = "";
 			korgFilter(msg, (e, i) => {
@@ -5214,7 +5229,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Current multi dump
 			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("ns5r");
-			upThis.#modeKaraoke = false;
+			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			let efxName = "";
 			let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
@@ -5502,7 +5517,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				// GMega bank set
 				upThis.switchMode("k11", true);
 				upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.k11);
-				upThis.#modeKaraoke = false;
+				upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 				upThis.#subDb[modeMap.k11][1] = e ? 4 : 0;
 				console.info("MIDI reset: GMega/K11");
 			}, () => {
