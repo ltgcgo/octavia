@@ -186,6 +186,9 @@ ChoirStr	Choir Strings
 SynVoix2	Synth Voice 2
 OrchHit2	Orchestra Hit 2
 BrsStb80	Brass Stab 80
+BassHit+	Bass Hit Plus
+6th Hit+	6th Hit Plus
+EuroHit+	Euro Hit Plus
 BriteTrp	Bright Trumpet
 SftDkTrp	Soft Dark Trumpet
 BlownTrp	Blown Trumpet
@@ -233,14 +236,14 @@ Sax Sect	Saxophone Section
 HyprAlto	Hyper Alto Sax
 PwrAltSx	Power Alto Sax
 FakeAlto	Fake Alto Sax
-FakeAlt+	Fake Alto Sax +
+FakeAlt+	Fake Alto Plus
 DFakeAlt	Dark Fake Alto Sax
 AltoSax#	Alto Saxophone #
 BrthTnSx	Breathy Tenor Sax
 SoftTenr	Soft Tenor Sax
 TenrSax2	Tenor Saxophone 2
 SuperTnr	Super Tenor Sax
-SuprTnr+	Super Tenor Sax +
+SuprTnr+	Super Tenor Plus
 SupTnrSt	Super Tenor Stereo
 Tenr&Alt	Tenor & Alto Sax
 BrthTnr2	Breathy Tenor Sax 2
@@ -322,18 +325,21 @@ K/S Hum.	Humid Kick / Snare
 IncntClk	Incontience Click
 K/S Slap	Slap Kick / Snare
 CheapOsc	Cheap Oscillator
+SoftHit+	Soft Hit Plus
 Rvr/Crsh	Reverse / Crash
-CheapOc+	Cheap Oscillator +
+CheapOc+	Cheap Oscillator Plus
 NstyCtSt	Stereo Nasty Cut
 NstOrSpl	Split Nasty Organ
 ChoCalcO	Chorus Calc Organ
+OrgnHit+	Organ Hit Plus
 UnvrsSwp	Universe Sweep
 SemiacOr	Semi Acoustic Organ
-Glocken+	Glockenspiel +
+Glocken+	Glockenspiel Plus
 CutNoise	Cutting Noise
 CutNoiz2	Cutting Noise 2
 DstCutNz	Distorted Cutting Noise
 Fl.KClik	Flute Key Click
+Insects	Insect Chirps
 Scratch2	Scratch Split
 CarTyreS	Car Tyre Squeal
 TechnoHi	Techno Kit High
@@ -545,5 +551,7 @@ MM-Fall	MM-Fall SFX
 MM-Clav3	MM-Clavichord 3
 MM-Vibe2	MM-Vibraphone 2
 DX-SLd 9	DX Square Lead 9
+AnalgStr	Analog Strings
 DirtySaw	Dirty Sawtooth Lead
+BPF Step	Band Passed Steps
 Dist.5th	Distorted Fifth

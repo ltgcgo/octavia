@@ -6114,9 +6114,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					e && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[94]] = e;
 				}, () => {
-					e != 127 && (upThis.setChActive(part, 1));
-					upThis.#cc[chOff + ccToPos[128]] = e;
-					upThis.allocateAce(part, 128);
+					upThis.setChCc(part, 128, e);
+					if (e != 127) {
+						upThis.setChActive(part, 1);
+						upThis.allocateAce(part, 128);
+					};
 				}, () => {
 					// note shift, RPN
 				}, () => {

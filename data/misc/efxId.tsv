@@ -351,7 +351,7 @@ MSB	LSB	Name
 56	03	XG 2-way Rot+Amp
 57	00	XG Ensemble Detune
 58	00	XG Ambience
-5d	00	XG Talking Modulator
+5d	00	XG Talking Mod
 5e	00	XG Lo-Fi
 5f	00	XG Delay+Distortion
 5f	01	XG Delay+Overdrive
