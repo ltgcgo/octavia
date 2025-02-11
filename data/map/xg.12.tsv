@@ -158,10 +158,12 @@ SynBs1Dk	DarkSynBass1
 FastResB	FastReso.Bas
 ResoBass	ResonantBass
 TechnoBa	Techno Bass
+OrbitrBa	Orbiter Bass
 Sqr.Bass	Square Bass
 RubberBa	Rubber Bass
 HardReso	HardResonant
 MnplisBa	MineaplsBass
+HammerBa	Hammer Bass
 AnalogBa	Analog Bass
 MelloSBa	MelloSynBass
 Seq.Bass	SequencedBas
@@ -315,7 +317,8 @@ PanFlut#	Pan Flute #
 BotlLgto	BottleLegato
 SqrLead2	Square Ld 2
 LMSquare	LM Square Ld
-HollowSq	Hollow Sqr.
+HollowSq	HollowSquare
+ShmoogLd	Shmoog Lead
 DblOsci.	DoubleOscil.
 MellowSq	Mellow Sqr.
 SoloSine	Solo Sine Ld
@@ -638,5 +641,5 @@ MM-Vibe2	MM-Vibrafn.2
 MM-Vce 4	MM-Voices 4
 DX-SLd 9	DX-SquareLd9
 J.Hammer	Jack Hammer
-RadioNz	Radio Noise
-Dist5th	Distorted5th
+Radio Nz	Radio Noise
+Dist.5th	Distorted5th

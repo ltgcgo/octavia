@@ -17,6 +17,7 @@ MellowEP	Mellow Electric Piano
 HardEPno	Hard Electric Piano
 VX E.Pno	VX Electric Piano
 60sElPno	60s' Electric Piano
+4 Way EP	4 Way E. Piano
 Easy EP	Easy Electric Piano
 EPiano1#	Electric Piano 1 #
 EPiano2K	Electric Piano 2 KSP
@@ -253,7 +254,7 @@ SwtPanFl	Sweet Pan Flute
 BotlLgto	Bottle Legato
 SqrLead2	Square Lead 2
 LMSquare	LM Square Lead
-HollowSq	Hollow Square
+HollowSq	Hollow Square Lead
 DblOsci.	Double Oscillator
 MellowSq	Mellow Square
 SoloSine	Solo Sine Lead
@@ -262,6 +263,7 @@ SawLead2	Sawtooth Lead 2
 ThickSaw	Thick Saw Lead
 Dyna.Saw	Dynamic Sawtooth
 Digi.Saw	Digital Sawtooth
+WaspySyn	Waspy Synth Lead
 RezzySaw	Rezzy Sawtooth Lead
 DoublSaw	Double Sawtooth Lead
 Dim Saw	Dim Sawtooth Lead
@@ -294,7 +296,7 @@ NylonEP.	Nylon Electric Piano
 AtmosPad	Atmosphere Pad
 DigiBmda	Digital Bermuda
 FantaBel	Fantasy Bells
-Reso&Pan	Resonant & Panning
+Reso&Pan	Resonance & Panning
 Ana.Echo	Analog Echoes
 DetSitar	Detuned Sitar
 ElecBnjo	Electric Banjo
@@ -543,5 +545,4 @@ MM-Clav3	MM-Clavichord 3
 MM-Vibe2	MM-Vibraphone 2
 DX-SLd 9	DX Square Lead 9
 DirtySaw	Dirty Sawtooth Lead
-Dist5th	Distorted Fifth
-4 Way EP	4 Way E. Piano
+Dist.5th	Distorted Fifth

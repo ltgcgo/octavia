@@ -178,12 +178,14 @@ AcidBass	Acid Bass
 ResoBass	Reson.Bass
 Clv.Bass	Clavi Bass
 TechnoBa	TechnoBass
+OrbitrBa	Orbiter Ba
 Sqr.Bass	SquareBass
 RubberBa	RubberBass
-Fish	Fish Bass
+FishBass	Fish Bass
 HardReso	HardReson.
 MnplisBa	MnplisBass
 Miami Ba	Miami Bass
+HammerBa	HammerBass
 AnalogBa	AnalogBass
 RezoBass	Rezzo Bass
 MelloSBa	MelloSynBs
@@ -268,6 +270,7 @@ StereoOh	Stereo Ooh
 SynVoix2	Syn.Voice2
 AnalgVox	AnalgVoice
 OrchHit2	Orch. Hit2
+ImpactHt	Impact Hit
 Brs Stab	Brass Stab
 DoublHit	Double Hit
 BrsStb80	BrasStab80
@@ -371,6 +374,7 @@ BotlLgto	BotlLegato
 SqrLead2	SquareLd 2
 LMSquare	LM Square
 HollowSq	Hollow Sqr
+ShmoogLd	ShmoogLead
 DblOsci.	DoublOsci.
 MellowSq	Mellow Sqr
 SoloSine	Solo Sine
@@ -858,7 +862,7 @@ DX-SLd 9	DX-SqrLd 9
 DirtySaw	Dirty Saw
 J.Hammer	JackHammer
 ANCowbel	AN Cowbell
-RadioNz	RadioNoise
+Radio Nz	RadioNoise
 FreeEdge	Free Edge
-Dist5th	Dist.Fifth
+Dist.5th	Dist.Fifth
 HardNoiz	Hard Noise

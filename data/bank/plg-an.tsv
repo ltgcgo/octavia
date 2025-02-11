@@ -2,59 +2,59 @@ MSB	PRG	LSB	NME
 100	38	0	ANSynBas
 100	38	64	RealMini
 100	38	65	Chamleon
-100	38	66	Cream
-100	38	67	Maxx
-100	38	68	2001
+100	38	66	Cream Ba
+100	38	67	MaxxBass
+100	38	68	2001 Bas
 100	38	69	BlapMoth
-100	38	70	Ruff
-100	38	71	BiggMac
+100	38	70	RuffBass
+100	38	71	Bigg Mac
 100	38	72	Prphtic1
 100	38	73	Prphtic2
-100	38	74	Wonder
-100	38	75	Slum
+100	38	74	WonderBa
+100	38	75	SlumBass
 100	38	96	X-Bass
 100	39	0	FootBase
 100	39	64	Mini Low
 100	39	65	DuckBass
 100	39	66	10thTone
 100	39	67	DuckBas2
-100	39	68	Cracker
-100	39	69	Monty
+100	39	68	CrackrBa
+100	39	69	MontyBas
 100	39	70	BirdWrld
 100	39	71	Woodbass
 100	39	72	RubbaBas
-100	39	73	Smooth
-100	39	74	Smoovey
+100	39	73	SmoothB.
+100	39	74	SmooveyB
 100	39	75	Zed Bass
-100	39	76	Oizo
+100	39	76	OizoBass
 100	39	96	Dog Bass
-100	39	97	Squeaky
+100	39	97	SqueakBa
 100	39	98	Insomnia
 100	39	99	Stranger
-100	39	100	Hardstep
-100	39	101	Behind
-100	39	102	Rydeen
-100	39	103	Knives
+100	39	100	HrdstpBa
+100	39	101	BehindBa
+100	39	102	RydeenBa
+100	39	103	KnivesBa
 100	39	104	Knives 2
-100	39	105	Mg Wood
+100	39	105	MgWoodBa
 100	39	106	Mg Frtls
-100	39	107	Logic
-100	50	0	Analog
+100	39	107	Logic Ba
+100	50	0	AnalgStr
 100	50	64	So-Lina
 100	50	65	Choclate
 100	50	66	Stringer
-100	51	0	Lush
-100	51	64	Bonn
+100	51	0	LushStr.
+100	51	64	BonnStr.
 100	51	65	PWMStrng
 100	51	66	MultiSaw
 100	51	67	AnaStrng
 100	51	68	StrngPad
 100	51	96	Hi Wedge
 100	54	0	MaMa
-100	54	96	MgVoice
-100	62	0	Fatty
+100	54	96	Mg.Voice
+100	62	0	FattyBrs
 100	62	64	MajorBrs
-100	62	65	Bronze
+100	62	65	BronzeBr
 100	62	66	HardBrss
 100	62	96	ObDetune
 100	62	97	ProBrass
@@ -67,65 +67,65 @@ MSB	PRG	LSB	NME
 100	80	65	Silence
 100	80	66	Maise
 100	80	67	KnivesLd
-100	80	68	Pulser
-100	80	69	Sliver
+100	80	68	PulserLd
+100	80	69	SliverLd
 100	80	70	Lucky
 100	80	71	ANPopcrn
 100	80	96	X-mod
 100	80	97	MgSoloLd
-100	80	98	Mg Cat
+100	80	98	Mg CatLd
 100	81	0	Caner
 100	81	64	ANSyncHd
-100	81	65	Chick
-100	81	66	Susy
-100	81	67	EarthLd
+100	81	65	Chick Ld
+100	81	66	SusyLead
+100	81	67	Earth Ld
 100	81	68	P-5 Saw
 100	81	69	Rock It
-100	81	70	Faaaat
+100	81	70	FaaaatLd
 100	81	71	DirtySaw
 100	81	72	Rhubarb
 100	81	73	J.Hammer
 100	81	74	X-mod 2
 100	81	75	PitchMan
 100	81	76	EarthLd2
-100	81	96	Cosmic
+100	81	96	CosmicLd
 100	81	97	Q Lead
 100	81	98	MiniTech
 100	82	0	ANCaliop
 100	82	96	AsianTek
 100	83	0	AN Chiff
-100	83	64	Pastel
+100	83	64	PastelLd
 100	83	96	Chromes
 100	84	0	ANSyncLd
-100	84	64	Billy
+100	84	64	Billy Ld
 100	84	65	Dre-full
-100	84	66	Funky
+100	84	66	Funky Ld
 100	84	96	DistOdsy
 100	85	0	AN VoxLd
 100	85	96	MgVoice2
-100	86	0	Lipstick
-100	86	64	Abacab
+100	86	0	LipstkLd
+100	86	64	AbacabLd
 100	86	96	5th Ring
 100	87	0	Squeamer
-100	87	64	Mr.Hook
+100	87	64	Mr. Hook
 100	87	65	SupaSync
-100	89	0	Magic
+100	89	0	MagicPad
 100	89	64	Contnent
-100	89	65	Yellow
-100	89	66	5th Pad
-100	89	67	Kelp
-100	89	96	Loom
+100	89	65	YellowPd
+100	89	66	FifthPad
+100	89	67	Kelp Pad
+100	89	96	Loom Pad
 100	90	0	SyncBrPd
 100	90	96	ProAtck2
 100	90	97	Pro Sync
-100	91	0	Soar
+100	91	0	Soar Pad
 100	92	0	AN Bowed
 100	92	96	AN Dawn
 100	93	0	Sync Eko
 100	93	64	Sharpsyn
 100	93	65	SyncEko2
 100	94	0	Vangelzm
-100	94	96	Mars
+100	94	96	Mars Pad
 100	94	97	WaterPad
 100	95	0	PWMSweep
 100	95	64	HighSwep
@@ -141,7 +141,7 @@ MSB	PRG	LSB	NME
 100	99	0	Saphire
 100	99	96	ProAtack
 100	99	97	Behind 2
-100	99	98	HarmoSq
+100	99	98	HarmoSqr
 100	99	99	HarmoSq2
 100	100	0	SepaWays
 100	101	0	DeepBlue
@@ -164,12 +164,12 @@ MSB	PRG	LSB	NME
 100	103	100	Indosync
 100	103	101	Nz Power
 100	112	0	ANBeltre
-100	112	96	EthTeck
+100	112	96	Eth.Teck
 100	114	0	Woob
 100	114	96	ANCowbel
 100	116	0	TriblTom
 100	116	96	AN Snare
-100	116	97	AnaDrum
+100	116	97	AnlgDrum
 100	118	0	SynthTom
 100	118	64	ULTSound
 100	118	65	AN Toms
@@ -181,7 +181,7 @@ MSB	PRG	LSB	NME
 100	119	0	AN HiHat
 100	125	0	ANHlcptr
 100	125	64	Siren
-100	125	65	RadioNz
+100	125	65	Radio Nz
 100	125	66	Fumble
 100	125	67	Invade
 100	125	68	FreeEdge
@@ -226,7 +226,7 @@ MSB	PRG	LSB	NME
 100	127	70	TechPlck
 100	127	71	Krftwrks
 100	127	72	Filtrflw
-100	127	73	Dist5th
+100	127	73	Dist.5th
 100	127	74	HardNoiz
 100	127	75	Lightstk
 100	127	76	Lotus

@@ -404,38 +404,38 @@ MSB	PRG	LSB	NME	ELC	LVL
 000	038	040	TechnoBa	1	0
 000	038	041	KickBass		
 000	038	042	NEP		
-000	038	064	Orbiter	1	1
+000	038	064	OrbitrBa	1	1
 000	038	065	Sqr.Bass	1	1
 000	038	066	RubberBa	1	1
-000	038	067	Fish	0	3
+000	038	067	FishBass	0	3
 000	038	068	HardReso	0	3
-000	038	069	Wah Saw		
-000	038	070	Pluto		
-000	038	071	Pluto +		
-000	038	072	Stimuli		
+000	038	069	WahSawBa		
+000	038	070	PlutoBas		
+000	038	071	PlutoBa+		
+000	038	072	StimuliB		
 000	038	073	RunPulse		
 000	038	074	TkinPuls		
-000	038	075	Node		
-000	038	076	Stainer		
+000	038	075	NodeBass		
+000	038	076	StainrBa		
 000	038	077	StainAtk		
 000	038	078	SweepSqr		
 000	038	079	SwpSqr +		
 000	038	080	Stinks		
 000	038	081	RezStink		
 000	038	082	Reso Sqr		
-000	038	083	Dagger		
-000	038	084	Zinc		
+000	038	083	DaggerBa		
+000	038	084	ZincBass		
 000	038	085	SweePWM		
 000	038	086	St.SwPWM		
 000	038	087	Slow Wah		
-000	038	088	Crook		
+000	038	088	CrookBas		
 000	038	089	FstFrtBa		
 000	038	090	Rubber30		
 000	038	091	FstRezBa		
 000	038	092	MnplisBa		
 000	038	093	Miami Ba		
 000	038	094	RzTalkBx		
-000	038	096	Hammer	1	1
+000	038	096	HammerBa	1	1
 000	038	112	AnalogBa	1	3
 000	038	113	RezoBass	1	3
 000	039	000	SynBass2	1	0
@@ -443,7 +443,7 @@ MSB	PRG	LSB	NME	ELC	LVL
 000	039	012	Seq.Bass	1	0
 000	039	018	ClkSynBa	1	0
 000	039	019	SynBs2Dk	0	0
-000	039	022	Zealot		
+000	039	022	ZealotBa		
 000	039	032	SmthSynB	1	1
 000	039	040	ModulrBa	1	1
 000	039	041	DX Bass	1	1
@@ -453,9 +453,9 @@ MSB	PRG	LSB	NME	ELC	LVL
 000	039	066	CS Light	0	3
 000	039	067	MetalBas	0	3
 000	039	068	F.OsciBa		
-000	039	069	Cubit		
-000	039	070	Cubit +		
-000	039	071	Keel		
+000	039	069	CubitBas		
+000	039	070	CubitBa+		
+000	039	071	KeelBass		
 000	039	072	Pwr Keel		
 000	039	073	PlnPulse		
 000	039	074	PwrPulse		
@@ -604,7 +604,7 @@ MSB	PRG	LSB	NME	ELC	LVL
 000	055	008	LoFi Hit		
 000	055	035	OrchHit2	1	0
 000	055	040	Throne		
-000	055	064	Impact	1	0
+000	055	064	ImpactHt	1	0
 000	055	065	Brs Stab	1	2
 000	055	066	DoublHit	1	2
 000	055	067	BrsStb80	1	2
@@ -786,7 +786,7 @@ MSB	PRG	LSB	NME	ELC	LVL
 000	080	006	SqrLead2	0	0
 000	080	008	LMSquare	1	0
 000	080	018	HollowSq	0	0
-000	080	019	Shmoog	1	0
+000	080	019	ShmoogLd	1	0
 000	080	035	DblOsci.	1	3
 000	080	064	MellowSq	1	0
 000	080	065	SoloSine	1	0
@@ -794,10 +794,10 @@ MSB	PRG	LSB	NME	ELC	LVL
 000	080	067	Pulse Ld	0	3
 000	080	068	SyncLead	0	3
 000	080	069	ForceOsc		
-000	080	070	Accent		
-000	080	071	Brick		
-000	080	072	Alum		
-000	080	073	Query		
+000	080	070	AccentLd		
+000	080	071	Brick Ld		
+000	080	072	AlumLead		
+000	080	073	Query Ld		
 000	080	074	FMSlwSwp		
 000	080	075	SyncLdDb		
 000	080	076	Curse Ld		
