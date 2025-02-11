@@ -696,7 +696,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = det.channel;
 			let upThis = this;
 			// Redirect CC event
-			let redirMap = this.#ccRedirMap[part],
+			let redirMap = upThis.#ccRedirMap[part],
 			redirTarget = redirMap[det.data[0]];
 			if (redirTarget) {
 				//console.debug(`Redirected cc${det.data[0]} on CH${part + 1} to cc${redirTarget}.`);
@@ -709,21 +709,21 @@ let OctaviaDevice = class extends CustomEventSource {
 						case modeMap.s90es:
 						case modeMap.motif: {
 							if (det.data[0] == 0) {
-								([0, 63].indexOf(det.data[1]) > -1) && (this.setChActive(part, 1));
+								([0, 63].indexOf(det.data[1]) > -1) && (upThis.setChActive(part, 1));
 								break;
 							};
-							det.data[1] && (this.setChActive(part, 1));
+							det.data[1] && (upThis.setChActive(part, 1));
 							break;
 						};
 						default: {
-							this.setChActive(part, 1);
+							//this.setChActive(part, 1);
 							break;
 						};
 					};
 				})();
 			};
 			let extOff = part * allocated.ext,
-			partMode = this.getChModeId(part);
+			partMode = upThis.getChModeId(part);
 			// Non-store CC messages
 			switch (det.data[0]) {
 				case 96: {
