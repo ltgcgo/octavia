@@ -72,7 +72,7 @@ voiceIdx = [
 ];
 let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"?": [0, 0, 120, 0, 0],
-	"gm": [0, 0, 127, 0, 0],
+	"gm": [0, 0, 120, 0, 0],
 	"gs": [0, 0, 120, 0, 0],
 	"sc": [0, 0, 120, 0, 0],
 	"xg": [0, 0, 127, 0, 0],
@@ -1386,6 +1386,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			cc,
 			data
 		});
+		/* if (part == 9 && cc == 0) {
+			console.info(new Error("WTF"));
+		}; */
 	};
 	getCcAll() {
 		// Return all CC registers

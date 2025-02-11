@@ -698,7 +698,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 120: {
-				standard = "GS";
+				standard = prg == 0 ? "GM" : "GS";
 				break;
 			};
 			case 121: {
