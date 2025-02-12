@@ -130,6 +130,7 @@ VXUprght	VX UprightBa
 Acou.Ba#	Acou. Bass #
 FingrDrk	DarkFingerBs
 FlangrBa	Flanger Bass
+Ba&DstEG	Ba&Dist.EGtr
 FngrSlap	FingerSlapBs
 FngrBas2	Finger Bass2
 Mod Bass	ModulateBass
@@ -162,6 +163,7 @@ OrbitrBa	Orbiter Bass
 Sqr.Bass	Square Bass
 RubberBa	Rubber Bass
 HardReso	HardResonant
+StimuliB	Stimuli Bass
 MnplisBa	MineaplsBass
 HammerBa	Hammer Bass
 AnalogBa	Analog Bass
@@ -174,6 +176,7 @@ ModulrBa	Modular Bass
 X WireBa	X Wire Bass
 AtkPulse	Attack Pulse
 F.OsciBa	ForceOsciBas
+CubitBa+	Cubit Bass +
 SynthAtk	Synth Attack
 SmoothBs	Smooth Bass
 Oct.Bass	Octave Bass

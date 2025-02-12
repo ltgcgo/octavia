@@ -159,16 +159,23 @@ defDrumNrpn = {
 	53: 54
 },
 ccAccepted = [
-	0, 1, 2, 4, 5, 6, 7, 8, 10, 11, 32,
-	38, 64, 65, 66, 67, 68, 69, 70, 71,
-	72, 73, 74, 75, 76, 77, 78, 84, 91,
-	92, 93, 94, 95, 98, 99, 100, 101,
-	128, // Dry level (internal register for Octavia)
+	0, 1, 2, 4, 5, 6, 7, 8, 10, 11,
 	12, 13, // General-purpose effect controllers
+	14, 15, // For some reason, used by PLG-VL
 	16, 17, 18, 19, // General-purpose sound controllers
-	14, 15, 20, 21, 26, 28, // For some reason, used by PLG-VL
+	20, 21, // For some reason, used by PLG-VL
 	22, // S90 ES and Motif ES
+	26, 28, // For some reason, used by PLG-VL
+	32, 38,
+	40, 41, 42, 43, // PLG-AN AC 1~4 & AN1x AC 1~4
+	44, 45, 46, 47, // AN1x AC 5~8
+	64, 65, 66, 67, 68, 69, 70,
+	71, 72, 73, 74, 75, 76, 77, 78,
 	80, 81, 82, 83, // Used by KORG KROSS 2
+	84,
+	91, 92, 93, 94, 95,
+	98, 99, 100, 101,
+	128, // Dry level (internal register for Octavia)
 	129, // PLG-VL part breath strength
 	130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, // PLG-VL part controls
 	142, 143, 144, 145, 146, 147, 148, 149, // PLG-DX carrier level
@@ -177,6 +184,7 @@ ccAccepted = [
 aceCandidates = [
 	2, 4,
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+	40, 41, 42, 43, 44, 45, 46, 47,
 	80, 81, 83,
 	136, 130, 131, 132, 133, 134, 135, 137, 138, 139,
 	142, 143, 144, 145, 146, 147, 148, 149,
@@ -190,9 +198,7 @@ let modeMap = {};
 modeIdx.forEach((e, i) => {
 	modeMap[e] = i;
 });
-let ccToPos = {
-	length: ccAccepted.length
-};
+let ccToPos = [];
 ccAccepted.forEach((e, i) => {
 	ccToPos[e] = i;
 });
@@ -406,7 +412,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
 	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es"); // Load all possible voice banks
-	userBank = new VoiceBank("gm"); // User-defined bank for MT-32, X5DR and NS5R
+	userBank = new VoiceBank("gm2"); // User-defined bank for MT-32, X5DR and NS5R
 	//bankProps = new SheetD;
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";

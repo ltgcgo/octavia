@@ -108,6 +108,7 @@ PkAcouBa	Picked Acoustic Bass
 VXUprght	VX Upright Bass
 Acou.Ba#	Acoustic Bass #
 FingrDrk	Dark Fingered Bass
+Ba&DstEG	Bass & Distortion Guitar
 FngrSlap	Fingered Slap Bass
 FngrBas2	Fingered Bass 2
 Mod Bass	Modulation Bass
@@ -140,6 +141,7 @@ ClkSynBa	Click Synth Bass
 SynBs2Dk	Dark Synth Bass 2
 SmthSynB	Smooth Synth Bass
 F.OsciBa	Forced Oscillation Bass
+CubitBa+	Cubit Bass Plus
 SynthAtk	Synth Attack Bass
 ViolinSc	Violin Section
 HdVlnSec	Hard Violin Section
@@ -271,13 +273,13 @@ WaspySyn	Waspy Synth Lead
 RezzySaw	Rezzy Sawtooth Lead
 DoublSaw	Double Sawtooth Lead
 Dim Saw	Dim Sawtooth Lead
-PulseSaw	Pulse Sawtooth Ld
+PulseSaw	Pulse Sawtooth Lead
 VeloLead	Velocity Lead
-Str8Puls	Straight Pulse
+Str8Puls	Straight Pulse Lead
 ModulSaw	Modular Sawtooth Lead
 SimplSaw	Simple Sawtooth
 SeqAnal.	Sequenced Analog Lead
-ElecPrim	Electric Primtive
+ElecPrim	Electric Primitive
 DistLead	Distortion Lead
 DaSyncLd	The Sync Lead
 BrthLayr	Breathy Layer
@@ -342,6 +344,7 @@ Fl.KClik	Flute Key Click
 Insects	Insect Chirps
 Scratch2	Scratch Split
 CarTyreS	Car Tyre Squeal
+Fireball	Fireball Impact
 TechnoHi	Techno Kit High
 TechnoLo	Techno Kit Low
 S. Latin	Small Latin Kit

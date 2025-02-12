@@ -183,6 +183,8 @@ Sqr.Bass	SquareBass
 RubberBa	RubberBass
 FishBass	Fish Bass
 HardReso	HardReson.
+PlutoBas	Pluto Bass
+StimuliB	Stimuli Bs
 MnplisBa	MnplisBass
 Miami Ba	Miami Bass
 HammerBa	HammerBass
@@ -199,6 +201,8 @@ AtkPulse	AttakPulse
 MetalBas	Metal Bass
 F.OsciBa	FrcOsciBas
 CubitBas	Cubit Bass
+CubitBa+	CubitBass+
+KeelBass	Keel Bass
 SynthAtk	SynthAttak
 SmoothBs	SmoothBass
 Oct.Bass	OctaveBass
