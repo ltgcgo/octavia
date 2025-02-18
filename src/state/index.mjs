@@ -2236,7 +2236,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case modeMap.motif:
 					case modeMap.s90es: {
-						efxDefault = [113, 0, 117, 0, 114, 0, 0, 0];
+						efxDefault = [129, 0, 133, 0, 130, 0, 0, 0];
 						break;
 					};
 					default: {

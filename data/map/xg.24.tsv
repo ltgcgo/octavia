@@ -134,6 +134,7 @@ SynBs1Dk	Dark Synth Bass 1
 FastResB	Fast Resonant Bass
 ResoBass	Resonant Bass
 HardReso	Hard Resonant Bass
+SweepSqr	Sweep Square Bass
 MnplisBa	Minneapolis Bass
 MelloSBa	Mellow Synth Bass
 Seq.Bass	Sequenced Bass
@@ -142,6 +143,7 @@ SynBs2Dk	Dark Synth Bass 2
 SmthSynB	Smooth Synth Bass
 F.OsciBa	Forced Oscillation Bass
 CubitBa+	Cubit Bass Plus
+PowerSaw	Powered Sawtooth Bass
 SynthAtk	Synth Attack Bass
 ViolinSc	Violin Section
 HdVlnSec	Hard Violin Section

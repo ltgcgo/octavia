@@ -152,11 +152,11 @@ let RootDisplay = class extends CustomEventSource {
 				e.split(`\t`).forEach((e0, i0) => {
 					switch(i0) {
 						case fieldMsb: {
-							id |= (parseInt(e0, 16) << 8);
+							id |= ((parseInt(e0, 16) & 255) << 8);
 							break;
 						};
 						case fieldLsb: {
-							id |= parseInt(e0, 16);
+							id |= (parseInt(e0, 16) & 255);
 							break;
 						};
 						case fieldNme: {
@@ -167,6 +167,7 @@ let RootDisplay = class extends CustomEventSource {
 				});
 				if (!upThis.#efxList[id] || overwrite) {
 					upThis.#efxList[id] = name;
+					console.debug(`0x${id.toString(16)}    ${name}`);
 					loadCount ++;
 				} else {
 					self.debugMode && console.debug(`EFX ID 0x${id.toString(16).padStart(4, "0")} (${name}) seems to be in conflict.`);

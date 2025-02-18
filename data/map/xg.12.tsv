@@ -164,6 +164,7 @@ Sqr.Bass	Square Bass
 RubberBa	Rubber Bass
 HardReso	HardResonant
 StimuliB	Stimuli Bass
+SweepSqr	Sweep Square
 MnplisBa	MineaplsBass
 HammerBa	Hammer Bass
 AnalogBa	Analog Bass
@@ -177,6 +178,7 @@ X WireBa	X Wire Bass
 AtkPulse	Attack Pulse
 F.OsciBa	ForceOsciBas
 CubitBa+	Cubit Bass +
+PowerSaw	Powered Saw
 SynthAtk	Synth Attack
 SmoothBs	Smooth Bass
 Oct.Bass	Octave Bass
