@@ -167,7 +167,7 @@ let RootDisplay = class extends CustomEventSource {
 				});
 				if (!upThis.#efxList[id] || overwrite) {
 					upThis.#efxList[id] = name;
-					console.debug(`0x${id.toString(16)}    ${name}`);
+					//console.debug(`0x${id.toString(16)}    ${name}`);
 					loadCount ++;
 				} else {
 					self.debugMode && console.debug(`EFX ID 0x${id.toString(16).padStart(4, "0")} (${name}) seems to be in conflict.`);

@@ -1894,6 +1894,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#prg.fill(0);
 		upThis.#velo.fill(0);
 		upThis.#poly.fill(0);
+		upThis.#polyState.fill(0);
 		upThis.#mono.fill(0);
 		upThis.#rawStrength.fill(0);
 		upThis.#pitch.fill(0);

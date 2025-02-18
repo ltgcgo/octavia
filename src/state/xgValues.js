@@ -302,13 +302,13 @@ let getVlCtrlSrc = function (ctrlNo) {
 };
 
 let xfEncLabels = {
-	"u8": ["utf-8"], // Custom extension
+	"u8": ["utf-8", "Unicode"], // Custom extension
 	"l1": ["l9", "Pan-Latin"],
 	"jp": ["sjis", "Japanese"],
 	"kr": ["iso-2022-kr", "Korean"], // Cannot be decoded by JS runtimes
 	"hz": ["gb18030", "Simplified Chinese"],
 	"b5": ["big5", "Traditional Chinese"],
-	"cy": ["koi8", "Cyrillic"],
+	"cy": ["koi8-ru", "Cyrillic"],
 	"vn": ["tcvn-5773-1993", "Vietnamese"] // Cannot be decoded by JS runtimes
 };
 let xfSongParts = {
