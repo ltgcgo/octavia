@@ -416,7 +416,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	//bankProps = new SheetD;
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
-	latestPolyphonicIndex = 0;
+	polyIndexLatest = 0;
+	polyIndexLast = 0;
 	chRedir(part, track, noConquer) {
 		let upThis = this;
 		if (upThis.#trkAsReq[track]) {
@@ -550,7 +551,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					velo,
 					state: this.NOTE_SUSTAIN
 				});
-				this.latestPolyphonicIndex = place + 1;
+				this.polyIndexLatest = place + 1;
+				if (place > this.polyIndexLast) {
+					this.polyIndexLast = place;
+					getDebugState() && console.debug(`Highest polyphony register index: ${this.polyIndexLast}`);
+				};
 			} else {
 				console.error("Polyphony exceeded.");
 			};
@@ -1687,6 +1692,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		let index = 3 * slot + 1;
 		return this.#efxBase.subarray(index, index + 2);
 	};
+	getPolyState(slot = 0) {
+		return this.#polyState[slot];
+	};
 	setEffectTypeRaw(slot = 0, isLsb, value) {
 		let efxbOff = 3 * slot;
 		this.#efxBase[efxbOff] = 1;
@@ -1919,7 +1927,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#selectPort = 0;
 		upThis.#receiveRS = true;
 		upThis.initDrums();
-		upThis.latestPolyphonicIndex = 0;
+		upThis.polyIndexLatest = 0;
+		upThis.polyIndexLast = 0;
 		// Reset MIDI receive channel
 		upThis.#chReceive.forEach(function (e, i, a) {
 			a[i] = i;

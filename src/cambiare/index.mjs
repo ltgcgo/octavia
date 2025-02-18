@@ -753,6 +753,44 @@ let Cambiare = class extends RootDisplay {
 		upThis.#bufLm.forEach((e, i, a) => {
 			a[i] = upThis.#bufLo[i];
 		});
+		// If under debug mode, also visualize the polyphonic state
+		if (getDebugState()) {
+			ccxt.clearRect(0, 0, 251, 63);
+			for (let slot = 0; slot <= upThis.device.polyIndexLast; slot ++) {
+				let pX = slot & 31, pY = slot >> 5;
+				if (slot + 1 == upThis.device.polyIndexLatest) {
+					ccxt.fillStyle = "#ff0"; // Yellow for the most recently accessed register
+				} else {
+					switch(upThis.device.getPolyState(slot)) {
+						case upThis.device.NOTE_SUSTAIN: {
+							// Active
+							ccxt.fillStyle = "#0f0";
+							break;
+						};
+						case upThis.device.NOTE_HELD:
+						case upThis.device.NOTE_SOSTENUTO_HELD: {
+							// Held
+							ccxt.fillStyle = "#0f7";
+							break;
+						};
+						case upThis.device.NOTE_SOSTENUTO_SUSTAIN: {
+							// Sostenuto
+							ccxt.fillStyle = "#70f";
+							break;
+						};
+						case upThis.device.NOTE_MUTED_RECOVERABLE: {
+							// Recoverable
+							ccxt.fillStyle = "#f70";
+							break;
+						};
+						default: {
+							ccxt.fillStyle = "#f00";
+						};
+					};
+				};
+				ccxt.fillRect(pX << 2, pY << 2, 3, 3);
+			};
+		};
 		let finishNow = (self.performance || self.Date).now();
 		switch (upThis.eventViewMode) {
 			case 0: {
@@ -774,7 +812,7 @@ let Cambiare = class extends RootDisplay {
 				break;
 			};
 			case 2: {
-				upThis.#sectInfo.events.setTextRaw(`${upThis.device.latestPolyphonicIndex}`.padStart(3, "0"));
+				upThis.#sectInfo.events.setTextRaw(`${upThis.device.polyIndexLatest}`.padStart(3, "0"));
 				break;
 			};
 			default: {
