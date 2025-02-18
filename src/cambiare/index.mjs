@@ -773,8 +773,12 @@ let Cambiare = class extends RootDisplay {
 				};
 				break;
 			};
+			case 2: {
+				upThis.#sectInfo.events.setTextRaw(`${upThis.device.latestPolyphonicIndex}`.padStart(3, "0"));
+				break;
+			};
 			default: {
-				upThis.#sectInfo.events.setTextRaw(``);
+				upThis.#sectInfo.events.setTextRaw(`???`);
 			};
 		};
 		upThis.#lastFrame = finishNow;

@@ -416,6 +416,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	//bankProps = new SheetD;
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
+	latestPolyphonicIndex = 0;
 	chRedir(part, track, noConquer) {
 		let upThis = this;
 		if (upThis.#trkAsReq[track]) {
@@ -466,7 +467,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// Sequencer specific meta pool
 	#metaSeq;
 	// Universal actions
-	#ua = {
+	#uAction = {
 		nOff: (part, note) => {
 			// Note off
 			let rawNote = part * 128 + note;
@@ -514,7 +515,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let place = 0;
 			if (this.#mono[part]) {
 				// Shut all previous notes off in mono mode
-				this.#ua.ano(part);
+				this.#uAction.ano(part);
 			};
 			while (this.#polyState[place] > 0 && this.#poly[place] != rawNote) {
 				// If just by judging whether a polyphonic voice is occupied,
@@ -549,7 +550,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					velo,
 					state: this.NOTE_SUSTAIN
 				});
-				//console.debug(place);
+				this.latestPolyphonicIndex = place + 1;
 			} else {
 				console.error("Polyphony exceeded.");
 			};
@@ -639,7 +640,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				let ch = e >> 7, no = e & 127;
 				if (e == 0 && this.#velo[0] == 0) {
 				} else if (ch == part) {
-					this.#ua.nOff(ch, no);
+					this.#uAction.nOff(ch, no);
 				};
 			});
 		}
@@ -650,7 +651,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = det.channel;
 			// Note off, velocity should be ignored.
 			let rawNote = det.data[0];
-			this.#ua.nOff(part, rawNote);
+			this.#uAction.nOff(part, rawNote);
 		},
 		9: function (det) {
 			let part = det.channel;
@@ -673,9 +674,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			let rawNote = det.data[0];
 			let velocity = det.data[1];
 			if (velocity > 0) {
-				upThis.#ua.nOn(part, rawNote, velocity);
+				upThis.#uAction.nOn(part, rawNote, velocity);
 			} else {
-				upThis.#ua.nOff(part, rawNote);
+				upThis.#uAction.nOff(part, rawNote);
 			};
 		},
 		10: function (det) {
@@ -749,7 +750,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case 121: {
 					// Reset controllers
-					this.#ua.ano(part);
+					this.#uAction.ano(part);
 					this.#pitch[part] = 0;
 					// Reset to zero
 					upThis.resetChCc(part, 1, 0); // Modulation
@@ -770,33 +771,33 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case 123: {
 					// All notes off
-					this.#ua.ano(part);
+					this.#uAction.ano(part);
 					return;
 					break;
 				};
 				case 124: {
 					// Omni off
-					this.#ua.ano(part);
+					this.#uAction.ano(part);
 					return;
 					break;
 				};
 				case 125: {
 					// Omni on
-					this.#ua.ano(part);
+					this.#uAction.ano(part);
 					return;
 					break;
 				};
 				case 126: {
 					// Mono mode
 					this.#mono[part] = 1;
-					this.#ua.ano(part);
+					this.#uAction.ano(part);
 					return;
 					break;
 				};
 				case 127: {
 					// Poly mode
 					this.#mono[part] = 0;
-					this.#ua.ano(part);
+					this.#uAction.ano(part);
 					return;
 					break;
 				};
@@ -1077,7 +1078,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					case 64: {
 						// cc64: hold
 						if (det.data[1] < 64) {
-							this.#ua.hoOf(part);
+							this.#uAction.hoOf(part);
 						};
 						break;
 					};
@@ -1085,10 +1086,10 @@ let OctaviaDevice = class extends CustomEventSource {
 						// cc66: sostenuto
 						if (det.data[1] >> 6) {
 							// Sostenuto on
-							this.#ua.soOn(part);
+							this.#uAction.soOn(part);
 						} else {
 							// Sostenuto off
-							this.#ua.soOf(part);
+							this.#uAction.soOf(part);
 						};
 						break;
 					};
@@ -1918,6 +1919,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#selectPort = 0;
 		upThis.#receiveRS = true;
 		upThis.initDrums();
+		upThis.latestPolyphonicIndex = 0;
 		// Reset MIDI receive channel
 		upThis.#chReceive.forEach(function (e, i, a) {
 			a[i] = i;
@@ -2173,7 +2175,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						// I'll deal with this later?
 						upThis.pushChPrimitives(ch);
 					};
-					//this.initOnReset && forced && this.#ua.ano(ch);
+					//this.initOnReset && forced && this.#uAction.ano(ch);
 				};
 				// Bank defaults
 				switch (idx) {
@@ -3595,7 +3597,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Placeholder until further documentation
 		dxDump.add([14, 31], (msg, track, id) => {
 			upThis.setChCc(msg[0], 64, 0);
-			upThis.#ua.ano(msg[0]);
+			upThis.#uAction.ano(msg[0]);
 			upThis.switchMode("xg");
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
 			upThis.resetAce();
@@ -5149,7 +5151,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// MT-32 alt reset?
 			let partBase = upThis.chRedir(0, track, true);
 			for (let part = 0; part < 16; part ++) {
-				upThis.#ua.ano(partBase + part);
+				upThis.#uAction.ano(partBase + part);
 				if (part && part < 10) {
 					upThis.#prg[partBase + part] = mt32DefProg[part - 1];
 				};

@@ -37,8 +37,8 @@ let RootDisplay = class extends CustomEventSource {
 	// A cache for providing fast poly calculation
 	#voiceCache = new Array(allocated.ch);
 	#polyCache = new Uint8Array(allocated.ch);
-	smoothingAtk = 0;
-	smoothingDcy = 0;
+	smoothAttack = 0;
+	smoothDecay = 0;
 	reset() {
 		let upThis = this;
 		// Dispatching the event
@@ -475,15 +475,14 @@ let RootDisplay = class extends CustomEventSource {
 		writeStrength.forEach(function (e, i, a) {
 			a[i] = Math.max(upThis.#beforeStrength[i], e);
 			let diff = a[i] - upThis.#mimicStrength[i];
-			let chOff = ccToPos.length * i;
 			if (diff >= 0) {
 				// cc73 = 0, atkPower = 4
 				// cc73 = 127, atkPower = 0.25
-				let atkPower = 4 * (0.25 ** (chContr[chOff + ccToPos[73]] / 64));
-				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothingAtk ** atkPower)));
+				let atkPower = 4 * (0.25 ** (upThis.device.getChCc(i, 73) / 64));
+				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothAttack ** atkPower)));
 			} else {
-				let rlsPower = 4 * (0.25 ** (chContr[chOff + ccToPos[72]] / 64));
-				upThis.#mimicStrength[i] += Math.floor(diff - (diff * (upThis.smoothingDcy ** rlsPower)));
+				let rlsPower = 4 * (0.25 ** (upThis.device.getChCc(i, 72) / 64));
+				upThis.#mimicStrength[i] += Math.floor(diff - (diff * (upThis.smoothDecay ** rlsPower)));
 			};
 		});
 		let curPoly = 0, curPolyEC = 0;
@@ -533,8 +532,8 @@ let RootDisplay = class extends CustomEventSource {
 	constructor(device, atk = 0.5, dcy = 0.5) {
 		super();
 		let upThis = this;
-		upThis.smoothingAtk = atk;
-		upThis.smoothingDcy = dcy;
+		upThis.smoothAttack = atk;
+		upThis.smoothDecay = dcy;
 		upThis.device = device;
 		upThis.addEventListener("meta", function (raw) {
 			raw?.data?.forEach(function (e) {
