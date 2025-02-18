@@ -6021,7 +6021,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
-					upThis.setEffectTypeRaw(0, false, (e & 15) | 112);
+					upThis.setEffectTypeRaw(0, false, (e & 15) | 128);
 				}, () => {
 					upThis.setEffectTypeRaw(0, true, e);
 				}][offset + i] || (() => {
@@ -6036,7 +6036,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
-					upThis.setEffectTypeRaw(1, false, (e & 15) | 112);
+					upThis.setEffectTypeRaw(1, false, (e & 15) | 128);
 				}, () => {
 					upThis.setEffectTypeRaw(1, true, e);
 				}][offset + i] || (() => {
@@ -6051,7 +6051,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
-					upThis.setEffectTypeRaw(3, false, (e & 15) | 112);
+					upThis.setEffectTypeRaw(3, false, (e & 15) | 128);
 				}, () => {
 					upThis.setEffectTypeRaw(3, true, e);
 				}][offset + i] || (() => {
@@ -6066,7 +6066,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
-					upThis.setEffectTypeRaw(4, false, (e & 15) | 112);
+					upThis.setEffectTypeRaw(4, false, (e & 15) | 128);
 				}, () => {
 					upThis.setEffectTypeRaw(4, true, e);
 				}][offset + i] || (() => {
@@ -6081,7 +6081,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
-					upThis.setEffectTypeRaw(2, false, (e & 15) | 112);
+					upThis.setEffectTypeRaw(2, false, (e & 15) | 128);
 				}, () => {
 					upThis.setEffectTypeRaw(2, true, e);
 				}][offset + i] || (() => {
