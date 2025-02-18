@@ -416,6 +416,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	//bankProps = new SheetD;
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
+	polyIndexShrink = true;
 	polyIndexLatest = 0;
 	polyIndexLast = 0;
 	chRedir(part, track, noConquer) {
@@ -509,7 +510,24 @@ let OctaviaDevice = class extends CustomEventSource {
 					});
 				};
 			};
-			if (this.polyIndexLast > 0 && this.#polyState[this.polyIndexLast] === 0) {
+			if (this.#mono[part]) {
+				for (let slot = this.polyIndexLast; slot >= 0; slot --) {
+					let rawValue = this.#poly[slot];
+					let ch = rawValue >> 7;
+					if (ch == part && this.#polyState[slot] !== 0) {
+						//console.debug(`CH${ch+1} ${rawValue & 127}: ${this.#polyState[slot]}`);
+						if (this.#polyState[slot] === this.NOTE_MUTED_RECOVERABLE) {
+							// Should recover to the previous state here, but there aren't ways to store that for now
+							this.#polyState[slot] = this.NOTE_SUSTAIN;
+							//console.debug(`State recovered.`);
+						}/* else {
+							console.debug(`State persisted.`);
+						}*/;
+						break;
+					};
+				};
+			};
+			if (this.polyIndexShrink && this.polyIndexLast > 0 && this.#polyState[this.polyIndexLast] === 0) {
 				this.polyIndexLast --;
 			};
 		},
@@ -518,8 +536,15 @@ let OctaviaDevice = class extends CustomEventSource {
 			let rawNote = part * 128 + note;
 			let place = 0;
 			if (this.#mono[part]) {
-				// Shut all previous notes off in mono mode
-				this.#uAction.ano(part);
+				for (let slot = 0; slot <= this.polyIndexLast; slot ++) {
+					let rawValue = this.#poly[slot];
+					let ch = rawValue >> 7;
+					if (ch == part && this.#polyState[slot] !== 0) {
+						this.#polyState[slot] = this.NOTE_MUTED_RECOVERABLE;
+						//console.debug(`CH${ch+1} ${rawValue & 127}: ${this.#polyState[slot]}`);
+					};
+				};
+				//console.debug(`Muted previous notes.`);
 			};
 			while (this.#polyState[place] > 0 && this.#poly[place] != rawNote) {
 				// If just by judging whether a polyphonic voice is occupied,
@@ -644,7 +669,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		ano: (part) => {
 			// All notes off
 			// Current implementation uses the static velocity register
-			this.#poly.forEach((e, i, a) => {
+			this.#poly.forEach((e) => {
 				let ch = e >> 7, no = e & 127;
 				if (e == 0 && this.#velo[0] == 0) {
 				} else if (ch == part) {
