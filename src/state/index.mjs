@@ -509,6 +509,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					});
 				};
 			};
+			if (this.polyIndexLast > 0 && this.#polyState[this.polyIndexLast] === 0) {
+				this.polyIndexLast --;
+			};
 		},
 		nOn: (part, note, velo) => {
 			// Note on
@@ -554,7 +557,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				this.polyIndexLatest = place + 1;
 				if (place > this.polyIndexLast) {
 					this.polyIndexLast = place;
-					getDebugState() && console.debug(`Highest polyphony register index: ${this.polyIndexLast}`);
+					// getDebugState() && console.debug(`Highest polyphony register index: ${this.polyIndexLast}`);
 				};
 			} else {
 				console.error("Polyphony exceeded.");
