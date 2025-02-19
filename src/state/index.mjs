@@ -2867,7 +2867,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 125: {
 					// XG drum reset
 					upThis.initDrums();
-					console.info(`XG drum setup reset: ${msg}`);
+					console.info(`XG drum setup reset on drum kit ${msg[1]}.`);
 					break;
 				};
 				case 126: {
@@ -5222,7 +5222,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				case 125: {// drum reset
 					upThis.initDrums();
-					console.info(`NS5R drum setup reset: ${msg}`);
+					console.info(`NS5R drum setup reset on drum kit ${msg[1]}.`);
 					break;
 				};
 				default: {
@@ -6306,7 +6306,6 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Receive port
 							}, () => {
 								// cc0
-								upThis.#cc[chOff + ccToPos[0]] = e;
 								switch (e) {
 									case 104:
 									case 105:
@@ -6324,6 +6323,7 @@ let OctaviaDevice = class extends CustomEventSource {
 										};
 									};
 								};
+								upThis.setChCc(part, 0, e);
 								upThis.pushChPrimitives(part);
 								upThis.dispatchEvent("voice", {
 									part
