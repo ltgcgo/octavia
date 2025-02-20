@@ -63,7 +63,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		});
 		upThis.addEventListener("screen", (ev) => {
 			console.debug(ev);
-			if (ev.data.type == "ns5r") {
+			if (ev.data.type === "ns5r") {
 				upThis.#dumpData = ev.data.data;
 				upThis.#dumpExpire = Date.now() + 1600;
 			};
@@ -90,15 +90,15 @@ let Ns5rDisplay = class extends RootDisplay {
 		for (let p = 0; p < 180; p ++) {
 			let pX = p % 12, pY = Math.floor(p / 12);
 			if (
-				(pY == 0 && pX < 11) ||
-				(pY == 14 && pX > 0) ||
-				(pY == 13)
+				(pY === 0 && pX < 11) ||
+				(pY === 14 && pX > 0) ||
+				(pY === 13)
 			) {
 				upThis.#nmdb[pY * 144 + pX + startX] = upThis.#pixelLit;
 			} else if (pY > 0 && pY < 13) {
 				if (
-					pX == 0 || pX > 9 ||
-					(pX == 5 && pY > 1 && pY < 12)
+					pX === 0 || pX > 9 ||
+					(pX === 5 && pY > 1 && pY < 12)
 				) {
 					upThis.#nmdb[pY * 144 + pX + startX] = upThis.#pixelLit;
 				};
@@ -109,7 +109,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		for (let c = 0; c < 21; c ++) {
 			let pX = c % 7, pY = Math.floor(c / 7),
 			pcY = pY + (9 - convertedValue);
-			if (pY != 1 || pX == 0 || pX == 6) {
+			if (pY != 1 || pX === 0 || pX === 6) {
 				upThis.#nmdb[pcY * 144 + pX + startX + 2] = upThis.#pixelLit;
 			} else {
 				upThis.#nmdb[pcY * 144 + pX + startX + 2] = upThis.#pixelOff;
@@ -178,7 +178,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		let upThis = this;
 		let timeNow = Date.now();
 		if (upThis.#refreshFrame < 500) {
-			if (upThis.#refreshFrame % 50 == 0) {
+			if (upThis.#refreshFrame % 50 === 0) {
 				upThis.#refreshed = true;
 			};
 			upThis.#refreshFrame ++;
@@ -342,9 +342,9 @@ let Ns5rDisplay = class extends RootDisplay {
 					let x = i % 100, y = Math.floor(i / 100);
 					// Top and bottom borders
 					if (
-						(y == 0 && x < 99) ||
-						(y == 18) ||
-						(y == 19 && x > 0)
+						(y === 0 && x < 99) ||
+						(y === 18) ||
+						(y === 19 && x > 0)
 					) {
 						upThis.#nmdb[y * 144 + x + xShift] = upThis.#pixelLit;
 					};
@@ -394,9 +394,9 @@ let Ns5rDisplay = class extends RootDisplay {
 					let realX = x + 78, realY = y + 19;
 					// Top and bottom borders
 					if (
-						(y == 0 && x < 36) ||
-						(y == 19) ||
-						(y == 20 && x > 0)
+						(y === 0 && x < 36) ||
+						(y === 19) ||
+						(y === 20 && x > 0)
 					) {
 						upThis.#nmdb[realY * 144 + realX] = upThis.#pixelLit;
 					};
@@ -411,7 +411,7 @@ let Ns5rDisplay = class extends RootDisplay {
 					let realX = x + 80, realY = y + 21;
 					let bit = sum.bitmap.bitmap[i >> (colUnit - 1)] ? upThis.#pixelLit : upThis.#pixelOff;
 					upThis.#nmdb[realY * 144 + realX] = bit;
-					if (colUnit == 2) {
+					if (colUnit === 2) {
 						upThis.#nmdb[realY * 144 + realX + 1] = bit;
 					};
 				};
@@ -442,7 +442,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			ctx.fillText("PART", 34, 262);
 			let circle = 2 * Math.PI;
 			for (let c = 1; c < 33; c ++) {
-				if (c == 1 || c == 32 || c % 5 == 0) {
+				if (c === 1 || c === 32 || c % 5 === 0) {
 					ctx.fillText(`${c}`, 24 * c + 64, 262);
 				} else {
 					ctx.beginPath();

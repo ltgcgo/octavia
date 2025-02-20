@@ -115,7 +115,7 @@ let Sc8850Display = class extends RootDisplay {
 		});
 		upThis.device.addEventListener("screen", (ev) => {
 			let data = ev.data;
-			if (data.type == "sc8850") {
+			if (data.type === "sc8850") {
 				for (let i = 0; i < data.data.length; i ++) {
 					upThis.#bmdb[data.offset + i] = data.data[i] ? 255 : 0;
 				};
@@ -128,7 +128,7 @@ let Sc8850Display = class extends RootDisplay {
 		upThis.device.addEventListener("note", (ev) => {
 			if (ev.data) {
 				let data = ev.data;
-				if (data.state == 3 && data.velo) {
+				if (data.state === 3 && data.velo) {
 					upThis.#lingerPress[data.part] = 1;
 				};
 			};
@@ -218,7 +218,7 @@ let Sc8850Display = class extends RootDisplay {
 				upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
 			};
 			if (upThis.#range) {
-				if (upThis.#start == 255) {
+				if (upThis.#start === 255) {
 					minCh = (Math.floor((upThis.#ch >> 4) / upThis.#range) * upThis.#range) << 4;
 				} else {
 					minCh = upThis.#start << 4;
@@ -240,7 +240,7 @@ let Sc8850Display = class extends RootDisplay {
 			});
 			// Render bank info and voice name
 			let voiceObject = upThis.getChVoice(upThis.#ch);
-			let scLetterNative = upThis.#letterMode == "gs" || upThis.#letterMode == "sc";
+			let scLetterNative = upThis.#letterMode === "gs" || upThis.#letterMode === "sc";
 			let scLetterMode = 0;
 			if (scLetterNative && (sum.letter.set <= timeNow && timeNow < sum.letter.set + 15000)) {
 				if (sum.letter.text.length <= 16) {
@@ -252,7 +252,7 @@ let Sc8850Display = class extends RootDisplay {
 					//console.debug(`SC variable: ${scLetterDuration - timeNow}`);
 				};
 			};
-			if (!scLetterNative || scLetterMode == 0) {
+			if (!scLetterNative || scLetterMode === 0) {
 				upThis.font56.getStr(voiceObject.bank).forEach((e0, i0) => {
 					let offsetX = i0 * 6 + 21;
 					e0.forEach((e1, i1) => {
@@ -318,7 +318,7 @@ let Sc8850Display = class extends RootDisplay {
 					let shiftX = +!((portStart >> 6) & 1);
 					for (let i = 0; i < 4; i ++) {
 						let portWork = portStart + i;
-						let portOffX = i * 40 + 2 + shiftX, portOffY = (portWork == portNow) ? 59 : 58;
+						let portOffX = i * 40 + 2 + shiftX, portOffY = (portWork === portNow) ? 59 : 58;
 						upThis.font55.getStr(`PART-${"ABCDEFGH"[portWork]}`).forEach((e0, i0) => {
 							let offsetX = i0 * 6;
 							e0.forEach((e1, i1) => {
@@ -328,7 +328,7 @@ let Sc8850Display = class extends RootDisplay {
 								};
 							});
 						});
-						upThis.sysBm.getBm(portWork == portNow ? "tabSel" : "tabIdle")?.render((e, x, y) => {
+						upThis.sysBm.getBm(portWork === portNow ? "tabSel" : "tabIdle")?.render((e, x, y) => {
 							if (e) {
 								let pI = (40 * i) + x + shiftX + (y + 57) * totalWidth;
 								upThis.#nmdb[pI] = upThis.#nmdb[pI] ? 0 : 255;
@@ -342,8 +342,8 @@ let Sc8850Display = class extends RootDisplay {
 				case 3: {
 					let portNow = upThis.#ch >> 4;
 					for (let i = 0; i < 4; i ++) {
-						let portOffX = i * 40 + 2, portOffY = (rendMode == i) ? 59 : 58;
-						let tabText = i == 3 ? "128CH" : `${16 << i}CH-${"ABCDEFGH"[minCh >> 4]}`;
+						let portOffX = i * 40 + 2, portOffY = (rendMode === i) ? 59 : 58;
+						let tabText = i === 3 ? "128CH" : `${16 << i}CH-${"ABCDEFGH"[minCh >> 4]}`;
 						upThis.font55.getStr(tabText).forEach((e0, i0) => {
 							let offsetX = i0 * 6;
 							e0.forEach((e1, i1) => {
@@ -353,7 +353,7 @@ let Sc8850Display = class extends RootDisplay {
 								};
 							});
 						});
-						upThis.sysBm.getBm(rendMode == i ? "tabSel" : "tabIdle")?.render((e, x, y) => {
+						upThis.sysBm.getBm(rendMode === i ? "tabSel" : "tabIdle")?.render((e, x, y) => {
 							if (e) {
 								let pI = (40 * i) + x + (y + 57) * totalWidth;
 								upThis.#nmdb[pI] = upThis.#nmdb[pI] ? 0 : 255;
@@ -363,7 +363,7 @@ let Sc8850Display = class extends RootDisplay {
 					break;
 				};
 			};
-			if (timeNow >= sum.letter.expire || (upThis.#letterMode == "gs" || upThis.#letterMode == "sc")) {
+			if (timeNow >= sum.letter.expire || (upThis.#letterMode === "gs" || upThis.#letterMode === "sc")) {
 				upThis.font56.getStr("123456789\x80\x81\x82\x83\x84\x85\x86").forEach((e0, i0) => {
 					let offsetX = i0 * 6;
 					e0.forEach((e1, i1) => {
@@ -428,7 +428,7 @@ let Sc8850Display = class extends RootDisplay {
 			strengthHeight = (35 - renderRange + 1) / renderRange,
 			strengthDivider = 256 / strengthHeight;
 			sum.velo.forEach(function (e, i) {
-				if (scConf.peakHold == 3 && upThis.#lingerPress[i]) {
+				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
 					upThis.#lingerExtra[i] = 127;
 					if (e != upThis.#linger[i]) {
@@ -448,7 +448,7 @@ let Sc8850Display = class extends RootDisplay {
 						let val;
 						switch (scConf.peakHold) {
 							case 3: {
-								if (upThis.#linger[i] == 0) {
+								if (upThis.#linger[i] === 0) {
 									break;
 								};
 								val = upThis.#linger[i] + 2 * renderRange;
@@ -484,7 +484,7 @@ let Sc8850Display = class extends RootDisplay {
 					let realX = x * 3 + 49, realY = (y << 1) + 15;
 					let bit = sum.bitmap.bitmap[i >> (colUnit - 1)] ? upThis.#pixelLit : upThis.#pixelOff;
 					fillBitsInBuffer(upThis.#nmdb, totalWidth, realX, realY, 2, 2, bit);
-					if (colUnit == 2) {
+					if (colUnit === 2) {
 						fillBitsInBuffer(upThis.#nmdb, totalWidth, realX + 2, realY, 3, 2, bit);
 					};
 				};

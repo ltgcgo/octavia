@@ -89,7 +89,10 @@ let x5dSendLevel = function (sendParam) {
 };
 
 let getDebugState = function () {
-	return !!self.Bun || self.debugMode || false; // If run on Bun.js, output all possible logs
+	if (self.Bun) {
+		return true; // If run on Bun.js, output all possible logs
+	};
+	return self.debugMode ?? false;
 };
 
 export {

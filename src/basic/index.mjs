@@ -326,7 +326,7 @@ let RootDisplay = class extends CustomEventSource {
 				case "xg": {
 					switch (voiceObject.sid[0]) {
 						case 126: {
-							if (voiceObject.sid[1] >> 1 == 56) {
+							if (voiceObject.sid[1] >> 1 === 56) {
 								data = upThis.sysBm.getBm("cat_smpl");
 							};
 							break;

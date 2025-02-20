@@ -35,15 +35,15 @@ let VoiceBank = class {
 			case "xg": {
 				switch (msb) {
 					case 0: {
-						if (lsb == 126) {
+						if (lsb === 126) {
 							args[2] = 125; // MU100 Native
-						} else if (lsb == 127) {
+						} else if (lsb === 127) {
 							args[2] = 0; // MU Basic
 						};
 						break;
 					};
 					case 16: {
-						if (lsb == 126) {
+						if (lsb === 126) {
 							args[2] = 0; // MU sampler restore
 						};
 						break;
@@ -56,7 +56,7 @@ let VoiceBank = class {
 						break;
 					};
 					case 33: {
-						if (lsb > 125 || lsb == 3) {
+						if (lsb > 125 || lsb === 3) {
 							args[2] = 0; // cc reset
 						};
 						args[2] += 5; // PLG-150VL redirection
@@ -91,7 +91,7 @@ let VoiceBank = class {
 					case 98:
 					case 99:
 					case 100: {
-						if (lsb == 126) {
+						if (lsb === 126) {
 							args[2] = 0; // MU100 Native restore
 						};
 						break;
@@ -100,8 +100,8 @@ let VoiceBank = class {
 					case 64:
 					case 126:
 					case 127: {
-						if (lsb == 126) {
-							if (msb == 127 && prg == 0) {} else {
+						if (lsb === 126) {
+							if (msb === 127 && prg === 0) {} else {
 								args[2] = 0; // MU100 Native restore
 							};
 						};
@@ -112,7 +112,7 @@ let VoiceBank = class {
 			};
 			case "gs":
 			case "sc": {
-				if (msb == 0 && lsb < 5) {
+				if (msb === 0 && lsb < 5) {
 					//args[2] = 0;
 					args[0] = 49;
 				} else if (msb > 125 && lsb < 5 && lsb != 2) {
@@ -124,7 +124,7 @@ let VoiceBank = class {
 				break;
 			};
 			case "mt32": {
-				if (msb == 0) {
+				if (msb === 0) {
 					args[0] = 49;
 				};
 				break;
@@ -140,11 +140,11 @@ let VoiceBank = class {
 						break;
 					};
 				};
-				if ((args[0] >> 1) == 40) {
+				if ((args[0] >> 1) === 40) {
 					args[2] |= 16;
 				} else if (args[0] > 95 && args[0] < 100) {
 					args[2] |= 16;
-					if (prg >> 4 == 7) {
+					if (prg >> 4 === 7) {
 						args[0] = 96;
 					};
 				};
@@ -154,18 +154,18 @@ let VoiceBank = class {
 				// Should only be present under SD mode
 				// However before non-resetting mode switches are available
 				// This is the only way
-				if ((msb >> 1) == 40) {
+				if ((msb >> 1) === 40) {
 					args[2] |= 16;
 				} else if (msb > 95 && msb < 100) {
 					args[2] |= 16;
-					if (prg >> 4 == 7) {
+					if (prg >> 4 === 7) {
 						args[0] = 96;
 					};
 				};
 				break;
 			};
 			case "sg": {
-				if (msb == 8 && lsb == 0) {
+				if (msb === 8 && lsb === 0) {
 					args[2] = 5;
 				};
 				break;
@@ -178,7 +178,7 @@ let VoiceBank = class {
 				break;
 			};
 			case "s90es": {
-				if (msb == 0) {
+				if (msb === 0) {
 					break;
 				};
 				if (lsb < 8) {
@@ -191,7 +191,7 @@ let VoiceBank = class {
 				break;
 			};
 			case "motif": {
-				if (msb == 0) {
+				if (msb === 0) {
 					break;
 				};
 				if (lsb < 8) {
@@ -210,7 +210,7 @@ let VoiceBank = class {
 			case 0: {
 				switch (args[2]) {
 					case 127: {
-						//if (mode == "xg") {
+						//if (mode === "xg") {
 							sect = "GM-a";
 						/*} else {
 							sect = "MT-a";
@@ -219,7 +219,7 @@ let VoiceBank = class {
 						break;
 					};
 					case 126: {
-						// if (mode == "xg") {
+						// if (mode === "xg") {
 							sect = "GM-n";
 						/*} else {
 							sect = "MT-b";
@@ -238,7 +238,7 @@ let VoiceBank = class {
 						break;
 					};
 					case 4: {
-						if (mode == "gs" || mode == "sc") {
+						if (mode === "gs" || mode === "sc") {
 							sect = "GM-a";
 							bank = "000";
 						} else {
@@ -250,7 +250,7 @@ let VoiceBank = class {
 					case 3:
 					case 2:
 					case 1: {
-						if (mode == "gs" || mode == "sc") {
+						if (mode === "gs" || mode === "sc") {
 							sect = "GM-a";
 							bank = "000";
 						};
@@ -268,7 +268,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 8: {
-				if (mode == "sg") {
+				if (mode === "sg") {
 					sect = "GM-s";
 				} else {
 					sect = "r:";
@@ -280,7 +280,7 @@ let VoiceBank = class {
 			case 34:
 			case 35:
 			case 36: {
-				if (mode == "xg") {
+				if (mode === "xg") {
 					sect = `${["AP", "VL", "PF", "DX", "AN"][msb & 7]}-${"abcdefgh"[lsb]}`;
 					useLsb = 3;
 				};
@@ -293,7 +293,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 49: {
-				if (args[2] >> 1 == 63) {
+				if (args[2] >> 1 === 63) {
 					sect = `MT-${"ba"[args[2] & 1]}`;
 					bank = `C${"-/"[args[2] & 1]}M`;
 				} else {
@@ -360,19 +360,19 @@ let VoiceBank = class {
 				break;
 			};
 			case 96: {
-				sect = args[2] == 106 ? "AP-a" : (args[2] >> 4 == 1 ? "SDg" : "PF");
+				sect = args[2] === 106 ? "AP-a" : (args[2] >> 4 === 1 ? "SDg" : "PF");
 				if (args[2] > 63) {
 					baseShift = 63;
-				} else if (args[2] >> 4 == 1) {
+				} else if (args[2] >> 4 === 1) {
 					baseShift = 16;
 				};
 				useLsb = 3;
 				break;
 			};
 			case 97: {
-				sect = args[2] >> 4 == 1 ? "SDa" : "VL:";
+				sect = args[2] >> 4 === 1 ? "SDa" : "VL:";
 				useLsb = 3;
-				if (args[2] >> 4 == 1) {
+				if (args[2] >> 4 === 1) {
 					baseShift = 16;
 				} else {
 					baseShift = 112;
@@ -380,16 +380,16 @@ let VoiceBank = class {
 				break;
 			};
 			case 98: {
-				sect = args[2] >> 4 == 1 ? "SDb" : "SG-a";
+				sect = args[2] >> 4 === 1 ? "SDb" : "SG-a";
 				useLsb = 3;
 				baseShift = 16;
 				break;
 			};
 			case 99: {
-				sect = args[2] >> 4 == 1 ? "SDc" : `DX`;
+				sect = args[2] >> 4 === 1 ? "SDc" : `DX`;
 				if (args[2] > 63) {
 					baseShift = 63;
-				} else if (args[2] >> 4 == 1) {
+				} else if (args[2] >> 4 === 1) {
 					baseShift = 16;
 				};
 				useLsb = 3;
@@ -399,7 +399,7 @@ let VoiceBank = class {
 				sect = `AN`;
 				if (args[2] > 63) {
 					baseShift = 63;
-				} else if (args[2] >> 4 == 1) {
+				} else if (args[2] >> 4 === 1) {
 					baseShift = 16;
 				};
 				useLsb = 3;
@@ -427,7 +427,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 127: {
-				if (args[2] == 127) {
+				if (args[2] === 127) {
 					sect = "rDrm";
 				} else {
 					sect = "yDrm";
@@ -448,20 +448,20 @@ let VoiceBank = class {
 		if (bank.length < 3) {
 			bank += `${[msb, lsb, msb, lsb][useLsb]}`.padStart(3 - bank.length, "0");
 		};
-		if (mode == "xg") {
-			if (msb == 0) {
+		if (mode === "xg") {
+			if (msb === 0) {
 				// Hijack NS5R GM:y section
 				if (args[2] < 100) {
 					sect = sect.replace("y0", "y:");
-				} else if (args[2] == 125) {
+				} else if (args[2] === 125) {
 					sect = "y126";
 				};
-			} else if (msb == 16) {
+			} else if (msb === 16) {
 				// Hijack XG MU2000 sampler
 				bankName = `Voice${((args[2] << 7) + args[1] + 1).toString().padStart(3, "0")}`;
 				ending = " ";
-			} else if (msb == 35) {
-				if ((lsb >> 1) == 2) {
+			} else if (msb === 35) {
+				if ((lsb >> 1) === 2) {
 					bankName = `DXCH_${(((args[2] & 1) << 7) + prg + 1).toString().padStart(3, "0")}`;
 					ending = " ";
 				};
@@ -486,14 +486,14 @@ let VoiceBank = class {
 						args[2] = 0;
 						ending = "^";
 					}; */
-					if (args[0] == 0 && args[1] == 0 && args[2] == 0) {
+					if (args[0] === 0 && args[1] === 0 && args[2] === 0) {
 						bankName = "Unloaded";
 					} else if (!this.#bankInfo[args[1] || 0][args[0] << 8]) {
-						if (msb == 48) {
+						if (msb === 48) {
 							args[0] = 0;
 							args[2] = 0;
 							ending = "!";
-						} else if (msb == 62) {
+						} else if (msb === 62) {
 							args[1] --;
 							ending = " ";
 							if (args[1] < 1 && !bankName?.length) {
@@ -501,7 +501,7 @@ let VoiceBank = class {
 								ending = "!";
 							};
 						} else if (msb < 63) {
-							if (args[0] == 0) {
+							if (args[0] === 0) {
 								args[2] = 0;
 								ending = "^";
 							} else {
@@ -512,18 +512,18 @@ let VoiceBank = class {
 									args[2] --; // Descending bank search
 								};
 							};
-						} else if (msb == 80) {
+						} else if (msb === 80) {
 							bankName = `PrgU:${prg.toString().padStart(3, "0")}`;
 							ending = "!";
-						} else if (msb == 88) {
+						} else if (msb === 88) {
 							bankName = `CmbU:${prg.toString().padStart(3, "0")}`;
 							ending = "!";
-						} else if (msb == 121) {
+						} else if (msb === 121) {
 							bankName = `GM2Vox0${lsb}`;
 							ending = "#";
-						} else if (msb == 122) {
-							if (args[1] == 32) {
-								args[1] == 0;
+						} else if (msb === 122) {
+							if (args[1] === 32) {
+								args[1] === 0;
 							} else {
 								args[1] %= 7;
 							};
@@ -539,11 +539,11 @@ let VoiceBank = class {
 								bankName = "";
 								ending = "*";
 							};
-						} else if (args[1] == 0) {
+						} else if (args[1] === 0) {
 							bankName = `${msb.toString().padStart(3, "0")} ${prg.toString().padStart(3, "0")} ${lsb.toString().padStart(3, "0")}`;
 							ending = "!";
 						} else {
-							if (args[0] == 0) {
+							if (args[0] === 0) {
 								args[2] = 0;
 								ending = "^";
 							} else if (args[2] > 0) {
@@ -557,7 +557,7 @@ let VoiceBank = class {
 							};
 						};
 					} else {
-						if (args[0] == 0) {
+						if (args[0] === 0) {
 							args[2] = 0;
 							ending = "^";
 						} else if (args[2] < 1) {
@@ -586,7 +586,7 @@ let VoiceBank = class {
 						break;
 					};
 				};
-				if (msb == 127 && ending == "^") {
+				if (msb === 127 && ending === "^") {
 					ending = " ";
 				};
 				break;
@@ -595,9 +595,9 @@ let VoiceBank = class {
 		let standard = "??";
 		switch (args[0]) {
 			case 0: {
-				if (args[2] == 0) {
+				if (args[2] === 0) {
 					standard = "GM";
-				} else if (args[2] == 5 || args[2] == 7) {
+				} else if (args[2] === 5 || args[2] === 7) {
 					standard = "KG";
 				} else if (args[2] < 126) {
 					standard = "XG";
@@ -620,7 +620,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 49: {
-				if (args[2] >> 1 == 63) {
+				if (args[2] >> 1 === 63) {
 					standard = "MT";
 				} else if (args[2] < 5) {
 					standard = "GM";
@@ -663,7 +663,7 @@ let VoiceBank = class {
 			};
 			case 67:
 			case 99: {
-				standard = args[2] >> 4 == 1 ? "SD" : "DX"; // PLG-150DX
+				standard = args[2] >> 4 === 1 ? "SD" : "DX"; // PLG-150DX
 				break;
 			};
 			case 81: {
@@ -675,15 +675,15 @@ let VoiceBank = class {
 				break;
 			};
 			case 96: {
-				standard = args[2] == 106 ? "AP" : (args[2] >> 4 == 1 ? "SD" : "PF");
+				standard = args[2] === 106 ? "AP" : (args[2] >> 4 === 1 ? "SD" : "PF");
 				break;
 			};
 			case 97: {
-				standard = args[2] >> 4 == 1 ? "SD" : "VL"; // PLG-150VL / SONDIUS-XG
+				standard = args[2] >> 4 === 1 ? "SD" : "VL"; // PLG-150VL / SONDIUS-XG
 				break;
 			};
 			case 98: {
-				standard = args[2] >> 4 == 1 ? "SD" : "SG"; // PLG-100SG
+				standard = args[2] >> 4 === 1 ? "SD" : "SG"; // PLG-100SG
 				break;
 			};
 			case 100: {
@@ -698,7 +698,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 120: {
-				standard = prg == 0 ? "GM" : "GS";
+				standard = prg === 0 ? "GM" : "GS";
 				break;
 			};
 			case 121: {
@@ -710,12 +710,12 @@ let VoiceBank = class {
 				break;
 			};
 			case 127: {
-				standard = args[2] == 127 ? "MT" : (prg == 0 ? "GM" : "XG");
+				standard = args[2] === 127 ? "MT" : (prg === 0 ? "GM" : "XG");
 				break;
 			};
 			default: {
 				if (args[0] < 48) {
-					if (args[0] == 16 && mode == "xg") {
+					if (args[0] === 16 && mode === "xg") {
 						standard = "XG";
 					} else {
 						standard = "GS";
@@ -761,7 +761,7 @@ let VoiceBank = class {
 		let loadCount = 0, allCount = 0, prioCount = 0;
 		text.split("\n").forEach(function (e, i) {
 			let assign = e.split("\t"), to = [];
-			if (i == 0) {
+			if (i === 0) {
 				assign.forEach(function (e0, i0) {
 					sig[sgCrit.indexOf(e0)] = i0;
 				});
@@ -835,7 +835,7 @@ let VoiceBank = class {
 					prioCount ++;
 				};
 				if (!writeArray[(msb << 8) | lsb] || overwriteByPriority || allowOverwrite) {
-					/*if (msb == 63 && lsb == 32) {
+					/*if (msb === 63 && lsb === 32) {
 						console.debug(`Voice object written to voice pool.`);
 					};*/
 					writeArray[(msb << 8) | lsb] = voiceObject;
@@ -851,9 +851,9 @@ let VoiceBank = class {
 		};
 	};
 	clearRange(options) {
-		let prg = options.prg != undefined ? (options.prg.constructor == Array ? options.prg : [options.prg, options.prg]) : [0, 127],
-		msb = options.msb != undefined ? (options.msb.constructor == Array ? options.msb : [options.msb, options.msb]) : [0, 127],
-		lsb = options.lsb != undefined ? (options.lsb.constructor == Array ? options.lsb : [options.lsb, options.lsb]) : [0, 127];
+		let prg = options.prg != undefined ? (options.prg.constructor === Array ? options.prg : [options.prg, options.prg]) : [0, 127],
+		msb = options.msb != undefined ? (options.msb.constructor === Array ? options.msb : [options.msb, options.msb]) : [0, 127],
+		lsb = options.lsb != undefined ? (options.lsb.constructor === Array ? options.lsb : [options.lsb, options.lsb]) : [0, 127];
 		for (let cMsb = msb[0]; cMsb <= msb[1]; cMsb ++) {
 			let precalMsb = cMsb << 8;
 			for (let cLsb = lsb[0]; cLsb <= lsb[1]; cLsb ++) {

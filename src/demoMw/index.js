@@ -17,7 +17,7 @@ let getGAC = function () {
 };
 let switchList = function (list, index) {
 	list?.forEach((e, i) => {
-		if (i == index) {
+		if (i === index) {
 			e.classList.on("active");
 		} else {
 			e.classList.off("active");
@@ -54,13 +54,13 @@ let inputConv = function (ev) {
 };
 let inputSel = function () {
 	activeIn = midiAccess.inputs.get(this.getAttribute("mw-port-id"));
-	midiInSw.innerText = activeIn.connection == "closed" ? "Closed" : "Opened";
-	if (inPortMap[activeIn.id] || activeIn.connection == "open") {
+	midiInSw.innerText = activeIn.connection === "closed" ? "Closed" : "Opened";
+	if (inPortMap[activeIn.id] || activeIn.connection === "open") {
 		switchList(midiInSel, inPortMap[activeIn.id]);
 	};
 	portInList.forEach((e) => {
 		let elId = e.getAttribute("mw-port-id");
-		if (elId == activeIn.id) {
+		if (elId === activeIn.id) {
 			e.classList.on("active");
 		} else {
 			e.classList.off("active");
@@ -68,7 +68,7 @@ let inputSel = function () {
 	});
 };
 midiInSw.addEventListener("click", function () {
-	if (activeIn.connection == "closed") {
+	if (activeIn.connection === "closed") {
 		activeIn.open();
 		inPortMap[activeIn.id] = activeInPort;
 		activeIn.addEventListener("midimessage", inputConv);
@@ -115,7 +115,7 @@ midiInSel.forEach((e, i) => {
 		if (fileSplit > -1) {
 			ext = file.name.slice(fileSplit + 1).toLowerCase();
 		};
-		if (ext == "syx") {
+		if (ext === "syx") {
 			// Load SysEx blobs
 			//tuiVis.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
 		} else {

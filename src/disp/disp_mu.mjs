@@ -307,7 +307,7 @@ let MuDisplay = class extends RootDisplay {
 			maxCh = upThis.#maxCh - 1;
 		};
 		if (upThis.#range) {
-			if (upThis.#start == 255) {
+			if (upThis.#start === 255) {
 				minCh = (Math.floor((upThis.#ch >> 4) / upThis.#range) * upThis.#range) << 4;
 			} else {
 				minCh = upThis.#start << 4;
@@ -342,7 +342,7 @@ let MuDisplay = class extends RootDisplay {
 				} else {
 					curStrn = curStrn >> 4;
 				};
-				if (rendMode == 0 || rendMode == 1) {
+				if (rendMode === 0 || rendMode === 1) {
 					// 16 channel
 					for (let pI = 0; pI <= curStrn; pI ++) {
 						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - Math.floor(rendPos / 2);
@@ -367,12 +367,12 @@ let MuDisplay = class extends RootDisplay {
 				let voiceObj = upThis.getChVoice(upThis.#ch),
 				voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " "),
 				primBuf = upThis.device.getChPrimitives(upThis.#ch);
-				let bnkSel = (primBuf[0] == 64 ? "SFX" : primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");
+				let bnkSel = (primBuf[0] === 64 ? "SFX" : primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");
 				if ([63].indexOf(primBuf[0]) > -1) {
 					bnkSel = `${primBuf[2] || 0}`.padStart(3, "0");
 					showLsb = true;
 				};
-				if (upThis.getMode() == "xg") {
+				if (upThis.getMode() === "xg") {
 					if ([32, 33, 34, 35, 36, 48, 79, 80, 81, 82, 83, 84, 95, 96, 97, 98, 99, 100].indexOf(primBuf[0]) > -1) {
 						bnkSel = `${primBuf[2] || 0}`.padStart(3, "0");
 						showLsb = true;
@@ -382,7 +382,7 @@ let MuDisplay = class extends RootDisplay {
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
 					let regionX = 0, regionY = 0;
-					if (rendMode == 1) {
+					if (rendMode === 1) {
 						regionX = i0 * 5;
 					} else if (!rendMode) {
 						regionX = (i0 % 8) * 5 + 45,
@@ -391,7 +391,7 @@ let MuDisplay = class extends RootDisplay {
 					e0.forEach(function (e1, i1) {
 						let partX = i1 % 5,
 						partY = Math.floor(i1 / 5);
-						if (rendMode == 1 && i0 > 7) {
+						if (rendMode === 1 && i0 > 7) {
 							partX = partX + 5;
 						};
 						upThis.#mmdb[(regionY + partY) * 85 + regionX + partX] = e1;
@@ -417,7 +417,7 @@ let MuDisplay = class extends RootDisplay {
 			let initOff = 71.5;
 			for (let c = -2; c < 32; c ++) {
 				ctx.fillStyle = activePixel;
-				if (c + minCh == upThis.#ch) {
+				if (c + minCh === upThis.#ch) {
 					ctx.fillStyle = inactivePixel;
 				};
 				let filler = "";
@@ -534,16 +534,16 @@ let MuDisplay = class extends RootDisplay {
 					useBm = upThis.sysBm.getBm(`cat_drm`);
 				} else if (["mu", "es"]. indexOf(standard) > -1) {
 					useBm = upThis.sysBm.getBm(`boot_3`);
-				} else if (standard == "kr") {
+				} else if (standard === "kr") {
 					useBm = upThis.sysBm.getBm(`st_korg`);
 				};
-				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56 || sum.chContr[chOff + ccToPos[0]] == 121 || (sum.chContr[chOff + ccToPos[0]] < 100 && sum.chContr[chOff + ccToPos[0]] >= 96))) {
+				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] === 56 || sum.chContr[chOff + ccToPos[0]] === 121 || (sum.chContr[chOff + ccToPos[0]] < 100 && sum.chContr[chOff + ccToPos[0]] >= 96))) {
 					useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
 				};
-				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 126) {
+				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 126) {
 					useBm = upThis.sysBm.getBm("cat_smpl");
 				};
-				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 64) {
+				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 64) {
 					useBm = upThis.sysBm.getBm("cat_sfx");
 				};
 				if (!useBm) {
@@ -564,14 +564,14 @@ let MuDisplay = class extends RootDisplay {
 					});
 				};
 			} else {
-				if (upThis.#bmst == 2) {
+				if (upThis.#bmst === 2) {
 					if (upThis.#unresolvedEx) {
 						upThis.#unresolvedEx = false;
 						getDebugState() &&  console.debug(`SysEx prompt cancelled.`);
 					};
 					useBm.forEach((e, i, a) => {
 						let crit = Math.floor((upThis.#bmex - timeNow) / blinkSpeedMode);
-						a[i] = crit % 2 == e;
+						a[i] = crit % 2 === e;
 					});
 				};
 			};
@@ -608,11 +608,11 @@ let MuDisplay = class extends RootDisplay {
 		ctx.stroke();
 		let pan = sum.chContr[chOff + ccToPos[10]];
 		upThis.#panStrokes.fill(0);
-		if (pan == 0) {
+		if (pan === 0) {
 			upThis.#panStrokes[0] = 1;
-		} else if (pan == 64) {
+		} else if (pan === 64) {
 			upThis.#panStrokes[3] = 1;
-		} else if (pan == 128) {
+		} else if (pan === 128) {
 			// Real MU doesn't show anything for random panning
 		} else if (pan < 64) {
 			upThis.#panStrokes[Math.floor(pan / 21)] = 1;
@@ -652,10 +652,10 @@ let MuDisplay = class extends RootDisplay {
 		if (modeSel?.constructor != Number) {
 			modeSel = -1;
 		};
-		paintTriRight(ctx, 826, 170, modeSel == 0);
-		paintTriRight(ctx, 826, 188, modeSel == 1);
-		paintTriRight(ctx, 826, 206, modeSel == 2);
-		paintTriRight(ctx, 826, 224, modeSel == 3);
+		paintTriRight(ctx, 826, 170, modeSel === 0);
+		paintTriRight(ctx, 826, 188, modeSel === 1);
+		paintTriRight(ctx, 826, 206, modeSel === 2);
+		paintTriRight(ctx, 826, 224, modeSel === 3);
 		// MIC & LIVE
 		ctx.fillStyle = getLcd(!(upThis.demoInfo && time));
 		ctx.fillRect(15, 153, 42, 11);

@@ -54,11 +54,11 @@ let QyDisplay = class extends RootDisplay {
 		for (let i = 0; i < length; i ++) {
 			let x = i % width, y = Math.floor(i / width);
 			if (
-				x == 0 && y < height - 1 ||
-				y == 0 && x < width - 1 ||
-				x == width - 1 && y > 0 ||
-				y == height - 1 && x > 0 ||
-				x == width - 2
+				x === 0 && y < height - 1 ||
+				y === 0 && x < width - 1 ||
+				x === width - 1 && y > 0 ||
+				y === height - 1 && x > 0 ||
+				x === width - 2
 			) {
 				this.#nmdb[offset + x + y * 128] = 1;
 			};
@@ -78,7 +78,7 @@ let QyDisplay = class extends RootDisplay {
 		length = width * height;
 		for (let i = 0; i < length; i ++) {
 			let x = i % width, y = Math.floor(i / width);
-			if (x == 0 && y > 0 && width % 2 == 0) {} else {
+			if (x === 0 && y > 0 && width % 2 === 0) {} else {
 				curBit = !curBit;
 			};
 			this.#nmdb[offset + x + y * 128] = +curBit;
@@ -349,23 +349,23 @@ let QyDisplay = class extends RootDisplay {
 					if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 						useBm = this.sysBm.getBm(`ext_${standard}`);
 					};
-					if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
+					if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] === 56)) {
 						useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 					};
-					if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 126) {
+					if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 126) {
 						useBm = this.sysBm.getBm("cat_smpl");
 					};
-					if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 64) {
+					if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 64) {
 						useBm = this.sysBm.getBm("cat_sfx");
 					};
 					if (!useBm) {
 						useBm = this.sysBm.getBm("no_abm");
 					};
 				} else {
-					if (this.#bmst == 2) {
+					if (this.#bmst === 2) {
 						useBm.forEach((e, i, a) => {
 							let crit = Math.floor((this.#bmex - timeNow) / 400); // divided by 400
-							a[i] = (crit & 1) == e;
+							a[i] = (crit & 1) === e;
 						});
 					};
 				};
@@ -428,7 +428,7 @@ let QyDisplay = class extends RootDisplay {
 					let cVelo = sum.strength[rch] * 1286 >> 16; // devided by 51
 					upThis.#renderFill(31 + tchOff, preCalY + 11 - cVelo, 9, cVelo + 1);
 				};
-				if (this.#ch == rch) {
+				if (this.#ch === rch) {
 					textTarget = 0;
 					upThis.#renderFill(31 + tchOff, preCalY, 9, 5);
 					if (mixerView) {

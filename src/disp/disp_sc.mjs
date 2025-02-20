@@ -94,7 +94,7 @@ let ScDisplay = class extends RootDisplay {
 			upThis.#ch = ev.data;
 		});
 		upThis.addEventListener("note", ({data}) => {
-			if (data.state == 3) {
+			if (data.state === 3) {
 				upThis.#noteOn[data.part] = 10;
 			};
 		});
@@ -153,7 +153,7 @@ let ScDisplay = class extends RootDisplay {
 						0, 0, circle
 					);
 					ctx.fill();
-				} else if (d == 4) {
+				} else if (d === 4) {
 					ctx.ellipse(
 						316,
 						(15 - c) * 12 + 100,
@@ -333,7 +333,7 @@ let ScDisplay = class extends RootDisplay {
 				};
 				infoTxt += upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ");
 				let timeOff = 0;
-				if (sum.mode == "gs" || sum.mode == "sc") {
+				if (sum.mode === "gs" || sum.mode === "sc") {
 					if (sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
 						let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
 						let critOff = sum.letter.set + (critTxt.length - 16) * 300;
@@ -363,16 +363,16 @@ let ScDisplay = class extends RootDisplay {
 			let cPit = upThis.device.getPitchShift(upThis.#ch);
 			if (cPit < 0) {
 				paramText += "-";
-			} else if (cPit == 0) {
+			} else if (cPit === 0) {
 				paramText += "±";
 			} else {
 				paramText += "+";
 			};
 			paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, " ");
 			let cPan = sum.chContr[chOff + ccToPos[10]];
-			if (cPan == 64) {
+			if (cPan === 64) {
 				paramText += "C 0";
-			} else if (cPan == 128) {
+			} else if (cPan === 128) {
 				paramText += "RND";
 			} else if (cPan < 1) {
 				paramText += "L63";
@@ -412,7 +412,7 @@ let ScDisplay = class extends RootDisplay {
 					upThis.#noteOn[i] --;
 				};
 				if (((e >> 4) << 4) > upThis.#linger[i] >> 8) {
-					if (scConf.peakHold == 3) {
+					if (scConf.peakHold === 3) {
 						upThis.#linger[i] = ((e >> 4) << 4) << 8;
 					} else {
 						upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
@@ -440,7 +440,7 @@ let ScDisplay = class extends RootDisplay {
 					};
 					upThis.#linger[i] = val;
 				};
-				if (scConf.peakHold == 3) {
+				if (scConf.peakHold === 3) {
 					//console.debug(`Tendency: ${Math.sign((upThis.#linger[i] >> 8) - upThis.#lingerOld[i])}`);
 					if (upThis.#keep[i] < 16) {
 						if (upThis.#peak[i] != 0 && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {

@@ -24,7 +24,7 @@ HTMLElement.prototype.$a = function (selector) {
 self.Alpine = Alpine;
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
-	if (baseTime == newTime) {
+	if (baseTime === newTime) {
 		return baseFactor;
 	};
 	return Math.pow(baseFactor, newTime / baseTime);

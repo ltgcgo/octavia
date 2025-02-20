@@ -71,7 +71,7 @@ let sysexBitmap = function (frameData, type = "xg", frameId = 0, noCopy) {
 		let pointer = Math.floor(canvasX / workBit) * canvasHeight + canvasY, shifter = workBit - canvasX % workBit - 1;
 		targetBuffer[startOffset + pointer] ^= (e ? 1 : 0) << shifter;
 	});
-	if (type == "gs") {
+	if (type === "gs") {
 		targetBuffer[72] = gsChecksum(targetBuffer.subarray(5, 72));
 	};
 	return targetBuffer;

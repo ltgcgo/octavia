@@ -26,7 +26,7 @@ let useMidiBus = false;
 
 // Generate Octavia channel switch SysEx
 self.generateSwitch = function (ch = 0, min, max) {
-	if (min != undefined && max == undefined) {
+	if (min != undefined && max === undefined) {
 		console.warn(`Invalid bounds for channel switch generation.`);
 		return;
 	};

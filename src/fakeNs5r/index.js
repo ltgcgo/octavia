@@ -268,7 +268,7 @@ let renderThread = setInterval(function () {
 				visualizer.sendCmd(e.data);
 			});
 		};
-		visualizer.render(curTime, dispCtx, location.hash == "#trueMode");
+		visualizer.render(curTime, dispCtx, location.hash === "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);

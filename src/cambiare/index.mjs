@@ -211,7 +211,7 @@ let setCanvasText = function (context, text) {
 
 HTMLElement.prototype.setTextRaw = function (text) {
 	let textNode;
-	if (this.childNodes[0]?.nodeType == 3) {
+	if (this.childNodes[0]?.nodeType === 3) {
 		textNode = this.childNodes[0];
 		textNode.data = text;
 	} else {
@@ -295,14 +295,14 @@ let Cambiare = class extends RootDisplay {
 				sx = Math.round(note * width / 128);
 				ex = Math.round((note + 1) * width / 128);
 				dx = ex - sx;
-				border = range == 1 ? 2 : 1;
+				border = range === 1 ? 2 : 1;
 				break;
 			};
 			case "piano": {
 				sx = Math.round((Math.floor(note / 12) * 7 + keyXs[note % 12]) * width / 75 * 1.0044642857142856);
 				ex = Math.round((Math.floor(note / 12) * 7 + keyXs[note % 12] + 1) * width / 75 * 1.0044642857142856) - 1;
 				dx = ex - sx;
-				border = range == 1 ? 3 : 1;
+				border = range === 1 ? 3 : 1;
 				break;
 			};
 			case "line": {
@@ -320,7 +320,7 @@ let Cambiare = class extends RootDisplay {
 		// Colours
 		context.fillStyle = `#${isBlackKey ? (upThis.getChAccent(part)) : (upThis.#foreground)}${((velo << 1) | (velo >> 6)).toString(16).padStart(2, "0")}`;
 		context.strokeStyle = context.fillStyle;
-		context.lineWidth = range == 1 ? 4 : 2;
+		context.lineWidth = range === 1 ? 4 : 2;
 		context.lineDashOffset = 0;
 		// Draw calls
 		switch (upThis.#style) {
@@ -359,7 +359,7 @@ let Cambiare = class extends RootDisplay {
 				break;
 			};
 			case "line": {
-				if (internalNoteStyle == 1) {
+				if (internalNoteStyle === 1) {
 					switch (range) {
 						case 4: {
 							context.setLineDash(lineDash[2]);
@@ -379,7 +379,7 @@ let Cambiare = class extends RootDisplay {
 					};
 				};
 				context.beginPath();
-				context.moveTo(sx, (range == 4 || !internalNoteStyle) && self?.document?.mozFullScreen ? 1 : 0);
+				context.moveTo(sx, (range === 4 || !internalNoteStyle) && self?.document?.mozFullScreen ? 1 : 0);
 				context.lineTo(ex, (height >> 1) + 1);
 				context.lineTo(sx, height);
 				context.stroke();
@@ -518,7 +518,7 @@ let Cambiare = class extends RootDisplay {
 								e.ccVis.lineWidth = upThis.panStyle >> 2 ? 1 : 3;
 								e.ccVis.beginPath();
 								e.ccVis.moveTo(84.5, 22.5);
-								if (pan == 64) {
+								if (pan === 64) {
 									e.ccVis.lineTo(84.5, 4);
 								} else {
 									e.ccVis.lineTo(84.5 + 18 * Math.sin(panRotateCache), 22.5 - 18.5 * Math.cos(panRotateCache));
@@ -562,7 +562,7 @@ let Cambiare = class extends RootDisplay {
 								e.ccVis.lineWidth = 3;
 								e.ccVis.beginPath();
 								e.ccVis.moveTo(84.5, 16.5);
-								if (pan == 64) {
+								if (pan === 64) {
 									e.ccVis.lineTo(84.5, 4);
 								} else {
 									e.ccVis.lineTo(84.5 + 11.5 * Math.sin(panRotateCache), 16.5 - 11.5 * Math.cos(panRotateCache));
@@ -570,7 +570,7 @@ let Cambiare = class extends RootDisplay {
 								e.ccVis.stroke();
 							};
 						};
-						if ((upThis.panStyle & 1) == 0 || pan >> 7) {
+						if ((upThis.panStyle & 1) === 0 || pan >> 7) {
 							e.ccVis.fillStyle = `#${upThis.#foreground}`;
 							e.ccVis.beginPath();
 							e.ccVis.arc(84.5, 16.5, 2.5, 0, piMulti[24]);
@@ -779,7 +779,7 @@ let Cambiare = class extends RootDisplay {
 			ccxt.clearRect(0, 0, 251, 63);
 			for (let slot = 0; slot <= upThis.device.polyIndexLast; slot ++) {
 				let pX = slot & 31, pY = slot >> 5;
-				if (slot + 1 == upThis.device.polyIndexLatest) {
+				if (slot + 1 === upThis.device.polyIndexLatest) {
 					ccxt.fillStyle = "#ff0"; // Yellow for the most recently accessed register
 				} else {
 					switch(upThis.device.getPolyState(slot)) {
@@ -911,7 +911,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#chMode[part] = mode;
 		let partViewer = upThis.#sectPart[part >> 4][part & 15];
 		for (let className of partViewer.root.classList) {
-			if (className.substring(0, 10) == "part-mode-") {
+			if (className.substring(0, 10) === "part-mode-") {
 				partViewer.root.classList.remove(className);
 			};
 		};
@@ -961,8 +961,8 @@ let Cambiare = class extends RootDisplay {
 			if (canvasUpdate) {
 				e.forEach((e0, i0) => {
 					//console.debug(e0, i, i0);
-					e0.cxt.canvas.width = upThis.#renderRange == 1 ? 1193 : 495;
-					e0.cxt.canvas.height = upThis.#renderRange == 4 ? 26 : 52;
+					e0.cxt.canvas.width = upThis.#renderRange === 1 ? 1193 : 495;
+					e0.cxt.canvas.height = upThis.#renderRange === 4 ? 26 : 52;
 				});
 			};
 		});
@@ -1280,7 +1280,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.addEventListener("metacommit", (ev) => {
 			let meta = ev.data;
 			//console.debug(meta);
-			if (upThis.#metaAmend && meta.type == upThis.#metaType && upThis.#metaLastLine) {
+			if (upThis.#metaAmend && meta.type === upThis.#metaType && upThis.#metaLastLine) {
 				// Amend the last line
 				switch (meta.type) {
 					case "C.Lyrics":
@@ -1295,7 +1295,7 @@ let Cambiare = class extends RootDisplay {
 						upThis.#metaLastLine.childNodes[0].data += meta.data;
 					};
 				};
-			} else if (meta.data?.length && metaBlocklist.indexOf(meta.type) == -1) {
+			} else if (meta.data?.length && metaBlocklist.indexOf(meta.type) === -1) {
 				// Commit a new line
 				let metaLineRoot = createElement("div", ["meta-line"]),
 				metaLineType = createElement("span", ["field", "field-key", "meta-type"], {i: metaNames[meta.type] || meta.type});
@@ -1323,7 +1323,7 @@ let Cambiare = class extends RootDisplay {
 				]);
 				if (upThis.#sectMeta.view.children.length > upThis.#metaGcStart) {
 					upThis.#metaGcAt = Date.now() + 500;
-					if (upThis.#metaGcScheduled == 0) {
+					if (upThis.#metaGcScheduled === 0) {
 						console.debug(`Meta event garbage collector triggered.`);
 					};
 					upThis.#metaGcScheduled = 1;
@@ -1339,7 +1339,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
 		upThis.#metaGcThread = setInterval(async () => {
 			let timeNow = Date.now();
-			if (upThis.#metaGcScheduled == 0) {
+			if (upThis.#metaGcScheduled === 0) {
 				return;
 			};
 			switch (upThis.#metaGcScheduled) {
@@ -1431,7 +1431,7 @@ let Cambiare = class extends RootDisplay {
 						`part-efx`, `part-focus`
 					]);
 					for (let className of e.root.classList) {
-						if (className.substring(0, 10) == "part-mode-") {
+						if (className.substring(0, 10) === "part-mode-") {
 							e.root.classList.remove(className);
 						};
 					};

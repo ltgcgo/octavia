@@ -6,7 +6,7 @@ import {BlobDecoder} from "./decoders.mjs";
 let same = function (origin, arr) {
 	let same = true;
 	arr.forEach((e, i) => {
-		same = same && origin[i] == e;
+		same = same && origin[i] === e;
 	});
 	return same;
 };
@@ -34,7 +34,7 @@ bankDecoder.set("s7e", async function (blob) {
 		let rwin = s7eBlob.subarray(ptr);
 		([() => {
 			// Waiting for header read
-			if (utf8Dec.decode(rwin.subarray(0, 4)) == "YSFC") {
+			if (utf8Dec.decode(rwin.subarray(0, 4)) === "YSFC") {
 				ptr += 80;
 				mode = 1;
 			} else {
@@ -67,7 +67,7 @@ bankDecoder.set("s7e", async function (blob) {
 					while (entryStart < sectWin.length) {
 						let entryWin = sectWin.subarray(entryStart, entryStart + entryLen);
 						let voiceName = utf8Dec.decode(entryWin.subarray(0, 10)).trimEnd();
-						if (voiceName.slice(0, 5) == "Init ") {
+						if (voiceName.slice(0, 5) === "Init ") {
 							voiceName = "";
 						};
 						if (voiceName) {
@@ -83,7 +83,7 @@ bankDecoder.set("s7e", async function (blob) {
 					while (entryStart < sectWin.length) {
 						let entryWin = sectWin.subarray(entryStart, entryStart + entryLen);
 						let voiceName = utf8Dec.decode(entryWin.subarray(0, 10)).trimEnd();
-						if (voiceName.slice(0, 5) == "Init ") {
+						if (voiceName.slice(0, 5) === "Init ") {
 							voiceName = "";
 						};
 						if (voiceName) {
@@ -99,7 +99,7 @@ bankDecoder.set("s7e", async function (blob) {
 					while (entryStart < sectWin.length) {
 						let entryWin = sectWin.subarray(entryStart, entryStart + entryLen);
 						let voiceName = utf8Dec.decode(entryWin.subarray(0, 10)).trimEnd();
-						if (voiceName == "----------") {
+						if (voiceName === "----------") {
 							voiceName = "";
 						};
 						if (voiceName) {
@@ -129,7 +129,7 @@ bankDecoder.set("pcg", async function (blob) {
 	while (resume) {
 		let rwin = sysexBlob.subarray(ptr);
 		([() => {
-			resume = utf8Dec.decode(rwin.subarray(0, 4)) == "INI2";
+			resume = utf8Dec.decode(rwin.subarray(0, 4)) === "INI2";
 			headSects = rwin[15];
 			//console.error(`Section count: ${headSects}`);
 			ptr += 16;

@@ -27,7 +27,7 @@ let demoId = 0;
 
 // Generate Octavia channel switch SysEx
 let generateSwitch = function (ch = 0, min, max) {
-	if (min != undefined && max == undefined) {
+	if (min != undefined && max === undefined) {
 		console.warn(`Invalid bounds for channel switch generation.`);
 		return;
 	};
@@ -285,7 +285,7 @@ midwIndicator.addEventListener("click", function () {
 visualizer.addEventListener("meta", function (ev) {
 	if (!visualizer.songTitle) {
 		ev.data.forEach(function (e) {
-			if (!visualizer.songTitle && e.meta == 3) {
+			if (!visualizer.songTitle && e.meta === 3) {
 				visualizer.songTitle = e.data;
 			};
 		});
@@ -311,7 +311,7 @@ dispCanv.addEventListener("wheel", function (ev) {
 });
 dispCanv.addEventListener("mousedown", function (ev) {
 	let ch = visualizer.getCh();
-	if (ev.button == 0) {
+	if (ev.button === 0) {
 		if (ev.offsetX < 64) {
 			visualizer.setCh(ch - 1);
 		} else if (ev.offsetX >= 1046) {
@@ -375,7 +375,7 @@ let renderThread = setInterval(function () {
 		if (currentAnimation && !visualizer.demoInfo) {
 			visualizer.demoInfo = currentAnimation;
 		};
-		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId, location.hash == "#trueMode", rhythmView);
+		visualizer.render(curTime, dispCtx, backlightColor, mixerView, tempoView, useMidiBus ? 0 : demoId, location.hash === "#trueMode", rhythmView);
 		lastTime = curTime;
 	};
 }, 20);

@@ -90,7 +90,7 @@ let TuiDisplay = class extends RootDisplay {
 				if (sum.texts[metaLine]?.data.length) {
 					fields[st] = `${sum.texts[metaLine].mask ? "        " : sum.texts[metaLine].type.padStart(8, " ")}: ${(sum.texts[metaLine].data || "")}`.padEnd(100, " ");
 				};
-				if (sum.texts[metaLine]?.data.length > 0 || sum.texts[metaLine]?.data.length == undefined) {
+				if (sum.texts[metaLine]?.data.length > 0 || sum.texts[metaLine]?.data.length === undefined) {
 					st --;
 				};
 				metaLine ++;

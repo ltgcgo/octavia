@@ -95,7 +95,7 @@ visualizer.addEventListener("mode", function (ev) {
 visualizer.addEventListener("meta", function (ev) {
 	if (!title) {
 		ev.data.forEach(function (e) {
-			if (!title && e.meta == 3) {
+			if (!title && e.meta === 3) {
 				title = e.data;
 			};
 		});

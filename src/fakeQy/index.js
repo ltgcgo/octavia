@@ -218,7 +218,7 @@ midwIndicator.addEventListener("click", function () {
 visualizer.addEventListener("meta", function (ev) {
 	if (!visualizer.songTitle) {
 		ev.data.forEach(function (e) {
-			if (!visualizer.songTitle && e.meta == 3) {
+			if (!visualizer.songTitle && e.meta === 3) {
 				visualizer.songTitle = e.data;
 			};
 		});
@@ -246,7 +246,7 @@ dispCanv.addEventListener("wheel", function (ev) {
 }); */
 dispCanv.addEventListener("mousedown", function (ev) {
 	let ch = visualizer.getCh();
-	if (ev.button == 0) {
+	if (ev.button === 0) {
 		if (ev.offsetX < 64) {
 			visualizer.setCh(ch - 1);
 		} else if (ev.offsetX >= 717) {
@@ -296,7 +296,7 @@ let renderThread = setInterval(function () {
 				visualizer.sendCmd(e.data);
 			});
 		};
-		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId, location.hash == "#trueMode");
+		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId, location.hash === "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);

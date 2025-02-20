@@ -24,7 +24,7 @@ demoModes[9] = "gm";
 let useMidiBus = false;
 
 let generateSwitch = function (ch = 0, min, max) {
-	if (min != undefined && max == undefined) {
+	if (min != undefined && max === undefined) {
 		console.warn(`Invalid bounds for channel switch generation.`);
 		return;
 	};
@@ -311,7 +311,7 @@ let renderThread = setInterval(function () {
 				visualizer.sendCmd(e.data);
 			});
 		};
-		visualizer.render(curTime, dispCtx, location.hash == "#trueMode");
+		visualizer.render(curTime, dispCtx, location.hash === "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);

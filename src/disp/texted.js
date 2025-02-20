@@ -22,7 +22,7 @@ let textedPitchBend = function (number) {
 };
 
 let textedPanning = function (number) {
-	if (number == 128) {
+	if (number === 128) {
 		return "<<>>";
 	};
 	let result = Array.from("----");

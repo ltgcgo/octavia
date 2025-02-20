@@ -59,7 +59,7 @@ let PsrDisplay = class extends RootDisplay {
 		});
 		this.addEventListener("metacommit", (ev) => {
 			let meta = ev.data;
-			if (meta.type == "SGLyrics" || meta.type == "C.Lyrics" || meta.type == "KarLyric") {
+			if (meta.type === "SGLyrics" || meta.type === "C.Lyrics" || meta.type === "KarLyric") {
 				this.#kana = meta.data;
 			}
 		});
@@ -151,7 +151,7 @@ let PsrDisplay = class extends RootDisplay {
 		}
 		usedFont.getStr(str).forEach((e, i) => {
 			e.render((e, x, y) => {
-				if (y == 7 && cursor == i) {
+				if (y === 7 && cursor === i) {
 					ctx.fillStyle = e ? inactivePixel : activePixel;
 				} else {
 					ctx.fillStyle = e ? activePixel : inactivePixel;
@@ -304,7 +304,7 @@ let PsrDisplay = class extends RootDisplay {
 				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
 				this.#nsdb[(Math.floor(i / 12) - 4) * 7 + noteHeadPos[i % 12]] = pixel;
 				if (isBlackKey[i % 12]) {
-					if (isBlackKey[i % 12] == 1) {
+					if (isBlackKey[i % 12] === 1) {
 						this.#nadb[(Math.floor(i / 12) - 4) * 2 + nadbIndex[i % 12]] = pixel;
 					}
 					else {
@@ -318,14 +318,14 @@ let PsrDisplay = class extends RootDisplay {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
 				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
 				this.#nsdb[noteHeadPos[i % 12]] = Math.max(this.#nsdb[noteHeadPos[i % 12]], pixel);
-				if (Math.floor(i / 12) == 3) {
+				if (Math.floor(i / 12) === 3) {
 					bottomOctaveFlag1 = true;
 				}
 				else {
 					bottomOctaveFlag2 = true;
 				}
 				if (isBlackKey[i % 12]) {
-					if (isBlackKey[i % 12] == 1) {
+					if (isBlackKey[i % 12] === 1) {
 						this.#nadb[nadbIndex[i % 12]] = Math.max(this.#nadb[nadbIndex[i % 12]], pixel);
 					}
 					else {
@@ -339,14 +339,14 @@ let PsrDisplay = class extends RootDisplay {
 			if (sum.chKeyPr[this.#ch]?.has(i)) {
 				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
 				this.#nsdb[14 + noteHeadPos[(i - 1) % 12 + 1]] = Math.max(this.#nsdb[14 + noteHeadPos[(i - 1) % 12 + 1]], pixel);
-				if (Math.floor((i - 1) / 12) == 7) {
+				if (Math.floor((i - 1) / 12) === 7) {
 					topOctaveFlag1 = true;
 				}
 				else {
 					topOctaveFlag2 = true;
 				}
 				if (isBlackKey[i % 12]) {
-					if (isBlackKey[i % 12] == 1) {
+					if (isBlackKey[i % 12] === 1) {
 						this.#nadb[4 + nadbIndex[i % 12]] = Math.max(this.#nadb[4 + nadbIndex[i % 12]], pixel);
 					}
 					else {
@@ -461,23 +461,23 @@ let PsrDisplay = class extends RootDisplay {
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 					useBm = this.sysBm.getBm(`ext_${standard}`);
 				};
-				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] == 56)) {
+				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] === 56)) {
 					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 				};
-				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 126) {
+				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 126) {
 					useBm = this.sysBm.getBm("cat_smpl");
 				};
-				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) == 64) {
+				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 64) {
 					useBm = this.sysBm.getBm("cat_sfx");
 				};
 				if (!useBm) {
 					useBm = this.sysBm.getBm("no_abm");
 				};
 			} else {
-				if (this.#bmst == 2) {
+				if (this.#bmst === 2) {
 					useBm.forEach((e, i, a) => {
 						let crit = Math.floor((this.#bmex - timeNow) / 400);
-						a[i] = crit % 2 == e;
+						a[i] = crit % 2 === e;
 					});
 				};
 			};
