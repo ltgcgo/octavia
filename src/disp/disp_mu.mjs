@@ -216,13 +216,13 @@ let MuDisplay = class extends RootDisplay {
 			upThis.demoInfo = false;
 		});
 		upThis.addEventListener("portrange", (ev) => {
-			if (ev && ev.data != 1 << Math.log2(ev.data)) {
+			if (ev && ev.data !== 1 << Math.log2(ev.data)) {
 				console.debug(`MU display rejected port range value ${ev.data}.`);
 			};
 			upThis.#range = ev.data;
 		});
 		upThis.addEventListener("portstart", (ev) => {
-			if (ev != 255 && ev >= allocated.port) {
+			if (ev !== 255 && ev >= allocated.port) {
 				console.debug(`MU display rejected port range value ${ev.data}.`);
 			};
 			upThis.#start = ev.data;
@@ -649,7 +649,7 @@ let MuDisplay = class extends RootDisplay {
 		paintTriDown(ctx, 800, 170, false);
 		// Paint right triangles
 		let modeSel = modeGroup[sum.mode];
-		if (modeSel?.constructor != Number) {
+		if (modeSel?.constructor !== Number) {
 			modeSel = -1;
 		};
 		paintTriRight(ctx, 826, 170, modeSel === 0);

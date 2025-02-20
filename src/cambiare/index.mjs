@@ -373,7 +373,7 @@ let Cambiare = class extends RootDisplay {
 					};
 				} else {
 					context.setLineDash(lineDash[0]);
-					if (range != 4 && self?.document?.mozFullScreen) {
+					if (range !== 4 && self?.document?.mozFullScreen) {
 						sx += 0.5;
 						ex += 0.5;
 					};
@@ -736,7 +736,7 @@ let Cambiare = class extends RootDisplay {
 		// Render the old pixel display buffers
 		upThis.#bufBo.forEach((e, i) => {
 			let y = i >> 5, x = i & 31;
-			if (upThis.#bufBm[i] != e) {
+			if (upThis.#bufBm[i] !== e) {
 				ccxt.clearRect(252 + (x << 2), y << 2, 3, 3);
 				if (e) {
 					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
@@ -753,7 +753,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#bufLo.forEach((e, i) => {
 			let y = Math.floor(i / 80), x = i % 80;
 			x += Math.floor(x / 5);
-			if (upThis.#bufLm[i] != e) {
+			if (upThis.#bufLm[i] !== e) {
 				ccxt.clearRect(x << 2, (y | 16) << 2, 3, 3);
 				if (e) {
 					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
@@ -902,7 +902,7 @@ let Cambiare = class extends RootDisplay {
 				upThis.#canvas.classList.remove(className);
 			};
 		};
-		if (mode != "?") {
+		if (mode !== "?") {
 			upThis.#canvas.classList.add(`cambiare-mode-${mode}`);
 		};
 	};
@@ -915,7 +915,7 @@ let Cambiare = class extends RootDisplay {
 				partViewer.root.classList.remove(className);
 			};
 		};
-		if (mode != "?") {
+		if (mode !== "?") {
 			partViewer.root.classList.add(`part-mode-${mode}`);
 		};
 	};

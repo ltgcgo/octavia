@@ -109,7 +109,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		for (let c = 0; c < 21; c ++) {
 			let pX = c % 7, pY = Math.floor(c / 7),
 			pcY = pY + (9 - convertedValue);
-			if (pY != 1 || pX === 0 || pX === 6) {
+			if (pY !== 1 || pX === 0 || pX === 6) {
 				upThis.#nmdb[pcY * 144 + pX + startX + 2] = upThis.#pixelLit;
 			} else {
 				upThis.#nmdb[pcY * 144 + pX + startX + 2] = upThis.#pixelOff;
@@ -420,7 +420,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		// Screen buffer write finish.
 		// Determine if full render is required.
 		let drawPixMode = false;
-		if (upThis.#lastTrue != trueMode) {
+		if (upThis.#lastTrue !== trueMode) {
 			upThis.#refreshed = true;
 		};
 		if (upThis.#refreshed) {
@@ -465,11 +465,11 @@ let Ns5rDisplay = class extends RootDisplay {
 				cap = 48;
 				if (Math.abs(diff) > cap) {
 					upThis.#dmdb[i] += Math.sign(diff) * cap;
-				} else if (diff != 0) {
+				} else if (diff !== 0) {
 					upThis.#dmdb[i] = e;
 				};
 			} else {
-				if (upThis.#dmdb[i] != e) {
+				if (upThis.#dmdb[i] !== e) {
 					upThis.#dmdb[i] = e;
 				};
 			};
@@ -477,7 +477,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		// Commit to display accordingly.
 		upThis.#dmdb.forEach((e, i) => {
 			let pixX = i % 144, pixY = Math.floor(i / 144);
-			let hasDifference = upThis.#omdb[i] != e;
+			let hasDifference = upThis.#omdb[i] !== e;
 			if (!drawPixMode && hasDifference) {
 				ctx.fillStyle = upThis.#backlight.slice(0, 7);
 				ctx.fillRect(6 * pixX + 1, 12 + 6 * pixY, 6, 6);
@@ -498,7 +498,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		});
 		// Commit to old display buffer.
 		upThis.#dmdb.forEach((e, i) => {
-			if (upThis.#omdb[i] != e) {
+			if (upThis.#omdb[i] !== e) {
 				upThis.#omdb[i] = e;
 			};
 		});

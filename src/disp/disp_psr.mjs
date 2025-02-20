@@ -161,7 +161,7 @@ let PsrDisplay = class extends RootDisplay {
 		});
 		ctx.resetTransform();
 		// Scrolling text
-		if (longString && Math.floor(timeNow / 60) != upThis.#lastRefreshTime) {
+		if (longString && Math.floor(timeNow / 60) !== upThis.#lastRefreshTime) {
 			if (upThis.#letterCoolDown > 0) {
 				upThis.#letterCoolDown--;
 			} else if (upThis.#letterShift > originalLength + 1) {
@@ -398,11 +398,11 @@ let PsrDisplay = class extends RootDisplay {
 		else {
 			if (rhythmView) {
 				let currentCursorPos = Math.round(sum.noteBeat * 2 - 0.5);
-				if (sum.noteBar != upThis.#lastFrameBar) {
+				if (sum.noteBar !== upThis.#lastFrameBar) {
 					upThis.#rhythmTextBuffer = "        "; // cleat text buffer upon bar changing
 				}
 				// upThis.#rhythmTextBuffer += upThis.#kana;
-				if (upThis.#kana != "") {
+				if (upThis.#kana !== "") {
 					let arr = Array.from(upThis.#rhythmTextBuffer);
 					// arr[currentCursorPos] = upThis.#kana;
 					arr.splice(currentCursorPos, upThis.#kana.length, upThis.#kana);
@@ -520,7 +520,7 @@ let PsrDisplay = class extends RootDisplay {
 		this.#nkdb.forEach((e, i) => {
 			ctx.fillStyle = [inactivePixel, mediumPixel, activePixel][e];
 			let octave = Math.floor(i / 12), note = i % 12;
-			if (i != 60) {
+			if (i !== 60) {
 				isBlackKey[note] ? ctx.fillRect(keyboardData[note] + 163 * octave, 321, 12, 26) : ctx.fillRect(keyboardData[note] + 163 * octave, 355, 14, 21);
 			}
 			else {
@@ -560,12 +560,12 @@ let PsrDisplay = class extends RootDisplay {
 		// Commit to old display buffer.
 		/*
 		this.#nkdb.forEach((e, i) => {
-			if (this.#okdb[i] != e) {
+			if (this.#okdb[i] !== e) {
 				this.#okdb[i] = e;
 			};
 		});
 		this.#nsdb.forEach((e, i) => {
-			if (this.#osdb[i] != e) {
+			if (this.#osdb[i] !== e) {
 				this.#osdb[i] = e;
 			};
 		});

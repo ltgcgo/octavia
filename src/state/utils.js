@@ -48,7 +48,7 @@ let korgFilter = function (korgArr, iterator) {
 		unmasked = (((dataMask >> shifts) & 1) << 7),
 		e = korgArr[pointer];
 		e += unmasked;
-		if (pointer % 8 != 0) {
+		if (pointer % 8 !== 0) {
 			iterator(e, realData, korgArr);
 			//console.debug(`Unmasked: ${dataMask} >> ${shifts} = ${e}`);
 			realData ++;

@@ -411,7 +411,7 @@ let QyDisplay = class extends RootDisplay {
 					upThis.#nmdb[4227 + x + (y << 7)] = e;
 				});
 				// The tempo pill
-				if (sum.tempo != 120) {
+				if (sum.tempo !== 120) {
 					upThis.qyRsrc.getBm("ActPill")?.render((e, x, y) => {
 						upThis.#nmdb[5141 + x + (y << 7)] = e;
 					});
@@ -513,7 +513,7 @@ let QyDisplay = class extends RootDisplay {
 		// Commit to display accordingly.
 		this.#nmdb.forEach((e, i) => {
 			let pixX = i & 127, pixY = i >> 7;
-			let hasDifference = this.#omdb[i] != e;
+			let hasDifference = this.#omdb[i] !== e;
 			if (!drawPixMode && hasDifference) {
 				ctx.fillStyle = this.#backlight.slice(0, 7);
 				ctx.fillRect(6 * pixX + 7, 7 + (pixY << 3), 6, 8);
@@ -528,7 +528,7 @@ let QyDisplay = class extends RootDisplay {
 		});
 		// Commit to old display buffer.
 		this.#nmdb.forEach((e, i) => {
-			if (this.#omdb[i] != e) {
+			if (this.#omdb[i] !== e) {
 				this.#omdb[i] = e;
 			};
 		});

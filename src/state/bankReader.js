@@ -115,7 +115,7 @@ let VoiceBank = class {
 				if (msb === 0 && lsb < 5) {
 					//args[2] = 0;
 					args[0] = 49;
-				} else if (msb > 125 && lsb < 5 && lsb != 2) {
+				} else if (msb > 125 && lsb < 5 && lsb !== 2) {
 					// Temporary fix for C/M bank under SC-55 mode
 					// SC-88 do care incorrect LSB selection
 					args[2] = msb;
@@ -482,7 +482,7 @@ let VoiceBank = class {
 				bankLevel = bankObject?.level;
 			} else {
 				if (!this.strictMode) {
-					/* if (mode != "gs" && mode != "ns5r") {
+					/* if (mode !== "gs" && mode !== "ns5r") {
 						args[2] = 0;
 						ending = "^";
 					}; */
@@ -723,7 +723,7 @@ let VoiceBank = class {
 				};
 			};
 		};
-		if (ending != " ") {
+		if (ending !== " ") {
 			switch (mode) {
 				case "krs":
 				case "s90es":
@@ -851,9 +851,9 @@ let VoiceBank = class {
 		};
 	};
 	clearRange(options) {
-		let prg = options.prg != undefined ? (options.prg.constructor === Array ? options.prg : [options.prg, options.prg]) : [0, 127],
-		msb = options.msb != undefined ? (options.msb.constructor === Array ? options.msb : [options.msb, options.msb]) : [0, 127],
-		lsb = options.lsb != undefined ? (options.lsb.constructor === Array ? options.lsb : [options.lsb, options.lsb]) : [0, 127];
+		let prg = options.prg !== undefined ? (options.prg.constructor === Array ? options.prg : [options.prg, options.prg]) : [0, 127],
+		msb = options.msb !== undefined ? (options.msb.constructor === Array ? options.msb : [options.msb, options.msb]) : [0, 127],
+		lsb = options.lsb !== undefined ? (options.lsb.constructor === Array ? options.lsb : [options.lsb, options.lsb]) : [0, 127];
 		for (let cMsb = msb[0]; cMsb <= msb[1]; cMsb ++) {
 			let precalMsb = cMsb << 8;
 			for (let cLsb = lsb[0]; cLsb <= lsb[1]; cLsb ++) {

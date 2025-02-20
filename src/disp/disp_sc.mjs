@@ -248,7 +248,7 @@ let ScDisplay = class extends RootDisplay {
 						upThis.#nmdb[textMultiTable[pY] + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 					});
 				});
-			} else if (timeNow <= sum.letter.expire && ((sum.mode != "gs" && sum.mode != "sc") || sum.letter.text?.length <= 16)) {
+			} else if (timeNow <= sum.letter.expire && ((sum.mode !== "gs" && sum.mode !== "sc") || sum.letter.text?.length <= 16)) {
 				infoTxt = isTextNull;
 				let original = sum.letter.text,
 				leftTrim = original.length - original.trimLeft().length,
@@ -417,7 +417,7 @@ let ScDisplay = class extends RootDisplay {
 					} else {
 						upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
 					};
-					if (scConf.peakHold != 3 || upThis.#noteOn[i] > 0) {
+					if (scConf.peakHold !== 3 || upThis.#noteOn[i] > 0) {
 						upThis.#keep[i] = 56;
 					};
 				} else if (upThis.#keep[i] > 15) {
@@ -443,7 +443,7 @@ let ScDisplay = class extends RootDisplay {
 				if (scConf.peakHold === 3) {
 					//console.debug(`Tendency: ${Math.sign((upThis.#linger[i] >> 8) - upThis.#lingerOld[i])}`);
 					if (upThis.#keep[i] < 16) {
-						if (upThis.#peak[i] != 0 && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {
+						if (upThis.#peak[i] !== 0 && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {
 							//console.debug(`Float!`);
 							let val = upThis.#peak[i];
 							val += (384 << rendMode);
@@ -572,7 +572,7 @@ let ScDisplay = class extends RootDisplay {
 		};
 		// Guide the drawn matrix
 		upThis.#nmdb.forEach((e, i) => {
-			if (upThis.#dmdb[i] != e) {
+			if (upThis.#dmdb[i] !== e) {
 				if (upThis.useBlur) {
 					let diff = e - upThis.#dmdb[i],
 					cap = 80;
@@ -588,7 +588,7 @@ let ScDisplay = class extends RootDisplay {
 		});
 		// Do the actual drawing
 		upThis.#dmdb.forEach((e, oi) => {
-			if (fullRefresh || upThis.#omdb[oi] != e) {
+			if (fullRefresh || upThis.#omdb[oi] !== e) {
 				let startX, startY, width = mspWidth, height = mspWidth;
 				// Position the pixels
 				if (oi < 665) {
@@ -640,7 +640,7 @@ let ScDisplay = class extends RootDisplay {
 		});
 		// Store the historical draws
 		upThis.#dmdb.forEach((e, i) => {
-			if (upThis.#omdb[i] != e) {
+			if (upThis.#omdb[i] !== e) {
 				upThis.#omdb[i] = e;
 			};
 		});

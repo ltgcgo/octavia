@@ -27,12 +27,12 @@ let demoId = 0;
 
 // Generate Octavia channel switch SysEx
 let generateSwitch = function (ch = 0, min, max) {
-	if (min != undefined && max === undefined) {
+	if (min !== undefined && max === undefined) {
 		console.warn(`Invalid bounds for channel switch generation.`);
 		return;
 	};
 	let data = [67, 16, 73, 11, 0, 0, ch];
-	if (min != undefined) {
+	if (min !== undefined) {
 		data.push(Math.floor(Math.log2(max - min + 1)), min);
 	};
 	return {
@@ -200,7 +200,7 @@ visualizer.addEventListener("reset", function (e) {
 // Listen to mode switches
 visualizer.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
-	if (visualizer.getMode() != "?") {
+	if (visualizer.getMode() !== "?") {
 		let textCmd = [67, 16, 76, 6, 0, 0, 77, 79, 68, 69, 58, 32];
 		let modeText = {
 			gm: [71, 77],

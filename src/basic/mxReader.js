@@ -177,7 +177,7 @@ let MxBm256 = class {
 		text.split("\n").forEach(function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
-				if (arr[1][0] != "@") {
+				if (arr[1][0] !== "@") {
 					let bm = new Uint8Array(256);
 					Array.from(arr[1]).forEach(function (e, i) {
 						let iOff = i * 4,
@@ -231,7 +231,7 @@ let MxBmDef = class {
 		text.split("\n").forEach(function (e, i) {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
-				if (arr[1][0] != "@") {
+				if (arr[1][0] !== "@") {
 					let bmWidth = parseInt(arr[1].slice(0, 4), 16),
 					bmHeight = parseInt(arr[1].slice(4, 8), 16);
 					let bm = new Uint8Array(bmWidth * bmHeight);

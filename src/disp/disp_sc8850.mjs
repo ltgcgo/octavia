@@ -91,13 +91,13 @@ let Sc8850Display = class extends RootDisplay {
 			upThis.#ch = ev.data;
 		});
 		upThis.addEventListener("portrange", (ev) => {
-			if (ev && ev.data != 1 << Math.log2(ev.data)) {
+			if (ev && ev.data !== 1 << Math.log2(ev.data)) {
 				console.debug(`MU display rejected port range value ${ev.data}.`);
 			};
 			upThis.#range = ev.data;
 		});
 		upThis.addEventListener("portstart", (ev) => {
-			if (ev != 255 && ev >= allocated.port) {
+			if (ev !== 255 && ev >= allocated.port) {
 				console.debug(`MU display rejected port range value ${ev.data}.`);
 			};
 			upThis.#start = ev.data;
@@ -296,7 +296,7 @@ let Sc8850Display = class extends RootDisplay {
 						break;
 					};
 				};
-				if (scLetterMode != 0) {
+				if (scLetterMode !== 0) {
 					upThis.font7a.getStr(displayText).forEach((e0, i0) => {
 						let offsetX = i0 * 8;
 						e0.forEach((e1, i1) => {
@@ -392,7 +392,7 @@ let Sc8850Display = class extends RootDisplay {
 							};
 						});
 					});
-					if (voiceObject.standard != "GM" && mode != voiceObject.standard) {
+					if (voiceObject.standard !== "GM" && mode !== voiceObject.standard) {
 						upThis.font56.getStr(voiceObject.standard).forEach((e0, i0) => {
 							let offsetX = i0 * 6;
 							e0.forEach((e1, i1) => {
@@ -431,12 +431,12 @@ let Sc8850Display = class extends RootDisplay {
 				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
 					upThis.#lingerExtra[i] = 127;
-					if (e != upThis.#linger[i]) {
+					if (e !== upThis.#linger[i]) {
 						upThis.#linger[i] = e;
 					};
 				};
 				if (e > upThis.#linger[i]) {
-					if (scConf.peakHold != 3 && upThis.#lingerPress[i]) {
+					if (scConf.peakHold !== 3 && upThis.#lingerPress[i]) {
 						upThis.#linger[i] = e;
 						upThis.#lingerExtra[i] = 127;
 					};
@@ -607,7 +607,7 @@ let Sc8850Display = class extends RootDisplay {
 		};
 		// Guide the drawn matrix
 		upThis.#nmdb.forEach((e, i) => {
-			if (upThis.#dmdb[i] != e) {
+			if (upThis.#dmdb[i] !== e) {
 				if (upThis.useBlur) {
 					let diff = e - upThis.#dmdb[i],
 					cap = 48;
@@ -624,7 +624,7 @@ let Sc8850Display = class extends RootDisplay {
 		// Do the actual drawing
 		upThis.#dmdb.forEach((e, i) => {
 			let pX = i % totalWidth, pY = Math.floor(i / totalWidth);
-			if (fullRefresh || upThis.#omdb[i] != e) {
+			if (fullRefresh || upThis.#omdb[i] !== e) {
 				let posX = 4 + 5 * pX, posY = 4 + 5 * pY;
 				ctx.clearRect(posX, posY, 5, 5);
 				ctx.fillStyle = backlight.orange;
@@ -642,7 +642,7 @@ let Sc8850Display = class extends RootDisplay {
 		});
 		// Store the historical draws
 		upThis.#dmdb.forEach((e, i) => {
-			if (upThis.#omdb[i] != e) {
+			if (upThis.#omdb[i] !== e) {
 				upThis.#omdb[i] = e;
 			};
 		});

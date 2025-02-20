@@ -546,7 +546,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				//console.debug(`Muted previous notes.`);
 			};
-			while (this.#polyState[place] > 0 && this.#poly[place] != rawNote) {
+			while (this.#polyState[place] > 0 && this.#poly[place] !== rawNote) {
 				// If just by judging whether a polyphonic voice is occupied,
 				// "multi" mode is considered active.
 				// If "rawNote" is also taken into consideration,
@@ -693,7 +693,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (upThis.getChModeId(part) === modeMap.xg) {
 				if (upThis.#chType[part] > 1) {
 					let fwData = upThis.getChDrumFirstWrite(part);
-					if (fwData[0] && fwData[1] != allocated.invalidCh && !upThis.#chActive[part]) {
+					if (fwData[0] && fwData[1] !== allocated.invalidCh && !upThis.#chActive[part]) {
 						upThis.copyChSetup(fwData[1], part);
 						upThis.dispatchEvent("voice", {
 							part
@@ -940,7 +940,7 @@ let OctaviaDevice = class extends CustomEventSource {
 										console.debug(`CH${part + 1} set to ${voiceIdx[(voiceObject.type || 0) & 1]} by MSB.`);
 									};*/
 								} else {
-									if (this.#chType[part] != this.CH_MELODIC) {
+									if (this.#chType[part] !== this.CH_MELODIC) {
 										this.setChType(part, this.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
@@ -1040,7 +1040,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Commit supported RPN values
 							let rpnIndex = useRpnMap[this.getChCc(part, 100)],
 							rpnIndex2 = rpnOptions[this.getChCc(part, 100)];
-							if (this.getChCc(part, 101) === 0 && rpnIndex != undefined) {
+							if (this.getChCc(part, 101) === 0 && rpnIndex !== undefined) {
 								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.getChCc(part, 100)} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
 								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
@@ -1100,7 +1100,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Commit supported RPN values
 							let rpnIndex = useRpnMap[this.getChCc(part, 100)],
 							rpnIndex2 = rpnOptions[this.getChCc(part, 100)];
-							if (this.getChCc(part, 101) === 0 && rpnIndex != undefined) {
+							if (this.getChCc(part, 101) === 0 && rpnIndex !== undefined) {
 								// This section is potentially unsafe
 								this.#rpn[part * allocated.rpn + rpnIndex + 1] = det.data[1];
 								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
@@ -1247,7 +1247,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		255: function (det) {
 			// Meta
 			(this.#metaRun[det.meta] || function (data, track, meta) {}).call(this, det.data, det.track, det.meta);
-			if (det.meta != 32) {
+			if (det.meta !== 32) {
 				this.#metaChannel = 0;
 			};
 			let useReply = passedMeta.indexOf(det.meta) > -1;
@@ -1414,7 +1414,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new Error("CC number not accepted"));
 		};
-		if (value?.constructor != Number) {
+		if (value?.constructor !== Number) {
 			throw(new TypeError("Expected numbers for value"));
 		};
 		let data = value & 255;
@@ -1482,7 +1482,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 	};
 	setChActive(part, active = 0) {
-		if (this.#chActive[part] != active) {
+		if (this.#chActive[part] !== active) {
 			this.dispatchEvent("channeltoggle", {
 				part,
 				active
@@ -1616,7 +1616,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				bank.ending = " ";
 			};
 		};
-		if (bank.ending != " " || !bank.name.length) {
+		if (bank.ending !== " " || !bank.name.length) {
 			bank = upThis.baseBank.get(msb, prg, lsb, mode);
 		};
 		return bank;
@@ -1628,7 +1628,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		1: cc0/Bank MSB
 		2: cc32/Bank LSB
 		*/
-		if (component >= allocated.vxPrim || component?.constructor != Number) {
+		if (component >= allocated.vxPrim || component?.constructor !== Number) {
 			throw(new RangeError(`Invalid voice primitive component "${component}"`));
 			return;
 		};
@@ -1795,7 +1795,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		} else if (gsLevel > 4 || gsLevel < 0) {
 			throw(new Error(`Invalid GS level ${gsLevel}`));
 			return;
-		} else if (useSc && (gsLevel >> 1) != 1) {
+		} else if (useSc && (gsLevel >> 1) !== 1) {
 			throw(new Error(`Invalid SC level ${gsLevel}`));
 		};
 		let upThis = this;
@@ -2311,7 +2311,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	runJson(json) {
 		// Execute transformed JSON event
 		if (json.type > 14) {
-			if (json.type === 15 && json.data.constructor != Uint8Array) {
+			if (json.type === 15 && json.data.constructor !== Uint8Array) {
 				json.data = Uint8Array.from(json.data);
 			};
 			return this.#runChEvent[json.type].call(this, json);
@@ -2333,7 +2333,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 			}); */
 			if (!executed) {
-				console.warn(`${eventTypes[json.type] ? eventTypes[json.type] : json.type}${[11, 12].includes(json.type) ? (json.data[0] != undefined ? json.data[0] : json.data).toString() : ""} event sent to CH${rcvPart + 1} without any recipient.`);
+				console.warn(`${eventTypes[json.type] ? eventTypes[json.type] : json.type}${[11, 12].includes(json.type) ? (json.data[0] !== undefined ? json.data[0] : json.data).toString() : ""} event sent to CH${rcvPart + 1} without any recipient.`);
 			};
 		};
 		if (this.#metaTexts.length > 100) {
@@ -2559,7 +2559,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								upThis.dispatchEvent("metacommit", {
 									"type": "Cmn.Text",
 									"data": e,
-									"mask": i != 0
+									"mask": i !== 0
 								});
 							});
 						};
@@ -2823,7 +2823,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let slotStart = 3,
 			paramStart = slotStart + (slotLen << 1),
 			valueStart = paramStart + paramLen;
-			if (slotLen != 1) {
+			if (slotLen !== 1) {
 				console.error(`Unsupported GM2 global parameter set: slotpath length too long (${slotLen})!\n`, msg);
 				return;
 			};
@@ -3170,7 +3170,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						setupWrite = false;
 						let ch = upThis.chRedir(e, track, true);
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part != ch) {
+						if (part !== ch) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -3514,12 +3514,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			// PLG-DX native dump
 			let size = msg[0], realSize = msg.length - 5,
 			lastIndex = msg.length - 1;
-			if (size != realSize) {
+			if (size !== realSize) {
 				console.info(`PLG-DX native dump size mismatch! Gave ${size} instead of ${msg.length - 5}.`);
 				return;
 			};
 			let checksum = gsChecksum(msg.subarray(4, lastIndex));
-			if (checksum != msg[lastIndex]) {
+			if (checksum !== msg[lastIndex]) {
 				console.info(`Bad PLG-DX checksum ${msg[lastIndex]} - should be ${checksum}.`);
 				return;
 			};
@@ -3557,13 +3557,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([100, 0], (msg, track, id) => {
 			// Unknown Yamaha DX7+ dump SysEx
 			let dumpString = msg.subarray(0, msg.length - 1)
-			if (msg[0] + 5 != msg.length) {
+			if (msg[0] + 5 !== msg.length) {
 				console.warn(`Yamaha DX7+ dump SysEx size mismatch! Expected ${msg.length}, but got ${msg[0]}:\n`, msg);
 				return;
 			};
 			let expectedChecksum = gsChecksum(dumpString);
 			let receivedChecksum = msg[msg.length - 1];
-			if (expectedChecksum != receivedChecksum) {
+			if (expectedChecksum !== receivedChecksum) {
 				console.warn(`Yamaha DX7+ dump SysEx checksum mismatch! Expected ${expectedChecksum}, but got ${receivedChecksum}:\n`, msg);
 				return;
 			};
@@ -3978,7 +3978,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						let ch = upThis.chRedir(e, track, true);
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part != ch) {
+						if (part !== ch) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -4413,7 +4413,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							ch = allocated.ch; // Effectively disabling event receives
 						};
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part != ch) {
+						if (part !== ch) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -4596,7 +4596,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
 			expected = gsChecksum(msgData);
-			if (expected != checksum) {
+			if (expected !== checksum) {
 				console.info(`X5D multi parameters checksum mismatch! Expected ${expected}, got ${checksum}.`);
 				console.debug(msg);
 			};
@@ -4772,7 +4772,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let x5Target = upThis.#detect.x5 === "81" ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, true);
 			let port = upThis.getTrackPort(track);
-			if (upThis.#portMode[port] && upThis.#portMode[port] != modeMap[x5Target]) {
+			if (upThis.#portMode[port] && upThis.#portMode[port] !== modeMap[x5Target]) {
 				if (upThis.#conf.dumpLimit === upThis.DUMP_MODE) {
 					console.warn(`Dump cancelled for track ${track}. Port ${String.fromCharCode(65 + port)} mode "${modeIdx[upThis.#portMode[port]]}" mismatch, should be "${x5Target}".`);
 					return;
@@ -4863,7 +4863,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							let midiCh = upThis.chRedir(e & 15, track, true),
 							trkSw = e >> 4;
 							upThis.#chReceive[part] = e;
-							if (midiCh != part || trkSw) {
+							if (midiCh !== part || trkSw) {
 								console.info(`X5D Part CH${part + 1} receives from CH${midiCh + 1}.`);
 								upThis.buildRchTree();
 							};
@@ -5292,7 +5292,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					[() => {
 						let ch = upThis.chRedir(e, track, true);
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part != ch) {
+						if (part !== ch) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -5435,12 +5435,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
 			expected = gsChecksum(msgData);
-			if (expected != checksum) {
+			if (expected !== checksum) {
 				console.info(`NS5R current multi dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
 				console.debug(msg);
 			};
 			let port = upThis.getTrackPort(track);
-			if (upThis.#portMode[port] && upThis.#portMode[port] != modeMap.ns5r) {
+			if (upThis.#portMode[port] && upThis.#portMode[port] !== modeMap.ns5r) {
 				if (upThis.#conf.dumpLimit === upThis.DUMP_MODE) {
 					console.warn(`Dump cancelled for track ${track}. Port ${String.fromCharCode(65 + port)} mode "${modeIdx[upThis.#portMode[port]]}" mismatch, should be "ns5r".`);
 					return;
@@ -5495,7 +5495,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Receive MIDI channel
 								let ch = upThis.chRedir(e, track, true);
 								upThis.#chReceive[part] = ch;
-								if (part != ch) {
+								if (part !== ch) {
 									console.info(`NS5R CH${part + 1} receives from CH${ch + 1}.`);
 									upThis.buildRchTree();
 								};
@@ -5599,7 +5599,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			/*let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
 			expected = gsChecksum(msgData);
-			if (expected != checksum) {
+			if (expected !== checksum) {
 				console.info(`NS5R all program dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
 				console.debug(msg);
 			};*/
@@ -5692,7 +5692,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
 			expected = gsChecksum(msgData);
-			if (expected != checksum) {
+			if (expected !== checksum) {
 				console.info(`NS5R screen dump checksum mismatch! Expected ${expected}, got ${checksum}.`);
 				console.debug(msg);
 			};
@@ -5768,7 +5768,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}, () => {
 				let ch = upThis.chRedir(e, track, true);
 				upThis.#chReceive[part] = ch; // Rx CH
-				if (part != ch) {
+				if (part !== ch) {
 					upThis.buildRchTree();
 					console.info(`${dPref}receives from CH${ch + 1}`);
 				};
@@ -5853,7 +5853,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}, () => {
 				let ch = upThis.chRedir(e, track, true);
 				upThis.#chReceive[part] = ch; // Rx CH
-				if (part != ch) {
+				if (part !== ch) {
 					upThis.buildRchTree();
 					console.info(`GMLX CH${part + 1} receives from CH${ch + 1}`);
 				};
@@ -5954,7 +5954,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// SG receive channel
 							let ch = upThis.chRedir(e, track, true);
 							upThis.#chReceive[part] = ch; // Rx CH
-							if (part != ch) {
+							if (part !== ch) {
 								upThis.buildRchTree();
 								console.info(`SG CH${part + 1} receives from CH${ch + 1}`);
 							};
@@ -6094,7 +6094,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("s90es");
 			let port = upThis.getTrackPort(track);
-			if (upThis.#portMode[port] && upThis.#portMode[port] != upThis.#detect.smotif) {
+			if (upThis.#portMode[port] && upThis.#portMode[port] !== upThis.#detect.smotif) {
 				if (upThis.#conf.dumpLimit === upThis.DUMP_MODE) {
 					console.warn(`Dump cancelled for track ${track}. Port ${String.fromCharCode(65 + port)} mode "${modeIdx[upThis.#portMode[port]]}" mismatch, should be "${modeIdx[upThis.#detect.smotif]}".`);
 					return;
@@ -6141,20 +6141,20 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					let ch = upThis.chRedir(e, track, true);
 					upThis.#chReceive[part] = ch; // Rx CH
-					if (part != ch) {
+					if (part !== ch) {
 						upThis.buildRchTree();
 						console.info(`${dPref}receives from CH${ch + 1}`);
 					};
 				}, () => {
 					upThis.#mono[part] = e ? 0 : 1;
 				}, false, false, false, false, false, false, false, false, () => {
-					e != 100 && (upThis.setChActive(part, 1));
+					e !== 100 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[7]] = e;
 				}, () => {
-					e != 64 && (upThis.setChActive(part, 1));
+					e !== 64 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[10]] = e;
 				}, false, false, false, () => {
-					//e != 40 && (upThis.setChActive(part, 1));
+					//e !== 40 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[91]] = e;
 				}, () => {
 					e && (upThis.setChActive(part, 1));
@@ -6164,17 +6164,17 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cc[chOff + ccToPos[94]] = e;
 				}, () => {
 					upThis.setChCc(part, 128, e);
-					if (e != 127) {
+					if (e !== 127) {
 						upThis.setChActive(part, 1);
 						upThis.allocateAce(part, 128);
 					};
 				}, () => {
 					// note shift, RPN
 				}, () => {
-					e != 64 && (upThis.setChActive(part, 1));
+					e !== 64 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[74]] = e;
 				}, () => {
-					e != 64 && (upThis.setChActive(part, 1));
+					e !== 64 && (upThis.setChActive(part, 1));
 					upThis.#cc[chOff + ccToPos[71]] = e;
 				}, false, () => {
 					upThis.#cc[chOff + ccToPos[65]] = e;
@@ -6462,7 +6462,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.debug(unpacked);*/
 			upThis.switchMode("krs");
 			let port = upThis.getTrackPort(track);
-			if (upThis.#portMode[port] && upThis.#portMode[port] != modeMap.krs) {
+			if (upThis.#portMode[port] && upThis.#portMode[port] !== modeMap.krs) {
 				if (upThis.#conf.dumpLimit === upThis.DUMP_MODE) {
 					console.warn(`Dump cancelled. Port ${String.fromCharCode(65 + port)} mode "${modeIdx[upThis.#portMode[port]]}" mismatch, should be "krs".`);
 					return;
