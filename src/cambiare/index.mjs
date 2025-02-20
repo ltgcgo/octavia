@@ -275,8 +275,20 @@ let Cambiare = class extends RootDisplay {
 		let {width, height} = context.canvas;
 		let sx, ex, dx, border;
 		let range = upThis.#renderRange;
-		let isHeld = state > 3,
+		let internalNoteStyle = 0,
 		isBlackKey = blackKeys.indexOf(note % 12) > -1;
+		switch (state) {
+			case upThis.device.NOTE_HELD:
+			case upThis.device.NOTE_SOSTENUTO_SUSTAIN:
+			case upThis.device.NOTE_SOSTENUTO_HELD: {
+				internalNoteStyle = 1;
+				break;
+			};
+			case upThis.device.NOTE_MUTED_RECOVERABLE: {
+				internalNoteStyle = 2;
+				break;
+			};
+		};
 		switch (upThis.#style) {
 			case "block":
 			case "comb": {
@@ -315,16 +327,22 @@ let Cambiare = class extends RootDisplay {
 			case "block": {
 				let h = context.canvas.height - 1;
 				context.fillRect(sx, 0, dx, h);
-				if (isHeld) {
+				if (internalNoteStyle > 0) {
 					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
+				};
+				if (internalNoteStyle === 2) {
+					context.clearRect(sx, border << 1, dx, h - (border << 2));
 				};
 				break;
 			};
 			case "comb": {
 				let h = (isBlackKey ? Math.round((context.canvas.height << 1) / 3) : context.canvas.height) - 1;
 				context.fillRect(sx, 0, dx, h);
-				if (isHeld) {
+				if (internalNoteStyle > 0) {
 					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
+				};
+				if (internalNoteStyle === 2) {
+					context.clearRect(sx, border << 1, dx, h - (border << 2));
 				};
 				break;
 			};
@@ -332,13 +350,16 @@ let Cambiare = class extends RootDisplay {
 				let sh = (isBlackKey ? 0 : context.canvas.height >> 1),
 				dh = (context.canvas.height >> 1) - 1;
 				context.fillRect(sx, sh, dx, dh);
-				if (isHeld) {
+				if (internalNoteStyle > 0) {
 					context.clearRect(sx + border, sh + border, dx - (border << 1), dh - (border << 1));
+				};
+				if (internalNoteStyle === 2) {
+					context.clearRect(sx, sh + (border << 1), dx, dh - (border << 2));
 				};
 				break;
 			};
 			case "line": {
-				if (isHeld) {
+				if (internalNoteStyle == 1) {
 					switch (range) {
 						case 4: {
 							context.setLineDash(lineDash[2]);
@@ -358,7 +379,7 @@ let Cambiare = class extends RootDisplay {
 					};
 				};
 				context.beginPath();
-				context.moveTo(sx, (range == 4 || !isHeld) && self?.document?.mozFullScreen ? 1 : 0);
+				context.moveTo(sx, (range == 4 || !internalNoteStyle) && self?.document?.mozFullScreen ? 1 : 0);
 				context.lineTo(ex, (height >> 1) + 1);
 				context.lineTo(sx, height);
 				context.stroke();
