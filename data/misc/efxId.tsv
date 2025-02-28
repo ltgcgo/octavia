@@ -1,5 +1,6 @@
 MSB	LSB	Name
 00	00	Effect Unset
+00	ff	Disabled
 01	00	XG Hall 1
 01	01	XG Hall 2
 01	06	XG Hall Medium

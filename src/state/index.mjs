@@ -47,7 +47,7 @@ const modeIdx = [
 	"mt32", "doc", "qy10", "qy20",
 	"ns5r", "x5d", "05rw",
 	"k11", "sg", "sd", "pa",
-	"krs", "s90es", "motif", "trin"
+	"krs", "s90es", "motif", "cs6x", "trin"
 ],
 modeAdapt = {
 	"gm2": "g2",
@@ -90,6 +90,7 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"krs": [121, 0, 120, 0, 0],
 	"s90es": [0, 0, 127, 0, 0],
 	"motif": [0, 0, 127, 0, 0],
+	"cs6x": [0, 0, 127, 0, 0],
 	"trin": [0, 0, 127, 0, 0]
 };
 const drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
@@ -267,12 +268,16 @@ const overrides = {
 	bank0: 128
 };
 
+// Decoders
+const decoderL9 = new TextDecoder("l9");
+
 // Lookup tables
 const ccOffTable = new Uint16Array(allocated.ch);
 const rpnOffTable = new Uint16Array(allocated.ch);
 const nrpnOffTable = new Uint16Array(allocated.ch);
 const aceOffTable = new Uint16Array(allocated.ch);
 const extOffTable = new Uint16Array(allocated.ch);
+const cvnOffTable = new Uint16Array(allocated.ch);
 const dNrpnOffTable = new Array(allocated.drm);
 for (let i = 0; i < allocated.ch; i ++) {
 	ccOffTable[i] = i * allocated.cc;
@@ -281,6 +286,7 @@ for (let i = 0; i < allocated.ch; i ++) {
 	//dNrpnOffTable[i] = i * allocated.dpn;
 	aceOffTable[i] = i * allocated.ace;
 	extOffTable[i] = i * allocated.ext;
+	cvnOffTable[i] = i * allocated.cvn;
 };
 for (let i0 = 0; i0 < allocated.drm; i0 ++) {
 	dNrpnOffTable[i0] = new Uint16Array(allocated.dpn);
@@ -1306,7 +1312,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 0: {
 					// bulk dumps
 					let targetLength = (msg[1] << 7) | msg[2];
-					console.debug(`Yamaha: bulk dump (${targetLength})`);
+					//console.debug(`Yamaha: bulk dump (${targetLength})`);
 					if (targetLength + 7 !== msg.length) {
 						console.warn(`Yamaha bulk dump length mismatch! Expected ${msg.length - 7}, received ${targetLength}.`);
 						console.debug(msg);
@@ -1705,6 +1711,33 @@ let OctaviaDevice = class extends CustomEventSource {
 			part
 		});
 	};
+	getChCvnBuffer(part, maxBufferLength = allocated.cvn) {
+		// A buffer that can be written directly
+		if (maxBufferLength > allocated.cvn || maxBufferLength < 1) {
+			throw(new RangeError("Invalid custom voice name buffer length"));
+		};
+		let pointer = cvnOffTable[part];
+		return this.#cvnBuffer.subarray(pointer, pointer + maxBufferLength);
+	};
+	getChCvnRegister(part, regIdx) {
+		if (maxBufferLength >= allocated.cvn || maxBufferLength < 0) {
+			throw(new RangeError("Invalid custom voice name register"));
+		};
+		return this.#cvnBuffer[cvnOffTable[part] + regIdx];
+	};
+	setChCvnRegister(part, regIdx, value = 32) {
+		if (maxBufferLength >= allocated.cvn || maxBufferLength < 0) {
+			throw(new RangeError("Invalid custom voice name register"));
+		};
+		this.#cvnBuffer[cvnOffTable[part] + regIdx] = Math.max(32, value & 255);
+	};
+	getChCvnString(part, preserveEnd) {
+		let result = decoderL9.decode(this.getChCvnBuffer(part));
+		if (!preserveEnd) {
+			result = result.trimEnd();
+		};
+		return result;
+	};
 	getChVoice(part) {
 		let upThis = this;
 		let voice = upThis.getVoice(...upThis.getChPrimitives(part), upThis.getChMode(part));
@@ -1715,15 +1748,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#cmTTimbre.subarray(allocated.cmt * (part - 1), allocated.cmt * (part - 1) + 10).forEach((e) => {
 						name += String.fromCharCode(Math.max(e, 32));
 					});
-					name = name.trimRight();
+					name = name.trimEnd();
 					break;
 				};
 				default: {
-					let pointer = allocated.cvn * part;
-					upThis.#cvnBuffer.subarray(pointer, pointer + allocated.cvn).forEach((e) => {
-						name += String.fromCharCode(Math.max(e, 32));
-					});
-					name = name.trimRight();
+					name = upThis.getChCvnString(part);
 				};
 			};
 			if (name.length) {
@@ -2270,11 +2299,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				switch (idx) {
 					case modeMap["?"]:
 					case modeMap.g2: {
-						efxDefault = [52, 4, 52, 18, 0, 0, 0, 0];
+						efxDefault = [52, 4, 52, 18, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.xg: {
-						efxDefault = [1, 0, 65, 0, 5, 0, 0, 0];
+						efxDefault = [1, 0, 65, 0, 5, 0, 64, 0];
 						break;
 					};
 					case modeMap.gm:
@@ -2290,20 +2319,20 @@ let OctaviaDevice = class extends CustomEventSource {
 					case modeMap["05rw"]:
 					case modeMap.x5d:
 					case modeMap.ns5r: {
-						efxDefault = [44, 1, 44, 19, 44, 0, 44, 0];
+						efxDefault = [44, 1, 44, 19, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.k11:
 					case modeMap.sg: {
-						efxDefault = [24, 0, 0, 0, 0, 0, 0, 0];
+						efxDefault = [24, 0, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.mt32: {
-						efxDefault = [40, 4, 0, 0, 0, 0, 0, 0];
+						efxDefault = [40, 4, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.doc: {
-						efxDefault = [24, 16, 0, 0, 0, 0, 0, 0];
+						efxDefault = [24, 16, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.motif:
@@ -2808,7 +2837,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#seKg = new BinaryMatch("Kawai");
 		upThis.#seSg = new BinaryMatch("Akai");
 		upThis.#seCs = new BinaryMatch("Casio");
-		let dxDump = new BinaryMatch("DX7+ Dump");
+		let cs6xDump = new BinaryMatch("DX7+ Dump");
 		// Notifies unrecognized SysEx strings with their vendors
 		let syxDefaultErr = function (msg) {
 			console.info(`Unrecognized SysEx in "${this.name}" set.\n%o`, msg);
@@ -2821,7 +2850,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#seKg.default = syxDefaultErr;
 		upThis.#seSg.default = syxDefaultErr;
 		upThis.#seCs.default = syxDefaultErr;
-		dxDump.default = syxDefaultErr;
+		cs6xDump.default = syxDefaultErr;
 		// The new SysEx engine only defines actions when absolutely needed.
 		// Mode reset section
 		upThis.#seUnr.add([9], (msg, track, id) => {
@@ -3602,7 +3631,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				return;
 			};
 			//console.debug(msg);
-			dxDump.run(dumpString.subarray(1));
+			cs6xDump.run(dumpString.subarray(1));
 		}).add([100, 76], (msg, track, id) => {
 			// This implementation is invalid, as it targets CS6x.
 			return;
@@ -3668,7 +3697,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		// DX7 Dumps
 		// Placeholder until further documentation
-		dxDump.add([14, 31], (msg, track, id) => {
+		cs6xDump/*.add([14, 31], (msg, track, id) => {
 			upThis.setChCc(msg[0], 64, 0);
 			upThis.#uAction.ano(msg[0]);
 			upThis.switchMode("xg");
@@ -3709,12 +3738,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("voice", {
 				part
 			});
-			/*if (voiceNameBuf.length > 0) {
-				voiceNameBuf = voiceNameBuf.trimRight();
-				console.debug(`DX7+ CH${part + 1} dumped voice name: "${voiceNameBuf}"`);
-			};*/
 			console.debug(`DX7+ CH${part + 1} dump: %o`, msg);
-		});
+		});*/
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {
 			// The Yamaha XG-style drum setup
@@ -6242,6 +6267,55 @@ let OctaviaDevice = class extends CustomEventSource {
 				},][(offset + i) & 3] || (() => {}))();
 			});
 		});
+		// Yamaha CS6x
+		upThis.#seXg.add([100, 14], (msg, track, id) => {
+			// CS6x bulk start
+			let cs6xBulkTarget = ["normal voice", "plugin voice PLG", "drums", , "performance", , "phrase clip"][msg[0] >> 4] ?? "invalid";
+			if (msg[0] & 15 == 15) {
+				cs6xBulkTarget += " edit buffer";
+			} else if (msg[0] >> 4 == 1) {
+				cs6xBulkTarget += `${(msg[0] & 1) + 1}`;
+			} else {
+				cs6xBulkTarget += ` ${["INT", "EXT"][msg[0] & 1]}`;
+			};
+			console.debug(`CS6x bulk dump for ${cs6xBulkTarget} started.`);
+		}).add([100, 15], (msg, track, id) => {
+			// CS6x bulk end, same as before
+			let cs6xBulkTarget = ["normal voice", "plugin voice PLG", "drums", , "performance", , "phrase clip"][msg[0] >> 4] ?? "invalid";
+			if (msg[0] & 15 == 15) {
+				cs6xBulkTarget += " edit buffer";
+			} else if (msg[0] >> 4 == 1) {
+				cs6xBulkTarget += `${(msg[0] & 1) + 1}`;
+			} else {
+				cs6xBulkTarget += ` ${["INT", "EXT"][msg[0] & 1]}`;
+			};
+			console.debug(`CS6x bulk dump for ${cs6xBulkTarget} ended.`);
+		}).add([100, 76, 112], (msg, track, id) => {
+			// CS6x voice plugin extra
+			let part = 0;
+			let extOff = extOffTable[part];
+			let cvnOff = part;
+			upThis.#ext[extOff] = upThis.EXT_DX;
+			upThis.#bnCustom[0] = 1;
+			let cvnView = upThis.#cvnBuffer.subarray(cvnOff, cvnOff + allocated.cvn);
+			cvnView.fill(32);
+			msg.subarray(1).forEach((e, i) => {
+				if (i < 10) {
+					cvnView[i] = Math.min(127, Math.max(e, 32));
+				} else if (i < 12) {
+					// Reserved
+				} else if (i < 13) {
+					console.debug(`Plugin voice type: ${e}`);
+				};
+			});
+			upThis.dispatchEvent("voice", {
+				part
+			});
+			upThis.dispatchEvent("metacommit", {
+				"type": "OSysMeta",
+				"data": `CH${part + 1} renamed to "${upThis.getChCvnString(part)}".`
+			});
+		})
 		// SD-90 part setup (part)
 		this.#seGs.add([0, 72, 18, 0, 0, 0, 0], (msg, track, id) => {
 			// SD-90 Native System On

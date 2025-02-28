@@ -35,10 +35,10 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['sc','SC'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['doc','DOC'],['qy10','QY10'],['qy20','QY20'],['sd','SD'],['krs','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['sc','SC'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['doc','DOC'],['qy10','QY10'],['qy20','QY20'],['sd','SD'],['krs','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES'],['cs6x','CS6x']]}">
 			<div class="column column-option"><b>Global mode</b></div>
 			<template x-for="mode in modes">
-				<div class="column column-option column-button" @click="gMode(mode[0])" x-text="mode[1]" :title="`Internal ID: (${mode[0]})`" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
+				<div class="column column-option column-button column-nowrap" @click="gMode(mode[0])" x-text="mode[1]" :title="`Internal ID: (${mode[0]})`" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
 		</div>
