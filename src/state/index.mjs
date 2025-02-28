@@ -1302,7 +1302,39 @@ let OctaviaDevice = class extends CustomEventSource {
 		67: (id, msg, track) => {
 			// Yamaha
 			// XG: [76, HH, MM, LL, ...DD]
-			this.#seXg.run(msg, track, id);
+			switch (id >> 4) {
+				case 0: {
+					// bulk dumps
+					let targetLength = (msg[1] << 7) | msg[2];
+					console.debug(`Yamaha: bulk dump (${targetLength})`);
+					if (targetLength + 7 !== msg.length) {
+						console.warn(`Yamaha bulk dump length mismatch! Expected ${msg.length - 7}, received ${targetLength}.`);
+						console.debug(msg);
+						break;
+					};
+					let expectedChecksum = gsChecksum(msg.subarray(1, msg.length - 1));
+					let receivedChecksum = msg[msg.length - 1];
+					if (msg[msg.length - 1] >> 7) {
+						console.warn(`Yamaha bulk dump checksum invalid! Expected ${expectedChecksum}, received ${receivedChecksum}:\n`);
+					} else if (expectedChecksum !== receivedChecksum) {
+						console.warn(`Yamaha bulk dump checksum mismatch! Expected ${expectedChecksum}, received ${receivedChecksum}:\n`);
+						console.debug(msg);
+					} else {
+						let msgPs = msg.slice(2, msg.length - 1);
+						msgPs[0] = msg[0];
+						this.#seXg.run(msgPs, track, id & 15);
+					};
+					break;
+				};
+				case 1: {
+					// parameter sets
+					this.#seXg.run(msg, track, id & 15);
+					break;
+				};
+				default: {
+					console.warn(`Unknown Yamaha SysEx type: ${id >> 4}.`);
+				};
+			};
 		},
 		68: (id, msg, track) => {
 			// Casio
@@ -3554,7 +3586,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Unknown section
 				};
 			});
-		}).add([100, 0], (msg, track, id) => {
+		})/*.add([100, 0], (msg, track, id) => {
+			// This implementation is invalid, as it targets CS6x.
+			return;
 			// Unknown Yamaha DX7+ dump SysEx
 			let dumpString = msg.subarray(0, msg.length - 1)
 			if (msg[0] + 5 !== msg.length) {
@@ -3570,6 +3604,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			//console.debug(msg);
 			dxDump.run(dumpString.subarray(1));
 		}).add([100, 76], (msg, track, id) => {
+			// This implementation is invalid, as it targets CS6x.
+			return;
 			// Unknown Yamaha DX7+ multipart SysEx
 			let use = msg[0] >> 4, section = msg[0] & 15, offset = msg[1];
 			switch (use) {
@@ -3601,7 +3637,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.info(`Unknown DX7+ multipart: %o`, msg);
 				};
 			};
-		}).add([1, 20], (msg, track, id) => {
+		})*/.add([1, 20], (msg, track, id) => {
 			if (id === 115) {
 				// DOC reset
 				upThis.switchMode("doc", true);
