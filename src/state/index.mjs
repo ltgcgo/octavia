@@ -755,10 +755,10 @@ let OctaviaDevice = class extends CustomEventSource {
 						case modeMap.s90es:
 						case modeMap.motif: {
 							if (det.data[0] === 0) {
-								([0, 63].indexOf(det.data[1]) > -1) && (upThis.setChActive(part, 1));
+								([0, 63].indexOf(det.data[1]) > -1) && upThis.setChActive(part, 1);
 								break;
 							};
-							det.data[1] && (upThis.setChActive(part, 1));
+							det.data[1] && upThis.setChActive(part, 1);
 							break;
 						};
 						default: {
@@ -1164,7 +1164,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (upThis.#mode) {
 				case modeMap.s90es:
 				case modeMap.motif: {
-					det.data && (upThis.setChActive(part, 1));
+					det.data && upThis.setChActive(part, 1);
 					break;
 				};
 				default: {
@@ -6194,7 +6194,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						part
 					});
 				}, () => {
-					e && (upThis.setChActive(part, 1));
+					e && upThis.setChActive(part, 1);
 					upThis.#cc[chOff + ccToPos[32]] = e;
 					if (upThis.getChPrimitive(part, 1) === 63) {
 						upThis.setChType(part, ([32, 40].indexOf(e) > -1) ? upThis.CH_DRUMS : upThis.CH_MELODIC, upThis.#mode, true);
@@ -6204,7 +6204,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						part
 					});
 				}, () => {
-					e && (upThis.setChActive(part, 1));
+					e && upThis.setChActive(part, 1);
 					upThis.#prg[part] = e;
 					//upThis.pushChPrimitives(part);
 					upThis.dispatchEvent("voice", {
@@ -6220,19 +6220,19 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					upThis.#mono[part] = e ? 0 : 1;
 				}, false, false, false, false, false, false, false, false, () => {
-					e !== 100 && (upThis.setChActive(part, 1));
+					e !== 100 && upThis.setChActive(part, 1);
 					upThis.#cc[chOff + ccToPos[7]] = e;
 				}, () => {
-					e !== 64 && (upThis.setChActive(part, 1));
+					e !== 64 && upThis.setChActive(part, 1);
 					upThis.#cc[chOff + ccToPos[10]] = e;
 				}, false, false, false, () => {
-					//e !== 40 && (upThis.setChActive(part, 1));
+					//e !== 40 && upThis.setChActive(part, 1);
 					upThis.#cc[chOff + ccToPos[91]] = e;
 				}, () => {
-					e && (upThis.setChActive(part, 1));
+					e && upThis.setChActive(part, 1);
 					upThis.#cc[chOff + ccToPos[93]] = e;
 				}, () => {
-					e && (upThis.setChActive(part, 1));
+					e && upThis.setChActive(part, 1);
 					upThis.#cc[chOff + ccToPos[94]] = e;
 				}, () => {
 					upThis.setChCc(part, 128, e);
@@ -6243,10 +6243,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					// note shift, RPN
 				}, () => {
-					e !== 64 && (upThis.setChActive(part, 1));
+					e !== 64 && upThis.setChActive(part, 1);
 					upThis.#cc[chOff + ccToPos[74]] = e;
 				}, () => {
-					e !== 64 && (upThis.setChActive(part, 1));
+					e !== 64 && upThis.setChActive(part, 1);
 					upThis.#cc[chOff + ccToPos[71]] = e;
 				}, false, () => {
 					upThis.#cc[chOff + ccToPos[65]] = e;
@@ -6333,7 +6333,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				let ri = i + offset;
 				([() => {
 					upThis.setChCc(part, 7, e); // volume
-					e !== 100 && (upThis.setChActive(part, 1));
+					e !== 100 && upThis.setChActive(part, 1);
 				}, , , () => {
 					upThis.#mono[part] = e == 0; // mono
 					upThis.setChCc(part, 64, 0);
@@ -6347,10 +6347,10 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.setChCc(part, 5, e); // portamento time
 				}, , () => {
 					upThis.setChCc(part, 91, e); // reverb
-					e !== 40 && (upThis.setChActive(part, 1));
+					e !== 40 && upThis.setChActive(part, 1);
 				}, () => {
 					upThis.setChCc(part, 93, e); // chorus
-					e && (upThis.setChActive(part, 1));
+					e && upThis.setChActive(part, 1);
 				}][ri] || (() => {}))();
 			});
 		}).add([100, 76, 1], (msg, track, id) => {
@@ -6410,6 +6410,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (efxTypeWritten) {
 				upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
 			};
+		}).add([100, 76, 5], (msg, track, id) => {
+			upThis.switchMode("cs6x");
+			// CS6x voice plugin control source
+			// Not supported yet.
 		}).add([100, 76, 16], (msg, track, id) => {
 			upThis.switchMode("cs6x");
 			// CS6x voice plugin element
@@ -6426,17 +6430,17 @@ let OctaviaDevice = class extends CustomEventSource {
 					// voice LSB
 					upThis.setChCc(part, 32, e);
 					voiceUpdated = true;
-					e && (upThis.setChActive(part, 1));
+					e && upThis.setChActive(part, 1);
 				}, () => {
 					// voice PC#
 					upThis.#prg[part] = e;
 					voiceUpdated = true;
-					e && (upThis.setChActive(part, 1));
+					e && upThis.setChActive(part, 1);
 				}, () => {
 					// coarse tuning
 					upThis.#rpnt[rpnOffTable[part] + useRpnMap[2]] = 1;
 					upThis.#rpn[rpnOffTable[part] + useRpnMap[2]] = e;
-					e && (upThis.setChActive(part, 1));
+					e && upThis.setChActive(part, 1);
 				}][ri] || (() => {}))();
 			});
 			if (voiceUpdated) {
@@ -6444,10 +6448,66 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.dispatchEvent("voice", {
 					part
 				});
+				let voiceObject = upThis.getChVoice(part);
+				switch (voiceObject.standard) {
+					case "DX": {
+						upThis.#ext[part] = upThis.EXT_DX;
+						break;
+					};
+					case "VL": {
+						upThis.#ext[part] = upThis.EXT_VL;
+						break;
+					};
+				};
 				upThis.dispatchEvent("metacommit", {
 					"type": "OSysMeta",
 					"data": `CH${part + 1} was renamed from "${upThis.getVoice(...upThis.getChPrimitives(part, true), upThis.getChMode(part))?.name}" to "${upThis.getChCvnString(part)}".`
 				});
+			};
+		}).add([100, 76, 32], (msg, track, id) => {
+			upThis.switchMode("cs6x");
+			// CS6x voice plugin native
+			let part = 0;
+			let offset = msg[0];
+			let pluginType = upThis.#ext[part];
+			switch (pluginType) {
+				case upThis.EXT_DX: {
+					if (msg.length > 2) {
+						console.debug(msg);
+					};
+					msg.subarray(1).forEach((e, i) => {
+						let ri = i + offset;
+						if (ri < 6) {
+							// Carrier level 1~6
+							let targetCc = ri + 142;
+							upThis.setChCc(part, targetCc, e);
+							e !== 64 && upThis.allocateAce(part, targetCc);
+						} else if (ri < 12) {
+							// Modulator level 1~6
+							let targetCc = ri + 144;
+							upThis.setChCc(part, targetCc, e);
+							e !== 64 && upThis.allocateAce(part, targetCc);
+						} else {
+							([() => {
+								// feedback level
+							}, () => {
+								// portamento mode
+							}, () => {
+								// portamento step
+							}, () => {
+								// pitch bend step
+							}][ri] || (() => {}))();
+						};
+					});
+					break;
+				};
+				case upThis.EXT_VL: {
+					console.info(`Support for Modular System Plug-in writes is not yet present for plugin type ${pluginType}.`);
+					break;
+				};
+				default: {
+					console.warn(`Unsupported plug-in type: ${pluginType}`);
+				};
 			};
 		});
 		// SD-90 part setup (part)
@@ -6731,14 +6791,14 @@ let OctaviaDevice = class extends CustomEventSource {
 					//console.debug(`${i} ${si} ${Math.floor(si / 44)} ${part} ${pi}`);
 					if (pi < 15) {
 						([() => {
-							e && (upThis.setChActive(part, 1));
+							e && upThis.setChActive(part, 1);
 							upThis.#prg[part] = e;
 							//console.debug(`PRG ${part + 1} ${pi}: ${e}`)
 							upThis.dispatchEvent("voice", {
 								part
 							});
 						}, () => {
-							e && (upThis.setChActive(part, 1));
+							e && upThis.setChActive(part, 1);
 							if (e < 10) {
 								upThis.#cc[chOff + ccToPos[0]] = 63;
 								upThis.#cc[chOff + ccToPos[32]] = e;
