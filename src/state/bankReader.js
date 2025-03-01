@@ -177,29 +177,87 @@ let VoiceBank = class {
 				};
 				break;
 			};
-			case "s90es": {
+			case "s90es":
+			case "motif":
+			case "cs6x": {
 				if (msb === 0) {
 					break;
 				};
-				if (lsb < 8) {
-					args[2] += 17;
-				} else if (lsb < 32) {
-					args[2] += 13;
-				} else {
-					args[2] = (args[2] >> 3) + 19;
-				};
-				break;
-			};
-			case "motif": {
-				if (msb === 0) {
-					break;
-				};
-				if (lsb < 8) {
-					args[2] += 28;
-				} else if (lsb < 32) {
-					args[2] += 13;
-				} else {
-					args[2] = (args[2] >> 3) + 19;
+				switch (msb) {
+					case 63: {
+						// native
+						switch (mode) {
+							case "s90es": {
+								if (lsb < 8) {
+									args[2] += 17;
+								} else if (lsb < 32) {
+									args[2] += 13;
+								} else {
+									args[2] = (args[2] >> 3) + 19;
+								};
+								break;
+							};
+							case "motif": {
+								if (lsb < 8) {
+									args[2] += 28;
+								} else if (lsb < 32) {
+									args[2] += 13;
+								} else {
+									args[2] = (args[2] >> 3) + 19;
+								};
+								break;
+							};
+						};
+						break;
+					};
+					case 32: {
+						if (lsb > 125) {
+							args[2] = 0; // cc reset
+						};
+						args[2] += 4; // PLG-150AP redirection
+						break;
+					};
+					case 33: {
+						if (lsb > 125 || lsb === 3) {
+							args[2] = 0; // cc reset
+						};
+						args[2] += 5; // PLG-150VL redirection
+						break;
+					};
+					case 34: // I guess this is for PF, but I'm not sure
+					case 35:
+					case 36: {
+						if (lsb > 125) {
+							args[2] = 0; // cc reset
+						};
+						args[2] += 5; // PLG-150DX/AN redirection
+						break;
+					};
+					case 79:
+					case 80:
+					case 81:
+					case 82:
+					case 83:
+					case 84: {
+						// 79: PLG-150DR + PLG-150PC redirection
+						// 80: PLG-150PF + PLG-150AP redirection
+						// 81: PLG-150VL redirection
+						// 82: PLG-100SG redirection
+						// 83: PLG-150DX redirection
+						// 84: PLG-150AN redirection
+						args[0] += 16;
+					};
+					case 95:
+					case 96:
+					case 97:
+					case 98:
+					case 99:
+					case 100: {
+						if (lsb === 126) {
+							args[2] = 0; // MU100 Native restore
+						};
+						break;
+					};
 				};
 				break;
 			};

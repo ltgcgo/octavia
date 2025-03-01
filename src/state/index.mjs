@@ -1057,7 +1057,8 @@ let OctaviaDevice = class extends CustomEventSource {
 									case modeMap.sc:
 									case modeMap.mt32:
 									case modeMap.s90es:
-									case modeMap.motif: {
+									case modeMap.motif:
+									case modeMap.cs6x: {
 										switch (this.getChCc(part, 100)) {
 											case 1:
 											case 2: {
@@ -1720,13 +1721,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		return this.#cvnBuffer.subarray(pointer, pointer + maxBufferLength);
 	};
 	getChCvnRegister(part, regIdx) {
-		if (maxBufferLength >= allocated.cvn || maxBufferLength < 0) {
+		if (regIdx >= allocated.cvn || regIdx < 0) {
 			throw(new RangeError("Invalid custom voice name register"));
 		};
 		return this.#cvnBuffer[cvnOffTable[part] + regIdx];
 	};
 	setChCvnRegister(part, regIdx, value = 32) {
-		if (maxBufferLength >= allocated.cvn || maxBufferLength < 0) {
+		if (regIdx >= allocated.cvn || regIdx < 0) {
 			throw(new RangeError("Invalid custom voice name register"));
 		};
 		this.#cvnBuffer[cvnOffTable[part] + regIdx] = Math.max(32, value & 255);
@@ -1773,6 +1774,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Override unwritten RPN values according to the current modeIdx
 			if (upThis.#mode === modeMap.mt32) {
 				pitchBendRange = 12;
+			};
+		} else {
+			if (pitchBendRange >> 7) {
+				pitchBendRange -= 256;
 			};
 		};
 		return upThis.#pitch[part] / 8192 * pitchBendRange + (upThis.#rpn[rpnOff + 3] - 64) + ((upThis.#rpn[rpnOff + 1] << 7) + upThis.#rpn[rpnOff + 2] - 8192) / 8192;
@@ -1919,9 +1924,17 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 	};
-	releaseAce(part = 0, cc) {
+	resetAce() {
+		// Clear all allocated ACE
+		this.#ace.fill(0);
+		console.info(`All ACE slots have been reset.`);
+	};
+	resetChAceAll(part = 0) {
+		this.#ace.subarray(aceOffTable[part], aceOffTable[part] + allocated.ace).fill(0);
+	};
+	resetChAce(part = 0, cc) {
 		// Waiting rewrite
-		let continueScan = true, pointer = allocated.ace * part, maxPointer = pointer + allocated.ace;
+		let continueScan = true, pointer = aceOffTable[part], maxPointer = pointer + allocated.ace;
 		while (continueScan && pointer < maxPointer) {
 			if (this.#ace[pointer] === cc) {
 				this.#ace[pointer] = 0;
@@ -1932,11 +1945,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (continueScan) {
 			getDebugState() && console.debug(`No ACE slot was allocated to cc${cc} in CH${part + 1}.`);
 		};
-	};
-	resetAce() {
-		// Clear all allocated ACE
-		this.#ace.fill(0);
-		console.info(`All ACE slots have been reset.`);
 	};
 	getAce() {
 		return this.#ace;
@@ -2056,6 +2064,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#cmTPatch.fill(0);
 		upThis.#cmTTimbre.fill(0);
 		upThis.#bnCustom.fill(0);
+		// Reset custom voice name buffers
+		upThis.#cvnBuffer.fill(32);
 		// Reset EFX base registers
 		upThis.#efxBase.fill(0);
 		upThis.#efxTo.fill(0);
@@ -2097,7 +2107,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#cc[chOff + ccToPos[98]] = 127;
 			// RPN reset
 			let rpnOff = ch * allocated.rpn;
-			upThis.#rpn[rpnOff] = 2; // Pitch bend sensitivity
+			upThis.#rpn[rpnOff] = 2; // pitch bend range
 			upThis.#rpn[rpnOff + 1] = 64; // Fine tune MSB
 			upThis.#rpn[rpnOff + 2] = 0; // Fine tune LSB
 			upThis.#rpn[rpnOff + 3] = 64; // Coarse tune MSB
@@ -2336,7 +2346,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case modeMap.motif:
-					case modeMap.s90es: {
+					case modeMap.s90es:
+					case modeMap.cs6x: {
 						efxDefault = [129, 0, 133, 0, 130, 0, 0, 0];
 						break;
 					};
@@ -5950,7 +5961,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					pitch: upThis.getPitchShift(part)
 				});
 			}, () => {
-				upThis.#rpn[rpnOff] = e; // pitch bend sensitivity
+				upThis.#rpn[rpnOff] = e; // pitch bend range
 				upThis.#rpnt[allocated.rpnt * part] = 1;
 				upThis.dispatchEvent("pitch", {
 					part,
@@ -6269,53 +6280,176 @@ let OctaviaDevice = class extends CustomEventSource {
 		});
 		// Yamaha CS6x
 		upThis.#seXg.add([100, 14], (msg, track, id) => {
+			upThis.switchMode("cs6x");
+			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs6x);
 			// CS6x bulk start
-			let cs6xBulkTarget = ["normal voice", "plugin voice PLG", "drums", , "performance", , "phrase clip"][msg[0] >> 4] ?? "invalid";
+			let bulkTarget = ["normal voice", "plugin voice PLG", "drums", , "performance", , "phrase clip"][msg[0] >> 4] ?? "invalid";
 			if (msg[0] & 15 == 15) {
-				cs6xBulkTarget += " edit buffer";
+				bulkTarget += " edit buffer";
 			} else if (msg[0] >> 4 == 1) {
-				cs6xBulkTarget += `${(msg[0] & 1) + 1}`;
+				bulkTarget += `${(msg[0] & 1) + 1}`;
 			} else {
-				cs6xBulkTarget += ` ${["INT", "EXT"][msg[0] & 1]}`;
+				bulkTarget += ` ${["INT", "EXT"][msg[0] & 1]}`;
 			};
-			console.debug(`CS6x bulk dump for ${cs6xBulkTarget} started.`);
+			console.debug(`CS6x bulk dump for ${bulkTarget} started.`);
 		}).add([100, 15], (msg, track, id) => {
+			upThis.switchMode("cs6x");
 			// CS6x bulk end, same as before
-			let cs6xBulkTarget = ["normal voice", "plugin voice PLG", "drums", , "performance", , "phrase clip"][msg[0] >> 4] ?? "invalid";
+			let bulkTarget = ["normal voice", "plugin voice PLG", "drums", , "performance", , "phrase clip"][msg[0] >> 4] ?? "invalid";
 			if (msg[0] & 15 == 15) {
-				cs6xBulkTarget += " edit buffer";
+				bulkTarget += " edit buffer";
 			} else if (msg[0] >> 4 == 1) {
-				cs6xBulkTarget += `${(msg[0] & 1) + 1}`;
+				bulkTarget += `${(msg[0] & 1) + 1}`;
 			} else {
-				cs6xBulkTarget += ` ${["INT", "EXT"][msg[0] & 1]}`;
+				bulkTarget += ` ${["INT", "EXT"][msg[0] & 1]}`;
 			};
-			console.debug(`CS6x bulk dump for ${cs6xBulkTarget} ended.`);
+			console.debug(`CS6x bulk dump for ${bulkTarget} ended.`);
 		}).add([100, 76, 112], (msg, track, id) => {
+			upThis.switchMode("cs6x");
 			// CS6x voice plugin extra
 			let part = 0;
-			let extOff = extOffTable[part];
-			let cvnOff = part;
-			upThis.#ext[extOff] = upThis.EXT_DX;
-			upThis.#bnCustom[0] = 1;
-			let cvnView = upThis.#cvnBuffer.subarray(cvnOff, cvnOff + allocated.cvn);
-			cvnView.fill(32);
+			let offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
-				if (i < 10) {
-					cvnView[i] = Math.min(127, Math.max(e, 32));
-				} else if (i < 12) {
+				let ri = i + offset;
+				if (ri < 10) {
+					upThis.setChCvnRegister(part, i, e & 127);
+					upThis.#bnCustom[part] = 1;
+				} else if (ri < 12) {
 					// Reserved
-				} else if (i < 13) {
+				} else if (ri < 13) {
 					console.debug(`Plugin voice type: ${e}`);
 				};
 			});
 			upThis.dispatchEvent("voice", {
 				part
 			});
-			upThis.dispatchEvent("metacommit", {
-				"type": "OSysMeta",
-				"data": `CH${part + 1} renamed to "${upThis.getChCvnString(part)}".`
+		}).add([100, 76, 0], (msg, track, id) => {
+			upThis.switchMode("cs6x");
+			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs6x);
+			// CS6x voice plugin common
+			let part = 0;
+			let offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset;
+				([() => {
+					upThis.setChCc(part, 7, e); // volume
+					e !== 100 && (upThis.setChActive(part, 1));
+				}, , , () => {
+					upThis.#mono[part] = e == 0; // mono
+					upThis.setChCc(part, 64, 0);
+					upThis.#uAction.ano(part);
+					upThis.resetChAceAll(part);
+				}, , () => {
+					// pitch bend range
+				}, , , () => {
+					upThis.setChCc(part, 65, e ? 127 : 0); // portamento SW
+				}, () => {
+					upThis.setChCc(part, 5, e); // portamento time
+				}, , () => {
+					upThis.setChCc(part, 91, e); // reverb
+					e !== 40 && (upThis.setChActive(part, 1));
+				}, () => {
+					upThis.setChCc(part, 93, e); // chorus
+					e && (upThis.setChActive(part, 1));
+				}][ri] || (() => {}))();
 			});
-		})
+		}).add([100, 76, 1], (msg, track, id) => {
+			upThis.switchMode("cs6x");
+			// CS6x voice plugin reverb
+			let part = 0;
+			let offset = msg[0];
+			let efxTypeWritten = false;
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset;
+				([() => {
+					upThis.setEffectTypeRaw(0, false, (e & 15) | 128);
+					efxTypeWritten = true;
+				}, () => {
+					upThis.setEffectTypeRaw(0, true, e);
+					efxTypeWritten = true;
+				}][ri] || (() => {}))();
+			});
+			if (efxTypeWritten) {
+				upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+			};
+		}).add([100, 76, 2], (msg, track, id) => {
+			upThis.switchMode("cs6x");
+			// CS6x voice plugin chorus
+			let part = 0;
+			let offset = msg[0];
+			let efxTypeWritten = false;
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset;
+				([() => {
+					upThis.setEffectTypeRaw(1, false, (e & 15) | 128);
+					efxTypeWritten = true;
+				}, () => {
+					upThis.setEffectTypeRaw(1, true, e);
+					efxTypeWritten = true;
+				}][ri] || (() => {}))();
+			});
+			if (efxTypeWritten) {
+				upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+			};
+		}).add([100, 76, 3], (msg, track, id) => {
+			upThis.switchMode("cs6x");
+			// CS6x voice plugin insertion
+			let part = 0;
+			let offset = msg[0];
+			let efxTypeWritten = false;
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset;
+				([() => {
+					upThis.setEffectTypeRaw(2, false, (e & 15) | 128);
+					efxTypeWritten = true;
+				}, () => {
+					upThis.setEffectTypeRaw(2, true, e);
+					efxTypeWritten = true;
+				}][ri] || (() => {}))();
+			});
+			if (efxTypeWritten) {
+				upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
+			};
+		}).add([100, 76, 16], (msg, track, id) => {
+			upThis.switchMode("cs6x");
+			// CS6x voice plugin element
+			let part = 0;
+			let offset = msg[0];
+			let voiceUpdated = false;
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset;
+				([() => {
+					// voice MSB
+					upThis.setChCc(part, 0, e);
+					voiceUpdated = true;
+				}, () => {
+					// voice LSB
+					upThis.setChCc(part, 32, e);
+					voiceUpdated = true;
+					e && (upThis.setChActive(part, 1));
+				}, () => {
+					// voice PC#
+					upThis.#prg[part] = e;
+					voiceUpdated = true;
+					e && (upThis.setChActive(part, 1));
+				}, () => {
+					// coarse tuning
+					upThis.#rpnt[rpnOffTable[part] + useRpnMap[2]] = 1;
+					upThis.#rpn[rpnOffTable[part] + useRpnMap[2]] = e;
+					e && (upThis.setChActive(part, 1));
+				}][ri] || (() => {}))();
+			});
+			if (voiceUpdated) {
+				upThis.pushChPrimitives(part);
+				upThis.dispatchEvent("voice", {
+					part
+				});
+				upThis.dispatchEvent("metacommit", {
+					"type": "OSysMeta",
+					"data": `CH${part + 1} was renamed from "${upThis.getVoice(...upThis.getChPrimitives(part, true), upThis.getChMode(part))?.name}" to "${upThis.getChCvnString(part)}".`
+				});
+			};
+		});
 		// SD-90 part setup (part)
 		this.#seGs.add([0, 72, 18, 0, 0, 0, 0], (msg, track, id) => {
 			// SD-90 Native System On
@@ -6473,7 +6607,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									upThis.#cc[chOff + ccToPos[68]] = e ? 127 : 0;
 								};
 							}, () => {
-								// Pitch bend sensitivity
+								// pitch bend range
 							}, () => {
 								// cc65
 								if (e < 2) {
