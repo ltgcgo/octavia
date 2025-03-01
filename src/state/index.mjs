@@ -1323,6 +1323,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let receivedChecksum = msg[msg.length - 1];
 					if (msg[msg.length - 1] >> 7) {
 						console.warn(`Yamaha bulk dump checksum invalid! Expected ${expectedChecksum}, received ${receivedChecksum}:\n`);
+						console.debug(msg);
 					} else if (expectedChecksum !== receivedChecksum) {
 						console.warn(`Yamaha bulk dump checksum mismatch! Expected ${expectedChecksum}, received ${receivedChecksum}:\n`);
 						console.debug(msg);
@@ -3581,23 +3582,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else {
 				console.warn(`Unknown PLG-SG data: ${msg}`);
 			};
-		}).add([98, 0], (msg, track, id) => {
-			upThis.dispatchEvent("mupromptex");
-			// PLG-DX native dump
-			let size = msg[0], realSize = msg.length - 5,
-			lastIndex = msg.length - 1;
-			if (size !== realSize) {
-				console.info(`PLG-DX native dump size mismatch! Gave ${size} instead of ${msg.length - 5}.`);
-				return;
-			};
-			let checksum = gsChecksum(msg.subarray(4, lastIndex));
-			if (checksum !== msg[lastIndex]) {
-				console.info(`Bad PLG-DX checksum ${msg[lastIndex]} - should be ${checksum}.`);
-				return;
-			};
-			// Dump to normal setup redirector
-			msg[0] = 98;
-			upThis.#seXg.run(msg.subarray(0, lastIndex), track, id, {noAce: true});
 		}).add([98, 96], (msg, track, id, opt) => {
 			// PLG-DX multi-part param set
 			let part = upThis.chRedir(msg[0], track, true);
@@ -3626,58 +3610,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Unknown section
 				};
 			});
-		})/*.add([100, 0], (msg, track, id) => {
-			// This implementation is invalid, as it targets CS6x.
-			return;
-			// Unknown Yamaha DX7+ dump SysEx
-			let dumpString = msg.subarray(0, msg.length - 1)
-			if (msg[0] + 5 !== msg.length) {
-				console.warn(`Yamaha DX7+ dump SysEx size mismatch! Expected ${msg.length}, but got ${msg[0]}:\n`, msg);
-				return;
-			};
-			let expectedChecksum = gsChecksum(dumpString);
-			let receivedChecksum = msg[msg.length - 1];
-			if (expectedChecksum !== receivedChecksum) {
-				console.warn(`Yamaha DX7+ dump SysEx checksum mismatch! Expected ${expectedChecksum}, but got ${receivedChecksum}:\n`, msg);
-				return;
-			};
-			//console.debug(msg);
-			cs6xDump.run(dumpString.subarray(1));
-		}).add([100, 76], (msg, track, id) => {
-			// This implementation is invalid, as it targets CS6x.
-			return;
-			// Unknown Yamaha DX7+ multipart SysEx
-			let use = msg[0] >> 4, section = msg[0] & 15, offset = msg[1];
-			switch (use) {
-				case 2: {
-					// DX7+ multipart parameter set
-					let part = upThis.chRedir(section, track, true),
-					chOff = ccOffTable[part];
-					msg.subarray(2).forEach((e, i) => {
-						let ri = i + offset;
-						if (ri < 7) {
-							// Unknown section
-						} else if (ri < 23) {
-							// 7~22 to 142~157
-							let targetCc = ri + 135;
-							upThis.allocateAce(part, targetCc);
-							upThis.setChCc(part, targetCc, e);
-							upThis.dispatchEvent("cc", {
-								part,
-								cc: targetCc,
-								data: e
-							});
-						} else {
-							// Unknown section
-						};
-					});
-					break;
-				};
-				default: {
-					console.info(`Unknown DX7+ multipart: %o`, msg);
-				};
-			};
-		})*/.add([1, 20], (msg, track, id) => {
+		}).add([1, 20], (msg, track, id) => {
 			if (id === 115) {
 				// DOC reset
 				upThis.switchMode("doc", true);
@@ -3706,51 +3639,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
 			};
 		});
-		// DX7 Dumps
-		// Placeholder until further documentation
-		cs6xDump/*.add([14, 31], (msg, track, id) => {
-			upThis.setChCc(msg[0], 64, 0);
-			upThis.#uAction.ano(msg[0]);
-			upThis.switchMode("xg");
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
-			upThis.resetAce();
-			console.debug(`Yamaha DX7+ reset CH${msg[0] + 1}.`);
-		}).add([76, 112], async (msg) => {
-			// Per-part DX7+ dump should take 035, XXX, 002/003
-			let part = msg[0];
-			let chOff = ccOffTable[part];
-			let extOff = extOffTable[part];
-			let cvnOff = allocated.cvn * part;
-			upThis.#ext[extOff] = upThis.EXT_DX;
-			upThis.#bnCustom[part] = 1;
-			let cvnView = upThis.#cvnBuffer.subarray(cvnOff, cvnOff + allocated.cvn);
-			cvnView.fill(32);
-			msg.subarray(1).forEach((e, i) => {
-				if (i < 10) {
-					cvnView[i] = Math.max(e, 32);
-				} else if (i < 40) {
-					// What the heck are these?
-				} else if (i < 56) {
-					// An educated guess that these are operator levels
-					// 40~55 to 142~157
-					let targetCc = i + 102;
-					upThis.setChCc(part, targetCc, e);
-					upThis.dispatchEvent("cc", {
-						part,
-						cc: targetCc,
-						data: e
-					});
-				};
-			});
-			upThis.#prg[part] = part & 127;
-			upThis.setChCc(part, 0, 35);
-			upThis.setChCc(part, 32, part >> 7 | 4);
-			upThis.pushChPrimitives(part);
-			upThis.dispatchEvent("voice", {
-				part
-			});
-			console.debug(`DX7+ CH${part + 1} dump: %o`, msg);
-		});*/
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {
 			// The Yamaha XG-style drum setup
