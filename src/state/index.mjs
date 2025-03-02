@@ -1312,14 +1312,19 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (id >> 4) {
 				case 0: {
 					// bulk dumps
-					let targetLength = (msg[1] << 7) | msg[2];
+					let bulkOffset = 0;
+					while (msg[bulkOffset] === 127 && bulkOffset < 4) {
+						bulkOffset ++;
+					};
+					//console.debug(`Bulk dump length read offset: ${bulkOffset}`);
+					let targetLength = (msg[1 + bulkOffset] << 7) | msg[2 + bulkOffset];
 					//console.debug(`Yamaha: bulk dump (${targetLength})`);
-					if (targetLength + 7 !== msg.length) {
-						console.warn(`Yamaha bulk dump length mismatch! Expected ${msg.length - 7}, received ${targetLength}.`);
+					if (targetLength + 7 + bulkOffset !== msg.length) {
+						console.warn(`Yamaha bulk dump length mismatch! Expected ${msg.length - 7 - bulkOffset}, received ${targetLength}.`);
 						console.debug(msg);
 						break;
 					};
-					let expectedChecksum = gsChecksum(msg.subarray(1, msg.length - 1));
+					let expectedChecksum = gsChecksum(msg.subarray(1 + bulkOffset, msg.length - 1));
 					let receivedChecksum = msg[msg.length - 1];
 					if (msg[msg.length - 1] >> 7) {
 						console.warn(`Yamaha bulk dump checksum invalid! Expected ${expectedChecksum}, received ${receivedChecksum}:\n`);
