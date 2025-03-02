@@ -1334,7 +1334,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						console.debug(msg);
 					} else {
 						let msgPs = msg.slice(2, msg.length - 1);
-						msgPs[0] = msg[0];
+						for (let i = 0; i <= bulkOffset; i ++) {
+							msgPs[i] = msg[i];
+						};
 						this.#seXg.run(msgPs, track, id & 15);
 					};
 					break;
@@ -5979,7 +5981,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			(addrSet[msg[0]] || (() => {
 				console.info(`Unrecognized ${dPref}ID: ${msg[0]}.`);
 			}))(msg.subarray(1));
-		})*/.add([127, 1, 0, 36, 54, 1], (msg, track, id) => {
+		})*/.add([127, 1, 54, 1], (msg, track, id) => {
 			// S90 ES Reverb
 			upThis.switchMode("s90es");
 			let dPref = "S90/Motif ES reverb ",
@@ -5994,7 +5996,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}))();
 			});
 			upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
-		}).add([127, 1, 0, 37, 54, 2], (msg, track, id) => {
+		}).add([127, 1, 54, 2], (msg, track, id) => {
 			// S90 ES Chorus
 			upThis.switchMode("s90es");
 			let dPref = "S90/Motif ES chorus ",
@@ -6009,7 +6011,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}))();
 			});
 			upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
-		}).add([127, 1, 0, 34, 54, 3], (msg, track, id) => {
+		}).add([127, 1, 54, 3], (msg, track, id) => {
 			// S90 ES Ins1
 			upThis.switchMode("s90es");
 			let dPref = "S90/Motif ES insert 1 ",
@@ -6024,7 +6026,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}))();
 			});
 			upThis.dispatchEvent("efxinsert0", upThis.getEffectType(3));
-		}).add([127, 1, 0, 34, 54, 4], (msg, track, id) => {
+		}).add([127, 1, 54, 4], (msg, track, id) => {
 			// S90 ES Ins2
 			upThis.switchMode("s90es");
 			let dPref = "S90/Motif ES insert 2 ",
@@ -6039,7 +6041,28 @@ let OctaviaDevice = class extends CustomEventSource {
 				}))();
 			});
 			upThis.dispatchEvent("efxinsert1", upThis.getEffectType(4));
-		}).add([127, 1, 0, 35, 54, 17], (msg, track, id) => {
+		}).add([127, 1, 54, 16], (msg, track, id) => {
+			// S90 ES EQ config
+			upThis.switchMode("s90es");
+			let offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				let eqPart = i >> 2;
+				let dPref = `S90/Motif ES EQ${eqPart + 1} `;
+				([() => {
+					let eqGain = e - 64;
+					//console.debug(`${dPref}gain: ${eqGain}dB`);
+				}, () => {
+					let eqFreq = xgNormFreq[e];
+					//console.debug(`${dPref}freq: ${eqFreq}Hz`);
+				}, () => {
+					let eqQFac = e / 10;
+					//console.debug(`${dPref}Q: ${eqQFac}`);
+				}, () => {
+					let eqType = e; // shelf, peak
+					//console.debug(`${dPref}type: ${["shelf", "peak"][eqTypes]}`);
+				},][(offset + i) & 3] || (() => {}))();
+			});
+		}).add([127, 1, 54, 17], (msg, track, id) => {
 			// S90 ES Var
 			upThis.switchMode("s90es");
 			let dPref = "S90/Motif ES variation ",
@@ -6054,7 +6077,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}))();
 			});
 			upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
-		}).add([127, 1, 0, 58, 55], (msg, track, id) => {
+		}).add([127, 1, 55], (msg, track, id) => {
 			// S90 ES bulk part setup dump (?)
 			upThis.dispatchEvent("mupromptex");
 			upThis.switchMode("s90es");
@@ -6148,27 +6171,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					// portamento mode: fingered, fulltime
 				}][offset + i] || (() => {}))();
-			});
-		}).add([127, 1, 54, 16], (msg, track, id) => {
-			// S90 ES EQ config
-			upThis.switchMode("s90es");
-			let offset = msg[0];
-			msg.subarray(1).forEach((e, i) => {
-				let eqPart = i >> 2;
-				let dPref = `S90/Motif ES EQ${eqPart + 1} `;
-				([() => {
-					let eqGain = e - 64;
-					//console.debug(`${dPref}gain: ${eqGain}dB`);
-				}, () => {
-					let eqFreq = xgNormFreq[e];
-					//console.debug(`${dPref}freq: ${eqFreq}Hz`);
-				}, () => {
-					let eqQFac = e / 10;
-					//console.debug(`${dPref}Q: ${eqQFac}`);
-				}, () => {
-					let eqType = e; // shelf, peak
-					//console.debug(`${dPref}type: ${["shelf", "peak"][eqTypes]}`);
-				},][(offset + i) & 3] || (() => {}))();
 			});
 		});
 		// Yamaha CS6x
