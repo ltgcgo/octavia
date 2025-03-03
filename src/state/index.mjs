@@ -3604,10 +3604,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (ri < 27) {
 					// 11~26 to 142~157
 					let targetCc = ri + 131;
-					if (!opt?.noAce) {
+					upThis.setChCc(part, targetCc, e);
+					if (!opt?.noAce && e > 0 && e !== 64) {
 						upThis.allocateAce(part, targetCc);
 					};
-					upThis.setChCc(part, targetCc, e);
 					upThis.dispatchEvent("cc", {
 						part,
 						cc: targetCc,
