@@ -3249,8 +3249,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						setupWrite = false;
 						let ch = upThis.chRedir(e, track, true);
+						let prevCh = upThis.#chReceive[part];
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part !== ch) {
+						if (part !== ch || ch !== prevCh) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -3944,8 +3945,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						});
 					}, () => {
 						let ch = upThis.chRedir(e, track, true);
+						let prevCh = upThis.#chReceive[part];
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part !== ch) {
+						if (part !== ch || ch !== prevCh) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -4380,7 +4382,9 @@ let OctaviaDevice = class extends CustomEventSource {
 							ch = allocated.ch; // Effectively disabling event receives
 						};
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part !== ch) {
+						let prevCh = upThis.#chReceive[part];
+						upThis.#chReceive[part] = ch; // Rx CH
+						if (part !== ch || ch !== prevCh) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -4832,7 +4836,6 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.#chReceive[part] = e;
 							if (midiCh !== part || trkSw) {
 								console.info(`X5D Part CH${part + 1} receives from CH${midiCh + 1}.`);
-								upThis.buildRchTree();
 							};
 						};
 					};
@@ -4841,6 +4844,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// What the heck is pitch bend range 0xF4(-12) to 0x0C(12)?
 				};
 			});
+			upThis.buildRchTree();
 		});
 		// Roland MT-32 or C/M SysEx section
 		this.#seGs.add([22, 18, 127], (msg, track, id) => {
@@ -5258,8 +5262,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (c < 14) {
 					[() => {
 						let ch = upThis.chRedir(e, track, true);
+						let prevCh = upThis.#chReceive[part];
 						upThis.#chReceive[part] = ch; // Rx CH
-						if (part !== ch) {
+						if (part !== ch || ch !== prevCh) {
 							upThis.buildRchTree();
 							console.info(`${dPref}receives from CH${ch + 1}`);
 						};
@@ -5464,7 +5469,6 @@ let OctaviaDevice = class extends CustomEventSource {
 								upThis.#chReceive[part] = ch;
 								if (part !== ch) {
 									console.info(`NS5R CH${part + 1} receives from CH${ch + 1}.`);
-									upThis.buildRchTree();
 								};
 								break;
 							};
@@ -5558,6 +5562,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			});
+			upThis.buildRchTree();
 		}).add([66, 54], (msg, track) => {
 			// All program dump
 			// Yup this one is also ported from old code
@@ -5716,7 +5721,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			chOff = ccOffTable[part],
 			rpnOff = rpnOffTable[part],
 			e = (msg[3] << 4) + msg[4];
-			let dPref = `K11 CH${part + 1} `;
+			let dPref = `GMega CH${part + 1} `;
 			([() => {
 				if (e < 128) {
 					// Melodic voice
@@ -5734,8 +5739,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				});
 			}, () => {
 				let ch = upThis.chRedir(e, track, true);
+				let prevCh = upThis.#chReceive[part];
 				upThis.#chReceive[part] = ch; // Rx CH
-				if (part !== ch) {
+				if (part !== ch || ch !== prevCh) {
 					upThis.buildRchTree();
 					console.info(`${dPref}receives from CH${ch + 1}`);
 				};
@@ -5793,6 +5799,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let e = (msg[2] << 4) + msg[3];
 			let part = upThis.chRedir(msg[1], track, true),
 			chOff = ccOffTable[part];
+			let dPref = `GMLX CH${part + 1} `;
 			[() => {
 				if (e < 128) {
 					// Melodic voice
@@ -5819,10 +5826,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				});
 			}, () => {
 				let ch = upThis.chRedir(e, track, true);
+				let prevCh = upThis.#chReceive[part];
 				upThis.#chReceive[part] = ch; // Rx CH
-				if (part !== ch) {
+				if (part !== ch || ch !== prevCh) {
 					upThis.buildRchTree();
-					console.info(`GMLX CH${part + 1} receives from CH${ch + 1}`);
+					console.info(`${dPref}receives from CH${ch + 1}`);
 				};
 			}][msg[0]]();
 		}).add([16, 0, 9, 4], (msg, track, id) => {
@@ -5832,7 +5840,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			let part = upThis.chRedir(msg[1], track, true),
 			chOff = ccOffTable[part],
 			rpnOff = rpnOffTable[part];
-			let dPref = `GMLX CH${part + 1} `;
 			[() => {
 				upThis.setChActive(part, e); // toggle channel
 			}, () => {
@@ -5920,8 +5927,9 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (msg[1] === 2) {
 							// SG receive channel
 							let ch = upThis.chRedir(e, track, true);
+							let prevCh = upThis.#chReceive[part];
 							upThis.#chReceive[part] = ch; // Rx CH
-							if (part !== ch) {
+							if (part !== ch || ch !== prevCh) {
 								upThis.buildRchTree();
 								console.info(`SG CH${part + 1} receives from CH${ch + 1}`);
 							};
@@ -6128,8 +6136,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					});
 				}, () => {
 					let ch = upThis.chRedir(e, track, true);
+					let prevCh = upThis.#chReceive[part];
 					upThis.#chReceive[part] = ch; // Rx CH
-					if (part !== ch) {
+					if (part !== ch || ch !== prevCh) {
 						upThis.buildRchTree();
 						console.info(`${dPref}receives from CH${ch + 1}`);
 					};
