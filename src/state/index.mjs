@@ -2828,7 +2828,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#metaChannel = data[0] + 1;
 		};
 		upThis.#metaRun[33] = function (data, track) {
-			getDebugState() && console.debug(`Track ${track} requests to get assigned to output ${data}.`);
+			getDebugState() && console.debug(`Track ${track} requests getting assigned to port ${data}.`);
 			upThis.#trkAsReq[track] = data + 1;
 		};
 		upThis.#metaRun[81] = function (data, track) {
@@ -2844,7 +2844,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.warn(`Unrecognized sequencer-specific byte sequence: ${seq}`);
 		};
 		upThis.#metaSeq.add([67, 0, 1], function (msg, track) {
-			getDebugState() && console.debug(`XGworks requests assigning track ${track} to output ${msg[0]}.`);
+			getDebugState() && console.debug(`XF port assign requests assigning track ${track} to port ${msg[0]}.`);
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		});
 		// Binary match should be avoided in favour of a circular structure

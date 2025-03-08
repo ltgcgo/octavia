@@ -314,10 +314,9 @@ let MuDisplay = class extends RootDisplay {
 			};
 			maxCh = minCh + upThis.#range * 16 - 1;
 		};
-		let chOff = upThis.#ch * ccToPos.length;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
-		let showLsb = !sum.chContr[chOff + ccToPos[0]];
+		let showLsb = upThis.device.getChPrimitive(upThis.#ch, 1);
 		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
 			// Show display text
 			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
@@ -511,9 +510,9 @@ let MuDisplay = class extends RootDisplay {
 				};
 				upThis.#bmst = 0;
 				let standard = upThis.getChVoice(upThis.#ch).standard.toLowerCase();
-				useBm = upThis.voxBm.getBm(upThis.getChVoice(upThis.#ch).name) || upThis.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[upThis.#ch], 0, sum.mode).name);
+				useBm = upThis.voxBm.getBm(upThis.getChVoice(upThis.#ch).name) || upThis.voxBm.getBm(upThis.getVoice(upThis.device.getChPrimitive(upThis.#ch, 1), upThis.device.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-					switch ((sum.chContr[chOff] + ccToPos[0]) >> 4) {
+					switch ((upThis.device.getChPrimitive(upThis.#ch, 1)) >> 4) {
 						case 2: {
 							// Internal
 							useBm = upThis.sysBm.getBm(`ext_${standard}I`);
@@ -537,13 +536,13 @@ let MuDisplay = class extends RootDisplay {
 				} else if (standard === "kr") {
 					useBm = upThis.sysBm.getBm(`st_korg`);
 				};
-				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] === 56 || sum.chContr[chOff + ccToPos[0]] === 121 || (sum.chContr[chOff + ccToPos[0]] < 100 && sum.chContr[chOff + ccToPos[0]] >= 96))) {
+				if (!useBm && (upThis.device.getChPrimitive(upThis.#ch, 1) < 48 || upThis.device.getChPrimitive(upThis.#ch, 1) === 56 || upThis.device.getChPrimitive(upThis.#ch, 1) === 121 || (upThis.device.getChPrimitive(upThis.#ch, 1) && upThis.device.getChPrimitive(upThis.#ch, 1)))) {
 					useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
 				};
-				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 126) {
+				if (!useBm && (upThis.device.getChPrimitive(upThis.#ch, 1)) === 126) {
 					useBm = upThis.sysBm.getBm("cat_smpl");
 				};
-				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 64) {
+				if (!useBm && (upThis.device.getChPrimitive(upThis.#ch, 1)) === 64) {
 					useBm = upThis.sysBm.getBm("cat_sfx");
 				};
 				if (!useBm) {
@@ -594,19 +593,19 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#waveBuffer[0] = +(sum.velo[upThis.#ch] > 159);
 		};
 		// Show param
-		normParamPaint(sum.chContr[chOff + ccToPos[7]], 404, ctx); // vol
-		normParamPaint(sum.chContr[chOff + ccToPos[11]], 452, ctx); // exp
-		normParamPaint(sum.chContr[chOff + ccToPos[74]], 500, ctx); // bri
-		efxParamPaint(sum.chContr[chOff + ccToPos[91]], 644, ctx, useWB, upThis.#waveBuffer); // rev
-		efxParamPaint(sum.chContr[chOff + ccToPos[93]], 692, ctx, useWB, upThis.#waveBuffer); // cho
-		efxParamPaint(sum.chContr[chOff + ccToPos[94]], 740, ctx, useWB, upThis.#waveBuffer); // var
+		normParamPaint(upThis.device.getChCc(upThis.#ch, 7), 404, ctx); // vol
+		normParamPaint(upThis.device.getChCc(upThis.#ch, 11), 452, ctx); // exp
+		normParamPaint(upThis.device.getChCc(upThis.#ch, 74), 500, ctx); // brt
+		efxParamPaint(upThis.device.getChCc(upThis.#ch, 91), 644, ctx, useWB, upThis.#waveBuffer); // rev
+		efxParamPaint(upThis.device.getChCc(upThis.#ch, 93), 692, ctx, useWB, upThis.#waveBuffer); // cho
+		efxParamPaint(upThis.device.getChCc(upThis.#ch, 94), 740, ctx, useWB, upThis.#waveBuffer); // var
 		// Show pan
 		ctx.beginPath();
 		ctx.arc(582, 216, 34, 2.356194490192345, 7.068583470577034);
 		ctx.lineWidth = 2;
 		ctx.strokeStyle = "#000f";
 		ctx.stroke();
-		let pan = sum.chContr[chOff + ccToPos[10]];
+		let pan = upThis.device.getChCc(upThis.#ch, 10);
 		upThis.#panStrokes.fill(0);
 		if (pan === 0) {
 			upThis.#panStrokes[0] = 1;
