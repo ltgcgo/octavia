@@ -2861,9 +2861,42 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#metaSeq.default = function (seq) {
 			console.warn(`Unrecognized sequencer-specific byte sequence: ${seq}`);
 		};
-		upThis.#metaSeq.add([67, 0, 1], function (msg, track) {
+		upThis.#metaSeq.add([67, 0, 1], (msg, track) => {
+			// XGworks port assign
 			getDebugState() && console.debug(`XGworks port assign requests assigning track ${track} to port ${msg[0]}.`);
 			upThis.#trkAsReq[track] = msg[0] + 1;
+		}).add([67, 123, 1], (msg, track) => {
+			// XF chords
+			let data = [];
+			for (let i = 0; i < msg.length; i += 2) {
+				let chordAccidental = msg[i] >> 4;
+				let chordRoot = msg[i] & 15;
+				if (chordAccidental < 7 && chordRoot && chordRoot < 8) {
+					data.push([chordRoot - 1, (chordAccidental - 3) << 2, msg[i | 1], msg[i | 1]]);
+				};
+			};
+			upThis.dispatchEvent("metacommit", {
+				type: "ChordCtl",
+				src: "yxf",
+				data
+			});
+			console.debug(`Yamaha XF chord data: %o`, data);
+		}).add([67, 123, 96], (msg, track) => {
+			// Custom XF style indicator
+			let data = [0, 0];
+			msg.subarray(1, 3).forEach((e) => {
+				data[0] = data[0] << 7;
+				data[0] |= e & 127;
+			});
+			msg.subarray(3, 5).forEach((e) => {
+				data[1] = data[1] << 7;
+				data[1] |= e & 127;
+			});
+			upThis.dispatchEvent("metacommit", {
+				type: "YStyleId",
+				data
+			});
+			console.debug(`Yamaha style ID: model ${data[0].toString(16)}, style ${data[1] + 1}`,);
 		});
 		// Binary match should be avoided in favour of a circular structure
 		upThis.#seUnr = new BinaryMatch("universal non-realtime");
@@ -3665,26 +3698,27 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
 			};
 		}).add([126, 0], (msg, track, id) => {
-			// Yamaha "MCS" section control
+			// YMCS section control
+			// Yamaha Music Communications System
 			switch (msg[1]) {
 				case 0: {
 					// Section control off
 					upThis.dispatchEvent("metacommit", {
-						type: "YMCSSecC",
+						type: "YMCSSect",
 						data: `Disabled`,
 						raw: "Intro "
 					});
 					console.debug(`Yamaha Section Control is off.`);
 					break;
 				};
-				case 1: {
+				case 127: {
 					// Section control on
 					upThis.dispatchEvent("metacommit", {
-						type: "YMCSSecC",
-						data: ["Intro", "Main A", "Main B", "Fill AB", "Fill BA", "Ending", "Blank"][msg[0] - 8] ?? `invalid section ${msg[0]}`,
+						type: "YMCSSect",
+						data: ["Intro", "Main A", "Main B", "Fill-in AB", "Fill-in BA", "Ending", "Blank"][msg[0] - 8] ?? `invalid section ${msg[0]}`,
 						raw: ["Intro ", "Main A", "Main B", "FillAB", "FillBA", "Ending", "Blank "][msg[0] - 8] ?? `ID: ${msg[0]}`
 					});
-					console.debug(`Yamaha Section Control switches to "${["intro", "main A", "main B", "fill AB", "fill BA", "ending", "blank"][msg[0] - 8] ?? `Invalid section ${msg[0]}`}".`);
+					console.debug(`Yamaha Section Control switches to "${["intro", "main A", "main B", "fill-in AB", "fill-in BA", "ending", "blank"][msg[0] - 8] ?? `Invalid section ${msg[0]}`}".`);
 					break;
 				};
 				default: {
@@ -3692,6 +3726,22 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(`Unknown YMCS section control: ${msg[1]}`);
 				};
 			};
+		}).add([126, 2], (msg, track, id) => {
+			// YMCS chord control
+			let data = [];
+			for (let i = 0; i < msg.length; i += 2) {
+				let chordAccidental = msg[i] >> 4;
+				let chordRoot = msg[i] & 15;
+				if (chordAccidental < 7 && chordRoot && chordRoot < 8) {
+					data.push([chordRoot - 1, (chordAccidental - 3) << 2, msg[i | 1], msg[i | 1]]);
+				};
+			};
+			upThis.dispatchEvent("metacommit", {
+				type: "ChordCtl",
+				src: "ymcs",
+				data
+			});
+			console.debug(`YMCS chord data: %o`, data);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {

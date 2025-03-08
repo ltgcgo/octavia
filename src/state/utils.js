@@ -95,6 +95,10 @@ let getDebugState = function () {
 	return self.debugMode ?? false;
 };
 
+const noteRoot = "CDEFGAB";
+const noteAcciTet12 = "♭𝄫,𝄫,♭,,♯,𝄪,𝄪♯".split(",");
+let getChordName = (root, acciTet48, type) => {};
+
 export {
 	toDecibel,
 	gsChecksum,

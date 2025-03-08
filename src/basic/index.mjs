@@ -204,6 +204,16 @@ let RootDisplay = class extends CustomEventSource {
 		upThis.dispatchEvent(`efxinsert2`, upThis.device.getEffectType(5));
 		upThis.dispatchEvent(`efxinsert3`, upThis.device.getEffectType(6));
 	};
+	async loadModels(text, overwrite) {
+		// Load the model ID map
+		let upThis = this;
+		let loadCount = 0, allCount = 0;
+	};
+	async loadStyles(text, overwrite) {
+		// Load the style ID map
+		let upThis = this;
+		let loadCount = 0, allCount = 0;
+	};
 	switchMode(modeName, forced = false) {
 		this.device.switchMode(modeName, forced);
 	};

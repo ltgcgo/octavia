@@ -77,12 +77,14 @@ const metaNames = {
 	"XfLyrOff": "XL Offset",
 	"XfLyrEnc": "XL Lang.",
 	"XfSngPrt": "XL Part",
-	"YMCSSecC": "Section Ctrl."
+	"YMCSSect": "Section Ctrl.",
+	"YStyleId": "Active Style"
 }, metaBlocklist = [
 	"XfSongBt",
 	"XfSngIns",
 	"XfLyrOff",
-	"XfSngRgn"
+	"XfSngRgn",
+	"ChordCtl"
 ];
 const lineDash = [[], [4, 2], [3, 2]];
 const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}];

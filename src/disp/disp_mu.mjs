@@ -316,7 +316,7 @@ let MuDisplay = class extends RootDisplay {
 		};
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
-		let showLsb = upThis.device.getChPrimitive(upThis.#ch, 1);
+		let showLsb = upThis.getChPrimitive(upThis.#ch, 1);
 		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
 			// Show display text
 			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
@@ -365,7 +365,7 @@ let MuDisplay = class extends RootDisplay {
 			if (rendMode < 2) {
 				let voiceObj = upThis.getChVoice(upThis.#ch),
 				voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " "),
-				primBuf = upThis.device.getChPrimitives(upThis.#ch);
+				primBuf = upThis.getChPrimitives(upThis.#ch);
 				let bnkSel = (primBuf[0] === 64 ? "SFX" : primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");
 				if ([63].indexOf(primBuf[0]) > -1) {
 					bnkSel = `${primBuf[2] || 0}`.padStart(3, "0");
@@ -510,9 +510,9 @@ let MuDisplay = class extends RootDisplay {
 				};
 				upThis.#bmst = 0;
 				let standard = upThis.getChVoice(upThis.#ch).standard.toLowerCase();
-				useBm = upThis.voxBm.getBm(upThis.getChVoice(upThis.#ch).name) || upThis.voxBm.getBm(upThis.getVoice(upThis.device.getChPrimitive(upThis.#ch, 1), upThis.device.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
+				useBm = upThis.voxBm.getBm(upThis.getChVoice(upThis.#ch).name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-					switch ((upThis.device.getChPrimitive(upThis.#ch, 1)) >> 4) {
+					switch ((upThis.getChPrimitive(upThis.#ch, 1)) >> 4) {
 						case 2: {
 							// Internal
 							useBm = upThis.sysBm.getBm(`ext_${standard}I`);
@@ -536,13 +536,13 @@ let MuDisplay = class extends RootDisplay {
 				} else if (standard === "kr") {
 					useBm = upThis.sysBm.getBm(`st_korg`);
 				};
-				if (!useBm && (upThis.device.getChPrimitive(upThis.#ch, 1) < 48 || upThis.device.getChPrimitive(upThis.#ch, 1) === 56 || upThis.device.getChPrimitive(upThis.#ch, 1) === 121 || (upThis.device.getChPrimitive(upThis.#ch, 1) && upThis.device.getChPrimitive(upThis.#ch, 1)))) {
+				if (!useBm && (upThis.getChPrimitive(upThis.#ch, 1) < 48 || upThis.getChPrimitive(upThis.#ch, 1) === 56 || upThis.getChPrimitive(upThis.#ch, 1) === 121 || (upThis.getChPrimitive(upThis.#ch, 1) && upThis.getChPrimitive(upThis.#ch, 1)))) {
 					useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
 				};
-				if (!useBm && (upThis.device.getChPrimitive(upThis.#ch, 1)) === 126) {
+				if (!useBm && (upThis.getChPrimitive(upThis.#ch, 1)) === 126) {
 					useBm = upThis.sysBm.getBm("cat_smpl");
 				};
-				if (!useBm && (upThis.device.getChPrimitive(upThis.#ch, 1)) === 64) {
+				if (!useBm && (upThis.getChPrimitive(upThis.#ch, 1)) === 64) {
 					useBm = upThis.sysBm.getBm("cat_sfx");
 				};
 				if (!useBm) {
