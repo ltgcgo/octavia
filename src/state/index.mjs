@@ -40,6 +40,7 @@ import {
 	x5dSendLevel,
 	getDebugState
 } from "./utils.js";
+import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
 
 const modeIdx = [
 	"?",
@@ -1346,6 +1347,23 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#seXg.run(msg, track, id & 15);
 					break;
 				};
+				case 7: {
+					// special-use
+					switch (id & 15) {
+						case 14: {
+							// style control
+							let newBuffer = new Uint8Array(msg.length + 1);
+							newBuffer[0] = 126;
+							newBuffer.set(msg, 1);
+							this.#seXg.run(newBuffer, track, 0);
+							break;
+						};
+						default: {
+							console.warn(`Unknown Yamaha special SysEx type: ${id}.`);
+						};
+					};
+					break;
+				};
 				default: {
 					console.warn(`Unknown Yamaha SysEx type: ${id >> 4}.`);
 				};
@@ -1901,7 +1919,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else if (!upThis.#ace[pointer + aceOff]) {
 				continueScan = false;
 				upThis.#ace[pointer + aceOff] = cc;
-				console.info(`Allocated cc${cc} to ACE slot ${pointer} in CH${part + 1}.`);
+				console.debug(`Allocated cc${cc} to ACE slot ${pointer} in CH${part + 1}.`);
 			};
 			pointer ++;
 		};
@@ -2844,7 +2862,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.warn(`Unrecognized sequencer-specific byte sequence: ${seq}`);
 		};
 		upThis.#metaSeq.add([67, 0, 1], function (msg, track) {
-			getDebugState() && console.debug(`XF port assign requests assigning track ${track} to port ${msg[0]}.`);
+			getDebugState() && console.debug(`XGworks port assign requests assigning track ${track} to port ${msg[0]}.`);
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		});
 		// Binary match should be avoided in favour of a circular structure
@@ -3645,6 +3663,34 @@ let OctaviaDevice = class extends CustomEventSource {
 				console.info("DOC Global Reverb: on");
 			} else {
 				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
+			};
+		}).add([126, 0], (msg, track, id) => {
+			// Yamaha "MCS" section control
+			switch (msg[1]) {
+				case 0: {
+					// Section control off
+					upThis.dispatchEvent("metacommit", {
+						type: "YMCSSecC",
+						data: `Disabled`,
+						raw: "Intro "
+					});
+					console.debug(`Yamaha Section Control is off.`);
+					break;
+				};
+				case 1: {
+					// Section control on
+					upThis.dispatchEvent("metacommit", {
+						type: "YMCSSecC",
+						data: ["Intro", "Main A", "Main B", "Fill AB", "Fill BA", "Ending", "Blank"][msg[0] - 8] ?? `invalid section ${msg[0]}`,
+						raw: ["Intro ", "Main A", "Main B", "FillAB", "FillBA", "Ending", "Blank "][msg[0] - 8] ?? `ID: ${msg[0]}`
+					});
+					console.debug(`Yamaha Section Control switches to "${["intro", "main A", "main B", "fill AB", "fill BA", "ending", "blank"][msg[0] - 8] ?? `Invalid section ${msg[0]}`}".`);
+					break;
+				};
+				default: {
+					// Unknown section control
+					console.debug(`Unknown YMCS section control: ${msg[1]}`);
+				};
 			};
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};

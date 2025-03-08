@@ -76,7 +76,8 @@ const metaNames = {
 	"XfMeloCh": "XF Melody",
 	"XfLyrOff": "XL Offset",
 	"XfLyrEnc": "XL Lang.",
-	"XfSngPrt": "XL Part"
+	"XfSngPrt": "XL Part",
+	"YMCSSecC": "Section Ctrl."
 }, metaBlocklist = [
 	"XfSongBt",
 	"XfSngIns",
