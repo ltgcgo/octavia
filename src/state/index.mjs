@@ -2527,29 +2527,32 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#metaRun[1] = function (data) {
 			data = data.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
 			// Normal text
-			switch (data.slice(0, 2)) {
+			switch (data.substring(0, 2)) {
 				case "@I": {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Info",
-						"data": data.slice(2)?.trimLeft()
+						"data": data.substring(2)?.trimLeft()
 					});
 					break;
 				};
 				case "@K": {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
-					upThis.dispatchEvent("metacommit", {
-						"type": "Kar.Mode",
-						"data": data.slice(2)?.trimLeft()
-					});
-					console.debug(`Karaoke mode active: ${data.slice(2)}`);
+					let textBuffer = data.substring(2);
+					if (textBuffer !== "MIDI KARAOKE FILE") {
+						upThis.dispatchEvent("metacommit", {
+							"type": "Kar.Mode",
+							"data": textBuffer?.trimLeft()
+						});
+					};
+					console.debug(`Karaoke mode active: ${textBuffer}`);
 					break;
 				};
 				case "@L": {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Lang",
-						"data": data.slice(2)?.trimLeft()
+						"data": data.substring(2)?.trimLeft()
 					});
 					break;
 				};
@@ -2557,7 +2560,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "KarTitle",
-						"data": data.slice(2)?.trimLeft()
+						"data": data.substring(2)?.trimLeft()
 					});
 					break;
 				};
@@ -2565,7 +2568,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Ver.",
-						"data": data.slice(2)?.trimLeft()
+						"data": data.substring(2)?.trimLeft()
 					});
 					break;
 				};
@@ -2620,7 +2623,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									});
 									upThis.dispatchEvent("metacommit", {
 										"type": "KarLyric",
-										"data": data.slice(1),
+										"data": data.substring(1),
 										"amend": true
 									});
 									break;
@@ -2635,7 +2638,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									});
 									upThis.dispatchEvent("metacommit", {
 										"type": "KarLyric",
-										"data": data.slice(1),
+										"data": data.substring(1),
 										"mask": true,
 										"amend": true
 									});
@@ -2723,12 +2726,6 @@ let OctaviaDevice = class extends CustomEventSource {
 									"type": "KarLyric",
 									"data": textBuffer,
 									"mask": false,
-									"amend": true
-								});
-								upThis.dispatchEvent("metacommit", {
-									"type": "KarLyric",
-									"data": "",
-									"mask": true,
 									"amend": false
 								});
 								textBuffer = "";
@@ -2753,13 +2750,35 @@ let OctaviaDevice = class extends CustomEventSource {
 					break;
 				};
 				default: {
+					let firstChar = 0, scanChar = true;
 					let lastChar = data.length - 1;
+					while (scanChar && firstChar < 8) {
+						switch (data.charCodeAt(firstChar)) {
+							case 32: {
+								scanChar = false;
+								break;
+							};
+							default: {
+								firstChar ++;
+							};
+						};
+					};
+					if (firstChar > 0) {
+						upThis.dispatchEvent("metacommit", {
+							"type": "C.Lyrics",
+							"data": data.substring(0, firstChar),
+							"amend": true,
+							"mask": upThis.#maskNewLyric,
+							"untimed": true
+						});
+						upThis.#maskNewLyric = false;
+					};
 					switch (data.charCodeAt(lastChar)) {
 						case 10: {
 							// Line feed
 							upThis.dispatchEvent("metacommit", {
 								"type": "C.Lyrics",
-								"data": data.substring(0, lastChar),
+								"data": data.substring(firstChar, lastChar),
 								"amend": false,
 								"mask": upThis.#maskNewLyric
 							});
@@ -2771,7 +2790,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Vertical tab and carriage return
 							upThis.dispatchEvent("metacommit", {
 								"type": "C.Lyrics",
-								"data": data.substring(0, lastChar),
+								"data": data.substring(firstChar, lastChar),
 								"amend": false,
 								"mask": upThis.#maskNewLyric
 							});
@@ -2782,7 +2801,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Space
 							upThis.dispatchEvent("metacommit", {
 								"type": "C.Lyrics",
-								"data": data.substring(0, lastChar),
+								"data": data.substring(firstChar, lastChar),
 								"amend": true,
 								"mask": upThis.#maskNewLyric
 							});
@@ -2798,13 +2817,13 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						default: {
 							if (data.trim() === "") {
-								console.debug(`Blank line? Shouldn't happen.`);
-								upThis.dispatchEvent("metacommit", {
+								console.info(`Blank line? Shouldn't happen.`);
+								/*upThis.dispatchEvent("metacommit", {
 									"type": "C.Lyrics",
 									"data": "",
 									"amend": false,
 									"mask": upThis.#maskNewLyric
-								});
+								});*/
 							} else {
 								upThis.dispatchEvent("metacommit", {
 									"type": "C.Lyrics",
@@ -3089,6 +3108,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							rTune += e;
 						});
 						rTune -= 1024;
+						console.debug(`Master tune: ${rTune}`);
 					};
 				};
 			};
@@ -4058,6 +4078,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					rTune += e;
 				});
 				rTune -= 1024;
+				console.debug(`Master tune: ${rTune}`);
 			};
 		}).add([43, 1, 0], (msg, track, id) => {
 			// TG300 effect (R C V) setup
@@ -4247,6 +4268,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							rTune += e;
 						});
 						rTune -= 1024;
+						console.debug(`Master tune: ${rTune}`);
 					};
 				};
 			};
@@ -5373,6 +5395,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								rTune += e;
 							});
 							rTune -= 1024;
+							console.debug(`Master tune: ${rTune}`);
 						};
 					};
 				};
