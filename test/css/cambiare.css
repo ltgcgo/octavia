@@ -216,6 +216,7 @@ div.cambiare-canvas > div.sect-meta div.meta-line {
 	margin: 0 0 3px;
 	height: 25px;
 	line-height: 25px;
+	tab-size: 2;
 }
 div.cambiare-canvas > div.sect-meta > div.boundary {
 	width: 100%;

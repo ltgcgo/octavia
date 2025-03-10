@@ -2701,7 +2701,8 @@ let OctaviaDevice = class extends CustomEventSource {
 								textBuffer += " ";
 								break;
 							};
-							case ">": { // Tab, ignored in Octavia
+							case ">": { // Tab, should be styled as 2-4 spaces when fit
+								textBuffer += "\t";
 								break;
 							};
 							case "<": { // New page, treated as new event in Octavia
