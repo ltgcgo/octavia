@@ -2701,7 +2701,8 @@ let OctaviaDevice = class extends CustomEventSource {
 					let textBuffer = "";
 					for (let e of data) {
 						switch (e) {
-							case "^": { // Space
+							case "^": // Space
+							case "%": { // Secondary line break, treated the same here
 								textBuffer += " ";
 								break;
 							};
@@ -2720,8 +2721,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								upThis.#maskNewLyric = false;
 								break;
 							};
-							case "/": // Line break
-							case "%": { // Secondary line break, tread the same here
+							case "/": { // Line break
 								upThis.dispatchEvent("metacommit", {
 									"type": "KarLyric",
 									"data": textBuffer,

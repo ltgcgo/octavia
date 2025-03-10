@@ -67,7 +67,7 @@ const metaNames = {
 	"XfSngTag": "XF Tags",
 	"XfKarLng": "XF Lang.",
 	"XfKarNme": "XF Name",
-	"XfKarCmp": "XK Composer",
+	"XfKarCmp": "XK Compo.",
 	"XfKarLrc": "XK Lyricist",
 	"XfKarArr": "XK Arranger",
 	"XfKarPer": "XK Perform.",
@@ -82,6 +82,7 @@ const metaNames = {
 }, metaBlocklist = [
 	"XfSongBt",
 	"XfSngIns",
+	"XfSngVoc",
 	"XfLyrOff",
 	"XfSngRgn",
 	"ChordCtl"
@@ -1284,7 +1285,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		});
 		upThis.addEventListener("metacommit", (ev) => {
-			let meta = ev.data;
+			let meta = ev.data, isHandled = false;
 			//console.debug(meta);
 			if (upThis.#metaAmend && meta.type === upThis.#metaType && upThis.#metaLastLine) {
 				// Amend the last line
@@ -1301,6 +1302,7 @@ let Cambiare = class extends RootDisplay {
 						upThis.#metaLastLine.childNodes[0].data += meta.data;
 					};
 				};
+				isHandled = true;
 			} else if (meta.data?.length && metaBlocklist.indexOf(meta.type) === -1) {
 				// Commit a new line
 				let metaLineRoot = createElement("div", ["meta-line"]),
@@ -1337,9 +1339,12 @@ let Cambiare = class extends RootDisplay {
 				while (upThis.#sectMeta.view.children.length > upThis.#metaMaxLine) {
 					upThis.#sectMeta.view.children[0].remove();
 				};
+				isHandled = true;
 			};
-			upThis.#metaAmend = meta.amend || false;
-			upThis.#metaType = meta.type || "";
+			if (isHandled) {
+				upThis.#metaAmend = meta.amend ?? false;
+				upThis.#metaType = meta.type ?? "";
+			};
 			upThis.#scrollMeta();
 		});
 		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
