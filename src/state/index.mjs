@@ -2755,15 +2755,16 @@ let OctaviaDevice = class extends CustomEventSource {
 					while (scanChar && firstChar < 8) {
 						switch (data.charCodeAt(firstChar)) {
 							case 32: {
-								scanChar = false;
+								firstChar ++;
 								break;
 							};
 							default: {
-								firstChar ++;
+								scanChar = false;
 							};
 						};
 					};
 					if (firstChar > 0) {
+					//console.debug(`Preceding spaces.`);
 						upThis.dispatchEvent("metacommit", {
 							"type": "C.Lyrics",
 							"data": data.substring(0, firstChar),
@@ -2776,6 +2777,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					switch (data.charCodeAt(lastChar)) {
 						case 10: {
 							// Line feed
+							//console.debug(`Line feed.`);
 							upThis.dispatchEvent("metacommit", {
 								"type": "C.Lyrics",
 								"data": data.substring(firstChar, lastChar),
@@ -2788,6 +2790,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 11:
 						case 13: {
 							// Vertical tab and carriage return
+							//console.debug(`Carriage return.`);
 							upThis.dispatchEvent("metacommit", {
 								"type": "C.Lyrics",
 								"data": data.substring(firstChar, lastChar),
@@ -2799,12 +2802,14 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						case 32: {
 							// Space
+							//console.debug(`Before trailing spaces.`);
 							upThis.dispatchEvent("metacommit", {
 								"type": "C.Lyrics",
 								"data": data.substring(firstChar, lastChar),
 								"amend": true,
 								"mask": upThis.#maskNewLyric
 							});
+							//console.debug(`Trailing spaces.`);
 							upThis.dispatchEvent("metacommit", {
 								"type": "C.Lyrics",
 								"data": " ",
@@ -2825,6 +2830,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									"mask": upThis.#maskNewLyric
 								});*/
 							} else {
+								//console.debug(`Normal data commit.`);
 								upThis.dispatchEvent("metacommit", {
 									"type": "C.Lyrics",
 									"data": data,
