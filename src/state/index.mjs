@@ -1348,6 +1348,14 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.#seXg.run(msg, track, id & 15);
 					break;
 				};
+				case 2: {
+					console.warn(`Octavia doesn't yet support Yamaha bulk dump requests.`);
+					break;
+				};
+				case 3: {
+					console.warn(`Octavia doesn't yet support Yamaha parameter requests.`);
+					break;
+				};
 				case 7: {
 					// special-use
 					switch (id & 15) {
