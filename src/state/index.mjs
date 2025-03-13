@@ -2957,7 +2957,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				let chordAccidental = msg[i] >> 4;
 				let chordRoot = msg[i] & 15;
 				if (chordAccidental < 7 && chordRoot && chordRoot < 8) {
-					data.push([chordRoot - 1, (chordAccidental - 3) << 2, msg[i | 1], msg[i | 1]]);
+					let chordIdNative = new Uint8Array(5);
+					chordIdNative[0] = chordRoot - 1;
+					chordIdNative[1] = (chordAccidental - 3) << 2;
+					chordIdNative[2] = msg[i | 1]; // XF ID
+					// Write the actual chord type here at 3 and 4
+					data.push(chordIdNative);
 				};
 			};
 			upThis.dispatchEvent("metacommit", {
@@ -3830,7 +3835,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				let chordAccidental = msg[i] >> 4;
 				let chordRoot = msg[i] & 15;
 				if (chordAccidental < 7 && chordRoot && chordRoot < 8) {
-					data.push([chordRoot - 1, (chordAccidental - 3) << 2, msg[i | 1], msg[i | 1]]);
+					let chordIdNative = new Uint8Array(5);
+					chordIdNative[0] = chordRoot - 1;
+					chordIdNative[1] = (chordAccidental - 3) << 2;
+					chordIdNative[2] = msg[i | 1]; // XF ID
+					// Write the actual chord type here at 3 and 4
+					data.push(chordIdNative);
 				};
 			};
 			upThis.dispatchEvent("metacommit", {
