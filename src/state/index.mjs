@@ -2966,6 +2966,17 @@ let OctaviaDevice = class extends CustomEventSource {
 				data
 			});
 			console.debug(`Yamaha XF chord data: %o`, data);
+		}).add([67, 123, 2], (msg, track) => {
+			// XF rehearsal mark
+			let data = new Uint8Array(2);
+			data[0] = msg[0] & 15; // Intro, Ending, Fill-in, A, B...
+			data[1] = msg[0] >> 4;
+			upThis.dispatchEvent("metacommit", {
+				type: "RhrslMrk",
+				src: "yxf",
+				data
+			});
+			console.debug(`Yamaha XF rehearsal mark: ${["Intro", "Ending", "Fill-in"][data[0]] ?? String.fromCharCode(62 + data[0])}${"'".repeat(data[1])} %o`, data);
 		}).add([67, 123, 96], (msg, track) => {
 			// Custom XF style indicator
 			let data = [0, 0];
