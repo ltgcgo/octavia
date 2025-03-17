@@ -121,6 +121,7 @@ const modeColourPool = {
 	"s90es": ["9efaa0", "006415"],
 	"motif": ["9efaa0", "006415"],
 	"cs6x": ["9efaa0", "006415"],
+	"an1x": ["9efaa0", "006415"],
 	"gm": ["a1f3ff", "005e88"],
 	"g2": ["a1f3ff", "005e88"],
 	"krs": ["a1f3ff", "005e88"],

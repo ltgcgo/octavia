@@ -48,7 +48,8 @@ const modeIdx = [
 	"mt32", "doc", "qy10", "qy20",
 	"ns5r", "x5d", "05rw",
 	"k11", "sg", "sd", "pa",
-	"krs", "s90es", "motif", "cs6x", "trin"
+	"krs", "s90es", "motif", "cs6x", "trin",
+	"an1x"
 ],
 modeAdapt = {
 	"gm2": "g2",
@@ -92,7 +93,8 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"s90es": [0, 0, 127, 0, 0],
 	"motif": [0, 0, 127, 0, 0],
 	"cs6x": [0, 0, 127, 0, 0],
-	"trin": [0, 0, 127, 0, 0]
+	"trin": [0, 0, 61, 0, 0],
+	"an1x": [36, 3, 127, 0, 0]
 };
 const drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
@@ -2184,7 +2186,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			throw(new RangeError(`Invalid part number: CH${part + 1}`));
 			return;
 		};
-		if (port < 0 || modeId >= modeIdx.length) {
+		if (part < 0 || modeId >= modeIdx.length) {
 			throw(new RangeError(`Invalid mode ID ${modeId}`));
 			return;
 		};
@@ -6980,6 +6982,26 @@ let OctaviaDevice = class extends CustomEventSource {
 				"data": trackName
 			});
 			//upThis.buildRchTree();
+		});
+		upThis.#seXg.add([92, 0, 0], (msg, track, id) => {
+			// Yamaha AN1x system
+			let offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset;
+				if (ri < 2) {
+					// Master tune
+				} else {
+					([false, false, false, false, false, false, () => {
+						// Rx channel 1
+						upThis.setChMode(e, modeMap.an1x);
+						upThis.pushChPrimitives(e);
+					}, () => {
+						// Rx channel 2
+						upThis.setChMode(e, modeMap.an1x);
+						upThis.pushChPrimitives(e);
+					}][ri - 2] || (() => {}))();
+				};
+			});
 		});
 	};
 };

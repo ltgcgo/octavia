@@ -179,6 +179,7 @@ let VoiceBank = class {
 			};
 			case "s90es":
 			case "motif":
+			case "an1x":
 			case "cs6x": {
 				if (msb === 0) {
 					break;
