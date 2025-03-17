@@ -17,8 +17,9 @@ mpaWidth = 7,
 mprHeight = 4,
 mpaHeight = 3;
 
-const exDuration = 1000,
-exExhaust = 400,
+const exBlinkSpeed = 200,
+exDuration = exBlinkSpeed * 5,
+exExhaust = exBlinkSpeed << 1,
 blinkSpeedMode = 400;
 
 const blank256Buffer = new Uint8Array(256);
@@ -168,8 +169,8 @@ let MuDisplay = class extends RootDisplay {
 	#start = 255; // start port
 	#minCh = 0;
 	#maxCh = 0;
-	#scheduledEx = false;
-	#unresolvedEx = false;
+	#scheduledEx = 0;
+	#unresolvedEx = 0;
 	//#awaitEx = 0;
 	#promptEx = 0;
 	inWB = false;
@@ -227,8 +228,8 @@ let MuDisplay = class extends RootDisplay {
 			};
 			upThis.#start = ev.data;
 		});
-		upThis.device.addEventListener("mupromptex", () => {
-			upThis.#scheduledEx = true;
+		upThis.device.addEventListener("mupromptex", ({data}) => {
+			upThis.#scheduledEx = data;
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
 		});
 		upThis.clockSource = upThis.clockSource || {
@@ -269,14 +270,20 @@ let MuDisplay = class extends RootDisplay {
 		upThis.#mmdb.fill(0);
 		// Part display
 		upThis.#pmdb.fill(0);
-		if (upThis.#scheduledEx) {
-			upThis.#scheduledEx = false;
-			if (timeNow - upThis.#promptEx > exExhaust) {
-				upThis.#unresolvedEx = true;
-				getDebugState() && console.debug(`SysEx prompt submitted.`);
+		if (upThis.#scheduledEx > 0) {
+			let durationPer10Ms = (upThis.#scheduledEx * 85 + 4095) >> 12;
+			if (timeNow - upThis.#promptEx > exBlinkSpeed) {
+				upThis.#unresolvedEx += (durationPer10Ms * 204 + 4095) >> 12; // Devides by 20
+				getDebugState() && console.debug(`SysEx prompt submitted: ${upThis.#unresolvedEx}.`);
 			} else {
-				getDebugState() && console.debug(`SysEx prompt too busy.`);
+				// MIDI transmits at 4.8 KB/s or 38400 bps
+				if ((((timeNow - upThis.#promptEx) * 41) >> 12 & 1) && upThis.#unresolvedEx < 8) {
+					upThis.#unresolvedEx == 8;
+				};
+				upThis.#unresolvedEx += (durationPer10Ms + 1) >> 1;
+				getDebugState() && console.debug(`SysEx prompt too busy: ${upThis.#unresolvedEx}.`);
 			};
+			upThis.#scheduledEx = 0;
 			//upThis.#awaitEx = timeNow;
 		};
 		// Strength
@@ -479,13 +486,13 @@ let MuDisplay = class extends RootDisplay {
 		if (timeNow <= sum.bitmap.expire) {
 			// Use provided bitmap
 			if (upThis.#unresolvedEx) {
-				upThis.#unresolvedEx = false;
+				upThis.#unresolvedEx = 0;
 				getDebugState() && console.debug(`SysEx prompt cancelled.`);
 			};
 			useBm = sum.bitmap.bitmap;
 		} else if (upThis.demoInfo && time > 0) {
 			if (upThis.#unresolvedEx) {
-				upThis.#unresolvedEx = false;
+				upThis.#unresolvedEx = 0;
 				getDebugState() && console.debug(`SysEx prompt cancelled.`);
 			};
 			let sequence = upThis.demoInfo.class || "boot";
@@ -503,10 +510,13 @@ let MuDisplay = class extends RootDisplay {
 			// Use stored pic
 			useBm = upThis.#bmdb.slice();
 			if (timeNow >= upThis.#bmex) {
-				if (upThis.#unresolvedEx) {
-					upThis.#unresolvedEx = false;
+				if (upThis.#unresolvedEx > 0 && timeNow - upThis.#promptEx >= exExhaust) {
+					upThis.#unresolvedEx -= 16;
 					upThis.#promptEx = timeNow;
-					getDebugState() && console.debug(`SysEx prompt resolved.`);
+					getDebugState() && console.debug(`SysEx prompt resolved: ${upThis.#unresolvedEx}.`);
+				} else if (upThis.#unresolvedEx < 0) {
+					upThis.#unresolvedEx = 0;
+					//getDebugState() && console.debug(`SysEx prompt reset.`);
 				};
 				upThis.#bmst = 0;
 				let standard = upThis.getChVoice(upThis.#ch).standard.toLowerCase();
@@ -565,12 +575,12 @@ let MuDisplay = class extends RootDisplay {
 			} else {
 				if (upThis.#bmst === 2) {
 					if (upThis.#unresolvedEx) {
-						upThis.#unresolvedEx = false;
+						upThis.#unresolvedEx = 0;
 						getDebugState() &&  console.debug(`SysEx prompt cancelled.`);
 					};
 					useBm.forEach((e, i, a) => {
 						let crit = Math.floor((upThis.#bmex - timeNow) / blinkSpeedMode);
-						a[i] = crit % 2 === e;
+						a[i] = (crit & 1) === e;
 					});
 				};
 			};

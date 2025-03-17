@@ -81,7 +81,7 @@ SteelGt2	Steel Gtr. 2
 12StrGtr	12-Str Gtr.
 Nyln&Stl	Nyln&SteelGt
 Stl&Body	SteelGt&Body
-Nashvill	Nashville Gt
+Nashv.Gt	Nashville Gt
 SteelGt#	Steel Gtr. #
 MelloGtr	Mellow Gtr.
 Jazz Amp	Jazz Gtr Amp
@@ -107,7 +107,7 @@ Mu.DstGt	MutedDistGtr
 MutedGt#	Muted Gtr. #
 OvdrGtDt	OvrdrvGtrDet
 Gt.Pinch	Guitar Pinch
-BriMnhtn	Bright Mnhtn
+BrtMnhtn	Bright Mnhtn
 Ovrdriv#	Overdriven #
 DstRthmG	DistRhythmGt
 DistGtr2	Dist. Gtr. 2
@@ -202,7 +202,7 @@ Susp.Str	Suspense Str
 Det.Fear	Detuned Fear
 BrTrmStr	BriteTremStr
 TremStr#	Tremolo Str#
-PizzOcta	Pizz. Octave
+PizzOct.	Pizz. Octave
 ElecHarp	ElectricHarp
 VlinHarp	Violin Harp
 DtVliHrp	DetViolinHrp
@@ -211,7 +211,7 @@ Slow Str	Slow Strings
 SforzStr	SforzStrings
 Arco Str	Arco Strings
 60sStrng	60s' Strings
-OrcheStr	OrcheStrings
+Orch.Str	Orch.Strings
 OrchStr2	OrchStrings2
 TremOrch	Tremolo Orch
 Velo.Str	Velo Strings
@@ -648,7 +648,11 @@ MM-Vce 4	MM-Voices 4
 DX-SLd 9	DX-SquareLd9
 WonderBa	Wonder Bass
 AnalgStr	AnalogString
+MultiSaw	MultiSaw.Str
+ANHardBr	AN HardBrass
 PulserLd	Pulser Lead
 J.Hammer	Jack Hammer
+AbacabLd	Abacab Lead
 Radio Nz	Radio Noise
+FreeRthm	Free Rhythm
 Dist.5th	Distorted5th
