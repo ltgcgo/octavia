@@ -180,6 +180,7 @@ let VoiceBank = class {
 			case "s90es":
 			case "motif":
 			case "an1x":
+			case "cs1x":
 			case "cs6x": {
 				if (msb === 0) {
 					break;
@@ -206,6 +207,10 @@ let VoiceBank = class {
 								} else {
 									args[2] = (args[2] >> 3) + 19;
 								};
+								break;
+							};
+							case "cs1x": {
+								args[2] += 34;
 								break;
 							};
 						};
@@ -385,6 +390,9 @@ let VoiceBank = class {
 					sect += kLsb % 10;
 				} else if (args[2] < 34) {
 					sect = ["Pre1", "Pre2", "Pre3", "Pre4", "Usr1", "Usr2", "DrmP", "DrmU", "Plg1", "Plg2", "Plg3", "Pre1", "Pre2", "Pre3", "Pre4", "Pre5", "Pre6"][args[2] - 17];
+				} else if (args[2] < 55) {
+					let sectParam = args[2] - 34;
+					sect = args[2] === 46 ? "PrDr" : `Pr${(sectParam >> 2) + 1}${String.fromCharCode(65 + (sectParam & 3))}`;
 				} else {
 					sect = `Ds`;
 				};
@@ -710,6 +718,8 @@ let VoiceBank = class {
 					standard = "KR";
 				} else if (args[2] < 34) {
 					standard = "ES";
+				} else if (args[2] < 55) {
+					standard = "CS";
 				} else {
 					standard = "DS";
 				};

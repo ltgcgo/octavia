@@ -292,6 +292,7 @@ audioPlayer.onended = function () {
 		`./data/map/xg.10.tsv`,
 		`./data/map/gs.10.tsv`,
 		`./data/map/sd.10.tsv`,
+		`./data/map/cs2x.10.tsv`,
 		`./data/map/s90es.10.tsv`
 	]);
 })();

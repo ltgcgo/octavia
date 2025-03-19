@@ -49,7 +49,7 @@ const modeIdx = [
 	"ns5r", "x5d", "05rw",
 	"k11", "sg", "sd", "pa",
 	"krs", "s90es", "motif", "cs6x", "trin",
-	"an1x", "cs2x"
+	"an1x", "cs1x"
 ],
 modeAdapt = {
 	"gm2": "g2",
@@ -95,7 +95,7 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"cs6x": [0, 0, 127, 0, 0],
 	"trin": [0, 0, 61, 0, 0],
 	"an1x": [36, 3, 127, 0, 0],
-	"cs2x": [0, 0, 127, 63, 0]
+	"cs1x": [0, 0, 127, 63, 0]
 };
 const drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
@@ -395,6 +395,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			"invBar": false,
 			"invDisp": false,
 			"peakHold": 1
+		},
+		"cs1x": {
+			"perfCh": 0
 		}
 	};
 	#detect;
@@ -423,7 +426,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es", "cs2x"); // Load all possible voice banks
 	userBank = new VoiceBank("gm2"); // User-defined bank for MT-32, X5DR and NS5R
 	//bankProps = new SheetD;
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
@@ -1064,6 +1067,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									case modeMap.mt32:
 									case modeMap.s90es:
 									case modeMap.motif:
+									case modeMap.cs1x:
 									case modeMap.cs6x: {
 										switch (this.getChCc(part, 100)) {
 											case 1:
@@ -2135,6 +2139,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.modelEx.sc.invBar = false;
 		upThis.modelEx.sc.invDisp = false;
 		upThis.modelEx.sc.peakHold = 1;
+		// Reset CS1x-exclusive params
+		upThis.modelEx.cs1x.perfCh = 0;
 		for (let ch = 0; ch < allocated.ch; ch ++) {
 			let chOff = ccOffTable[ch];
 			// Reset to full
@@ -2369,7 +2375,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						efxDefault = [52, 4, 52, 18, 0, 255, 0, 255];
 						break;
 					};
-					case modeMap.xg: {
+					case modeMap.xg:
+					case modeMap.cs1x: {
 						efxDefault = [1, 0, 65, 0, 5, 0, 64, 0];
 						break;
 					};
@@ -7019,14 +7026,15 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		});
 		upThis.#seXg.add([75, 80, 0], (msg, track, id) => {
-			// Yamaha CS1x or CS2x system
+			// Yamaha CS1x system
 			let offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
 				let ri = i + offset;
 				([() => {
 					// performance receive channel
+					upThis.modelEx.cs1x.perfCh = e;
 					upThis.pushChPrimitives(e);
-					console.debug(`Yamaha CS2x performance on CH${e + 1}.`);
+					console.debug(`Yamaha CS1x performance on CH${e + 1}.`);
 				}, false, false, false, () => {
 					// device ID
 				}, false, () => {
@@ -7035,23 +7043,68 @@ let OctaviaDevice = class extends CustomEventSource {
 						case 1: {
 							upThis.switchMode("xg", true);
 							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
-							console.debug(`Yamaha CS2x set to XG mode.`);
+							console.debug(`Yamaha CS1x set to XG mode.`);
 							break;
 						};
 						case 3: {
-							upThis.switchMode("cs2x", true);
-							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs2x);
-							console.debug(`Yamaha CS2x set to CS2x performance mode.`);
+							upThis.switchMode("cs1x", true);
+							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs1x);
+							console.debug(`Yamaha CS1x set to performance mode.`);
 							break;
 						};
 						default: {
-							console.warn(`Unknown Yamaha CS2x mode: ${e}`);
+							console.warn(`Unknown Yamaha CS1x mode: ${e}`);
 						};
 					};
 				}, () => {
 					// keyboard coarse tune
 				}][ri] || (() => {}))();
 			});
+		}).add([75, 96, 0], (msg, track, id) => {
+			// Yamaha CS1x current performance common
+			let offset = msg[0];
+			let cvnWritten = false;
+			let perfCh = upThis.modelEx.cs1x.perfCh;
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset;
+				if (ri < 8) {
+					cvnWritten = true;
+					upThis.#bnCustom[perfCh] = 1;
+					upThis.setChCvnRegister(perfCh, ri, e);
+				} else if (ri < 48) {
+					// CS1x common
+					([false, () => {
+						// not master volume
+						//upThis.#masterVol = e / 127;
+						//upThis.dispatchEvent("mastervolume", upThis.#masterVol);
+						upThis.setChCc(perfCh, 7, e);
+					}][ri] || (() => {}))();
+				} else if (ri < 80) {
+					// CS1x effects
+					([() => {
+						upThis.setEffectTypeRaw(0, false, e);
+					}, () => {
+						upThis.setEffectTypeRaw(0, true, e);
+						upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+					}, () => {
+						upThis.setEffectTypeRaw(1, false, e);
+					}, () => {
+						upThis.setEffectTypeRaw(1, true, e);
+						upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+					}, () => {
+						upThis.setEffectTypeRaw(2, false, e);
+					}, () => {
+						upThis.setEffectTypeRaw(2, true, e);
+						upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
+					}][ri - 48] || (() => {}))();
+				} else {
+					getDebugState() && console.debug(`Unknown CS1x effect register: ${ri}.`);
+				};
+			});
+			if (cvnWritten) {
+				upThis.setChActive(perfCh, 1);
+				upThis.pushChPrimitives(perfCh);
+			};
 		});
 	};
 };

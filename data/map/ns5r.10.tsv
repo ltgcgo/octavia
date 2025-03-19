@@ -19,7 +19,7 @@ SlpBass1	Slap Bs 1
 SlpBass2	Slap Bs 2
 Pizzcato	Pizzicato
 Slow Str	SlowString
-Anal.Pad	Analog Pad
+AnalgPad	Analog Pad
 StringPd	String Pad
 DooVoice	Doo Voice
 SynBrass	Syn Brass
@@ -164,7 +164,7 @@ VelFlute	Velo Flute
 ComboKit	[ComboKit]
 WavSweep	Wave Sweep
 FunkRoad	FunkyRoads
-Anal.Str	AnaStrings
+AnalgStr	AnaStrings
 EuroPipe	Euro Pipe
 Stratify	Stratified
 CrystIce	CrystalIce

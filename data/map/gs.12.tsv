@@ -296,7 +296,7 @@ StOrBrs3	St.Orch.Brs3
 StackBrs	Stack Brass
 SynBras3	SynthBrass 3
 QuackBrs	Quack Brass
-Anal.Brs	Analog Brass
+AnalgBrs	Analog Brass
 Octa.Brs	OctaveBrass2
 OctSynBr	Oct SynBrass
 HybridBr	Hybrid Brass
@@ -399,7 +399,7 @@ GlockChi	GlockenChime
 ClearBel	Clear Bells
 XmasBell	ChristmasBel
 VibraBel	Vibra Bells
-Anal.Bel	Analog Bell
+AnalgBel	Analog Bell
 ChorlBel	Choral Bell
 Harp Vox	Harpvox
 Holw.Rlz	HollowReleas

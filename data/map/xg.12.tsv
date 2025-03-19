@@ -286,8 +286,8 @@ RezSynBr	ResoSynthBrs
 SynBras3	SynthBrass 3
 AnlSforz	Analog Sforz
 SyBrsSub	SynthBrasSub
-AnVelBrs	Anal.VeloBrs
-Anal.Brs	Analog Brass
+AnVelBrs	AnalgVeloBrs
+AnalgBrs	Analog Brass
 SynBras4	SynthBrass 4
 ChoirBrs	Choir Brass
 Ana.Horn	Analog Horn
@@ -343,7 +343,7 @@ VeloLead	VelocityLead
 Str8Puls	StraightPuls
 ModulSaw	Modular Saw.
 SimplSaw	Simple Saw.
-SeqAnal.	Seq. Analog
+SeqAnalg	Seq. Analog
 NoviceLd	Novice Lead
 ElecPrim	ElecPrimtive
 DistLead	Distort.Lead
@@ -370,7 +370,7 @@ LoudGlok	Loud Glocken
 XmasBell	Xmas. Bells
 VibraBel	VibrafoneBel
 DigiBell	Digital Bell
-Anal.Bel	Analog Bells
+AnalgBel	Analog Bells
 WarmAtms	Warm Atmos.
 HollwRls	HollwRelease
 NylonEP.	Nylon EPiano
@@ -463,7 +463,7 @@ PopLatin	Pop Latin Kt
 StndKit#	StandardKit#
 DarkRoom	Dark Room Kt
 ElectrKt	Electro Kit
-Anal.Kt2	Analog Kit 2
+AnalgKt2	Analog Kit 2
 HipHopKt	Hip Hop Kit
 PerigeKt	Perigee Kit
 BrushKt2	Brush Kit 2

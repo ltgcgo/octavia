@@ -407,7 +407,7 @@ MKS Bras	MKS Brass
 SynBras3	SynBrass 3
 ProBrass	Pro Brass
 QuackBrs	QuackBrass
-Anal.Brs	AnalgBrass
+AnalgBrs	AnalgBrass
 Octa.Brs	OctavBrass
 OctSynBr	Oct SynBrs
 HybridBr	Hybrid Brs
@@ -559,7 +559,7 @@ XmasBell	Xmas Bell
 VibraBel	VibraBells
 DigiBell	Digi Bells
 MusicBel	Music Bell
-Anal.Bel	AnalogBell
+AnalgBel	AnalogBell
 ChorlBel	ChoralBell
 AirBells	Air Bells
 BellHarp	Bell Harp
@@ -807,7 +807,7 @@ DanceKit	Dance Kit
 CR-78 Kt	CR-78 Kit
 TR-606Kt	TR-606 Kit
 TR-707Kt	TR-707 Kit
-Anal.Kt2	TR-909 Kit
+AnalgKt2	TR-909 Kit
 BrushKt2	Brush Kt 2
 Brush2LR	Brush2 L/R
 EthnicKt	Ethnic Kit

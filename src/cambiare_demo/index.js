@@ -272,6 +272,7 @@ let demoPool = new SheetData();
 		`./data/map/xg.24.tsv`,
 		`./data/map/gs.24.tsv`,
 		`./data/map/sd.24.tsv`,
+		`./data/map/cs2x.24.tsv`,
 		`./data/map/s90es.24.tsv`,
 		`./data/map/kross.24.tsv`,
 		`./data/map/gm.12.tsv`,
@@ -285,6 +286,7 @@ let demoPool = new SheetData();
 		`./data/map/xg.10.tsv`,
 		`./data/map/gs.10.tsv`,
 		`./data/map/sd.10.tsv`,
+		`./data/map/cs2x.10.tsv`,
 		`./data/map/s90es.10.tsv`
 	]);
 	await visualizer.glyphs.loadFile("./data/bitmaps/xg/font.tsv");

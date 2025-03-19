@@ -338,11 +338,11 @@ QuackBrs	QuackBrass
 RezSynBr	ResoSynBrs
 PolyBras	Poly Brass
 SynBras3	SynthBras3
-AnlSforz	Anal.Sforz
+AnlSforz	AnalgSforz
 JumpBras	Jump Brass
 SyBrsSub	SynBrasSub
 AnVelBrs	An.VeloBrs
-Anal.Brs	AnalogBras
+AnalgBrs	AnalogBras
 SoftBras	Soft Brass
 SynBras4	SynthBras4
 ChoirBrs	ChoirBrass
@@ -405,7 +405,7 @@ VeloLead	Velo. Lead
 Str8Puls	StraitPuls
 ModulSaw	ModularSaw
 SimplSaw	Simple Saw
-SeqAnal.	Seq.Analog
+SeqAnalg	Seq.Analog
 NoviceLd	NoviceLead
 VentSyn.	Vent Synth
 PureLead	Pure Lead
@@ -428,7 +428,7 @@ RotarStr	Rotary Str
 LightPad	Light Pad
 PolyPd80	PolyPad 80
 ClickPad	Click Pad
-Anal.Pad	Analog Pad
+AnalgPad	Analog Pad
 SquarePd	Square Pad
 Light Pd	Light Pad
 CosmicPd	Cosmic Pad
@@ -457,7 +457,7 @@ DigiBell	Digi. Bell
 AirBells	Air Bells
 BellHarp	Bell Harp
 Gamelmba	Gamelimba
-Anal.Bel	AnalogBell
+AnalgBel	AnalogBell
 WarmAtms	Warm Atmos
 HollwRls	Hollow Rls
 NylonEP.	Nylon EP.
@@ -502,7 +502,7 @@ ThaiBell	Thai Bells
 Gr.Cassa	Gran Cassa
 Mel Tom2	Melo Tom 2
 Tim'sSet	Tim's Set
-Anal.Tom	Analog Tom
+AnalgTom	Analog Tom
 ElecPerc	Elec. Perc
 Syn.Perc	Synth Perc
 RvCymbl2	RevCymbal2
@@ -610,7 +610,7 @@ RogueKit	Rogue Kit
 DarkRoom	DarkRoomKt
 RockKit2	Rock Kit 2
 ElectrKt	ElectroKit
-Anal.Kt2	AnalogKit2
+AnalgKt2	AnalogKit2
 DanceKit	Dance Kit
 HipHopKt	Hip Hop Kt
 JungleKt	Jungle Kit
