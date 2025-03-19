@@ -210,7 +210,38 @@ let VoiceBank = class {
 								break;
 							};
 							case "cs1x": {
-								args[2] += 34;
+								switch (lsb >> 1) {
+									case 0:
+									case 1:
+									case 2:
+									case 3:
+									case 4:
+									case 5:
+									case 6:
+									case 7:
+									case 8:
+									case 9:
+									case 10: {
+										args[2] += 34;
+										break;
+									};
+									case 32: {
+										args[2] = 34 + ((lsb & 1) << 2);
+										break;
+									};
+									case 33: {
+										args[2] = 47 + ((lsb & 1) << 2);
+										break;
+									};
+									case 61: {
+										args[2] = 34 + ((lsb & 1) << 2);
+										break;
+									};
+									case 62: {
+										args[2] = 47 + ((lsb & 1) << 2);
+										break;
+									};
+								};
 								break;
 							};
 						};
@@ -392,7 +423,24 @@ let VoiceBank = class {
 					sect = ["Pre1", "Pre2", "Pre3", "Pre4", "Usr1", "Usr2", "DrmP", "DrmU", "Plg1", "Plg2", "Plg3", "Pre1", "Pre2", "Pre3", "Pre4", "Pre5", "Pre6"][args[2] - 17];
 				} else if (args[2] < 55) {
 					let sectParam = args[2] - 34;
-					sect = args[2] === 46 ? "PrDr" : `Pr${(sectParam >> 2) + 1}${String.fromCharCode(65 + (sectParam & 3))}`;
+					if (sectParam > 12) {
+						sectParam --;
+					};
+					switch (lsb >> 1) {
+						case 32:
+						case 33: {
+							sect = `Pr${lsb - 63}U`;
+							break;
+						};
+						case 61:
+						case 62: {
+							sect = `Pr${lsb - 121}U`;
+							break;
+						};
+						default: {
+							sect = args[2] === 46 ? "PrDr" : `Pr${(sectParam >> 2) + 1}${String.fromCharCode(65 + (sectParam & 3))}`;
+						};
+					};
 				} else {
 					sect = `Ds`;
 				};
