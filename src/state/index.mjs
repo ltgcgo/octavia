@@ -49,7 +49,7 @@ const modeIdx = [
 	"ns5r", "x5d", "05rw",
 	"k11", "sg", "sd", "pa",
 	"krs", "s90es", "motif", "cs6x", "trin",
-	"an1x"
+	"an1x", "cs2x"
 ],
 modeAdapt = {
 	"gm2": "g2",
@@ -94,7 +94,8 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"motif": [0, 0, 127, 0, 0],
 	"cs6x": [0, 0, 127, 0, 0],
 	"trin": [0, 0, 61, 0, 0],
-	"an1x": [36, 3, 127, 0, 0]
+	"an1x": [36, 3, 127, 0, 0],
+	"cs2x": [0, 0, 127, 63, 0]
 };
 const drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
@@ -1490,6 +1491,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		}; */
 		return result;
 	};
+	getChCcWritten(part, cc) {
+		let upThis = this;
+		if (ccAccepted.indexOf(cc) < 0) {
+			throw(new Error("CC number not accepted"));
+		};
+		let result = upThis.#cc[allocated.chcc + ccOffTable[part] + ccToPos[cc]];
+		return result;
+	};
 	setChCc(part = 0, cc, value) {
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
@@ -1526,7 +1535,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		return arr;
 	};
 	resetCc(part) {
-		// Placeholder until CC write state is ready
+		let upThis = this;
+		let start = ccOffTable[part] + allocated.chcc;
+		upThis.#cc.fill(0, start, start + allocated.cc);
 	};
 	resetChCc(part, cc, value) {
 		let upThis = this;
@@ -1534,11 +1545,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.setChCc(part, cc, value);
 		};
 		upThis.#cc[ccOffTable[part] + ccToPos[cc] + allocated.chcc] = 0;
-		return;
 	};
 	resetCcAll() {
-		return;
 		// Placeholder until CC write state is ready
+		this.#cc.fill(0, allocated.chcc, allocated.chcc << 1);
 	};
 	isChCcWritten(part, cc) {
 		if (ccAccepted.indexOf(cc) < 0) {
@@ -1722,6 +1732,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		switch (component) {
 			case 1:
 			case 2: {
+				if (!upThis.getChCcWritten(part, [255, 0, 32][component])) {
+					result = result || upThis.#subDb[upThis.getChModeId(part)][component + 2];
+				};
 				if (useSubDb) {
 					result = result || upThis.#subDb[upThis.getChModeId(part)][component - 1];
 				};
@@ -6995,12 +7008,49 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Rx channel 1
 						upThis.setChMode(e, modeMap.an1x);
 						upThis.pushChPrimitives(e);
+						console.debug(`Yamaha AN1x slot 1 receives from CH${e + 1}`);
 					}, () => {
 						// Rx channel 2
 						upThis.setChMode(e, modeMap.an1x);
 						upThis.pushChPrimitives(e);
+						console.debug(`Yamaha AN1x slot 2 receives from CH${e + 1}.`);
 					}][ri - 2] || (() => {}))();
 				};
+			});
+		});
+		upThis.#seXg.add([75, 80, 0], (msg, track, id) => {
+			// Yamaha CS1x or CS2x system
+			let offset = msg[0];
+			msg.subarray(1).forEach((e, i) => {
+				let ri = i + offset;
+				([() => {
+					// performance receive channel
+					upThis.pushChPrimitives(e);
+					console.debug(`Yamaha CS2x performance on CH${e + 1}.`);
+				}, false, false, false, () => {
+					// device ID
+				}, false, () => {
+					// device mode
+					switch (e) {
+						case 1: {
+							upThis.switchMode("xg", true);
+							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
+							console.debug(`Yamaha CS2x set to XG mode.`);
+							break;
+						};
+						case 3: {
+							upThis.switchMode("cs2x", true);
+							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs2x);
+							console.debug(`Yamaha CS2x set to CS2x performance mode.`);
+							break;
+						};
+						default: {
+							console.warn(`Unknown Yamaha CS2x mode: ${e}`);
+						};
+					};
+				}, () => {
+					// keyboard coarse tune
+				}][ri] || (() => {}))();
 			});
 		});
 	};
