@@ -11,7 +11,7 @@ Kr637200	Mark I Silver Suit EP
 Kr637300	Tremolo Suit EP
 Kr637400	Chorus & U-Vibe Suit EP
 Kr637500	U-Vibe & Echo Suit EP
-Kr637600	Bi-Phase Suit EP MW
+Kr637600	Bi-Phase Suit EP
 Kr637700	Phaser Suit EP 1
 Kr637800	Phaser Suit EP 2
 Kr637900	Preamp & Wah Suit EP
@@ -45,13 +45,13 @@ Kr63a700	DX E. Piano + Syn Pad
 Kr63a800	FM Suitcase E. Piano
 Kr63a900	Chorus DX + Suit EP
 Kr63b000	DX EP + Dyno EP
-Kr63b100	Pad Electric Piano 1
-Kr63b200	Pad Electric Piano 2
-Kr63b300	Pad Electric Piano 3
+Kr63b100	Pad E. Piano 1
+Kr63b200	Pad E. Piano 2
+Kr63b300	Pad E. Piano 3
 Kr63b400	Hybrid Phaser EP
 Kr63b500	E. Piano Pad + Synth
 Kr63b600	Super Grand
-Kr63b700	Phantom Electric Piano
+Kr63b700	Phantom E. Piano
 Kr63b800	Tablet E. Piano SW2
 Kr63b900	Tablet E. Harpsi. SW2
 Kr630901	Higher Ground Clavichord
@@ -76,20 +76,20 @@ Kr632701	Warm Overdriven E. Organ
 Kr632801	Bossa Electric Organ
 Kr633001	Gospel Electric Organ
 Kr633101	Compressor E. Organ
-Kr633201	Drawbars E. Organ 1 MW
-Kr633301	Drawbars E. Organ 2 MW
+Kr633201	Drawbars E. Organ 1
+Kr633301	Drawbars E. Organ 2
 Kr633401	Manual Compr. E. Organ
 Kr633501	Vibrato / Chorus E. Org
 Kr633601	800000048 E. Organ
 Kr633701	880000048 E. Organ
 Kr633801	Warm Gospel E. Organ
-Kr633901	Tremolo Electric Organ
+Kr633901	Tremolo E. Organ
 Kr634001	Full To Soft E. Organ
-Kr634101	Full BX3 Electric Organ
-Kr634201	Full Rock Electric Organ
-Kr634301	Vintage Electric Organ
-Kr634401	Church Electric Organ
-Kr634501	Ballad Eletric Organ
+Kr634101	Full BX3 E. Organ
+Kr634201	Full Rock E. Organ
+Kr634301	Vintage E. Organ
+Kr634401	Church E. Organ
+Kr634501	Ballad E. Organ
 Kr634601	Slow Blues E. Organ
 Kr634701	Fast Blues E. Organ
 Kr634801	Overdriven Rock E. Organ
@@ -316,7 +316,7 @@ Kr634503	Bass & Lead Boys
 Kr634603	Fat Sync Lead
 Kr634703	MS2000 Fast Sync Lead
 Kr634803	Deep Fifth EDM Lead
-Kr634903	Eletric Piano Lead
+Kr634903	Electric Piano Lead
 Kr635003	Tropical Lead 1
 Kr635103	Tropical Lead 2
 Kr635203	Noisy Stabber Neo
@@ -478,7 +478,7 @@ Kr639404	Sitar & Tambura
 Kr639504	Velo Bend Koto
 Kr639604	Harp 1
 Kr639704	Harp 2
-Kr63a704	Saturated Electric Bass
+Kr63a704	Saturated E. Bass
 Kr63b804	Decayed Bass
 Kr63b904	That Sub Bass Kick
 Kr63c004	Kick Bass / Gate
@@ -671,7 +671,7 @@ MelBDClv	Mellow BD Clavichord
 DstBDClv	Distorted BD Clavichord
 VWaBDClv	Velo Wah BD Clavichord
 T.WahClv	Touch Wah Clavichord
-LuvSngOr	Love Song Electric Organ
+LuvSngOr	Love Song E. Organ
 RkPrecOr	Percussive Rock E. Organ
 StStrng1	Stereo Strings 1
 StStrng2	Stereo Strings 2
@@ -699,19 +699,19 @@ NylonGt1	Nylon Guitar 1
 NylonGt2	Nylon Guitar 2
 12StrGtr	12-String Guitar
 PsycoGtr	Psycho Guitar
-EFngrBa1	Fingered Electric Bass 1
-EFngrBa2	Fingered Electric Bass 2
-EFngrBa3	Fingered Electric Bass 3
-EFngrBa4	Fingered Electric Bass 4
-EPickBa1	Picked Electric Bass 1
-EPickBa2	Picked Electric Bass 2
-EPickBa3	Picked Electric Bass 3
-EPickBa4	Picked Electric Bass 4
-EPickBed	Picked Bed Electric Bass
-EThmbBa1	Thumb Electric Bass
-EThmbBa2	Thumb Electric Bass
-EFrtlBa1	Fretless Electric Bass 1
-EFrtlBa2	Fretless Electric Bass 2
+EFngrBa1	Fingered E. Bass 1
+EFngrBa2	Fingered E. Bass 2
+EFngrBa3	Fingered E. Bass 3
+EFngrBa4	Fingered E. Bass 4
+EPickBa1	Picked E. Bass 1
+EPickBa2	Picked E. Bass 2
+EPickBa3	Picked E. Bass 3
+EPickBa4	Picked E. Bass 4
+EPickBed	Picked Bed E. Bass
+EThmbBa1	Thumb E. Bass
+EThmbBa2	Thumb E. Bass
+EFrtlBa1	Fretless E. Bass 1
+EFrtlBa2	Fretless E. Bass 2
 EFrtlOct	Octave Fretless E. Bass
 Acou.Ba1	Acoustic Bass 1
 Acou.Ba2	Acoustic Bass 2

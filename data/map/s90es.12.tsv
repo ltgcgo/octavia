@@ -1,8 +1,5 @@
 ID	Name
 NaturalS	Natural S700
-Dave's B	Dave's B Org
-YamaEP's	Yamaha EPnos
-Vintg'74	Vintage'74EP
 Greasy	Greasy Organ
 ElegantS	Elegant S700
 Bright S	Bright S700
@@ -18,6 +15,7 @@ Pno&Str	Piano & Strs
 Pno&Ooh	Piano & Oohs
 Digi.Grd	Digi. Grand
 CP80&EP	CP80 & E. Pno
+YamaEP's	Yamaha EPnos
 DynoStrt	DynoStraight
 ChrsDyno	ChorusedDyno
 ChrsHard	ChorusedHard
@@ -27,6 +25,7 @@ HrdVintg	Hard Vintage
 PhaseVin	Phaser Vintg
 SoftCase	Soft Case EP
 Early70s	Early 70'sEP
+Vintg'74	Vintage'74EP
 Sweetnes	Sweetness EP
 VintgFas	Phased Vintg
 EarlyFsn	Early Fusion
@@ -80,6 +79,7 @@ Medieval	Medieval Org
 PreludeO	Prelude Orgn
 AmpedOrg	Amped Organ
 VintageC	Vintage C.Or
+Dave's B	Dave's B Org
 2nd Perc	2ndPercOrgan
 1685&13	16+8+5 & 1/3
 JazzyOr1	Jazzy Organ1

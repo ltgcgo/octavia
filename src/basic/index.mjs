@@ -393,7 +393,7 @@ let RootDisplay = class extends CustomEventSource {
 		return this.#noteTime / this.#noteBInt;
 	};
 	get noteOverall() {
-		return this.noteProgress - this.#noteBarOffset;
+		return (this.noteProgress - this.#noteBarOffset) * this.#noteDenom / 4;
 	};
 	get noteBar() {
 		return Math.floor(this.noteOverall / this.#noteNomin);
@@ -617,7 +617,7 @@ let RootDisplay = class extends CustomEventSource {
 			let metroClick = 24 * (32 / data[3]) / data[2];
 			if (oldNomin !== upThis.#noteNomin) {
 				let targetBar = curBar;
-				upThis.#noteBarOffset -= targetBar * (upThis.#noteNomin - oldNomin);
+				upThis.#noteBarOffset -= targetBar * (upThis.#noteNomin - oldNomin) * (4 / upThis.#noteDenom);
 				if (curBeat + 1 >= oldNomin) {
 					if (oldNomin < upThis.#noteNomin) {
 						// For example, 4/4 > 6/4
@@ -626,6 +626,15 @@ let RootDisplay = class extends CustomEventSource {
 						// For example, 6/4 > 4/4
 						upThis.#noteBarOffset += upThis.#noteNomin;
 					};
+				};
+			};
+			if (oldDenom !== upThis.#noteDenom) {
+				let targetBar = curBar;
+				console.debug(`${curBar}/${curBeat}`);
+				if (oldDenom < upThis.#noteDenom) {
+					upThis.#noteBarOffset += targetBar * (upThis.#noteDenom - oldDenom) * (oldDenom / upThis.#noteDenom);
+				} else {
+					upThis.#noteBarOffset += targetBar * (upThis.#noteDenom - oldDenom) * (upThis.#noteDenom / oldDenom);
 				};
 			};
 			upThis.dispatchEvent("tsig", upThis.getTimeSig());
