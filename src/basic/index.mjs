@@ -58,6 +58,7 @@ let RootDisplay = class extends CustomEventSource {
 		upThis.#noteTime = 0;
 		upThis.dispatchEvent("tempo", upThis.#noteTempo);
 		upThis.dispatchEvent("title", upThis.#titleName);
+		upThis.dispatchEvent("tsig", upThis.getTimeSig());
 	};
 	init() {
 		this.reset();
@@ -605,8 +606,8 @@ let RootDisplay = class extends CustomEventSource {
 			upThis.dispatchEvent("tempo", upThis.#noteTempo);
 		};
 		upThis.#metaRun[88] = function (type, data) {
-			let noteProgress = upThis.noteProgress;
-			let noteOverall = upThis.noteOverall;
+			//let noteProgress = upThis.noteProgress;
+			//let noteOverall = upThis.noteOverall;
 			let curBar = upThis.noteBar;
 			let curBeat = upThis.noteBeat;
 			// Change time signature
@@ -614,7 +615,7 @@ let RootDisplay = class extends CustomEventSource {
 			let oldDenom = upThis.#noteDenom;
 			upThis.#noteNomin = data[0];
 			upThis.#noteDenom = 1 << data[1];
-			let metroClick = 24 * (32 / data[3]) / data[2];
+			//let metroClick = 24 * (32 / data[3]) / data[2];
 			if (oldNomin !== upThis.#noteNomin) {
 				let targetBar = curBar;
 				upThis.#noteBarOffset -= targetBar * (upThis.#noteNomin - oldNomin) * (4 / upThis.#noteDenom);

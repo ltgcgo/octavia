@@ -4622,7 +4622,6 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else {
 							ch = allocated.ch; // Effectively disabling event receives
 						};
-						upThis.#chReceive[part] = ch; // Rx CH
 						let prevCh = upThis.#chReceive[part];
 						upThis.#chReceive[part] = ch; // Rx CH
 						if (part !== ch || ch !== prevCh) {
@@ -5924,7 +5923,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#seAi.run([66, ...msg], track, id);
 		});
 		// Kawai GMega
-		this.#seKg.add([16, 0, 8, 0], (msg, track, id) => {
+		upThis.#seKg.add([16, 0, 8, 0], (msg, track, id) => {
 			// GMega system section
 			let e = (msg[2] << 4) + msg[3];
 			let dPref = "K11 ";

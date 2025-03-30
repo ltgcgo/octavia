@@ -4,11 +4,13 @@ GrndPnoK	Grand Piano KSP
 MelloGrP	Mellow Grand Piano
 PianoStr	Piano + Strings
 ConGrand	Concert Grand Piano
+ConGrndK	Concert Grand KSP
 DblConGr	Double Concert Grand
 OldAcPno	Old Acoustic Piano
 GrandP #	Grand Piano #
 BritPnoK	Bright Piano KSP
 StBrtPno	Stereo Bright Piano
+DetBrPno	Detuned Bright Piano
 BriteP #	Bright Piano #
 EGndPnoK	Electric Grand Piano KSP
 HnkyTnkK	Honky Tonk KSP
@@ -17,11 +19,16 @@ MellowEP	Mellow Electric Piano
 HardEPno	Hard Electric Piano
 VX E.Pno	VX Electric Piano
 60sElPno	60s' Electric Piano
+Diploid1	Diploid E. Piano 1
+Diploid2	Diploid E. Piano 2
+Diploid3	Diploid E. Piano 3
 4 Way EP	4 Way E. Piano
 Easy EP	Easy Electric Piano
 EPiano1#	Electric Piano 1 #
 EPiano2K	Electric Piano 2 KSP
 VX EPno2	VX Electric Piano 2
+Shirakwa	Shirakawa E. Piano
+ShivrDX+	Shivering DX Plus
 EPiano2#	Electric Piano 2 #
 HpschrdK	Harpsichord KSP
 Hpschrd2	Harpsichord 2
@@ -84,6 +91,7 @@ HammrSt.	Stereo Hammer Guitar
 Funk Gtr	Funk Guitar 1
 MuteStlG	Muted Steel Guitar
 FunkGtr2	Funk Guitar 2
+WrenchGt	Wrench Guitar
 GrvyMtGt	Groovy Muted Guitar
 Mu.DstGt	Muted Distortion Guitar
 MutedGt#	Muted Guitar #
@@ -106,6 +114,7 @@ GtFeedbk	Guitar Feedback
 GtrHrmo2	Guitar Harmonics 2
 PkAcouBa	Picked Acoustic Bass
 VXUprght	VX Upright Bass
+WalkSyBa	Walking Synth Bass
 Acou.Ba#	Acoustic Bass #
 FingrDrk	Dark Fingered Bass
 Ba&DstEG	Bass & Distortion Guitar
@@ -113,7 +122,7 @@ FngrSlap	Fingered Slap Bass
 FngrBas2	Fingered Bass 2
 Mod Bass	Modulation Bass
 RezChase	Resonant Chase
-FW EBass	Fingered W. E. Bass
+FW EBass	Flatwound E. Bass
 FingrBa#	Fingered Bass #
 PickBas2	Picked Bass 2
 M.PkBass	Muted Picked Bass
@@ -133,8 +142,11 @@ SlapBa2#	Slap Bass 2 #
 SynBs1Dk	Dark Synth Bass 1
 FastResB	Fast Resonant Bass
 ResoBass	Resonant Bass
+MPulseBa	Muted Pulse Bass
 HardReso	Hard Resonant Bass
+TkinPuls	Talking Pulse Bass
 SweepSqr	Sweep Square Bass
+Reso Sqr	Resonant Square Bass
 MnplisBa	Minneapolis Bass
 MelloSBa	Mellow Synth Bass
 Seq.Bass	Sequenced Bass
@@ -143,6 +155,7 @@ SynBs2Dk	Dark Synth Bass 2
 SmthSynB	Smooth Synth Bass
 F.OsciBa	Forced Oscillation Bass
 CubitBa+	Cubit Bass Plus
+PlnPulse	Plain Pulse Bass
 PowerSaw	Powered Sawtooth Bass
 SynthAtk	Synth Attack Bass
 ViolinSc	Violin Section
@@ -171,7 +184,9 @@ OrchStr2	Orchestral Strings 2
 TremOrch	Tremolo Orch Strings
 Velo.Str	Velocity Strings
 TrsteStr	Triste Strings
-Stacc.Hi	High Staccato Strings
+Stacc.Hi	High Staccato
+Stacc.Hi	High Staccato
+SolidStr	Solid Strings
 SwellStr	Swell Strings
 3 OctStr	3 Octave Strings
 5PartStr	5-Part Strings
@@ -180,10 +195,12 @@ LegatoSt	Legato Strings
 ChmbrStr	Chamber Strings
 Reso Str	Resonant Strings
 Syn.Str3	Synth Strings 3
+Monarchy	Monarchy Strings
 GrandPad	Grand Strings Pad
 SweepStr	Sweep Strings
 Syn.Str4	Synth Strings 4
 Syn.Str5	Synth Strings 5
+TaurusS.	Taurus Strings
 SolPlexs	Solar Plexus Strings
 MelChoir	Mellow Choir
 ChoirStr	Choir Strings
@@ -552,13 +569,76 @@ Dosukoi	SG Dosukoi
 O-Onchi	SG Onchi
 Unison1	SG Unison 1
 Unison2	SG Unison 2
+DX-RvCy1	DX-Reverse Cymbal 1
+DX-RvCy2	DX-Reverse Cymbal 2
 MM-Fall	MM-Fall SFX
+FrtePno1	Forte Piano 1
+FrtePno2	Forte Piano 2
+El.Grd 1	Electric Grand 1
+El.Grd 2	Electric Grand 2
+El.Grd 3	Electric Grand 3
+El.Grd 4	Electric Grand 4
+Det.EP 1	Detuned E. Piano 1
+Det.EP 2	Detuned E. Piano 2
+Det.EP 3	Detuned E. Piano 3
+Det.EP 4	Detuned E. Piano 4
+Det.EP 5	Detuned E. Piano 5
+Det.EP 6	Detuned E. Piano 6
+Det.EP 7	Detuned E. Piano 7
+Det.EP 8	Detuned E. Piano 8
+Det.EP 9	Detuned E. Piano 9
+Det.EP10	Detuned E. Piano 10
+AD1900s1	AD 1900s' Harpsichord
 MM-Clav3	MM-Clavichord 3
+Syn.Glok	Synth Glockenspiel
+DX-MsBx1	DX-Music Box 1
+DX-MsBx2	DX-Music Box 2
+DX-MsBx3	DX-Music Box 3
+DX-MsBx4	DX-Music Box 4
+DX-MsBx5	DX-Music Box 5
+DX-MsBx6	DX-Music Box 6
+DX-MsBx7	DX-Music Box 7
+DX-MsBx8	DX-Music Box 8
 MM-Vibr2	MM-Vibraphone 2
-DX-SLd 9	DX Square Lead 9
+DX-Acrd1	DX-Accordion 1
+DX-Acrd2	DX-Accordion 2
+DX-Acrd3	DX-Accordion 3
+DX-Acrd4	DX-Accordion 4
+DX-Acrd5	DX-Accordion 5
+DX-Acrd6	DX-Accordion 6
+DX-ClGt1	DX-Clear Guitar 1
+DX-ClGt2	DX-Clear Guitar 2
+DX-ClGt3	DX-Clear Guitar 3
+DX-ClGt4	DX-Clear Guitar 4
+DX-ClGt5	DX-Clear Guitar 5
+DX-ClGt6	DX-Clear Guitar 6
+DX-ClGt7	DX-Clear Guitar 7
+DX-ClGt8	DX-Clear Guitar 8
+DX-ClGt9	DX-Clear Guitar 9
+DXClGt10	DX-Clear Guitar 10
+DXClGt11	DX-Clear Guitar 11
+HardFngr	Hard Fingered Bass
+DX-PkBa1	DX-Picked Bass 1
+DX-PkBa2	DX-Picked Bass 2
+DX-PkBa3	DX-Picked Bass 3
+DX-PkBa4	DX-Picked Bass 4
+CompedEB	Compressed E. Bass
+CmbaHarp	Cimbalom Harp
+General	General Strings
+DX-Clar1	DX-Clarinet 1
+DX-Clar2	DX-Clarinet 2
+DX-Clar3	DX-Clarinet 3
+DX-SLd 9	DX-Square Lead 9
+BellStr1	Bell Strings 1
+BellStr2	Bell Strings 2
+Chi-S&H1	Chiffer - Sample & Hold
+DX-Echo1	DX-Echo Drops 1
+DX-India	DX-Indian Sitar
+Twincle	Twincle Bells
 AnalgStr	Analog Strings
 MultiSaw	Multi-Saw Strings
 ANHardBr	AN Hard Brass
 DirtySaw	Dirty Sawtooth Lead
 BPF Step	Band Passed Steps
 Dist.5th	Distorted Fifth
+CrystBel	Crystal Bells

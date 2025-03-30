@@ -72,7 +72,7 @@ const metaNames = {
 	"XfKarLrc": "XK Lyricist",
 	"XfKarArr": "XK Arranger",
 	"XfKarPer": "XK Perform.",
-	"XfKarPrg": "XK Program.",
+	"XfKarPrg": "XK Progr.",
 	"XfScneNo": "XF Scene #",
 	"XfMeloCh": "XF Melody",
 	"XfLyrOff": "XL Offset",

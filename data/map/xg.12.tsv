@@ -5,11 +5,14 @@ MelloGrP	MellowGrdPno
 PianoStr	PianoStrings
 DreamPno	Dream Piano
 ConGrand	ConcertGrand
+ConGrndK	ConcrtGrandK
 DblConGr	DoublConGrnd
 OldAcPno	OldAcouPiano
 GrandP #	Grand Piano#
 BritPnoK	BrightPianoK
 StBrtPno	StBritePiano
+DetBrPno	Det.BritePno
+MIDI Gr4	MIDI Grand 4
 BriteP #	BrightPiano#
 EGndPnoK	ElGrndPianoK
 Det.CP80	Detuned CP80
@@ -21,6 +24,9 @@ ChorusEP	Chorus EP 1
 HardEPno	Hard El. Pno
 VX E.Pno	VX El. Piano
 60sElPno	60's ElPiano
+Diploid1	Diploid EP 1
+Diploid2	Diploid EP 2
+Diploid3	Diploid EP 3
 Easy EP	Easy EP.
 EPiano1#	El. Piano 1#
 EPiano2K	El.Piano 2 K
@@ -29,6 +35,8 @@ DXLegend	DX Legend EP
 DX Phase	DX Phase EP
 DXAnalog	DX Analog EP
 VX EPno2	VX El.Piano2
+Shirakwa	Shirakawa EP
+ShivrDX+	Shiver DX +
 EPiano2#	El. Piano 2#
 HpschrdK	HarpsichordK
 Hpschrd2	Harpsichord2
@@ -38,6 +46,7 @@ ClaviWah	Wah Clavinet
 PulseClv	Pulse Clavi.
 PiercClv	Pierce Clavi
 SupClavi	Super Clavi.
+HardyPlk	Hardy Pluck
 Clavi. #	Clavinet   #
 S. Orgel	Small Orgel
 VibrafnK	Vibraphone K
@@ -60,6 +69,7 @@ DetPrcOr	Det.Perc Org
 LightOrg	Light Organ
 PercOrg2	Perc Organ 2
 WarmJazz	Warm Jazz Or
+BeepOrgn	Beep Organ
 PercOrg#	Perc Organ #
 RotaryOr	Rotary Organ
 SlwRotar	Slow Rotary
@@ -101,6 +111,7 @@ HammrSt.	StereoHammer
 Funk Gtr	Funk Gtr. 1
 MuteStlG	MutedSteelGt
 FunkGtr2	Funk Guitar2
+WrenchGt	Wrench Gtr.
 Heavy Wr	Heavy Wrench
 GrvyMtGt	Groovy Mt Gt
 Mu.DstGt	MutedDistGtr
@@ -127,6 +138,7 @@ GtrHrmo2	Gtr. Harmo 2
 JazzRthm	Jazz Rhythm
 PkAcouBa	Pick A. Bass
 VXUprght	VX UprightBa
+WalkSyBa	Walkin'SynBa
 Acou.Ba#	Acou. Bass #
 FingrDrk	DarkFingerBs
 FlangrBa	Flanger Bass
@@ -135,7 +147,7 @@ FngrSlap	FingerSlapBs
 FngrBas2	Finger Bass2
 Mod Bass	ModulateBass
 RezChase	Reso. Chase
-FW EBass	FingrW.EBass
+FW EBass	FlatWndEBass
 FingrBa#	FingerBass #
 PickBas2	Picked Bass2
 M.PkBass	MutedPikBass
@@ -158,13 +170,16 @@ SlapBa2#	Slap Bass 2#
 SynBs1Dk	DarkSynBass1
 FastResB	FastReso.Bas
 ResoBass	ResonantBass
+MPulseBa	MutedPulseBa
 TechnoBa	Techno Bass
 OrbitrBa	Orbiter Bass
 Sqr.Bass	Square Bass
 RubberBa	Rubber Bass
 HardReso	HardResonant
 StimuliB	Stimuli Bass
+TkinPuls	Talkin Pulse
 SweepSqr	Sweep Square
+Reso Sqr	ResoSquareBa
 MnplisBa	MineaplsBass
 HammerBa	Hammer Bass
 AnalogBa	Analog Bass
@@ -178,6 +193,7 @@ X WireBa	X Wire Bass
 AtkPulse	Attack Pulse
 F.OsciBa	ForceOsciBas
 CubitBa+	Cubit Bass +
+PlnPulse	Plain Pulse
 PowerSaw	Powered Saw
 SynthAtk	Synth Attack
 SmoothBs	Smooth Bass
@@ -215,7 +231,10 @@ Orch.Str	Orch.Strings
 OrchStr2	OrchStrings2
 TremOrch	Tremolo Orch
 Velo.Str	Velo Strings
-Stacc.Hi	Hi Staccato
+Stacc.Hi	HighStaccato
+Stacc.Hi	HighStaccato
+Stacc.Lo	Low Staccato
+SolidStr	Solid String
 SwellStr	SwellStrings
 3 OctStr	3 Oct. Str.
 5PartStr	5 Part Str.
@@ -228,10 +247,12 @@ ChmbrStr	Chamber Str.
 Strngs2#	Strings 2 #
 Reso Str	Resonant Str
 Syn.Str3	Synth Str. 3
+Monarchy	Monarchy Str
 GrandPad	GrandStrsPad
 SweepStr	SweepStrings
 Syn.Str4	Synth Str. 4
 Syn.Str5	Synth Str. 5
+TaurusS.	TaurusString
 SolPlexs	Solar Plexus
 St.Choir	Stereo Choir
 ChoirAh2	Choir Aah 2
@@ -327,7 +348,9 @@ ShmoogLd	Shmoog Lead
 DblOsci.	DoubleOscil.
 MellowSq	Mellow Sqr.
 SoloSine	Solo Sine Ld
+AccentLd	Accent Lead
 FMSlwSwp	FM SlowSweep
+OctvBeep	Octave Beep
 SawLead2	Saw. Lead 2
 ThickSaw	Thick Saw Ld
 Dyna.Saw	Dynamic Saw
@@ -340,6 +363,7 @@ Dim Saw	Dim Saw Lead
 PulseSaw	Pulse Saw Ld
 Dr. Lead	Doctor Lead
 VeloLead	VelocityLead
+Dunce Ld	Dunce Lead
 Str8Puls	StraightPuls
 ModulSaw	Modular Saw.
 SimplSaw	Simple Saw.
@@ -641,11 +665,88 @@ M-ASoft	M-Adult Soft
 M-AHusky	M-AdultHusky
 F-NMusic	F-New Music
 F-Coquet	F-Coquette
+DX-Wolf	DX-Wolf Howl
+DX-Ring1	DX-Ringing 1
+DX-Ring2	DX-Ringing 2
+DX-RvCy1	DX-RevCymbl1
+DX-RvCy2	DX-RevCymbl2
+OutLimit	Outer Limit
+FrtePno1	FortePiano 1
+FrtePno2	FortePiano 2
+El.Grd 1	El. Grand 1
+El.Grd 2	El. Grand 2
+El.Grd 3	El. Grand 3
+El.Grd 4	El. Grand 4
+Det.EP 1	Detuned EP 1
+Det.EP 2	Detuned EP 2
+Det.EP 3	Detuned EP 3
+Det.EP 4	Detuned EP 4
+Det.EP 5	Detuned EP 5
+Det.EP 6	Detuned EP 6
+Det.EP 7	Detuned EP 7
 Det.EP 8	Detuned EP 8
+Det.EP 9	Detuned EP 9
+Det.EP10	DetunedEP 10
 MM-Clav3	MM-Clavi. 3
+Syn.Glok	SynthGlocken
+DX-MsBx1	DX-MusicBox1
+DX-MsBx2	DX-MusicBox2
+DX-MsBx3	DX-MusicBox3
+DX-MsBx4	DX-MusicBox4
+DX-MsBx5	DX-MusicBox5
+DX-MsBx6	DX-MusicBox6
+DX-MsBx7	DX-MusicBox7
+DX-MsBx8	DX-MusicBox8
 MM-Vibr2	MM-Vibrafn.2
+DX-Mrmb1	DX-Marimba 1
+DX-Mrmb2	DX-Marimba 2
+DX-Mrmb3	DX-Marimba 3
+DX-Mrmb4	DX-Marimba 4
+DX-Mrmb5	DX-Marimba 5
+DX-Mrmb6	DX-Marimba 6
+DX-Mrmb7	DX-Marimba 7
+DX-Acrd1	DX-Acordion1
+DX-Acrd2	DX-Acordion2
+DX-Acrd3	DX-Acordion3
+DX-Acrd4	DX-Acordion4
+DX-Acrd5	DX-Acordion5
+DX-Acrd6	DX-Acordion6
+DX-ClGt1	DX-ClearGt.1
+DX-ClGt2	DX-ClearGt.2
+DX-ClGt3	DX-ClearGt.3
+DX-ClGt4	DX-ClearGt.4
+DX-ClGt5	DX-ClearGt.5
+DX-ClGt6	DX-ClearGt.6
+DX-ClGt7	DX-ClearGt.7
+DX-ClGt8	DX-ClearGt.8
+DX-ClGt9	DX-ClearGt.9
+DXClGt10	DX-ClearGt10
+DXClGt11	DX-ClearGt11
+BassLgnd	Bass Legend
+HardFngr	HardFingerBa
+DX-PkBa1	DX-PickedBa1
+DX-PkBa2	DX-PickedBa2
+DX-PkBa3	DX-PickedBa3
+DX-PkBa4	DX-PickedBa4
+CompedEB	CompedE.Bass
+Apollon	Apollon Harp
+CmbaHarp	CimbalomHarp
+General	GeneralStrng
 MM-Vce 4	MM-Voices 4
+DX-Clar1	DX-Clarinet1
+DX-Clar2	DX-Clarinet2
+DX-Clar3	DX-Clarinet3
 DX-SLd 9	DX-SquareLd9
+BellStr1	Bell String1
+BellStr2	Bell String2
+Chi-S&H1	Chiff-Smp&H1
+DX-Echo1	DX-Echoes 1
+DX-India	DX-Ind.Sitar
+DX-Klmb1	DX-Kalimba 1
+DX-Klmb2	DX-Kalimba 2
+DX-Klmb3	DX-Kalimba 3
+DX-Klmb4	DX-Kalimba 4
+Twincle	Twincle Bell
 WonderBa	Wonder Bass
 AnalgStr	AnalogString
 MultiSaw	MultiSaw.Str
@@ -656,3 +757,4 @@ AbacabLd	Abacab Lead
 Radio Nz	Radio Noise
 FreeRthm	Free Rhythm
 Dist.5th	Distorted5th
+CrystBel	Crystal Bell

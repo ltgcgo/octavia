@@ -44,11 +44,11 @@ let gsChecksum = function (sequence) {
 let korgFilter = function (korgArr, iterator) {
 	let realData = 0, dataMask = 0;
 	for (let pointer = 0; pointer < korgArr.length; pointer ++) {
-		let shifts = pointer % 8 - 1,
+		let shifts = (pointer & 7) - 1,
 		unmasked = (((dataMask >> shifts) & 1) << 7),
 		e = korgArr[pointer];
 		e += unmasked;
-		if (pointer % 8 !== 0) {
+		if ((pointer & 7) !== 0) {
 			iterator(e, realData, korgArr);
 			//console.debug(`Unmasked: ${dataMask} >> ${shifts} = ${e}`);
 			realData ++;
@@ -78,6 +78,8 @@ let korgPack = function (rawArr) {
 	});
 	return packed;
 };
+
+let halfByteFilter = function (halfByteArr, iterator) {};
 
 let x5dSendLevel = function (sendParam) {
 	let res = Math.floor(sendParam * 14.2);
