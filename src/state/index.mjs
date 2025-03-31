@@ -37,6 +37,8 @@ import {
 	korgFilter,
 	korgUnpack,
 	korgPack,
+	halfByteFilter,
+	halfByteUnpack,
 	x5dSendLevel,
 	getDebugState
 } from "./utils.js";
@@ -2568,7 +2570,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Info",
-						"data": data.substring(2)?.trimLeft()
+						"data": data.substring(2)?.trimStart()
 					});
 					break;
 				};
@@ -2578,7 +2580,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (textBuffer !== "MIDI KARAOKE FILE") {
 						upThis.dispatchEvent("metacommit", {
 							"type": "Kar.Mode",
-							"data": textBuffer?.trimLeft()
+							"data": textBuffer?.trimStart()
 						});
 					};
 					console.debug(`Karaoke mode active: ${textBuffer}`);
@@ -2588,7 +2590,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Lang",
-						"data": data.substring(2)?.trimLeft()
+						"data": data.substring(2)?.trimStart()
 					});
 					break;
 				};
@@ -2596,7 +2598,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "KarTitle",
-						"data": data.substring(2)?.trimLeft()
+						"data": data.substring(2)?.trimStart()
 					});
 					break;
 				};
@@ -2604,7 +2606,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Ver.",
-						"data": data.substring(2)?.trimLeft()
+						"data": data.substring(2)?.trimStart()
 					});
 					break;
 				};
@@ -4482,6 +4484,10 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 18, 65], (msg, track, id) => {
 			// GS drum setup
 			sysExDrumsR(((msg[0] >> 4) + 1) << 1, msg[0] & 15, msg.subarray(1));
+		}).add([66, 18, 72], (msg, track, id) => {
+			// GS system/patch A dump
+			let offset = ((msg[0] & 127) << 7) | (msg[1] & 127);
+			console.debug(offset, halfByteUnpack(msg.subarray(2)));
 		}).add([69, 18, 16], (msg, track, id) => {
 			// GS display section
 			switch (msg[0]) {
@@ -6995,7 +7001,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			});
-			trackName = trackName.trimRight();
+			trackName = trackName.trimEnd();
 			upThis.dispatchEvent("metacommit", {
 				"type": "EORTitle",
 				"data": trackName

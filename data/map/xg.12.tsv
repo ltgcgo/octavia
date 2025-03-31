@@ -8,6 +8,7 @@ ConGrand	ConcertGrand
 ConGrndK	ConcrtGrandK
 DblConGr	DoublConGrnd
 OldAcPno	OldAcouPiano
+LvGrdPno	LvGrandPiano
 GrandP #	Grand Piano#
 BritPnoK	BrightPianoK
 StBrtPno	StBritePiano
@@ -705,6 +706,7 @@ DX-Mrmb4	DX-Marimba 4
 DX-Mrmb5	DX-Marimba 5
 DX-Mrmb6	DX-Marimba 6
 DX-Mrmb7	DX-Marimba 7
+CrystBel	Crystal Bell
 DX-Acrd1	DX-Acordion1
 DX-Acrd2	DX-Acordion2
 DX-Acrd3	DX-Acordion3
@@ -757,4 +759,3 @@ AbacabLd	Abacab Lead
 Radio Nz	Radio Noise
 FreeRthm	Free Rhythm
 Dist.5th	Distorted5th
-CrystBel	Crystal Bell

@@ -280,6 +280,8 @@ let Cambiare = class extends RootDisplay {
 	#style = "comb";
 	glyphs = new MxFont40();
 	panStyle = 11; // Block, Pin, Arc, Dash
+	pixelMin = 0;
+	pixelMax = 255;
 	#drawNote(context, note, velo, state = 0, pitch = 0, part) {
 		// Param calculation
 		let upThis = this;
@@ -707,23 +709,23 @@ let Cambiare = class extends RootDisplay {
 			upThis.#bufBn.fill(0);
 		} else if (sum.bitmap.bitmap.length > 256) {
 			sum.bitmap.bitmap.forEach((e, i) => {
-				upThis.#bufBn[i] = e ? 255 : 0;
+				upThis.#bufBn[i] = e ? upThis.pixelMax : upThis.pixelMin;
 			});
 		} else {
 			sum.bitmap.bitmap.forEach((e, i) => {
-				upThis.#bufBn[i << 1] = e ? 255 : 0;
-				upThis.#bufBn[(i << 1) | 1] = e ? 255 : 0;
+				upThis.#bufBn[i << 1] = e ? upThis.pixelMax : upThis.pixelMin;
+				upThis.#bufBn[(i << 1) | 1] = e ? upThis.pixelMax : upThis.pixelMin;
 			});
 		};
 		upThis.#bufLn.fill(0);
 		if (timeNow <= sum.letter.expire) {
-			upThis.glyphs.getStr(sum.letter.text).forEach((e0, i0) => {
+			upThis.glyphs.getStr(sum.letter.text.padEnd(32, " ")).forEach((e0, i0) => {
 				// Per character
 				let baseX = (i0 & 15) * 5, baseY = (i0 >> 4) << 3;
 				e0.forEach((e, i) => {
 					// Per pixel in character
 					let x = baseX + i % 5, y = baseY + Math.floor(i / 5);
-					upThis.#bufLn[y * 80 + x] = e ? 255 : 0;
+					upThis.#bufLn[y * 80 + x] = e ? upThis.pixelMax : upThis.pixelMin;
 				});
 			});
 		};

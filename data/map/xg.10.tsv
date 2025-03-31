@@ -8,6 +8,7 @@ ConGrand	Con. Grand
 ConGrndK	Con.GrandK
 DblConGr	DblConGrnd
 OldAcPno	OldAcPiano
+LvGrdPno	LvGrandPno
 GrandP #	GrndPiano#
 BritPnoK	BritPianoK
 StBrtPno	StBritePno
@@ -932,6 +933,7 @@ DX-Mrmb5	DX-Mrimba5
 DX-Mrmb6	DX-Mrimba6
 DX-Mrmb7	DX-Mrimba7
 DumBells	Dumb Bells
+CrystBel	CrystalBel
 SilkRoad	Silk Road
 DX-Acrd1	DX-Accord1
 DX-Acrd2	DX-Accord2
@@ -1002,4 +1004,3 @@ BPF Step	BPF Steps
 Dist.5th	Dist.Fifth
 HardNoiz	Hard Noise
 Celuloid	Celluloid
-CrystBel	CrystalBel

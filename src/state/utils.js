@@ -79,7 +79,26 @@ let korgPack = function (rawArr) {
 	return packed;
 };
 
-let halfByteFilter = function (halfByteArr, iterator) {};
+let halfByteFilter = function (halfByteArr, iterator) {
+	let realData = 0;
+	for (let pointer = 0; pointer < halfByteArr.length; pointer ++) {
+		if (pointer & 1) {
+			realData = (realData << 4) | (halfByteArr[pointer] & 15);
+			let i = pointer >> 1;
+			iterator(realData, i, halfByteArr);
+		} else {
+			realData = halfByteArr[pointer] & 15;
+		};
+	};
+};
+let halfByteUnpack = function (halfByteArr) {
+	let newLength = halfByteArr.length >> 1;
+	let unpacked = new Uint8Array(newLength);
+	halfByteFilter(halfByteArr, (e, i) => {
+		unpacked[i] = e;
+	});
+	return unpacked;
+};
 
 let x5dSendLevel = function (sendParam) {
 	let res = Math.floor(sendParam * 14.2);
@@ -107,6 +126,8 @@ export {
 	korgFilter,
 	korgUnpack,
 	korgPack,
+	halfByteFilter,
+	halfByteUnpack,
 	x5dSendLevel,
 	customInterpreter,
 	getDebugState

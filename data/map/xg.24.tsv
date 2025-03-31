@@ -7,6 +7,7 @@ ConGrand	Concert Grand Piano
 ConGrndK	Concert Grand KSP
 DblConGr	Double Concert Grand
 OldAcPno	Old Acoustic Piano
+LvGrdPno	Live! Grand Piano
 GrandP #	Grand Piano #
 BritPnoK	Bright Piano KSP
 StBrtPno	Stereo Bright Piano
@@ -17,7 +18,7 @@ HnkyTnkK	Honky Tonk KSP
 EPiano1K	Electric Piano 1 KSP
 MellowEP	Mellow Electric Piano
 HardEPno	Hard Electric Piano
-VX E.Pno	VX Electric Piano
+VX E.Pno	Velo Crossfade EP
 60sElPno	60s' Electric Piano
 Diploid1	Diploid E. Piano 1
 Diploid2	Diploid E. Piano 2
@@ -26,7 +27,7 @@ Diploid3	Diploid E. Piano 3
 Easy EP	Easy Electric Piano
 EPiano1#	Electric Piano 1 #
 EPiano2K	Electric Piano 2 KSP
-VX EPno2	VX Electric Piano 2
+VX EPno2	Velo Crossfade EP 2
 Shirakwa	Shirakawa E. Piano
 ShivrDX+	Shivering DX Plus
 EPiano2#	Electric Piano 2 #
@@ -600,6 +601,7 @@ DX-MsBx6	DX-Music Box 6
 DX-MsBx7	DX-Music Box 7
 DX-MsBx8	DX-Music Box 8
 MM-Vibr2	MM-Vibraphone 2
+CrystBel	Crystal Bells
 DX-Acrd1	DX-Accordion 1
 DX-Acrd2	DX-Accordion 2
 DX-Acrd3	DX-Accordion 3
@@ -641,4 +643,3 @@ ANHardBr	AN Hard Brass
 DirtySaw	Dirty Sawtooth Lead
 BPF Step	Band Passed Steps
 Dist.5th	Distorted Fifth
-CrystBel	Crystal Bells
