@@ -280,7 +280,7 @@ let Cambiare = class extends RootDisplay {
 	#style = "comb";
 	glyphs = new MxFont40();
 	panStyle = 11; // Block, Pin, Arc, Dash
-	pixelMin = 0;
+	pixelMin = 12;
 	pixelMax = 255;
 	#drawNote(context, note, velo, state = 0, pitch = 0, part) {
 		// Param calculation
