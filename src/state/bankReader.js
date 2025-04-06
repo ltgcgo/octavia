@@ -107,6 +107,22 @@ let VoiceBank = class {
 						};
 						break;
 					};
+					case 121: {
+						switch (lsb) {
+							case 126: {
+								args[2] = 0;
+								break;
+							};
+							case 16: {
+								args[2] = 15;
+								break;
+							};
+							default: {
+								args[2] = args[2] & 15;
+							};
+						};
+						break;
+					};
 				};
 				break;
 			};
@@ -146,6 +162,23 @@ let VoiceBank = class {
 					args[2] |= 16;
 					if (prg >> 4 === 7) {
 						args[0] = 96;
+					};
+				};
+				break;
+			};
+			case "pa": {
+				switch (msb) {
+					case 120: {
+						if (lsb == 64) {
+							args[2] = 2;
+						} else {
+							args[2] = 1;
+						};
+						break;
+					};
+					case 121: {
+						args[2] = (args[2] & 63) + 32;
+						break;
 					};
 				};
 				break;
@@ -406,9 +439,12 @@ let VoiceBank = class {
 				bank = ["DOC", "QY1", "QY2"][args[2] - 112] || "057";
 			};
 			case 61:
-			case 120:
 			case 128: {
 				sect = "rDrm";
+				break;
+			};
+			case 120: {
+				sect = "gDrm";
 				break;
 			};
 			case 62: {
@@ -530,8 +566,8 @@ let VoiceBank = class {
 				break;
 			};
 			case 121: {
-				sect = `GM-${args[2] ? "" : "a"}`;
-				useLsb = 3;
+				sect = `GM${args[2] ? "" : "-a"}`;
+				useLsb = 1;
 				break;
 			};
 			case 122: {
@@ -815,13 +851,16 @@ let VoiceBank = class {
 				standard = "SD"; // Roland StudioCanvas
 				break;
 			};
-			case 120:
+			case 120: {
+				standard = prg === 0 ? "GM" : "G2";
+				break;
+			};
 			case 128: {
 				standard = prg === 0 ? "GM" : "GS";
 				break;
 			};
 			case 121: {
-				standard = args[2] ? "G2" : "GM";
+				standard = args[2] ? ["G2", "XG", "PA", "PA", "PA"][args[2] >> 4] : "GM";
 				break;
 			};
 			case 122: {
@@ -849,6 +888,10 @@ let VoiceBank = class {
 				case "motif": {
 					bankName = "";
 					standard = noVoxStdPool[mode];
+					break;
+				};
+				case "g2": {
+					bankName = "GM2 Ext?";
 					break;
 				};
 				default: {

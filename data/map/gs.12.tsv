@@ -26,8 +26,7 @@ ElPiano3	Elec.Piano 3
 Det.EP 2	Detuned EP 2
 Det.EP 3	Detuned EP 3
 ElPno 2v	El. Piano 2v
-St.FM EP	Stereo FM EP
-HardFMEP	Hard FM EP
+StereoDX	Stereo DX EP
 CplHapsi	CoupledHapsi
 SynHapsi	Synth Harpsi
 AtkClavi	Attack Clavi
@@ -414,7 +413,7 @@ Altrnate	Alternative
 Reso Pan	Resonant Pan
 WaterPno	Water Piano
 Pan Seq.	Pan Sequnce
-Sci-Fi 2	Star Theme 2
+StarThm2	Star Theme 2
 NewCntry	New Century
 DetSitar	DetunedSitar
 SitarDrn	Sitar/Drone

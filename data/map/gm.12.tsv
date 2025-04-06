@@ -1,7 +1,7 @@
 ID	Name
 Standard	Standard Kit
 Standrd2	StandardKit2
-Electro	Electro Kit
+ElectrKt	Electro Kit
 SymphnKt	Symphony Kit
 Orch.Kit	OrchestraKit
 Hrpschrd	Harpsichord
@@ -59,3 +59,4 @@ MelodTom	Melodic Tom
 RevCymbl	Rev. Cymbal
 BrthNoiz	Breath Noise
 FretNoiz	Gt.FretNoise
+GM2 Ext?	GM2Extended?

@@ -405,6 +405,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		}
 	};
 	#detect;
+	get detect() {
+		return structuredClone(this.#detect);
+	};
 	#conf;
 	#confProxy;
 	#masterVol = 100;
@@ -430,7 +433,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es", "cs2x"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es", "cs2x", "pa"); // Load all possible voice banks
 	userBank = new VoiceBank("gm2"); // User-defined bank for MT-32, X5DR and NS5R
 	//bankProps = new SheetD;
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
@@ -889,6 +892,8 @@ let OctaviaDevice = class extends CustomEventSource {
 								this.switchMode(modeIdx[this.#detect.ds]);
 							} else if (det.data[1] === 64 || det.data[1] === 127) {
 								this.switchMode("xg");
+							} else if (det.data[1] === 120 || det.data[1] === 121) {
+								this.switchMode("g2");
 							};
 						} else if (this.#mode === modeMap.gs || this.#mode === modeMap.sc) {
 							if (det.data[1] < 56) {
@@ -1902,6 +1907,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (validId > 0) {
 			upThis.#detect.x5 = 82; // Reset to X5DR
 			upThis.#detect.ds = modeMap.krs; // Reset to KORG KROSS 2
+			upThis.#detect.gm = modeMap.gm;
+			upThis.#detect.g2 = modeMap.g2;
 		};
 		switch (validId) {
 			case modeMap["05rw"]: {
@@ -1911,10 +1918,20 @@ let OctaviaDevice = class extends CustomEventSource {
 			case modeMap.s90es: {
 				upThis.#detect.ds = modeMap.s90es;
 				upThis.#detect.smotif = modeMap.s90es;
+				break;
 			};
 			case modeMap.motif: {
 				upThis.#detect.ds = modeMap.motif;
 				upThis.#detect.smotif = modeMap.motif;
+				break;
+			};
+			case modeMap.sd: {
+				upThis.#detect.g2 = modeMap.sd;
+				break;
+			};
+			case modeMap.pa: {
+				upThis.#detect.g2 = modeMap.pa;
+				break;
 			};
 		};
 	};
@@ -2233,6 +2250,16 @@ let OctaviaDevice = class extends CustomEventSource {
 			return this.#chMode[part] || this.#portMode[part >> 4] || this.#mode;
 		};
 	};
+	getPortMode(port, noFallback) {
+		return modeIdx[this.getPortModeId(port, noFallback)];
+	};
+	getPortModeId(port, noFallback) {
+		if (noFallback) {
+			this.#portMode[part >> 4];
+		} else {
+			this.#portMode[part >> 4] || this.#mode;
+		};
+	};
 	setPortMode(port, range, modeId) {
 		// Per-channel mode, but in bulk
 		let upThis = this;
@@ -2341,6 +2368,18 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#mode = idx;
 				upThis.#bitmapPage = 0; // Restore page
 				//console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
+				// Mode redirection
+				switch (idx) {
+					case modeMap.gm: {
+						idx = upThis.#detect.gm;
+						break;
+					};
+					case modeMap.g2: {
+						idx = upThis.#detect.g2;
+						break;
+					};
+				};
+				// Drum initialization
 				for (let ch = 0; ch < allocated.ch; ch ++) {
 					let oldMode = upThis.getChModeId(ch, true);
 					if (upThis.#chType[ch] > 0 && oldMode === modeMap["?"]) {
@@ -2433,7 +2472,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (setTarget) {
 					upThis.setDetectionTargets(mode);
 				};
-				upThis.dispatchEvent("mode", mode);
+				upThis.dispatchEvent("mode", modeIdx[idx]);
 				upThis.forceVoiceRefresh();
 				/*drumChannels.forEach((e) => {
 					upThis.dispatchEvent("voice", {
@@ -2522,7 +2561,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			"ds": modeMap.krs, // device-exclusive banks
 			"smotif": modeMap.s90es, // defaults to S90 ES
 			"gs": 4, // GS reset
-			"sc": 3 // GS mode set
+			"sc": 3, // GS mode set
+			"gm": modeMap.gm, // GM flavour (GM, XG, GS, 05R/W)
+			"g2": modeMap.g2 // GM2 flavour (GM2, XG, SD, PA)
 		};
 		upThis.#conf = {
 			"dumpLimit": upThis.DUMP_MODE
@@ -3067,7 +3108,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#seUnr.add([9], (msg, track, id) => {
 			// General MIDI reset.
 			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], true);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[["gm", "?", "g2"][msg[0] - 1]]);
+			upThis.setPortMode(upThis.getTrackPort(track), 1, [modeMap.gm, modeMap["?"], upThis.#detect.g2][msg[0] - 1]);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 			console.info(`MIDI reset: ${["GM", "Init", "GM2"][msg[0] - 1]}`);
 			if (msg[0] === 2) {

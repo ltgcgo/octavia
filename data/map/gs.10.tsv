@@ -33,8 +33,8 @@ Det.EP 2	Det. EP 2
 Det.EP 3	Det. EP 3
 DXLegend	DX Legend
 ElPno 2v	E.Piano 2v
-St.FM EP	Ste. FM EP
-HardFMEP	Hard FM EP
+StereoDX	Stereo DX
+DX Hard 	Hard DX EP
 Hpschrd2	Harpsi. 2
 Hpschrd3	Harpsi. 3
 CplHapsi	CoupleHpsi
@@ -593,7 +593,8 @@ Big Pan	Big Panner
 Reso Pan	Reso. Pan
 WaterPno	WaterPiano
 Pan Seq.	PanSequnce
-Sci-Fi 2	StarTheme2
+StarThme	Star Theme
+StarThm2	StarTheme2
 DreamPad	Dream Pad
 SilkyPad	Silky Pad
 NewCntry	NewCentury
