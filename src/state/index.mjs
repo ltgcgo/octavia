@@ -2255,9 +2255,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getPortModeId(port, noFallback) {
 		if (noFallback) {
-			this.#portMode[part >> 4];
+			return this.#portMode[port];
 		} else {
-			this.#portMode[part >> 4] || this.#mode;
+			return this.#portMode[port] || this.#mode;
 		};
 	};
 	setPortMode(port, range, modeId) {
@@ -2296,8 +2296,6 @@ let OctaviaDevice = class extends CustomEventSource {
 				});
 			};
 		};
-		//console.debug(upThis.#portModeInitial);
-		//console.debug(upThis.#portMode);
 	};
 	copyChSetup(sourceCh, targetCh, failWhenActive) {
 		if (sourceCh === targetCh) {
@@ -2365,7 +2363,6 @@ let OctaviaDevice = class extends CustomEventSource {
 					this.init(1);
 					//oldMode = modeMap["?"];
 				};
-				upThis.#mode = idx;
 				upThis.#bitmapPage = 0; // Restore page
 				//console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
 				// Mode redirection
@@ -2379,6 +2376,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 				};
+				upThis.#mode = idx;
 				// Drum initialization
 				for (let ch = 0; ch < allocated.ch; ch ++) {
 					let oldMode = upThis.getChModeId(ch, true);

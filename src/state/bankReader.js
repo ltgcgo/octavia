@@ -852,7 +852,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 120: {
-				standard = prg === 0 ? "GM" : "G2";
+				standard = prg === 0 ? "GM" : (["G2", "PA", "PA"][args[2]] ?? "G2");
 				break;
 			};
 			case 128: {
@@ -892,6 +892,12 @@ let VoiceBank = class {
 				};
 				case "g2": {
 					bankName = "GM2 Ext?";
+					break;
+				};
+				case "pa": {
+					if (ending === "^") {
+						bankName = "Unknown";
+					};
 					break;
 				};
 				default: {

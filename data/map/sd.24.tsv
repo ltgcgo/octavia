@@ -9,10 +9,11 @@ StJazzKt	Stereo Jazz Kit
 Amb.Jazz	Ambient Jazz Kit
 SBrushKt	Stereo Brush Kit
 AmbBrush	Ambient Brush Kit
-GrndPnoW	Grand Piano W
-GrndPnoW	Grand Piano W
+GrndPnoW	Wide Grand Piano
+GrndPnoD	Dark Grand Piano
 St.Pno 1	Stereo Piano 1
-St.Pno1W	Stereo Piano 1W
+St.Pno1W	Wide Stereo Piano 1
+BritPnoW	Wide Bright Piano
 St.Pno 2	Stereo Piano 2
 SftRhode	Soft Rhodes Piano
 FatRhode	Fat Rhodes Piano
@@ -27,22 +28,22 @@ FatAcBas	Fat Acoustic Bass
 FngrPkBa	Fingered Pick Bass
 SlapPop1	Slap Pop Bass 1
 FatSynBa	Fat Synth Bass
-Violin2V	Violin 2V
+Violin2V	Velo Violin 2
 StTrmStr	Stereo Tremolo Strings
 St.Strs2	Stereo Strings 2
 RmntcTrp	Romantic Trumpet
-TrombonV	Trombone V
+TrombonV	Velo Trombone
 EnMuteTp	Enhanced Muted Trumpet
 StFrHorn	Stereo French Horn
 StBigBrs	Stereo Big Brass
-AltoSaxV	Alto Sax V
+AltoSaxV	Velo Alto Sax
 BrthTenr	Breathy Tenor Sax
 BlowTenr	Blown Tenor Sax
 BareBari	Bare Baritone Sax
 Enh.Oboe	Enhanced Oboe
 BrtClari	Bright Clarinet
 JzClari2	Jazz Clarinet 2
-RecordrV	Recorder V
+RecordrV	Velo Recorder
 FatSawSl	Fat Sawtooth Solo
 ChiffLd3	Chiffer Lead 3
 ChoirPd2	Choir Pad 2

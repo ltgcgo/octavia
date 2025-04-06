@@ -278,6 +278,7 @@ let demoPool = new SheetData();
 		`./data/map/cs2x.24.tsv`,
 		`./data/map/s90es.24.tsv`,
 		`./data/map/kross.24.tsv`,
+		`./data/map/pa.24.tsv`,
 		`./data/map/gm.12.tsv`,
 		`./data/map/ns5r.12.tsv`,
 		`./data/map/xg.12.tsv`,
