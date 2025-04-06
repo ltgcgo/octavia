@@ -67,6 +67,10 @@ body {
 }
 .column-option.dropdown {
 	border-color: var(--page-option-border-select);
+	padding: 0;
+}
+.column-option.dropdown > .dropdown-trigger > button {
+	margin: 0.6rem;
 }
 .column-option[active='true'] {
 	border-color: var(--page-option-border-active);

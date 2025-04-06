@@ -40,7 +40,7 @@
 			<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
 				<div class="dropdown-trigger" style="min-width: 5.5rem" @click="active[1]=false;active[0]=!active[0]">
 					<button aria-haspopup="true">
-						<span x-text="cats[$store.deviceModeCatOverride?modes[$store.deviceMode][1]:value.cat]"></span>
+						<div x-text="cats[$store.deviceModeCatOverride?modes[$store.deviceMode][1]:value.cat]"></div>
 					</button><div class="iconset attach-right">
 						<div class="iconcut size-24" x-show="!active[0]" style="mask-image:url('./img/feather/chevron-down.svg')"></div>
 						<div class="iconcut size-24" x-show="active[0]" style="mask-image:url('./img/feather/chevron-up.svg')"></div>
@@ -49,7 +49,7 @@
 				<div class="dropdown-menu" role="menu" id="dropdown-globalMode">
 					<div class="dropdown-content">
 						<template x-for="(cat, index) in cats">
-							<a class="dropdown-item" :active="value.cat==index" x-text="cat" @click="value.cat=index;$store.deviceModeCatOverride=false;active[0]=false;active[1]=true"></a>
+							<a class="dropdown-item" :active="($store.deviceModeCatOverride?modes[$store.deviceMode][1]:value.cat)==index" x-text="cat" @click="value.cat=index;$store.deviceModeCatOverride=false;active[0]=false;active[1]=true"></a>
 						</template>
 					</div>
 				</div>
@@ -57,7 +57,7 @@
 			<div :class="`column column-option column-button column-nowrap dropdown${active[1]?' is-active':''}`" :active="active[1]">
 				<div class="dropdown-trigger" style="min-width: 9rem" @click="active[0]=false;active[1]=!active[1]">
 					<button aria-haspopup="true">
-						<span x-text="modes[$store.deviceMode||'?'][0]||'Unrecognized'"></span>
+						<div x-text="modes[$store.deviceMode||'?'][0]||'Unrecognized'"></div>
 					</button><div class="iconset attach-right">
 						<div class="iconcut size-24" x-show="!active[1]" style="mask-image:url('./img/feather/chevron-down.svg')"></div>
 						<div class="iconcut size-24" x-show="active[1]" style="mask-image:url('./img/feather/chevron-up.svg')"></div>
