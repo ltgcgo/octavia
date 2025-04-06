@@ -177,7 +177,15 @@ let VoiceBank = class {
 						break;
 					};
 					case 121: {
-						args[2] = (args[2] & 63) + 32;
+						switch (lsb) {
+							case 127: {
+								args[2] = 79;
+								break;
+							};
+							default: {
+								args[2] = (args[2] & 63) + 32;
+							};
+						};
 						break;
 					};
 				};

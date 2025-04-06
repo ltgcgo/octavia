@@ -1,20 +1,38 @@
 ID	Name
 AcstcKit	Acoustic Kit
 PpStRXKt	Pop Standard RX Kit
+HouseKt3	House Kit 3
+Perc.Kit	Percussion Kit
+LatnPcKt	Latin Perc. Kit
 TriPrcKt	Trinity Perc. Kit
 AcGrdPno	Acoustic Grand Piano
 PAGrdPno	PA Grand Piano
 PnoStrPd	Piano + Strings Pad
 Vintg.EP	Vintage E. Piano
+PrStgeEP	Pro Stage EP
 StudioEP	Studio E. Piano
+JazOrgDk	Dark Jazz Organ
+FullDrOr	Full Drawbar Organ
+JazzOrgn	Jazz Organ
+BX-3SDcy	Short Decay BX-3 Organ
 Killer B	Killer BX-3 Organ
 Dirty B.	Dirty BX-3 Organ
+JimmyOrg	Jimmy Organ
+Musette2	Musette 2
 SwtHrmnc	Sweet Harmonica
 NylnGtKO	Key Off Nylon Guitar
+Ac.GtrKO	Key Off Acoustic Guitar
 St12StrG	Stereo 12-String Guitar
+MndolnKO	Key Off Mandolin
+ClubJzGt	Club Jazz Guitar
+ClbJzGt2	Club Jazz Guitar 2
+SnglCoil	Single Coil Guitar
+NuStr8Gt	New Straight Guitar
 EGtrHrmo	E. Guitar Harmonics
+AcBaBuzz	Buzzy Acoustic Bass
 FngrEBas	Fingered E. Bass
 FngrEBa2	Fingered E. Bass 2
+FngrEBa3	Fingered E. Bass 3
 Dyna.Bas	Dynamic Bass
 30303Bas	30303 Synth Bass
 30303Sqr	30303 Square Bass
@@ -24,15 +42,36 @@ Digi.Ba3	Digital Bass 3
 i3 Strng	i3 Strings
 SymBowed	Symphonic Bowed Strings
 CameraS.	Camera Strings
+AnalgStr	Analog Strings
+AnlgVlvt	Analog Velvet Strings
+OohVoice	Ooh Voice
+BrsImpct	Brass Impact
+HtInInda	Hit In India
+Wild Arp	Wild Arppegiator
+FlipBlip	Flip Blip
+Trp.Expr	Expressive Trumpet
+WahTrmpt	Wah Trumpet
 FrHrSect	French Horn Section
 TightBrs	Tight Brass
+TrombEns	Trombone Ensemble
 BrassHit	Brass Hit
 BigPannr	Big Panner
 NzyTenor	Noisy Tenor Sax
+FltSwtch	Flute Switch
+FltFrull	Flute Frull
+SneSwtch	Sine Switch
 OctoLead	Octo Lead
 SynPnoid	Synth Pianoid
+MasterPd	Master Pad
+CrossSwp	Cross Sweep Pad
+DigiPly6	Digital Poly Six Pad
+TknoPhnc	Techno Phonic Pad
+FreshAir	Fresh Air Pad
+FuturePd	Future Pad
 CosmicPd	Cosmic Pad
 Medit.Pd	Meditate Pad
+CinemaPd	Cinema Pad
+VsBelBoy	Vs Bell Boy
 MovinBel	Moving Bells
 Reso.Pan	Resonant Panning
 MoonCycl	Moon Cycle
