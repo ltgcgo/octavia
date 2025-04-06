@@ -38,7 +38,7 @@
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{cats:['Pre-GM','GM 1','GM 2'],modes:{'?':['Auto Detect',255],'gm':['General MIDI',1],'xg':['Yamaha XG',1],'gs':['Roland GS',1],'sc':['Roland SC',1],'ns5r':['KORG NS5R',1],'05rw':['KORG 05R/W',1],'x5d':['KORG X5D',1],'k11':['Kawai GMega',1],'sg':['Akai SG',1],'g2':['General MIDI 2',2],'sd':['Roland SD',2],'pa':['KORG PA',2],'krs':['KORG KROSS 2',2],'cs1x':['Yamaha CS1x',1],'s90es':['Yamaha S90 ES',1],'motif':['Yamaha Motif ES',1],'trin':['KORG Trinity',1],'mt32':['Roland MT-32',0],'doc':['Yamaha DOC',0],'qy10':['Yamaha QY10',0],'qy20':['Yamaha QY20',0]},active:[false,false],value:{cat:1}}">
 			<div class="column column-option"><b>Global mode</b></div>
 			<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
-				<div class="dropdown-trigger" style="min-width: 5.5rem" @click="active[1]=false;active[0]=!active[0]">
+				<div class="dropdown-trigger" style="min-width: 6.5rem" @click="active[1]=false;active[0]=!active[0]">
 					<button aria-haspopup="true">
 						<div x-text="cats[$store.deviceModeCatOverride?modes[$store.deviceMode][1]:value.cat]"></div>
 					</button><div class="iconset attach-right">
@@ -66,7 +66,7 @@
 				<div class="dropdown-menu" role="menu" id="dropdown-globalMode">
 					<div class="dropdown-content">
 						<template x-for="(mode, index) in modes">
-							<a class="dropdown-item" :active="$store.deviceMode==index" x-text="mode[0]" x-show="value.cat==mode[1]||mode[1]==255" :title="`Internal ID: (${index})`" @click="gMode(index);active[1]=false"></a>
+							<a class="dropdown-item" :active="$store.deviceMode==index" x-text="mode[0]" x-show="mode[1]===255||($store.deviceModeCatOverride?modes[$store.deviceMode][1]:value.cat)==mode[1]" :title="`Internal ID: (${index})`" @click="gMode(index);active[1]=false"></a>
 						</template>
 					</div>
 				</div>

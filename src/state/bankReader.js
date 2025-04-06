@@ -115,7 +115,7 @@ let VoiceBank = class {
 				if (msb === 0 && lsb < 5) {
 					//args[2] = 0;
 					args[0] = 49;
-				} else if (msb > 125 && lsb < 5 && lsb !== 2) {
+				} else if (msb < 128 && msb > 125 && lsb < 5 && lsb !== 2) {
 					// Temporary fix for C/M bank under SC-55 mode
 					// SC-88 do care incorrect LSB selection
 					args[2] = msb;
@@ -406,7 +406,8 @@ let VoiceBank = class {
 				bank = ["DOC", "QY1", "QY2"][args[2] - 112] || "057";
 			};
 			case 61:
-			case 120: {
+			case 120:
+			case 128: {
 				sect = "rDrm";
 				break;
 			};
@@ -814,7 +815,8 @@ let VoiceBank = class {
 				standard = "SD"; // Roland StudioCanvas
 				break;
 			};
-			case 120: {
+			case 120:
+			case 128: {
 				standard = prg === 0 ? "GM" : "GS";
 				break;
 			};

@@ -18,7 +18,7 @@ HnkyTnkK	Honky Tonk KSP
 EPiano1K	Electric Piano 1 KSP
 MellowEP	Mellow Electric Piano
 HardEPno	Hard Electric Piano
-VX E.Pno	Velo Crossfade EP
+VX E.Pno	VX Electric Piano
 60sElPno	60s' Electric Piano
 Diploid1	Diploid E. Piano 1
 Diploid2	Diploid E. Piano 2
@@ -27,7 +27,7 @@ Diploid3	Diploid E. Piano 3
 Easy EP	Easy Electric Piano
 EPiano1#	Electric Piano 1 #
 EPiano2K	Electric Piano 2 KSP
-VX EPno2	Velo Crossfade EP 2
+VX EPno2	VX Electric Piano 2
 Shirakwa	Shirakawa E. Piano
 ShivrDX+	Shivering DX Plus
 EPiano2#	Electric Piano 2 #
@@ -570,9 +570,17 @@ Dosukoi	SG Dosukoi
 O-Onchi	SG Onchi
 Unison1	SG Unison 1
 Unison2	SG Unison 2
+DX-TlCal	DX-Telephone Calendar
+DX-TlBsy	DX-Telephone Busy
+DX-TlTne	DX-Telephone Tone
 DX-RvCy1	DX-Reverse Cymbal 1
 DX-RvCy2	DX-Reverse Cymbal 2
+DX-Hlcpt	DX-Helicopter
 MM-Fall	MM-Fall SFX
+PercShot	Percussion Shot
+StreetSD	Street Snare Drums
+SmbaWhsl	Samba Whistle
+Refs Wsl	Referee's Whistle
 FrtePno1	Forte Piano 1
 FrtePno2	Forte Piano 2
 El.Grd 1	Electric Grand 1

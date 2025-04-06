@@ -77,8 +77,8 @@ voiceIdx = [
 let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"?": [0, 0, 120, 0, 0],
 	"gm": [0, 0, 120, 0, 0],
-	"gs": [0, 0, 120, 0, 0],
-	"sc": [0, 0, 120, 0, 0],
+	"gs": [0, 0, 128, 0, 0],
+	"sc": [0, 0, 128, 0, 0],
 	"xg": [0, 0, 127, 0, 0],
 	"g2": [0, 0, 120, 0, 0],
 	"mt32": [0, 127, 127, 0, 127],
@@ -273,7 +273,7 @@ const allocated = {
 };
 allocated.chcc = allocated.cc * allocated.ch;
 const overrides = {
-	bank0: 128
+	bank0: 255
 };
 
 // Decoders
@@ -874,7 +874,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
 									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getChCc(part, 0)*/;
-									det.data[1] = 120;
+									det.data[1] = modeDetailsData.gs[2];
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
 								if (det.data[1] > 0) {
@@ -895,7 +895,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
 									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getChCc(part, 0)*/;
-									det.data[1] = 120;
+									det.data[1] = modeDetailsData.gs[2];
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
 							};
@@ -903,7 +903,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
-									det.data[1] = 120;
+									det.data[1] = modeDetailsData.gs[2];
 									this.switchMode("gs", true);
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
@@ -6768,7 +6768,8 @@ let OctaviaDevice = class extends CustomEventSource {
 									case 105:
 									case 106:
 									case 107:
-									case 120: {
+									case 120:
+									case 128: {
 										if (!upThis.#chType[part]) {
 											upThis.setChType(part, upThis.CH_DRUMS);
 										};
