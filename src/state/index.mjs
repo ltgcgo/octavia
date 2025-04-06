@@ -91,13 +91,15 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"k11": [0, 0, 122, 0, 0],
 	"sg": [0, 0, 122, 0, 0],
 	"sd": [97, 0, 105, 0, 0],
+	"pa": [0, 0, 120, 121, 0],
 	"krs": [121, 0, 120, 0, 0],
 	"s90es": [0, 0, 127, 0, 0],
 	"motif": [0, 0, 127, 0, 0],
 	"cs6x": [0, 0, 127, 0, 0],
 	"trin": [0, 0, 61, 0, 0],
 	"an1x": [36, 3, 127, 0, 0],
-	"cs1x": [0, 0, 127, 63, 0]
+	"cs1x": [0, 0, 127, 63, 0],
+	"cs2x": [0, 0, 127, 63, 0]
 };
 const drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
 const passedMeta = [0, 3, 81, 84, 88]; // What is meta event 32?
@@ -2340,7 +2342,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.#bitmapPage = 0; // Restore page
 				//console.debug(`Mode ${mode} has drum MSB: ${drumMsb[idx]}`);
 				for (let ch = 0; ch < allocated.ch; ch ++) {
-					let oldMode = upThis.getChModeId(ch, true)
+					let oldMode = upThis.getChModeId(ch, true);
 					if (upThis.#chType[ch] > 0 && oldMode === modeMap["?"]) {
 						// Switch drum MSBs.
 						upThis.setChCc(ch, 0, upThis.#subDb[idx][2]);

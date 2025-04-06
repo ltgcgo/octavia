@@ -53,6 +53,7 @@ visualizer.reset();
 Alpine.store("play", "smf");
 Alpine.store("sound", "file");
 Alpine.store("deviceMode", "?");
+Alpine.store("deviceModeCatOverride", false);
 Alpine.store("showRange", "port1");
 Alpine.store("startPort", 0);
 Alpine.store("useMidiBus", false);
@@ -69,6 +70,7 @@ audioFilePlayer.addEventListener("ended", () => {
 
 visualizer.addEventListener("mode", (ev) => {
 	Alpine.store("deviceMode", ev.data);
+	Alpine.store("deviceModeCatOverride", ev.data !== "?");
 });
 visualizer.addEventListener("banklevel", (ev) => {
 	switch (ev.data.mode) {
@@ -101,6 +103,7 @@ let audioUri;
 self.gMode = async function (mode) {
 	visualizer.device.switchMode(mode, true, true);
 	Alpine.store("deviceMode", mode);
+	Alpine.store("deviceModeCatOverride", mode !== "?");
 };
 self.gRange = async function (mode) {
 	visualizer.setRange(mode);

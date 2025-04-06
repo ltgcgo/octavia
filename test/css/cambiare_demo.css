@@ -9,16 +9,47 @@ body {
 :root {
 	--page-button-bg: #0000;
 	--page-button-bg-hover: #0001;
+	--page-button-bg-active: #0003;
 	--page-option-border: #0000;
+	--page-option-border-select: #0002;
 	--page-option-border-active: #0008;
 }
 @media (prefers-color-scheme: dark) {
 	:root {
 		--page-button-bg: #fff0;
 		--page-button-bg-hover: #fff1;
+		--page-button-bg-active: #fff4;
 		--page-option-border: #fff0;
+		--page-option-border-select: #fff3;
 		--page-option-border-active: #fffa;
 	}
+}
+
+.iconset {
+	display: inline-block;
+}
+.iconset > .iconcut {
+	background: var(--page-option-border-active);
+}
+.iconset > .size-16 {
+	width: 16px;
+	height: 16px;
+}
+.iconset > .size-24 {
+	width: 24px;
+	height: 24px;
+}
+.iconset > .size-32 {
+	width: 32px;
+	height: 32px;
+}
+.iconset > .size-48 {
+	width: 48px;
+	height: 48px;
+}
+.iconset > .size-64 {
+	width: 64px;
+	height: 64px;
 }
 
 .container {
@@ -34,8 +65,23 @@ body {
 	padding: 0.6rem;
 	margin: 0.15rem;
 }
-.column-option[active='true']{
+.column-option.dropdown {
+	border-color: var(--page-option-border-select);
+}
+.column-option[active='true'] {
 	border-color: var(--page-option-border-active);
+}
+.column-option.dropdown .dropdown-item {
+	font-size: 16px;
+}
+.column-option.dropdown .dropdown-item[active='true'] {
+	background: var(--page-button-bg-active);
+}
+.column-option .attach-right {
+	position: absolute;
+	bottom: 50%;
+	right: 0.6rem;
+	transform: translateY(50%);
 }
 .column-button {
 	background: var(--page-button-bg);

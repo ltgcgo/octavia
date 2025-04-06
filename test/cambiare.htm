@@ -35,11 +35,45 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{modes:[['?','Auto'],['gm','GM'],['xg','XG'],['gs','GS'],['sc','SC'],['ns5r','NS5R'],['05rw','05R/W'],['x5d','X5D'],['k11','GMega'],['sg','SG'],['g2','GM2'],['mt32','MT-32'],['doc','DOC'],['qy10','QY10'],['qy20','QY20'],['sd','SD'],['krs','KROSS 2'],['s90es','S90 ES'],['motif','Motif ES']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{cats:['Pre-GM','GM 1','GM 2'],modes:{'?':['Auto Detect',255],'gm':['General MIDI',1],'xg':['Yamaha XG',1],'gs':['Roland GS',1],'sc':['Roland SC',1],'ns5r':['KORG NS5R',1],'05rw':['KORG 05R/W',1],'x5d':['KORG X5D',1],'k11':['Kawai GMega',1],'sg':['Akai SG',1],'g2':['General MIDI 2',2],'sd':['Roland SD',2],'pa':['KORG PA',2],'krs':['KORG KROSS 2',2],'cs1x':['Yamaha CS1x',1],'s90es':['Yamaha S90 ES',1],'motif':['Yamaha Motif ES',1],'trin':['KORG Trinity',1],'mt32':['Roland MT-32',0],'doc':['Yamaha DOC',0],'qy10':['Yamaha QY10',0],'qy20':['Yamaha QY20',0]},active:[false,false],value:{cat:1}}">
 			<div class="column column-option"><b>Global mode</b></div>
-			<template x-for="mode in modes">
-				<div class="column column-option column-button column-nowrap" @click="gMode(mode[0])" x-text="mode[1]" :title="`Internal ID: (${mode[0]})`" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
-			</template>
+			<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
+				<div class="dropdown-trigger" style="min-width: 5.5rem" @click="active[1]=false;active[0]=!active[0]">
+					<button aria-haspopup="true">
+						<span x-text="cats[$store.deviceModeCatOverride?modes[$store.deviceMode][1]:value.cat]"></span>
+					</button><div class="iconset attach-right">
+						<div class="iconcut size-24" x-show="!active[0]" style="mask-image:url('./img/feather/chevron-down.svg')"></div>
+						<div class="iconcut size-24" x-show="active[0]" style="mask-image:url('./img/feather/chevron-up.svg')"></div>
+					</div>
+				</div>
+				<div class="dropdown-menu" role="menu" id="dropdown-globalMode">
+					<div class="dropdown-content">
+						<template x-for="(cat, index) in cats">
+							<a class="dropdown-item" :active="value.cat==index" x-text="cat" @click="value.cat=index;$store.deviceModeCatOverride=false;active[0]=false;active[1]=true"></a>
+						</template>
+					</div>
+				</div>
+			</div>
+			<div :class="`column column-option column-button column-nowrap dropdown${active[1]?' is-active':''}`" :active="active[1]">
+				<div class="dropdown-trigger" style="min-width: 9rem" @click="active[0]=false;active[1]=!active[1]">
+					<button aria-haspopup="true">
+						<span x-text="modes[$store.deviceMode||'?'][0]||'Unrecognized'"></span>
+					</button><div class="iconset attach-right">
+						<div class="iconcut size-24" x-show="!active[1]" style="mask-image:url('./img/feather/chevron-down.svg')"></div>
+						<div class="iconcut size-24" x-show="active[1]" style="mask-image:url('./img/feather/chevron-up.svg')"></div>
+					</div>
+				</div>
+				<div class="dropdown-menu" role="menu" id="dropdown-globalMode">
+					<div class="dropdown-content">
+						<template x-for="(mode, index) in modes">
+							<a class="dropdown-item" :active="$store.deviceMode==index" x-text="mode[0]" x-show="value.cat==mode[1]||mode[1]==255" :title="`Internal ID: (${index})`" @click="gMode(index);active[1]=false"></a>
+						</template>
+					</div>
+				</div>
+			</div>
+			<!--<template x-for="(mode, index) in modes">
+				<div class="column column-option column-button column-nowrap" @click="gMode(mode[0])" x-text="mode" :title="`Internal ID: (${index})`" :active="($store.deviceMode||'?')==mode[0]?'true':'false'"></div>
+			</template>-->
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native']],gsLvls:[[1,'SC-55'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']]}">
