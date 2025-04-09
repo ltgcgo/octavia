@@ -46,7 +46,6 @@ let readUintBE = function (buffer, byteLength) {
 	};
 	return result;
 };
-
 let commitData = (controller, data) => {
 	controller.unsent = false;
 	controller.enqueue(data);
