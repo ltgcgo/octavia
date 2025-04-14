@@ -3433,7 +3433,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				workArr.unshift(0);
 			};
 			workArr.forEach(function (e, i) {
-				let ln = Math.floor(i / 16), co = i % 16;
+				let ln = i >> 4, co = i & 15;
 				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
 				pt -= co * 5;
 				if (ln === 2) {
@@ -4594,7 +4594,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						};*/
 						workArr.forEach(function (e, ii) {
 							let i = ii + offset;
-							let ln = Math.floor(i / 16), co = i % 16;
+							let ln = i >> 4, co = i & 15;
 							let pt = (co * 4 + ln) * 5, threshold = 5, bi = 0;
 							pt -= co * 4;
 							if (ln === 3) {
