@@ -3429,10 +3429,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#bitmapExpire = Date.now() + 3200;
 			upThis.#bitmap.fill(0); // Init
 			let workArr = msg.subarray(1);
-			for (let index = 0; index < offset; index ++) {
-				workArr.unshift(0);
-			};
-			workArr.forEach(function (e, i) {
+			workArr.forEach(function (e, ir) {
+				let i = ir + offset;
 				let ln = i >> 4, co = i & 15;
 				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
 				pt -= co * 5;
@@ -4311,7 +4309,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#bitmapExpire = Date.now() + 3200;
 			upThis.#bitmap.fill(0); // Init
 			msg.forEach(function (e, i) {
-				let ln = Math.floor(i / 16), co = i % 16;
+				let ln = i >> 4, co = i & 15;
 				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
 				pt -= co * 5;
 				if (ln === 2) {
@@ -4589,9 +4587,6 @@ let OctaviaDevice = class extends CustomEventSource {
 						let offset = msg[1] & 63;
 						target.fill(0); // Init
 						let workArr = msg.subarray(2);
-						/*for (let index = 0; index < offset; index ++) {
-							workArr.unshift(0);
-						};*/
 						workArr.forEach(function (e, ii) {
 							let i = ii + offset;
 							let ln = i >> 4, co = i & 15;
