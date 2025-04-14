@@ -2099,7 +2099,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#sgSplittedMask = false;
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
-		upThis.#bitmap.fill(0);
+		for (let i = 0; i < upThis.#bitmapStore.length; i ++) {
+			upThis.#bitmap.fill(0);
+		};
 		upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 		upThis.#selectPort = 0;
 		upThis.#receiveRS = true;
@@ -2551,7 +2553,9 @@ let OctaviaDevice = class extends CustomEventSource {
 	constructor() {
 		super();
 		let upThis = this;
-		upThis.#bitmap = new Uint8Array(256);
+		for (let i = 0; i < 10; i ++) {
+			upThis.#bitmapStore[i] = new Uint8Array(256);
+		};
 		upThis.#bitmapStore[10] = new Uint8Array(512);
 		upThis.#metaSeq = new BinaryMatch();
 		upThis.#detect = {
@@ -3427,7 +3431,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let offset = msg[0];
 			upThis.#bitmapPage = 0;
 			upThis.#bitmapExpire = Date.now() + 3200;
-			upThis.#bitmap.fill(0); // Init
+			//upThis.#bitmap.fill(0); // Init
 			let workArr = msg.subarray(1);
 			workArr.forEach(function (e, ir) {
 				let i = ir + offset;
@@ -4307,7 +4311,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Same as XG bitmap display
 			upThis.#bitmapPage = 0;
 			upThis.#bitmapExpire = Date.now() + 3200;
-			upThis.#bitmap.fill(0); // Init
+			//upThis.#bitmap.fill(0); // Init
 			msg.forEach(function (e, i) {
 				let ln = i >> 4, co = i & 15;
 				let pt = (co * 3 + ln) * 7, threshold = 7, bi = 0;
@@ -4571,7 +4575,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				default: {
 					if (msg[0] < 6) {
-						// GS display bitmap
+						// GS bitmap display or frame draw
 						if (upThis.#bitmapPage > 9) {
 							upThis.#bitmapPage = 0;
 						};
@@ -4585,7 +4589,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						let target = upThis.#bitmapStore[realPage];
 						getDebugState() && console.debug(`GS frame draw page ${realPage}.`);
 						let offset = msg[1] & 63;
-						target.fill(0); // Init
+						//target.fill(0); // Init
 						let workArr = msg.subarray(2);
 						workArr.forEach(function (e, ii) {
 							let i = ii + offset;
@@ -5621,7 +5625,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				let bitOffset = offset - 32;
 				upThis.#bitmapExpire = Date.now() + 3200;
 				upThis.#bitmapPage = 10; // Use bitmap 11 that holds 512 pixels
-				upThis.#bitmap.fill(0); // Init
+				//upThis.#bitmap.fill(0); // Init
 				let workArr = msg.subarray(1);
 				let lastCol = 4;
 				workArr.forEach(function (e, i) {
