@@ -53,6 +53,7 @@ Octavia will now dynamically load additional demos if available. [See the credit
 - [AlpineJS](https://alpinejs.dev) (MIT License)
 - [BabelJS](https://babeljs.io) (MIT License)
 - [`brotli-dec-wasm`](https://github.com/httptoolkit/brotli-wasm) (Apache 2.0 License)
+  - [`rust-brotli`](https://crates.io/crates/brotli) (MIT License)
 - [`browser-fs-access`](https://github.com/GoogleChromeLabs/browser-fs-access) (Apache 2.0 License)
 - [Bulma](https://bulma.io) (MIT License)
 - Lightfelt (GNU LGPL v3.0)
