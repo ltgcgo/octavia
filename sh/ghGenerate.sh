@@ -16,7 +16,7 @@ tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			zopfli --i1 "$file" && echo "Compressed \"${file}\" with Zopfli."
+			gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
 		else
 			echo "File \"${file}\" cannot be compressed."
 		fi
@@ -32,7 +32,7 @@ tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			brotli -vq 11 "$file"
+			brotli -v9 "$file"
 		else
 			echo "File \"${file}\" cannot be compressed."
 		fi
