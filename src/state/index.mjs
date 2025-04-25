@@ -2459,7 +2459,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						break;
 					};
 					case modeMap.pa: {
-						efxDefault = [28, 52, 28, 0, 28, 0, 28, 0];
+						efxDefault = [28, 52, 28, 16, 28, 0, 28, 0];
 						break;
 					};
 					default: {
@@ -7178,19 +7178,26 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (msg[1]) {
 				case 0: {
 					setKorgPaEfx(0, msg[2], msg.subarray(3));
+					console.debug("Partially parsed KORG PA EFX SysEX:\n", msg);
 					break;
 				};
 				case 1: {
 					setKorgPaEfx(1, msg[2], msg.subarray(3));
+					console.debug("Partially parsed KORG PA EFX SysEX:\n", msg);
 					break;
 				};
 				case 2: {
 					setKorgPaEfx(2, msg[2], msg.subarray(3));
+					console.debug("Partially parsed KORG PA EFX SysEX:\n", msg);
 					break;
 				};
 				case 3: {
 					setKorgPaEfx(3, msg[2], msg.subarray(3));
+					console.debug("Partially parsed KORG PA EFX SysEX:\n", msg);
 					break;
+				};
+				default: {
+					console.debug("Unparsed KORG PA SysEX:\n", msg);
 				};
 			};
 		});
