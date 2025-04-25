@@ -2458,6 +2458,10 @@ let OctaviaDevice = class extends CustomEventSource {
 						efxDefault = [129, 0, 133, 0, 130, 0, 0, 0];
 						break;
 					};
+					case modeMap.pa: {
+						efxDefault = [28, 52, 28, 0, 28, 0, 28, 0];
+						break;
+					};
 					default: {
 						efxDefault = [0, 0, 0, 0, 0, 0, 0, 0];
 					};
@@ -7150,6 +7154,44 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (cvnWritten) {
 				upThis.setChActive(perfCh, 1);
 				upThis.pushChPrimitives(perfCh);
+			};
+		});
+		// KORG PA effects, only with PA50SD/PA80/MicroArranger/PA1X
+		let setKorgPaEfx = (slot, offset, msg) => {
+			let efxId = 0;
+			msg.forEach((e, i) => {
+				([() => {
+					efxId = ((e & 1) << 7) | (efxId & 127);
+					upThis.setEffectTypeRaw(slot, false, 28);
+					upThis.setEffectTypeRaw(slot, true, efxId);
+				}, () => {
+					efxId = (efxId & 128) | (e & 127);
+					upThis.setEffectTypeRaw(slot, false, 28);
+					upThis.setEffectTypeRaw(slot, true, efxId);
+					upThis.dispatchEvent(["efxreverb", "efxchorus", "efxdelay", "efxinsert0"][slot], upThis.getEffectType(slot));
+				}][i + offset] || (() => {}))();
+			});
+			//console.debug(slot, msg);
+		};
+		upThis.#seAi.add([96, 0, 1], (msg, track, id) => {
+			let catId = msg[0];
+			switch (msg[1]) {
+				case 0: {
+					setKorgPaEfx(0, msg[2], msg.subarray(3));
+					break;
+				};
+				case 1: {
+					setKorgPaEfx(1, msg[2], msg.subarray(3));
+					break;
+				};
+				case 2: {
+					setKorgPaEfx(2, msg[2], msg.subarray(3));
+					break;
+				};
+				case 3: {
+					setKorgPaEfx(3, msg[2], msg.subarray(3));
+					break;
+				};
 			};
 		});
 	};
