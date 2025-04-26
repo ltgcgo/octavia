@@ -1315,28 +1315,44 @@ let Cambiare = class extends RootDisplay {
 				debugger;
 			};
 			upThis.#sectInfo.insert1.setTextRaw(upThis.getEfx(ev.data.id));
-			classOn(upThis.#sectInfo.inscon1, ["field-active"]);
+			if (ev.data?.hidden) {
+				classOff(upThis.#sectInfo.inscon1, ["field-active"]);
+			} else {
+				classOn(upThis.#sectInfo.inscon1, ["field-active"]);
+			};
 		});
 		upThis.addEventListener("efxinsert2", (ev) => {
 			if (!ev.data?.id) {
 				debugger;
 			};
 			upThis.#sectInfo.insert2.setTextRaw(upThis.getEfx(ev.data.id));
-			classOn(upThis.#sectInfo.inscon2, ["field-active"]);
+			if (ev.data?.hidden) {
+				classOff(upThis.#sectInfo.inscon2, ["field-active"]);
+			} else {
+				classOn(upThis.#sectInfo.inscon2, ["field-active"]);
+			};
 		});
 		upThis.addEventListener("efxinsert3", (ev) => {
 			if (!ev.data?.id) {
 				debugger;
 			};
 			upThis.#sectInfo.insert3.setTextRaw(upThis.getEfx(ev.data.id));
-			classOn(upThis.#sectInfo.inscon3, ["field-active"]);
+			if (ev.data?.hidden) {
+				classOff(upThis.#sectInfo.inscon3, ["field-active"]);
+			} else {
+				classOn(upThis.#sectInfo.inscon3, ["field-active"]);
+			};
 		});
 		upThis.addEventListener("efxinsert4", (ev) => {
 			if (!ev.data?.id) {
 				debugger;
 			};
 			upThis.#sectInfo.insert4.setTextRaw(upThis.getEfx(ev.data.id));
-			classOn(upThis.#sectInfo.inscon4, ["field-active"]);
+			if (ev.data?.hidden) {
+				classOff(upThis.#sectInfo.inscon4, ["field-active"]);
+			} else {
+				classOn(upThis.#sectInfo.inscon4, ["field-active"]);
+			};
 		});
 		upThis.addEventListener("partefxtoggle", (ev) => {
 			let {part, active} = ev.data;

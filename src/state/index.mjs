@@ -2474,9 +2474,13 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				for (let i = 0; i < allocated.efx; i ++) {
 					if (!upThis.#efxBase[3 * i] && typeof efxDefault[i << 1] === "number") {
-						upThis.#efxBase[3 * i + 1] = efxDefault[2 * i];
-						upThis.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
-						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert0', 'insert1', 'insert2', 'insert3', 'insert3'][i]}`, {"id": upThis.getEffectType(i)});
+						upThis.#efxBase[3 * i + 1] = efxDefault[i << 1];
+						upThis.#efxBase[3 * i + 2] = efxDefault[(i << 1) | 1];
+						let hidden = false;
+						if (efxDefault[i << 1] === 0 && efxDefault[i << 1 | 1] >> 4 === 15) {
+							hidden = true;
+						};
+						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert0', 'insert1', 'insert2', 'insert3', 'insert4'][i]}`, {"id": upThis.getEffectType(i), hidden});
 						//console.debug(upThis.getEffectType(i));
 					};
 				};

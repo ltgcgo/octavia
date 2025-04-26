@@ -197,14 +197,14 @@ let RootDisplay = class extends CustomEventSource {
 			};
 		});
 		console.debug(`EFX: ${allCount} total, ${loadCount} loaded.`);
-		upThis.dispatchEvent(`efxreverb`, {"id": upThis.device.getEffectType(0)});
-		upThis.dispatchEvent(`efxchorus`, {"id": upThis.device.getEffectType(1)});
-		upThis.dispatchEvent(`efxdelay`, {"id": upThis.device.getEffectType(2)});
-		upThis.dispatchEvent(`efxinsert0`, {"id": upThis.device.getEffectType(3)});
-		upThis.dispatchEvent(`efxinsert1`, {"id": upThis.device.getEffectType(4)});
-		upThis.dispatchEvent(`efxinsert2`, {"id": upThis.device.getEffectType(5)});
-		upThis.dispatchEvent(`efxinsert3`, {"id": upThis.device.getEffectType(6)});
-		upThis.dispatchEvent(`efxinsert4`, {"id": upThis.device.getEffectType(7)});
+		let slots = ["reverb", "chorus", "delay", "insert0", "insert1", "insert2", "insert3", "insert4"];
+		for (let i = 0; i < slots.length; i ++) {
+			let hidden = false, id = upThis.device.getEffectType(i);
+			if (id[0] === 0 && id[1] >> 4 === 15) {
+				hidden = true;
+			};
+			upThis.dispatchEvent(`efx${slots[i]}`, {id, hidden});
+		};
 	};
 	async loadModels(text, overwrite) {
 		// Load the model ID map
