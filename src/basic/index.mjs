@@ -4,7 +4,7 @@
 "use strict";
 
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
-import {ccToPos, dnToPos, allocated, overrides} from "../state/index.mjs";
+import {ccToPos, dnToPos, allocated, overrides, effectSlots} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {customInterpreter} from "../state/utils.js";
@@ -197,13 +197,12 @@ let RootDisplay = class extends CustomEventSource {
 			};
 		});
 		console.debug(`EFX: ${allCount} total, ${loadCount} loaded.`);
-		let slots = ["reverb", "chorus", "delay", "insert0", "insert1", "insert2", "insert3", "insert4"];
-		for (let i = 0; i < slots.length; i ++) {
+		for (let i = 0; i < effectSlots.length; i ++) {
 			let hidden = false, id = upThis.device.getEffectType(i);
 			if (id[0] === 0 && id[1] >> 4 === 15) {
 				hidden = true;
 			};
-			upThis.dispatchEvent(`efx${slots[i]}`, {id, hidden});
+			upThis.dispatchEvent(`efx${effectSlots[i]}`, {id, hidden});
 		};
 	};
 	async loadModels(text, overwrite) {

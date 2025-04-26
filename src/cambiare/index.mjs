@@ -1356,13 +1356,13 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.addEventListener("partefxtoggle", (ev) => {
 			let {part, active} = ev.data;
-			([classOff, classOn][active])(upThis.#sectPart[part >> 4][part & 15].number, [
+			([classOff, classOn][active ? 1 : 0])(upThis.#sectPart[part >> 4][part & 15].number, [
 				`part-efx`
 			]);
 		});
 		upThis.addEventListener("channeltoggle", (ev) => {
 			let {part, active} = ev.data;
-			([classOff, classOn][active])(upThis.#sectPart[part >> 4][part & 15].root, [
+			([classOff, classOn][active ? 1 : 0])(upThis.#sectPart[part >> 4][part & 15].root, [
 				`part-active`
 			]);
 		});

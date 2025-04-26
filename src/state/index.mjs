@@ -203,6 +203,8 @@ nrpnCcMap = [33, 102, 99, 32, 100, 8, 9, 10]; // cc71 to cc78
 
 const korgDrums = [0, 16, 25, 40, 32, 64, 24, 48];
 
+const effectSlots = "reverb,chorus,delay,insert0,insert1,insert2,insert3,insert4".split(",");
+
 let modeMap = {};
 modeIdx.forEach((e, i) => {
 	modeMap[e] = i;
@@ -1870,6 +1872,18 @@ let OctaviaDevice = class extends CustomEventSource {
 	getEffectSink() {
 		return this.#efxTo;
 	};
+	getChEffectSink(part) {
+		return this.#efxTo[part];
+	};
+	setChEffectSink(part, efxSlot = 0) {
+		// EFX slot 0 does NOT mean it's reverb, but rather "no insertion effects"
+		// Octavia assumes that reverb is always enabled for the whole module
+		this.#efxTo[part] = efxSlot;
+		this.dispatchEvent("partefxtoggle", {
+			part,
+			active: efxSlot
+		});
+	};
 	setLetterDisplay(data, source, offset = 0, delay = 3200) {
 		let upThis = this,
 		invalidCp;
@@ -2211,14 +2225,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.buildRchTree();
 		upThis.buildRccMap();
 		upThis.dispatchEvent("mastervolume", upThis.#masterVol);
-		upThis.dispatchEvent(`efxreverb`, {"id": upThis.getEffectType(0)});
-		upThis.dispatchEvent(`efxchorus`, {"id": upThis.getEffectType(1)});
-		upThis.dispatchEvent(`efxdelay`, {"id": upThis.getEffectType(2)});
-		upThis.dispatchEvent(`efxinsert0`, {"id": upThis.getEffectType(3)});
-		upThis.dispatchEvent(`efxinsert1`, {"id": upThis.getEffectType(4)});
-		upThis.dispatchEvent(`efxinsert2`, {"id": upThis.getEffectType(5)});
-		upThis.dispatchEvent(`efxinsert3`, {"id": upThis.getEffectType(6)});
-		upThis.dispatchEvent(`efxinsert4`, {"id": upThis.getEffectType(6)});
+		for (let i = 0; i < effectSlots; i ++) {
+			upThis.dispatchEvent(`efx${effectSlots[i]}`, {"id": upThis.getEffectType(i)});
+		};
 		upThis.dispatchEvent("reset");
 		upThis.switchMode("?");
 		return;
@@ -2480,7 +2489,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (efxDefault[i << 1] === 0 && efxDefault[i << 1 | 1] >> 4 === 15) {
 							hidden = true;
 						};
-						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert0', 'insert1', 'insert2', 'insert3', 'insert4'][i]}`, {"id": upThis.getEffectType(i), hidden});
+						upThis.dispatchEvent(`efx${effectSlots[i]}`, {"id": upThis.getEffectType(i), hidden});
 						//console.debug(upThis.getEffectType(i));
 					};
 				};
@@ -4783,11 +4792,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						// GS part EFX toggle
 						console.debug(`${dPref}EFX: o${["ff", "n"][e]}`);
-						upThis.#efxTo[part] = e;
-						upThis.dispatchEvent("partefxtoggle", {
-							part,
-							active: e
-						});
+						upThis.setChEffectSink(part, e ? 3 : 0);
 					}][offset + i - 32]();
 				});
 			} else {
@@ -7075,11 +7080,12 @@ let OctaviaDevice = class extends CustomEventSource {
 						([() => {
 							// Insertion FX info
 							let ifxSlot = e & 7;
-							if (e & 8 !== 0) {
+							if ((e & 8) !== 0) {
 								// The fourth least significant bit seems to be turning IFX off.
 								ifxSlot = 1;
 							};
 							console.debug(`${dPref}CH${part + 1} sends to ${ifxSlot > 1 ? `IFX${ifxSlot - 1}` : "direct out"} (${e.toString(16)}).`);
+							upThis.setChEffectSink(part, (e > 1 && e < 7) ? e + 1 : 0);
 						}][pi - 22] || (() => {}))();
 					} else {
 						([() => {
@@ -7219,7 +7225,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					efxId = (efxId & 128) | (e & 127);
 					upThis.setEffectTypeRaw(slot, false, 28);
 					upThis.setEffectTypeRaw(slot, true, efxId);
-					upThis.dispatchEvent(["efxreverb", "efxchorus", "efxdelay", "efxinsert0"][slot], {"id": upThis.getEffectType(slot)});
+					upThis.dispatchEvent(`efx${effectSlots[slot]}`, {"id": upThis.getEffectType(slot)});
 				}][i + offset] || (() => {}))();
 			});
 			//console.debug(slot, msg);
@@ -7261,5 +7267,6 @@ export {
 	ccToPos,
 	dnToPos,
 	overrides,
-	getDebugState
+	getDebugState,
+	effectSlots
 };
