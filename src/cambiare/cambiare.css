@@ -1,0 +1,346 @@
+div.cambiare {
+	font-family: "PT Sans Narrow";
+	font-size: 26px;
+	display: grid;
+	align-items: center;
+	justify-content: center;
+	background: #000;
+}
+div.cambiare > div.cambiare-container {
+	overflow: hidden;
+}
+
+div.cambiare-canvas {
+	--background-color: #222;
+	--foreground-color: #fff;
+	--accent-color: #fcdaff;
+	--white-keys: var(--foreground-color);
+	--black-keys: var(--accent-color);
+}
+div.cambiare-canvas .pcp-font4 {
+	transform: var(--pcp-font4);
+}
+div.cambiare-canvas .pcp-font7 {
+	transform: var(--pcp-font7);
+}
+div.cambiare-canvas.cambiare-scheme-light {
+	--background-color: #fff;
+	--foreground-color: #000;
+	--accent-color: #742b81;
+	--white-keys: var(--foreground-color);
+	--black-keys: var(--accent-color);
+}
+div.cambiare-canvas.cambiare-mode-xg,
+div.cambiare-canvas.cambiare-mode-doc,
+div.cambiare-canvas.cambiare-mode-qy10,
+div.cambiare-canvas.cambiare-mode-qy20,
+div.cambiare-canvas.cambiare-mode-ns5r,
+div.cambiare-canvas.cambiare-mode-x5d,
+div.cambiare-canvas.cambiare-mode-05rw,
+div.cambiare-canvas.cambiare-mode-trin,
+div.cambiare-canvas.cambiare-mode-k11,
+div.cambiare-canvas.cambiare-mode-s90es,
+div.cambiare-canvas.cambiare-mode-motif,
+div.cambiare-canvas.cambiare-mode-cs6x,
+div.cambiare-canvas.cambiare-mode-an1x,
+div.cambiare-canvas.cambiare-mode-cs1x,
+div.cambiare-canvas div.part-channel.part-mode-xg,
+div.cambiare-canvas div.part-channel.part-mode-doc,
+div.cambiare-canvas div.part-channel.part-mode-qy10,
+div.cambiare-canvas div.part-channel.part-mode-qy20,
+div.cambiare-canvas div.part-channel.part-mode-ns5r,
+div.cambiare-canvas div.part-channel.part-mode-x5d,
+div.cambiare-canvas div.part-channel.part-mode-05rw,
+div.cambiare-canvas div.part-channel.part-mode-trin,
+div.cambiare-canvas div.part-channel.part-mode-k11,
+div.cambiare-canvas div.part-channel.part-mode-s90es,
+div.cambiare-canvas div.part-channel.part-mode-motif,
+div.cambiare-canvas div.part-channel.part-mode-cs6x,
+div.cambiare-canvas div.part-channel.part-mode-an1x,
+div.cambiare-canvas div.part-channel.part-mode-cs1x {
+	--accent-color: #9efaa0;
+}
+div.cambiare-canvas.cambiare-mode-gm,
+div.cambiare-canvas.cambiare-mode-g2,
+div.cambiare-canvas.cambiare-mode-pa,
+div.cambiare-canvas.cambiare-mode-krs,
+div.cambiare-canvas div.part-channel.part-mode-gm,
+div.cambiare-canvas div.part-channel.part-mode-g2,
+div.cambiare-canvas div.part-channel.part-mode-pa,
+div.cambiare-canvas div.part-channel.part-mode-krs {
+	--accent-color: #a1f3ff;
+}
+div.cambiare-canvas.cambiare-mode-gs,
+div.cambiare-canvas.cambiare-mode-sc,
+div.cambiare-canvas.cambiare-mode-mt32,
+div.cambiare-canvas.cambiare-mode-sd,
+div.cambiare-canvas div.part-channel.part-mode-gs,
+div.cambiare-canvas div.part-channel.part-mode-sc,
+div.cambiare-canvas div.part-channel.part-mode-mt32,
+div.cambiare-canvas div.part-channel.part-mode-sd {
+	--accent-color: #ffe1a5;
+}
+div.cambiare-canvas.cambiare-mode-sg,
+div.cambiare-canvas div.part-channel.part-mode-sg {
+	--accent-color: #fdd;
+}
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-xg,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-doc,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-qy10,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-qy20,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-ns5r,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-x5d,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-05rw,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-trin,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-k11,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-s90es,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-motif,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-cs6x,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-an1x,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-cs1x,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-xg,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-doc,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-qy10,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-qy20,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-ns5r,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-x5d,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-05rw,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-trin,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-k11,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-s90es,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-motif,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-cs6x,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-an1x,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-cs1x {
+	--accent-color: #006415;
+}
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gm,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-g2,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-pa,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-krs,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-gm,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-g2,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-pa,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-krs {
+	--accent-color: #005e88;
+}
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gs,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sc,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-mt32,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sd,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-gs,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sc,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-mt32,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sd {
+	--accent-color: #804e00;
+}
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sg,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sg {
+	--accent-color: #902;
+}
+
+div.cambiare div.cambiare-canvas {
+	background: var(--background-color);
+	color: var(--foreground-color);
+	width: 1920px;
+	height: 1080px;
+	transform-origin: 0 0;
+}
+div.cambiare-canvas > div {
+	display: inline-block;
+	position: absolute;
+	/*background: #fff5;*/
+	width: 1896px;
+	left: 12px;
+}
+div.cambiare-canvas.debug > div {
+	outline: 1px #0f07 solid;
+}
+div.cambiare-canvas span {
+	display: inline-block;
+	line-height: 1.15em;
+}
+div.cambiare-canvas span.field,
+div.cambiare-canvas div.boundary,
+div.cambiare-canvas canvas.field {
+	position: absolute;
+	cursor: default;
+}
+div.cambiare-canvas.debug div.portion {
+	position: relative;
+	cursor: default;
+}
+div.cambiare-canvas.debug span.field,
+div.cambiare-canvas.debug div.boundary {
+	outline: 1px #fff7 solid;
+}
+div.cambiare-canvas.debug div.portion {
+	outline: 1px #aaf7 solid;
+}
+div.cambiare-canvas span.field-label {
+	color: var(--accent-color);
+}
+div.cambiare-canvas span.field-key {
+	color: var(--accent-color);
+	font-weight: bold;
+}
+
+div.cambiare-canvas > div.sect-info {
+	top: 3px;
+	height: 67px;
+}
+div.cambiare-canvas > div.sect-mark {
+	top: 72px;
+	height: 33px;
+}
+div.cambiare-canvas > div.sect-part {
+	top: 106px;
+	height: 832px;
+}
+div.cambiare-canvas > div.sect-meta {
+	width: 934px;
+	top: 940px;
+	height: 137px;
+	overflow: hidden;
+}
+
+div.cambiare-canvas > div.sect-mark > div {
+	width: 936px;
+	height: 33px;
+}
+div.cambiare-canvas > div.sect-mark span.mark-send-title {
+	font-size: 14px;
+}
+div.cambiare-canvas > div.sect-mark span.mark-send-param {
+	font-size: 12px;
+}
+div.cambiare-canvas.cambiare-port1 div.sect-mark-right, div.cambiare-canvas.cambiare-compact div.sect-mark-right {
+	display: none;
+}
+
+@keyframes slideFadeIn {
+	0% {
+		transform: translateX(1em);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+div.cambiare-canvas > div.sect-meta div.meta-line {
+	margin: 0 0 3px;
+	height: 25px;
+	line-height: 25px;
+	tab-size: 2;
+}
+div.cambiare-canvas > div.sect-meta > div.boundary {
+	width: 100%;
+	transition: transform 0.1s;
+}
+div.cambiare-canvas > div.sect-meta div.meta-line > span {
+	font-size: 20px;
+}
+div.cambiare-canvas > div.sect-meta span.meta-type {
+	width: 88px;
+	text-align: right;
+}
+div.cambiare-canvas > div.sect-meta span.meta-data {
+	left: 94px;
+	white-space: pre;
+}
+div.cambiare-canvas > div.sect-meta span.meta-data > span.meta-slice {
+	animation: slideFadeIn 0.1s;
+}
+
+div.cambiare-canvas > div.sect-part > div {
+	width: 1896px;
+	height: 832px;
+	display: none;
+}
+div.cambiare-canvas.cambiare-port2 > div.sect-part > div,
+div.cambiare-canvas.cambiare-port4 > div.sect-part > div {
+	width: 936px;
+}
+div.cambiare-canvas.cambiare-port4 > div.sect-part > div {
+	height: 416px;
+}
+div.cambiare-canvas > div.sect-part div.part-channel {
+	height: 52px;
+	width: 100%;
+	display: none;
+}
+div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-channel {
+	height: 26px;
+}
+div.cambiare-canvas > div.sect-part div.part-info-major,
+div.cambiare-canvas > div.sect-part div.part-info-minor {
+	width: 254px;
+	height: 26px;
+	font-size: 20px;
+}
+div.cambiare-canvas > div.sect-part div.part-info-major span.part-efx {
+	font-weight: bold;
+}
+div.cambiare-canvas > div.sect-part div.part-info-major span.part-focus {
+	text-decoration: underline;
+}
+div.cambiare-canvas > div.sect-part span.part-csplit {
+	top: 100%;
+	width: 1px;
+	height: calc(33% - 2px);
+	opacity: 0.5;
+	background: var(--accent-color);
+	transform: translateY(calc(-100% - 1px));
+}
+div.cambiare-canvas > div.sect-part span.part-csplit:nth-child(6) {
+	opacity: 1;
+}
+div.cambiare-canvas > div.sect-part span.part-cdive {
+	transform: translateY(-1px);
+}
+div.cambiare-canvas > div.sect-part span.part-note-black {
+	--white-keys: var(--black-keys);
+}
+div.cambiare-canvas > div.sect-part span.part-note {
+	top: 2px;
+	height: calc(100% - 2px);
+	width: 0.78125%;
+	border: 1px solid var(--white-keys);
+	background: var(--white-keys);
+	transform: translateX(1px);
+}
+div.cambiare-canvas > div.sect-part span.part-note-held {
+	background: transparent;
+}
+div.cambiare-canvas.cambiare-port1 > div.sect-part span.part-note {
+	border: 2px solid var(--white-keys);
+}
+div.cambiare-canvas > div.sect-part div.part-keys {
+	left: 256px;
+	width: calc(100% - 256px);
+	height: 100%;
+	overflow: hidden;
+}
+div.cambiare-canvas > div.sect-part div.part-keyboard {
+	height: 100%;
+	width: calc(100% * 128 / 176);
+	margin: 0 calc(100% * 24 / 176);
+}
+div.cambiare-canvas:not(div.cambiare-style-line) > div.sect-part div.part-keyboard {
+	transition: 0.025s transform;
+}
+div.cambiare-canvas.cambiare-port4 > div.sect-part div.part-info-minor {
+	display: none;
+}
+div.cambiare-canvas > div.sect-part > div.port-active,
+div.cambiare-canvas > div.sect-part div.part-active {
+	display: block;
+}
+div.cambiare-canvas > div.sect-part div.part-hidden {
+	opacity: 0;
+}
+
+rect {
+	opacity: 0.1;
+}

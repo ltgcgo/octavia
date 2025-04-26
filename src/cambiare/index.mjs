@@ -1020,7 +1020,7 @@ let Cambiare = class extends RootDisplay {
 		attachElement.appendChild(containerElement);
 		upThis.#container = containerElement;
 		// Insert the canvas
-		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-block"]);
+		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-comb"]);
 		containerElement.appendChild(canvasElement);
 		upThis.#canvas = canvasElement;
 		// Start the resizer
@@ -1041,8 +1041,8 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.volume = createElement("span", ["field", "pcp-font4"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
 		upThis.#sectInfo.mode = createElement("span", ["field", "pcp-font4"], {t: 1, l: 708, w: 152, h: 33});
 		upThis.#sectInfo.reverb = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1000, w: 190, h: 33});
-		upThis.#sectInfo.chorus = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1240, w: 190, h: 33});
-		upThis.#sectInfo.delay = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1475, w: 190, h: 33});
+		upThis.#sectInfo.chorus = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1235, w: 190, h: 33});
+		upThis.#sectInfo.delay = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1471, w: 190, h: 33});
 		upThis.#sectInfo.insert = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1706, w: 190, h: 33});
 		upThis.#sectInfo.title = createElement("span", ["field", "pcp-font4"], {t: 35, l: 50, w: 810, h: 33})
 		/*upThis.#sectInfo.reverb = createElement("span", ["field", "pcp-font4"], {t: 35, l: 40, w: 190, h: 33});
@@ -1071,16 +1071,16 @@ let Cambiare = class extends RootDisplay {
 			createElement("span", ["field", "field-label", "pcp-font4"], {t: 1, l: 626, w: 17, h: 33, i: "%"}),
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 652, w: 52, h: 33, i: "Mode"}),
 			upThis.#sectInfo.mode,
-			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 960, w: 34, h: 33, i: "Rev"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 960, w: 36, h: 33, i: "Rev", a: "right"}),
 			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 0, w: 34, h: 33, i: "Rev"}),
 			upThis.#sectInfo.reverb,
-			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1198, w: 36, h: 33, i: "Cho"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1195, w: 36, h: 33, i: "Cho", a: "right"}),
 			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 238, w: 36, h: 33, i: "Cho"}),
 			upThis.#sectInfo.chorus,
-			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1438, w: 31, h: 33, i: "Var"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1431, w: 36, h: 33, i: "Var", a: "right"}),
 			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 478, w: 31, h: 33, i: "Var"}),
 			upThis.#sectInfo.delay,
-			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1673, w: 27, h: 33, i: "Ins"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1666, w: 36, h: 33, i: "Ins", a: "right"}),
 			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 713, w: 27, h: 33, i: "Ins"}),
 			upThis.#sectInfo.insert,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 0, w: 44, h: 33, i: "Title"}),
