@@ -3384,6 +3384,11 @@ let OctaviaDevice = class extends CustomEventSource {
 						console.debug(`${dPref}connection: ${e ? "system" : "insertion"}`);
 					}, (e) => {
 						console.debug(`${dPref}channel: CH${e + 1}`);
+						// This part needs rework
+						if (e < 64) {
+							let part = upThis.chRedir(e, track, true);
+							upThis.setChEffectSink(part, 2);
+						};
 					}, (e) => {
 						console.debug(`${dPref}mod wheel: ${e - 64}`);
 					}, (e) => {
@@ -3429,14 +3434,20 @@ let OctaviaDevice = class extends CustomEventSource {
 			let varSlot = msg[0], offset = msg[1];
 			let dPref = `XG Insertion ${msg[0] + 1} `;
 			msg.subarray(2).forEach((e, i) => {
-				([(e) => {
+				([() => {
 					upThis.setEffectTypeRaw(3 + varSlot, false, e);
 					console.info(`${dPref}main type: ${xgEffType[e]}`);
 					upThis.dispatchEvent(`efxinsert${varSlot}`, {"id": upThis.getEffectType(3 + varSlot)});
-				}, (e) => {
+				}, () => {
 					upThis.setEffectTypeRaw(3 + varSlot, true, e);
 					console.debug(`${dPref}sub type: ${e + 1}`);
 					upThis.dispatchEvent(`efxinsert${varSlot}`, {"id": upThis.getEffectType(3 + varSlot)});
+				}, false, false, false, false, false, false, false, false, false, false, () => {
+					console.debug(`${dPref}channel: CH${e + 1}`);
+					if (e < 64) {
+						let part = upThis.chRedir(e, track, true);
+						upThis.setChEffectSink(part, 3 + varSlot);
+					};
 				}][offset + i] || function () {
 					//console.warn(`Unknown XG variation address: ${msg[0]}.`);
 				})(e);
