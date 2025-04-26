@@ -265,7 +265,7 @@ const allocated = {
 	dpn: useDrumNrpn.length, // Drum setup params
 	dnc: 128, // drum note 0 to 127
 	ext: 3, // extensions
-	efx: 7,
+	efx: 8,
 	cvn: 12, // custom voice names
 	redir: 32,
 	vxPrim: 3,
@@ -1150,6 +1150,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							// Sostenuto off
 							this.#uAction.soOf(part);
 						};
+						//console.debug(`Sostenuto: ${det.data[1]}`);
 						break;
 					};
 					case 98:
@@ -2415,18 +2416,18 @@ let OctaviaDevice = class extends CustomEventSource {
 				switch (idx) {
 					case modeMap["?"]:
 					case modeMap.g2: {
-						efxDefault = [52, 4, 52, 18, 0, 255, 0, 255];
+						efxDefault = [52, 4, 52, 18, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.xg:
 					case modeMap.cs1x: {
-						efxDefault = [1, 0, 65, 0, 5, 0, 64, 0];
+						efxDefault = [1, 0, 65, 0, 5, 0, 64, 0, 64, 0, 64, 0, 64, 0, 0, 255];
 						break;
 					};
 					case modeMap.gm:
 					case modeMap.gs:
 					case modeMap.sc: {
-						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0];
+						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.sd: {
@@ -2436,41 +2437,46 @@ let OctaviaDevice = class extends CustomEventSource {
 					case modeMap["05rw"]:
 					case modeMap.x5d:
 					case modeMap.ns5r: {
-						efxDefault = [44, 1, 44, 19, 0, 255, 0, 255];
+						efxDefault = [44, 1, 44, 19, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.k11:
 					case modeMap.sg: {
-						efxDefault = [24, 0, 0, 255, 0, 255, 0, 255];
+						efxDefault = [24, 0, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.mt32: {
-						efxDefault = [40, 4, 0, 255, 0, 255, 0, 255];
+						efxDefault = [40, 4, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.doc: {
-						efxDefault = [24, 16, 0, 255, 0, 255, 0, 255];
+						efxDefault = [24, 16, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.motif:
 					case modeMap.s90es:
 					case modeMap.cs6x: {
-						efxDefault = [129, 0, 133, 0, 130, 0, 0, 0];
+						efxDefault = [129, 0, 133, 0, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 						break;
 					};
 					case modeMap.pa: {
-						efxDefault = [28, 52, 28, 16, 28, 0, 28, 0];
+						efxDefault = [28, 52, 28, 16, 28, 0, 28, 0, 0, 255, 0, 255, 0, 255, 0, 255];
+						break;
+					};
+					case modeMap.krs: {
+						efxDefault = [45, 0, 45, 0, 0, 255, 45, 0, 45, 0, 45, 0, 45, 0, 45, 0];
 						break;
 					};
 					default: {
-						efxDefault = [0, 0, 0, 0, 0, 0, 0, 0];
+						efxDefault = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 					};
 				};
 				for (let i = 0; i < allocated.efx; i ++) {
-					if (!upThis.#efxBase[3 * i] && efxDefault[i << 1]?.constructor) {
+					if (!upThis.#efxBase[3 * i] && typeof efxDefault[i << 1] === "number") {
 						upThis.#efxBase[3 * i + 1] = efxDefault[2 * i];
 						upThis.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
-						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert0'][i]}`, upThis.getEffectType(i));
+						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert0', 'insert1', 'insert2', 'insert3', 'insert3'][i]}`, upThis.getEffectType(i));
+						//console.debug(upThis.getEffectType(i));
 					};
 				};
 				if (setTarget) {
@@ -6976,16 +6982,44 @@ let OctaviaDevice = class extends CustomEventSource {
 			korgFilter(msg, (e, i) => {
 				if (i < 24) {
 					trackName += String.fromCharCode(Math.max(32, e));
+				} else if (i < 88) {
+					// Trap...
+				} else if (i < 468) {
+					// 88 ~ 467: IFX 1~5
+					let si = i - 88;
+					//let slot = Math.floor(si / 76);
+					let slot = (si * 863) >> 16;
+					let pi = si - slot * 76;
+					([() => {
+						upThis.setEffectType(slot + 3, 45, e);
+						upThis.dispatchEvent(`efxinsert${slot}`, upThis.getEffectType(slot + 3));
+					}, false, () => {
+						console.debug(`${dPref}IFX${slot + 1} sends to ${e <= 5 && e > 0 ? `IFX${e}` : "direct out"}.`);
+					}][pi] || (() => {}))();
+				} else if (i < 604) {
+					// 468 ~ 603: MFX 1~2 (chorus, reverb)
+					let si = i - 468;
+					//let slot = Math.floor(si / 68);
+					let slot = (si * 964) >> 16;
+					let pi = si - slot * 68;
+					([() => {
+						upThis.setEffectType(1 - slot, 45, e);
+						upThis.dispatchEvent(['efxreverb', 'efxchorus'][1 - slot], upThis.getEffectType(1 - slot));
+					}, false][pi] || (() => {}))();
+					console.debug(slot);
 				} else if (i < 1276) {
 					// Trap...
 				} else {
 					// Part dump
 					let si = i - 1276;
-					let part = upThis.chRedir(Math.floor(si / 44), track, true);
-					let pi = si % 44;
+					//let track = Math.floor(si / 44);
+					let track = (si * 1490) >> 16;
+					let part = upThis.chRedir(track, track, true);
+					// let pi = si % 44;
+					let pi = si - track * 44;
 					let chOff = ccOffTable[part];
-					//console.debug(`${i} ${si} ${Math.floor(si / 44)} ${part} ${pi}`);
-					if (pi < 15) {
+					//console.debug(`${i} ${si} ${Math.floor(si / 44)} ${part} ${pi.toString().padStart(2, "0")}: ${e.toString(16).padStart(2, "0")}`);
+					if (pi < 22) {
 						([() => {
 							e && upThis.setChActive(part, 1);
 							upThis.#prg[part] = e;
@@ -7014,7 +7048,9 @@ let OctaviaDevice = class extends CustomEventSource {
 							// receive CH and status
 							let ch = upThis.chRedir(e & 15, track, true);
 							upThis.#chReceive[part] = ch;
-							console.info(`${dPref}CH${part + 1} receives from CH${ch + 1}`);
+							if (ch !== part) {
+								console.info(`${dPref}CH${part + 1} receives from CH${ch + 1}`);
+							};
 							/*let enabled = (e >> 5) & 1;
 							if (!enabled) {
 								upThis.setChActive(part, 0);
@@ -7030,7 +7066,17 @@ let OctaviaDevice = class extends CustomEventSource {
 							//console.debug(`${dPref}CH${part + 1} pan: ${e}`);
 							upThis.#cc[chOff + ccToPos[10]] = e || 128;
 						}][pi] || (() => {}))();
-					} else if (pi < 36) {} else {
+					} else if (pi < 36) {
+						([() => {
+							// Insertion FX info
+							let ifxSlot = e & 7;
+							if (e & 8 !== 0) {
+								// The fourth least significant bit seems to be turning IFX off.
+								ifxSlot = 1;
+							};
+							console.debug(`${dPref}CH${part + 1} sends to ${ifxSlot > 1 ? `IFX${ifxSlot - 1}` : "direct out"} (${e.toString(16)}).`);
+						}][pi - 22] || (() => {}))();
+					} else {
 						([() => {
 							upThis.#cc[chOff + ccToPos[74]] = ((e + 128) & 255) - 64;
 						}, () => {
@@ -7041,7 +7087,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.#cc[chOff + ccToPos[75]] = ((e + 128) & 255) - 64;
 						}, false, () => {
 							upThis.#cc[chOff + ccToPos[72]] = ((e + 128) & 255) - 64;
-						}][pi] || (() => {}))();
+						}][pi - 36] || (() => {}))();
 						//console.debug(`${dPref}${pi} ${e}`);
 					};
 				};

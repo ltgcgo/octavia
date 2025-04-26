@@ -106,7 +106,7 @@ MSB	LSB	Name
 1c	3b	PA Prm 4 EQ+Wah
 1c	3c	PA P4 EQ+Cho/Flng
 1c	3d	PA Prm 4 EQ+Phaser
-1c	3e	PA P4EQ+M-tap Dly
+1c	3e	PA P4 EQ+M-tap Dly
 1c	3f	PA Compressor+Wah
 1c	40	PA Comp+Amp Sim
 1c	41	PA Comp+Ovdr/HiGain
@@ -266,6 +266,20 @@ MSB	LSB	Name
 2c	2d	AI Delay/Overdrive
 2c	2e	AI Delay/Phaser
 2c	2f	AI Delay/Rotary
+2d	00	KR Unset
+2d	03	KR Stereo Limiter
+2d	07	KR St. Param 4 EQ
+2d	1d	KR Stereo Phaser
+2d	69	KR Hall
+2d	6a	KR Plate
+2d	6b	KR Room
+2d	6c	KR Bright Room
+2d	6d	KR Spring
+2d	6e	KR Hall 2
+2d	6f	KR Plate 2
+2d	70	KR Room 2
+2d	71	KR Early Reflection
+2d	72	KR P4 EQ+M-tap Dly
 31	00	GS Chorus/Delay
 31	01	GS Flanger/Delay
 31	02	GS Chorus/Flanger

@@ -575,6 +575,7 @@ let RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "efxinsert1");
 		eventPassThru(upThis.device, upThis, "efxinsert2");
 		eventPassThru(upThis.device, upThis, "efxinsert3");
+		eventPassThru(upThis.device, upThis, "efxinsert4");
 		eventPassThru(upThis.device, upThis, "partefxtoggle");
 		eventPassThru(upThis.device, upThis, "chmode");
 		upThis.addEventListener("note", function ({data}) {
