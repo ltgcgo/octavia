@@ -633,6 +633,18 @@ let RootDisplay = class extends CustomEventSource {
 			};
 			upThis.dispatchEvent("tsig", upThis.getTimeSig());
 		};
+		upThis.addEventListener("metacommit", ({data}) => {
+			switch (data.type) {
+				case "KarTitle":
+				case "EORTitle": {
+					if (upThis.#titleName?.length < 1) {
+						upThis.#titleName = data.data;
+						upThis.dispatchEvent("title", upThis.#titleName);
+					};
+					break;
+				};
+			};
+		});
 	};
 };
 

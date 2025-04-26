@@ -269,7 +269,9 @@ MSB	LSB	Name
 2d	00	KR Unset
 2d	03	KR Stereo Limiter
 2d	07	KR St. Param 4 EQ
+2d	11	KR Talking Mod
 2d	1d	KR Stereo Phaser
+2d	40	KR Stereo Chorus
 2d	69	KR Hall
 2d	6a	KR Plate
 2d	6b	KR Room
