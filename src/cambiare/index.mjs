@@ -1020,7 +1020,7 @@ let Cambiare = class extends RootDisplay {
 		attachElement.appendChild(containerElement);
 		upThis.#container = containerElement;
 		// Insert the canvas
-		let canvasElement = createElement("div", ["cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-comb"]);
+		let canvasElement = createElement("div", [/*"debug",*/ "cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-comb"]);
 		containerElement.appendChild(canvasElement);
 		upThis.#canvas = canvasElement;
 		// Start the resizer
@@ -1044,7 +1044,31 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.chorus = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1235, w: 190, h: 33});
 		upThis.#sectInfo.delay = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1471, w: 190, h: 33});
 		upThis.#sectInfo.insert = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1706, w: 190, h: 33});
-		upThis.#sectInfo.title = createElement("span", ["field", "pcp-font4"], {t: 35, l: 50, w: 810, h: 33})
+		upThis.#sectInfo.title = createElement("span", ["field", "pcp-font4"], {t: 35, l: 50, w: 810, h: 33});
+		upThis.#sectInfo.insert1 = createElement("span", ["field", "pcp-font4"], {t: 0, l: 40, w: 190, h: 33})
+		upThis.#sectInfo.insert2 = createElement("span", ["field", "pcp-font4"], {t: 0, l: 40, w: 190, h: 33})
+		upThis.#sectInfo.insert3 = createElement("span", ["field", "pcp-font4"], {t: 0, l: 40, w: 190, h: 33})
+		upThis.#sectInfo.insert4 = createElement("span", ["field", "pcp-font4"], {t: 0, l: 40, w: 190, h: 33})
+		upThis.#sectInfo.inscon1 = createElement("span", ["field", "field-collapsive"], {t: 35, l: 960, w: 230, h: 33});
+		upThis.#sectInfo.inscon2 = createElement("span", ["field", "field-collapsive"], {t: 35, l: 1195, w: 230, h: 33});
+		upThis.#sectInfo.inscon3 = createElement("span", ["field", "field-collapsive"], {t: 35, l: 1431, w: 230, h: 33});
+		upThis.#sectInfo.inscon4 = createElement("span", ["field", "field-collapsive"], {t: 35, l: 1666, w: 230, h: 33});
+		mountElement(upThis.#sectInfo.inscon1, [
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 0, l: 0, w: 36, h: 33, i: "In2", a: "right"}),
+			upThis.#sectInfo.insert1
+		]);
+		mountElement(upThis.#sectInfo.inscon2, [
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 0, l: 0, w: 36, h: 33, i: "In3", a: "right"}),
+			upThis.#sectInfo.insert2
+		]);
+		mountElement(upThis.#sectInfo.inscon3, [
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 0, l: 0, w: 36, h: 33, i: "In4", a: "right"}),
+			upThis.#sectInfo.insert3
+		]);
+		mountElement(upThis.#sectInfo.inscon4, [
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 0, l: 0, w: 36, h: 33, i: "In5", a: "right"}),
+			upThis.#sectInfo.insert4
+		]);
 		/*upThis.#sectInfo.reverb = createElement("span", ["field", "pcp-font4"], {t: 35, l: 40, w: 190, h: 33});
 		upThis.#sectInfo.chorus = createElement("span", ["field", "pcp-font4"], {t: 35, l: 280, w: 190, h: 33});
 		upThis.#sectInfo.delay = createElement("span", ["field", "pcp-font4"], {t: 35, l: 515, w: 190, h: 33});
@@ -1083,6 +1107,10 @@ let Cambiare = class extends RootDisplay {
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1666, w: 36, h: 33, i: "Ins", a: "right"}),
 			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 713, w: 27, h: 33, i: "Ins"}),
 			upThis.#sectInfo.insert,
+			upThis.#sectInfo.inscon1,
+			upThis.#sectInfo.inscon2,
+			upThis.#sectInfo.inscon3,
+			upThis.#sectInfo.inscon4,
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 0, w: 44, h: 33, i: "Title"}),
 			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 960, w: 44, h: 33, i: "Title"}),
 			upThis.#sectInfo.title
@@ -1259,16 +1287,56 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectPart[part >> 4][part & 15].notes.style.transform = `translateX(${pitch / 1.28}%)`;
 		});
 		upThis.addEventListener("efxreverb", (ev) => {
-			upThis.#sectInfo.reverb.setTextRaw(upThis.getEfx(ev.data));
+			if (!ev.data?.id) {
+				debugger;
+			};
+			upThis.#sectInfo.reverb.setTextRaw(upThis.getEfx(ev.data.id));
 		});
 		upThis.addEventListener("efxchorus", (ev) => {
-			upThis.#sectInfo.chorus.setTextRaw(upThis.getEfx(ev.data));
+			if (!ev.data?.id) {
+				debugger;
+			};
+			upThis.#sectInfo.chorus.setTextRaw(upThis.getEfx(ev.data.id));
 		});
 		upThis.addEventListener("efxdelay", (ev) => {
-			upThis.#sectInfo.delay.setTextRaw(upThis.getEfx(ev.data));
+			if (!ev.data?.id) {
+				debugger;
+			};
+			upThis.#sectInfo.delay.setTextRaw(upThis.getEfx(ev.data.id));
 		});
 		upThis.addEventListener("efxinsert0", (ev) => {
-			upThis.#sectInfo.insert.setTextRaw(upThis.getEfx(ev.data));
+			if (!ev.data?.id) {
+				debugger;
+			};
+			upThis.#sectInfo.insert.setTextRaw(upThis.getEfx(ev.data.id));
+		});
+		upThis.addEventListener("efxinsert1", (ev) => {
+			if (!ev.data?.id) {
+				debugger;
+			};
+			upThis.#sectInfo.insert1.setTextRaw(upThis.getEfx(ev.data.id));
+			classOn(upThis.#sectInfo.inscon1, ["field-active"]);
+		});
+		upThis.addEventListener("efxinsert2", (ev) => {
+			if (!ev.data?.id) {
+				debugger;
+			};
+			upThis.#sectInfo.insert2.setTextRaw(upThis.getEfx(ev.data.id));
+			classOn(upThis.#sectInfo.inscon2, ["field-active"]);
+		});
+		upThis.addEventListener("efxinsert3", (ev) => {
+			if (!ev.data?.id) {
+				debugger;
+			};
+			upThis.#sectInfo.insert3.setTextRaw(upThis.getEfx(ev.data.id));
+			classOn(upThis.#sectInfo.inscon3, ["field-active"]);
+		});
+		upThis.addEventListener("efxinsert4", (ev) => {
+			if (!ev.data?.id) {
+				debugger;
+			};
+			upThis.#sectInfo.insert4.setTextRaw(upThis.getEfx(ev.data.id));
+			classOn(upThis.#sectInfo.inscon4, ["field-active"]);
 		});
 		upThis.addEventListener("partefxtoggle", (ev) => {
 			let {part, active} = ev.data;
@@ -1395,10 +1463,10 @@ let Cambiare = class extends RootDisplay {
 		upThis.dispatchEvent("tempo", 120);
 		upThis.dispatchEvent("tsig", [4, 4]);
 		upThis.dispatchEvent("title", "");
-		upThis.dispatchEvent(`efxreverb`, upThis.device.getEffectType(0));
-		upThis.dispatchEvent(`efxchorus`, upThis.device.getEffectType(1));
-		upThis.dispatchEvent(`efxdelay`, upThis.device.getEffectType(2));
-		upThis.dispatchEvent(`efxinsert0`, upThis.device.getEffectType(3));
+		upThis.dispatchEvent(`efxreverb`, {"id": upThis.device.getEffectType(0)});
+		upThis.dispatchEvent(`efxchorus`, {"id": upThis.device.getEffectType(1)});
+		upThis.dispatchEvent(`efxdelay`, {"id": upThis.device.getEffectType(2)});
+		upThis.dispatchEvent(`efxinsert0`, {"id": upThis.device.getEffectType(3)});
 		upThis.#setPortView(true);
 	};
 	detach(attachElement) {
@@ -1435,6 +1503,10 @@ let Cambiare = class extends RootDisplay {
 			upThis.#underlinedCh = allocated.invalidCh;
 			upThis.#chAccent.fill(null);
 			upThis.#chMode.fill(null);
+			classOff(upThis.#sectInfo.inscon1, ["field-active"]);
+			classOff(upThis.#sectInfo.inscon2, ["field-active"]);
+			classOff(upThis.#sectInfo.inscon3, ["field-active"]);
+			classOff(upThis.#sectInfo.inscon4, ["field-active"]);
 			try {
 				// Remove all meta
 				let list = upThis.#sectMeta.view.children;

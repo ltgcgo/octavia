@@ -204,6 +204,13 @@ div.cambiare-canvas > div.sect-meta {
 	overflow: hidden;
 }
 
+div.cambiare-canvas > div.sect-info > span.field-collapsive {
+	display: none;
+}
+div.cambiare-canvas > div.sect-info > span.field-active {
+	display: initial;
+}
+
 div.cambiare-canvas > div.sect-mark > div {
 	width: 936px;
 	height: 33px;

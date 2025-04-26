@@ -197,13 +197,14 @@ let RootDisplay = class extends CustomEventSource {
 			};
 		});
 		console.debug(`EFX: ${allCount} total, ${loadCount} loaded.`);
-		upThis.dispatchEvent(`efxreverb`, upThis.device.getEffectType(0));
-		upThis.dispatchEvent(`efxchorus`, upThis.device.getEffectType(1));
-		upThis.dispatchEvent(`efxdelay`, upThis.device.getEffectType(2));
-		upThis.dispatchEvent(`efxinsert0`, upThis.device.getEffectType(3));
-		upThis.dispatchEvent(`efxinsert1`, upThis.device.getEffectType(4));
-		upThis.dispatchEvent(`efxinsert2`, upThis.device.getEffectType(5));
-		upThis.dispatchEvent(`efxinsert3`, upThis.device.getEffectType(6));
+		upThis.dispatchEvent(`efxreverb`, {"id": upThis.device.getEffectType(0)});
+		upThis.dispatchEvent(`efxchorus`, {"id": upThis.device.getEffectType(1)});
+		upThis.dispatchEvent(`efxdelay`, {"id": upThis.device.getEffectType(2)});
+		upThis.dispatchEvent(`efxinsert0`, {"id": upThis.device.getEffectType(3)});
+		upThis.dispatchEvent(`efxinsert1`, {"id": upThis.device.getEffectType(4)});
+		upThis.dispatchEvent(`efxinsert2`, {"id": upThis.device.getEffectType(5)});
+		upThis.dispatchEvent(`efxinsert3`, {"id": upThis.device.getEffectType(6)});
+		upThis.dispatchEvent(`efxinsert4`, {"id": upThis.device.getEffectType(7)});
 	};
 	async loadModels(text, overwrite) {
 		// Load the model ID map
@@ -236,7 +237,8 @@ let RootDisplay = class extends CustomEventSource {
 	getMapped(id) {
 		return this.#mapList[id]?.name || id;
 	};
-	getEfx([msb, lsb]) {
+	getEfx(data) {
+		let [msb, lsb] = data;
 		let id = (msb << 8) | lsb;
 		return this.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;
 	};

@@ -2211,13 +2211,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.buildRchTree();
 		upThis.buildRccMap();
 		upThis.dispatchEvent("mastervolume", upThis.#masterVol);
-		upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
-		upThis.dispatchEvent(`efxchorus`, upThis.getEffectType(1));
-		upThis.dispatchEvent(`efxdelay`, upThis.getEffectType(2));
-		upThis.dispatchEvent(`efxinsert0`, upThis.getEffectType(3));
-		upThis.dispatchEvent(`efxinsert1`, upThis.getEffectType(4));
-		upThis.dispatchEvent(`efxinsert2`, upThis.getEffectType(5));
-		upThis.dispatchEvent(`efxinsert3`, upThis.getEffectType(6));
+		upThis.dispatchEvent(`efxreverb`, {"id": upThis.getEffectType(0)});
+		upThis.dispatchEvent(`efxchorus`, {"id": upThis.getEffectType(1)});
+		upThis.dispatchEvent(`efxdelay`, {"id": upThis.getEffectType(2)});
+		upThis.dispatchEvent(`efxinsert0`, {"id": upThis.getEffectType(3)});
+		upThis.dispatchEvent(`efxinsert1`, {"id": upThis.getEffectType(4)});
+		upThis.dispatchEvent(`efxinsert2`, {"id": upThis.getEffectType(5)});
+		upThis.dispatchEvent(`efxinsert3`, {"id": upThis.getEffectType(6)});
+		upThis.dispatchEvent(`efxinsert4`, {"id": upThis.getEffectType(6)});
 		upThis.dispatchEvent("reset");
 		upThis.switchMode("?");
 		return;
@@ -2456,7 +2457,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					case modeMap.motif:
 					case modeMap.s90es:
 					case modeMap.cs6x: {
-						efxDefault = [129, 0, 133, 0, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+						efxDefault = [129, 0, 133, 0, 130, 0, 128, 0, 128, 0, 0, 255, 0, 255, 0, 2];
 						break;
 					};
 					case modeMap.pa: {
@@ -2475,7 +2476,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					if (!upThis.#efxBase[3 * i] && typeof efxDefault[i << 1] === "number") {
 						upThis.#efxBase[3 * i + 1] = efxDefault[2 * i];
 						upThis.#efxBase[3 * i + 2] = efxDefault[2 * i + 1];
-						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert0', 'insert1', 'insert2', 'insert3', 'insert3'][i]}`, upThis.getEffectType(i));
+						upThis.dispatchEvent(`efx${['reverb', 'chorus', 'delay', 'insert0', 'insert1', 'insert2', 'insert3', 'insert3'][i]}`, {"id": upThis.getEffectType(i)});
 						//console.debug(upThis.getEffectType(i));
 					};
 				};
@@ -3169,7 +3170,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// GM reverb set
 					if (param === 0) {
 						upThis.setEffectType(0, 52, value);
-						upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+						upThis.dispatchEvent("efxreverb", {"id": upThis.getEffectType(0)});
 					};
 					break;
 				};
@@ -3177,7 +3178,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// GM chorus set
 					if (param === 0) {
 						upThis.setEffectType(1, 52, value | 16);
-						upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+						upThis.dispatchEvent("efxchorus", {"id": upThis.getEffectType(1)});
 					};
 					break;
 				};
@@ -3246,11 +3247,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					([(e) => {
 						upThis.setEffectTypeRaw(0, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
-						upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+						upThis.dispatchEvent("efxreverb", {"id": upThis.getEffectType(0)});
 					}, (e) => {
 						upThis.setEffectTypeRaw(0, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
-						upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+						upThis.dispatchEvent("efxreverb", {"id": upThis.getEffectType(0)});
 					}, (e) => {
 						console.debug(`${dPref}time: ${getXgRevTime(e)}s`);
 					}, (e) => {
@@ -3296,11 +3297,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					([(e) => {
 						upThis.setEffectTypeRaw(1, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
-						upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+						upThis.dispatchEvent("efxchorus", {"id": upThis.getEffectType(1)});
 					}, (e) => {
 						upThis.setEffectTypeRaw(1, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
-						upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+						upThis.dispatchEvent("efxchorus", {"id": upThis.getEffectType(1)});
 					}, (e) => {
 						console.debug(`${dPref}LFO: ${xgLfoFreq[e]}Hz`);
 					}, (e) => {
@@ -3345,11 +3346,11 @@ let OctaviaDevice = class extends CustomEventSource {
 					([(e) => {
 						upThis.setEffectTypeRaw(2, false, e);
 						console.info(`${dPref}main type: ${xgEffType[e]}`);
-						upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
+						upThis.dispatchEvent("efxdelay", {"id": upThis.getEffectType(2)});
 					}, (e) => {
 						upThis.setEffectTypeRaw(2, true, e);
 						console.debug(`${dPref}sub type: ${e + 1}`);
-						upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
+						upThis.dispatchEvent("efxdelay", {"id": upThis.getEffectType(2)});
 					}][msg[0] - 64 + i] || function () {
 						//console.warn(`Unknown XG variation address: ${msg[0]}.`);
 					})(e);
@@ -3418,11 +3419,11 @@ let OctaviaDevice = class extends CustomEventSource {
 				([(e) => {
 					upThis.setEffectTypeRaw(3 + varSlot, false, e);
 					console.info(`${dPref}main type: ${xgEffType[e]}`);
-					upThis.dispatchEvent(`efxinsert${varSlot}`, upThis.getEffectType(3 + varSlot));
+					upThis.dispatchEvent(`efxinsert${varSlot}`, {"id": upThis.getEffectType(3 + varSlot)});
 				}, (e) => {
 					upThis.setEffectTypeRaw(3 + varSlot, true, e);
 					console.debug(`${dPref}sub type: ${e + 1}`);
-					upThis.dispatchEvent(`efxinsert${varSlot}`, upThis.getEffectType(3 + varSlot));
+					upThis.dispatchEvent(`efxinsert${varSlot}`, {"id": upThis.getEffectType(3 + varSlot)});
 				}][offset + i] || function () {
 					//console.warn(`Unknown XG variation address: ${msg[0]}.`);
 				})(e);
@@ -3875,7 +3876,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (id === 115) {
 				// DOC reverb type
 				upThis.setEffectType(0, 24, msg[0] | 16);
-				upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
+				upThis.dispatchEvent(`efxreverb`, {"id": upThis.getEffectType(0)});
 			} else {
 				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
 			};
@@ -4419,7 +4420,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					([() => {
 						console.info(`${dPref}type: ${gsRevType[e]}`);
 						upThis.setEffectType(0, 40, e);
-						upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
+						upThis.dispatchEvent(`efxreverb`, {"id": upThis.getEffectType(0)});
 					}, () => {// character
 					}, () => {// pre-LPF
 					}, () => {// level
@@ -4430,7 +4431,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, () => {
 						console.info(`${dPref}type: ${gsChoType[e]}`);
 						upThis.setEffectType(1, 40, 16 + e);
-						upThis.dispatchEvent(`efxchorus`, upThis.getEffectType(1));
+						upThis.dispatchEvent(`efxchorus`, {"id": upThis.getEffectType(1)});
 					}, () => {// pre-LPF
 					}, () => {// level
 					}, () => {// feedback
@@ -4452,7 +4453,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					([() => {
 						console.info(`${dPref}type: ${gsDelType[e]}`);
 						upThis.setEffectType(2, 40, 32 + e);
-						upThis.dispatchEvent(`efxdelay`, upThis.getEffectType(2));
+						upThis.dispatchEvent(`efxdelay`, {"id": upThis.getEffectType(2)});
 					}, () => {// pre-LPF
 					}, () => {// time C
 					}, () => {// time L
@@ -4498,11 +4499,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			msg.subarray(1).forEach((e, i) => {
 				([() => {
 					upThis.setEffectTypeRaw(3, false, 32 + e);
-					upThis.dispatchEvent(`efxinsert0`, upThis.getEffectType(3));
+					upThis.dispatchEvent(`efxinsert0`, {"id": upThis.getEffectType(3)});
 				}, () => {
 					upThis.setEffectTypeRaw(3, true, e);
 					console.info(`${dPref}type: ${getGsEfx(upThis.#efxBase.subarray(10, 12))}`);
-					upThis.dispatchEvent(`efxinsert0`, upThis.getEffectType(3));
+					upThis.dispatchEvent(`efxinsert0`, {"id": upThis.getEffectType(3)});
 				}, false,
 				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
 				prefDesc, prefDesc, prefDesc, prefDesc, prefDesc,
@@ -5030,7 +5031,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			korgFilter(msg, (e, i) => {
 				if (i > 0 && i < 3) {
 					upThis.setEffectType(i - 1, 44, e);
-					upThis.dispatchEvent(`efx${['reverb', 'chorus'][i - 1]}`, upThis.getEffectType(i - 1));
+					upThis.dispatchEvent(`efx${['reverb', 'chorus'][i - 1]}`, {"id": upThis.getEffectType(i - 1)});
 				};
 			});
 		}).add([54, 104], (msg, track) => {
@@ -5692,7 +5693,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else if (i < 10) {
 					// AI effect ID
 					upThis.setEffectType(i - 8, 44, e);
-					upThis.dispatchEvent(`efx${['reverb', 'chorus'][i - 8]}`, upThis.getEffectType(i - 8));
+					upThis.dispatchEvent(`efx${['reverb', 'chorus'][i - 8]}`, {"id": upThis.getEffectType(i - 8)});
 				};
 			});
 		}).add([66, 53], (msg, track) => {
@@ -5847,7 +5848,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						} else if (ri < 10) {
 							// AI effect ID
 							upThis.setEffectType(ri - 8, 44, e);
-							upThis.dispatchEvent(`efx${['reverb', 'chorus'][ri - 8]}`, upThis.getEffectType(ri - 8));
+							upThis.dispatchEvent(`efx${['reverb', 'chorus'][ri - 8]}`, {"id": upThis.getEffectType(ri - 8)});
 						};
 						//console.debug(e);
 						break;
@@ -5993,7 +5994,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			}, () => {
 				upThis.setEffectType(0, 24, e);
 				console.debug(`${dPref}reverb type: ${e}`);
-				upThis.dispatchEvent(`efxreverb`, upThis.getEffectType(0));
+				upThis.dispatchEvent(`efxreverb`, {"id": upThis.getEffectType(0)});
 			}, () => {
 				console.debug(`${dPref}reverb time: ${e}`);
 			}, () => {
@@ -6300,7 +6301,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
 				}))();
 			});
-			upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+			upThis.dispatchEvent("efxreverb", {"id": upThis.getEffectType(0)});
 		}).add([127, 1, 54, 2], (msg, track, id) => {
 			// S90 ES Chorus
 			upThis.switchMode("s90es");
@@ -6315,7 +6316,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
 				}))();
 			});
-			upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+			upThis.dispatchEvent("efxchorus", {"id": upThis.getEffectType(1)});
 		}).add([127, 1, 54, 3], (msg, track, id) => {
 			// S90 ES Ins1
 			upThis.switchMode("s90es");
@@ -6330,7 +6331,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
 				}))();
 			});
-			upThis.dispatchEvent("efxinsert0", upThis.getEffectType(3));
+			upThis.dispatchEvent("efxinsert0", {"id": upThis.getEffectType(3)});
 		}).add([127, 1, 54, 4], (msg, track, id) => {
 			// S90 ES Ins2
 			upThis.switchMode("s90es");
@@ -6345,7 +6346,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
 				}))();
 			});
-			upThis.dispatchEvent("efxinsert1", upThis.getEffectType(4));
+			upThis.dispatchEvent("efxinsert1", {"id": upThis.getEffectType(4)});
 		}).add([127, 1, 54, 16], (msg, track, id) => {
 			// S90 ES EQ config
 			upThis.switchMode("s90es");
@@ -6381,7 +6382,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					//console.info(`Unrecognized ${dPref}ID: ${offset + i}`);
 				}))();
 			});
-			upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
+			upThis.dispatchEvent("efxdelay", {"id": upThis.getEffectType(2)});
 		}).add([127, 1, 55], (msg, track, id) => {
 			// S90 ES bulk part setup dump (?)
 			upThis.invokeSysExIndicator();
@@ -6571,7 +6572,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}][ri] || (() => {}))();
 			});
 			if (efxTypeWritten) {
-				upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+				upThis.dispatchEvent("efxreverb", {"id": upThis.getEffectType(0)});
 			};
 		}).add([100, 76, 2], (msg, track, id) => {
 			upThis.switchMode("cs6x");
@@ -6590,7 +6591,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}][ri] || (() => {}))();
 			});
 			if (efxTypeWritten) {
-				upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+				upThis.dispatchEvent("efxchorus", {"id": upThis.getEffectType(1)});
 			};
 		}).add([100, 76, 3], (msg, track, id) => {
 			upThis.switchMode("cs6x");
@@ -6609,7 +6610,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}][ri] || (() => {}))();
 			});
 			if (efxTypeWritten) {
-				upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
+				upThis.dispatchEvent("efxdelay", {"id": upThis.getEffectType(2)});
 			};
 		}).add([100, 76, 5], (msg, track, id) => {
 			upThis.switchMode("cs6x");
@@ -6741,7 +6742,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									case 0: {
 										if (e) {
 											upThis.setEffectType(1, 60, e - 1);
-											upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+											upThis.dispatchEvent("efxchorus", {"id": upThis.getEffectType(1)});
 											console.debug(`SD MFX Cho: ${ri} - ${e}`);
 										};
 										break;
@@ -6760,7 +6761,7 @@ let OctaviaDevice = class extends CustomEventSource {
 									case 0: {
 										if (e) {
 											upThis.setEffectType(0, 55 + e, 0);
-											upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+											upThis.dispatchEvent("efxreverb", {"id": upThis.getEffectType(0)});
 											console.debug(`SD MFX Rev: ${ri} - ${e}`);
 										};
 										break;
@@ -6781,7 +6782,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								switch (ri) {
 									case 0: {
 										upThis.setEffectTypeRaw(efxSink, 62, e);
-										upThis.dispatchEvent(`efx${efxSink > 2 ? "delay" : "insert" + (efxSink - 4)}`, upThis.getEffectType(efxSink));
+										upThis.dispatchEvent(`efx${efxSink > 2 ? "delay" : "insert" + (efxSink - 4)}`, {"id": upThis.getEffectType(efxSink)});
 										break;
 									};
 								};
@@ -6992,7 +6993,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					let pi = si - slot * 76;
 					([() => {
 						upThis.setEffectType(slot + 3, 45, e);
-						upThis.dispatchEvent(`efxinsert${slot}`, upThis.getEffectType(slot + 3));
+						upThis.dispatchEvent(`efxinsert${slot}`, {"id": upThis.getEffectType(slot + 3)});
 					}, false, () => {
 						console.debug(`${dPref}IFX${slot + 1} sends to ${e <= 5 && e > 0 ? `IFX${e}` : "direct out"}.`);
 					}][pi] || (() => {}))();
@@ -7004,9 +7005,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					let pi = si - slot * 68;
 					([() => {
 						upThis.setEffectType(1 - slot, 45, e);
-						upThis.dispatchEvent(['efxreverb', 'efxchorus'][1 - slot], upThis.getEffectType(1 - slot));
+						upThis.dispatchEvent(['efxreverb', 'efxchorus'][1 - slot], {"id": upThis.getEffectType(1 - slot)});
 					}, false][pi] || (() => {}))();
-					console.debug(slot);
+					//console.debug(slot);
 				} else if (i < 1276) {
 					// Trap...
 				} else {
@@ -7181,17 +7182,17 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.setEffectTypeRaw(0, false, e);
 					}, () => {
 						upThis.setEffectTypeRaw(0, true, e);
-						upThis.dispatchEvent("efxreverb", upThis.getEffectType(0));
+						upThis.dispatchEvent("efxreverb", {"id": upThis.getEffectType(0)});
 					}, () => {
 						upThis.setEffectTypeRaw(1, false, e);
 					}, () => {
 						upThis.setEffectTypeRaw(1, true, e);
-						upThis.dispatchEvent("efxchorus", upThis.getEffectType(1));
+						upThis.dispatchEvent("efxchorus", {"id": upThis.getEffectType(1)});
 					}, () => {
 						upThis.setEffectTypeRaw(2, false, e);
 					}, () => {
 						upThis.setEffectTypeRaw(2, true, e);
-						upThis.dispatchEvent("efxdelay", upThis.getEffectType(2));
+						upThis.dispatchEvent("efxdelay", {"id": upThis.getEffectType(2)});
 					}][ri - 48] || (() => {}))();
 				} else {
 					getDebugState() && console.debug(`Unknown CS1x effect register: ${ri}.`);
@@ -7214,7 +7215,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					efxId = (efxId & 128) | (e & 127);
 					upThis.setEffectTypeRaw(slot, false, 28);
 					upThis.setEffectTypeRaw(slot, true, efxId);
-					upThis.dispatchEvent(["efxreverb", "efxchorus", "efxdelay", "efxinsert0"][slot], upThis.getEffectType(slot));
+					upThis.dispatchEvent(["efxreverb", "efxchorus", "efxdelay", "efxinsert0"][slot], {"id": upThis.getEffectType(slot)});
 				}][i + offset] || (() => {}))();
 			});
 			//console.debug(slot, msg);
