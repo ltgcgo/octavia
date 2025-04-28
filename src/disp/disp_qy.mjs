@@ -185,7 +185,7 @@ let QyDisplay = class extends RootDisplay {
 			upThis.#renderMosaic(19, 50, 10, 14, 0);
 			upThis.#renderFill(22, 52, 1, 10);
 			upThis.#renderFill(23, 52, 1, 10, 0);
-			let masterVol = 9 - sum.master.volume * 6489 >> 16; // 9 - Math.floor(mV / 10.1)
+			let masterVol = 9 - (sum.master.volume * 6489 >> 16); // 9 - Math.floor(mV / 10.1)
 			upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
 				upThis.#nmdb[7 + x + ((50 + masterVol + y) << 7)] = e;
 			});
