@@ -38,9 +38,8 @@ let ScDisplay = class extends RootDisplay {
 	#pmdb; // Param display
 	#bmdb; // Bitmap display
 	#linger = new Uint16Array(allocated.ch);
-	#lingerOld = new Uint8Array(allocated.ch);
-	#peak = new Uint16Array(allocated.ch);
-	#keep = new Uint8Array(allocated.ch);
+	#lingerExtra = new Uint16Array(allocated.ch);
+	#lingerPress = new Uint16Array(allocated.ch);
 	#noteOn = new Uint8Array(allocated.ch);
 	#ch = 0;
 	#lastBg = 0;
@@ -96,12 +95,19 @@ let ScDisplay = class extends RootDisplay {
 		upThis.addEventListener("note", ({data}) => {
 			if (data.state === 3) {
 				upThis.#noteOn[data.part] = 10;
+				if (data.state === 3 && data.velo) {
+					upThis.#lingerPress[data.part] = 1;
+				};
 			};
 		});
 		upThis.bootBm.load("RsrcName\tBitmap\nboot\t002a000c71c0e38f003ef87df3e008a211448802080451220082011448803c8338e3ea67a0df7cf3bc28045120c90a0114482262884512089fbe1f7c823dc7038e2086\nmask\t0008001080804040202010100808040402020101\ntext\t005f001f000000880080008000000000000001b00100030000000000000002a71a70020000000000000005514d10040000000000000008a28be008000000000000001145140010000000000000002271e700700000000000000000000000000000000071c8bc8befbc01e88089ce1d145b45111044041131b1121208aa8a222088082262a222241155e44479e00e5405444448228a0888828002a98888889145141111048005531111211c72281c23e880f140227387000000000000000000000000c1c880f00780600000f00001911101101000400c01100000423202202070801802271cb1045407803911000007910594089808800be200600a3e7a1311101100140430c01241140672203c03c71c60002271e8000000000000000000000000f0001020000001e89efbe881100020000f30041140441b02271ce18b2260082280882a079144811944000e28e11e5408a2890222798002202220881145124444130004404441103c71c31c89c000f08f08fa200");
 		upThis.xgFont.loaded.wait().then(() => {
 			upThis.#booted = 1;
 		});
+	};
+	reset() {
+		super.reset();
+		this.#lingerExtra.fill(0);
 	};
 	setCh(ch) {
 		this.#ch = ch;
@@ -403,63 +409,64 @@ let ScDisplay = class extends RootDisplay {
 				});
 			});
 			// Bitmap display
-			let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
-			rendPos = 0;
+			let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4);
 			// Strength calculation
 			sum.velo.forEach(function (e, i) {
-				upThis.#lingerOld[i] = upThis.#linger[i] >> 8;
-				if (upThis.#noteOn[i]) {
-					upThis.#noteOn[i] --;
+				let realVelo = (e * e) >> 8;
+				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
+					upThis.#lingerPress[i] --;
+					upThis.#lingerExtra[i] = 40;
+					if (e !== upThis.#linger[i]) {
+						upThis.#linger[i] = realVelo << 8;
+					};
 				};
-				if (((e >> 4) << 4) > upThis.#linger[i] >> 8) {
-					if (scConf.peakHold === 3) {
-						upThis.#linger[i] = ((e >> 4) << 4) << 8;
-					} else {
-						upThis.#linger[i] = (((e >> 4) << 4) + 15) << 8;
+				if ((realVelo >> 4) << 4 > upThis.#linger[i] >> 8) {
+					if (scConf.peakHold !== 3 && upThis.#lingerPress[i]) {
+						upThis.#linger[i] = realVelo << 8;
+						upThis.#lingerExtra[i] = 40;
 					};
-					if (scConf.peakHold !== 3 || upThis.#noteOn[i] > 0) {
-						upThis.#keep[i] = 56;
-					};
-				} else if (upThis.#keep[i] > 15) {
-					upThis.#keep[i] --;
 				} else {
-					let val;
-					switch (scConf.peakHold) {
-						case 1:
-						case 3: {
-							val = upThis.#linger[i] - (384 << rendMode);
-							if (val < 0) {
+					let shouldKeep = upThis.#lingerExtra[i] >> 4;
+					if (shouldKeep) {
+						if (upThis.#lingerExtra[i] > 1) {
+							upThis.#lingerExtra[i] -= 1;
+						} else {
+							upThis.#lingerExtra[i] = 0;
+						};
+					} else {
+						let val;
+						switch (scConf.peakHold) {
+							case 3: {
+								//console.debug("FLOAT?");
+								if (upThis.#linger[i] === 0) {
+									break;
+								};
+								console.debug("FLOAT!");
+								val = upThis.#linger[i] + (384 << rendMode);
+								if (val > 65535) {
+									val = 0;
+								};
+								break;
+							};
+							case 2: {
 								val = 0;
+								break;
 							};
-							break;
-						};
-						default: {
-							val = 0;
-							break;
-						};
-					};
-					upThis.#linger[i] = val;
-				};
-				if (scConf.peakHold === 3) {
-					//console.debug(`Tendency: ${Math.sign((upThis.#linger[i] >> 8) - upThis.#lingerOld[i])}`);
-					if (upThis.#keep[i] < 16) {
-						if (upThis.#peak[i] !== 0 && (upThis.#linger[i] >> 8) <= upThis.#lingerOld[i]) {
-							//console.debug(`Float!`);
-							let val = upThis.#peak[i];
-							val += (384 << rendMode);
-							if (val < 65536) {
-								upThis.#peak[i] = val;
-							} else {
-								upThis.#peak[i] = 0;
+							case 1:
+							case 0: {
+								val = upThis.#linger[i] - (384 << rendMode);
+								console.debug("SINK!");
+								if (val < 0) {
+									val = 0;
+								};
+								break;
 							};
 						};
-					} else {
-						upThis.#peak[i] = upThis.#linger[i];
+						upThis.#linger[i] = val;
 					};
-				} else {
-					upThis.#peak[i] = upThis.#linger[i];
 				};
 			});
+			//console.debug(upThis.#linger.join(", "));
 			let useBm = upThis.#nmdb.subarray(1400, 1656);
 			if (timeNow <= sum.bitmap.expire) {
 				sum.bitmap.bitmap.forEach((e, i) => {
@@ -471,8 +478,9 @@ let ScDisplay = class extends RootDisplay {
 				let rendPos = 0;
 				for (let c = minCh; c <= maxCh; c ++) {
 					let rendPart = rendPos >> 4;
-					let strSmooth = sum.strength[c] >> (4 + rendMode),
-					lingered = upThis.#peak[c] >> (12 + rendMode);
+					let realVelo = (sum.strength[c] * sum.strength[c]) >> 8;;
+					let strSmooth = realVelo >> (4 + rendMode),
+					lingered = upThis.#linger[c] >> (12 + rendMode);
 					switch (rendMode) {
 						case 2: {
 							let offY = 4 * (3 - rendPart);
