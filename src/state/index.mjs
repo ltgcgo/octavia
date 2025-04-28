@@ -974,7 +974,7 @@ let OctaviaDevice = class extends CustomEventSource {
 								break;
 							};
 							case modeMap.sd: {
-								if ([104, 105, 106, 107].indexOf(det.data[1]) > -1) {
+								if ([104, 105, 106, 107, 120].indexOf(det.data[1]) > -1) {
 									if (this.#chType[part] === 0) {
 										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
@@ -2466,7 +2466,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					case modeMap.motif:
 					case modeMap.s90es:
 					case modeMap.cs6x: {
-						efxDefault = [129, 0, 133, 0, 130, 0, 128, 0, 128, 0, 0, 255, 0, 255, 0, 2];
+						efxDefault = [129, 0, 133, 0, 130, 0, 128, 0, 128, 0, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					case modeMap.pa: {
