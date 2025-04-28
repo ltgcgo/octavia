@@ -412,7 +412,7 @@ let ScDisplay = class extends RootDisplay {
 			let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4);
 			// Strength calculation
 			sum.velo.forEach(function (e, i) {
-				let realVelo = (e * e) >> 8;
+				let realVelo = upThis.device?.getChType(i) ? e : (e * e) >> 8;
 				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
 					upThis.#lingerExtra[i] = 40;
@@ -478,7 +478,7 @@ let ScDisplay = class extends RootDisplay {
 				let rendPos = 0;
 				for (let c = minCh; c <= maxCh; c ++) {
 					let rendPart = rendPos >> 4;
-					let realVelo = (sum.strength[c] * sum.strength[c]) >> 8;;
+					let realVelo = upThis.device?.getChType(c) ? sum.strength[c] : (sum.strength[c] * sum.strength[c]) >> 8;
 					let strSmooth = realVelo >> (4 + rendMode),
 					lingered = upThis.#linger[c] >> (12 + rendMode);
 					switch (rendMode) {
