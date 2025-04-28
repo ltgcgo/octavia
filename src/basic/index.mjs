@@ -383,7 +383,7 @@ let RootDisplay = class extends CustomEventSource {
 			};
 		};
 		if (!data) {
-			if (upThis.device.getChType()[ch]) {
+			if (upThis.device.getChType(ch)) {
 				data = upThis.sysBm.getBm("cat_drm");
 			} else {
 				data = upThis.sysBm.getBm("no_vox");
@@ -480,7 +480,7 @@ let RootDisplay = class extends CustomEventSource {
 		let chPitch = upThis.device.getPitch(); // All pitch bends
 		let chContr = upThis.device.getCcAll(); // All CC values
 		let chProgr = upThis.device.getProgram(); // All program values
-		let chType = upThis.device.getChType(); // All channel types
+		let chType = upThis.device.getChTypes(); // All channel types
 		let chExt = [];
 		// Mimic strength variation
 		let writeStrength = upThis.device.getStrength();

@@ -1575,7 +1575,10 @@ let OctaviaDevice = class extends CustomEventSource {
 	getChSource() {
 		return this.#chReceive;
 	};
-	getChType() {
+	getChType(part = 0) {
+		return this.#chType[part];
+	};
+	getChTypes() {
 		return this.#chType;
 	};
 	setChType(part, type, mode = 0, disableMsbSet = false) {

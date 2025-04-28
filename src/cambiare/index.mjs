@@ -1275,7 +1275,7 @@ let Cambiare = class extends RootDisplay {
 			let voice = upThis.getChVoice(data.part),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
 			setCanvasText(target.metre, upThis.getMapped(voice.name));
-			target.type.setTextRaw(chTypes[upThis.device.getChType()[data.part]]);
+			target.type.setTextRaw(chTypes[upThis.device.getChType(data.part)]);
 			target.std.setTextRaw(voice.standard);
 			target.msb.setTextRaw(`${voice.sid[0]}`.padStart(3, "0"));
 			target.prg.setTextRaw(`${voice.sid[1]}`.padStart(3, "0"));

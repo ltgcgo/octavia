@@ -345,17 +345,17 @@ let QyDisplay = class extends RootDisplay {
 				if (timeNow >= this.#bmex) {
 					this.#bmst = 0;
 					let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
-					useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
+					useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(primBuf[0], primBuf[1], 0, sum.mode).name);
 					if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 						useBm = this.sysBm.getBm(`ext_${standard}`);
 					};
-					if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] === 56)) {
+					if (!useBm && (primBuf[0] < 48 || sum.chContr[chOff + ccToPos[0]] === 56)) {
 						useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 					};
-					if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 126) {
+					if (!useBm && primBuf[0] === 126) {
 						useBm = this.sysBm.getBm("cat_smpl");
 					};
-					if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 64) {
+					if (!useBm && primBuf[0] === 64) {
 						useBm = this.sysBm.getBm("cat_sfx");
 					};
 					if (!useBm) {
