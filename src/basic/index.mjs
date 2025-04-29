@@ -8,6 +8,8 @@ import {ccToPos, dnToPos, allocated, overrides, effectSlots} from "../state/inde
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {customInterpreter} from "../state/utils.js";
+import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
+import DsvParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 
 MidiParser.customInterpreter = customInterpreter;
 
@@ -214,6 +216,10 @@ let RootDisplay = class extends CustomEventSource {
 		// Load the style ID map
 		let upThis = this;
 		let loadCount = 0, allCount = 0;
+	};
+	async loadProps(stream, overwrite) {
+		// Load the voice properties
+		;
 	};
 	switchMode(modeName, forced = false) {
 		this.device.switchMode(modeName, forced);
