@@ -2,7 +2,7 @@
 
 import {ccToPos} from "../state/index.mjs";
 
-const sgCrit = ["MSB", "PRG", "LSB", "NME", "ELC", "DRM", "LVL"];
+const sgCrit = ["MSB", "PRG", "LSB", "NME", "ELC", "DRM", "LVL", "VXP"];
 
 const noVoxStdPool = {
 	"krs": "KR",
@@ -29,7 +29,7 @@ let VoiceBank = class {
 	get(msb = 0, prg = 0, lsb = 0, mode, preferredHint = 0) {
 		let sid = [msb, prg, lsb];
 		let bankName;
-		let bankPoly = 1, bankType = 0, bankDrum, bankLevel;
+		let bankPoly = 1, bankType = 0, bankDrum, bankLevel, bankVoice;
 		let args = Array.from(arguments);
 		switch (mode) {
 			case "xg": {
@@ -640,6 +640,7 @@ let VoiceBank = class {
 				bankType = bankObject?.type || bankType;
 				bankDrum = bankObject?.drum;
 				bankLevel = bankObject?.level;
+				bankVoice = bankObject?.voice;
 			} else {
 				if (!this.strictMode) {
 					/* if (mode !== "gs" && mode !== "ns5r") {
@@ -921,6 +922,7 @@ let VoiceBank = class {
 			type: bankType,
 			drum: bankDrum,
 			level: bankLevel,
+			voice: bankVoice,
 			iid,
 			eid,
 			sid,
@@ -947,7 +949,7 @@ let VoiceBank = class {
 					debugger;
 				};
 			} else {
-				let msb = 0, prg = 0, lsb = 0, name, poly = 1, type = 0, level, drum;
+				let msb = 0, prg = 0, lsb = 0, name, poly = 1, type = 0, level, drum, voice;
 				assign.forEach(function (e1, i1) {
 					switch (i1) {
 						case sig[0]: {
@@ -981,9 +983,13 @@ let VoiceBank = class {
 							break;
 						};
 						case sig[6]: {
-							if (e1?.constructor) {
+							if (typeof e1 === "string") {
 								level = parseInt(e1);
 							};
+							break;
+						};
+						case sig[7]: {
+							voice = e1;
 							break;
 						};
 					};
@@ -999,6 +1005,7 @@ let VoiceBank = class {
 					type,
 					drum,
 					level,
+					voice,
 					priority
 				};
 				/*if (loadCount > 889 && loadCount < 910) {

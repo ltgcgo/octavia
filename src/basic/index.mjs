@@ -235,12 +235,15 @@ let RootDisplay = class extends CustomEventSource {
 				!(upThis.#propList.has(entry.voiceId) || upThis.#propList.get(entry.voiceId)?.priority <= priority) ||
 				overwrite
 			) {
+				if (Object.keys(entry).length < 2) {
+					continue;
+				};
 				if (upThis.#propList.get(entry.voiceId)?.priority > priority) {
 					prioCount ++;
 				};
 				entry.priority = priority;
 				if (upThis.handleProp) {
-					upThis.handleProp(entry);
+					await upThis.handleProp(entry);
 				};
 				upThis.#propList.set(entry.voiceId, entry);
 				//console.debug(entry);
@@ -374,7 +377,7 @@ let RootDisplay = class extends CustomEventSource {
 	getChBm(ch, voiceObject) {
 		// Get part bitmap
 		let upThis = this;
-		voiceObject = voiceObject || upThis.getChVoice(ch);
+		voiceObject = voiceObject ?? upThis.getChVoice(ch);
 		let data = upThis.getVoxBm(voiceObject);
 		if (!data) {
 			if (!upThis.sysBm) {
@@ -437,6 +440,40 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		return data;
 	};
+	getProps(voiceObject) {
+		let upThis = this;
+		let props, lastEid, loopGuard = 0, sourceObject = voiceObject;
+		while (
+			loopGuard < 8 &&
+			(
+				props === undefined ||
+				props === null
+			) &&
+			(
+				!lastEid?.constructor ||
+				lastEid instanceof Array &&
+				(
+					lastEid[1] !== voiceObject.eid[1] ||
+					lastEid[2] !== voiceObject.eid[2]
+				)
+			)
+		) {
+			lastEid = voiceObject.eid;
+			if (typeof voiceObject.voice !== "string") {
+				//console.debug(`No voice ID defined for "${voiceObject.name}" (${voiceObject.eid.join(" ")}).`);
+				continue;
+			};
+			if (upThis.#propList.has(voiceObject.voice)) {
+				props = upThis.#propList.get(voiceObject.voice);
+			} else {
+				voiceObject = upThis.getVoice(lastEid[0], lastEid[2] === 0 ? 0 : lastEid[1], lastEid[2] === 0 ? 0 : lastEid[2] - 1);
+			};
+		};
+		if (!props && loopGuard === 8) {
+			console.info(`Voice property fetching failed for "${voiceObject.name}" (${voiceObject.eid.join(" ")}).`);
+		};
+		return props;
+	};
 	get noteProgress() {
 		return this.#noteTime / this.#noteBInt;
 	};
@@ -461,6 +498,9 @@ let RootDisplay = class extends CustomEventSource {
 	};
 	getTempo() {
 		return this.#noteTempo;
+	};
+	getChCachedVoice(part) {
+		return this.#voiceCache[part];
 	};
 	eachVoice(iter) {
 		let upThis = this;

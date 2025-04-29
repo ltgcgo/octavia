@@ -1,5 +1,5 @@
 voiceId	scSqr	scScale
-gs1:GrandPno		
+gs1:GrandPno	1	0.5
 gs2:GrandPno		
 gs3:GrandPno		
 gs4:GrandPno		
@@ -14,7 +14,7 @@ gs3:PianoStr
 gs4:Pno+Str2		
 gs4:DreamPno		
 gs4:DreamP.2		
-gs1:BritePno		
+gs1:BritePno	1	0.4375
 gs2:BritePno		
 gs3:BritePno		
 gs4:BritePno		
@@ -24,20 +24,20 @@ gs1:Piano 2w
 gs4:PopPno w		
 gs4:RockP. w		
 gs3:DancePno		
-gs1:EGrndPno		
+gs1:EGrndPno	1	0.625
 gs2:EGrndPno		
 gs3:EGrndPno		
 gs1:EGRhode1		
 gs1:EGRhode2		
 gs1:Piano 3w		
-gs1:HnkyTonk		
+gs1:HnkyTonk	1	0.375
 gs2:HnkyTonk		
 gs3:HnkyTonk		
 gs4:HnkyTonk		
 gs1:HnkyTk w		
 gs2:Old Uprt		
 gs3:HnkyTnk2		
-gs1:ElPiano1		
+gs1:ElPiano1	1	0.4375
 gs2:ElPiano1		
 gs3:ElPiano1		
 gs1:Det.EP 1		
@@ -51,7 +51,7 @@ gs1:60sElPno
 gs3:Wurly EP		
 gs2:HrdRhode		
 gs2:MelRhode		
-gs1:ElPiano2		
+gs1:ElPiano2	1	0.4375
 gs2:ElPiano2		
 gs4:ElPiano3		
 gs1:Det.EP 2		
@@ -61,7 +61,7 @@ gs1:ElPno 2v
 gs2:StereoDX		
 gs2:DX Hard 		
 gs4:DX Phase		
-gs1:Hrpschrd		
+gs1:Hrpschrd	1	0.4375
 gs2:Hrpschrd		
 gs4:Hrpschrd		
 gs3:Hpschrd2		
@@ -70,7 +70,7 @@ gs1:CplHapsi
 gs1:Harpsi.w		
 gs1:Harpsi.o		
 gs3:SynHapsi		
-gs1:Clavinet		
+gs1:Clavinet	1	0.75
 gs2:Clavinet		
 gs4:Clavinet		
 gs4:Clvinet2		
@@ -87,16 +87,16 @@ gs4:SyRngClv
 gs4:SyDstClv		
 gs4:JP8k Clv		
 gs4:PulseClv		
-gs1:Celesta		
+gs1:Celesta	1	0.625
 gs3:PopCelst		
-gs1:Glocken		
+gs1:Glocken	1	0.56
 gs2:Glocken		
-gs1:MusicBox		
+gs1:MusicBox	1	0.75
 gs2:MusicBox		
 gs4:MusicBox		
 gs4:MusicBx2		
 gs4:St.MusBx		
-gs1:Vibrafon		
+gs1:Vibrafon	1	0.625
 gs2:Vibrafon		
 gs3:Vibrafon		
 gs2:HardVibr		
@@ -104,22 +104,22 @@ gs3:Pop Vibr
 gs1:Vib. w		
 gs3:Vibra. w		
 gs1:Vibrafns		
-gs1:Marimba		
+gs1:Marimba	1	0.5
 gs2:Marimba		
 gs1:Marmba w		
 gs2:Barafon		
 gs2:Barafon2		
 gs2:Log Drum		
-gs1:Xylophon		
+gs1:Xylophon	1	0.9375
 gs2:Xylophon		
 gs4:Xylofn.w		
-gs1:TubulBel		
+gs1:TubulBel	1	0.625
 gs4:TubulBel		
 gs1:ChrchBel		
 gs1:Carillon		
 gs4:ChchBel2		
 gs4:TubBel w		
-gs1:Santur		
+gs1:Santur	1	0.75
 gs4:Santur		
 gs2:Santur 2		
 gs4:Santur 3		
@@ -127,7 +127,7 @@ gs2:Cimbalom
 gs3:Zither		
 gs3:Zither 2		
 gs3:Dulcimer		
-gs1:DrawOrgn		
+gs1:DrawOrgn	1	0.625
 gs2:DrawOrgn		
 gs3:DrawOrgn		
 gs2:Organ101		
@@ -161,7 +161,7 @@ gs3:70sDrOrg
 gs2:EvenBar		
 gs2:Organ Ba		
 gs3:5thOrgan		
-gs1:PercOrgn		
+gs1:PercOrgn	1	0.9375
 gs2:PercOrgn		
 gs3:PercOrgn		
 gs2:Organ201		
@@ -180,22 +180,22 @@ gs3:PercOrg3
 gs4:PercOrg4		
 gs4:PercOrg5		
 gs4:PercOrg6		
-gs1:RockOrgn		
+gs1:RockOrgn	1	0.375
 gs2:RotaryOr		
 gs2:SlwRotar		
 gs3:RockOrg2		
 gs3:RockOrg3		
 gs2:FstRotar		
-gs1:ChrchOrg		
+gs1:ChrchOrg	1	0.4375
 gs1:ChurOrg2		
 gs1:ChurOrg3		
 gs2:OrgFlute		
 gs2:TrmOrgFl		
 gs3:ThtreOrg		
-gs1:ReedOrgn		
+gs1:ReedOrgn	1	0.6875
 gs3:WindOrgn		
 gs4:PuffOrgn		
-gs1:Acordion		
+gs1:Acordion	1	0.4375
 gs2:Acordion		
 gs3:Acordion		
 gs1:AccordIt		
@@ -203,19 +203,19 @@ gs3:DstAcord
 gs3:ChoAcord		
 gs3:HrdAcord		
 gs3:SftAcord		
-gs1:Harmnica		
+gs1:Harmnica	1	0.375
 gs2:Harmnica		
 gs3:Harmnica		
 gs4:Harmnica		
 gs2:Harmo. 2		
 gs4:BscBHrmo		
 gs4:SplBHrmo		
-gs1:Bndoneon		
+gs1:Bndoneon	1	0.3125
 gs2:Bndoneon		
 gs3:Bndoneon		
 gs3:Bndneon2		
 gs3:Bndneon3		
-gs1:NylonGtr		
+gs1:NylonGtr	1	0.75
 gs2:NylonGtr		
 gs3:NylonGtr		
 gs1:Ukulele		
@@ -223,7 +223,7 @@ gs1:NylonGt3
 gs2:VelGtHrm		
 gs1:NylonGt2		
 gs2:LequintG		
-gs1:SteelGtr		
+gs1:SteelGtr	1	0.625
 gs2:SteelGtr		
 gs3:SteelGtr		
 gs1:12StrGtr		
@@ -234,12 +234,12 @@ gs3:Mandoln2
 gs3:MandoTrm		
 gs2:SteelGt2		
 gs4:Stl&Body		
-gs1:Jazz Gtr		
+gs1:Jazz Gtr	1	1
 gs3:Jazz Gtr		
 gs1:MellowGt		
 gs1:HawaiiGt		
 gs2:PedalStl		
-gs1:CleanGtr		
+gs1:CleanGtr	1	0.625
 gs2:CleanGtr		
 gs3:CleanGtr		
 gs3:ClnHalfG		
@@ -259,7 +259,7 @@ gs4:LPRearAt
 gs4:MidT.Gtr		
 gs4:ChngRuan		
 gs4:ChgRuan2		
-gs1:MutedGtr		
+gs1:MutedGtr	1	0.75
 gs2:MutedGtr		
 gs3:MutedGtr		
 gs2:Mu.DstGt		
@@ -268,7 +268,7 @@ gs1:Funk Gtr
 gs2:Funk Pop		
 gs1:FunkGtr2		
 gs4:Jazz Man		
-gs1:OvrDrvGt		
+gs1:OvrDrvGt	1	0.6875
 gs2:OvrDrvGt		
 gs3:OvrDrvGt		
 gs3:OvrDrGt2		
@@ -281,7 +281,7 @@ gs3:LPOvrDr2
 gs4:LP HfDrv		
 gs4:LPHfDrv2		
 gs4:LPChorus		
-gs1:Dist.Gtr		
+gs1:Dist.Gtr	1	0.5
 gs2:Dist.Gtr		
 gs3:Dist.Gtr		
 gs2:DistGtr2		
@@ -297,12 +297,12 @@ gs2:5thDist.
 gs2:RockRthm		
 gs2:RckRthm2		
 gs4:DsRthmGt		
-gs1:GtrHarmo		
+gs1:GtrHarmo	1	0.75
 gs1:GtFeedbk		
 gs3:GtrFdbk2		
 gs2:AcGtrHmo		
 gs3:ElBaHrmo		
-gs1:Aco.Bass		
+gs1:Aco.Bass	1	1
 gs2:Aco.Bass		
 gs3:Aco.Bass		
 gs4:Aco.Bass		
@@ -310,7 +310,7 @@ gs3:Rokabily
 gs3:WildAcBa		
 gs4:AtkAcoBa		
 gs3:Bass+OHH		
-gs1:FngrBass		
+gs1:FngrBass	1	0.9375
 gs2:FngrBass		
 gs3:FngrBass		
 gs2:FngrBas2		
@@ -322,7 +322,7 @@ gs4:AtkFngr.
 gs4:FngrSlap		
 gs3:ChorJzBa		
 gs3:F.Ba/Hrm		
-gs1:PickBass		
+gs1:PickBass	1	0.75
 gs2:PickBass		
 gs3:PickBass		
 gs3:PickBas2		
@@ -331,7 +331,7 @@ gs3:PickBas4
 gs4:DblPikBa		
 gs2:M.PkBass		
 gs3:PkBa/Hrm		
-gs1:Fretless		
+gs1:Fretless	1	0.75
 gs2:Fretless		
 gs2:Fretles2		
 gs2:Fretles3		
@@ -339,16 +339,16 @@ gs2:Fretles4
 gs2:SynFretl		
 gs2:SmthFrtl		
 gs3:WoodFrtl		
-gs1:SlapBass		
+gs1:SlapBass	1	0.9375
 gs2:SlapBass		
 gs3:Pop Slap		
 gs2:ResoSlap		
 gs3:UnisnSlp		
-gs1:SlapBas2		
+gs1:SlapBas2	1	0.6875
 gs2:SlapBas2		
 gs4:SlpBass3		
 gs3:FM Slap		
-gs1:SynBass1		
+gs1:SynBass1	1	0.4375
 gs2:SynBass1		
 gs1:SynBa101		
 gs3:CS Bass		
@@ -386,7 +386,7 @@ gs4:303SqDB2
 gs4:303SqDB3		
 gs4:303SqBRv		
 gs4:TeeBee		
-gs1:SynBass2		
+gs1:SynBass2	1	0.75
 gs2:SynBa201		
 gs2:ModulrBs		
 gs2:Seq.Bass		
@@ -431,30 +431,30 @@ gs4:MGLiteBa
 gs4:DstSynBa		
 gs4:RiseBass		
 gs4:CyberBas		
-gs1:Violin		
+gs1:Violin	1	0.5625
 gs2:Violin		
 gs3:Violin		
 gs3:ViolnAtk		
 gs1:SlwVioln		
-gs1:Viola		
+gs1:Viola	1	0.5625
 gs2:Viola		
 gs3:Viola		
 gs3:ViolaAtk		
-gs1:Cello		
+gs1:Cello	1	0.8125
 gs2:Cello		
 gs3:Cello		
 gs3:CelloAtk		
-gs1:Contrbas		
+gs1:Contrbas	1	0.6875
 gs2:Contrbas		
 gs3:Contrbas		
 gs4:Contrbas		
-gs1:Trem.Str		
+gs1:Trem.Str	1	0.5625
 gs2:Trem.Str		
 gs4:TrmStrSt		
 gs2:SlwTrStr		
 gs2:Susp.Str		
 gs4:SuspStr2		
-gs1:Pizz.Str		
+gs1:Pizz.Str	1	0.75
 gs2:Pizz.Str		
 gs3:VcCbPizz		
 gs3:ChmbrPiz		
@@ -462,7 +462,7 @@ gs3:St. Pizz
 gs3:SoloPizz		
 gs3:SoloSpic		
 gs4:StrsSpic		
-gs1:Harp		
+gs1:Harp	1	0.8125
 gs2:Harp		
 gs4:Harp&Str		
 gs4:Harp St.		
@@ -471,9 +471,9 @@ gs3:Syn.Harp
 gs4:YangChin		
 gs4:YangQin2		
 gs4:SynYanQn		
-gs1:Timpani		
+gs1:Timpani	1	1
 gs2:Timpani		
-gs1:Strings1		
+gs1:Strings1	1	0.6875
 gs2:Strings1		
 gs3:Strings1		
 gs4:Strings1		
@@ -503,7 +503,7 @@ gs3:OctavStr
 gs3:OctStr.2		
 gs4:ContraSc		
 gs4:60s Strs		
-gs1:Strings2		
+gs1:Strings2	1	0.4375
 gs2:Strings2		
 gs3:Strings2		
 gs4:Strings2		
@@ -515,7 +515,7 @@ gs2:StSlwStr
 gs4:StSlStr2		
 gs4:StStr+Ch		
 gs4:StStrCh2		
-gs1:Syn.Str1		
+gs1:Syn.Str1	1	0.5625
 gs2:Syn.Str1		
 gs3:Syn.Str1		
 gs2:OB Str.		
@@ -531,7 +531,7 @@ gs3:High Str
 gs3:HybrdStr		
 gs3:Tron Str		
 gs3:NoizyStr		
-gs1:Syn.Str2		
+gs1:Syn.Str2	1	0.3125
 gs3:Syn.Str5		
 gs3:JUNO Str		
 gs4:FiltOrch		
@@ -542,7 +542,7 @@ gs4:JUNOFull
 gs3:Air Str.		
 gs4:AtkSyStr		
 gs4:StraiStr		
-gs1:ChoirAah		
+gs1:ChoirAah	1	0.6875
 gs2:ChoirAah		
 gs3:ChoirAah		
 gs2:St.Choir		
@@ -556,7 +556,7 @@ gs3:ChoirHah
 gs3:ChoirLah		
 gs2:ChoirAh2		
 gs3:MaleC.Ah		
-gs1:VoiceOoh		
+gs1:VoiceOoh	1	0.625
 gs4:VoiceOoh		
 gs4:Chor.Ooh		
 gs4:VoiceOh2		
@@ -585,7 +585,7 @@ gs4:MalChoWo
 gs4:Male Aah		
 gs4:Male Ooh		
 gs4:Humming		
-gs1:SynVoice		
+gs1:SynVoice	1	0.625
 gs4:Syn Vox		
 gs4:SynVox 2		
 gs2:SyVoice2		
@@ -595,7 +595,7 @@ gs3:VP330
 gs3:VnlChoir		
 gs4:JX8P Vox		
 gs4:AnalgVox		
-gs1:Orch.Hit		
+gs1:Orch.Hit	1	0.625
 gs2:Orch.Hit		
 gs4:Bass Hit		
 gs4:6th Hit		
@@ -620,7 +620,7 @@ gs3:Str. Hit
 gs3:StackHit		
 gs4:Indus.Ht		
 gs4:Clap Hit		
-gs1:Trumpet		
+gs1:Trumpet	1	0.5
 gs2:Trumpet		
 gs3:Trumpet		
 gs4:Trumpet		
@@ -635,7 +635,7 @@ gs2:Warm Trp
 gs4:WarmTrp2		
 gs4:Twin Trp		
 gs3:Syn Trp		
-gs1:Trombone		
+gs1:Trombone	1	0.625
 gs2:Trombone		
 gs3:Trombone		
 gs4:Trombone		
@@ -645,17 +645,17 @@ gs4:Trom&Tba
 gs4:BrtTromb		
 gs3:BassTrom		
 gs4:Eufonium		
-gs1:Tuba		
+gs1:Tuba	1	0.9375
 gs2:Tuba		
 gs2:Tuba 2		
 gs4:Tuba+Hrn		
-gs1:MutedTrp		
+gs1:MutedTrp	1	0.5
 gs2:MutedTrp		
 gs4:CMuteTrp		
 gs4:MuteTrp2		
 gs4:MuteTrp3		
 gs3:MutedHrn		
-gs1:FrchHorn		
+gs1:FrchHorn	1	0.5
 gs2:FrchHorn		
 gs1:FrHorn 2		
 gs3:Hrn+Orch		
@@ -666,7 +666,7 @@ gs3:DualFrHr
 gs2:HornOrch		
 gs3:Syn.Horn		
 gs3:RipFrHrn		
-gs1:BrasSect		
+gs1:BrasSect	1	0.75
 gs3:BrasSect		
 gs3:Brass ff		
 gs3:BoneSect		
@@ -689,7 +689,7 @@ gs4:StPopBrs
 gs4:StOrchBr		
 gs4:StOrBrs2		
 gs4:StOrBrs3		
-gs1:SynBras1		
+gs1:SynBras1	1	0.375
 gs2:SynBras1		
 gs3:SynBras1		
 gs2:PolyBras		
@@ -709,7 +709,7 @@ gs3:OctSynBr
 gs3:HybridBr		
 gs4:OctSyBr2		
 gs4:BPF Bras		
-gs1:SynBras2		
+gs1:SynBras2	1	0.4375
 gs3:SynBras2		
 gs2:SoftBras		
 gs3:WarmBras		
@@ -727,11 +727,11 @@ gs1:Ana.Brs2
 gs2:VeloBras		
 gs2:VeloBrs2		
 gs3:TransBrs		
-gs1:SprnoSax		
+gs1:SprnoSax	1	0.625
 gs2:SprnoSax		
 gs3:SprnoSax		
 gs1:ExpSprno		
-gs1:Alto Sax		
+gs1:Alto Sax	1	0.75
 gs2:Alto Sax		
 gs3:Alto Sax		
 gs2:HyprAlto		
@@ -739,39 +739,39 @@ gs3:Exp.Alto
 gs3:Grow Sax		
 gs3:Alto+Trp		
 gs4:Sax Sect		
-gs1:TenorSax		
+gs1:TenorSax	1	0.4375
 gs2:TenorSax		
 gs3:TenorSax		
 gs3:TenrSax2		
 gs2:BrthTnSx		
 gs3:St.TnrSx		
-gs1:Bari.Sax		
+gs1:Bari.Sax	1	0.6875
 gs2:Bari.Sax		
 gs3:Bari.Sax		
 gs3:BariSax2		
 gs4:Bari&Tnr		
-gs1:Oboe		
+gs1:Oboe	1	0.75
 gs2:Oboe		
 gs3:Oboe		
 gs4:Oboe		
 gs3:Exp.Oboe		
 gs3:Mul.Reed		
-gs1:Eng.Horn		
+gs1:Eng.Horn	1	0.8125
 gs2:Eng.Horn		
-gs1:Bassoon		
+gs1:Bassoon	1	0.6875
 gs2:Bassoon		
-gs1:Clarinet		
+gs1:Clarinet	1	0.625
 gs2:Clarinet		
 gs2:BsClari.		
 gs3:MultiWnd		
 gs4:QuadWind		
-gs1:Piccolo		
+gs1:Piccolo	1	0.625
 gs2:Piccolo		
 gs3:Piccolo2		
 gs3:Nay		
 gs3:NayTrem.		
 gs3:Di Zi		
-gs1:Flute		
+gs1:Flute	1	0.875
 gs2:Flute		
 gs3:Flute 2		
 gs3:ExpFlute		
@@ -780,8 +780,8 @@ gs3:FluteVln
 gs4:PipeReed		
 gs3:TrnFlute		
 gs4:IndiaFlu		
-gs1:Recorder		
-gs1:PanFlute		
+gs1:Recorder	1	0.8125
+gs1:PanFlute	1	0.6875
 gs2:PanFlute		
 gs2:Kawala		
 gs3:Zampona		
@@ -789,14 +789,14 @@ gs3:ZmpnaAtk
 gs4:TinWhist		
 gs4:TinWhsNm		
 gs4:TinWhsOr		
-gs1:BotlBlow		
+gs1:BotlBlow	1	0.5
 gs2:BotlBlow		
-gs1:Shakhchi		
+gs1:Shakhchi	1	0.3125
 gs3:Di Zi 2		
-gs1:Whistle		
+gs1:Whistle	1	0.75
 gs3:Whistle2		
-gs1:Ocarina		
-gs1:SquareLd		
+gs1:Ocarina	1	1
+gs1:SquareLd	1	0.25
 gs3:SquareLd		
 gs1:SquareWv		
 gs3:MGSquare		
@@ -831,7 +831,7 @@ gs4:HipHopSi
 gs4:HipHopSq		
 gs4:HipHopPu		
 gs4:FluxPuls		
-gs1:Saw Lead		
+gs1:Saw Lead	1	0.375
 gs3:Saw Lead		
 gs1:Saw Wave		
 gs3:OB2 Saw		
@@ -873,10 +873,10 @@ gs3:ChzSaw 2
 gs3:Rthm Saw		
 gs4:SeqAna.3		
 gs4:TeknoSaw		
-gs1:CaliopLd		
+gs1:CaliopLd	1	0.875
 gs2:VentLead		
 gs2:Pure Pan		
-gs1:Chiff Ld		
+gs1:Chiff Ld	1	0.625
 gs3:TB Lead		
 gs4:HybridLd		
 gs4:UnisnSqr		
@@ -887,7 +887,7 @@ gs4:UnisnSaw
 gs3:Mad Lead		
 gs4:Crowd.Ld		
 gs4:DblSqrLd		
-gs1:CharanLd		
+gs1:CharanLd	1	0.625
 gs4:WireLead		
 gs4:FBCharan		
 gs4:FatGR Ld		
@@ -909,12 +909,12 @@ gs4:LA Brass
 gs3:JUNOSbOs		
 gs4:2600SbOs		
 gs4:JP8kFdOs		
-gs1:Voice Ld		
+gs1:Voice Ld	1	0.8125
 gs4:VoiceLd2		
 gs3:Vox Lead		
 gs3:LFO Vox		
 gs4:VoxLead2		
-gs1:Fifth Ld		
+gs1:Fifth Ld	1	0.75
 gs2:Big Five		
 gs3:5th Lead		
 gs3:5thAnClv		
@@ -922,7 +922,7 @@ gs4:5thPulse
 gs4:JP5thSaw		
 gs4:JP8k 5FB		
 gs3:4th Lead		
-gs1:Bass&Ld		
+gs1:Bass&Ld	1	0.625
 gs2:Big&Raw		
 gs2:Fat&Prky		
 gs3:JUNORave		
@@ -930,7 +930,7 @@ gs3:JP8BaLd1
 gs3:JP8BaLd2		
 gs3:SH-5BaLd		
 gs4:Delay.Ld		
-gs1:Fantasia		
+gs1:Fantasia	1	0.5625
 gs2:Fantasy2		
 gs3:NewAgePd		
 gs3:BelHeavn		
@@ -938,7 +938,7 @@ gs4:Fantasy3
 gs4:Fantasy4		
 gs4:After D!		
 gs4:260HrmPd		
-gs1:Warm Pad		
+gs1:Warm Pad	1	0.375
 gs2:ThickPad		
 gs3:ThickMtx		
 gs2:Horn Pad		
@@ -953,7 +953,7 @@ gs4:HumanPad
 gs4:SyncBrPd		
 gs4:OctPWMPd		
 gs4:JPSoftPd		
-gs1:PolySyPd		
+gs1:PolySyPd	1	0.375
 gs2:80sPlySy		
 gs3:PlySyPd2		
 gs3:PolyKing		
@@ -969,7 +969,7 @@ gs4:HappySyn
 gs4:FwdSweep		
 gs4:RevSweep		
 gs4:MinorRav		
-gs1:ChoirPad		
+gs1:ChoirPad	1	0.6875
 gs2:Heaven		
 gs3:SCHeaven		
 gs4:Itopia		
@@ -982,19 +982,19 @@ gs3:Auh Vox
 gs3:Auh Auh		
 gs3:Vocorder		
 gs4:Holy Vox		
-gs1:BowedPad		
+gs1:BowedPad	1	0.4375
 gs3:SftBelPd		
 gs3:JP8SqrPd		
 gs3:7thBelPd		
 gs4:SteelGls		
 gs4:BotlStak		
-gs1:MetalPad		
+gs1:MetalPad	1	0.5625
 gs2:Tine Pad		
 gs2:PannerPd		
 gs4:SteelPad		
 gs4:Spe.Rave		
 gs4:MetalPd2		
-gs1:Halo Pad		
+gs1:Halo Pad	1	0.6875
 gs3:VoicePad		
 gs3:VoxSweep		
 gs3:HorrorPd		
@@ -1002,7 +1002,7 @@ gs4:SynVoxPd
 gs4:SynVxPd2		
 gs4:BrthRise		
 gs4:TearsVox		
-gs1:SweepPad		
+gs1:SweepPad	1	0.4375
 gs2:PolarPad		
 gs4:Ambi.BPF		
 gs4:Sync Pad		
@@ -1015,19 +1015,19 @@ gs4:Swp.Pipe
 gs4:SwpStack		
 gs4:Deep Swp		
 gs4:StrayPad		
-gs1:Ice Rain		
+gs1:Ice Rain	1	0.6875
 gs1:HrmoRain		
 gs1:AfrcWind		
 gs3:AnklngPd		
 gs3:RattlePd		
 gs1:ClaviPad		
-gs1:SoundTrk		
+gs1:SoundTrk	1	0.5
 gs1:Ancestrl		
 gs1:Prologue		
 gs3:Prolog 2		
 gs3:Hols Str		
 gs1:Rave		
-gs1:Crystal		
+gs1:Crystal	1	0.5
 gs1:SynMalet		
 gs1:SftCryst		
 gs1:RndGlock		
@@ -1044,7 +1044,7 @@ gs1:AirBells
 gs1:BellHarp		
 gs1:Gamelmba		
 gs3:JUNO Bel		
-gs1:Atmosphr		
+gs1:Atmosphr	1	0.75
 gs1:WarmAtms		
 gs1:NylnHarp		
 gs1:Harp Vox		
@@ -1054,11 +1054,11 @@ gs1:Ambient
 gs3:Invisibl		
 gs3:PulseKey		
 gs3:NoisePno		
-gs1:Bright		
+gs1:Bright	1	0.9375
 gs3:ShneStar		
 gs3:OB Stab		
 gs3:Org Bell		
-gs1:Goblins		
+gs1:Goblins	1	0.25
 gs1:GobSynth		
 gs1:50sSciFi		
 gs3:Abduct		
@@ -1075,7 +1075,7 @@ gs3:Altrnate
 gs3:UFO FX		
 gs3:GarglMan		
 gs3:Sweep FX		
-gs1:Echoes		
+gs1:Echoes	1	0.6875
 gs1:EchoBell		
 gs1:Echo Pan		
 gs1:EchoPan2		
@@ -1084,14 +1084,14 @@ gs1:Reso Pan
 gs1:WaterPno		
 gs3:Pan Seq.		
 gs3:Aqua		
-gs1:StarThme		
+gs1:StarThme	1	0.5625
 gs1:StarThm2		
 gs3:DreamPad		
 gs3:SilkyPad		
 gs3:NewCntry		
 gs3:7thAtmos		
 gs3:GalaxyWy		
-gs1:Sitar		
+gs1:Sitar	1	0.5625
 gs4:Sitar		
 gs1:Sitar 2		
 gs2:DetSitar		
@@ -1100,7 +1100,7 @@ gs4:SitarDrn
 gs4:Sitar 4		
 gs2:Tambra		
 gs2:Tamboura		
-gs1:Banjo		
+gs1:Banjo	1	1
 gs2:Banjo		
 gs2:MuteBnjo		
 gs2:Rabab		
@@ -1109,38 +1109,38 @@ gs2:Gopichnt
 gs2:Oud		
 gs3:Oud&Str		
 gs3:Pi Pa		
-gs1:Shamisen		
+gs1:Shamisen	1	1
 gs2:Tsugaru		
 gs3:SynShami		
-gs1:Koto		
+gs1:Koto	1	0.6875
 gs3:Koto		
 gs3:Gu Zheng		
 gs1:Taisho		
 gs2:Kanoon		
 gs3:Kann&Chr		
 gs3:Oct Harp		
-gs1:Kalimba		
+gs1:Kalimba	1	0.9375
 gs2:Kalimba		
 gs3:Kalimba		
 gs3:Sanza		
 gs4:Bodhran		
 gs4:MuteBodh		
-gs1:Bagpipe		
+gs1:Bagpipe	1	0.75
 gs3:Didgrdoo		
 gs4:UillPipe		
 gs4:UillPpNm		
 gs4:UillPpOr		
-gs1:Fiddle		
+gs1:Fiddle	1	0.5625
 gs3:Er Hu		
 gs3:Gao Hu		
-gs1:Shanai		
+gs1:Shanai	1	0.5625
 gs2:Shanai 2		
 gs2:Pungi		
 gs2:Hichriki		
 gs3:Mizmar		
 gs3:Suona		
 gs3:Suona 2		
-gs1:TnklBell		
+gs1:TnklBell	1	1
 gs2:Bonang		
 gs2:Gender		
 gs2:GmlnGong		
@@ -1163,20 +1163,20 @@ gs4:JnglCrsh
 gs4:JgCrsh!!		
 gs4:RideCym!		
 gs4:RideBel!		
-gs1:Agogo		
+gs1:Agogo	1	0.75
 gs2:Agogo		
 gs2:Atargane		
 gs3:Tmbourin		
-gs1:SteelDrm		
+gs1:SteelDrm	1	0.625
 gs3:IslndMlt		
-gs1:Woodblok		
+gs1:Woodblok	1	0.9375
 gs1:Castanet		
 gs3:Angklung		
 gs3:AngkRthm		
 gs3:FngrSnap		
 gs3:909 Clap		
 gs4:HandClp!		
-gs1:Taiko		
+gs1:Taiko	1	0.75
 gs3:SmallTko		
 gs1:ConcrtBD		
 gs4:Con.BDMt		
@@ -1193,7 +1193,7 @@ gs4:Kick1 !!
 gs4:Kick2 !!		
 gs4:Kick3 !!		
 gs4:Kick4 !!		
-gs1:MelodTom		
+gs1:MelodTom	1	0.625
 gs2:Real Tom		
 gs4:RealTom2		
 gs4:Jazz Tom		
@@ -1210,14 +1210,14 @@ gs4:Snare2!!
 gs4:Snare3!!		
 gs4:Snare4!!		
 gs4:Snare5!!		
-gs1:Syn Drum		
+gs1:Syn Drum	1	0.75
 gs1:808 Tom		
 gs1:ElecPerc		
 gs3:SinePerc		
 gs3:606 Tom		
 gs3:909 Tom		
 gs4:606DsTom		
-gs1:RevCymbl		
+gs1:RevCymbl	1	0.5625
 gs2:RvCymbl2		
 gs3:RvCymbl3		
 gs4:RvCymbl4		
@@ -1236,7 +1236,7 @@ gs4:RvBDr1!!
 gs4:RvBDr2!!		
 gs4:RvBDr3!!		
 gs4:RvClap!!		
-gs1:FretNoiz		
+gs1:FretNoiz	1	0.4375
 gs1:CutNoise		
 gs1:Str.Slap		
 gs2:CutNoiz2		
@@ -1275,7 +1275,7 @@ gs4:Gtr.Strk
 gs4:GtrStrk2		
 gs4:GtrStrk3		
 gs4:GtrStrk4		
-gs1:BrthNoiz		
+gs1:BrthNoiz	1	0.9375
 gs1:Fl.KClik		
 gs4:BrthNz!!		
 gs4:Fl. Brth		
@@ -1285,7 +1285,7 @@ gs4:VoxBrth.
 gs4:VoxBrth2		
 gs4:TrombnNz		
 gs4:TrumptNz		
-gs1:Seashore		
+gs1:Seashore	1	0.6875
 gs1:Shower		
 gs1:Thunder		
 gs1:Wind		
@@ -1295,7 +1295,7 @@ gs3:Wind 2
 gs4:Cricket		
 gs3:PinkNoiz		
 gs3:White Nz		
-gs1:Tweet		
+gs1:Tweet	1	0.5
 gs1:Dog Woof		
 gs1:HorseGlp		
 gs1:BirdTwit		
@@ -1304,7 +1304,7 @@ gs2:Growl
 gs4:Growl 2		
 gs4:FancyAni		
 gs4:Seal		
-gs1:Telphone		
+gs1:Telphone	1	0.4375
 gs1:PhonCall		
 gs1:DoorSqek		
 gs1:DoorSlam		
@@ -1320,7 +1320,7 @@ gs4:Scratch4
 gs4:Scratch5		
 gs4:Scratch6		
 gs4:Scratch7		
-gs1:Helicptr		
+gs1:Helicptr	1	0.6875
 gs1:CarStart		
 gs1:CarTyreS		
 gs1:Car Pass		
@@ -1354,7 +1354,7 @@ gs4:SwordCrs
 gs4:Stab		
 gs4:Stab 2		
 gs1:Coaster		
-gs1:Applause		
+gs1:Applause	1	0.5625
 gs1:LaughVox		
 gs1:ScreamVx		
 gs1:Punch		
@@ -1374,7 +1374,7 @@ gs4:VxComeOn
 gs4:Voice Ow		
 gs4:VoiceWoo		
 gs4:VoiceHie		
-gs1:Gunshot		
+gs1:Gunshot	1	0.75
 gs1:MchinGun		
 gs1:LaserGun		
 gs1:Xplosion		
@@ -1445,42 +1445,42 @@ gs1:Triangle
 gs1:1NoteJam		
 gs1:WaterBel		
 gs1:JnglTune		
-gs1:Standard		
-gs2:Standrd2		
-gs3:Standrd3		
-gs4:StdrdL/R		
-gs1:Room Kit		
-gs3:HipHopKt		
-gs3:JungleKt		
-gs3:TechnoKt		
-gs4:Room L/R		
-gs4:HouseKit		
-gs1:PowerKit		
-gs1:Electro		
-gs1:AnalogKt		
-gs2:DanceKit		
-gs3:CR-78 Kt		
-gs3:TR-606Kt		
-gs3:TR-707Kt		
-gs3:AnalgKt2		
-gs1:Jazz Kit		
-gs4:Jazz L/R		
-gs1:BrushKit		
-gs4:BrushKt2		
-gs4:Brush2LR		
-gs1:Orch.Kit		
-gs2:EthnicKt		
-gs2:KikSnare		
-gs4:KkSnare2		
-gs3:AsianKit		
-gs3:CymbalKt		
-gs4:GamelnKt		
-gs4:GamlnKt2		
-gs1:SFX Kit		
-gs2:RyFX Kit		
-gs3:RyFX2 Kt		
-gs4:RyFX3 Kt		
-gs4:SFX Kt 2		
-gs4:VoiceKit		
-gs4:CymblKt2		
-gs1:MT-32 Kt		
+gs1:Standard	0	1
+gs2:Standrd2	0	1
+gs3:Standrd3	0	1
+gs4:StdrdL/R	0	1
+gs1:Room Kit	0	1
+gs3:HipHopKt	0	1
+gs3:JungleKt	0	1
+gs3:TechnoKt	0	1
+gs4:Room L/R	0	1
+gs4:HouseKit	0	1
+gs1:PowerKit	0	1
+gs1:Electro	0	1
+gs1:AnalogKt	0	1
+gs2:DanceKit	0	1
+gs3:CR-78 Kt	0	1
+gs3:TR-606Kt	0	1
+gs3:TR-707Kt	0	1
+gs3:AnalgKt2	0	1
+gs1:Jazz Kit	0	1
+gs4:Jazz L/R	0	1
+gs1:BrushKit	0	1
+gs4:BrushKt2	0	1
+gs4:Brush2LR	0	1
+gs1:Orch.Kit	0	1
+gs2:EthnicKt	0	1
+gs2:KikSnare	0	1
+gs4:KkSnare2	0	1
+gs3:AsianKit	0	1
+gs3:CymbalKt	0	1
+gs4:GamelnKt	0	1
+gs4:GamlnKt2	0	1
+gs1:SFX Kit	0	1
+gs2:RyFX Kit	0	1
+gs3:RyFX2 Kt	0	1
+gs4:RyFX3 Kt	0	1
+gs4:SFX Kt 2	0	1
+gs4:VoiceKit	0	1
+gs4:CymblKt2	0	1
+gs1:MT-32 Kt	0	1

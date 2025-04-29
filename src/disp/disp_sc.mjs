@@ -14,7 +14,7 @@ import {
 
 const textMultiTable = [0, 95, 190, 285, 380, 475, 570];
 
-let tmpMelodicBypassCat = Uint8Array.from([0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
+//let tmpMelodicBypassCat = Uint8Array.from([0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
 
 let cmpWidth = 7,
 mspWidth = 6,
@@ -108,6 +108,11 @@ let ScDisplay = class extends RootDisplay {
 		upThis.xgFont.loaded.wait().then(() => {
 			upThis.#booted = 1;
 		});
+	};
+	async handleProp(entry) {
+		entry.scSqr = parseInt(entry.scSqr);
+		entry.scScale = Math.ceil(parseFloat(entry.scScale) * 256);
+		//console.debug(entry);
 	};
 	reset() {
 		super.reset();
@@ -256,6 +261,7 @@ let ScDisplay = class extends RootDisplay {
 			while (isTextNull.indexOf("  ") > -1) {
 				isTextNull = isTextNull.replaceAll("  ", " ");
 			};
+			let voiceObject = upThis.getChVoice(upThis.#ch);
 			if (timeNow <= upThis.#sysTime) {
 				upThis.xgFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
 					e0.forEach(function (e1, i1) {
@@ -347,7 +353,7 @@ let ScDisplay = class extends RootDisplay {
 						infoTxt += "+";
 					};
 				};
-				infoTxt += upThis.getMapped(upThis.getChVoice(upThis.#ch).name).slice(0, 12).padEnd(12, " ");
+				infoTxt += upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ");
 				let timeOff = 0;
 				if (sum.mode === "gs" || sum.mode === "sc") {
 					if (sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
@@ -428,10 +434,26 @@ let ScDisplay = class extends RootDisplay {
 				};
 				let e = sum.strength[i];
 				//i === 9 && console.debug(upThis.#velo[i], e);
-				let isMelodic = upThis.device?.getChType(i) === 0 && tmpMelodicBypassCat[upThis.getChPrimitive(i, 0, true) >> 3] === 0;
+				//let isMelodic = upThis.device?.getChType(i) === 0 && tmpMelodicBypassCat[upThis.getChPrimitive(i, 0, true) >> 3] === 0;
 				// This is for when the scaling factors are not available
-				upThis.#velo[i] = isMelodic ? (e * e) >> 8 : e;
+				// upThis.#velo[i] = isMelodic ? (e * e) >> 8 : e;
 				// When the scaling factors are available, use the code below instead
+				let props = upThis.getProps(voiceObject);
+				let scalingFactor = props?.scScale ?? 256;
+				upThis.#velo[i] = e * scalingFactor >> 8;
+				switch (props?.scSqr) {
+					case 16: {
+						upThis.#velo[i] = (((upThis.#velo[i] * scalingFactor) >> 8) * rawStrength[i]) >> 7;
+						break;
+					};
+					case 2:
+					case 1: {
+						for (let i = 0; i < props?.scSqr; i ++) {
+							upThis.#velo[i] = (upThis.#velo[i] * rawStrength[i]) >> 7;
+						};
+						break;
+					};
+				};
 				// upThis.#velo[i] = isMelodic ? (e * rawStrength[i]) >> 7 : e;
 			};
 			for (let i = 0; i < allocated.ch; i ++) {
@@ -439,7 +461,7 @@ let ScDisplay = class extends RootDisplay {
 				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
 					upThis.#lingerExtra[i] = 40;
-					if (e !== upThis.#linger[i]) {
+					if (realVelo !== upThis.#linger[i]) {
 						upThis.#linger[i] = realVelo << 8;
 					};
 				};
