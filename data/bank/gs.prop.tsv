@@ -1,0 +1,1486 @@
+voiceId	scSqr	scScale
+gs1:GrandPno		
+gs2:GrandPno		
+gs3:GrandPno		
+gs4:GrandPno		
+gs4:Uprt.Pno		
+gs4:Mild Pno		
+gs1:Piano 1w		
+gs4:UprtP. w		
+gs4:MildP. w		
+gs1:Piano 1d		
+gs3:EuropePf		
+gs3:PianoStr		
+gs4:Pno+Str2		
+gs4:DreamPno		
+gs4:DreamP.2		
+gs1:BritePno		
+gs2:BritePno		
+gs3:BritePno		
+gs4:BritePno		
+gs4:PopPiano		
+gs4:Rock Pno		
+gs1:Piano 2w		
+gs4:PopPno w		
+gs4:RockP. w		
+gs3:DancePno		
+gs1:EGrndPno		
+gs2:EGrndPno		
+gs3:EGrndPno		
+gs1:EGRhode1		
+gs1:EGRhode2		
+gs1:Piano 3w		
+gs1:HnkyTonk		
+gs2:HnkyTonk		
+gs3:HnkyTonk		
+gs4:HnkyTonk		
+gs1:HnkyTk w		
+gs2:Old Uprt		
+gs3:HnkyTnk2		
+gs1:ElPiano1		
+gs2:ElPiano1		
+gs3:ElPiano1		
+gs1:Det.EP 1		
+gs2:StSoftEP		
+gs3:ChorusEP		
+gs3:SilntRho		
+gs1:EPiano1v		
+gs2:FM+SA EP		
+gs3:Dst.EPno		
+gs1:60sElPno		
+gs3:Wurly EP		
+gs2:HrdRhode		
+gs2:MelRhode		
+gs1:ElPiano2		
+gs2:ElPiano2		
+gs4:ElPiano3		
+gs1:Det.EP 2		
+gs4:Det.EP 3		
+gs4:DXLegend		
+gs1:ElPno 2v		
+gs2:StereoDX		
+gs2:DX Hard 		
+gs4:DX Phase		
+gs1:Hrpschrd		
+gs2:Hrpschrd		
+gs4:Hrpschrd		
+gs3:Hpschrd2		
+gs4:Hpschrd3		
+gs1:CplHapsi		
+gs1:Harpsi.w		
+gs1:Harpsi.o		
+gs3:SynHapsi		
+gs1:Clavinet		
+gs2:Clavinet		
+gs4:Clavinet		
+gs4:Clvinet2		
+gs4:AtkClavi		
+gs4:AtkClv.2		
+gs3:Comp Clv		
+gs3:Reso Clv		
+gs4:PhaseClv		
+gs3:Clavi. o		
+gs3:AnaClavi		
+gs3:JP8 Clv1		
+gs3:JP8 Clv2		
+gs4:SyRngClv		
+gs4:SyDstClv		
+gs4:JP8k Clv		
+gs4:PulseClv		
+gs1:Celesta		
+gs3:PopCelst		
+gs1:Glocken		
+gs2:Glocken		
+gs1:MusicBox		
+gs2:MusicBox		
+gs4:MusicBox		
+gs4:MusicBx2		
+gs4:St.MusBx		
+gs1:Vibrafon		
+gs2:Vibrafon		
+gs3:Vibrafon		
+gs2:HardVibr		
+gs3:Pop Vibr		
+gs1:Vib. w		
+gs3:Vibra. w		
+gs1:Vibrafns		
+gs1:Marimba		
+gs2:Marimba		
+gs1:Marmba w		
+gs2:Barafon		
+gs2:Barafon2		
+gs2:Log Drum		
+gs1:Xylophon		
+gs2:Xylophon		
+gs4:Xylofn.w		
+gs1:TubulBel		
+gs4:TubulBel		
+gs1:ChrchBel		
+gs1:Carillon		
+gs4:ChchBel2		
+gs4:TubBel w		
+gs1:Santur		
+gs4:Santur		
+gs2:Santur 2		
+gs4:Santur 3		
+gs2:Cimbalom		
+gs3:Zither		
+gs3:Zither 2		
+gs3:Dulcimer		
+gs1:DrawOrgn		
+gs2:DrawOrgn		
+gs3:DrawOrgn		
+gs2:Organ101		
+gs4:FullOrgn		
+gs4:FullOrg2		
+gs4:FullOrg3		
+gs4:FullOrg4		
+gs4:FullOrg5		
+gs4:FullOrg6		
+gs1:DetDrwOr		
+gs3:TremDrOr		
+gs2:Organ109		
+gs3:Organ. o		
+gs4:FullOrg7		
+gs4:FullOrg8		
+gs4:FullOrg9		
+gs1:60sDrOrg		
+gs2:60sDrOr2		
+gs2:60sDrOr3		
+gs3:FarfOrgn		
+gs2:CheezOrg		
+gs3:D-50 Org		
+gs3:JUNO Org		
+gs3:HybridOr		
+gs3:VS Organ		
+gs3:EChrchOr		
+gs4:JX-8P Or		
+gs4:FM Organ		
+gs1:DrawOrg2		
+gs3:70sDrOrg		
+gs2:EvenBar		
+gs2:Organ Ba		
+gs3:5thOrgan		
+gs1:PercOrgn		
+gs2:PercOrgn		
+gs3:PercOrgn		
+gs2:Organ201		
+gs3:JazzOrgn		
+gs3:EOrg16+2		
+gs4:JazzOrg2		
+gs4:JazzOrg3		
+gs4:JazzOrg4		
+gs4:JazzOrg5		
+gs4:JazzOrg6		
+gs1:DetPrcOr		
+gs3:ChorusOr		
+gs3:OctaveOr		
+gs1:PercOrg2		
+gs3:PercOrg3		
+gs4:PercOrg4		
+gs4:PercOrg5		
+gs4:PercOrg6		
+gs1:RockOrgn		
+gs2:RotaryOr		
+gs2:SlwRotar		
+gs3:RockOrg2		
+gs3:RockOrg3		
+gs2:FstRotar		
+gs1:ChrchOrg		
+gs1:ChurOrg2		
+gs1:ChurOrg3		
+gs2:OrgFlute		
+gs2:TrmOrgFl		
+gs3:ThtreOrg		
+gs1:ReedOrgn		
+gs3:WindOrgn		
+gs4:PuffOrgn		
+gs1:Acordion		
+gs2:Acordion		
+gs3:Acordion		
+gs1:AccordIt		
+gs3:DstAcord		
+gs3:ChoAcord		
+gs3:HrdAcord		
+gs3:SftAcord		
+gs1:Harmnica		
+gs2:Harmnica		
+gs3:Harmnica		
+gs4:Harmnica		
+gs2:Harmo. 2		
+gs4:BscBHrmo		
+gs4:SplBHrmo		
+gs1:Bndoneon		
+gs2:Bndoneon		
+gs3:Bndoneon		
+gs3:Bndneon2		
+gs3:Bndneon3		
+gs1:NylonGtr		
+gs2:NylonGtr		
+gs3:NylonGtr		
+gs1:Ukulele		
+gs1:NylonGt3		
+gs2:VelGtHrm		
+gs1:NylonGt2		
+gs2:LequintG		
+gs1:SteelGtr		
+gs2:SteelGtr		
+gs3:SteelGtr		
+gs1:12StrGtr		
+gs2:Nyln&Stl		
+gs4:AtkSteel		
+gs1:Mandolin		
+gs3:Mandoln2		
+gs3:MandoTrm		
+gs2:SteelGt2		
+gs4:Stl&Body		
+gs1:Jazz Gtr		
+gs3:Jazz Gtr		
+gs1:MellowGt		
+gs1:HawaiiGt		
+gs2:PedalStl		
+gs1:CleanGtr		
+gs2:CleanGtr		
+gs3:CleanGtr		
+gs3:ClnHalfG		
+gs3:OpnHrdGt		
+gs3:OpnHrdG2		
+gs3:JC ClnGt		
+gs4:AtkClnGt		
+gs1:ChorusGt		
+gs3:JC ChoGt		
+gs3:TCFrntPk		
+gs3:TCRearPk		
+gs3:TC Clean		
+gs3:TC Cln 2		
+gs4:LPRearPk		
+gs4:LPRearP2		
+gs4:LPRearAt		
+gs4:MidT.Gtr		
+gs4:ChngRuan		
+gs4:ChgRuan2		
+gs1:MutedGtr		
+gs2:MutedGtr		
+gs3:MutedGtr		
+gs2:Mu.DstGt		
+gs3:TCMuteGt		
+gs1:Funk Gtr		
+gs2:Funk Pop		
+gs1:FunkGtr2		
+gs4:Jazz Man		
+gs1:OvrDrvGt		
+gs2:OvrDrvGt		
+gs3:OvrDrvGt		
+gs3:OvrDrGt2		
+gs3:OvrDrGt3		
+gs3:MoDrvGtr		
+gs4:Gt.Pinch		
+gs4:AtkDrvGt		
+gs3:LPOvrDrv		
+gs3:LPOvrDr2		
+gs4:LP HfDrv		
+gs4:LPHfDrv2		
+gs4:LPChorus		
+gs1:Dist.Gtr		
+gs2:Dist.Gtr		
+gs3:Dist.Gtr		
+gs2:DistGtr2		
+gs2:DazedGtr		
+gs3:DistGtr3		
+gs3:FstDstGt		
+gs4:AtkDstGt		
+gs1:FeedbkGt		
+gs2:FeedbkG2		
+gs2:PowerGtr		
+gs2:PowerGt2		
+gs2:5thDist.		
+gs2:RockRthm		
+gs2:RckRthm2		
+gs4:DsRthmGt		
+gs1:GtrHarmo		
+gs1:GtFeedbk		
+gs3:GtrFdbk2		
+gs2:AcGtrHmo		
+gs3:ElBaHrmo		
+gs1:Aco.Bass		
+gs2:Aco.Bass		
+gs3:Aco.Bass		
+gs4:Aco.Bass		
+gs3:Rokabily		
+gs3:WildAcBa		
+gs4:AtkAcoBa		
+gs3:Bass+OHH		
+gs1:FngrBass		
+gs2:FngrBass		
+gs3:FngrBass		
+gs2:FngrBas2		
+gs2:Jazzy Ba		
+gs3:JazzyBa2		
+gs3:RockBass		
+gs4:HeartBas		
+gs4:AtkFngr.		
+gs4:FngrSlap		
+gs3:ChorJzBa		
+gs3:F.Ba/Hrm		
+gs1:PickBass		
+gs2:PickBass		
+gs3:PickBass		
+gs3:PickBas2		
+gs3:PickBas3		
+gs3:PickBas4		
+gs4:DblPikBa		
+gs2:M.PkBass		
+gs3:PkBa/Hrm		
+gs1:Fretless		
+gs2:Fretless		
+gs2:Fretles2		
+gs2:Fretles3		
+gs2:Fretles4		
+gs2:SynFretl		
+gs2:SmthFrtl		
+gs3:WoodFrtl		
+gs1:SlapBass		
+gs2:SlapBass		
+gs3:Pop Slap		
+gs2:ResoSlap		
+gs3:UnisnSlp		
+gs1:SlapBas2		
+gs2:SlapBas2		
+gs4:SlpBass3		
+gs3:FM Slap		
+gs1:SynBass1		
+gs2:SynBass1		
+gs1:SynBa101		
+gs3:CS Bass		
+gs3:JP-4 Ba		
+gs3:JP-8 Ba		
+gs3:P5 Bass		
+gs3:JPMG Ba		
+gs1:SynBass3		
+gs2:AcidBass		
+gs2:TB303 Ba		
+gs2:TechnoBa		
+gs3:TB303Ba2		
+gs3:TB303Kik		
+gs3:TB303Saw		
+gs3:Rubbr303		
+gs3:Reso 303		
+gs2:ResoSHBa		
+gs3:303SqrBa		
+gs3:303DstBa		
+gs4:Clavi.Ba		
+gs4:HammerBa		
+gs4:JungleBa		
+gs4:SquareBa		
+gs4:Sqr.Ba.2		
+gs3:ArpgioBa		
+gs4:Polak Is		
+gs4:VeryCute		
+gs4:HitSawBa		
+gs4:RingBass		
+gs4:AtkSinBa		
+gs4:OBSineBa		
+gs4:Aux Bass		
+gs4:303SqDsB		
+gs4:303SqDB2		
+gs4:303SqDB3		
+gs4:303SqBRv		
+gs4:TeeBee		
+gs1:SynBass2		
+gs2:SynBa201		
+gs2:ModulrBs		
+gs2:Seq.Bass		
+gs3:MG Bass		
+gs3:MGOctBas		
+gs3:MGOctBa2		
+gs3:MGBlipBa		
+gs1:SynBass4		
+gs2:BeefFMBa		
+gs2:X WireBa		
+gs3:Dly Bass		
+gs3:X WireBa		
+gs3:WreStrBa		
+gs3:BlipBass		
+gs3:RubbrBa2		
+gs4:SynBelBa		
+gs4:Odd Bass		
+gs1:RubberBa		
+gs2:SH101Ba1		
+gs2:SH101Ba2		
+gs2:SmoothBa		
+gs3:SH101Ba3		
+gs3:Spike Ba		
+gs3:House Ba		
+gs3:KG Bass		
+gs3:SyncBass		
+gs3:MG5th Ba		
+gs3:RandomBa		
+gs3:WowMG Ba		
+gs3:BubbleBa		
+gs4:AtkPulse		
+gs4:SyncBas2		
+gs4:PulseMix		
+gs4:MGDistBa		
+gs4:SeqBass2		
+gs4:3rd Bass		
+gs4:MGOctBas		
+gs4:SlwEnvBa		
+gs4:MildBass		
+gs4:DstEnvBa		
+gs4:MGLiteBa		
+gs4:DstSynBa		
+gs4:RiseBass		
+gs4:CyberBas		
+gs1:Violin		
+gs2:Violin		
+gs3:Violin		
+gs3:ViolnAtk		
+gs1:SlwVioln		
+gs1:Viola		
+gs2:Viola		
+gs3:Viola		
+gs3:ViolaAtk		
+gs1:Cello		
+gs2:Cello		
+gs3:Cello		
+gs3:CelloAtk		
+gs1:Contrbas		
+gs2:Contrbas		
+gs3:Contrbas		
+gs4:Contrbas		
+gs1:Trem.Str		
+gs2:Trem.Str		
+gs4:TrmStrSt		
+gs2:SlwTrStr		
+gs2:Susp.Str		
+gs4:SuspStr2		
+gs1:Pizz.Str		
+gs2:Pizz.Str		
+gs3:VcCbPizz		
+gs3:ChmbrPiz		
+gs3:St. Pizz		
+gs3:SoloPizz		
+gs3:SoloSpic		
+gs4:StrsSpic		
+gs1:Harp		
+gs2:Harp		
+gs4:Harp&Str		
+gs4:Harp St.		
+gs4:UileanHp		
+gs3:Syn.Harp		
+gs4:YangChin		
+gs4:YangQin2		
+gs4:SynYanQn		
+gs1:Timpani		
+gs2:Timpani		
+gs1:Strings1		
+gs2:Strings1		
+gs3:Strings1		
+gs4:Strings1		
+gs2:Slow Str		
+gs3:BriteStr		
+gs3:ChmbrStr		
+gs3:CellSect		
+gs4:Brt.Str2		
+gs4:Brt.Str3		
+gs4:Quad Str		
+gs4:Mild Str		
+gs1:Orch.Str		
+gs2:OrchStr2		
+gs2:TremOrch		
+gs2:ChoirStr		
+gs3:Str&FrHr		
+gs4:Str+Flut		
+gs4:ChoirS.2		
+gs4:ChoirS.3		
+gs2:StStrngs		
+gs4:St.Strs2		
+gs4:St.Strs3		
+gs4:OrchStr3		
+gs4:OrchStr4		
+gs2:Velo.Str		
+gs3:OctavStr		
+gs3:OctStr.2		
+gs4:ContraSc		
+gs4:60s Strs		
+gs1:Strings2		
+gs2:Strings2		
+gs3:Strings2		
+gs4:Strings2		
+gs2:SlowStr2		
+gs4:SlowStr3		
+gs2:LegatoSt		
+gs2:Warm Str		
+gs2:StSlwStr		
+gs4:StSlStr2		
+gs4:StStr+Ch		
+gs4:StStrCh2		
+gs1:Syn.Str1		
+gs2:Syn.Str1		
+gs3:Syn.Str1		
+gs2:OB Str.		
+gs3:StackStr		
+gs3:JP Str.		
+gs4:Chor.Str		
+gs1:Syn.Str3		
+gs3:Syn.Str4		
+gs4:Syn.Str6		
+gs4:Syn.Str7		
+gs4:LoFi Str		
+gs3:High Str		
+gs3:HybrdStr		
+gs3:Tron Str		
+gs3:NoizyStr		
+gs1:Syn.Str2		
+gs3:Syn.Str5		
+gs3:JUNO Str		
+gs4:FiltOrch		
+gs4:JPSawStr		
+gs4:HybrStr2		
+gs4:Dist.Str		
+gs4:JUNOFull		
+gs3:Air Str.		
+gs4:AtkSyStr		
+gs4:StraiStr		
+gs1:ChoirAah		
+gs2:ChoirAah		
+gs3:ChoirAah		
+gs2:St.Choir		
+gs2:MltChoir		
+gs3:ChurchCh		
+gs4:BoyChoir		
+gs4:BoysCh.2		
+gs4:StBoyCh.		
+gs4:Rich Ch.		
+gs3:ChoirHah		
+gs3:ChoirLah		
+gs2:ChoirAh2		
+gs3:MaleC.Ah		
+gs1:VoiceOoh		
+gs4:VoiceOoh		
+gs4:Chor.Ooh		
+gs4:VoiceOh2		
+gs4:ChorOoh2		
+gs4:OohsMaj7		
+gs4:OohsSus4		
+gs4:JazzScat		
+gs3:VoiceDah		
+gs4:JazzyDah		
+gs4:JazzyBah		
+gs4:JazzyDow		
+gs4:JazzThum		
+gs4:Fem. Lah		
+gs4:FemChoLa		
+gs4:Fem. Luh		
+gs4:FemChoLu		
+gs4:Fem. Lan		
+gs4:FemChLan		
+gs4:Fem. Aah		
+gs4:Fem. Uuh		
+gs4:F.La&Lan		
+gs4:Male Wah		
+gs4:MalChoWa		
+gs4:Male Woh		
+gs4:MalChoWo		
+gs4:Male Aah		
+gs4:Male Ooh		
+gs4:Humming		
+gs1:SynVoice		
+gs4:Syn Vox		
+gs4:SynVox 2		
+gs2:SyVoice2		
+gs3:SlntNght		
+gs4:SyVoice3		
+gs3:VP330		
+gs3:VnlChoir		
+gs4:JX8P Vox		
+gs4:AnalgVox		
+gs1:Orch.Hit		
+gs2:Orch.Hit		
+gs4:Bass Hit		
+gs4:6th Hit		
+gs4:Euro Hit		
+gs2:ImpactHt		
+gs2:PhillyHt		
+gs2:DoublHit		
+gs3:Perc.Hit		
+gs3:ShockWav		
+gs4:BounceHt		
+gs4:DrillHit		
+gs4:ThrillHt		
+gs2:LoFiRave		
+gs3:TechnoHt		
+gs3:Dist.Hit		
+gs3:Bam Hit		
+gs3:Bit Hit		
+gs3:Bim Hit		
+gs3:Tkng Hit		
+gs3:Rave Hit		
+gs3:Str. Hit		
+gs3:StackHit		
+gs4:Indus.Ht		
+gs4:Clap Hit		
+gs1:Trumpet		
+gs2:Trumpet		
+gs3:Trumpet		
+gs4:Trumpet		
+gs2:Trumpet2		
+gs3:Trumpet3		
+gs4:Dark Trp		
+gs4:Trp&Noiz		
+gs2:FlugelHr		
+gs3:4th Trp		
+gs2:BriteTrp		
+gs2:Warm Trp		
+gs4:WarmTrp2		
+gs4:Twin Trp		
+gs3:Syn Trp		
+gs1:Trombone		
+gs2:Trombone		
+gs3:Trombone		
+gs4:Trombone		
+gs1:Trombon2		
+gs3:Twinbone		
+gs4:Trom&Tba		
+gs4:BrtTromb		
+gs3:BassTrom		
+gs4:Eufonium		
+gs1:Tuba		
+gs2:Tuba		
+gs2:Tuba 2		
+gs4:Tuba+Hrn		
+gs1:MutedTrp		
+gs2:MutedTrp		
+gs4:CMuteTrp		
+gs4:MuteTrp2		
+gs4:MuteTrp3		
+gs3:MutedHrn		
+gs1:FrchHorn		
+gs2:FrchHorn		
+gs1:FrHorn 2		
+gs3:Hrn+Orch		
+gs3:WideFrHr		
+gs2:FrHrSolo		
+gs3:SlwFrHrn		
+gs3:DualFrHr		
+gs2:HornOrch		
+gs3:Syn.Horn		
+gs3:RipFrHrn		
+gs1:BrasSect		
+gs3:BrasSect		
+gs3:Brass ff		
+gs3:BoneSect		
+gs4:StBrs ff		
+gs4:QuadBras		
+gs4:QuadBrs2		
+gs1:BrsSect2		
+gs3:BrsSect3		
+gs3:SforzBrs		
+gs4:SfzBras2		
+gs4:PopBrass		
+gs2:BrasFall		
+gs3:Trp Fall		
+gs3:OctBrass		
+gs3:Brs+Reed		
+gs4:Fat+Reed		
+gs4:OrchBras		
+gs4:OrchBrs2		
+gs4:StPopBrs		
+gs4:StOrchBr		
+gs4:StOrBrs2		
+gs4:StOrBrs3		
+gs1:SynBras1		
+gs2:SynBras1		
+gs3:SynBras1		
+gs2:PolyBras		
+gs3:JUNO Brs		
+gs3:StackBrs		
+gs3:SH-5 Brs		
+gs3:MKS Bras		
+gs4:JumpBras		
+gs1:SynBras3		
+gs3:ProBrass		
+gs2:QuackBrs		
+gs3:P5 Brass		
+gs4:OrchSyBr		
+gs1:AnalgBrs		
+gs2:Octa.Brs		
+gs3:OctSynBr		
+gs3:HybridBr		
+gs4:OctSyBr2		
+gs4:BPF Bras		
+gs1:SynBras2		
+gs3:SynBras2		
+gs2:SoftBras		
+gs3:WarmBras		
+gs4:SynBras3		
+gs4:SyncBras		
+gs4:FatSncBr		
+gs4:DeepSyBr		
+gs1:SynBras4		
+gs3:SynSfzBr		
+gs3:OB Brass		
+gs3:RezBrass		
+gs4:DstSqrBr		
+gs4:JP8kSwBr		
+gs1:Ana.Brs2		
+gs2:VeloBras		
+gs2:VeloBrs2		
+gs3:TransBrs		
+gs1:SprnoSax		
+gs2:SprnoSax		
+gs3:SprnoSax		
+gs1:ExpSprno		
+gs1:Alto Sax		
+gs2:Alto Sax		
+gs3:Alto Sax		
+gs2:HyprAlto		
+gs3:Exp.Alto		
+gs3:Grow Sax		
+gs3:Alto+Trp		
+gs4:Sax Sect		
+gs1:TenorSax		
+gs2:TenorSax		
+gs3:TenorSax		
+gs3:TenrSax2		
+gs2:BrthTnSx		
+gs3:St.TnrSx		
+gs1:Bari.Sax		
+gs2:Bari.Sax		
+gs3:Bari.Sax		
+gs3:BariSax2		
+gs4:Bari&Tnr		
+gs1:Oboe		
+gs2:Oboe		
+gs3:Oboe		
+gs4:Oboe		
+gs3:Exp.Oboe		
+gs3:Mul.Reed		
+gs1:Eng.Horn		
+gs2:Eng.Horn		
+gs1:Bassoon		
+gs2:Bassoon		
+gs1:Clarinet		
+gs2:Clarinet		
+gs2:BsClari.		
+gs3:MultiWnd		
+gs4:QuadWind		
+gs1:Piccolo		
+gs2:Piccolo		
+gs3:Piccolo2		
+gs3:Nay		
+gs3:NayTrem.		
+gs3:Di Zi		
+gs1:Flute		
+gs2:Flute		
+gs3:Flute 2		
+gs3:ExpFlute		
+gs3:TrvFlute		
+gs3:FluteVln		
+gs4:PipeReed		
+gs3:TrnFlute		
+gs4:IndiaFlu		
+gs1:Recorder		
+gs1:PanFlute		
+gs2:PanFlute		
+gs2:Kawala		
+gs3:Zampona		
+gs3:ZmpnaAtk		
+gs4:TinWhist		
+gs4:TinWhsNm		
+gs4:TinWhsOr		
+gs1:BotlBlow		
+gs2:BotlBlow		
+gs1:Shakhchi		
+gs3:Di Zi 2		
+gs1:Whistle		
+gs3:Whistle2		
+gs1:Ocarina		
+gs1:SquareLd		
+gs3:SquareLd		
+gs1:SquareWv		
+gs3:MGSquare		
+gs2:HolwMini		
+gs2:MellowFM		
+gs2:CC Solo		
+gs2:Shmoog		
+gs2:LMSquare		
+gs4:JP8k TWM		
+gs1:SineWave	1	1
+gs3:2600Sine		
+gs3:SineLead		
+gs3:KG Lead		
+gs4:TwinSine		
+gs3:P5Square		
+gs3:OBSquare		
+gs3:JP-8 Sqr		
+gs4:DsSquare		
+gs4:303SqrDs		
+gs4:303SqDs2		
+gs4:303MixSq		
+gs4:2Sqr&Saw		
+gs3:Pulse Ld		
+gs3:JP8Pulse		
+gs3:JP8Puls2		
+gs3:MGRezPls		
+gs4:JP8Puls3		
+gs4:260 Ring		
+gs4:303DstLd		
+gs4:JP8kDsLd		
+gs4:HipHopSi		
+gs4:HipHopSq		
+gs4:HipHopPu		
+gs4:FluxPuls		
+gs1:Saw Lead		
+gs3:Saw Lead		
+gs1:Saw Wave		
+gs3:OB2 Saw		
+gs2:PulseSaw		
+gs2:FelineGR		
+gs2:Big Lead		
+gs2:VeloLead		
+gs2:GR-300		
+gs2:LA Saw		
+gs1:Dr. Lead		
+gs3:ThickSaw		
+gs4:JP8k Saw		
+gs3:D-50 Fat		
+gs4:OBDblSaw		
+gs4:JPDblSaw		
+gs4:ThickSw2		
+gs4:SuperSaw		
+gs2:WaspySyn		
+gs3:PM Lead		
+gs3:CS SawLd		
+gs3:MG Saw		
+gs3:MG Saw 2		
+gs3:OB Saw		
+gs3:OB Saw 2		
+gs3:D-50 Saw		
+gs3:SH101Saw		
+gs3:CS Saw		
+gs3:MG SawLd		
+gs3:OB SawLd		
+gs3:P5 SawLd		
+gs3:MGUnison		
+gs3:OctSawLd		
+gs4:NtrlLead		
+gs3:Seq.Saw.		
+gs3:Seq.Saw2		
+gs3:Reso Saw		
+gs3:CheezSaw		
+gs3:ChzSaw 2		
+gs3:Rthm Saw		
+gs4:SeqAna.3		
+gs4:TeknoSaw		
+gs1:CaliopLd		
+gs2:VentLead		
+gs2:Pure Pan		
+gs1:Chiff Ld		
+gs3:TB Lead		
+gs4:HybridLd		
+gs4:UnisnSqr		
+gs4:FtSoloLd		
+gs4:Force.Ld		
+gs4:OctUnisn		
+gs4:UnisnSaw		
+gs3:Mad Lead		
+gs4:Crowd.Ld		
+gs4:DblSqrLd		
+gs1:CharanLd		
+gs4:WireLead		
+gs4:FBCharan		
+gs4:FatGR Ld		
+gs4:Windy GR		
+gs4:MellowGR		
+gs4:GR&Pulse		
+gs2:DistLead		
+gs3:Acid Gtr		
+gs3:AcidGtr2		
+gs4:DanceDGt		
+gs4:DanceDG2		
+gs3:P5Snc.Ld		
+gs3:FatSncLd		
+gs3:RockLead		
+gs3:5thDcySn		
+gs3:DirtySnc		
+gs4:DualSync		
+gs4:LA Brass		
+gs3:JUNOSbOs		
+gs4:2600SbOs		
+gs4:JP8kFdOs		
+gs1:Voice Ld		
+gs4:VoiceLd2		
+gs3:Vox Lead		
+gs3:LFO Vox		
+gs4:VoxLead2		
+gs1:Fifth Ld		
+gs2:Big Five		
+gs3:5th Lead		
+gs3:5thAnClv		
+gs4:5thPulse		
+gs4:JP5thSaw		
+gs4:JP8k 5FB		
+gs3:4th Lead		
+gs1:Bass&Ld		
+gs2:Big&Raw		
+gs2:Fat&Prky		
+gs3:JUNORave		
+gs3:JP8BaLd1		
+gs3:JP8BaLd2		
+gs3:SH-5BaLd		
+gs4:Delay.Ld		
+gs1:Fantasia		
+gs2:Fantasy2		
+gs3:NewAgePd		
+gs3:BelHeavn		
+gs4:Fantasy3		
+gs4:Fantasy4		
+gs4:After D!		
+gs4:260HrmPd		
+gs1:Warm Pad		
+gs2:ThickPad		
+gs3:ThickMtx		
+gs2:Horn Pad		
+gs2:RotarStr		
+gs2:Soft Pad		
+gs3:OBSoftPd		
+gs4:Sine Pad		
+gs4:OBSftPd2		
+gs3:OctavePd		
+gs3:StackPad		
+gs4:HumanPad		
+gs4:SyncBrPd		
+gs4:OctPWMPd		
+gs4:JPSoftPd		
+gs1:PolySyPd		
+gs2:80sPlySy		
+gs3:PlySyPd2		
+gs3:PolyKing		
+gs4:SuprPoly		
+gs3:PwrStack		
+gs3:OctStack		
+gs3:RezStack		
+gs3:TekStack		
+gs4:PulseStk		
+gs4:TwnOctRv		
+gs4:Oct.Rave		
+gs4:HappySyn		
+gs4:FwdSweep		
+gs4:RevSweep		
+gs4:MinorRav		
+gs1:ChoirPad		
+gs2:Heaven		
+gs3:SCHeaven		
+gs4:Itopia		
+gs4:WaterSpa		
+gs4:Cold Spa		
+gs4:NzPeaker		
+gs4:BambooHt		
+gs3:CosmicVx		
+gs3:Auh Vox		
+gs3:Auh Auh		
+gs3:Vocorder		
+gs4:Holy Vox		
+gs1:BowedPad		
+gs3:SftBelPd		
+gs3:JP8SqrPd		
+gs3:7thBelPd		
+gs4:SteelGls		
+gs4:BotlStak		
+gs1:MetalPad		
+gs2:Tine Pad		
+gs2:PannerPd		
+gs4:SteelPad		
+gs4:Spe.Rave		
+gs4:MetalPd2		
+gs1:Halo Pad		
+gs3:VoicePad		
+gs3:VoxSweep		
+gs3:HorrorPd		
+gs4:SynVoxPd		
+gs4:SynVxPd2		
+gs4:BrthRise		
+gs4:TearsVox		
+gs1:SweepPad		
+gs2:PolarPad		
+gs4:Ambi.BPF		
+gs4:Sync Pad		
+gs4:Warriors		
+gs2:Converge		
+gs2:Shwimmer		
+gs2:Celstial		
+gs3:BagSweep		
+gs4:Swp.Pipe		
+gs4:SwpStack		
+gs4:Deep Swp		
+gs4:StrayPad		
+gs1:Ice Rain		
+gs1:HrmoRain		
+gs1:AfrcWind		
+gs3:AnklngPd		
+gs3:RattlePd		
+gs1:ClaviPad		
+gs1:SoundTrk		
+gs1:Ancestrl		
+gs1:Prologue		
+gs3:Prolog 2		
+gs3:Hols Str		
+gs1:Rave		
+gs1:Crystal		
+gs1:SynMalet		
+gs1:SftCryst		
+gs1:RndGlock		
+gs1:LoudGlok		
+gs1:GlockChi		
+gs1:ClearBel		
+gs1:XmasBell		
+gs1:VibraBel		
+gs1:DigiBell		
+gs3:MusicBel		
+gs3:AnalgBel		
+gs1:ChorlBel		
+gs1:AirBells		
+gs1:BellHarp		
+gs1:Gamelmba		
+gs3:JUNO Bel		
+gs1:Atmosphr		
+gs1:WarmAtms		
+gs1:NylnHarp		
+gs1:Harp Vox		
+gs1:Holw.Rlz		
+gs1:NlnRhode		
+gs1:Ambient		
+gs3:Invisibl		
+gs3:PulseKey		
+gs3:NoisePno		
+gs1:Bright		
+gs3:ShneStar		
+gs3:OB Stab		
+gs3:Org Bell		
+gs1:Goblins		
+gs1:GobSynth		
+gs1:50sSciFi		
+gs3:Abduct		
+gs3:Auhbient		
+gs3:LFO Pad		
+gs3:RandmStr		
+gs3:RandomPd		
+gs3:Low Bird		
+gs3:FallDown		
+gs3:LFO Rave		
+gs3:LFO Horr		
+gs3:LFO Tech		
+gs3:Altrnate		
+gs3:UFO FX		
+gs3:GarglMan		
+gs3:Sweep FX		
+gs1:Echoes		
+gs1:EchoBell		
+gs1:Echo Pan		
+gs1:EchoPan2		
+gs1:Big Pan		
+gs1:Reso Pan		
+gs1:WaterPno		
+gs3:Pan Seq.		
+gs3:Aqua		
+gs1:StarThme		
+gs1:StarThm2		
+gs3:DreamPad		
+gs3:SilkyPad		
+gs3:NewCntry		
+gs3:7thAtmos		
+gs3:GalaxyWy		
+gs1:Sitar		
+gs4:Sitar		
+gs1:Sitar 2		
+gs2:DetSitar		
+gs3:Sitar 3		
+gs4:SitarDrn		
+gs4:Sitar 4		
+gs2:Tambra		
+gs2:Tamboura		
+gs1:Banjo		
+gs2:Banjo		
+gs2:MuteBnjo		
+gs2:Rabab		
+gs3:San Xian		
+gs2:Gopichnt		
+gs2:Oud		
+gs3:Oud&Str		
+gs3:Pi Pa		
+gs1:Shamisen		
+gs2:Tsugaru		
+gs3:SynShami		
+gs1:Koto		
+gs3:Koto		
+gs3:Gu Zheng		
+gs1:Taisho		
+gs2:Kanoon		
+gs3:Kann&Chr		
+gs3:Oct Harp		
+gs1:Kalimba		
+gs2:Kalimba		
+gs3:Kalimba		
+gs3:Sanza		
+gs4:Bodhran		
+gs4:MuteBodh		
+gs1:Bagpipe		
+gs3:Didgrdoo		
+gs4:UillPipe		
+gs4:UillPpNm		
+gs4:UillPpOr		
+gs1:Fiddle		
+gs3:Er Hu		
+gs3:Gao Hu		
+gs1:Shanai		
+gs2:Shanai 2		
+gs2:Pungi		
+gs2:Hichriki		
+gs3:Mizmar		
+gs3:Suona		
+gs3:Suona 2		
+gs1:TnklBell		
+gs2:Bonang		
+gs2:Gender		
+gs2:GmlnGong		
+gs2:StGameln		
+gs3:Jang-Gu		
+gs4:Jegogan		
+gs4:Jublag		
+gs4:Pemade		
+gs2:RAMACymb		
+gs4:Kajar		
+gs4:Kelontuk		
+gs4:KelntkMt		
+gs4:KelntkSd		
+gs4:KopyakOp		
+gs4:KopyakMt		
+gs4:CengCeng		
+gs4:Reyoung		
+gs4:Kempur		
+gs4:JnglCrsh		
+gs4:JgCrsh!!		
+gs4:RideCym!		
+gs4:RideBel!		
+gs1:Agogo		
+gs2:Agogo		
+gs2:Atargane		
+gs3:Tmbourin		
+gs1:SteelDrm		
+gs3:IslndMlt		
+gs1:Woodblok		
+gs1:Castanet		
+gs3:Angklung		
+gs3:AngkRthm		
+gs3:FngrSnap		
+gs3:909 Clap		
+gs4:HandClp!		
+gs1:Taiko		
+gs3:SmallTko		
+gs1:ConcrtBD		
+gs4:Con.BDMt		
+gs3:JungleBD		
+gs3:TechnoBD		
+gs3:Bounce		
+gs4:KendnWad		
+gs4:Bebarngn		
+gs4:Pelegngn		
+gs4:Dholak		
+gs4:Dholak 2		
+gs4:JnglBaDr		
+gs4:Kick1 !!		
+gs4:Kick2 !!		
+gs4:Kick3 !!		
+gs4:Kick4 !!		
+gs1:MelodTom		
+gs2:Real Tom		
+gs4:RealTom2		
+gs4:Jazz Tom		
+gs4:BrushTom		
+gs1:MeloTom2		
+gs2:Rock Tom		
+gs3:Rash SD		
+gs3:House SD		
+gs3:JungleSD		
+gs3:909 SD		
+gs4:JnglSnDr		
+gs4:Snare1!!		
+gs4:Snare2!!		
+gs4:Snare3!!		
+gs4:Snare4!!		
+gs4:Snare5!!		
+gs1:Syn Drum		
+gs1:808 Tom		
+gs1:ElecPerc		
+gs3:SinePerc		
+gs3:606 Tom		
+gs3:909 Tom		
+gs4:606DsTom		
+gs1:RevCymbl		
+gs2:RvCymbl2		
+gs3:RvCymbl3		
+gs4:RvCymbl4		
+gs2:RevSnare		
+gs2:RvSnare2		
+gs2:Rev Kick		
+gs2:RevConBD		
+gs2:Rev.Tom		
+gs2:Rev.Tom2		
+gs4:Rev.Tom3		
+gs4:Rev.Tom4		
+gs4:RvSnr1!!		
+gs4:RvSnr2!!		
+gs4:RvSnr3!!		
+gs4:RvBDr1!!		
+gs4:RvBDr2!!		
+gs4:RvBDr3!!		
+gs4:RvClap!!		
+gs1:FretNoiz		
+gs1:CutNoise		
+gs1:Str.Slap		
+gs2:CutNoiz2		
+gs2:DstCutNz		
+gs2:B.Slide		
+gs2:P.Scrape		
+gs3:Gtr.Fx!!		
+gs3:BartkPiz		
+gs3:Gtr.Slap		
+gs3:ChrdStrk		
+gs3:BiwaStrk		
+gs3:BiwaTrem		
+gs4:AcBaNz!!		
+gs4:DsGtNz!!		
+gs4:ElGtNz!!		
+gs4:ElGtNz!2		
+gs4:GtStrk!!		
+gs4:GtSlide!		
+gs4:AcBaMute		
+gs4:AcBaTch.		
+gs4:AcBaAtk.		
+gs4:TCUpNoiz		
+gs4:TCDownMt		
+gs4:TC Up Mt		
+gs4:TCDownNz		
+gs4:DsGtUpNz		
+gs4:DsGtDown		
+gs4:DsGtDwn2		
+gs4:DsGtMute		
+gs4:GtrStrk5		
+gs4:StlGtrSl		
+gs4:StlGtSl2		
+gs4:StlGtSl3		
+gs4:StlGtSl4		
+gs4:Gtr.Strk		
+gs4:GtrStrk2		
+gs4:GtrStrk3		
+gs4:GtrStrk4		
+gs1:BrthNoiz		
+gs1:Fl.KClik		
+gs4:BrthNz!!		
+gs4:Fl. Brth		
+gs4:Fl.Brth2		
+gs4:Fl.Brth3		
+gs4:VoxBrth.		
+gs4:VoxBrth2		
+gs4:TrombnNz		
+gs4:TrumptNz		
+gs1:Seashore		
+gs1:Shower		
+gs1:Thunder		
+gs1:Wind		
+gs1:Stream		
+gs1:Bubble		
+gs3:Wind 2		
+gs4:Cricket		
+gs3:PinkNoiz		
+gs3:White Nz		
+gs1:Tweet		
+gs1:Dog Woof		
+gs1:HorseGlp		
+gs1:BirdTwit		
+gs2:Kitty		
+gs2:Growl		
+gs4:Growl 2		
+gs4:FancyAni		
+gs4:Seal		
+gs1:Telphone		
+gs1:PhonCall		
+gs1:DoorSqek		
+gs1:DoorSlam		
+gs1:ScratchC		
+gs1:WindChim		
+gs2:Scratch2		
+gs3:ScrachKy		
+gs3:TapeRwnd		
+gs3:PhonNoiz		
+gs3:MC500 Bp		
+gs4:Scratch3		
+gs4:Scratch4		
+gs4:Scratch5		
+gs4:Scratch6		
+gs4:Scratch7		
+gs1:Helicptr		
+gs1:CarStart		
+gs1:CarTyreS		
+gs1:Car Pass		
+gs1:CarCrash		
+gs1:Siren		
+gs1:Train		
+gs1:JetPlane		
+gs1:Starship		
+gs1:Burst		
+gs3:Calclate		
+gs3:PercBang		
+gs4:Burner		
+gs4:Glas&Glm		
+gs4:Ice Ring		
+gs4:OverBlow		
+gs4:CrakBotl		
+gs4:PourBotl		
+gs4:Soda		
+gs4:CD Tray		
+gs4:AudioSwi		
+gs4:Key Type		
+gs4:TrainHrn		
+gs4:TrainPas		
+gs4:CarStar2		
+gs4:Car Horn		
+gs4:Boeeeeen		
+gs4:RailCros		
+gs4:Compress		
+gs4:SwordBom		
+gs4:SwordCrs		
+gs4:Stab		
+gs4:Stab 2		
+gs1:Coaster		
+gs1:Applause		
+gs1:LaughVox		
+gs1:ScreamVx		
+gs1:Punch		
+gs1:Heart		
+gs1:Footstep		
+gs2:Applauz2		
+gs3:SmalClub		
+gs3:ApplzWav		
+gs4:BabyLaf.		
+gs3:Voice 1		
+gs3:Voice 2		
+gs3:Voice 3		
+gs3:VoiceTah		
+gs3:VoiceWey		
+gs4:Vx Kikit		
+gs4:VxComeOn		
+gs4:Voice Ow		
+gs4:VoiceWoo		
+gs4:VoiceHie		
+gs1:Gunshot		
+gs1:MchinGun		
+gs1:LaserGun		
+gs1:Xplosion		
+gs3:Eruption		
+gs3:Big Shot		
+gs4:Xploshn2		
+gs1:Slow Str		
+gs1:Strings		
+gs1:SynBrass		
+gs1:MelloGrP		
+gs1:ElPiano3		
+gs1:ElPiano4		
+gs1:ElecOrgn		
+gs1:ElecOrg2		
+gs1:ElecOrg3		
+gs1:ElecOrg4		
+gs1:PipeOrgn		
+gs1:PipeOrg2		
+gs1:PipeOrg3		
+gs1:Hpschrd2		
+gs1:Hpschrd3		
+gs1:Clvichrd		
+gs1:Clavi. 2		
+gs1:Clavi. 3		
+gs1:Celesta2		
+gs1:Fantasy		
+gs1:HarmoPan		
+gs1:Chorale		
+gs1:Glasses		
+gs1:WarmBell		
+gs1:FunnyVox		
+gs1:Oboe2001		
+gs1:Dr. Solo		
+gs1:Sch.Daze		
+gs1:Belsingr		
+gs1:Sqr.Lead		
+gs1:Str Sect		
+gs1:StrSect2		
+gs1:StrSect3		
+gs1:Violin 2		
+gs1:Cello 2		
+gs1:Harp 2		
+gs1:Guitar		
+gs1:Guitar 2		
+gs1:Elec.Gtr		
+gs1:ElecGtr2		
+gs1:AcouBas2		
+gs1:ElecBass		
+gs1:ElecBas2		
+gs1:Fretles2		
+gs1:Flute 2		
+gs1:Piccolo2		
+gs1:Pan Pipe		
+gs1:Clrinet2		
+gs1:Trumpet2		
+gs1:BrasSec2		
+gs1:Vibrfon2		
+gs1:Windbell		
+gs1:Sho		
+gs1:Whistle2		
+gs1:BrthPipe		
+gs1:Dp Snare		
+gs1:El.Perc2		
+gs1:TaikoRim		
+gs1:Cymbal		
+gs1:Cascanet		
+gs1:Triangle		
+gs1:1NoteJam		
+gs1:WaterBel		
+gs1:JnglTune		
+gs1:Standard		
+gs2:Standrd2		
+gs3:Standrd3		
+gs4:StdrdL/R		
+gs1:Room Kit		
+gs3:HipHopKt		
+gs3:JungleKt		
+gs3:TechnoKt		
+gs4:Room L/R		
+gs4:HouseKit		
+gs1:PowerKit		
+gs1:Electro		
+gs1:AnalogKt		
+gs2:DanceKit		
+gs3:CR-78 Kt		
+gs3:TR-606Kt		
+gs3:TR-707Kt		
+gs3:AnalgKt2		
+gs1:Jazz Kit		
+gs4:Jazz L/R		
+gs1:BrushKit		
+gs4:BrushKt2		
+gs4:Brush2LR		
+gs1:Orch.Kit		
+gs2:EthnicKt		
+gs2:KikSnare		
+gs4:KkSnare2		
+gs3:AsianKit		
+gs3:CymbalKt		
+gs4:GamelnKt		
+gs4:GamlnKt2		
+gs1:SFX Kit		
+gs2:RyFX Kit		
+gs3:RyFX2 Kt		
+gs4:RyFX3 Kt		
+gs4:SFX Kt 2		
+gs4:VoiceKit		
+gs4:CymblKt2		
+gs1:MT-32 Kt		

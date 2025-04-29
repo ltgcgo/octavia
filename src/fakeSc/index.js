@@ -295,6 +295,7 @@ audioPlayer.onended = function () {
 		`./data/map/cs2x.10.tsv`,
 		`./data/map/s90es.10.tsv`
 	]);
+	visualizer.loadProps((await fetch("./data/bank/gs.prop.tsv")).body, false, 0, "gs.prop.tsv");
 })();
 let lastTime = 0;
 let renderThread = setInterval(function () {

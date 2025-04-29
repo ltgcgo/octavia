@@ -9,14 +9,18 @@ import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {customInterpreter} from "../state/utils.js";
 import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
-import DsvParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
+import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 
 MidiParser.customInterpreter = customInterpreter;
 
-let eventPassThru = function (source, sink, type) {
+const eventPassThru = (source, sink, type) => {
 	source.addEventListener(type, (ev) => {
 		sink.dispatchEvent(type, ev.data);
 	});
+};
+const nameFromPath = (path) => {
+	let nameArray = path.split("/");
+	return nameArray[nameArray.length - 1] || nameArray[nameArray.length - 2] || "(remote)";
 };
 
 let RootDisplay = class extends CustomEventSource {
@@ -24,6 +28,7 @@ let RootDisplay = class extends CustomEventSource {
 	#midiPool;
 	#mapList = {};
 	#efxList = [];
+	#propList = new Map();
 	#titleName = "";
 	#metaRun = [];
 	#noteEvents = [];
@@ -69,7 +74,7 @@ let RootDisplay = class extends CustomEventSource {
 	async loadFile(blob) {
 		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
 	};
-	async loadMap(text, overwrite, priority) {
+	async loadMap(text, overwrite, priority, name = "(internal)") {
 		// Load the voice ID to voice name map
 		let upThis = this;
 		let loadCount = 0, allCount = 0, prioCount = 0;
@@ -131,14 +136,14 @@ let RootDisplay = class extends CustomEventSource {
 				});
 			};
 		});
-		console.debug(`Voice names: ${allCount} total, ${loadCount} loaded (${loadCount - prioCount} + ${prioCount}).`);
+		console.debug(`Voice names: From "${name}", ${allCount} total, ${loadCount} loaded (${loadCount - prioCount} + ${prioCount}).`);
 		upThis?.device.forceVoiceRefresh();
 	};
 	async loadMapPaths(paths) {
 		let upThis = this;
 		paths.forEach(async (e, i) => {
 			// Lower the index, higher the priority
-			upThis.loadMap(await (await fetch(e)).text(), 0, i);
+			upThis.loadMap(await (await fetch(e)).text(), 0, i, nameFromPath(e));
 		});
 	};
 	async loadEfx(text, overwrite) {
@@ -217,10 +222,45 @@ let RootDisplay = class extends CustomEventSource {
 		let upThis = this;
 		let loadCount = 0, allCount = 0;
 	};
-	async loadProps(stream, overwrite) {
+	async loadProps(stream, overwrite, priority = 0, name = "(internal)") {
 		// Load the voice properties
-		;
+		let upThis = this;
+		let loadCount = 0, allCount = 0, prioCount = 0;
+		for await (let entry of DSVParser.parseObjects(DSVParser.DATA_TEXT | DSVParser.TYPE_TSV, TextReader.line(stream))) {
+			if (typeof entry?.voiceId !== "string") {
+				continue;
+			};
+			allCount ++;
+			if (
+				!(upThis.#propList.has(entry.voiceId) || upThis.#propList.get(entry.voiceId)?.priority <= priority) ||
+				overwrite
+			) {
+				if (upThis.#propList.get(entry.voiceId)?.priority > priority) {
+					prioCount ++;
+				};
+				entry.priority = priority;
+				if (upThis.handleProp) {
+					upThis.handleProp(entry);
+				};
+				upThis.#propList.set(entry.voiceId, entry);
+				//console.debug(entry);
+				loadCount ++;
+			} else {
+				console.debug(`Tried to write a pre-existing entry "${entry.voiceId}" on entry ${allCount}.`);
+			};
+		};
+		console.debug(`Voice properties: From "${name}", ${allCount} total, ${loadCount} loaded (${loadCount - prioCount} + ${prioCount}).`);
 	};
+	async loadPropsPaths(paths) {
+		let upThis = this;
+		paths.forEach(async (e, i) => {
+			let nameArray = e.split("/");
+			upThis.loadProps((await fetch(e)).body, 0, i, nameFromPath(e));
+		});
+	};
+	/*handleProp(entry) {
+		// This is a method that should be overriden!
+	};*/
 	switchMode(modeName, forced = false) {
 		this.device.switchMode(modeName, forced);
 	};

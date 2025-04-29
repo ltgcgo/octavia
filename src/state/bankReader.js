@@ -1023,7 +1023,7 @@ let VoiceBank = class {
 			};
 		});
 		if (!allowOverwrite) {
-			console.debug(`Map "${name}": ${allCount} total, ${loadCount} loaded (${loadCount - prioCount} + ${prioCount}).`);
+			console.debug(`Map: From "${name}", ${allCount} total, ${loadCount} loaded (${loadCount - prioCount} + ${prioCount}).`);
 		};
 	};
 	clearRange(options) {
