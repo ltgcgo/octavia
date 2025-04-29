@@ -40,7 +40,7 @@ let ScDisplay = class extends RootDisplay {
 	#pmdb; // Param display
 	#bmdb; // Bitmap display
 	#velo = new Uint8Array(allocated.ch);
-	//#rawStrength = new Uint8Array(allocated.ch);
+	#rawStrength = new Uint8Array(allocated.ch);
 	#linger = new Uint16Array(allocated.ch);
 	#lingerExtra = new Uint16Array(allocated.ch);
 	#lingerPress = new Uint16Array(allocated.ch);
@@ -429,9 +429,9 @@ let ScDisplay = class extends RootDisplay {
 			// Strength calculation
 			let rawStrength = upThis.device?.getRawStrength();
 			for (let i = 0; i < allocated.ch; i ++) {
-				/*if (upThis.#lingerPress[i] > 0) {
-					upThis.#rawStrength = rawStrength[i];
-				};*/
+				if (upThis.#lingerPress[i] > 0 && rawStrength[i] > 0) {
+					upThis.#rawStrength[i] = rawStrength[i];
+				};
 				let e = sum.strength[i];
 				//i === 9 && console.debug(upThis.#velo[i], e);
 				//let isMelodic = upThis.device?.getChType(i) === 0 && tmpMelodicBypassCat[upThis.getChPrimitive(i, 0, true) >> 3] === 0;
@@ -444,21 +444,25 @@ let ScDisplay = class extends RootDisplay {
 				upThis.#velo[i] = e * scalingFactor >> 8;
 				switch (props?.scSqr) {
 					case 16: {
-						upThis.#velo[i] = (((upThis.#velo[i] * scalingFactor) >> 8) * rawStrength[i]) >> 7;
+						upThis.#velo[i] = (((upThis.#velo[i] * scalingFactor) >> 8) * upThis.#rawStrength[i]) >> 7;
 						break;
 					};
+					case 4:
 					case 3:
 					case 2:
 					case 1: {
 						for (let i1 = 0; i1 < props?.scSqr; i1 ++) {
-							upThis.#velo[i] = (upThis.#velo[i] * rawStrength[i]) >> 7;
+							upThis.#velo[i] = (upThis.#velo[i] * upThis.#rawStrength[i]) >> 7;
+							/*if (props?.scSqr !== 16 && i === 0) {
+								console.debug(i1, upThis.#velo[i], upThis.#rawStrength[i], sum.strength[i]);
+							};*/
 						};
 						break;
 					};
+					default: {
+						//
+					};
 				};
-				/*if (props?.scSqr > 1 && props?.scSqr < 16) {
-					console.debug(upThis.#velo[i]);
-				};*/
 				// upThis.#velo[i] = isMelodic ? (e * rawStrength[i]) >> 7 : e;
 			};
 			//console.debug(upThis.#velo[0], rawStrength[0], sum.strength[0]);

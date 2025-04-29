@@ -180,7 +180,7 @@ gs3:PercOrg3
 gs4:PercOrg4		
 gs4:PercOrg5		
 gs4:PercOrg6		
-gs1:RockOrgn	1	0.375
+gs1:RockOrgn	0	0.375
 gs2:RotaryOr		
 gs2:SlwRotar		
 gs3:RockOrg2		
@@ -731,7 +731,7 @@ gs1:SprnoSax	1	0.625
 gs2:SprnoSax		
 gs3:SprnoSax		
 gs1:ExpSprno		
-gs1:Alto Sax	1	0.75
+gs1:Alto Sax	2	0.75
 gs2:Alto Sax		
 gs3:Alto Sax		
 gs2:HyprAlto		
@@ -1275,7 +1275,7 @@ gs4:Gtr.Strk
 gs4:GtrStrk2		
 gs4:GtrStrk3		
 gs4:GtrStrk4		
-gs1:BrthNoiz	1	0.9375
+gs1:BrthNoiz	0	0.9375
 gs1:Fl.KClik		
 gs4:BrthNz!!		
 gs4:Fl. Brth		
