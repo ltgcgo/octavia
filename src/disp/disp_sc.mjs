@@ -345,7 +345,8 @@ let ScDisplay = class extends RootDisplay {
 					case 120:
 					case 122:
 					case 126:
-					case 127: {
+					case 127:
+					case 128: {
 						infoTxt += " ";
 						break;
 					};
