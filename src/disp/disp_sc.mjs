@@ -130,21 +130,27 @@ let ScDisplay = class extends RootDisplay {
 			// Show text
 			ctx.fillStyle = "#000";
 			ctx.textAlign = "left";
-			ctx.font = '420 16px "Work Sans"';
+			ctx.font = '420 23px "Work Sans"';
 			ctx.textRendering = "geometricPrecision";
-			ctx.fillText("PART", 21, 20);
-			ctx.fillText("INSTRUMENT", 154, 20);
-			ctx.fillText("LEVEL", 21, 91);
-			ctx.fillText("PAN", 154, 91);
-			ctx.fillText("REVERB", 21, 162);
-			ctx.fillText("CHORUS", 154, 162);
-			ctx.fillText("KEY SHIFT", 21, 233);
-			ctx.fillText("MIDI CH", 154, 233);
+			ctx.scale(1, 0.8);
+			ctx.letterSpacing = "-1px";
+			ctx.fillText("PART", 23, 25);
+			ctx.fillText("INSTRUMENT", 156, 25);
+			ctx.fillText("LEVEL", 23, 113.75);
+			ctx.fillText("PAN", 156, 113.75);
+			ctx.fillText("REVERB", 23, 202.5);
+			ctx.fillText("CHORUS", 156, 202.5);
+			ctx.fillText("KEY SHIFT", 23, 291.25);
+			ctx.fillText("MIDI CH", 156, 291.25);
+			ctx.resetTransform();
+			ctx.scale(1, 0.85);
 			ctx.textAlign = "center";
 			ctx.textRendering = "auto";
+			ctx.fontStretch = "extra-expanded";
 			for (let c = 1; c <= 16; c ++) {
-				ctx.fillText(`${c}`, 308 + cmpHeightX * c, 300);
+				ctx.fillText(`${c}`, 308 + cmpHeightX * c, 352.94);
 			};
+			ctx.resetTransform();
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = "#000";
 			let circle = 2 * Math.PI;
