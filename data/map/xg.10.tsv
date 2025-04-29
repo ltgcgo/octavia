@@ -153,6 +153,7 @@ GtrHrmo2	GtrHarmo 2
 JazzRthm	JazzRhythm
 PkAcouBa	PickAcouBa
 VXUprght	VX Upright
+BostonBa	BostonBass
 WalkSyBa	Walk'SynBa
 Acou.Ba#	Acou.Bass#
 FingrDrk	FingerBsDk
@@ -243,6 +244,7 @@ HdContrS	HdContrSec
 SlContrS	SlContrSec
 SlwTrStr	SlowTrmStr
 Susp.Str	Susp. Str.
+Fear Str	FearString
 Det.Fear	DetuneFear
 Apoclyps	Apocalypse
 BrTrmStr	BrtTremStr
@@ -277,6 +279,7 @@ Warm Str	WarmString
 Strings3	Strings 3
 ChmbrStr	ChamberStr
 Strngs2#	Strings 2#
+ZephyrS.	ZephyrStr.
 Reso Str	Reso. Str.
 Syn.Str3	SynthStr.3
 Monarchy	MonarchySt
@@ -371,6 +374,7 @@ ChoirBrs	ChoirBrass
 Ana.Horn	AnalogHorn
 AnVelBr2	AnVeloBrs2
 AnalBrs2	AnalogBrs2
+Medit.Sx	MeditateSx
 SwtSprno	SwtSoprano
 LgtAltSx	LgtAltoSax
 Sax Sect	Sax Sect.
@@ -1027,4 +1031,3 @@ BPF Step	BPF Steps
 Dist.5th	Dist.Fifth
 HardNoiz	Hard Noise
 Celuloid	Celluloid
-Medit.Sx	MeditateSx

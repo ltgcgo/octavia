@@ -1654,26 +1654,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			volume: this.#masterVol
 		};
 	};
-	getRawStrength() {
-		// 0 to 127
-		let upThis = this;
-		this.#poly.forEach(function (e) {
-			let channel = e >> 7;
-			if (upThis.#velo[e] > upThis.#rawStrength[channel]) {
-				upThis.#rawStrength[channel] = upThis.#velo[e];
-			};
-		});
-		return this.#rawStrength;
-	};
-	getStrength() {
-		// 0 to 255
-		// Should later become 0 to 65535
-		let str = [], upThis = this;
-		this.getRawStrength().forEach(function (e, i) {
-			str[i] = Math.floor(e * upThis.getChCc(i, 7) * upThis.getChCc(i, 11) * upThis.#masterVol / 803288);
-		});
-		return str;
-	};
 	getRpn() {
 		return this.#rpn;
 	};
@@ -2510,6 +2490,26 @@ let OctaviaDevice = class extends CustomEventSource {
 		} else {
 			throw(new Error(`Unknown mode ${mode}`));
 		};
+	};
+	getRawStrength() {
+		// 0 to 127
+		let upThis = this;
+		this.#poly.forEach(function (e) {
+			let channel = e >> 7;
+			if (upThis.#velo[e] > upThis.#rawStrength[channel]) {
+				upThis.#rawStrength[channel] = upThis.#velo[e];
+			};
+		});
+		return this.#rawStrength;
+	};
+	getStrength() {
+		// 0 to 255
+		// Should later become 0 to 32768
+		let str = [], upThis = this;
+		this.getRawStrength().forEach(function (e, i) {
+			str[i] = Math.floor(e * upThis.getChCc(i, 7) * upThis.getChCc(i, 11) * upThis.#masterVol / 803288);
+		});
+		return str;
 	};
 	newStrength() {
 		this.#rawStrength.fill(0);

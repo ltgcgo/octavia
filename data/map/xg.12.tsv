@@ -24,7 +24,7 @@ EPiano1K	El.Piano 1 K
 ChorusEP	Chorus EP 1
 HardEPno	Hard El. Pno
 VX E.Pno	VX El. Piano
-60sElPno	60's ElPiano
+60sElPno	60s' E.Piano
 Diploid1	Diploid EP 1
 Diploid2	Diploid EP 2
 Diploid3	Diploid EP 3
@@ -139,6 +139,7 @@ GtrHrmo2	Gtr. Harmo 2
 JazzRthm	Jazz Rhythm
 PkAcouBa	Pick A. Bass
 VXUprght	VX UprightBa
+BostonBa	Boston Bass
 WalkSyBa	Walkin'SynBa
 Acou.Ba#	Acou. Bass #
 FingrDrk	DarkFingerBs
@@ -216,6 +217,7 @@ HdContrS	HardContrSec
 SlContrS	SlowContrSec
 SlwTrStr	SlowTremStr.
 Susp.Str	Suspense Str
+Fear Str	Fear Strings
 Det.Fear	Detuned Fear
 BrTrmStr	BriteTremStr
 TremStr#	Tremolo Str#
@@ -246,6 +248,7 @@ Warm Str	Warm Strings
 70s Str	70s' Strings
 ChmbrStr	Chamber Str.
 Strngs2#	Strings 2 #
+ZephyrS.	Zephyr Strs.
 Reso Str	Resonant Str
 Syn.Str3	Synth Str. 3
 Monarchy	Monarchy Str
@@ -315,6 +318,7 @@ ChoirBrs	Choir Brass
 Ana.Horn	Analog Horn
 AnVelBr2	AnalVeloBrs2
 AnalBrs2	AnalogBrass2
+Medit.Sx	Meditate Sax
 SwtSprno	SweetSoprano
 LgtAltSx	Lgt.Alto Sax
 Sax Sect	Sax Section
@@ -770,4 +774,3 @@ AbacabLd	Abacab Lead
 Radio Nz	Radio Noise
 FreeRthm	Free Rhythm
 Dist.5th	Distorted5th
-Medit.Sx	Meditate Sax

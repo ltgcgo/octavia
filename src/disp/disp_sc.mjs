@@ -14,6 +14,8 @@ import {
 
 const textMultiTable = [0, 95, 190, 285, 380, 475, 570];
 
+let tmpMelodicBypassCat = Uint8Array.from([0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
+
 let cmpWidth = 7,
 mspWidth = 6,
 cmpHeightX = 31,
@@ -37,6 +39,8 @@ let ScDisplay = class extends RootDisplay {
 	#tmdb; // Text display
 	#pmdb; // Param display
 	#bmdb; // Bitmap display
+	#velo = new Uint8Array(allocated.ch);
+	#rawStrength = new Uint8Array(allocated.ch);
 	#linger = new Uint16Array(allocated.ch);
 	#lingerExtra = new Uint16Array(allocated.ch);
 	#lingerPress = new Uint16Array(allocated.ch);
@@ -417,8 +421,21 @@ let ScDisplay = class extends RootDisplay {
 			// Bitmap display
 			let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4);
 			// Strength calculation
-			sum.velo.forEach(function (e, i) {
-				let realVelo = upThis.device?.getChType(i) ? e : (e * e) >> 8;
+			let rawStrength = upThis.device?.getRawStrength();
+			for (let i = 0; i < allocated.ch; i ++) {
+				if (upThis.#lingerPress[i] > 0) {
+					upThis.#rawStrength = rawStrength[i];
+				};
+				let e = sum.strength[i];
+				//i === 9 && console.debug(upThis.#velo[i], e);
+				let isMelodic = upThis.device?.getChType(i) === 0 && tmpMelodicBypassCat[upThis.getChPrimitive(i, 0, true) >> 3] === 0;
+				// This is for when the scaling factors are not available
+				upThis.#velo[i] = isMelodic ? (e * e) >> 8 : e;
+				// When the scaling factors are available, use the code below instead
+				// upThis.#velo[i] = isMelodic ? (e * rawStrength[i]) >> 7 : e;
+			};
+			for (let i = 0; i < allocated.ch; i ++) {
+				let realVelo = upThis.#velo[i];
 				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
 					upThis.#lingerExtra[i] = 40;
@@ -447,7 +464,7 @@ let ScDisplay = class extends RootDisplay {
 								if (upThis.#linger[i] === 0) {
 									break;
 								};
-								console.debug("FLOAT!");
+								//console.debug("FLOAT!");
 								val = upThis.#linger[i] + (384 << rendMode);
 								if (val > 65535) {
 									val = 0;
@@ -461,7 +478,7 @@ let ScDisplay = class extends RootDisplay {
 							case 1:
 							case 0: {
 								val = upThis.#linger[i] - (384 << rendMode);
-								console.debug("SINK!");
+								//console.debug("SINK!");
 								if (val < 0) {
 									val = 0;
 								};
@@ -471,7 +488,7 @@ let ScDisplay = class extends RootDisplay {
 						upThis.#linger[i] = val;
 					};
 				};
-			});
+			};
 			//console.debug(upThis.#linger.join(", "));
 			let useBm = upThis.#nmdb.subarray(1400, 1656);
 			if (timeNow <= sum.bitmap.expire) {
@@ -484,7 +501,7 @@ let ScDisplay = class extends RootDisplay {
 				let rendPos = 0;
 				for (let c = minCh; c <= maxCh; c ++) {
 					let rendPart = rendPos >> 4;
-					let realVelo = upThis.device?.getChType(c) ? sum.strength[c] : (sum.strength[c] * sum.strength[c]) >> 8;
+					let realVelo = upThis.#velo[c];
 					let strSmooth = realVelo >> (4 + rendMode),
 					lingered = upThis.#linger[c] >> (12 + rendMode);
 					switch (rendMode) {
