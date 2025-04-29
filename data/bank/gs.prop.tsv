@@ -310,7 +310,7 @@ gs3:Rokabily
 gs3:WildAcBa		
 gs4:AtkAcoBa		
 gs3:Bass+OHH		
-gs1:FngrBass	1	0.9375
+gs1:FngrBass	0	0.9375
 gs2:FngrBass		
 gs3:FngrBass		
 gs2:FngrBas2		
@@ -386,7 +386,7 @@ gs4:303SqDB2
 gs4:303SqDB3		
 gs4:303SqBRv		
 gs4:TeeBee		
-gs1:SynBass2	1	0.75
+gs1:SynBass2	2	0.75
 gs2:SynBa201		
 gs2:ModulrBs		
 gs2:Seq.Bass		
@@ -531,7 +531,7 @@ gs3:High Str
 gs3:HybrdStr		
 gs3:Tron Str		
 gs3:NoizyStr		
-gs1:Syn.Str2	1	0.3125
+gs1:Syn.Str2	2	0.3125
 gs3:Syn.Str5		
 gs3:JUNO Str		
 gs4:FiltOrch		
@@ -795,7 +795,7 @@ gs1:Shakhchi	1	0.3125
 gs3:Di Zi 2		
 gs1:Whistle	1	0.75
 gs3:Whistle2		
-gs1:Ocarina	1	1
+gs1:Ocarina	3	1
 gs1:SquareLd	1	0.25
 gs3:SquareLd		
 gs1:SquareWv		
@@ -1084,7 +1084,7 @@ gs1:Reso Pan
 gs1:WaterPno		
 gs3:Pan Seq.		
 gs3:Aqua		
-gs1:StarThme	1	0.5625
+gs1:StarThme	0	0.5625
 gs1:StarThm2		
 gs3:DreamPad		
 gs3:SilkyPad		
