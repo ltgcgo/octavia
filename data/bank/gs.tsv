@@ -27,8 +27,8 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 000	002	049	EGrndPno	0	1	gs1:EGrndPno
 002	002	049	EGrndPno	0	2	gs2:EGrndPno
 003	002	049	EGrndPno	1	3	gs3:EGrndPno
-000	002	001	EGRhode1		1	gs1:EGRhode1
-000	002	002	EGRhode2		1	gs1:EGRhode2
+002	002	001	EGRhode1		2	gs1:EGRhode1
+002	002	002	EGRhode2		2	gs1:EGRhode2
 000	002	008	Piano 3w		1	gs1:Piano 3w
 000	003	049	HnkyTonk	1	1	gs1:HnkyTonk
 002	003	049	HnkyTonk	1	2	gs2:HnkyTonk
@@ -103,7 +103,7 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 003	011	001	Pop Vibr		3	gs3:Pop Vibr
 000	011	008	Vib. w		1	gs1:Vib. w
 003	011	008	Vibra. w		3	gs3:Vibra. w
-000	011	009	Vibrafns		1	gs1:Vibrafns
+003	011	009	Vibrafns		1	gs3:Vibrafns
 000	012	049	Marimba	0	1	gs1:Marimba
 002	012	049	Marimba	0	2	gs2:Marimba
 000	012	008	Marmba w		1	gs1:Marmba w
@@ -219,7 +219,7 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 002	024	049	NylonGtr	0	2	gs2:NylonGtr
 003	024	049	NylonGtr	1	3	gs3:NylonGtr
 000	024	008	Ukulele		1	gs1:Ukulele
-000	024	016	NylonGt3		1	gs1:NylonGt3
+000	024	016	NylnGt.o		1	gs1:NylnGt.o
 002	024	024	VelGtHrm		2	gs2:VelGtHrm
 000	024	032	NylonGt2		1	gs1:NylonGt2
 002	024	040	LequintG		2	gs2:LequintG
@@ -236,7 +236,7 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 004	025	033	Stl&Body		4	gs4:Stl&Body
 000	026	049	Jazz Gtr	0	1	gs1:Jazz Gtr
 003	026	049	Jazz Gtr	0	3	gs3:Jazz Gtr
-000	026	001	MellowGt		1	gs1:MellowGt
+002	026	001	MellowGt		1	gs2:MellowGt
 000	026	008	HawaiiGt		1	gs1:HawaiiGt
 002	026	008	PedalStl		2	gs2:PedalStl
 000	027	049	CleanGtr	0	1	gs1:CleanGtr
@@ -730,7 +730,7 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 000	064	049	SprnoSax	0	1	gs1:SprnoSax
 002	064	049	SprnoSax	0	2	gs2:SprnoSax
 003	064	049	SprnoSax	0	3	gs3:SprnoSax
-001	064	008	ExpSprno		1	gs1:ExpSprno
+003	064	008	ExpSprno		1	gs3:ExpSprno
 000	065	049	Alto Sax	0	1	gs1:Alto Sax
 002	065	049	Alto Sax	0	2	gs2:Alto Sax
 003	065	049	Alto Sax	0	3	gs3:Alto Sax
@@ -1381,198 +1381,198 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 003	127	004	Eruption	0	3	gs3:Eruption
 003	127	005	Big Shot	1	3	gs3:Big Shot
 004	127	006	Xploshn2	1	4	gs4:Xploshn2
-126	000	049	BritePno	0	1	gs1:BritePno
-126	001	049	BritePno	0	1	gs1:BritePno
-126	002	049	BritePno	0	1	gs1:BritePno
-126	003	049	HnkyTonk	1	1	gs1:HnkyTonk
-126	004	049	GrandPno	0	1	gs1:GrandPno
-126	005	049	BritePno	0	1	gs1:BritePno
-126	006	049	BritePno	0	1	gs1:BritePno
-126	007	049	ElPiano1	0	1	gs1:ElPiano1
-126	008	049	Det.EP 1	1	1	gs1:Det.EP 1
-126	009	049	ElPiano2	0	1	gs1:ElPiano2
-126	010	049	SteelGtr	0	1	gs1:SteelGtr
-126	011	049	SteelGtr	0	1	gs1:SteelGtr
-126	012	049	12StrGtr	1	1	gs1:12StrGtr
-126	013	049	Funk Gtr	0	1	gs1:Funk Gtr
-126	014	049	MutedGtr	0	1	gs1:MutedGtr
-126	015	049	SlapBass	0	1	gs1:SlapBass
-126	016	049	SlapBass	0	1	gs1:SlapBass
-126	017	049	SlapBass	0	1	gs1:SlapBass
-126	018	049	SlapBass	0	1	gs1:SlapBass
-126	019	049	SlapBas2	0	1	gs1:SlapBas2
-126	020	049	SlapBas2	0	1	gs1:SlapBas2
-126	021	049	SlapBas2	0	1	gs1:SlapBas2
-126	022	049	SlapBas2	0	1	gs1:SlapBas2
-126	023	049	FngrBass	0	1	gs1:FngrBass
-126	024	049	FngrBass	0	1	gs1:FngrBass
-126	025	049	PickBass	0	1	gs1:PickBass
-126	026	049	PickBass	0	1	gs1:PickBass
-126	027	049	Fretless	0	1	gs1:Fretless
-126	028	049	Aco.Bass	0	1	gs1:Aco.Bass
-126	029	049	ChoirAah	0	1	gs1:ChoirAah
-126	030	049	ChoirAah	0	1	gs1:ChoirAah
-126	031	049	ChoirAah	0	1	gs1:ChoirAah
-126	032	049	ChoirAah	0	1	gs1:ChoirAah
-126	033	049	Slow Str	0	1	gs1:Slow Str
-126	034	049	Strings	0	1	gs1:Strings
-126	035	049	Syn.Str3	1	1	gs1:Syn.Str3
-126	036	049	Syn.Str3	1	1	gs1:Syn.Str3
-126	037	049	DrawOrgn	0	1	gs1:DrawOrgn
-126	038	049	DrawOrgn	0	1	gs1:DrawOrgn
-126	039	049	DrawOrgn	0	1	gs1:DrawOrgn
-126	040	049	PercOrgn	0	1	gs1:PercOrgn
-126	041	049	DrawOrgn	0	1	gs1:DrawOrgn
-126	042	049	DrawOrgn	0	1	gs1:DrawOrgn
-126	043	049	PercOrgn	0	1	gs1:PercOrgn
-126	044	049	PercOrgn	0	1	gs1:PercOrgn
-126	045	049	PercOrgn	0	1	gs1:PercOrgn
-126	046	049	Trumpet	0	1	gs1:Trumpet
-126	047	049	Trumpet	0	1	gs1:Trumpet
-126	048	049	Trombone	0	1	gs1:Trombone
-126	049	049	Trombone	0	1	gs1:Trombone
-126	050	049	Trombone	0	1	gs1:Trombone
-126	051	049	Trombone	0	1	gs1:Trombone
-126	052	049	Trombone	0	1	gs1:Trombone
-126	053	049	Trombone	0	1	gs1:Trombone
-126	054	049	Alto Sax	0	1	gs1:Alto Sax
-126	055	049	TenorSax	0	1	gs1:TenorSax
-126	056	049	Bari.Sax	0	1	gs1:Bari.Sax
-126	057	049	Alto Sax	0	1	gs1:Alto Sax
-126	058	049	BrasSect	0	1	gs1:BrasSect
-126	059	049	BrasSect	0	1	gs1:BrasSect
-126	060	049	SynBrass	1	1	gs1:SynBrass
-126	061	049	SynBrass	1	1	gs1:SynBrass
-126	062	049	BrasSect	0	1	gs1:BrasSect
-126	063	049	Orch.Hit	1	1	gs1:Orch.Hit
-127	000	049	GrandPno	3	1	gs1:GrandPno
-127	001	049	BritePno	1	1	gs1:BritePno
-127	002	049	MelloGrP	0	1	gs1:MelloGrP
-127	003	049	ElPiano1	2	1	gs1:ElPiano1
-127	004	049	ElPiano2	1	1	gs1:ElPiano2
-127	005	049	ElPiano3	1	1	gs1:ElPiano3
-127	006	049	ElPiano4	3	1	gs1:ElPiano4
-127	007	049	HnkyTonk	2	1	gs1:HnkyTonk
-127	008	049	ElecOrgn	2	1	gs1:ElecOrgn
-127	009	049	ElecOrg2	2	1	gs1:ElecOrg2
-127	010	049	ElecOrg3	1	1	gs1:ElecOrg3
-127	011	049	ElecOrg4	1	1	gs1:ElecOrg4
-127	012	049	PipeOrgn	2	1	gs1:PipeOrgn
-127	013	049	PipeOrg2	2	1	gs1:PipeOrg2
-127	014	049	PipeOrg3	1	1	gs1:PipeOrg3
-127	015	049	Acordion	1	1	gs1:Acordion
-127	016	049	Hrpschrd	3	1	gs1:Hrpschrd
-127	017	049	Hpschrd2	1	1	gs1:Hpschrd2
-127	018	049	Hpschrd3	0	1	gs1:Hpschrd3
-127	019	049	Clvichrd	2	1	gs1:Clvichrd
-127	020	049	Clavi. 2	1	1	gs1:Clavi. 2
-127	021	049	Clavi. 3	0	1	gs1:Clavi. 3
-127	022	049	Celesta	3	1	gs1:Celesta
-127	023	049	Celesta2	1	1	gs1:Celesta2
-127	024	049	SynBrass	1	1	gs1:SynBrass
-127	025	049	SynBras2	2	1	gs1:SynBras2
-127	026	049	SynBras3	1	1	gs1:SynBras3
-127	027	049	SynBras4	1	1	gs1:SynBras4
-127	028	049	SynBass1	1	1	gs1:SynBass1
-127	029	049	SynBass2	1	1	gs1:SynBass2
-127	030	049	SynBass3	1	1	gs1:SynBass3
-127	031	049	SynBass4	0	1	gs1:SynBass4
-127	032	049	Fantasy	2	1	gs1:Fantasy
-127	033	049	HarmoPan	2	1	gs1:HarmoPan
-127	034	049	Chorale	2	1	gs1:Chorale
-127	035	049	Glasses	1	1	gs1:Glasses
-127	036	049	SoundTrk	3	1	gs1:SoundTrk
-127	037	049	Atmosphr	3	1	gs1:Atmosphr
-127	038	049	WarmBell	3	1	gs1:WarmBell
-127	039	049	FunnyVox	0	1	gs1:FunnyVox
-127	040	049	EchoBell	2	1	gs1:EchoBell
-127	041	049	Ice Rain	2	1	gs1:Ice Rain
-127	042	049	Oboe2001	1	1	gs1:Oboe2001
-127	043	049	Echo Pan	1	1	gs1:Echo Pan
-127	044	049	Dr. Solo	1	1	gs1:Dr. Solo
-127	045	049	Sch.Daze	1	1	gs1:Sch.Daze
-127	046	049	Belsingr	0	1	gs1:Belsingr
-127	047	049	Sqr.Lead	1	1	gs1:Sqr.Lead
-127	048	049	Str Sect	3	1	gs1:Str Sect
-127	049	049	StrSect2	2	1	gs1:StrSect2
-127	050	049	StrSect3	1	1	gs1:StrSect3
-127	051	049	Pizz.Str	2	1	gs1:Pizz.Str
-127	052	049	Violin	2	1	gs1:Violin
-127	053	049	Violin 2	1	1	gs1:Violin 2
-127	054	049	Cello	2	1	gs1:Cello
-127	055	049	Cello 2	1	1	gs1:Cello 2
-127	056	049	Contrbas	1	1	gs1:Contrbas
-127	057	049	Harp	2	1	gs1:Harp
-127	058	049	Harp 2	1	1	gs1:Harp 2
-127	059	049	Guitar	1	1	gs1:Guitar
-127	060	049	Guitar 2	1	1	gs1:Guitar 2
-127	061	049	Elec.Gtr	3	1	gs1:Elec.Gtr
-127	062	049	ElecGtr2	2	1	gs1:ElecGtr2
-127	063	049	Sitar	3	1	gs1:Sitar
-127	064	049	Aco.Bass	1	1	gs1:Aco.Bass
-127	065	049	AcouBas2	0	1	gs1:AcouBas2
-127	066	049	ElecBass	1	1	gs1:ElecBass
-127	067	049	ElecBas2	0	1	gs1:ElecBas2
-127	068	049	SlapBass	2	1	gs1:SlapBass
-127	069	049	SlapBas2	1	1	gs1:SlapBas2
-127	070	049	Fretless	3	1	gs1:Fretless
-127	071	049	Fretles2	1	1	gs1:Fretles2
-127	072	049	Flute	3	1	gs1:Flute
-127	073	049	Flute 2	1	1	gs1:Flute 2
-127	074	049	Piccolo	2	1	gs1:Piccolo
-127	075	049	Piccolo2	1	1	gs1:Piccolo2
-127	076	049	Recorder	1	1	gs1:Recorder
-127	077	049	Pan Pipe	2	1	gs1:Pan Pipe
-127	078	049	SprnoSax	3	1	gs1:SprnoSax
-127	079	049	Alto Sax	2	1	gs1:Alto Sax
-127	080	049	TenorSax	1	1	gs1:TenorSax
-127	081	049	Bari.Sax	0	1	gs1:Bari.Sax
-127	082	049	Clarinet	2	1	gs1:Clarinet
-127	083	049	Clrinet2	1	1	gs1:Clrinet2
-127	084	049	Oboe	1	1	gs1:Oboe
-127	085	049	Eng.Horn	1	1	gs1:Eng.Horn
-127	086	049	Bassoon	1	1	gs1:Bassoon
-127	087	049	Harmnica	1	1	gs1:Harmnica
-127	088	049	Trumpet	2	1	gs1:Trumpet
-127	089	049	Trumpet2	1	1	gs1:Trumpet2
-127	090	049	Trombone	2	1	gs1:Trombone
-127	091	049	Trombon2	1	1	gs1:Trombon2
-127	092	049	FrchHorn	2	1	gs1:FrchHorn
-127	093	049	FrHorn 2	1	1	gs1:FrHorn 2
-127	094	049	Tuba	1	1	gs1:Tuba
-127	095	049	BrasSect	3	1	gs1:BrasSect
-127	096	049	BrasSec2	2	1	gs1:BrasSec2
-127	097	049	Vibrafon	2	1	gs1:Vibrafon
-127	098	049	Vibrfon2	1	1	gs1:Vibrfon2
-127	099	049	SynMalet	0	1	gs1:SynMalet
-127	100	049	Windbell	2	1	gs1:Windbell
-127	101	049	Glocken	1	1	gs1:Glocken
-127	102	049	TubulBel	3	1	gs1:TubulBel
-127	103	049	Xylophon	0	1	gs1:Xylophon
-127	104	049	Marimba	2	1	gs1:Marimba
-127	105	049	Koto	1	1	gs1:Koto
-127	106	049	Sho	3	1	gs1:Sho
-127	107	049	Shakhchi	3	1	gs1:Shakhchi
-127	108	049	Whistle	1	1	gs1:Whistle
-127	109	049	Whistle2	0	1	gs1:Whistle2
-127	110	049	BotlBlow	3	1	gs1:BotlBlow
-127	111	049	BrthPipe	2	1	gs1:BrthPipe
-127	112	049	Timpani	1	1	gs1:Timpani
-127	113	049	MelodTom	0	1	gs1:MelodTom
-127	114	049	Dp Snare	1	1	gs1:Dp Snare
-127	115	049	ElecPerc	1	1	gs1:ElecPerc
-127	116	049	El.Perc2	1	1	gs1:El.Perc2
-127	117	049	Taiko	2	1	gs1:Taiko
-127	118	049	TaikoRim	0	1	gs1:TaikoRim
-127	119	049	Cymbal	1	1	gs1:Cymbal
-127	120	049	Cascanet	1	1	gs1:Cascanet
-127	121	049	Triangle	1	1	gs1:Triangle
-127	122	049	Orch.Hit	3	1	gs1:Orch.Hit
-127	123	049	Telphone	0	1	gs1:Telphone
-127	124	049	Tweet	0	1	gs1:Tweet
-127	125	049	1NoteJam	3	1	gs1:1NoteJam
-127	126	049	WaterBel	2	1	gs1:WaterBel
-127	127	049	JnglTune	3	1	gs1:JnglTune
+126	000	049	BritePno	0	1	mt2:BritePno
+126	001	049	BritePno	0	1	mt2:BritePno
+126	002	049	BritePno	0	1	mt2:BritePno
+126	003	049	HnkyTonk	1	1	mt2:HnkyTonk
+126	004	049	GrandPno	0	1	mt2:GrandPno
+126	005	049	BritePno	0	1	mt2:BritePno
+126	006	049	BritePno	0	1	mt2:BritePno
+126	007	049	ElPiano1	0	1	mt2:ElPiano1
+126	008	049	Det.EP 1	1	1	mt2:Det.EP 1
+126	009	049	ElPiano2	0	1	mt2:ElPiano2
+126	010	049	SteelGtr	0	1	mt2:SteelGtr
+126	011	049	SteelGtr	0	1	mt2:SteelGtr
+126	012	049	12StrGtr	1	1	mt2:12StrGtr
+126	013	049	Funk Gtr	0	1	mt2:Funk Gtr
+126	014	049	MutedGtr	0	1	mt2:MutedGtr
+126	015	049	SlapBass	0	1	mt2:SlapBass
+126	016	049	SlapBass	0	1	mt2:SlapBass
+126	017	049	SlapBass	0	1	mt2:SlapBass
+126	018	049	SlapBass	0	1	mt2:SlapBass
+126	019	049	SlapBas2	0	1	mt2:SlapBas2
+126	020	049	SlapBas2	0	1	mt2:SlapBas2
+126	021	049	SlapBas2	0	1	mt2:SlapBas2
+126	022	049	SlapBas2	0	1	mt2:SlapBas2
+126	023	049	FngrBass	0	1	mt2:FngrBass
+126	024	049	FngrBass	0	1	mt2:FngrBass
+126	025	049	PickBass	0	1	mt2:PickBass
+126	026	049	PickBass	0	1	mt2:PickBass
+126	027	049	Fretless	0	1	mt2:Fretless
+126	028	049	Aco.Bass	0	1	mt2:Aco.Bass
+126	029	049	ChoirAah	0	1	mt2:ChoirAah
+126	030	049	ChoirAah	0	1	mt2:ChoirAah
+126	031	049	ChoirAah	0	1	mt2:ChoirAah
+126	032	049	ChoirAah	0	1	mt2:ChoirAah
+126	033	049	Slow Str	0	1	mt2:Slow Str
+126	034	049	Strings	0	1	mt2:Strings
+126	035	049	Syn.Str3	1	1	mt2:Syn.Str3
+126	036	049	Syn.Str3	1	1	mt2:Syn.Str3
+126	037	049	DrawOrgn	0	1	mt2:DrawOrgn
+126	038	049	DrawOrgn	0	1	mt2:DrawOrgn
+126	039	049	DrawOrgn	0	1	mt2:DrawOrgn
+126	040	049	PercOrgn	0	1	mt2:PercOrgn
+126	041	049	DrawOrgn	0	1	mt2:DrawOrgn
+126	042	049	DrawOrgn	0	1	mt2:DrawOrgn
+126	043	049	PercOrgn	0	1	mt2:PercOrgn
+126	044	049	PercOrgn	0	1	mt2:PercOrgn
+126	045	049	PercOrgn	0	1	mt2:PercOrgn
+126	046	049	Trumpet	0	1	mt2:Trumpet
+126	047	049	Trumpet	0	1	mt2:Trumpet
+126	048	049	Trombone	0	1	mt2:Trombone
+126	049	049	Trombone	0	1	mt2:Trombone
+126	050	049	Trombone	0	1	mt2:Trombone
+126	051	049	Trombone	0	1	mt2:Trombone
+126	052	049	Trombone	0	1	mt2:Trombone
+126	053	049	Trombone	0	1	mt2:Trombone
+126	054	049	Alto Sax	0	1	mt2:Alto Sax
+126	055	049	TenorSax	0	1	mt2:TenorSax
+126	056	049	Bari.Sax	0	1	mt2:Bari.Sax
+126	057	049	Alto Sax	0	1	mt2:Alto Sax
+126	058	049	BrasSect	0	1	mt2:BrasSect
+126	059	049	BrasSect	0	1	mt2:BrasSect
+126	060	049	SynBrass	1	1	mt2:SynBrass
+126	061	049	SynBrass	1	1	mt2:SynBrass
+126	062	049	BrasSect	0	1	mt2:BrasSect
+126	063	049	Orch.Hit	1	1	mt2:Orch.Hit
+127	000	049	GrandPno	3	1	mt1:GrandPno
+127	001	049	BritePno	1	1	mt1:BritePno
+127	002	049	MelloGrP	0	1	mt1:MelloGrP
+127	003	049	ElPiano1	2	1	mt1:ElPiano1
+127	004	049	ElPiano2	1	1	mt1:ElPiano2
+127	005	049	ElPiano3	1	1	mt1:ElPiano3
+127	006	049	ElPiano4	3	1	mt1:ElPiano4
+127	007	049	HnkyTonk	2	1	mt1:HnkyTonk
+127	008	049	ElecOrgn	2	1	mt1:ElecOrgn
+127	009	049	ElecOrg2	2	1	mt1:ElecOrg2
+127	010	049	ElecOrg3	1	1	mt1:ElecOrg3
+127	011	049	ElecOrg4	1	1	mt1:ElecOrg4
+127	012	049	PipeOrgn	2	1	mt1:PipeOrgn
+127	013	049	PipeOrg2	2	1	mt1:PipeOrg2
+127	014	049	PipeOrg3	1	1	mt1:PipeOrg3
+127	015	049	Acordion	1	1	mt1:Acordion
+127	016	049	Hrpschrd	3	1	mt1:Hrpschrd
+127	017	049	Hpschrd2	1	1	mt1:Hpschrd2
+127	018	049	Hpschrd3	0	1	mt1:Hpschrd3
+127	019	049	Clvichrd	2	1	mt1:Clvichrd
+127	020	049	Clavi. 2	1	1	mt1:Clavi. 2
+127	021	049	Clavi. 3	0	1	mt1:Clavi. 3
+127	022	049	Celesta	3	1	mt1:Celesta
+127	023	049	Celesta2	1	1	mt1:Celesta2
+127	024	049	SynBrass	1	1	mt1:SynBrass
+127	025	049	SynBras2	2	1	mt1:SynBras2
+127	026	049	SynBras3	1	1	mt1:SynBras3
+127	027	049	SynBras4	1	1	mt1:SynBras4
+127	028	049	SynBass1	1	1	mt1:SynBass1
+127	029	049	SynBass2	1	1	mt1:SynBass2
+127	030	049	SynBass3	1	1	mt1:SynBass3
+127	031	049	SynBass4	0	1	mt1:SynBass4
+127	032	049	Fantasy	2	1	mt1:Fantasy
+127	033	049	HarmoPan	2	1	mt1:HarmoPan
+127	034	049	Chorale	2	1	mt1:Chorale
+127	035	049	Glasses	1	1	mt1:Glasses
+127	036	049	SoundTrk	3	1	mt1:SoundTrk
+127	037	049	Atmosphr	3	1	mt1:Atmosphr
+127	038	049	WarmBell	3	1	mt1:WarmBell
+127	039	049	FunnyVox	0	1	mt1:FunnyVox
+127	040	049	EchoBell	2	1	mt1:EchoBell
+127	041	049	Ice Rain	2	1	mt1:Ice Rain
+127	042	049	Oboe2001	1	1	mt1:Oboe2001
+127	043	049	Echo Pan	1	1	mt1:Echo Pan
+127	044	049	Dr. Solo	1	1	mt1:Dr. Solo
+127	045	049	Sch.Daze	1	1	mt1:Sch.Daze
+127	046	049	Belsingr	0	1	mt1:Belsingr
+127	047	049	Sqr.Lead	1	1	mt1:Sqr.Lead
+127	048	049	Str Sect	3	1	mt1:Str Sect
+127	049	049	StrSect2	2	1	mt1:StrSect2
+127	050	049	StrSect3	1	1	mt1:StrSect3
+127	051	049	Pizz.Str	2	1	mt1:Pizz.Str
+127	052	049	Violin	2	1	mt1:Violin
+127	053	049	Violin 2	1	1	mt1:Violin 2
+127	054	049	Cello	2	1	mt1:Cello
+127	055	049	Cello 2	1	1	mt1:Cello 2
+127	056	049	Contrbas	1	1	mt1:Contrbas
+127	057	049	Harp	2	1	mt1:Harp
+127	058	049	Harp 2	1	1	mt1:Harp 2
+127	059	049	Guitar	1	1	mt1:Guitar
+127	060	049	Guitar 2	1	1	mt1:Guitar 2
+127	061	049	Elec.Gtr	3	1	mt1:Elec.Gtr
+127	062	049	ElecGtr2	2	1	mt1:ElecGtr2
+127	063	049	Sitar	3	1	mt1:Sitar
+127	064	049	Aco.Bass	1	1	mt1:Aco.Bass
+127	065	049	AcouBas2	0	1	mt1:AcouBas2
+127	066	049	ElecBass	1	1	mt1:ElecBass
+127	067	049	ElecBas2	0	1	mt1:ElecBas2
+127	068	049	SlapBass	2	1	mt1:SlapBass
+127	069	049	SlapBas2	1	1	mt1:SlapBas2
+127	070	049	Fretless	3	1	mt1:Fretless
+127	071	049	Fretles2	1	1	mt1:Fretles2
+127	072	049	Flute	3	1	mt1:Flute
+127	073	049	Flute 2	1	1	mt1:Flute 2
+127	074	049	Piccolo	2	1	mt1:Piccolo
+127	075	049	Piccolo2	1	1	mt1:Piccolo2
+127	076	049	Recorder	1	1	mt1:Recorder
+127	077	049	Pan Pipe	2	1	mt1:Pan Pipe
+127	078	049	SprnoSax	3	1	mt1:SprnoSax
+127	079	049	Alto Sax	2	1	mt1:Alto Sax
+127	080	049	TenorSax	1	1	mt1:TenorSax
+127	081	049	Bari.Sax	0	1	mt1:Bari.Sax
+127	082	049	Clarinet	2	1	mt1:Clarinet
+127	083	049	Clrinet2	1	1	mt1:Clrinet2
+127	084	049	Oboe	1	1	mt1:Oboe
+127	085	049	Eng.Horn	1	1	mt1:Eng.Horn
+127	086	049	Bassoon	1	1	mt1:Bassoon
+127	087	049	Harmnica	1	1	mt1:Harmnica
+127	088	049	Trumpet	2	1	mt1:Trumpet
+127	089	049	Trumpet2	1	1	mt1:Trumpet2
+127	090	049	Trombone	2	1	mt1:Trombone
+127	091	049	Trombon2	1	1	mt1:Trombon2
+127	092	049	FrchHorn	2	1	mt1:FrchHorn
+127	093	049	FrHorn 2	1	1	mt1:FrHorn 2
+127	094	049	Tuba	1	1	mt1:Tuba
+127	095	049	BrasSect	3	1	mt1:BrasSect
+127	096	049	BrasSec2	2	1	mt1:BrasSec2
+127	097	049	Vibrafon	2	1	mt1:Vibrafon
+127	098	049	Vibrfon2	1	1	mt1:Vibrfon2
+127	099	049	SynMalet	0	1	mt1:SynMalet
+127	100	049	Windbell	2	1	mt1:Windbell
+127	101	049	Glocken	1	1	mt1:Glocken
+127	102	049	TubulBel	3	1	mt1:TubulBel
+127	103	049	Xylophon	0	1	mt1:Xylophon
+127	104	049	Marimba	2	1	mt1:Marimba
+127	105	049	Koto	1	1	mt1:Koto
+127	106	049	Sho	3	1	mt1:Sho
+127	107	049	Shakhchi	3	1	mt1:Shakhchi
+127	108	049	Whistle	1	1	mt1:Whistle
+127	109	049	Whistle2	0	1	mt1:Whistle2
+127	110	049	BotlBlow	3	1	mt1:BotlBlow
+127	111	049	BrthPipe	2	1	mt1:BrthPipe
+127	112	049	Timpani	1	1	mt1:Timpani
+127	113	049	MelodTom	0	1	mt1:MelodTom
+127	114	049	Dp Snare	1	1	mt1:Dp Snare
+127	115	049	ElecPerc	1	1	mt1:ElecPerc
+127	116	049	El.Perc2	1	1	mt1:El.Perc2
+127	117	049	Taiko	2	1	mt1:Taiko
+127	118	049	TaikoRim	0	1	mt1:TaikoRim
+127	119	049	Cymbal	1	1	mt1:Cymbal
+127	120	049	Cascanet	1	1	mt1:Cascanet
+127	121	049	Triangle	1	1	mt1:Triangle
+127	122	049	Orch.Hit	3	1	mt1:Orch.Hit
+127	123	049	Telphone	0	1	mt1:Telphone
+127	124	049	Tweet	0	1	mt1:Tweet
+127	125	049	1NoteJam	3	1	mt1:1NoteJam
+127	126	049	WaterBel	2	1	mt1:WaterBel
+127	127	049	JnglTune	3	1	mt1:JnglTune
 000	000	128	Standard	16	1	gs1:Standard
 002	001	128	Standrd2	16	2	gs2:Standrd2
 003	002	128	Standrd3	16	3	gs3:Standrd3

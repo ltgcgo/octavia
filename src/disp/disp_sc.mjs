@@ -54,7 +54,7 @@ let ScDisplay = class extends RootDisplay {
 	bootBm = new MxBmDef();
 	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	constructor(conf) {
-		super(new OctaviaDevice(), 0, 0.875);
+		super(new OctaviaDevice(), 0, 0.4);
 		let upThis = this;
 		upThis.useBlur = !!conf?.useBlur;
 		upThis.#tmdb = upThis.#nmdb.subarray(0, 665);
@@ -312,27 +312,51 @@ let ScDisplay = class extends RootDisplay {
 					});
 				});
 			} else {
+				let deviceMode = upThis.device?.getChMode(upThis.#ch);
 				infoTxt = `${sum.chProgr[upThis.#ch] + 1}`.padStart(3, "0");
 				let primBuf = upThis.device.getChPrimitives(upThis.#ch);
 				switch (primBuf[0]) {
 					case 0: {
 						switch (primBuf[2]) {
-							case 0:
-							case 125:
-							case 126:
-							case 127: {
+							case 0: {
+								switch (deviceMode) {
+									case "gm": {
+										infoTxt += "_";
+										break;
+									};
+									default: {
+										infoTxt += " ";
+									};
+								};
+								break;
+							};
+							case 125: {
 								infoTxt += " ";
 								break;
 							};
+							case 126:
+							case 127: {
+								switch (deviceMode) {
+									case "gs":
+									case "sc": {
+										infoTxt += "#";
+										break;
+									};
+									default: {
+										infoTxt += " ";
+									};
+								};
+								break;
+							};
 							default: {
-								switch (upThis.device.getMode()) {
+								switch (deviceMode) {
 									case "gs":
 									case "sc": {
 										infoTxt += " ";
 										break;
 									};
 									default: {
-										infoTxt += "+";
+										infoTxt += (voiceObject.eid[2] === voiceObject.iid[2] || voiceObject.ending === " ") ? "+" : "!";
 									};
 								};
 							};
@@ -351,7 +375,7 @@ let ScDisplay = class extends RootDisplay {
 						break;
 					};
 					default: {
-						infoTxt += "+";
+						infoTxt += (voiceObject.eid[2] === voiceObject.iid[2] || voiceObject.ending === " ") ? "+" : "!";
 					};
 				};
 				infoTxt += upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ");

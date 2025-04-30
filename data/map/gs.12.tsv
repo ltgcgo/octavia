@@ -1,4 +1,8 @@
 ID	Name
+303SqDst	303 SqDistBa
+303SqDs3	303 SqDstBa3
+303SqrRv	303 Sqr. Rev
+Syn.Bass	Synth Bass 1
 Uprt.Pno	Upright Pno.
 UprtP. w	Uprt Piano w
 MildP. w	Mild Piano w
@@ -46,7 +50,7 @@ PopCelst	Pop Celesta
 MusicBx2	Music Box 2
 St.MusBx	St.Music Box
 HardVibr	Hard Vibra.
-Vib. w	Vibes. w
+Vib. w	Vibra. w
 Vibra. w	Vibraphone w
 Vibrafns	Vibraphones
 Xylofn.w	Xylophone w
@@ -105,6 +109,7 @@ BscBHrmo	BasicB.Harmo
 SplBHrmo	SupplB.Harmo
 Bndneon2	Bandoneon 2
 Bndneon3	Bandoneon 3
+NylnGt.o	Nylon Gtr. o
 VelGtHrm	Velo Harmnix
 LequintG	Lequint Gt.
 12StrGtr	12Str Guitar
@@ -191,10 +196,6 @@ ResoSHBa	Reso SH Bass
 303DstBa	303 Dist Ba.
 JungleBa	Jungle Bass
 ArpgioBa	ArpeggioBass
-303SqDst	303 SqDistBa
-303SqDs2	303 SqDstBa2
-303SqDs3	303 SqDstBa3
-303SqrRv	303 Sqr. Rev
 SynBa201	Syn.Bass 201
 ModulrBs	Modular Bass
 Seq.Bass	Sequenced Bs
@@ -331,6 +332,7 @@ HolwMini	Hollow Mini
 CC Solo	CC Solo Lead
 JP-8 Sqr	JP-8 Square
 DsSquare	Dist. Square
+303SqDs2	303 SqDstBa2
 JP8Pulse	JP8 Pulse Ld
 JP8Puls2	JP8 Pulse 2
 MGRezPls	MG Rez.Pulse
@@ -534,7 +536,6 @@ PipeOrg2	Pipe Organ 2
 PipeOrg3	Pipe Organ 3
 Clavi. 2	Clavichord 2
 Clavi. 3	Clavichord 3
-Syn.Bass	Synth Bass 1
 Fantasy	New Age Pad
 HarmoPan	Harmonic Pan
 FunnyVox	Funny Voices

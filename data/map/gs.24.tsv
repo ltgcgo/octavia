@@ -1,15 +1,20 @@
 ID	Name
+303SqDst	303 Square Dist. Bass
+303SqDs3	303 Square Dist. Bass 3
+303SqrRv	303 Square Reversed
+AcouBass	Acoustic Bass 1
 Uprt.Pno	Upright Piano
-Piano 1w	Grand Piano (wide)
-UprtP. w	Upright Piano (wide)
+Piano 1w	Wide Grand Piano
+UprtP. w	Wide Upright Piano
+Piano 1d	Dark Grand Piano
 EuropePf	European Piano
 PianoStr	Piano + Strings 1
 Pno+Str2	Piano + Strings 2
 DreamP.2	Dream Piano 2
-Piano 2w	Bright Piano (wide)
+Piano 2w	Wide Bright Piano
 EGRhode1	E. Guitar + Rhodes 1
 EGRhode2	E. Guitar + Rhodes 2
-Piano 3w	Electric Grand (wide)
+Piano 3w	Wide Electric Grand
 Old Uprt	Old Upright Piano
 StSoftEP	Stereo Soft EP
 ChorusEP	Chorus E. Piano
@@ -18,19 +23,19 @@ Dst.EPno	Distorted E. Piano
 60sElPno	60s' Electric Piano
 Wurly EP	Wurly E. Piano
 MelRhode	Mellow Rhodes
-ElPno 2v	Electric Piano 2 (wide)
+ElPno 2v	Wide Electric Piano 2
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
 CplHapsi	Coupled Harpsichord
-Harpsi.w	Harpsichord (wide)
-Harpsi.o	Harpsichord (open)
+Harpsi.w	Wide Harpsichord
+Harpsi.o	Open Harpsichord
 SynHapsi	Synth Harpsichord
 AtkClavi	Attack Clavinet
 AtkClv.2	Attack Clavinet 2
 Comp Clv	Compression Clavinet
 Reso Clv	Resonant Clavinet
 PhaseClv	Phased Clavinet
-Clavi. o	Clavinet (open)
+Clavi. o	Open Clavinet
 AnaClavi	Analog Clavinet
 JP8 Clv1	JP8 Clavinet 1
 JP8 Clv2	JP8 Clavinet 2
@@ -41,11 +46,14 @@ PulseClv	Pulse Clavinet
 St.MusBx	Stereo Music Box
 HardVibr	Hard Vibraphone
 Pop Vibr	Pop Vibraphone
+Vib. w	Wide Vibraphone.
+Vibra. w	Wide Vibraphone
+Xylofn.w	Wide Xylophone
 ChchBel2	Church Bell 2
-TubBel w	Tubular Bell (wide)
+TubBel w	Wide Tubular Bell
 DetDrwOr	Detuned Organ
 TremDrOr	Tremolo Organ
-Organ. o	Drawbar Organ (open)
+Organ. o	Open Drawbar Organ
 60sDrOrg	60s' Drawbar Organ 1
 60sDrOr2	60s' Drawbar Organ 2
 60sDrOr3	60s' Drawbar Organ 3
@@ -71,7 +79,7 @@ BscBHrmo	Basic Blues Harmonica
 SplBHrmo	Supplem. Blues Harmonica
 Bndoneon	Bandoneon
 Bndneon2	Bandoneon 2
-NylonGt3	Nylon Guitar (open)
+NylnGt.o	Open Nylon Guitar
 VelGtHrm	Velo Harmonics
 NylonGt2	Nylon Guitar 2
 LequintG	Lequint Guitar
@@ -151,11 +159,6 @@ Reso 303	Reso 303 Bass
 303SqrBa	303 Square Bass
 303DstBa	303 Distorted Bass
 ArpgioBa	Arpeggio Bass
-303SqDst	303 Square Dist. Bass
-303SqDs2	303 Square Dist. Bass 2
-303SqDs2	303 Square Dist. Bass 2
-303SqDs3	303 Square Dist. Bass 3
-303SqrRv	303 Square Reversed
 SynBa201	Synth Bass 201
 Seq.Bass	Sequenced Bass
 MGOctBas	MG Octave Bass 1
@@ -215,7 +218,7 @@ Trp&Noiz	Trumpet & Noise
 BriteTrp	Bright Trumpet
 Warm Trp	Warm Trumpet
 Syn Trp	Synth Trumpet
-Twinbone	Twin Bones
+Twinbone	Twin Trombones
 BassTrom	Bass Trombone
 CMuteTrp	Cupped Muted Trumpet
 MutedHrn	Muted French Horn
@@ -261,6 +264,8 @@ P5Square	P5 Square Lead
 OBSquare	OB Square Lead
 JP-8 Sqr	JP-8 Square Lead
 DsSquare	Distorted Square
+303SqDs2	303 Square Dist. Bass 2
+303SqDs2	303 Square Dist. Bass 2
 JP8Pulse	JP8 Pulse Lead
 JP8Puls2	JP8 Pulse Lead 2
 MGRezPls	MG Resonant Pulse
@@ -404,7 +409,6 @@ RailCros	Rail Crossing
 ApplzWav	Applause Waves
 BabyLaf.	Baby Laughing
 VxComeOn	Voice Come On
-AcouBass	Acoustic Bass 1
 SynBrass	Synth Brass 1
 MelloGrP	Mellow Grand Piano
 ElecOrgn	Electric Organ 1

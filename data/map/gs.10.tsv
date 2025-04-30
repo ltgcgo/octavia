@@ -1,4 +1,11 @@
 ID	Name
+303SqDst	303SqDstBa
+303SqDs3	303SqDsBa3
+303SqrRv	303Sqr.Rev
+SlapBa 2	Slap Bass2
+AcouBass	AcouBass 1
+Syn.Bass	Syn Bass 1
+NylonGt3	Nylon Gt.o
 Uprt.Pno	UprightPno
 Mild Pno	Mild Piano
 UprtP. w	UprtPno. w
@@ -137,7 +144,7 @@ SplBHrmo	SupplBHrmo
 Bndoneon	Bandoneon
 Bndneon2	Bandoneon2
 Bndneon3	Bandoneon3
-NylonGt3	Nylon Gt.o
+NylnGt.o	NylonGtr o
 VelGtHrm	VeloHarmnx
 NylonGt2	Nylon Gt.2
 LequintG	Lequint Gt
@@ -247,11 +254,6 @@ ResoSHBa	Reso SH Ba
 303DstBa	303 DistBa
 JungleBa	JungleBass
 ArpgioBa	ArpeggioBs
-303SqDst	303SqDstBa
-303SqDs2	303SqDsBa2
-303SqDs2	303SqDsBa2
-303SqDs3	303SqDsBa3
-303SqrRv	303Sqr.Rev
 SynBa201	SynBass201
 ModulrBs	Modular Bs
 Seq.Bass	SequenceBs
@@ -374,7 +376,7 @@ BriteTrp	Bright Tp.
 Warm Trp	Warm Tp.
 Syn Trp	SynTrumpet
 Trombon2	Trombone 2
-Twinbone	Twin bones
+Twinbone	Twin Bones
 BassTrom	Bass Trmb.
 CMuteTrp	CupMuteTrp
 MutedHrn	Muted Horn
@@ -461,6 +463,8 @@ P5Square	P5 Square
 OBSquare	OB Square
 JP-8 Sqr	JP-8 Sqr.
 DsSquare	DistSquare
+303SqDs2	303SqDsBa2
+303SqDs2	303SqDsBa2
 Pulse Ld	Pulse Lead
 JP8Pulse	JP8 Pulse
 JP8Puls2	JP8 Pulse2
@@ -759,8 +763,6 @@ MchinGun	MachineGun
 LaserGun	Laser Gun
 Xplosion	Explosion
 Xploshn2	Explosion2
-SlapBa 2	Slap Bass2
-AcouBass	AcouBass 1
 SynBrass	SynBrass 1
 MelloGrP	MelloGrPno
 ElPiano4	El.Piano 4
@@ -772,7 +774,6 @@ PipeOrgn	Pipe Org 1
 PipeOrg2	Pipe Org 2
 PipeOrg3	Pipe Org 3
 Celesta2	Celesta 2
-Syn.Bass	Syn Bass 1
 HarmoPan	Harmo Pan
 WarmBell	Warm Bell
 FunnyVox	Funny Vox
