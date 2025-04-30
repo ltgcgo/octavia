@@ -363,15 +363,31 @@ let ScDisplay = class extends RootDisplay {
 						};
 						break;
 					};
-					case 56:
+					case 56: {
+						infoTxt += " ";
+						break;
+					};
 					case 61:
 					case 62:
+					case 63:
 					case 120:
 					case 122:
-					case 126:
-					case 127:
 					case 128: {
-						infoTxt += " ";
+						infoTxt += upThis.device?.getChType(upThis.#ch) === 0 ? " " : "*";
+						break;
+					};
+					case 126:
+					case 127: {
+						switch (deviceMode) {
+							case "gs":
+							case "sc": {
+								infoTxt += primBuf[0] === 127 ? "#" : "@";
+								break;
+							};
+							default: {
+								infoTxt += upThis.device?.getChType(upThis.#ch) === 0 ? " " : "*";
+							};
+						};
 						break;
 					};
 					default: {

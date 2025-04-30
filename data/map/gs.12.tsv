@@ -295,13 +295,13 @@ OrchBrs2	Orch.Brass 2
 StOrBrs2	St.Orch.Brs2
 StOrBrs3	St.Orch.Brs3
 StackBrs	Stack Brass
-SynBras3	SynthBrass 3
+SynBras3	Synth Brass3
 QuackBrs	Quack Brass
 AnalgBrs	Analog Brass
 Octa.Brs	OctaveBrass2
 OctSynBr	Oct SynBrass
 HybridBr	Hybrid Brass
-SynBras4	SynthBrass 4
+SynBras4	Synth Brass4
 SynSfzBr	SynBrass sfz
 Ana.Brs2	AnalogBrass2
 VeloBras	Velo Brass 1
@@ -524,7 +524,7 @@ Voice 3	Voice Three
 Vx Kikit	Voice Kikit
 MchinGun	Machine Gun
 Xploshn2	Explosion 2
-SynBrass	SynthBrass 1
+SynBrass	Synth Brass1
 MelloGrP	Mellow Grand
 ElPiano4	Elec.Piano 4
 ElecOrgn	Elec Organ 1
@@ -536,7 +536,6 @@ PipeOrg2	Pipe Organ 2
 PipeOrg3	Pipe Organ 3
 Clavi. 2	Clavichord 2
 Clavi. 3	Clavichord 3
-Fantasy	New Age Pad
 HarmoPan	Harmonic Pan
 FunnyVox	Funny Voices
 Dr. Solo	Doctor Solo

@@ -444,7 +444,7 @@ gs1:Cello	1	0.8125
 gs2:Cello		
 gs3:Cello		
 gs3:CelloAtk		
-gs1:Contrbas	1	0.6875
+gs1:Contrbas	1	0.71875
 gs2:Contrbas		
 gs3:Contrbas		
 gs4:Contrbas		
@@ -462,7 +462,7 @@ gs3:St. Pizz
 gs3:SoloPizz		
 gs3:SoloSpic		
 gs4:StrsSpic		
-gs1:Harp	1	0.8125
+gs1:Harp	1	0.84375
 gs2:Harp		
 gs4:Harp&Str		
 gs4:Harp St.		
@@ -515,7 +515,7 @@ gs2:StSlwStr
 gs4:StSlStr2		
 gs4:StStr+Ch		
 gs4:StStrCh2		
-gs1:Syn.Str1	1	0.5625
+gs1:Syn.Str1	1	0.53125
 gs2:Syn.Str1		
 gs3:Syn.Str1		
 gs2:OB Str.		
@@ -635,7 +635,7 @@ gs2:Warm Trp
 gs4:WarmTrp2		
 gs4:Twin Trp		
 gs3:Syn Trp		
-gs1:Trombone	1	0.625
+gs1:Trombone	2	0.625
 gs2:Trombone		
 gs3:Trombone		
 gs4:Trombone		
@@ -793,7 +793,7 @@ gs1:BotlBlow	1	0.5
 gs2:BotlBlow		
 gs1:Shakhchi	1	0.3125
 gs3:Di Zi 2		
-gs1:Whistle	1	0.75
+gs1:Whistle	1	0.71825
 gs3:Whistle2		
 gs1:Ocarina	3	1
 gs1:SquareLd	1	0.25
@@ -988,7 +988,7 @@ gs3:JP8SqrPd
 gs3:7thBelPd		
 gs4:SteelGls		
 gs4:BotlStak		
-gs1:MetalPad	1	0.5625
+gs1:MetalPad	1	0.59375
 gs2:Tine Pad		
 gs2:PannerPd		
 gs4:SteelPad		
@@ -1002,7 +1002,7 @@ gs4:SynVoxPd
 gs4:SynVxPd2		
 gs4:BrthRise		
 gs4:TearsVox		
-gs1:SweepPad	1	0.4375
+gs1:SweepPad	1	0.40625
 gs2:PolarPad		
 gs4:Ambi.BPF		
 gs4:Sync Pad		
@@ -1084,7 +1084,7 @@ gs1:Reso Pan
 gs1:WaterPno		
 gs3:Pan Seq.		
 gs3:Aqua		
-gs1:StarThme	0	0.5625
+gs1:StarThme	0	0.53125
 gs1:StarThm2		
 gs3:DreamPad		
 gs3:SilkyPad		
@@ -1380,134 +1380,134 @@ gs1:Xplosion	2	0.625
 gs3:Eruption		
 gs3:Big Shot		
 gs4:Xploshn2		
-mt1:GrandPno		
-mt1:BritePno		
-mt1:MelloGrP		
-mt1:ElPiano1		
-mt1:ElPiano2		
-mt1:ElPiano3		
-mt1:ElPiano4		
-mt1:HnkyTonk		
-mt1:ElecOrgn		
-mt1:ElecOrg2		
-mt1:ElecOrg3		
-mt1:ElecOrg4		
-mt1:PipeOrgn		
-mt1:PipeOrg2		
-mt1:PipeOrg3		
-mt1:Acordion		
-mt1:Hrpschrd		
-mt1:Hpschrd2		
-mt1:Hpschrd3		
-mt1:Clvichrd		
-mt1:Clavi. 2		
-mt1:Clavi. 3		
-mt1:Celesta		
-mt1:Celesta2		
-mt1:SynBrass		
-mt1:SynBras2		
-mt1:SynBras3		
-mt1:SynBras4		
-mt1:SynBass1		
-mt1:SynBass2		
-mt1:SynBass3		
-mt1:SynBass4		
-mt1:Fantasy		
-mt1:HarmoPan		
-mt1:Chorale		
-mt1:Glasses		
-mt1:SoundTrk		
-mt1:Atmosphr		
-mt1:WarmBell		
-mt1:FunnyVox		
-mt1:EchoBell		
-mt1:Ice Rain		
-mt1:Oboe2001		
-mt1:Echo Pan		
-mt1:Dr. Solo		
-mt1:Sch.Daze		
-mt1:Belsingr		
-mt1:Sqr.Lead		
-mt1:Str Sect		
-mt1:StrSect2		
-mt1:StrSect3		
-mt1:Pizz.Str		
-mt1:Violin		
-mt1:Violin 2		
-mt1:Cello		
-mt1:Cello 2		
-mt1:Contrbas		
-mt1:Harp		
-mt1:Harp 2		
-mt1:Guitar		
-mt1:Guitar 2		
-mt1:Elec.Gtr		
-mt1:ElecGtr2		
-mt1:Sitar		
-mt1:Aco.Bass		
-mt1:AcouBas2		
-mt1:ElecBass		
-mt1:ElecBas2		
-mt1:SlapBass		
-mt1:SlapBas2		
-mt1:Fretless		
-mt1:Fretles2		
-mt1:Flute		
-mt1:Flute 2		
-mt1:Piccolo		
-mt1:Piccolo2		
-mt1:Recorder		
-mt1:Pan Pipe		
-mt1:SprnoSax		
-mt1:Alto Sax		
-mt1:TenorSax		
-mt1:Bari.Sax		
-mt1:Clarinet		
-mt1:Clrinet2		
-mt1:Oboe		
-mt1:Eng.Horn		
-mt1:Bassoon		
-mt1:Harmnica		
-mt1:Trumpet		
-mt1:Trumpet2		
-mt1:Trombone		
-mt1:Trombon2		
-mt1:FrchHorn		
-mt1:FrHorn 2		
-mt1:Tuba		
-mt1:BrasSect		
-mt1:BrasSec2		
-mt1:Vibrafon		
-mt1:Vibrfon2		
-mt1:SynMalet		
-mt1:Windbell		
-mt1:Glocken		
-mt1:TubulBel		
-mt1:Xylophon		
-mt1:Marimba		
-mt1:Koto		
-mt1:Sho		
-mt1:Shakhchi		
-mt1:Whistle		
-mt1:Whistle2		
-mt1:BotlBlow		
-mt1:BrthPipe		
-mt1:Timpani		
-mt1:MelodTom		
-mt1:Dp Snare		
-mt1:ElecPerc		
-mt1:El.Perc2		
-mt1:Taiko		
-mt1:TaikoRim		
-mt1:Cymbal		
-mt1:Cascanet		
-mt1:Triangle		
-mt1:Orch.Hit		
-mt1:Telphone		
-mt1:Tweet		
-mt1:1NoteJam		
-mt1:WaterBel		
-mt1:JnglTune		
+mt1:GrandPno	1	0.3125
+mt1:BritePno	1	0.375
+mt1:MelloGrP	1	0.3125
+mt1:ElPiano1	1	0.3125
+mt1:ElPiano2	1	0.25
+mt1:ElPiano3	0	0.3125
+mt1:ElPiano4	1	0.3125
+mt1:HnkyTonk	1	0.375
+mt1:ElecOrgn	0	0.3125
+mt1:ElecOrg2	0	0.375
+mt1:ElecOrg3	1	0.4375
+mt1:ElecOrg4	0	0.3125
+mt1:PipeOrgn	0	0.1875
+mt1:PipeOrg2	0	0.25
+mt1:PipeOrg3	0	0.1875
+mt1:Acordion	0	0.1875
+mt1:Hrpschrd	1	0.4375
+mt1:Hpschrd2	0	0.4375
+mt1:Hpschrd3	0	0.25
+mt1:Clvichrd	0	0.375
+mt1:Clavi. 2	1	0.3125
+mt1:Clavi. 3	0	0.3125
+mt1:Celesta	0	0.1875
+mt1:Celesta2	0	0.25
+mt1:SynBrass	0	0.375
+mt1:SynBras2	0	0.375
+mt1:SynBras3	0	0.25
+mt1:SynBras4	1	0.5625
+mt1:SynBass1	1	0.4375
+mt1:SynBass2	0	0.28125
+mt1:SynBass3	1	0.3125
+mt1:SynBass4	0	0.25
+mt1:Fantasia	0	0.375
+mt1:HarmoPan	0	0.125
+mt1:Chorale	0	0.3125
+mt1:Glasses	0	0.375
+mt1:SoundTrk	1	0.5
+mt1:Atmosphr	0	0.25
+mt1:WarmBell	0	0.3125
+mt1:FunnyVox	1	0.1875
+mt1:EchoBell	1	0.4375
+mt1:Ice Rain	1	0.625
+mt1:Oboe2001	1	0.1875
+mt1:Echo Pan	1	0.375
+mt1:Dr. Solo	0	0.1875
+mt1:Sch.Daze	0	0.1875
+mt1:Belsingr	0	0.375
+mt1:Sqr.Lead	0	0.1875
+mt1:Str Sect	0	0.5
+mt1:StrSect2	0	0.625
+mt1:StrSect3	0	0.5625
+mt1:Pizz.Str	0	0.3125
+mt1:Violin	1	0.375
+mt1:Violin 2	1	0.3125
+mt1:Cello	1	0.4375
+mt1:Cello 2	1	0.4375
+mt1:Contrbas	1	0.4375
+mt1:Harp	3	0.375
+mt1:Harp 2	1	0.375
+mt1:Guitar	1	0.4375
+mt1:Guitar 2	0	0.1875
+mt1:Elec.Gtr	0	0.4375
+mt1:ElecGtr2	1	0.4375
+mt1:Sitar	1	0.5
+mt1:Aco.Bass	0	0.5
+mt1:AcouBas2	0	0.5
+mt1:ElecBass	0	0.25
+mt1:ElecBas2	0	0.1875
+mt1:SlapBass	1	0.4375
+mt1:SlapBas2	1	0.3125
+mt1:Fretless	0	0.5
+mt1:Fretles2	0	0.5
+mt1:Flute	0	0.25
+mt1:Flute 2	1	0.4375
+mt1:Piccolo	1	0.4375
+mt1:Piccolo2	0	0.21825
+mt1:Recorder	0	0.3125
+mt1:Pan Pipe	0	0.375
+mt1:SprnoSax	0	0.5
+mt1:Alto Sax	0	0.375
+mt1:TenorSax	0	0.5625
+mt1:Bari.Sax	0	0.3125
+mt1:Clarinet	0	0.25
+mt1:Clrinet2	0	0.25
+mt1:Oboe	0	0.375
+mt1:Eng.Horn	0	0.5625
+mt1:Bassoon	0	0.375
+mt1:Harmnica	0	0.375
+mt1:Trumpet	0	0.4375
+mt1:Trumpet2	0	0.4375
+mt1:Trombone	0	0.4375
+mt1:Trombon2	0	0.375
+mt1:FrchHorn	0	0.3125
+mt1:FrHorn 2	0	0.5625
+mt1:Tuba	0	0.4375
+mt1:BrasSect	0	0.75
+mt1:BrasSec2	0	0.5
+mt1:Vibrafon	0	0.375
+mt1:Vibrfon2	0	0.375
+mt1:SynMalet	1	0.1875
+mt1:Windbell	1	0.3125
+mt1:Glocken	1	0.3125
+mt1:TubulBel	1	0.375
+mt1:Xylophon	0	0.375
+mt1:Marimba	0	0.375
+mt1:Koto	0	0.375
+mt1:Sho	0	0.1875
+mt1:Shakhchi	0	0.4375
+mt1:Whistle	0	0.375
+mt1:Whistle2	0	0.25
+mt1:BotlBlow	0	0.375
+mt1:BrthPipe	0	0.4375
+mt1:Timpani	0	0.25
+mt1:MelodTom	0	0.375
+mt1:Dp Snare	0	0.375
+mt1:ElecPerc	0	0.28125
+mt1:El.Perc2	0	0.375
+mt1:Taiko	0	0.625
+mt1:TaikoRim	0	0.3125
+mt1:Cymbal	0	0.375
+mt1:Cascanet	0	0.3125
+mt1:Triangle	0	0.125
+mt1:Orch.Hit	0	0.53125
+mt1:Telphone	0	0.1875
+mt1:Tweet	0	0.25
+mt1:1NoteJam	1	0.75
+mt1:WaterBel	0	0.1875
+mt1:JnglTune	0	0.3125
 mt2:BritePno		
 mt2:HnkyTonk		
 mt2:GrandPno		
