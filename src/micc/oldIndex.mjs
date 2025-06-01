@@ -158,7 +158,7 @@ let streamDisassemble = function (source) {
 						intValue = intValue << 7;
 						intValue |= e & 127;
 						if (e < 128 || i >= 3) {
-							//console.info(`VLV read done: ${intValue}.`);
+							//console.info(`VLV read done: 0x${intValue.toString(16)}.`);
 							if (i) {
 								//console.info(`This is a multi-byte VLV read.`);
 								ptr ++;
@@ -179,7 +179,7 @@ let streamDisassemble = function (source) {
 					case 3: {
 						// Write length
 						//console.info(`Writing length...`);
-						commitData(controller, u8Enc.encode(`\tln ${intValue}\n`));
+						commitData(controller, u8Enc.encode(`\tln 0x${intValue.toString(16)}\n`));
 						state = finalState;
 						ptrStart = ptr + 1;
 						sectStart = ptrStart + totalPtr;
@@ -199,18 +199,18 @@ let streamDisassemble = function (source) {
 						if (i & 1) {
 							switch (i >> 1) {
 								case 0: {
-									commitData(controller, u8Enc.encode(`\tft ${intValue}\n`));
+									commitData(controller, u8Enc.encode(`\tft 0x${intValue.toString(16)}\n`));
 									break;
 								};
 								case 1: {
-									commitData(controller, u8Enc.encode(`\ttc ${intValue}\n`));
+									commitData(controller, u8Enc.encode(`\ttc 0x${intValue.toString(16)}\n`));
 									break;
 								};
 								case 2: {
 									if (intValue < 32768) {
-										commitData(controller, u8Enc.encode(`\tdv ${intValue}\n`));
+										commitData(controller, u8Enc.encode(`\tdv 0x${intValue.toString(16)}\n`));
 									} else {
-										commitData(controller, u8Enc.encode(`\ttd ${intValue}\n`));
+										commitData(controller, u8Enc.encode(`\ttd 0x${intValue.toString(16)}\n`));
 									};
 									state = 0;
 									ptrStart = ptr + 1;
@@ -235,8 +235,8 @@ let streamDisassemble = function (source) {
 						let i = ptr - ptrStart;
 						if (i) {
 							if (intValue) {
-								//console.info(`Delta time: ${intValue} (raced)`);
-								commitData(controller, u8Enc.encode(`\tdt ${intValue}\n`));
+								//console.info(`Delta time: 0x${intValue.toString(16)} (raced)`);
+								commitData(controller, u8Enc.encode(`\tdt 0x${intValue.toString(16)}\n`));
 								intValue = 0;
 							};
 							//console.info(`Reading event type...`);
@@ -260,9 +260,9 @@ let streamDisassemble = function (source) {
 								};
 							};
 						} else {
-							//console.info(`Delta time: ${intValue}`);
+							//console.info(`Delta time: 0x${intValue.toString(16)}`);
 							if (intValue) {
-								commitData(controller, u8Enc.encode(`\tdt ${intValue}\n`));
+								commitData(controller, u8Enc.encode(`\tdt 0x${intValue.toString(16)}\n`));
 							};
 							intValue = 0;
 						};
@@ -271,7 +271,7 @@ let streamDisassemble = function (source) {
 					case 7: {
 						// Meta event init, jump to 17 for full reads
 						//console.info(`Reading meta...`);
-						commitData(controller, u8Enc.encode(`\tmt ${e}`));
+						commitData(controller, u8Enc.encode(`\tmt 0x${e.toString(16)}`));
 						state = 2;
 						nextState = 17;
 						startNextSect = true;
@@ -325,11 +325,11 @@ let streamDisassemble = function (source) {
 						//console.info(`Note off!`);
 						let i = ptr - ptrStart;
 						if (i) {
-							commitData(controller, u8Enc.encode(` ${e}\n`));
+							commitData(controller, u8Enc.encode(` 0x${e.toString(16)}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							commitData(controller, u8Enc.encode(`\tof ${`${part}`.padStart(2, "0")} ${e}`));
+							commitData(controller, u8Enc.encode(`\tof ${`${part}`.padStart(2, "0")} 0x${e.toString(16)}`));
 						};
 						break;
 					};
@@ -338,11 +338,11 @@ let streamDisassemble = function (source) {
 						//console.info(`Note on!`);
 						let i = ptr - ptrStart;
 						if (i) {
-							commitData(controller, u8Enc.encode(` ${e}\n`));
+							commitData(controller, u8Enc.encode(` 0x${e.toString(16)}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							commitData(controller, u8Enc.encode(`\ton ${`${part}`.padStart(2, "0")} ${e}`));
+							commitData(controller, u8Enc.encode(`\ton ${`${part}`.padStart(2, "0")} 0x${e.toString(16)}`));
 						};
 						break;
 					};
@@ -351,11 +351,11 @@ let streamDisassemble = function (source) {
 						//console.info(`Note AT!`);
 						let i = ptr - ptrStart;
 						if (i) {
-							commitData(controller, u8Enc.encode(` ${e}\n`));
+							commitData(controller, u8Enc.encode(` 0x${e.toString(16)}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							commitData(controller, u8Enc.encode(`\tpa ${`${part}`.padStart(2, "0")} ${e}`));
+							commitData(controller, u8Enc.encode(`\tpa ${`${part}`.padStart(2, "0")} 0x${e.toString(16)}`));
 						};
 						break;
 					};
@@ -364,18 +364,18 @@ let streamDisassemble = function (source) {
 						//console.info(`Control change!`);
 						let i = ptr - ptrStart;
 						if (i) {
-							commitData(controller, u8Enc.encode(` ${e}\n`));
+							commitData(controller, u8Enc.encode(` 0x${e.toString(16)}\n`));
 							state = 5;
 							ptrStart = ptr + 1;
 						} else {
-							commitData(controller, u8Enc.encode(`\tcc ${`${part}`.padStart(2, "0")} ${e}`));
+							commitData(controller, u8Enc.encode(`\tcc ${`${part}`.padStart(2, "0")} 0x${e.toString(16)}`));
 						};
 						break;
 					};
 					case 12: {
 						// Program change
 						//console.info(`Program change!`);
-						commitData(controller, u8Enc.encode(`\tpc ${`${part}`.padStart(2, "0")} ${e}\n`));
+						commitData(controller, u8Enc.encode(`\tpc ${`${part}`.padStart(2, "0")} 0x${e.toString(16)}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
 						break;
@@ -383,7 +383,7 @@ let streamDisassemble = function (source) {
 					case 13: {
 						// Channel aftertouch (CAT)
 						//console.info(`Channel AT!`);
-						commitData(controller, u8Enc.encode(`\tca ${`${part}`.padStart(2, "0")} ${e}\n`));
+						commitData(controller, u8Enc.encode(`\tca ${`${part}`.padStart(2, "0")} 0x${e.toString(16)}\n`));
 						state = 5;
 						ptrStart = ptr + 1;
 						break;

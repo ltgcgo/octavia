@@ -1,6 +1,6 @@
 "use strict";
 
-import {streamDisassemble} from "../../src/micc/index.mjs";
+import {streamDisassemble} from "../../src/micc/oldIndex.mjs";
 
 WritableStream.prototype.from = async function (asyncIt) {
 	let writer = this.getWriter();

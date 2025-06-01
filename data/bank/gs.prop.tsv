@@ -1,7 +1,7 @@
 voiceId	scSqr	scScale
 gs1:GrandPno	1	0.5
 gs2:GrandPno		
-gs3:GrandPno		
+gs3:GrandPno	0	0.59375
 gs4:GrandPno		
 gs4:Uprt.Pno		
 gs4:Mild Pno		
@@ -21,6 +21,8 @@ gs4:BritePno
 gs4:PopPiano		
 gs4:Rock Pno		
 gs1:Piano 2w	1	0.375
+gs2:Piano 2w		
+gs3:Piano 2w	0	0.625
 gs4:PopPno w		
 gs4:RockP. w		
 gs3:DancePno		
@@ -30,6 +32,8 @@ gs3:EGrndPno
 gs2:EGRhode1		
 gs2:EGRhode2		
 gs1:Piano 3w	1	0.375
+gs2:Piano 3w		
+gs3:Piano 3w	0	0.78125
 gs1:HnkyTonk	1	0.375
 gs2:HnkyTonk		
 gs3:HnkyTonk		
@@ -39,7 +43,7 @@ gs2:Old Uprt
 gs3:HnkyTnk2		
 gs1:ElPiano1	1	0.4375
 gs2:ElPiano1		
-gs3:ElPiano1		
+gs3:ElPiano1	0	0.84375
 gs1:Det.EP 1	1	0.25
 gs2:StSoftEP		
 gs3:ChorusEP		
@@ -58,7 +62,7 @@ gs1:Det.EP 2	1	0.25
 gs4:Det.EP 3		
 gs4:DXLegend		
 gs1:ElPno 2v	1	0.5
-gs2:StereoDX		
+gs2:StereoDX	0	0.5625
 gs2:DX Hard 		
 gs4:DX Phase		
 gs1:Hrpschrd	1	0.4375
@@ -339,7 +343,7 @@ gs2:Fretles4
 gs2:SynFretl		
 gs2:SmthFrtl		
 gs3:WoodFrtl		
-gs1:SlapBass	1	0.9375
+gs1:SlapBass	1	0.90625
 gs2:SlapBass		
 gs3:Pop Slap		
 gs2:ResoSlap		
@@ -944,7 +948,7 @@ gs3:ThickMtx
 gs2:Horn Pad		
 gs2:RotarStr		
 gs2:Soft Pad		
-gs3:OBSoftPd		
+gs3:OBSoftPd	0	0.5625
 gs4:Sine Pad		
 gs4:OBSftPd2		
 gs3:OctavePd		
@@ -1441,8 +1445,8 @@ mt1:Harp	3	0.375
 mt1:Harp 2	1	0.375
 mt1:Guitar	1	0.4375
 mt1:Guitar 2	0	0.1875
-mt1:Elec.Gtr	0	0.4375
-mt1:ElecGtr2	1	0.4375
+mt1:Elec.Gtr	0	0.46875
+mt1:ElecGtr2	0	0.5
 mt1:Sitar	1	0.5
 mt1:Aco.Bass	0	0.5
 mt1:AcouBas2	0	0.5

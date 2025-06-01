@@ -1852,6 +1852,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.setEffectTypeRaw(slot, false, msb);
 		this.setEffectTypeRaw(slot, true, lsb);
 	};
+	pushEffectType(slot = 0) {
+
+	};
 	getEffectSink() {
 		return this.#efxTo;
 	};
@@ -2405,7 +2408,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 				// EFX defaults
-				let efxDefault;
+				let efxDefault, efxBlank;
 				switch (idx) {
 					case modeMap["?"]:
 					case modeMap.g2: {
@@ -2415,16 +2418,19 @@ let OctaviaDevice = class extends CustomEventSource {
 					case modeMap.xg:
 					case modeMap.cs1x: {
 						efxDefault = [1, 0, 65, 0, 5, 0, 64, 0, 64, 0, 64, 0, 64, 0, 0, 255];
+						efxBlank = [64, 0];
 						break;
 					};
 					case modeMap.gm:
 					case modeMap.gs:
 					case modeMap.sc: {
 						efxDefault = [40, 4, 40, 18, 40, 32, 32, 0, 0, 255, 0, 255, 0, 255, 0, 255];
+						efxBlank = [32, 0];
 						break;
 					};
 					case modeMap.sd: {
 						efxDefault = [58, 0, 60, 0, 61, 0, 61, 0];
+						efxBlank = [61, 0];
 						break;
 					};
 					case modeMap["05rw"]:
@@ -2450,14 +2456,17 @@ let OctaviaDevice = class extends CustomEventSource {
 					case modeMap.s90es:
 					case modeMap.cs6x: {
 						efxDefault = [129, 0, 133, 0, 130, 0, 128, 0, 128, 0, 0, 255, 0, 255, 0, 255];
+						efxBlank = [128, 0];
 						break;
 					};
 					case modeMap.pa: {
 						efxDefault = [28, 52, 28, 16, 28, 0, 28, 0, 0, 255, 0, 255, 0, 255, 0, 255];
+						efxBlank = [28, 0];
 						break;
 					};
 					case modeMap.krs: {
 						efxDefault = [45, 0, 45, 0, 0, 255, 45, 0, 45, 0, 45, 0, 45, 0, 45, 0];
+						efxBlank = [45, 0];
 						break;
 					};
 					default: {
@@ -2470,6 +2479,8 @@ let OctaviaDevice = class extends CustomEventSource {
 						upThis.#efxBase[3 * i + 2] = efxDefault[(i << 1) | 1];
 						let hidden = false;
 						if (efxDefault[i << 1] === 0 && efxDefault[i << 1 | 1] >> 4 === 15) {
+							hidden = true;
+						} else if (efxBlank?.length > 0 && efxDefault[i << 1] === efxBlank[0] && efxDefault[i << 1 | 1] === efxBlank[1]) {
 							hidden = true;
 						};
 						upThis.dispatchEvent(`efx${effectSlots[i]}`, {"id": upThis.getEffectType(i), hidden});

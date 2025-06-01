@@ -447,3 +447,5 @@ getBridge().addEventListener("message", function (ev) {
 	perf.fresh();
 	demoPerfs["MONOPOLY"] = perf;
 };
+self.genNewSwitch = genNewSwitch;
+self.genDispType = genDispType;
