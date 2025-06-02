@@ -396,6 +396,10 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
 	#subDb = {};
 	modelEx = {
+		"xg": {
+			"varSys": false,
+			"insPart": new Uint8Array(5) // Var, In1~4
+		},
 		"sc": {
 			"showBar": true,
 			"invBar": false,
@@ -1873,11 +1877,39 @@ let OctaviaDevice = class extends CustomEventSource {
 	setChEffectSink(part, efxSlot = 0) {
 		// EFX slot 0 does NOT mean it's reverb, but rather "no insertion effects"
 		// Octavia assumes that reverb is always enabled for the whole module
+		let upThis = this;
+		if (efxSlot < 0 || efxSlot >= allocated.efx) {
+			throw(new RangeError(`Invalid EFX slot ${efxSlot}`));
+		};
+		if (part < 0 || part >= allocated.ch) {
+			throw(new RangeError(`Invalid CH${part + 1}`));
+		};
 		this.#efxTo[part] = efxSlot;
 		this.dispatchEvent("partefxtoggle", {
 			part,
 			active: efxSlot
 		});
+	};
+	setXgChEffectSink(part, efxSlot = 0) {
+		// Notice: XG IFX 0 is reserved for insertion-mode variation
+		let upThis = this,
+		xgConf = upThis.modelEx.xg;
+		let xgInsSlot = efxSlot - 2;
+		if (efxSlot < 0 || xgInsSlot >= xgConf.insPart.length) {
+			throw(new RangeError(`Invalid XG insertion slot ${xgInsSlot}`));
+		};
+		let lastCh = xgConf.insPart[xgInsSlot];
+		xgConf.insPart[xgInsSlot] = part;
+		if (lastCh !== allocated.invalidCh) {
+			upThis.setChEffectSink(lastCh, 0);
+		};
+		if (part === allocated.invalidCh) {
+			if (lastCh !== allocated.invalidCh) {
+				upThis.setChEffectSink(lastCh, 0);
+			};
+		} else {
+			upThis.setChEffectSink(part, efxSlot);
+		};
 	};
 	setLetterDisplay(data, source, offset = 0, delay = 3200) {
 		let upThis = this,
@@ -2167,6 +2199,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.aiEfxName = "";
 		// Reset MT-32 user bank
 		upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
+		// Reset XG-exclusive params
+		upThis.modelEx.xg.varSys = false;
+		upThis.modelEx.xg.insPart.fill(allocated.invalidCh);
 		// Reset SC-exclusive params
 		upThis.modelEx.sc.showBar = true;
 		upThis.modelEx.sc.invBar = false;
@@ -3402,13 +3437,21 @@ let OctaviaDevice = class extends CustomEventSource {
 					}, (e) => {
 						console.debug(`${dPref}to chorus: ${toDecibel(e)}dB`);
 					}, (e) => {
+						upThis.modelEx.xg.varSys = e ? true : false;
 						console.debug(`${dPref}connection: ${e ? "system" : "insertion"}`);
 					}, (e) => {
-						console.debug(`${dPref}channel: CH${e + 1}`);
+						if (upThis.modelEx.xg.varSys) {
+							console.warn(`${dPref}effect is applied system-wide. Setting its effective channel to CH${e + 1} will not have any effect.`);
+							return;
+						};
 						// This part needs rework
 						if (e < 64) {
 							let part = upThis.chRedir(e, track, true);
-							upThis.setChEffectSink(part, 2);
+							upThis.setXgChEffectSink(part, 2);
+							console.debug(`${dPref}channel: CH${e + 1} (CH${part + 1})`);
+						} else {
+							upThis.setXgChEffectSink(allocated.invalidCh, 2);
+							console.info(`${dPref}channel: CH${e + 1} (unsupported)`);
 						};
 					}, (e) => {
 						console.debug(`${dPref}mod wheel: ${e - 64}`);
@@ -3464,10 +3507,13 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.debug(`${dPref}sub type: ${e + 1}`);
 					upThis.pushEffectType(3 + varSlot);
 				}, false, false, false, false, false, false, false, false, false, false, () => {
-					console.debug(`${dPref}channel: CH${e + 1}`);
 					if (e < 64) {
 						let part = upThis.chRedir(e, track, true);
-						upThis.setChEffectSink(part, 3 + varSlot);
+						upThis.setXgChEffectSink(part, 3 + varSlot);
+						console.debug(`${dPref}channel: CH${e + 1} (CH${part + 1})`);
+					} else {
+						upThis.setXgChEffectSink(allocated.invalidCh, 3 + varSlot);
+						console.info(`${dPref}channel: CH${e + 1} (unsupported)`);
 					};
 				}][offset + i] || function () {
 					//console.warn(`Unknown XG variation address: ${msg[0]}.`);

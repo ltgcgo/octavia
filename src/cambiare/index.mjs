@@ -1356,6 +1356,11 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.addEventListener("partefxtoggle", (ev) => {
 			let {part, active} = ev.data;
+			if (part >= allocated.ch) {
+				throw(new Error("HORNI"));
+				console.error(`Setting part ${part + 1} as ${active ? "" : "in"}active is invalid.`);
+				return;
+			};
 			([classOff, classOn][active ? 1 : 0])(upThis.#sectPart[part >> 4][part & 15].number, [
 				`part-efx`
 			]);
