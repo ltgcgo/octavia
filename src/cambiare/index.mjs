@@ -483,7 +483,7 @@ let Cambiare = class extends RootDisplay {
 			chOff = part * allocated.cc,
 			aceOff = part * allocated.ace,
 			e = upThis.#sectPart[port][part & 15];
-			if (visualizer.device.getActive()[part] && port >= upThis.#renderPort && port < renderPortMax) {
+			if (upThis.device.getActive()[part] && port >= upThis.#renderPort && port < renderPortMax) {
 				// Render CC draw calls
 				ccCandidates[8] = sum.ace[aceOff + 0] || 256;
 				ccCandidates[9] = sum.ace[aceOff + 1] || 256;
