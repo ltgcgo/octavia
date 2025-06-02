@@ -216,9 +216,15 @@ let setCcSvg = function (svg, value) {
 	svg.setAttribute("y", 24 - hV);
 };
 
-let setCanvasText = function (context, text) {
+let setCanvasText = function (context, text, italic) {
 	context.innerText = text;
 	context.rNew = true;
+	let fontIsItalic = context.font.substring(0, 6) === "italic";
+	if (italic && !fontIsItalic) {
+		context.font = `italic ${context.font}`;
+	} else if (!italic && fontIsItalic) {
+		context.font = context.font.substring(7);
+	};
 	//context.rOffset = 0;
 	let measured = context.measureText(text);
 	context.rWidth = measured.width;
@@ -1272,14 +1278,15 @@ let Cambiare = class extends RootDisplay {
 			};*/
 		});
 		upThis.addEventListener("voice", ({data}) => {
-			let voice = upThis.getChVoice(data.part),
+			let voice = upThis.getCachedChVoice(data.part),
+			voicePrimitives = upThis.getChPrimitives(data.part, true),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
-			setCanvasText(target.metre, upThis.getMapped(voice.name));
+			setCanvasText(target.metre, upThis.getMapped(voice.name), voice.refreshFailure || voice.ending !== " ");
 			target.type.setTextRaw(chTypes[upThis.device.getChType(data.part)]);
 			target.std.setTextRaw(voice.standard);
-			target.msb.setTextRaw(`${voice.sid[0]}`.padStart(3, "0"));
-			target.prg.setTextRaw(`${voice.sid[1]}`.padStart(3, "0"));
-			target.lsb.setTextRaw(`${voice.sid[2]}`.padStart(3, "0"));
+			target.msb.setTextRaw(`${voicePrimitives[0]}`.padStart(3, "0"));
+			target.prg.setTextRaw(`${voicePrimitives[1]}`.padStart(3, "0"));
+			target.lsb.setTextRaw(`${voicePrimitives[2]}`.padStart(3, "0"));
 			//console.debug(data);
 		});
 		upThis.addEventListener("pitch", (ev) => {

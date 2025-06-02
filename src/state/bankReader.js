@@ -739,6 +739,7 @@ let VoiceBank = class {
 		let eid = [args[0], args[1], args[2]];
 		switch (ending) {
 			case "^": {
+				// No LSB match
 				switch (mode) {
 					case "gs":
 					case "sc":
@@ -746,10 +747,28 @@ let VoiceBank = class {
 						ending = " ";
 						break;
 					};
+					case "xg": {
+						if (lsb === 126) {
+							ending = " ";
+						};
+						break;
+					};
 				};
-				if (msb === 127 && ending === "^") {
+				if (msb === 127) {
 					ending = " ";
 				};
+				break;
+			};
+			case "*": {
+				// No PC match
+				break;
+			};
+			case "!": {
+				// No MSB match
+				break;
+			};
+			case "?": {
+				// Failure
 				break;
 			};
 		};
@@ -897,21 +916,25 @@ let VoiceBank = class {
 				case "motif": {
 					bankName = "";
 					standard = noVoxStdPool[mode];
+					ending = "?";
 					break;
 				};
 				case "g2": {
 					bankName = "GM2 Ext?";
+					ending = "?";
 					break;
 				};
 				case "pa": {
 					if (ending === "^") {
 						bankName = "Unknown";
+						ending = "?";
 					};
 					break;
 				};
 				default: {
 					if (self.debugMode) {
 						bankName = "";
+						ending = "?";
 					};
 				};
 			};

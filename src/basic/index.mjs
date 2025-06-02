@@ -276,6 +276,47 @@ let RootDisplay = class extends CustomEventSource {
 	getChVoice(ch) {
 		return this.device.getChVoice(ch);
 	};
+	refreshCachedChVoice(ch, forcedRefresh) {
+		let upThis = this,
+		voice = upThis.device.getChVoice(ch),
+		cachedVoice = upThis.#voiceCache[ch],
+		refresh = true;
+		if (!forcedRefresh) {
+			switch (upThis.device.getChMode(ch)) {
+				case "xg": {
+					if (upThis.device.getChType(ch) > 0 && voice.ending === "!") {
+						refresh = false;
+						cachedVoice.refreshFailure = true;
+					};
+					break;
+				};
+			};
+		};
+		if (refresh) {
+			upThis.#voiceCache[ch] = voice;
+			upThis.#polyCache[ch] = voice.poly ?? 1;
+			return voice;
+		} else {
+			return cachedVoice;
+		};
+	};
+	getCachedChVoice(ch) {
+		let cachedVoice = this.#voiceCache[ch];
+		if (cachedVoice) {
+			switch (cachedVoice.ending) {
+				case "?":
+				case "!": {
+					return this.refreshCachedChVoice(ch);
+					break;
+				};
+				default: {
+					return cachedVoice;
+				};
+			};
+		} else {
+			return this.device.getChVoice(ch);
+		};
+	};
 	getChPrimitive(ch, component, useSubDb) {
 		return this.device.getChPrimitive(ch, component, useSubDb);
 	};
@@ -670,9 +711,7 @@ let RootDisplay = class extends CustomEventSource {
 			//console.debug(data);
 		});
 		upThis.addEventListener("voice", ({data}) => {
-			let voice = upThis.getChVoice(data.part);
-			upThis.#voiceCache[data.part] = voice;
-			upThis.#polyCache[data.part] = voice.poly ?? 1;
+			upThis.refreshCachedChVoice(data.part);
 		});
 		upThis.addEventListener("reset", ({data}) => {
 			upThis.#polyCache.fill(1);
