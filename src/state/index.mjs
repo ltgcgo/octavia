@@ -3733,7 +3733,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// XG A/D mono/stereo mode, won't implement for now
 		}).add([76, 112], (msg, track, id) => {
 			// XG plugin board generic
-			console.debug(`XG enable PLG-${["VL", "SG", "DX", "AN", "PF", "DR", "PC", "AP"][msg[0]]} for CH${msg[2] + 1}.`);
+			console.debug(`XG enable PLG-${["VL", "SG", "DX", "AN", "PF", "DR", "PC", "AP"][msg[0]]} slot #${msg[1] + 1} for CH${msg[2] + 1}.`);
 			switch (msg[0]) {
 				case 0: {
 					upThis.#ext[allocated.ext * msg[2]] = upThis.EXT_VL;

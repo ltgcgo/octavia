@@ -1,5 +1,6 @@
 ID	Name
 ClvchrdK	ClvichordK
+GrandP #	GrndPiano#
 GrndPnoK	GrndPianoK
 MelloGrP	MelloGrPno
 PianoStr	PianoStrng
@@ -9,17 +10,17 @@ ConGrndK	Con.GrandK
 DblConGr	DblConGrnd
 OldAcPno	OldAcPiano
 LvGrdPno	LvGrandPno
-GrandP #	GrndPiano#
+BriteP #	BritPiano#
 BritPnoK	BritPianoK
 StBrtPno	StBritePno
 DetBrPno	Det.BrtPno
 MIDI Gr4	MIDIGrand4
-BriteP #	BritPiano#
 EGndPnoK	ElGrndPnoK
 Det.CP80	DetuneCP80
 LayerCP1	LayeredCP1
 LayerCP2	LayeredCP2
 HnkyTnkK	HonkyTonkK
+EPiano1#	El.Piano1#
 EPiano1K	ElPiano 1K
 MellowEP	Mellow EP.
 ChorusEP	Chorus EP.
@@ -30,7 +31,7 @@ Diploid1	Diploid 1
 Diploid2	Diploid 2
 Diploid3	Diploid 3
 Easy EP	Easy EP.
-EPiano1#	El.Piano1#
+EPiano2#	El.Piano2#
 EPiano2K	ElPiano 2K
 Chor.EP2	ChorusEP.2
 DX Hard	DX Hard EP
@@ -40,17 +41,16 @@ DX Kt EP	DX Koto EP
 VX EPno2	VX EPiano2
 Shirakwa	Shirakawa
 ShivrDX+	ShiverDX +
-EPiano2#	El.Piano2#
 HpschrdK	HrpsichrdK
 Hpschrd2	Hrpsichrd2
 Hpschrd3	Hrpsichrd3
+Clavi. #	Clavinet #
 ClvinetK	Clavinet K
 ClaviWah	ClvchrdWah
 PulseClv	PulseClavi
 PiercClv	PierceClav
 SupClavi	SuperClavi
 HardyPlk	HardyPluck
-Clavi. #	Clavinet #
 FM Celst	FM Celesta
 S. Orgel	SmallOrgel
 VibrafnK	VibrafoneK
@@ -61,6 +61,7 @@ Balafone	Balaphone
 Log Drum	Log Drums
 ChrchBel	ChurchBell
 Dulcmer2	Dulcimer 2
+DrawOrg#	DrawOrgan#
 DetDrwOr	DetDrawOrg
 60sDrOrg	60sDrawOrg
 60sDrOr2	60sDrawOr2
@@ -74,18 +75,17 @@ CheezOrg	CheeseOrgn
 DrawOrg3	DrawOrgan3
 ClkGspOr	ClikGospOr
 Mood Org	Mood Organ
-DrawOrg#	DrawOrgan#
+PercOrg#	PercOrgan#
 70sPcOrg	70sPercOrg
 DetPrcOr	DetPercOrg
 LightOrg	LightOrgan
 PercOrg2	PercOrgan2
 WarmJazz	WarmJazzOr
 BeepOrgn	Beep Organ
-PercOrg#	PercOrgan#
+RockOrg#	RockOrgan#
 RotaryOr	RotaryOrgn
 SlwRotar	SlowRotary
 FstRotar	FastRotary
-RockOrg#	RockOrgan#
 ChurOrg3	ChurchOrg3
 ChurOrg2	ChurchOrg2
 NotreDam	Notre Dame
@@ -95,25 +95,25 @@ PuffOrgn	Puff Organ
 AccordIt	AcordionIt
 Harmo. 2	Harmonica2
 TngoAcd2	TangoAcod2
+NylonGt#	Nylon Gt.#
 NylonGt2	Nylon Gt.2
 NylonGt3	Nylon Gt.3
 VelGtHrm	VelGtHrmnx
 DecayEsG	DecayEspGt
-NylonGt#	Nylon Gt.#
+SteelGt#	Steel Gt.#
 SteelGt2	Steel Gt.2
 12StrGtr	12-Str Gt.
 Nyln&Stl	Nyln&Steel
 Stl&Body	Steel&Body
 Nashv.Gt	Nashville
 OldSampl	Old Sample
-SteelGt#	Steel Gt.#
+JazzGtr#	Jazz Gtr.#
 MelloGtr	Mellow Gt.
 Jazz Amp	JazzGtrAmp
 OctPlate	Oct. Plate
 MidSJazz	MidSupJzGt
 NekRough	Neck.Rough
 PdlSteel	PedalSteel
-JazzGtr#	Jazz Gtr.#
 ChorusGt	Chorus Gt.
 MidT.Gtr	MidToneGt.
 MidTGtSt	MidTnGtrSt
@@ -122,6 +122,7 @@ HammrMid	Mid Hammer
 HammrBrg	BridgeHamr
 HammrDbl	Dbl Hammer
 HammrSt.	St. Hammer
+MutedGt#	Muted Gt.#
 Funk Gtr	Funk Gtr 1
 MuteStlG	MuteSteelG
 FunkGtr2	Funk Gtr 2
@@ -129,11 +130,11 @@ WrenchGt	Wrench Gtr
 Heavy Wr	HeavyWrnch
 GrvyMtGt	GroovyMtGt
 Mu.DstGt	MuteDistGt
-MutedGt#	Muted Gt.#
+Ovrdriv#	Overdrive#
 OvdrGtDt	OvdrGtrDet
 Gt.Pinch	Gtr. Pinch
 BrtMnhtn	BriteMnhtn
-Ovrdriv#	Overdrive#
+Dist.Gt#	Dist. Gt.#
 DstRthmG	DistRthmGt
 DistGtr2	Dist.Gtr 2
 DistGtr3	Dist.Gtr 3
@@ -146,16 +147,16 @@ TwinDist	TwinDistGt
 RckRthm2	RockRthm 2
 RockRthm	RockRhythm
 Bite +	Bite Plus
-Dist.Gt#	Dist. Gt.#
 AcouHarm	Acou.Harmo
 GtFeedbk	GtFeedback
 GtrHrmo2	GtrHarmo 2
+Acou.Ba#	Acou.Bass#
 JazzRthm	JazzRhythm
 PkAcouBa	PickAcouBa
 VXUprght	VX Upright
 BostonBa	BostonBass
 WalkSyBa	Walk'SynBa
-Acou.Ba#	Acou.Bass#
+FingrBa#	FingerBas#
 FingrDrk	FingerBsDk
 FlangrBa	Flanger Ba
 Ba&DstEG	Ba&DstEGtr
@@ -166,11 +167,11 @@ Mod Bass	Modul.Bass
 RezChase	Reso.Chase
 BlueBass	Blues Bass
 FW EBass	FltWdEBass
-FingrBa#	FingerBas#
 PickBas2	PickedBas2
 M.PkBass	MutePkBass
 HardPick	Hard Pick
 RzHardPk	ResoHardPk
+Fretles#	FretlesBs#
 Fretles2	FretlesBs2
 Fretles3	FretlesBs3
 Fretles4	FretlesBs4
@@ -178,13 +179,12 @@ Pwr.Fret	PwrFretles
 TalkinBa	TalkinBass
 SynFretl	SynFretles
 SmthFrtl	SmthFrtles
-Fretles#	FretlesBs#
+SlapBas#	Slap Bass#
 ResoSlap	Reson.Slap
 PunchThm	PunchThmBs
 Thum&Slp	Thumb&Slap
-SlapBas#	Slap Bass#
-VeloSlap	VeloSwSlap
 SlapBa2#	SlapBass2#
+VeloSlap	VeloSwSlap
 SynBs1Dk	SynBass1Dk
 FastResB	FastResoBs
 AcidBass	Acid Bass
@@ -242,19 +242,20 @@ SlCelloS	SlCelloSec
 ContrSec	ContrbSect
 HdContrS	HdContrSec
 SlContrS	SlContrSec
+TremStr#	Trem.Str #
 SlwTrStr	SlowTrmStr
 Susp.Str	Susp. Str.
 Fear Str	FearString
 Det.Fear	DetuneFear
 Apoclyps	Apocalypse
 BrTrmStr	BrtTremStr
-TremStr#	Trem.Str #
 PizzOct.	PizzOctave
 YangChin	Yang Chin
 ElecHarp	Elec. Harp
 VlinHarp	ViolinHarp
 DtVliHrp	DtViolnHrp
 Roll&Hit	Roll & Hit
+Strngs1#	Strings 1#
 StStrngs	St.Strings
 Slow Str	SlowString
 SforzStr	SfzStrings
@@ -271,14 +272,13 @@ SolidStr	SolidStrng
 SwellStr	Swell Str.
 3 OctStr	3 Oct.Str.
 5PartStr	5-Part Str
-Strngs1#	Strings 1#
+Strngs2#	Strings 2#
 StSlwStr	St.SlowStr
 LegatoSt	Legato Str
 Warm Str	WarmString
 70s Str	70s'String
 Strings3	Strings 3
 ChmbrStr	ChamberStr
-Strngs2#	Strings 2#
 ZephyrS.	ZephyrStr.
 Reso Str	Reso. Str.
 Syn.Str3	SynthStr.3
@@ -290,6 +290,7 @@ Syn.Str5	SynthStr.5
 TradeWnd	Trade Wind
 WormHole	Worm Hole
 TaurusS.	TaurusStr.
+Leo Str.	Leo String
 SolPlexs	SolrPlexus
 St.Choir	Ste. Choir
 ChoirAh2	Choir Ah 2
@@ -310,6 +311,7 @@ BassHit+	Bass Hit +
 6th Hit	Sixth Hit
 6th Hit+	6th Hit +
 EuroHit+	Euro Hit +
+Trumpet#	Trumpet #
 Trumpet2	Trumpet 2
 BriteTrp	Bright Trp
 Warm Trp	Warm Trmpt
@@ -323,7 +325,7 @@ MlSwtTrp	Mel.SwtTrp
 NormlTrp	Normal Trp
 Bril Trp	Brill. Trp
 FlugelHr	FlugelHorn
-Trumpet#	Trumpet #
+Trombon#	Trombone #
 Trombon2	Trombone 2
 BrtTromb	BrtTrombon
 MelloTrb	MelloTromb
@@ -332,12 +334,11 @@ HardTrmb	HardTrombn
 BrtBsTrb	BriteBsTrb
 HrdBsTrb	HardBsTrmb
 TromSect	TrombnSect
-Trombon#	Trombone #
 HardTuba	Hard Tuba
 SlowTuba	Slow Tuba
 Eufonium	Euphonium
-MuteTrp2	MutedTrp 2
 MutedTp#	MutedTrp #
+MuteTrp2	MutedTrp 2
 FrHrSolo	FrHornSolo
 FrHorn 2	Fr. Horn 2
 HornOrch	Horn Orch.
@@ -345,6 +346,7 @@ Syn.Horn	SynthFrHrn
 HrnOrch2	Horn Orch2
 BrtFrHrn	BriteFrHrn
 HardFrHr	HardFrHorn
+BrsSect#	BrassSect#
 StBrsSec	StBrasSect
 SforzBrs	SforzBrass
 MildBras	Mild Brass
@@ -360,7 +362,6 @@ Tenor&Tp	Tenor&Trp
 Alps Brs	Alps Brass
 SymphBrs	SymphBrass
 PhoenxBr	Phoenix Br
-BrsSect#	BrassSect#
 QuackBrs	QuackBrass
 RezSynBr	ResoSynBrs
 PolyBras	Poly Brass
@@ -378,6 +379,7 @@ AnVelBr2	AnVeloBrs2
 AnalBrs2	AnalogBrs2
 Medit.Sx	MeditateSx
 SwtSprno	SwtSoprano
+AltoSax#	Alto Sax #
 LgtAltSx	LgtAltoSax
 Sax Sect	Sax Sect.
 HyprAlto	Hyper Alto
@@ -385,7 +387,6 @@ PwrAltSx	PowerAltSx
 FakeAlto	Fake Alto
 FakeAlt+	Fake Alto+
 DFakeAlt	DrkFakeAlt
-AltoSax#	Alto Sax #
 BrthTnSx	BrthyTnrSx
 SoftTenr	SoftTenrSx
 TenrSax2	TenorSax 2
@@ -402,9 +403,9 @@ NeatBrth	NeatBreath
 BthBoehm	BrthyBoehm
 Pastoral	Pastorale
 SwtFlute	SweetFlute
+PanFlut#	Pan Flute#
 PanFlut2	PanFlute 2
 SwtPanFl	SwtPanFlut
-PanFlut#	Pan Flute#
 BotlLgto	BotlLegato
 SqrLead2	SquareLd 2
 LMSquare	LM Square
