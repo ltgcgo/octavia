@@ -7,7 +7,10 @@ import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js
 import {ccToPos, dnToPos, allocated, overrides, effectSlots} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
-import {customInterpreter} from "../state/utils.js";
+import {
+	arrayCompare,
+	customInterpreter
+} from "../state/utils.js";
 import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
 import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 
@@ -276,12 +279,12 @@ let RootDisplay = class extends CustomEventSource {
 	getChVoice(ch) {
 		return this.device.getChVoice(ch);
 	};
-	refreshCachedChVoice(ch, forcedRefresh) {
+	refreshCachedChVoice(ch, forcedRefreshObject) {
 		let upThis = this,
-		voice = upThis.device.getChVoice(ch),
+		voice = forcedRefreshObject ?? upThis.device.getChVoice(ch),
 		cachedVoice = upThis.#voiceCache[ch],
 		refresh = true;
-		if (!forcedRefresh) {
+		if (!forcedRefreshObject) {
 			switch (upThis.device.getChMode(ch)) {
 				case "xg": {
 					if (upThis.device.getChType(ch) > 0 && voice.ending === "!") {
@@ -295,26 +298,34 @@ let RootDisplay = class extends CustomEventSource {
 		if (refresh) {
 			upThis.#voiceCache[ch] = voice;
 			upThis.#polyCache[ch] = voice.poly ?? 1;
+			upThis.dispatchEvent("cachedvoice", {"part": ch});
 			return voice;
 		} else {
 			return cachedVoice;
 		};
 	};
 	getCachedChVoice(ch) {
-		let cachedVoice = this.#voiceCache[ch];
+		let upThis = this,
+		cachedVoice = upThis.#voiceCache[ch],
+		updatedVoice = upThis.device.getChPrimitives(ch, true);
 		if (cachedVoice) {
 			switch (cachedVoice.ending) {
 				case "?":
 				case "!": {
-					return this.refreshCachedChVoice(ch);
+					return upThis.refreshCachedChVoice(ch);
 					break;
 				};
 				default: {
-					return cachedVoice;
+					if (arrayCompare(cachedVoice.sid, updatedVoice)[1] !== 0) {
+						return upThis.refreshCachedChVoice(ch);
+					} else {
+						return cachedVoice;
+					};
 				};
 			};
 		} else {
-			return this.device.getChVoice(ch);
+			console.debug(0);
+			return upThis.refreshCachedChVoice(ch);
 		};
 	};
 	getChPrimitive(ch, component, useSubDb) {
@@ -712,6 +723,7 @@ let RootDisplay = class extends CustomEventSource {
 		});
 		upThis.addEventListener("voice", ({data}) => {
 			upThis.refreshCachedChVoice(data.part);
+			console.debug(data);
 		});
 		upThis.addEventListener("reset", ({data}) => {
 			upThis.#polyCache.fill(1);

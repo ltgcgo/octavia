@@ -1,5 +1,21 @@
 "use strict";
 
+let arrayCompare = (arr1, arr2) => {
+	let minLength = Math.min(arr1.length, arr2.length);
+	let result = 0;
+	for (let i = 0; i < minLength; i ++) {
+		result = arr1[i] - arr2[i];
+		if (result !== 0) {
+			return [i, result];
+			break;
+		};
+	};
+	if (arr1.length !== arr2.length) {
+		return [minLength, arr1.length - arr2.length];
+	};
+	return [0, 0];
+};
+
 let toDecibel = function (data = 64) {
 	return Math.round(2000 * Math.log10(data / 64)) / 100;
 };
@@ -121,6 +137,7 @@ const noteAcciTet12 = "♭𝄫,𝄫,♭,,♯,𝄪,𝄪♯".split(",");
 let getChordName = (root, acciTet48, type) => {};
 
 export {
+	arrayCompare,
 	toDecibel,
 	gsChecksum,
 	korgFilter,
