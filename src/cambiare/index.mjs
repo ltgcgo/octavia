@@ -1278,9 +1278,10 @@ let Cambiare = class extends RootDisplay {
 			};*/
 		});
 		upThis.addEventListener("voice", ({data}) => {
-			let voice = upThis.getCachedChVoice(data.part),
+			let voice = upThis.getCachedChVoice(data.part, true),
 			voicePrimitives = upThis.getChPrimitives(data.part, true),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
+			//console.debug(voice.refreshFailure);
 			setCanvasText(target.metre, upThis.getMapped(voice.name), voice.refreshFailure || voice.ending !== " ");
 			target.type.setTextRaw(chTypes[upThis.device.getChType(data.part)]);
 			target.std.setTextRaw(voice.standard);

@@ -47,6 +47,8 @@ let RootDisplay = class extends CustomEventSource {
 	// A cache for providing fast poly calculation
 	#voiceCache = new Array(allocated.ch);
 	#polyCache = new Uint8Array(allocated.ch);
+	// Recursion guard
+	#getCachedInstanceCount = 0;
 	smoothAttack = 0;
 	smoothDecay = 0;
 	reset() {
@@ -284,12 +286,30 @@ let RootDisplay = class extends CustomEventSource {
 		voice = forcedRefreshObject ?? upThis.device.getChVoice(ch),
 		cachedVoice = upThis.#voiceCache[ch],
 		refresh = true;
+		upThis.#getCachedInstanceCount ++;
 		if (!forcedRefreshObject) {
 			switch (upThis.device.getChMode(ch)) {
 				case "xg": {
 					if (upThis.device.getChType(ch) > 0 && voice.ending === "!") {
 						refresh = false;
 						cachedVoice.refreshFailure = true;
+						console.debug("Cached voice persisted due to invalid drum kit.");
+					};
+					break;
+				};
+				case "gs":
+				case "sc": {
+					if (voice.ending !== " ") {
+						if (voice.sid[2] === 1) {
+							voice.name = "Silence";
+							voice.refreshFailure = true;
+							console.debug("Cached voice nullified due to invalid SC-55 voice.");
+						} else {
+							refresh = false;
+							cachedVoice.refreshFailure = true;
+							console.debug("Cached voice persisted due to invalid GS voice.");
+							//console.info(new Error());
+						};
 					};
 					break;
 				};
@@ -298,9 +318,15 @@ let RootDisplay = class extends CustomEventSource {
 		if (refresh) {
 			upThis.#voiceCache[ch] = voice;
 			upThis.#polyCache[ch] = voice.poly ?? 1;
-			upThis.dispatchEvent("cachedvoice", {"part": ch});
+			if (upThis.#getCachedInstanceCount > 1) {
+				console.debug(`Bubbling prevented at instance #${upThis.#getCachedInstanceCount}.`);
+			} else {
+				upThis.dispatchEvent("cachedvoice", {"part": ch});
+			};
+			upThis.#getCachedInstanceCount --;
 			return voice;
 		} else {
+			upThis.#getCachedInstanceCount --;
 			return cachedVoice;
 		};
 	};
@@ -312,7 +338,7 @@ let RootDisplay = class extends CustomEventSource {
 			switch (cachedVoice.ending) {
 				case "?":
 				case "!": {
-					return upThis.refreshCachedChVoice(ch);
+					return upThis.refreshCachedChVoice(ch, undefined);
 					break;
 				};
 				default: {
@@ -723,7 +749,6 @@ let RootDisplay = class extends CustomEventSource {
 		});
 		upThis.addEventListener("voice", ({data}) => {
 			upThis.refreshCachedChVoice(data.part);
-			console.debug(data);
 		});
 		upThis.addEventListener("reset", ({data}) => {
 			upThis.#polyCache.fill(1);

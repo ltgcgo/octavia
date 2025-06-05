@@ -939,6 +939,12 @@ let VoiceBank = class {
 				};
 			};
 		};
+		/*
+		Invalid voice names:
+		- GM2 Ext?
+		- Unknown
+		- Silence
+		*/
 		return {
 			name: bankName || `${noVoxCatPool[mode] || mode.toUpperCase()}${halfHex(msb || 0)}${halfHex(prg || 0)}${halfHex(lsb || 0)}`,
 			poly: bankPoly,
