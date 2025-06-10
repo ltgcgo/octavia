@@ -1,35 +1,35 @@
 ID	Name
 KGrdPno1	Kross Grand Piano 1
-Kr636500	R&B Suit EP Phaser
-Kr636600	Preamp Suit EP
-Kr636700	Distorted Suit EP SW2
+Kr636500	Phaser R&B Suit E. Piano
+Kr636600	Preamp Suit E. Piano
+Kr636700	Distorted Suit E. Piano
 Kr636800	Dist. & Phaser Suit EP
-Kr636900	1984 Suit EP
+Kr636900	1984 Suit E. Piano
 Kr637000	Classic Bell Suit EP
 Kr637100	Mark I Line Suit EP
 Kr637200	Mark I Silver Suit EP
-Kr637300	Tremolo Suit EP
-Kr637400	Chorus & U-Vibe Suit EP
-Kr637500	U-Vibe & Echo Suit EP
-Kr637600	Bi-Phase Suit EP
-Kr637700	Phaser Suit EP 1
-Kr637800	Phaser Suit EP 2
+Kr637300	Tremolo Suit E. Piano
+Kr637400	Chorus & U-Vibr. Suit EP
+Kr637500	U-Vibr. & Echo Suit EP
+Kr637600	Bi-phase Suit E. Piano
+Kr637700	Phaser Suit E. Piano 1
+Kr637800	Phaser Suit E. Piano 2
 Kr637900	Preamp & Wah Suit EP
-Kr638000	Wah Wah Suit EP
-Kr638100	BPM Delay Suit EP
-Kr638200	Mark V Suit EP
-Kr638300	Hard Suit EP
-Kr638400	Studio Dyno EP
+Kr638000	Wah Wah Suit E. Piano
+Kr638100	BPM Delay Suit E. Piano
+Kr638200	Mark V Suit E. Piano
+Kr638300	Hard Suit E. Piano
+Kr638400	Studio Dyno E. Piano
 Kr638500	EQ / Chorus Dyno EP
-Kr638600	Chorus Dyno EP
-Kr638800	Wah Wheel Reed EP
-Kr638900	Mellow Reed EP
-Kr639000	Tremolo Reed EP
-Kr639100	Reed EP Overdrive
-Kr639200	Rockin' Reed EP
-Kr639300	Chorus Reed EP
-Kr639400	Phaser Reed EP
-Kr639500	Pure Suit EP + Pad
+Kr638600	Chorused Dyno E. Piano
+Kr638800	Wah Wheel Reed E. Piano
+Kr638900	Mellow Reed E. Piano
+Kr639000	Tremolo Reed E. Piano
+Kr639100	Overdriven Reed E. Piano
+Kr639200	Rockin' Reed E. Piano
+Kr639300	Chorused Reed E. Piano
+Kr639400	Phaser Reed E. Piano
+Kr639500	Pure Suit E. Piano + Pad
 Kr639600	Bright Suit EP + Pad 1
 Kr639700	Bright Suit EP + Pad 2
 Kr639800	Hard Suit EP + DX EP
@@ -44,11 +44,11 @@ Kr63a600	DX E. Piano + EP Pad 2
 Kr63a700	DX E. Piano + Syn Pad
 Kr63a800	FM Suitcase E. Piano
 Kr63a900	Chorus DX + Suit EP
-Kr63b000	DX EP + Dyno EP
+Kr63b000	DX FM EP + Dyno EP
 Kr63b100	Pad E. Piano 1
 Kr63b200	Pad E. Piano 2
 Kr63b300	Pad E. Piano 3
-Kr63b400	Hybrid Phaser EP
+Kr63b400	Hybrid Phaser E. Piano
 Kr63b500	E. Piano Pad + Synth
 Kr63b600	Super Grand
 Kr63b700	Phantom E. Piano
@@ -369,7 +369,7 @@ Kr639803	EDM Chordplay 2
 Kr639903	Future Chordal
 Kr63a003	Fuzz Felt
 Kr63a103	Pro Sync
-Kr63a203	Annihilation EP
+Kr63a203	Annihilation E. Piano
 Kr63a303	Sine Pad
 Kr63a403	Swirl Sine Pad
 Kr63a503	Synth Filter Pad
@@ -385,7 +385,7 @@ Kr63b403	String Resonant Pad
 Kr63b503	Flashy Analog Harpy
 Kr63b603	Angelic Choir
 Kr63b703	The Pad
-Kr63b803	The EP Pads
+Kr63b803	The E. Piano Pads
 Kr63b903	Attacky Pad
 Kr63c003	Poppin' Pad
 Kr63c103	African Brass
@@ -547,7 +547,7 @@ Kr636605	Mad Analog Kit
 Kr636705	Tricki Kit
 Kr636805	Human Beat Box Kit
 Kr636905	Percussion Kit
-Kr637005	Orch&Ethno Kit
+Kr637005	Orch. & Ethno Kit
 Kr637105	Nippon Kit
 Kr637505	Saw Pizzicato
 Kr637605	Short Square Arp
@@ -558,7 +558,7 @@ Kr638005	Chip Pulse 1
 Kr638105	Chip Pulse 2
 Kr638205	Analog Bell / Harp
 Kr638305	Square / Pulse Synth
-Kr638405	Comp EP. SW1/2
+Kr638405	Comped E. Piano
 Kr638505	Organ Percussion Shot
 Kr638605	Synth Mallets 5th
 Kr638705	Metallic Hitter
@@ -652,7 +652,7 @@ AP+SynPd	A. Piano + Synth Pad
 90sPiano	90’s Piano
 ToyPiano	Toy Piano
 RmcToyPf	Romance Toy Piano
-EPRBSW12	R&B Suit EP SW1/2
+EPRBSW12	R&B Suit E. Piano
 EPDynoEC	Exciter / Chorus Dyno EP
 BrtACClv	Bright AC Clavichord
 MelACClv	Mellow AC Clavichord
@@ -725,6 +725,7 @@ PowerKt1	Power Kit 1
 PowerKt2	Power Kit 2
 BasicKt1	Basic Kit 1
 BasicKt2	Basic Kit 2
+JazHopKt	Jazzy Hop Kit
 DbstpKit	Dubstep Kit
 TropicKt	Tropical Kit
 BD&SD!!1	Bass & Snare Drum Menu 1

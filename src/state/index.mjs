@@ -409,6 +409,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		"cs1x": {
 			"perfCh": 0
+		},
+		"kross": {
+			"chToggle": false
 		}
 	};
 	#detect;
@@ -6998,12 +7001,12 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Part dump
 					let si = i - 1276;
 					//let track = Math.floor(si / 44);
-					let track = (si * 1490) >> 16;
-					let part = upThis.chRedir(track, track, true);
+					let bmt1Track = (si * 1490) >> 16;
+					let part = upThis.chRedir(bmt1Track, track, true);
+					console.debug(part);
 					// let pi = si % 44;
-					let pi = si - track * 44;
-					let chOff = ccOffTable[part];
-					//console.debug(`${i} ${si} ${Math.floor(si / 44)} ${part} ${pi.toString().padStart(2, "0")}: ${e.toString(16).padStart(2, "0")}`);
+					let pi = si - bmt1Track * 44;
+					//console.debug(`${i} ${si} ${Math.floor(si / 44)} ${part} ${pi.toString().padStart(8, "0")}: ${e.toString(16).padStart(2, "0")}`);
 					if (pi < 22) {
 						([() => {
 							e && upThis.setChActive(part, 1);
@@ -7013,14 +7016,14 @@ let OctaviaDevice = class extends CustomEventSource {
 						}, () => {
 							e && upThis.setChActive(part, 1);
 							if (e < 10) {
-								upThis.#cc[chOff + ccToPos[0]] = 63;
-								upThis.#cc[chOff + ccToPos[32]] = e;
+								upThis.setChCc(part, 0, 63);
+								upThis.setChCc(part, 32, e);
 							} else if (e < 20) {
-								upThis.#cc[chOff + ccToPos[0]] = 121;
-								upThis.#cc[chOff + ccToPos[32]] = e - 10;
+								upThis.setChCc(part, 0, 121);
+								upThis.setChCc(part, 32, e - 10);
 							} else if (e < 24) {
-								upThis.#cc[chOff + ccToPos[0]] = [120, 0, 56, 62][e - 20];
-								upThis.#cc[chOff + ccToPos[32]] = 0;
+								upThis.setChCc(part, 0, [120, 0, 56, 62][e - 20]);
+								upThis.setChCc(part, 32, 0);
 							};
 							upThis.pushChPrimitives(part);
 							//console.debug(`${dPref}CH${part + 1} LSB ${pi}: ${e}`)
@@ -7031,20 +7034,20 @@ let OctaviaDevice = class extends CustomEventSource {
 							if (ch !== part) {
 								console.info(`${dPref}CH${part + 1} receives from CH${ch + 1}`);
 							};
-							/*let enabled = (e >> 5) & 1;
-							if (!enabled) {
-								upThis.setChActive(part, 0);
+							let enabled = (e >> 5) & 1;
+							if (!enabled && upThis.modelEx.kross.chToggle) {
+								//upThis.setChActive(part, 0);
 								console.debug(`KORG KROSS 2 CH${part + 1} is disabled.`);
-							};*/
+							};
 						}, false, false, () => {
-							upThis.#cc[chOff + ccToPos[7]] = e;
+							upThis.setChCc(part, 7, e);
 						}, false, () => {
 							// coarse
 						}, () => {
 							// fine
 						}, false, false, false, false, false, () => {
 							//console.debug(`${dPref}CH${part + 1} pan: ${e}`);
-							upThis.#cc[chOff + ccToPos[10]] = e || 128;
+							upThis.setChCc(part, 10, e || 128);
 						}][pi] || (() => {}))();
 					} else if (pi < 36) {
 						([() => {
@@ -7059,15 +7062,15 @@ let OctaviaDevice = class extends CustomEventSource {
 						}][pi - 22] || (() => {}))();
 					} else {
 						([() => {
-							upThis.#cc[chOff + ccToPos[74]] = ((e + 128) & 255) - 64;
+							upThis.setChCc(part, 74, ((e + 128) & 255) - 64);
 						}, () => {
-							upThis.#cc[chOff + ccToPos[71]] = ((e + 128) & 255) - 64;
+							upThis.setChCc(part, 71, ((e + 128) & 255) - 64);
 						}, false, false, () => {
-							upThis.#cc[chOff + ccToPos[73]] = ((e + 128) & 255) - 64;
+							upThis.setChCc(part, 73, ((e + 128) & 255) - 64);
 						}, () => {
-							upThis.#cc[chOff + ccToPos[75]] = ((e + 128) & 255) - 64;
+							upThis.setChCc(part, 75, ((e + 128) & 255) - 64);
 						}, false, () => {
-							upThis.#cc[chOff + ccToPos[72]] = ((e + 128) & 255) - 64;
+							upThis.setChCc(part, 72, ((e + 128) & 255) - 64);
 						}][pi - 36] || (() => {}))();
 						//console.debug(`${dPref}${pi} ${e}`);
 					};
