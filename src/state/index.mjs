@@ -7036,7 +7036,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							};
 							let enabled = (e >> 5) & 1;
 							if (!enabled && upThis.modelEx.kross.chToggle) {
-								//upThis.setChActive(part, 0);
+								upThis.setChActive(part, 0);
 								console.debug(`KORG KROSS 2 CH${part + 1} is disabled.`);
 							};
 						}, false, false, () => {
