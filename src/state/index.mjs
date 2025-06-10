@@ -7003,7 +7003,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					//let track = Math.floor(si / 44);
 					let bmt1Track = (si * 1490) >> 16;
 					let part = upThis.chRedir(bmt1Track, track, true);
-					console.debug(part);
+					//console.debug(part);
 					// let pi = si % 44;
 					let pi = si - bmt1Track * 44;
 					//console.debug(`${i} ${si} ${Math.floor(si / 44)} ${part} ${pi.toString().padStart(8, "0")}: ${e.toString(16).padStart(2, "0")}`);
@@ -7057,7 +7057,9 @@ let OctaviaDevice = class extends CustomEventSource {
 								// The fourth least significant bit seems to be turning IFX off.
 								ifxSlot = 1;
 							};
-							console.debug(`${dPref}CH${part + 1} sends to ${ifxSlot > 1 ? `IFX${ifxSlot - 1}` : "direct out"} (${e.toString(16)}).`);
+							if (ifxSlot > 1) {
+								console.debug(`${dPref}CH${part + 1} sends to ${ifxSlot > 1 ? `IFX${ifxSlot - 1}` : "direct out"} (${e.toString(16)}).`);
+							};
 							upThis.setChEffectSink(part, (e > 1 && e < 7) ? e + 1 : 0);
 						}][pi - 22] || (() => {}))();
 					} else {
