@@ -334,23 +334,27 @@ let RootDisplay = class extends CustomEventSource {
 		let upThis = this,
 		cachedVoice = upThis.#voiceCache[ch],
 		updatedVoice = upThis.device.getChPrimitives(ch, true);
+		//console.debug(0);
 		if (cachedVoice) {
 			switch (cachedVoice.ending) {
 				case "?":
 				case "!": {
+					//console.debug(1);
 					return upThis.refreshCachedChVoice(ch, undefined);
 					break;
 				};
 				default: {
 					if (arrayCompare(cachedVoice.sid, updatedVoice)[1] !== 0) {
+						//console.debug(2);
 						return upThis.refreshCachedChVoice(ch);
 					} else {
+						//console.debug(3);
 						return cachedVoice;
 					};
 				};
 			};
 		} else {
-			console.debug(0);
+			//console.debug(4);
 			return upThis.refreshCachedChVoice(ch);
 		};
 	};

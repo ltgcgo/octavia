@@ -412,6 +412,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		"kross": {
 			"chToggle": false
+		},
+		"sg": {
+			"convLastSyll": 0,
+			"runLineLen": 0,
+			"maxLineLen": 32,
+			"splitMask": false
 		}
 	};
 	#detect;
@@ -2133,9 +2139,9 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#masterVol = 100;
 		upThis.#metaTexts = [];
 		upThis.#noteLength = 500;
-		upThis.#sgConvertLastSyllable = 0;
-		upThis.#sgRunningLineLength = 0;
-		upThis.#sgSplittedMask = false;
+		upThis.modelEx.sg.convLastSyll = 0;
+		upThis.modelEx.sg.runLineLen = 0;
+		upThis.modelEx.sg.splitMask = false;
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
 		for (let i = 0; i < upThis.#bitmapStore.length; i ++) {
@@ -3863,7 +3869,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			// PLG-SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
 			dPref = `PLG-SG CH${part + 1} `,
-			timeNow = Date.now();
+			timeNow = Date.now(),
+			sgConf = upThis.modelEx.sg;
 			if (msg[1] === 0) {
 				// Vocal information
 				let vocal = "",
@@ -3876,28 +3883,28 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				});
 				if (
-					timeNow >= upThis.#sgConvertLastSyllable ||
-					upThis.#sgRunningLineLength >= upThis.#sgMaxLineLength
+					timeNow >= sgConf.convLastSyll ||
+					sgConf.runLineLen >= sgConf.maxLineLen
 				) {
 					upThis.dispatchEvent("metacommit", {
 						"type": "SGLyrics",
 						"data": "",
 						"amend": false
 					});
-					//console.debug(`Splitted at length: ${upThis.#sgRunningLineLength}`);
-					upThis.#sgSplittedMask = timeNow < upThis.#sgConvertLastSyllable;
-					upThis.#sgRunningLineLength = 0;
+					//console.debug(`Splitted at length: ${sgConf.runLineLen}`);
+					sgConf.splitMask = timeNow < sgConf.convLastSyll;
+					sgConf.runLineLen = 0;
 				};
 				upThis.dispatchEvent("metacommit", {
 					"type": "SGLyrics",
 					"data": `${getSgKana(vocal)}`,
 					"amend": true,
-					"mask": upThis.#sgSplittedMask
+					"mask": sgConf.splitMask
 				});
-				upThis.#sgRunningLineLength ++;
-				upThis.#sgSplittedMask = false;
-				//console.debug(`Running length: ${upThis.#sgRunningLineLength}`);
-				upThis.#sgConvertLastSyllable = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
+				sgConf.runLineLen ++;
+				sgConf.splitMask = false;
+				//console.debug(`Running length: ${sgConf.runLineLen}`);
+				sgConf.convLastSyll = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
 				if (getDebugState()) {
 					console.debug(`${dPref}vocals: ${vocal}`);
 				};
@@ -6428,11 +6435,12 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 			msg.subarray(2).forEach((e, i) => {
 				([() => {
-					upThis.#cc[chOff + ccToPos[0]] = e;
+					upThis.setChCc(part, 0, e);
 					upThis.pushChPrimitives(part);
 				}, () => {
 					e && upThis.setChActive(part, 1);
-					upThis.#cc[chOff + ccToPos[32]] = e;
+					upThis.setChCc(part, 32, e);
+					// Needs voice detection reunification
 					if (upThis.getChPrimitive(part, 1) === 63) {
 						upThis.setChType(part, ([32, 40].indexOf(e) > -1) ? upThis.CH_DRUMS : upThis.CH_MELODIC, upThis.#mode, true);
 					};
@@ -6440,7 +6448,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				}, () => {
 					e && upThis.setChActive(part, 1);
 					upThis.#prg[part] = e;
-					//upThis.pushChPrimitives(part);
+					upThis.pushChPrimitives(part);
 				}, () => {
 					let ch = upThis.chRedir(e, track, true);
 					let prevCh = upThis.#chReceive[part];
@@ -7035,9 +7043,11 @@ let OctaviaDevice = class extends CustomEventSource {
 								console.info(`${dPref}CH${part + 1} receives from CH${ch + 1}`);
 							};
 							let enabled = (e >> 5) & 1;
-							if (!enabled && upThis.modelEx.kross.chToggle) {
-								upThis.setChActive(part, 0);
-								console.debug(`KORG KROSS 2 CH${part + 1} is disabled.`);
+							if (upThis.modelEx.kross.chToggle) {
+								upThis.setChActive(part, enabled);
+								if (!enabled) {
+									console.debug(`KORG KROSS 2 CH${part + 1} is disabled.`);
+								};
 							};
 						}, false, false, () => {
 							upThis.setChCc(part, 7, e);
