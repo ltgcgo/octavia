@@ -83,11 +83,12 @@ Jazz Amp	Amped Jazz Guitar
 MidSJazz	Mid. Super Jazz Guitar
 NekRough	Roughcaster Neck
 ChorusGt	Chorus Guitar
+CleanGt2	Clean Guitar 2
 MidT.Gtr	Mid-tone Guitar
 MidTGtSt	Mid-tone Guitar Stereo
 HammrMid	Middle Hammer Guitar
-HammrBrg	Bridge Hammer
-HammrDbl	Double Hammer
+HammrBrg	Bridge Hammer Guitar
+HammrDbl	Double Hammer Guitar
 HammrSt.	Stereo Hammer Guitar
 MutedGt#	Muted Guitar #
 Funk Gtr	Funk Guitar 1
@@ -96,9 +97,9 @@ FunkGtr2	Funk Guitar 2
 WrenchGt	Wrench Guitar
 GrvyMtGt	Groovy Muted Guitar
 Mu.DstGt	Muted Distortion Guitar
-Ovrdriv#	Overdriven #
+Ovrdriv#	Overdriven Guitar #
 OvdrGtDt	Detuned Overdrive Guitar
-BrtMnhtn	Bright Manhattan
+BrtMnhtn	Bright Manhattan Guitar
 Dist.Gt#	Distortion Guitar #
 DstRthmG	Distorted Rhythm Guitar
 DistGtr2	Distortion Guitar 2
@@ -248,7 +249,7 @@ SymphBrs	Symphonic Brass
 PhoenxBr	Phoenix Brass
 RezSynBr	Resonant Synth Brass
 SynBras3	Synth Brass 3
-AnlSforz	Analog Sforzando
+AnlSforz	Analog Sforzando Brass
 SyBrsSub	Synth Brass Sub-oscillator
 AnVelBrs	Analog Velocity Brass
 SynBras4	Synth Brass 4

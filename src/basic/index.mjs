@@ -584,9 +584,13 @@ let RootDisplay = class extends CustomEventSource {
 	getChCachedVoice(part) {
 		return this.#voiceCache[part];
 	};
-	eachVoice(iter) {
+	eachVoice(iter, all = false) {
 		let upThis = this;
-		upThis.#voiceCache.forEach(iter);
+		for (let i = 0; i < upThis.#voiceCache.length; i ++) {
+			if (all || upThis.device?.getChActive(i)) {
+				iter(upThis.#voiceCache[i], i, upThis.#voiceCache);
+			};
+		};
 	};
 	sendCmd(raw) {
 		this.device.runJson(raw);

@@ -2732,6 +2732,28 @@ let OctaviaDevice = class extends CustomEventSource {
 					});
 					break;
 				};
+				case "Mi": {
+					// Possibly containing MidStamp info
+					if (data.substring(2, 16) === "dStamp-1.00: 0") {
+						let endPtr = data.length;
+						for (let i = data.length; i > 0; i --) {
+							let leadInt = data.charCodeAt(i - 1) >> 5;
+							if ((leadInt + 1) >> 1 === 1) {
+								endPtr = i;
+								break;
+							};
+						};
+					} else {
+						data.split("\n").forEach((e, i) => {
+							upThis.dispatchEvent("metacommit", {
+								"type": "Cmn.Text",
+								"data": e,
+								"mask": i !== 0
+							});
+						});
+					};
+					break;
+				};
 				case "XF": {
 					// XG File Data section
 					let dataArr = data.slice(2).split(":");
