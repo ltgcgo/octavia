@@ -132,6 +132,24 @@ let getDebugState = function () {
 	return self.debugMode ?? false;
 };
 
+let ascii64Dec = function (text) {
+	let targetSize = ((text.length + 1) * 3) >> 2, // Math.ceil(text.length * 3 / 4)
+	result = new Uint8Array(targetSize),
+	units = (text.length + 3) >> 2;// Math.ceil(text.length / 4)
+	for (let i = 0; i < units; i ++) {
+		let ai = i << 2, di = i * 3;
+		let v = 0;
+		for (let i0 = 0; i0 < 4; i0 ++) {
+			v <<= 6;
+			v |= (text.charCodeAt(ai + i0) - 32) & 63;
+		};
+		result[di] = v >> 16;
+		result[di + 1] = (v >> 8) & 255;
+		result[di + 2] = v & 255;
+	};
+	return result;
+};
+
 const noteRoot = "CDEFGAB";
 const noteAcciTet12 = "♭𝄫,𝄫,♭,,♯,𝄪,𝄪♯".split(",");
 let getChordName = (root, acciTet48, type) => {};
@@ -147,5 +165,6 @@ export {
 	halfByteUnpack,
 	x5dSendLevel,
 	customInterpreter,
+	ascii64Dec,
 	getDebugState
 };

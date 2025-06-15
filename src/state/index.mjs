@@ -41,6 +41,7 @@ import {
 	halfByteFilter,
 	halfByteUnpack,
 	x5dSendLevel,
+	ascii64Dec,
 	getDebugState
 } from "./utils.js";
 import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
@@ -2743,6 +2744,13 @@ let OctaviaDevice = class extends CustomEventSource {
 								break;
 							};
 						};
+						let msData = data.substring(16, endPtr);
+						//console.debug(msData);
+						//console.debug(ascii64Dec(msData));
+						upThis.dispatchEvent("metacommit", {
+							"type": "MidStamp",
+							"data": ascii64Dec(msData)
+						});
 					} else {
 						data.split("\n").forEach((e, i) => {
 							upThis.dispatchEvent("metacommit", {

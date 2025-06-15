@@ -40,22 +40,23 @@ const modeNames = {
 	"pa": "Korg PA"
 };
 const metaNames = {
-	"Copyrite": "Copyright",
-	"Cmn.Text": "Text",
 	"C.Lyrics": "Lyrics",
 	"C.Marker": "Marker",
+	"Cmn.Text": "Text",
+	"Copyrite": "Copyright",
 	"CuePoint": "Cue Point",
+	"EORTitle": "Real Title", // Extension-overriden real title
 	"Instrmnt": "Instrument",
 	"Kar.Info": "Kar. Info",
-	"Kar.Mode": "Karaoke",
 	"Kar.Lang": "Language",
-	"KarTitle": "Kar. Title",
-	"KarLyric": "Kar. Lyrics",
+	"Kar.Mode": "Karaoke",
 	"Kar.Ver.": "Kar. Version",
+	"KarLyric": "Kar. Lyrics",
+	"KarTitle": "Kar. Title",
+	"MidStamp": "MIDI Stamp",
+	"OSysMeta": "Octavia Sys.",
 	"SGLyrics": "SG Lyrics",
 	"TrkTitle": "Title",
-	"EORTitle": "Real Title", // Extension-overriden real title
-	"OSysMeta": "Octavia Sys.",
 	"XfSngDte": "XF Date",
 	"XfSngRgn": "XF Region",
 	"XfSngCat": "XF Category",
