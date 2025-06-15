@@ -84,13 +84,14 @@ const metaNames = {
 	"YMCSSect": "Section Ctrl.",
 	"YStyleId": "Active Style"
 }, metaBlocklist = [
+	"ChordCtl",
+	"MidStamp",
+	"RhrslMrk",
 	"XfSongBt",
 	"XfSngIns",
 	"XfSngVoc",
 	"XfLyrOff",
-	"XfSngRgn",
-	"ChordCtl",
-	"RhrslMrk"
+	"XfSngRgn"
 ];
 const lineDash = [[], [4, 2], [3, 2]];
 const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}];

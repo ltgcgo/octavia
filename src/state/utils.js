@@ -141,7 +141,7 @@ let ascii64Dec = function (text) {
 		let v = 0;
 		for (let i0 = 0; i0 < 4; i0 ++) {
 			v <<= 6;
-			v |= (text.charCodeAt(ai + i0) - 32) & 63;
+			v |= (text.charCodeAt(ai + i0) - 32) & 63; // No idea about the distribution
 		};
 		result[di] = v >> 16;
 		result[di + 1] = (v >> 8) & 255;
