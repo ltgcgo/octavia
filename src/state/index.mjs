@@ -206,6 +206,17 @@ nrpnCcMap = [33, 102, 99, 32, 100, 8, 9, 10]; // cc71 to cc78
 const korgDrums = [0, 16, 25, 40, 32, 64, 24, 48];
 
 const effectSlots = "reverb,chorus,delay,insert0,insert1,insert2,insert3,insert4".split(",");
+const yPlgConf = [
+	["VL", 32, 8, 1],
+	["SG", 8, 1, 1],
+	["DX", 16, 1, 16],
+	["AN", 16, 2, 5],
+	["PF", 2, 1, 64],
+	["DR", 2, 1, 32],
+	["PC", 2, 1, 32],
+	["AP", 2, 1, 64]
+];
+// name, slot, realSlots, poly
 
 let modeMap = {};
 modeIdx.forEach((e, i) => {
@@ -402,6 +413,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			"varSys": false,
 			"insPart": new Uint8Array(5) // Var, In1~4
 		},
+		"yPlg": [],
 		"sc": {
 			"showBar": true,
 			"invBar": false,
@@ -2206,6 +2218,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Reset XG-exclusive params
 		upThis.modelEx.xg.varSys = false;
 		upThis.modelEx.xg.insPart.fill(allocated.invalidCh);
+		for (let i = 0; i < yPlgConf.length; i ++) {
+			let plgBuf = upThis.modelEx.yPlg[i];
+			plgBuf.fill(0, 0, yPlgConf[i][2]);
+			plgBuf.fill(allocated.invalidCh, yPlgConf[i][2]);
+		};
 		// Reset SC-exclusive params
 		upThis.modelEx.sc.showBar = true;
 		upThis.modelEx.sc.invBar = false;
@@ -2403,7 +2420,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (upThis.#mode === 0 || forced) {
 				//let oldMode = upThis.#mode;
 				if (upThis.initOnReset && forced) {
-					this.init(1);
+					upThis.init(1);
 					//oldMode = modeMap["?"];
 				};
 				upThis.#bitmapPage = 0; // Restore page
@@ -2658,6 +2675,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			} else {
 				upThis.#subDb[index] = new Uint8Array(modeDetailsData[mode]);
 			};
+		};
+		for (let plgInfo of yPlgConf) {
+			upThis.modelEx.yPlg.push(new Uint8Array(plgInfo[1]));
 		};
 		/* upThis.#detect = new Proxy(upThis.#detectR, {
 			get: (real, key) => {
@@ -3746,8 +3766,24 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([76, 17, 0, 0], (msg, track, id) => {
 			// XG A/D mono/stereo mode, won't implement for now
 		}).add([76, 112], (msg, track, id) => {
-			// XG plugin board generic
-			console.debug(`XG enable PLG-${["VL", "SG", "DX", "AN", "PF", "DR", "PC", "AP"][msg[0]]} slot #${msg[1] + 1} for CH${msg[2] + 1}.`);
+			// XG plugin board slot assign
+			if (msg[0] >= yPlgConf.length) {
+				console.error(`Supplied invalid plugin board ID: ${msg[0]}`);
+				return;
+			};
+			if (msg[1] >= yPlgConf[msg[0]][1]) {
+				console.error(`Supplied invalid slot ID for board type "${yPlgConf[msg[0]][0]}" (${msg[0]}): ${msg[1]} (#${msg[1] + 1}))`);
+				return;
+			};
+			if (msg[1] >= yPlgConf[msg[0]][2]) {
+				console.warn(`While enabled in Octavia, slot #${msg[1] + 1} for board type "${yPlgConf[msg[0]][0]}" (${msg[0]}) may not function outside software recreation.`);
+			} else if (msg[2] > 63) {
+				console.debug(`XG disable PLG-${yPlgConf[msg[0]][0]} (${msg[0]}) slot #${msg[1] + 1} as it's set to CH${msg[2] + 1}.`);
+			} else {
+				console.debug(`XG enable PLG-${yPlgConf[msg[0]][0]} (${msg[0]}) slot #${msg[1] + 1} for CH${msg[2] + 1}.`);
+			};
+			upThis.modelEx.yPlg[msg[0]][msg[1]] = msg[2] < 64 ? upThis.chRedir(msg[2], track, true) : allocated.invalidCh;
+			// The code below should not be present with proper implementation.
 			switch (msg[0]) {
 				case 0: {
 					upThis.#ext[allocated.ext * msg[2]] = upThis.EXT_VL;
