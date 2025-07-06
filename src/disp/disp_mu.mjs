@@ -183,6 +183,7 @@ let MuDisplay = class extends RootDisplay {
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
+	isMetreAffectedByPan = false;
 	clockSource;
 	constructor() {
 		super(new OctaviaDevice());
@@ -342,28 +343,40 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#mmdb[1278] = 1;
 			upThis.#mmdb[1279] = 1;
 			for (let ch = minCh; ch <= maxCh; ch ++) {
-				let curStrn = sum.strength[ch];
+				let curStrn = sum.strength[ch],
+				curStrnL = curStrn,
+				curStrnR = curStrn;
+				let chPan = upThis.device.getChCc(ch, 10);
+				if (chPan === 64 || chPan >> 7 === 1 || !upThis.isMetreAffectedByPan) {
+					// Nothing will happen
+				} else if (chPan < 64) {
+					curStrnR = Math.round(curStrnR * chPan >> 6);
+				} else if (chPan > 64) {
+					curStrnL = Math.round(curStrnR * (128 - chPan) >> 6);
+				};
 				if (rendMode) {
-					curStrn = curStrn >> 5;
+					curStrnL >>= 5;
+					curStrnR >>= 5;
 				} else {
-					curStrn = curStrn >> 4;
+					curStrnL >>= 4;
+					curStrnR >>= 4;
 				};
 				if (rendMode === 0 || rendMode === 1) {
 					// 16 channel
 					for (let pI = 0; pI <= curStrn; pI ++) {
-						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - Math.floor(rendPos / 2);
-						upThis.#mmdb[pR] = 1;
-						upThis.#mmdb[pR + 1] = 1;
+						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - (rendPos >> 1);
+						pI <= curStrnL && (upThis.#mmdb[pR] = 1);
+						pI <= curStrnR && (upThis.#mmdb[pR + 1] = 1);
 					};
 				} else {
 					// 64 channel
 					for (let pI = 0; pI <= curStrn; pI ++) {
-						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - Math.floor(rendPos / 2);
+						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - (rendPos >> 1);
 						if (rendPos > 31) {
 							pR -= 760;
 						};
-						upThis.#mmdb[pR] = 1;
-						upThis.#mmdb[pR + 1] = 1;
+						pI <= curStrnL && (upThis.#mmdb[pR] = 1);
+						pI <= curStrnR && (upThis.#mmdb[pR + 1] = 1);
 					};
 				};
 				rendPos ++;
