@@ -403,6 +403,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#chMode = new Uint8Array(allocated.ch); // Per-part mode
 	#bnCustom = new Uint8Array(allocated.ch); // Custom name activation
 	#cvnBuffer = new Uint8Array(allocated.ch * allocated.cvn); // Per-channel custom voice name
+	#cvnBufferIsWritten = new Uint8Array(allocated.ch); // If the CVN buffer has been written
 	#cmTPatch = new Uint8Array(128); // C/M part patch storage
 	#cmTTimbre = new Uint8Array(allocated.cmt * 8); // C/M part timbre storage
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
@@ -1804,7 +1805,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		if (regIdx >= allocated.cvn || regIdx < 0) {
 			throw(new RangeError("Invalid custom voice name register"));
 		};
+		this.#cvnBufferIsWritten[part] = 1;
 		this.#cvnBuffer[cvnOffTable[part] + regIdx] = Math.max(32, value & 255);
+	};
+	resetChCvn(part) {
+		this.#cvnBuffer.fill(32, cvnOffTable[part], cvnOffTable[part] + allocated.cvn);
+		this.#cvnBufferIsWritten[part] = 0;
 	};
 	getChCvnString(part, preserveEnd) {
 		let result = decoderL9.decode(this.getChCvnBuffer(part));
@@ -1812,6 +1818,9 @@ let OctaviaDevice = class extends CustomEventSource {
 			result = result.trimEnd();
 		};
 		return result;
+	};
+	getChCvnIsWritten(part) {
+		return this.#cvnBufferIsWritten[part];
 	};
 	getChVoice(part) {
 		let upThis = this;
@@ -2206,8 +2215,6 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#cmTPatch.fill(0);
 		upThis.#cmTTimbre.fill(0);
 		upThis.#bnCustom.fill(0);
-		// Reset custom voice name buffers
-		upThis.#cvnBuffer.fill(32);
 		// Reset EFX base registers
 		upThis.#efxBase.fill(0);
 		upThis.#efxTo.fill(0);
@@ -2231,6 +2238,8 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Reset CS1x-exclusive params
 		upThis.modelEx.cs1x.perfCh = 0;
 		for (let ch = 0; ch < allocated.ch; ch ++) {
+			// Reset custom voice name buffers
+			upThis.resetChCvn(ch);
 			let chOff = ccOffTable[ch];
 			// Reset to full
 			upThis.#cc[chOff + ccToPos[7]] = 100; // Volume
@@ -7161,6 +7170,13 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 			//upThis.buildRchTree();
 		});
+		let an1xAssign = function (e, track, slot) {
+			let part = upThis.chRedir(e, track, true);
+			upThis.setChMode(part, modeMap.an1x);
+			upThis.pushChPrimitives(part);
+			console.debug(`Yamaha AN1x slot ${slot + 1} receives from CH${part + 1}(${e + 1}).`);
+			upThis.modelEx.yPlg[3][slot] = part;
+		};
 		upThis.#seXg.add([92, 0, 0], (msg, track, id) => {
 			// Yamaha AN1x system
 			let offset = msg[0];
@@ -7171,14 +7187,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				} else {
 					([false, false, false, false, false, false, () => {
 						// Rx channel 1
-						upThis.setChMode(e, modeMap.an1x);
-						upThis.pushChPrimitives(e);
-						console.debug(`Yamaha AN1x slot 1 receives from CH${e + 1}`);
+						an1xAssign(e, track, 0);
 					}, () => {
 						// Rx channel 2
-						upThis.setChMode(e, modeMap.an1x);
-						upThis.pushChPrimitives(e);
-						console.debug(`Yamaha AN1x slot 2 receives from CH${e + 1}.`);
+						an1xAssign(e, track, 1);
 					}][ri - 2] || (() => {}))();
 				};
 			});

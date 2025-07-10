@@ -333,9 +333,9 @@ let RootDisplay = class extends CustomEventSource {
 	getCachedChVoice(ch) {
 		let upThis = this,
 		cachedVoice = upThis.#voiceCache[ch],
-		updatedVoice = upThis.device.getChPrimitives(ch, true);
+		updatedVoice = upThis.device?.getChPrimitives(ch, true);
 		//console.debug(0);
-		if (cachedVoice) {
+		if (cachedVoice && upThis.device?.getChCvnIsWritten(ch) === 0) {
 			switch (cachedVoice.ending) {
 				case "?":
 				case "!": {
