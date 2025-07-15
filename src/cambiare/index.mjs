@@ -1412,7 +1412,7 @@ let Cambiare = class extends RootDisplay {
 					};
 				};
 				isHandled = true;
-			} else if (meta.data?.length && metaBlocklist.indexOf(meta.type) === -1) {
+			} else if ((meta.data?.length || typeof meta.data === "object") && metaBlocklist.indexOf(meta.type) === -1) {
 				// Commit a new line
 				let metaLineRoot = createElement("div", ["meta-line"]),
 				metaLineType = createElement("span", ["field", "field-key", "meta-type"], {i: metaNames[meta.type] || meta.type});
@@ -1427,6 +1427,22 @@ let Cambiare = class extends RootDisplay {
 						mountElement(upThis.#metaLastLine, [
 							createElement("span", ["meta-slice"], {i: meta.data})
 						]);
+						break;
+					};
+					case "OSysMeta": {
+						let data = meta?.data,
+						text;
+						switch (meta?.msg) {
+							case "part.rename": {
+								let chVoiceId = upThis.device?.getVoice(... upThis.getCachedChVoice(data.part).sid, upThis.device?.getChMode(0)).name;
+								text = `CH${data.part + 1} was renamed from "${upThis.getMapped(chVoiceId)}" (${chVoiceId}) to "${visualizer.device?.getChCvnString(0)}".`;
+								break;
+							};
+							default: {
+								console.debug(`Unhandled Octavia system meta event "${meta.msg}":\n%o`, meta.data);
+							};
+						};
+						upThis.#metaLastLine = createElement("span", ["field", "meta-data"], {i: text ?? `${meta.data?.msg}`});
 						break;
 					};
 					default: {

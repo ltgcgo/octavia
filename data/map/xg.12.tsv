@@ -696,6 +696,10 @@ El.Grd 1	El. Grand 1
 El.Grd 2	El. Grand 2
 El.Grd 3	El. Grand 3
 El.Grd 4	El. Grand 4
+DX-Road1	DX-Rhodes 1
+DX-Road2	DX-Rhodes 2
+DX-Road3	DX-Rhodes 3
+DX-Road4	DX-Rhodes 4
 Det.EP 1	Detuned EP 1
 Det.EP 2	Detuned EP 2
 Det.EP 3	Detuned EP 3
@@ -749,6 +753,8 @@ DX-PkBa2	DX-PickedBa2
 DX-PkBa3	DX-PickedBa3
 DX-PkBa4	DX-PickedBa4
 CompedEB	CompedE.Bass
+SuprBas1	Super Bass 1
+SuprBas2	Super Bass 2
 Apollon	Apollon Harp
 CmbaHarp	CimbalomHarp
 General	GeneralStrng
@@ -756,7 +762,17 @@ MM-Vce 4	MM-Voices 4
 DX-Clar1	DX-Clarinet1
 DX-Clar2	DX-Clarinet2
 DX-Clar3	DX-Clarinet3
+DX-Bottl	DX-BottleBlw
 DX-SLd 9	DX-SquareLd9
+DX-SyLd1	DX-Syn.Lead1
+DX-SyLd2	DX-Syn.Lead2
+DX-SyLd3	DX-Syn.Lead3
+DX-SyLd4	DX-Syn.Lead4
+DX-SyLd5	DX-Syn.Lead5
+DX-SyLd6	DX-Syn.Lead6
+DX-SyLd7	DX-Syn.Lead7
+DX-SyLd8	DX-Syn.Lead8
+DX-SyLd9	DX-Syn.Lead9
 BellStr1	Bell String1
 BellStr2	Bell String2
 Chi-S&H1	Chiff-Smp&H1

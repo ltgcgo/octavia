@@ -6750,7 +6750,10 @@ let OctaviaDevice = class extends CustomEventSource {
 				};
 				upThis.dispatchEvent("metacommit", {
 					"type": "OSysMeta",
-					"data": `CH${part + 1} was renamed from "${upThis.getVoice(...upThis.getChPrimitives(part, true), upThis.getChMode(part))?.name}" to "${upThis.getChCvnString(part)}".`
+					"msg": "part.rename",
+					"data": {
+						part
+					}
 				});
 			};
 		}).add([100, 76, 32], (msg, track, id) => {

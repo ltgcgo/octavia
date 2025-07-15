@@ -641,7 +641,17 @@ General	General Strings
 DX-Clar1	DX-Clarinet 1
 DX-Clar2	DX-Clarinet 2
 DX-Clar3	DX-Clarinet 3
+DX-Bottl	DX-Bottle Blow
 DX-SLd 9	DX-Square Lead 9
+DX-SyLd1	DX-Synth Lead 1
+DX-SyLd2	DX-Synth Lead 2
+DX-SyLd3	DX-Synth Lead 3
+DX-SyLd4	DX-Synth Lead 4
+DX-SyLd5	DX-Synth Lead 5
+DX-SyLd6	DX-Synth Lead 6
+DX-SyLd7	DX-Synth Lead 7
+DX-SyLd8	DX-Synth Lead 8
+DX-SyLd9	DX-Synth Lead 9
 BellStr1	Bell Strings 1
 BellStr2	Bell Strings 2
 Chi-S&H1	Chiffer - Sample & Hold

@@ -17,56 +17,56 @@ MSB	LSB	PRG	NME
 057	112	015	Celesta
 057	112	016	Vibrafon
 057	112	017	Marimba
-057	112	018	No Voice
-057	112	019	No Voice
+057	112	018	Hrpschrd
+057	112	019	Vibrafon
 057	112	020	SynBrass
-057	112	021	No Voice
+057	112	021	Silence
 057	112	022	Crystal
 057	112	023	Timpani
 057	112	024	Gut Gtr.
 057	112	025	Jazz Gtr
 057	112	026	Rock Gtr
-057	112	027	No Voice
+057	112	027	Hrpschrd
 057	112	028	UprghtBa
 057	112	029	ElecBass
 057	112	030	E.SlapBa
 057	112	031	Syn.Bass
-057	112	032	No Voice
-057	112	033	No Voice
-057	112	034	No Voice
-057	112	035	No Voice
-057	112	036	No Voice
-057	112	037	No Voice
-057	112	038	No Voice
-057	112	039	No Voice
+057	112	032	Silence
+057	112	033	Silence
+057	112	034	Silence
+057	112	035	Silence
+057	112	036	Silence
+057	112	037	Silence
+057	112	038	Silence
+057	112	039	Silence
 057	112	040	MutedTrp
 057	112	041	Harmnica
 057	112	042	ChoirAah
-057	112	043	No Voice
+057	112	043	JazzOrgn
 057	112	044	Syn.Wood
 057	112	045	Syn.Strs
 057	112	046	SynVoice
-057	112	047	No Voice
+057	112	047	GrandPno
 057	112	048	Mild Pno
-057	112	049	No Voice
+057	112	049	GrandPno
 057	112	050	ElPiano2
 057	112	051	BritePno
-057	112	052	No Voice
+057	112	052	BritePno
 057	112	053	Folk Gtr
-057	112	054	No Voice
+057	112	054	Rock Gtr
 057	112	055	Banjo
 057	112	056	Pizz.Str
 057	112	057	Harp
-057	112	058	No Voice
-057	112	059	No Voice
-057	112	060	No Voice
-057	112	061	No Voice
-057	112	062	No Voice
-057	112	063	No Voice
-057	112	064	No Voice
-057	112	065	No Voice
-057	112	066	No Voice
-057	112	067	No Voice
+057	112	058	Silence
+057	112	059	Silence
+057	112	060	BrasSect
+057	112	061	Flute
+057	112	062	Strings
+057	112	063	ChoirAah
+057	112	064	PipeOrg.
+057	112	065	JazzOrgn
+057	112	066	SynBrass
+057	112	067	Saxophon
 057	112	068	Clvinova
 057	112	069	RockGtr2
 057	112	070	MutedGtr
@@ -82,51 +82,51 @@ MSB	LSB	PRG	NME
 057	112	080	Bassoon
 057	112	081	ChmbrStr
 057	112	082	JazzOrg2
-057	112	083	No Voice
-057	112	084	No Voice
-057	112	085	No Voice
-057	112	086	No Voice
-057	112	087	No Voice
+057	112	083	Silence
+057	112	084	Silence
+057	112	085	Silence
+057	112	086	Silence
+057	112	087	Silence
 057	112	088	Dist.Gtr
 057	112	089	Cosmic 1
 057	112	090	Cosmic 2
 057	112	091	Cosmic 3
 057	112	092	Orch.Hit
-057	112	093	No Voice
-057	112	094	No Voice
-057	112	095	No Voice
-057	112	096	No Voice
-057	112	097	No Voice
-057	112	098	No Voice
-057	112	099	No Voice
-057	112	100	No Voice
-057	112	101	No Voice
-057	112	102	No Voice
-057	112	103	No Voice
-057	112	104	No Voice
-057	112	105	No Voice
-057	112	106	No Voice
-057	112	107	No Voice
-057	112	108	No Voice
-057	112	109	No Voice
-057	112	110	No Voice
-057	112	111	No Voice
-057	112	112	No Voice
-057	112	113	No Voice
-057	112	114	No Voice
-057	112	115	No Voice
-057	112	116	No Voice
-057	112	117	No Voice
-057	112	118	No Voice
-057	112	119	No Voice
-057	112	120	No Voice
-057	112	121	No Voice
-057	112	122	No Voice
-057	112	123	No Voice
-057	112	124	No Voice
-057	112	125	No Voice
+057	112	093	Silence
+057	112	094	Silence
+057	112	095	Silence
+057	112	096	Silence
+057	112	097	Silence
+057	112	098	Silence
+057	112	099	Silence
+057	112	100	Silence
+057	112	101	Silence
+057	112	102	Silence
+057	112	103	Silence
+057	112	104	Silence
+057	112	105	Silence
+057	112	106	Silence
+057	112	107	Silence
+057	112	108	Silence
+057	112	109	Silence
+057	112	110	Silence
+057	112	111	Silence
+057	112	112	Silence
+057	112	113	Silence
+057	112	114	Silence
+057	112	115	Silence
+057	112	116	Silence
+057	112	117	Silence
+057	112	118	Silence
+057	112	119	Silence
+057	112	120	Silence
+057	112	121	Silence
+057	112	122	Silence
+057	112	123	Silence
+057	112	124	Silence
+057	112	125	Silence
 057	112	126	DOC Kit
-057	112	127	No Voice
+057	112	127	Silence
 057	113	000	Rock Pno
 057	113	001	ElPiano2
 057	113	002	ElPiano1
