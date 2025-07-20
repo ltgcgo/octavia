@@ -386,7 +386,16 @@ let MuDisplay = class extends RootDisplay {
 				let voiceObj = upThis.getChVoice(upThis.#ch),
 				voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " "),
 				primBuf = upThis.getChPrimitives(upThis.#ch);
-				let bnkSel = (primBuf[0] === 64 ? "SFX" : primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");
+				let bnkSel = (primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");
+				switch (primBuf[0]) {
+					case 64:
+					case 67: {
+						if (upThis.device.getChMode(0) === "xg") {
+							bnkSel = "SFX";
+						};
+						break;
+					};
+				};
 				if ([63].indexOf(primBuf[0]) > -1) {
 					bnkSel = `${primBuf[2] || 0}`.padStart(3, "0");
 					showLsb = true;
