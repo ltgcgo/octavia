@@ -5000,7 +5000,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// KORG X5DR SysEx section
 		this.#seAi.add([54, 65], (msg, track) => {
 			// X5D multi parameters (part setup)
-			let x5Target = upThis.#detect.x5 === "81" ? "05rw" : "x5d";
+			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, true);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let checksum = msg[msg.length - 1],
@@ -5077,7 +5077,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 76, 0], (msg, track) => {
 			// X5D program dump
 			upThis.invokeSysExIndicator();
-			let x5Target = upThis.#detect.x5 === "81" ? "05rw" : "x5d";
+			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let name = "", msb = upThis.#detect.x5, prg = 0, lsb = 0;
@@ -5123,7 +5123,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 77, 0], (msg, track) => {
 			// X5D combi dump
 			upThis.invokeSysExIndicator();
-			let x5Target = upThis.#detect.x5 === "81" ? "05rw" : "x5d";
+			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
@@ -5157,14 +5157,14 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.forceVoiceRefresh();
 		}).add([54, 78], (msg, track) => {
 			// X5D mode switch
-			let x5Target = upThis.#detect.x5 === "81" ? "05rw" : "x5d";
+			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			console.debug(`X5D mode switch requested: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]} mode.`);
 		}).add([54, 85], (msg, track) => {
 			// X5D effect dump
 			upThis.invokeSysExIndicator();
-			let x5Target = upThis.#detect.x5 === "81" ? "05rw" : "x5d";
+			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			korgFilter(msg, (e, i) => {
@@ -5176,7 +5176,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 104], (msg, track) => {
 			// X5D extended multi setup dump
 			upThis.invokeSysExIndicator();
-			let x5Target = upThis.#detect.x5 === "81" ? "05rw" : "x5d";
+			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, true);
 			let port = upThis.getTrackPort(track);
 			if (upThis.#portMode[port] && upThis.#portMode[port] !== modeMap[x5Target]) {
