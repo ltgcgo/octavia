@@ -26,6 +26,7 @@ Diploid2	Diploid E. Piano 2
 Diploid3	Diploid E. Piano 3
 4 Way EP	4 Way E. Piano
 Easy EP	Easy Electric Piano
+Cheap EP	Cheap E. Piano
 EPiano2#	Electric Piano 2 #
 EPiano2K	Electric Piano 2 KSP
 VX EPno2	VX Electric Piano 2
@@ -175,6 +176,7 @@ SlContrS	Slow Contrabass Section
 TremStr#	Tremolo Strings #
 SlwTrStr	Slow Tremolo Strings
 Susp.Str	Suspense Strings
+Det.Fear	Detuned Fear Strings
 BrTrmStr	Bright Tremolo Strings
 PizzOct.	Pizzcato Octave
 ElecHarp	Electric Harp
@@ -186,8 +188,7 @@ OrchStr2	Orchestral Strings 2
 TremOrch	Tremolo Orch Strings
 Velo.Str	Velocity Strings
 TrsteStr	Triste Strings
-Stacc.Hi	High Staccato
-Stacc.Hi	High Staccato
+Stacc.Hi	High Staccato Strings
 SolidStr	Solid Strings
 SwellStr	Swell Strings
 3 OctStr	3 Octave Strings
@@ -274,6 +275,7 @@ Tenr&Alt	Tenor & Alto Sax
 BrthTnr2	Breathy Tenor Sax 2
 SwtTenor	Sweet Tenor Sax
 Oboe   #	Oboe #
+HeinzUni	Heinz Unison Oboe
 Exp.Oboe	Expressive Oboe
 BasClari	Bass Clarinet
 Flute  #	Flute #

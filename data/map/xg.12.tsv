@@ -238,6 +238,7 @@ TremOrch	Tremolo Orch
 Velo.Str	Velo Strings
 Stacc.Hi	HighStaccato
 Stacc.Hi	HighStaccato
+Stacc.Hi	HighStaccato
 Stacc.Lo	Low Staccato
 SolidStr	Solid String
 SwellStr	SwellStrings
@@ -388,6 +389,8 @@ RotarStr	Rotary Str.
 PolyPd80	Poly Pad 80
 SqrTwang	Square Twang
 Sqr.Pad8	Square Pad 8
+Shwimmer	Shwimmer Pad
+Converge	Converge Pad
 ClaviPad	Clavich. Pad
 HrmoRain	HarmonicRain
 AfrcWind	African Wind
@@ -482,6 +485,7 @@ Scratch2	ScratchSplit
 TeleFon2	Telephone 2
 CarTyreS	Car Tyre Sq.
 Car Pass	Car Passing
+Connect	Connectivity
 LaughVox	Laugh Voice
 ScreamVx	Scream Voice
 MchinGun	Machine Gun

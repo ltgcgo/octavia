@@ -31,6 +31,7 @@ Diploid1	Diploid 1
 Diploid2	Diploid 2
 Diploid3	Diploid 3
 Easy EP	Easy EP.
+Cheap EP	Cheap EP.
 EPiano2#	El.Piano2#
 EPiano2K	ElPiano 2K
 Chor.EP2	ChorusEP.2
@@ -266,8 +267,9 @@ Orch.Str	OrchString
 OrchStr2	OrchStrng2
 TremOrch	Trem.Orch.
 Velo.Str	VeloString
-Stacc.Hi	HighStacc.
-Stacc.Hi	HighStacc.
+Stacc.Hi	StaccatoHi
+Stacc.Hi	StaccatoHi
+Stacc.Hi	StaccatoHi
 Stacc.Lo	Low Stacc.
 SolidStr	SolidStrng
 SwellStr	Swell Str.
@@ -470,6 +472,8 @@ GlassPad	Glass Pad
 SqrTwang	Sqr. Twang
 Sqr.Pad8	Sqr. Pad 8
 ChorusPd	Chorus Pad
+Shwimmer	ShwimmerPd
+Converge	ConvergePd
 PolarPad	Polar Pad
 Celstial	Celestial
 ClaviPad	Clavi. Pad
@@ -617,6 +621,7 @@ Car Pass	CarPassing
 CarCrash	Car Crash
 JetPlane	Jet Plane
 Submarin	Submarine
+Connect	Connctvity
 LaughVox	Laugh Vox
 ScreamVx	Scream Vox
 Heart	Heartbeat
@@ -968,7 +973,7 @@ DX-Mrmb5	DX-Mrimba5
 DX-Mrmb6	DX-Mrimba6
 DX-Mrmb7	DX-Mrimba7
 MiniBell	Mini Bells
-DumBells	Dumb Bells
+DumBells	Dum Bells
 CrystBel	CrystalBel
 SilkRoad	Silk Road
 DX-Acrd1	DX-Accord1

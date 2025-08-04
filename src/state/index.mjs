@@ -2446,6 +2446,14 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 				upThis.#mode = idx;
+				// Apply detection settings
+				switch (idx) {
+					case modeMap.gs:
+					case modeMap.sc: {
+						upThis.#subDb[modeMap[mode]][1] = upThis.#detect[mode];
+						break;
+					};
+				};
 				// Drum initialization
 				for (let ch = 0; ch < allocated.ch; ch ++) {
 					let oldMode = upThis.getChModeId(ch, true);
@@ -4489,7 +4497,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.setChCc(25, 0, 120);
 			upThis.setChCc(41, 0, 120);
 			upThis.setChCc(57, 0, 120);*/
-			upThis.#subDb[modeMap.sc][1] = upThis.#detect.sc;
+			//upThis.#subDb[modeMap.sc][1] = upThis.#detect.sc;
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			upThis.#trkRedir.fill(0);
 			console.info(`GS system to ${["single", "dual"][msg[0]]} mode.`);
@@ -4499,7 +4507,6 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Roland GS reset
 					upThis.switchMode("gs", true);
 					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.gs);
-					upThis.#subDb[modeMap.gs][1] = upThis.#detect.gs;
 					/*upThis.setChCc(9, 0, 120);
 					upThis.setChCc(25, 0, 120);
 					upThis.setChCc(41, 0, 120);
