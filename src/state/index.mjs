@@ -579,8 +579,18 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			};
-			if (this.polyIndexShrink && this.polyIndexLast > 0 && this.#polyState[this.polyIndexLast] === 0) {
-				this.polyIndexLast --;
+			if (this.polyIndexShrink && this.polyIndexLast > 0) {
+				let isShrunk = false,
+				newPolyLast = this.polyIndexLast;
+				for (; newPolyLast > 0 && this.#polyState[newPolyLast] === 0; newPolyLast --) {
+					isShrunk = true;
+				};
+				if (isShrunk) {
+					this.polyIndexLast = newPolyLast;
+					if (this.#polyState[newPolyLast + 1] !== 0) {
+						console.debug(`Edge case.`);
+					};
+				};
 			};
 		},
 		nOn: (part, note, velo) => {
