@@ -582,11 +582,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			if (this.polyIndexShrink && this.polyIndexLast > 0) {
 				const shrunkRoundMax = 8;
 				let isShrunk = false,
-				shrunkRound = 0,
+				shrunkMin = this.polyIndexLast - shrunkRoundMax,
 				newPolyLast = this.polyIndexLast;
-				for (; newPolyLast > 0 && shrunkRound < shrunkRoundMax && this.#polyState[newPolyLast] === 0; newPolyLast --) {
+				for (; newPolyLast > shrunkMin && this.#polyState[newPolyLast] === 0; newPolyLast --) {
 					isShrunk = true;
-					shrunkRound ++;
 				};
 				if (isShrunk) {
 					this.polyIndexLast = newPolyLast;
