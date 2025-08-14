@@ -1,0 +1,13 @@
+{
+	default_bind 0.0.0.0
+}
+
+:8010 {
+	file_server {
+		index index.htm index.html default.htm default.html
+		browse {
+			sort name asc
+			reveal_symlinks
+		}
+	}
+}

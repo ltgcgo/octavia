@@ -5,6 +5,8 @@ mkdir -p dist
 rm -r dist/*.js
 rm -r dist/*.map
 rm -r dist/*.mjs
+rm -r dist/*.gz 2>/dev/null
+rm -r dist/*.br 2>/dev/null
 # Using esbuild to build all JS files
 #esbuild --bundle src/index.js --outfile=dist/index.js --minify --sourcemap
 #esbuild --bundle src/index.js --target=es6 --outfile=dist/index.es6.js --minify --sourcemap
