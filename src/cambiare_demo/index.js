@@ -371,6 +371,15 @@ getBridge().addEventListener("message", function (ev) {
 	//console.debug(ev.data);
 });
 
+(async () => {
+	try {
+		let commitInfo = await (await fetch("../latest.json")).json();
+		console.info(`Latest commit: ${commitInfo.hash}\nCommit date: %o`, new Date(commitInfo.time));
+	} catch (err) {
+		console.info(`Development build detected.`);
+	};
+})();
+
 Alpine.start();
 self.visualizer = visualizer;
 self.gOpenLni();
