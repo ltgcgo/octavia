@@ -115,29 +115,29 @@ const pixelProfiles = {
 };
 
 const modeColourPool = {
-	"xg": ["9efaa0", "006415"],
-	"doc": ["9efaa0", "006415"],
-	"qy10": ["9efaa0", "006415"],
-	"qy20": ["9efaa0", "006415"],
-	"ns5r": ["9efaa0", "006415"],
-	"x5d": ["9efaa0", "006415"],
-	"05rw": ["9efaa0", "006415"],
-	"trin": ["9efaa0", "006415"],
-	"k11": ["9efaa0", "006415"],
-	"s90es": ["9efaa0", "006415"],
-	"motif": ["9efaa0", "006415"],
-	"cs6x": ["9efaa0", "006415"],
-	"an1x": ["9efaa0", "006415"],
-	"cs1x": ["9efaa0", "006415"],
-	"gm": ["a1f3ff", "005e88"],
-	"g2": ["a1f3ff", "005e88"],
-	"pa": ["a1f3ff", "005e88"],
-	"krs": ["a1f3ff", "005e88"],
-	"gs": ["ffe1a5", "804e00"],
-	"sc": ["ffe1a5", "804e00"],
-	"mt32": ["ffe1a5", "804e00"],
-	"sd": ["ffe1a5", "804e00"],
-	"sg": ["ffdddd", "990022"]
+	"xg": ["9efaa0", "006415", "9efaa0"],
+	"doc": ["9efaa0", "006415", "9efaa0"],
+	"qy10": ["9efaa0", "006415", "9efaa0"],
+	"qy20": ["9efaa0", "006415", "9efaa0"],
+	"ns5r": ["9efaa0", "006415", "9efaa0"],
+	"x5d": ["9efaa0", "006415", "9efaa0"],
+	"05rw": ["9efaa0", "006415", "9efaa0"],
+	"trin": ["9efaa0", "006415", "9efaa0"],
+	"k11": ["9efaa0", "006415", "9efaa0"],
+	"s90es": ["9efaa0", "006415", "9efaa0"],
+	"motif": ["9efaa0", "006415", "9efaa0"],
+	"cs6x": ["9efaa0", "006415", "9efaa0"],
+	"an1x": ["9efaa0", "006415", "9efaa0"],
+	"cs1x": ["9efaa0", "006415", "9efaa0"],
+	"gm": ["a1f3ff", "005e88", "a1f3ff"],
+	"g2": ["a1f3ff", "005e88", "a1f3ff"],
+	"pa": ["a1f3ff", "005e88", "a1f3ff"],
+	"krs": ["a1f3ff", "005e88", "a1f3ff"],
+	"gs": ["ffe1a5", "804e00", "ffe1a5"],
+	"sc": ["ffe1a5", "804e00", "ffe1a5"],
+	"mt32": ["ffe1a5", "804e00", "ffe1a5"],
+	"sd": ["ffe1a5", "804e00", "ffe1a5"],
+	"sg": ["ffdddd", "990022", "ffdddd"]
 };
 /*const modeGlobalClasses = [];
 for (let mode in modeNames) {
@@ -920,7 +920,7 @@ let Cambiare = class extends RootDisplay {
 	setMode(mode) {
 		let upThis = this;
 		upThis.#mode = mode;
-		upThis.#accent = (modeColourPool[mode] || ["fcdaff", "742b81"])[upThis.#scheme];
+		upThis.#accent = (modeColourPool[mode] || ["fcdaff", "742b81", "fcdaff"])[upThis.#scheme];
 		//classOff(upThis.#canvas, modeGlobalClasses);
 		for (let className of upThis.#canvas.classList) {
 			if (className.substring(0, 14) === "cambiare-mode-") {
@@ -946,10 +946,13 @@ let Cambiare = class extends RootDisplay {
 	};
 	setScheme(scheme = 0) {
 		let upThis = this;
-		upThis.#scheme = scheme ? 1 : 0;
-		upThis.#foreground = ["ffffff", "000000"][upThis.#scheme];
-		[classOff, classOn][upThis.#scheme](upThis.#canvas, [`cambiare-scheme-light`]);
-		upThis.#accent = (modeColourPool[upThis.#mode] || ["fcdaff", "742b81"])[upThis.#scheme];
+		upThis.#scheme = (scheme >= 0 && scheme < 3) ? scheme : 0;
+		upThis.#foreground = ["ffffff", "000000", "ffffff"][upThis.#scheme];
+		classOff(upThis.#canvas, [`cambiare-scheme-light`, `cambiare-scheme-luma`]);
+		if (upThis.#scheme) {
+			classOn(upThis.#canvas, [[null, `cambiare-scheme-light`, `cambiare-scheme-luma`][upThis.#scheme]]);
+		};
+		upThis.#accent = (modeColourPool[upThis.#mode] || ["fcdaff", "742b81", "fcdaff"])[upThis.#scheme];
 		for (let part = 0; part < allocated.ch; part ++) {
 			if (upThis.device.getChActive(part) === 0) {
 				continue;

@@ -23,6 +23,12 @@ div.cambiare-canvas .pcp-font4 {
 div.cambiare-canvas .pcp-font7 {
 	transform: var(--pcp-font7);
 }
+div.cambiare-canvas.cambiare-scheme-luma {
+	--background-color: #000;
+}
+div.cambiare:has(div.cambiare-canvas.cambiare-scheme-luma) {
+	background: #222;
+}
 div.cambiare-canvas.cambiare-scheme-light {
 	--background-color: #fff;
 	--foreground-color: #000;
