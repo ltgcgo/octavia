@@ -48,6 +48,8 @@ jobs:
         uses: denoland/setup-deno@v1.1.1
       - name: Restore file timestamps
         uses: chetan/git-restore-mtime-action@v2
+      - name: "Generate last commit ID"
+        run: "printf \"{'hash':'$(git log -n 1 --format='%H' | tr '[:lower:]' '[:upper:]' | basenc --base16 -d | basenc --base64url -w 0)','time':$(git log -n 1 --format='%at')}\" > ./ghp/latest.json; cat ./ghp/latest_commit"
       - name: Build Octavia files
         run: "./shx build"
       - name: Build Windows XP-compatible Octavia files
