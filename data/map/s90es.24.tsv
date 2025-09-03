@@ -1,5 +1,8 @@
 ID	Name
-Intimate	Intimate S700
+NaturalS	Natural S700 Piano
+ElegantS	Elegant S700 Piano
+Bright S	Bright S700 Piano
+Intimate	Intimate S700 Piano
 FulGrand	Full Grand Piano
 Ragtime	Ragtime Honkytonk
 80sLayer	80's Layered EP
@@ -104,7 +107,8 @@ OvrDaTop	Over The Top Guitar
 Beater	Beater Guitar
 MegaAcBs	Mega Acoustic Bass
 FngrPkBs	Fingered Picked Bass
-RndWound	Round Wound Bass
+PrecFWBs	Prec Flatwound Bass
+RndWndBs	Roundwound Bass
 ActivePk	Active Picked Bs
 PkBsFgDs	Picked Bass Finger Dist.
 MegaFgHm	Mega Fingered Harmonics

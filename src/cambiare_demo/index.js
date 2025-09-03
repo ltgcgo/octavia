@@ -374,7 +374,7 @@ getBridge().addEventListener("message", function (ev) {
 (async () => {
 	try {
 		let commitInfo = await (await fetch("../latest.json")).json();
-		console.info(`Latest commit: ${commitInfo.hash}\nCommit date: %o`, new Date(commitInfo.time));
+		console.info(`Latest commit: ${commitInfo.hash}\nCommit time: %o`, new Date(commitInfo.time));
 	} catch (err) {
 		console.info(`Development build detected.`);
 	};
