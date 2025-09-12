@@ -8,7 +8,7 @@ ConGrand	Concert Grand Piano
 ConGrndK	Concert Grand KSP
 DblConGr	Double Concert Grand
 OldAcPno	Old Acoustic Piano
-LvGrdPno	Live! Grand Piano
+GrandP *	Live! Grand Piano
 BriteP #	Bright Piano #
 BritPnoK	Bright Piano KSP
 StBrtPno	Stereo Bright Piano
@@ -27,6 +27,8 @@ Diploid3	Diploid E. Piano 3
 4 Way EP	4 Way E. Piano
 Easy EP	Easy Electric Piano
 Cheap EP	Cheap E. Piano
+Funky EP	Funky E. Piano
+GalaxyEP	Cool! Galaxy EP
 EPiano2#	Electric Piano 2 #
 EPiano2K	Electric Piano 2 KSP
 VX EPno2	VX Electric Piano 2
@@ -41,6 +43,7 @@ ClaviWah	Wah Clavinet
 PulseClv	Pulse Clavinet
 PiercClv	Pierce Clavinet
 SupClavi	Super Clavinet
+BrtClav*	Bright Clavinet *
 VibrafnK	Vibraphone KSP
 HardVibr	Hard Vibraphone
 DrawOrg#	Drawbar Organ #
@@ -83,6 +86,7 @@ MelloGtr	Mellow Guitar
 Jazz Amp	Amped Jazz Guitar
 MidSJazz	Mid. Super Jazz Guitar
 NekRough	Roughcaster Neck
+JazzGtr*	Jazz Guitar *
 ChorusGt	Chorus Guitar
 CleanGt2	Clean Guitar 2
 MidT.Gtr	Mid-tone Guitar
@@ -91,6 +95,7 @@ HammrMid	Middle Hammer Guitar
 HammrBrg	Bridge Hammer Guitar
 HammrDbl	Double Hammer Guitar
 HammrSt.	Stereo Hammer Guitar
+60sClnGt	60s' Clean Guitar
 MutedGt#	Muted Guitar #
 Funk Gtr	Funk Guitar 1
 MuteStlG	Muted Steel Guitar
@@ -127,6 +132,7 @@ FngrBas2	Fingered Bass 2
 Mod Bass	Modulation Bass
 RezChase	Resonant Chase
 FW EBass	Flatwound E. Bass
+MelFgrBa	Mellow Fingered Bass
 PickBas2	Picked Bass 2
 M.PkBass	Muted Picked Bass
 HardPick	Hard Picked Bass
@@ -193,6 +199,7 @@ SolidStr	Solid Strings
 SwellStr	Swell Strings
 3 OctStr	3 Octave Strings
 5PartStr	5-Part Strings
+Str.Ens*	String Ensemble *
 StSlwStr	Stereo Slow Strings
 LegatoSt	Legato Strings
 ChmbrStr	Chamber Strings
@@ -204,6 +211,7 @@ GrandPad	Grand Strings Pad
 SweepStr	Sweep Strings
 Syn.Str4	Synth Strings 4
 Syn.Str5	Synth Strings 5
+SynStr1*	Synth Strings 1 *
 TaurusS.	Taurus Strings
 SolPlexs	Solar Plexus Strings
 MelChoir	Mellow Choir
@@ -214,6 +222,7 @@ BrsStb80	Brass Stab 80
 BassHit+	Bass Hit Plus
 6th Hit+	6th Hit Plus
 EuroHit+	Euro Hit Plus
+OrchHit*	Orchestra Hit *
 BriteTrp	Bright Trumpet
 SftDkTrp	Soft Dark Trumpet
 BlownTrp	Blown Trumpet
@@ -248,6 +257,7 @@ CutBrass	Super Brass Cut
 Tenor&Tp	Tenor Sax & Trumpet
 SymphBrs	Symphonic Brass
 PhoenxBr	Phoenix Brass
+BrsSect*	Brass Section *
 RezSynBr	Resonant Synth Brass
 SynBras3	Synth Brass 3
 AnlSforz	Analog Sforzando Brass
@@ -256,6 +266,7 @@ AnVelBrs	Analog Velocity Brass
 SynBras4	Synth Brass 4
 AnVelBr2	Analog Velocity Brass 2
 AnalBrs2	Analog Brass 2
+SprnoSx*	Soprano Sax *
 SwtSprno	Sweet Soprano Sax
 AltoSax#	Alto Saxophone #
 LgtAltSx	Legato Alto Sax
@@ -274,6 +285,7 @@ SupTnrSt	Super Tenor Stereo
 Tenr&Alt	Tenor & Alto Sax
 BrthTnr2	Breathy Tenor Sax 2
 SwtTenor	Sweet Tenor Sax
+BariSax*	Baritone Sax *
 Oboe   #	Oboe #
 HeinzUni	Heinz Unison Oboe
 Exp.Oboe	Expressive Oboe
@@ -304,6 +316,7 @@ Str8Puls	Straight Pulse Lead
 ModulSaw	Modular Sawtooth Lead
 SimplSaw	Simple Sawtooth
 SeqAnalg	Sequenced Analog Lead
+SawLead*	Sawtooth Lead *
 ElecPrim	Electric Primitive
 DistLead	Distortion Lead
 DaSyncLd	The Sync Lead

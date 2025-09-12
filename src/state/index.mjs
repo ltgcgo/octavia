@@ -411,6 +411,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#subDb = {};
 	modelEx = {
 		"xg": {
+			"map": 0, // MU Basic, MU100 Native, PSR/LE
 			"varSys": false,
 			"insPart": new Uint8Array(5) // Var, In1~4
 		},
@@ -1701,7 +1702,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	getDetect() {
 		return self?.structuredClone(this.#detect);
 	};
-	getVoice(msbO, prgO, lsbO, mode = "?") {
+	getVoice(msbO, prgO, lsbO, mode = "?", hint = 0) {
 		let upThis = this;
 		if (!modeMap[mode]?.constructor) {
 			mode = "?";
@@ -1721,7 +1722,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				lsb = 3; // Use SC-88 Pro map
 			};
 		};
-		let bank = upThis.userBank.get(msb, prg, lsb, mode);
+		let bank = upThis.userBank.get(msb, prg, lsb, mode, hint);
 		if (mode === "mt32") {
 			// Reload MT-32 user bank transparently
 			if (bank.name.indexOf("MT-m:") === 0) {
@@ -1742,7 +1743,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		};
 		if (bank.ending !== " " || !bank.name.length) {
-			bank = upThis.baseBank.get(msb, prg, lsb, mode);
+			bank = upThis.baseBank.get(msb, prg, lsb, mode, hint);
 		};
 		return bank;
 	};
@@ -1836,7 +1837,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	getChVoice(part) {
 		let upThis = this;
-		let voice = upThis.getVoice(...upThis.getChPrimitives(part), upThis.getChMode(part));
+		let voice = upThis.getVoice(...upThis.getChPrimitives(part), upThis.getChMode(part), upThis.modelEx[upThis.getChMode(part)]?.map ?? 0);
 		if (upThis.#bnCustom[part]) {
 			let name = "";
 			switch (upThis.#mode) {
@@ -2146,10 +2147,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		let upThis = this;
 		// Full reset, except the loaded banks
 		upThis.#metaChannel = 0;
-		upThis.#subDb[modeMap.xg][1] = 0;
+		//if (upThis.modelEx.xg.map === 1) {
+			upThis.#subDb[modeMap.xg][1] = 0;
+			upThis.modelEx.xg.map = 0;
+		//};
 		upThis.dispatchEvent("banklevel", {
 			"mode": "xg",
-			"data": 0
+			"data": upThis.modelEx.xg.map
 		});
 		//upThis.#detect.x5 = 82; // Reset to X5DR
 		//upThis.#detect.ds = modeMap.krs; // Reset to KROSS 2
@@ -3835,11 +3839,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (ri === 8) {
 					console.debug(`${dPref}LCD contrast: ${e}.`);
 				} else if (ri === 18) {
-					upThis.#subDb[modeMap.xg][1] = e ? 126 : 0;
-					console.debug(`${dPref}default bank: ${e ? "MU100 Native" : "MU Basic"}.`);
+					upThis.#subDb[modeMap.xg][1] = [0, 126, 143][e] ?? 127;
+					console.debug(`${dPref}default bank: ${["MU Basic", "MU100 Native", "PSR/LE"][e] ?? e}.`);
+					upThis.modelEx.xg.map = e;
 					upThis.dispatchEvent("banklevel", {
 						"mode": "xg",
-						"data": +!!e
+						"data": e
 					});
 					upThis.forceVoiceRefresh();
 				} else if (ri >= 64 && ri < 69) {

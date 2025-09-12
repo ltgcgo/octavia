@@ -76,7 +76,7 @@
 			</template>-->
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native']],gsLvls:[[1,'SC-55'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native'],[2,'PSR/LE']],gsLvls:[[1,'SC-55'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']]}">
 			<div class="column column-option"><b>XG level</b></div>
 			<template x-for="xgLvl in xgLvls">
 				<div class="column column-option column-button" @click="gXgLvl(xgLvl[0])" x-text="xgLvl[1]" :active="($store.xgLvl||0)==xgLvl[0]?'true':'false'"></div>

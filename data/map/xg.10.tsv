@@ -9,7 +9,7 @@ ConGrand	Con. Grand
 ConGrndK	Con.GrandK
 DblConGr	DblConGrnd
 OldAcPno	OldAcPiano
-LvGrdPno	LvGrandPno
+GrandP *	LvGrandPno
 BriteP #	BritPiano#
 BritPnoK	BritPianoK
 StBrtPno	StBritePno
@@ -32,6 +32,7 @@ Diploid2	Diploid 2
 Diploid3	Diploid 3
 Easy EP	Easy EP.
 Cheap EP	Cheap EP.
+GalaxyEP	Galaxy EP
 EPiano2#	El.Piano2#
 EPiano2K	ElPiano 2K
 Chor.EP2	ChorusEP.2
@@ -52,6 +53,7 @@ PulseClv	PulseClavi
 PiercClv	PierceClav
 SupClavi	SuperClavi
 HardyPlk	HardyPluck
+BrtClav*	Brt.Clavi*
 FM Celst	FM Celesta
 S. Orgel	SmallOrgel
 VibrafnK	VibrafoneK
@@ -76,6 +78,9 @@ CheezOrg	CheeseOrgn
 DrawOrg3	DrawOrgan3
 ClkGspOr	ClikGospOr
 Mood Org	Mood Organ
+JazzOrg1	JazzOrgan1
+JazzOrg2	JazzOrgan2
+JazzOrg3	JazzOrgan3
 PercOrg#	PercOrgan#
 70sPcOrg	70sPercOrg
 DetPrcOr	DetPercOrg
@@ -114,6 +119,7 @@ Jazz Amp	JazzGtrAmp
 OctPlate	Oct. Plate
 MidSJazz	MidSupJzGt
 NekRough	Neck.Rough
+JazzGtr*	Jazz Gtr.*
 PdlSteel	PedalSteel
 ChorusGt	Chorus Gt.
 CleanGt2	Clean Gt.2
@@ -124,6 +130,7 @@ HammrMid	Mid Hammer
 HammrBrg	BridgeHamr
 HammrDbl	Dbl Hammer
 HammrSt.	St. Hammer
+60sClnGt	60sClnGtr.
 MutedGt#	Muted Gt.#
 Funk Gtr	Funk Gtr 1
 MuteStlG	MuteSteelG
@@ -169,6 +176,7 @@ Mod Bass	Modul.Bass
 RezChase	Reso.Chase
 BlueBass	Blues Bass
 FW EBass	FltWdEBass
+MelFgrBa	MelFingrBa
 PickBas2	PickedBas2
 M.PkBass	MutePkBass
 HardPick	Hard Pick
@@ -275,6 +283,7 @@ SolidStr	SolidStrng
 SwellStr	Swell Str.
 3 OctStr	3 Oct.Str.
 5PartStr	5-Part Str
+Str.Ens*	StringEns*
 Strngs2#	Strings 2#
 StSlwStr	St.SlowStr
 LegatoSt	Legato Str
@@ -290,6 +299,7 @@ GrandPad	Grand Pad
 SweepStr	SweepStrng
 Syn.Str4	SynthStr.4
 Syn.Str5	SynthStr.5
+SynStr1*	SynthStr1*
 TradeWnd	Trade Wind
 WormHole	Worm Hole
 TaurusS.	TaurusStr.
@@ -314,6 +324,7 @@ BassHit+	Bass Hit +
 6th Hit	Sixth Hit
 6th Hit+	6th Hit +
 EuroHit+	Euro Hit +
+OrchHit*	Orch. Hit*
 Trumpet#	Trumpet #
 Trumpet2	Trumpet 2
 BriteTrp	Bright Trp
@@ -365,6 +376,7 @@ Tenor&Tp	Tenor&Trp
 Alps Brs	Alps Brass
 SymphBrs	SymphBrass
 PhoenxBr	Phoenix Br
+BrsSect*	BrassSect*
 QuackBrs	QuackBrass
 RezSynBr	ResoSynBrs
 PolyBras	Poly Brass
@@ -381,6 +393,7 @@ Ana.Horn	AnalogHorn
 AnVelBr2	AnVeloBrs2
 AnalBrs2	AnalogBrs2
 Medit.Sx	MeditateSx
+SprnoSx*	Sopr. Sax*
 SwtSprno	SwtSoprano
 AltoSax#	Alto Sax #
 LgtAltSx	LgtAltoSax
@@ -399,6 +412,7 @@ SupTnrSt	SuprTnrSt.
 Tenr&Alt	Tenor&Alto
 BrthTnr2	BrthyTenr2
 SwtTenor	SweetTenor
+BariSax*	Bari. Sax*
 HeinzUni	HeinzUnisn
 Exp.Oboe	Expr. Oboe
 BasClari	BassClari.
@@ -442,6 +456,7 @@ Str8Puls	StraitPuls
 ModulSaw	ModularSaw
 SimplSaw	Simple Saw
 SeqAnalg	Seq.Analog
+SawLead*	Saw. Lead*
 NoviceLd	NoviceLead
 VentSyn.	Vent Synth
 PureLead	Pure Lead

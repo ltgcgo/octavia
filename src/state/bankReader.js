@@ -21,12 +21,15 @@ let halfHex = function (n) {
 };
 
 let VoiceBank = class {
+	HINT_XG_MUBASIC = 0; // 127
+	HINT_XG_MU100 = 1; // 126
+	HINT_XG_PSR = 2; // 125
 	#bankInfo;
 	get bankInfo() {
 		return this.#bankInfo;
 	};
 	strictMode = false;
-	get(msb = 0, prg = 0, lsb = 0, mode, preferredHint = 0) {
+	get(msb = 0, prg = 0, lsb = 0, mode, hint = 0) {
 		let sid = [msb, prg, lsb];
 		let bankName;
 		let bankPoly = 1, bankType = 0, bankDrum, bankLevel, bankVoice;
@@ -35,10 +38,18 @@ let VoiceBank = class {
 			case "xg": {
 				switch (msb) {
 					case 0: {
-						if (lsb === 126) {
-							args[2] = 125; // MU100 Native
-						} else if (lsb === 127) {
-							args[2] = 0; // MU Basic
+						if (hint === 2) {
+							if (lsb >> 4 === 7) {
+								args[2] += 16;
+							};
+						} else {
+							switch (lsb) {
+								case 127:
+								case 125: {
+									args[2] = 0; // MU Basic
+									break;
+								};
+							};
 						};
 						break;
 					};
@@ -748,7 +759,7 @@ let VoiceBank = class {
 						break;
 					};
 					case "xg": {
-						if (lsb === 126) {
+						if (lsb === 126 || lsb === 143) {
 							ending = " ";
 						};
 						break;
@@ -779,7 +790,7 @@ let VoiceBank = class {
 					standard = "GM";
 				} else if (args[2] === 5 || args[2] === 7) {
 					standard = "KG";
-				} else if (args[2] < 126) {
+				} else if (args[2] < 144) {
 					standard = "XG";
 				};
 				break;
@@ -955,6 +966,7 @@ let VoiceBank = class {
 			iid,
 			eid,
 			sid,
+			hint,
 			ending,
 			sect,
 			bank,

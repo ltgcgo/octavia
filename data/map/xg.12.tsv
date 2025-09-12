@@ -9,7 +9,7 @@ ConGrand	ConcertGrand
 ConGrndK	ConcrtGrandK
 DblConGr	DoublConGrnd
 OldAcPno	OldAcouPiano
-LvGrdPno	LvGrandPiano
+GrandP *	LvGrandPiano
 BriteP #	BrightPiano#
 BritPnoK	BrightPianoK
 StBrtPno	StBritePiano
@@ -49,6 +49,7 @@ PulseClv	Pulse Clavi.
 PiercClv	Pierce Clavi
 SupClavi	Super Clavi.
 HardyPlk	Hardy Pluck
+BrtClav*	BrightClavi*
 S. Orgel	Small Orgel
 VibrafnK	Vibraphone K
 HardVibr	HardVibrafon
@@ -65,6 +66,9 @@ DrawOrg2	Draw Organ 2
 CheezOrg	Cheese Organ
 DrawOrg3	Draw Organ 3
 ClkGspOr	ClikGospelOr
+JazzOrg1	Jazz Organ 1
+JazzOrg2	Jazz Organ 2
+JazzOrg3	Jazz Organ 3
 PercOrg#	Perc Organ #
 70sPcOrg	70s Perc Org
 DetPrcOr	Det.Perc Org
@@ -100,6 +104,7 @@ Jazz Amp	Jazz Gtr Amp
 OctPlate	Octave Plate
 MidSJazz	MidSuperJzGt
 NekRough	NeckRoughcst
+JazzGtr*	Jazz Guitar*
 PdlSteel	Pedal Steel
 ChorusGt	Chorus Gtr.
 CleanGt2	Clean Gtr. 2
@@ -110,6 +115,7 @@ HammrMid	MiddleHammer
 HammrBrg	BridgeHammer
 HammrDbl	Doubl Hammer
 HammrSt.	StereoHammer
+60sClnGt	60s'CleanGtr
 MutedGt#	Muted Gtr. #
 Funk Gtr	Funk Gtr. 1
 MuteStlG	MutedSteelGt
@@ -152,6 +158,7 @@ FngrBas2	Finger Bass2
 Mod Bass	ModulateBass
 RezChase	Reso. Chase
 FW EBass	FlatWndEBass
+MelFgrBa	MellowFinger
 PickBas2	Picked Bass2
 M.PkBass	MutedPikBass
 HardPick	HardPickBass
@@ -244,6 +251,7 @@ SolidStr	Solid String
 SwellStr	SwellStrings
 3 OctStr	3 Oct. Str.
 5PartStr	5 Part Str.
+Str.Ens*	StringsEns.*
 Strngs2#	Strings 2 #
 StSlwStr	St.Slow Str.
 LegatoSt	Legato Str.
@@ -258,6 +266,7 @@ GrandPad	GrandStrsPad
 SweepStr	SweepStrings
 Syn.Str4	Synth Str. 4
 Syn.Str5	Synth Str. 5
+SynStr1*	Syn.String1*
 TaurusS.	TaurusString
 Leo Str.	Leo Strings
 SolPlexs	Solar Plexus
@@ -270,6 +279,7 @@ AnalgVox	Analog Voice
 OrchHit2	Orch. Hit 2
 BrsStb80	Brass Stab80
 6th Hit+	Sixth Hit +
+OrchHit*	OrchestraHt*
 BriteTrp	BriteTrumpet
 Warm Trp	Warm Trumpet
 Dark Trp	Dark Trumpet
@@ -310,6 +320,7 @@ CutBrass	SuprBrassCut
 Tenor&Tp	Tenor&Trmpt
 SymphBrs	Symph. Brass
 PhoenxBr	Phoenix Brs.
+BrsSect*	Brass Sect.*
 QuackBrs	Quack Brass
 RezSynBr	ResoSynthBrs
 SynBras3	SynthBrass 3
@@ -323,6 +334,7 @@ Ana.Horn	Analog Horn
 AnVelBr2	AnalVeloBrs2
 AnalBrs2	AnalogBrass2
 Medit.Sx	Meditate Sax
+SprnoSx*	Soprano Sax*
 SwtSprno	SweetSoprano
 AltoSax#	Alto Sax. #
 LgtAltSx	Lgt.Alto Sax
@@ -340,6 +352,7 @@ SupTnrSt	SuperTnr St.
 Tenr&Alt	Tenor & Alto
 BrthTnr2	BreathyTenr2
 SwtTenor	Sweet Tenor
+BariSax*	BaritoneSax*
 HeinzUni	Heinz Unison
 Exp.Oboe	Express.Oboe
 BasClari	BassClarinet
@@ -377,6 +390,7 @@ Str8Puls	StraightPuls
 ModulSaw	Modular Saw.
 SimplSaw	Simple Saw.
 SeqAnalg	Seq. Analog
+SawLead*	Sawtooth Ld*
 NoviceLd	Novice Lead
 ElecPrim	ElecPrimtive
 DistLead	Distort.Lead

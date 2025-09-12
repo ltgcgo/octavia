@@ -5,15 +5,24 @@ MSB	LSB	Name
 01	01	XG Hall 2
 01	06	XG Hall Medium
 01	07	XG Hall Large
+01	10	XG Hall 3
+01	11	XG Hall 4
+01	17	XG Cathedral
 02	00	XG Room 1
 02	01	XG Room 2
 02	02	XG Room 3
 02	05	XG Room Small
 02	06	XG Room Medium
 02	07	XG Room Large
+02	11	XG Room 4
+02	13	XG Room 5
 03	00	XG Stage 1
 03	01	XG Stage 2
+03	10	XG Stage 3
+03	11	XG Stage 4
 04	00	XG Plate
+04	10	XG Plate 2
+04	11	XG Plate 3
 04	07	XG GM Plate
 05	00	XG Delay LCR
 06	00	XG Delay LR
@@ -421,10 +430,12 @@ MSB	LSB	Name
 42	01	XG Celeste 2
 42	02	XG Celeste 3
 42	08	XG Celeste 4
+42	11	XG Chorus 4
 43	00	XG Flanger 1
 43	01	XG Flanger 2
 43	07	XG GM Flanger
 43	08	XG Flanger 3
+43	11	XG Flanger 4
 44	00	XG Symphonic
 45	00	XG Rotary Speaker
 45	01	XG Distort+Rotary
