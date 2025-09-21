@@ -488,7 +488,6 @@ let Cambiare = class extends RootDisplay {
 		let renderPortMax = upThis.#renderPort + upThis.#renderRange;
 		for (let part = 0; part < allocated.ch; part ++) {
 			let port = part >> 4,
-			chOff = part * allocated.cc,
 			aceOff = part * allocated.ace,
 			e = upThis.#sectPart[port][part & 15];
 			if (upThis.device.getActive()[part] && port >= upThis.#renderPort && port < renderPortMax) {
@@ -502,7 +501,7 @@ let Cambiare = class extends RootDisplay {
 				for (let cci = 0; cci < ccCandidates.length; cci ++) {
 					let cce = ccCandidates[cci];
 					if (cce < 256) {
-						let ccValue = sum.chContr[chOff + ccToPos[cce]],
+						let ccValue = upThis.device?.getChCc(part, cce),
 						ccHeight = ccValue * 24 / 127;
 						if (ccHeight > 0) {
 							let ccTop = 24 - ccHeight;
@@ -510,7 +509,7 @@ let Cambiare = class extends RootDisplay {
 						};
 					};
 				};
-				let pan = sum.chContr[chOff + ccToPos[10]] || 1;
+				let pan = upThis.device?.getChCc(part, 10) || 1;
 				switch (upThis.panStyle) {
 					case 7:
 					case 6:
@@ -649,15 +648,15 @@ let Cambiare = class extends RootDisplay {
 				e.extVis.fillStyle = `#${upThis.#foreground}`;
 				switch (sum.chExt[part][0]) {
 					case upThis.device.EXT_VL: {
-						let mouth = (sum.chContr[chOff + ccToPos[136]] - 64) / 64 || sum.rawPitch[part] / 8192;
+						let mouth = (upThis.device?.getChCc(part, 136) - 64) / 64 || sum.rawPitch[part] / 8192;
 						mouth = mouth * -4 + 4;
 						// Enabling global mod wheel locking will cause ghost activations. Must improve later.
-						let velocity = +(sum.rawVelo[part] > 0 || sum.chContr[chOff + ccToPos[1]] > 0) * (sum.chContr[chOff + ccToPos[129]] * sum.chContr[chOff + ccToPos[11]] / 16129);
+						let velocity = +(sum.rawVelo[part] > 0 || upThis.device?.getChCc(part, 1) > 0) * (upThis.device?.getChCc(part, 129) * upThis.device?.getChCc(part, 11) / 16129);
 						if (!velocity && sum.rawStrength[part]) {
-							velocity = sum.rawStrength[part] * sum.chContr[chOff + ccToPos[11]] / 16129;
+							velocity = sum.rawStrength[part] * upThis.device?.getChCc(part, 11) / 16129;
 						};
 						velocity *= 32;
-						let breathNoise = sum.chContr[chOff + ccToPos[1]] / 127 * 8;
+						let breathNoise = upThis.device?.getChCc(part, 1) / 127 * 8;
 						e.extVis.beginPath();
 						e.extVis.moveTo(0, 12 - mouth - 3);
 						e.extVis.lineTo(7 + velocity, 12);
@@ -671,8 +670,9 @@ let Cambiare = class extends RootDisplay {
 						break;
 					};
 					case upThis.device.EXT_DX: {
-						let dxView = sum.chContr.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1);
-						dxView.forEach((v, i) => {
+						for (let i = 0; i < 16; i ++) {
+							let dxCc = i + 142,
+							v = upThis.device?.getChCc(part, dxCc);
 							if (i >= 8) {
 								e.extVis.fillStyle = `#${upThis.getChAccent(part)}`;
 							};
@@ -683,7 +683,7 @@ let Cambiare = class extends RootDisplay {
 							} else {
 								e.extVis.fillRect(x, 12, 2, 1 - size);
 							};
-						});
+						};
 						break;
 					};
 				};
