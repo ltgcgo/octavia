@@ -7354,7 +7354,7 @@ let OctaviaDevice = class extends CustomEventSource {
 export {
 	OctaviaDevice,
 	allocated,
-	ccToPos,
+	ccToPos as mappedCcBufferOffset,
 	dnToPos,
 	overrides,
 	getDebugState,

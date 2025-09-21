@@ -3,7 +3,7 @@
 
 "use strict";
 
-import {OctaviaDevice, allocated, ccToPos, getDebugState} from "../state/index.mjs";
+import {OctaviaDevice, allocated, getDebugState} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40} from "../basic/mxReader.js";
 

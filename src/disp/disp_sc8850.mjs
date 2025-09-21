@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
-import {RootDisplay, ccToPos} from "../basic/index.mjs";
+import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxFont176, MxBmDef} from "../basic/mxReader.js";
 
 import {getDebugState} from "../state/utils.js";
@@ -225,7 +225,6 @@ let Sc8850Display = class extends RootDisplay {
 				};
 				maxCh = minCh + upThis.#range * 16 - 1;
 			};
-			let chOff = upThis.#ch * ccToPos.length;
 			let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4);
 			//console.debug(minCh, maxCh, rendMode);
 			// Render current channel

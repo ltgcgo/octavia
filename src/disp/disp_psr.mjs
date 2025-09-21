@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice} from "../state/index.mjs";
-import {RootDisplay, ccToPos} from "../basic/index.mjs";
+import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
 import {
@@ -202,7 +202,6 @@ let PsrDisplay = class extends RootDisplay {
 		if (this.#ch < minCh) {
 			this.#ch = maxCh - 15 + (this.#ch & 15);
 		};
-		let chOff = this.#ch * ccToPos.length;
 		// Clear out the current working display buffer.
 		this.#nkdb.forEach((e, i, a) => {a[i] = 0});
 		this.#nsdb.forEach((e, i, a) => {a[i] = 0});
@@ -457,17 +456,17 @@ let PsrDisplay = class extends RootDisplay {
 			if (timeNow >= this.#bmex) {
 				this.#bmst = 0;
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
-				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(sum.chContr[chOff] + ccToPos[0], sum.chProgr[this.#ch], 0, sum.mode).name);
+				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(upThis.device?.getChCc(upThis.#ch, 0), sum.chProgr[this.#ch], 0, sum.mode).name);
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 					useBm = this.sysBm.getBm(`ext_${standard}`);
 				};
-				if (!useBm && (sum.chContr[chOff + ccToPos[0]] < 48 || sum.chContr[chOff + ccToPos[0]] === 56)) {
+				if (!useBm && (upThis.device?.getChCc(upThis.#ch, 0) < 48 || upThis.device?.getChCc(upThis.#ch, 0) === 56)) {
 					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 				};
-				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 126) {
+				if (!useBm && upThis.device?.getChCc(upThis.#ch, 0) === 126) {
 					useBm = this.sysBm.getBm("cat_smpl");
 				};
-				if (!useBm && (sum.chContr[chOff] + ccToPos[0]) === 64) {
+				if (!useBm && upThis.device?.getChCc(upThis.#ch, 0) === 64) {
 					useBm = this.sysBm.getBm("cat_sfx");
 				};
 				if (!useBm) {

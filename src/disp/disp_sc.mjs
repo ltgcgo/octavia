@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
-import {RootDisplay, ccToPos} from "../basic/index.mjs";
+import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBmDef} from "../basic/mxReader.js";
 
 import {
@@ -255,7 +255,6 @@ let ScDisplay = class extends RootDisplay {
 			if (upThis.#ch < minCh) {
 				upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
 			};
-			let chOff = upThis.#ch * ccToPos.length;
 			// Text matrix display
 			let infoTxt, isTextNull = sum.letter.text.trim();
 			while (isTextNull.indexOf("  ") > -1) {
@@ -421,8 +420,8 @@ let ScDisplay = class extends RootDisplay {
 			// Assemble text
 			let paramText = "";
 			paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}${((upThis.#ch & 15) + 1).toString().padStart(2, "0")}`;
-			paramText += sum.chContr[chOff + ccToPos[7]].toString().padStart(3, " ");
-			paramText += sum.chContr[chOff + ccToPos[91]].toString().padStart(3, " ");
+			paramText += upThis.device?.getChCc(upThis.#ch, 7).toString().padStart(3, " ");
+			paramText += upThis.device?.getChCc(upThis.#ch, 91).toString().padStart(3, " ");
 			let cPit = upThis.device.getPitchShift(upThis.#ch);
 			if (cPit < 0) {
 				paramText += "-";
@@ -432,7 +431,7 @@ let ScDisplay = class extends RootDisplay {
 				paramText += "+";
 			};
 			paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, " ");
-			let cPan = sum.chContr[chOff + ccToPos[10]];
+			let cPan = upThis.device?.getChCc(upThis.#ch, 10);
 			if (cPan === 64) {
 				paramText += "C 0";
 			} else if (cPan === 128) {
@@ -447,7 +446,7 @@ let ScDisplay = class extends RootDisplay {
 				};
 				paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
 			};
-			paramText += sum.chContr[chOff + ccToPos[93]].toString().padStart(3, " ");
+			paramText += upThis.device?.getChCc(upThis.#ch, 93).toString().padStart(3, " ");
 			let chSource = upThis.device.getChSource()[upThis.#ch];
 			if (chSource < 128) {
 				paramText += "ABCDEFGH"[chSource >> 4];

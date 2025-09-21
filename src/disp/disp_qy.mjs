@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice} from "../state/index.mjs";
-import {RootDisplay, ccToPos} from "../basic/index.mjs";
+import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
 
 import {
@@ -145,7 +145,6 @@ let QyDisplay = class extends RootDisplay {
 		if (this.#ch < minCh) {
 			this.#ch = maxCh - 15 + (this.#ch & 15);
 		};
-		let chOff = this.#ch * ccToPos.length;
 		// Clear out the current working display buffer.
 		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
 		// Start rendering
@@ -203,7 +202,7 @@ let QyDisplay = class extends RootDisplay {
 						upThis.#nmdb[55 + x + i * 6 + (y << 7)] = e;
 				});
 			});
-			let curCat = upThis.#getCat(upThis.#ch, sum.chContr[upThis.#ch * ccToPos.length], sum.chProgr[upThis.#ch]),
+			let curCat = upThis.#getCat(upThis.#ch, upThis.device?.getChCc(upThis.#ch, 0), sum.chProgr[upThis.#ch]),
 			curCatBm = upThis.qyRsrc.getBm(`Vox_${curCat}`);
 			if (curCatBm) {
 				curCatBm.render((e, x, y) => {
@@ -349,7 +348,7 @@ let QyDisplay = class extends RootDisplay {
 					if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 						useBm = this.sysBm.getBm(`ext_${standard}`);
 					};
-					if (!useBm && (primBuf[0] < 48 || sum.chContr[chOff + ccToPos[0]] === 56)) {
+					if (!useBm && (primBuf[0] < 48 || upThis.device?.getChCc(upThis.#ch, 0) === 56)) {
 						useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
 					};
 					if (!useBm && primBuf[0] === 126) {
@@ -459,15 +458,15 @@ let QyDisplay = class extends RootDisplay {
 					upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
 						upThis.#nmdb[4255 + tchOff + x + (y << 7)] = e;
 					});
-					upThis.#renderNeedle(tchOff + 35, 36, sum.chContr[rch * ccToPos.length + ccToPos[10]]);
-					let volSlid = 15 - (sum.chContr[rch * ccToPos.length + ccToPos[7]] >> 3);
+					upThis.#renderNeedle(tchOff + 35, 36, upThis.device?.getChCc(rch, 10));
+					let volSlid = 15 - (upThis.device?.getChCc(rch, 7) >> 3);
 					upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
 						upThis.#nmdb[5535 + tchOff + x + ((volSlid + y) << 7)] = e;
 					});
 					upThis.#renderFill(32 + tchOff, 46 + volSlid, 8, 1);
 					// Category render
 					let chType = upThis.device.getChType()[rch];
-					let curCat = upThis.#getCat(rch, sum.chContr[rch * ccToPos.length], sum.chProgr[rch]),
+					let curCat = upThis.#getCat(rch, upThis.device?.getChCc(rch, 0), sum.chProgr[rch]),
 					curCatBm = upThis.qyRsrc.getBm(`Vox_${[`${curCat}`, "dr", "ds1", "ds2", "ds3", "ds4", "ds5", "ds6", "ds7", "ds8"][chType]}`);
 					if (curCatBm) {
 						curCatBm.render((e, x, y) => {

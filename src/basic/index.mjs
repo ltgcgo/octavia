@@ -4,7 +4,7 @@
 "use strict";
 
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
-import {ccToPos, dnToPos, allocated, overrides, effectSlots} from "../state/index.mjs";
+import {dnToPos, allocated, overrides, effectSlots} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {
@@ -819,7 +819,6 @@ let RootDisplay = class extends CustomEventSource {
 
 export {
 	RootDisplay,
-	ccToPos,
 	dnToPos,
 	allocated
 };
