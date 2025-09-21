@@ -409,7 +409,7 @@ PnoStPad	Piano Stereo Pad
 StRichSt	Stage Rich Piano Stereo
 ChorDigi	Chorus Digital Piano
 Sweetnes	Sweetness E. Piano
-60's EP	60s' Electric Piano
+60s' EP	60s' Electric Piano
 ChorTine	Chorused E. Tine
 90Ballad	90s' Ballad Keys
 DXEP+Cho	DX EP + Chorus
@@ -530,7 +530,7 @@ M-Heavy	Male Heavy
 M-YngMan	Male Young Man
 M-YSoft	Male Soft Young
 M-YHusky	Male Husky Young
-M-AGO	Male AGO
+M-AGO	Male Jaw
 M-Idol	Male Idol
 M-Honest	Male Honest
 F-NMusic	Female New Music
@@ -541,7 +541,7 @@ F-Opera	Female Opera
 F-Coquet	Female Coquette
 F-Antiq	Female Antique
 F-Nose	Female Nose
-F-Chobo	Female Chobo
+F-Chobo	Female Kabuki Reciter
 F-Pops	Female Pops
 F-Soft	Female Soft Young
 F-Boyish	Female Boyish
@@ -585,8 +585,8 @@ N-Storm	Natural Storm
 N-Sea	Natural Sea
 WaterEFX	Water Effects
 O-Cry	SG Crying
-Dosukoi	SG Dosukoi
-O-Onchi	SG Onchi
+Dosukoi	SG Sumo Chant
+O-Onchi	SG Tone Deaf
 Unison1	SG Unison 1
 Unison2	SG Unison 2
 DX-TlCal	DX-Telephone Calendar

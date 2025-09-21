@@ -24,6 +24,7 @@ Dst.EPno	Distorted E. Piano
 Wurly EP	Wurly E. Piano
 MelRhode	Mellow Rhodes
 ElPno 2v	Wide Electric Piano 2
+DX Hard 	Hard DX E. Piano
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
 CplHapsi	Coupled Harpsichord
@@ -228,6 +229,7 @@ WideFrHr	Wide French Horn
 FrHrSolo	Solo French Horn
 SlwFrHrn	Slow French Horn
 RipFrHrn	Rip French Horn
+Brass ff	Brass Section ff
 BoneSect	Trombone Section
 BrsSect2	Brass Section 2
 BrsSect3	Brass Section 3
@@ -429,6 +431,8 @@ Standrd3	Standard Kit 3
 StdrdL/R	Standard Kit L/R
 AnalgKt2	Analog Kit 2
 Brush2LR	Brush Kit 2 L/R
+KikSnare	Kick & Snare Kit
+KkSnare2	Kick & Snare Kit 2
 CymbalKt	Cymbal & Claps Kit
 GamlnKt2	Gamelan Kit 2
 RyFX Kit	Rhythm FX Kit

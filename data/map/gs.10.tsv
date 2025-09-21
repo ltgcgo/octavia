@@ -389,6 +389,7 @@ DualFrHr	Dual FrHrn
 HornOrch	Horn Orch.
 Syn.Horn	Synth Horn
 RipFrHrn	Rip FrHorn
+Brass ff	BrsSect.ff
 BoneSect	Bone Sect.
 QuadBras	Quad Brass
 BrsSect2	Brass 2
@@ -582,7 +583,7 @@ NoisePno	NoisePiano
 ShneStar	Shine Star
 Org Bell	Organ Bell
 GobSynth	Goblinson
-50sSciFi	50's SciFi
+50sSciFi	50s' SciFi
 Abduct	Abduction
 RandmStr	Random Str
 RandomPd	Random Pad

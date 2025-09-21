@@ -286,6 +286,7 @@ SlwFrHrn	Slow Fr.Horn
 DualFrHr	Dual Horns
 HornOrch	Horn Orch.
 RipFrHrn	Rip Fr. Horn
+Brass ff	BrassSect.ff
 BoneSect	Bones Sect.
 Trp Fall	Trumpet Fall
 OctBrass	Octave Brass
@@ -377,7 +378,7 @@ BelHeavn	Bell Heaven
 ThickMtx	Thick Matrix
 RotarStr	RotaryString
 OBSoftPd	OB Soft Pad
-80sPlySy	80's PolySyn
+80sPlySy	80s' PolySyn
 PlySyPd2	Polysynth 2
 PwrStack	Power Stack
 OctStack	Octave Stack
@@ -409,7 +410,7 @@ NlnRhode	Nylon+Rhodes
 Ambient	Ambient Pad
 NoisePno	Noise Piano
 ShneStar	Shining Star
-50sSciFi	50's Sci-Fi
+50sSciFi	50s' Sci-Fi
 Low Bird	LowBirds Pad
 FallDown	Falling Down
 Altrnate	Alternative
@@ -557,6 +558,7 @@ Room L/R	Room Kit L/R
 Jazz L/R	Jazz Kit L/R
 BrushKt2	Brush Kit 2
 Brush2LR	Brush 2 L/R
+KikSnare	Kick & Snare
 KkSnare2	Kick Snare 2
 GamelnKt	Gamelan Kit
 GamlnKt2	Gamelan Kt 2

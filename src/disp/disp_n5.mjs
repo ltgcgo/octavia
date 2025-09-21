@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice} from "../state/index.mjs";
-import {RootDisplay, ccToPos} from "../basic/index.mjs";
+import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBmDef} from "../basic/mxReader.js";
 
 import {
@@ -204,7 +204,6 @@ let Ns5rDisplay = class extends RootDisplay {
 		if (upThis.#ch < minCh) {
 			upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
 		};
-		let chOff = upThis.#ch * ccToPos.length;
 		if (timeNow < upThis.#dumpExpire) {
 			upThis.#dumpData?.forEach((e, i) => {
 				upThis.#nmdb[i] = e ? upThis.#pixelLit : upThis.#pixelOff;
@@ -365,11 +364,11 @@ let Ns5rDisplay = class extends RootDisplay {
 			} else {
 				// Render params only when it's not covered
 				let xShift = trueMode ? 2 : 0;
-				upThis.#renderParamBox(20 + xShift, sum.chContr[chOff + ccToPos[7]]);
-				upThis.#renderParamBox(33 + xShift, sum.chContr[chOff + ccToPos[11]]);
+				upThis.#renderParamBox(20 + xShift, upThis.device?.getChCc(upThis.#ch, 7));
+				upThis.#renderParamBox(33 + xShift, upThis.device?.getChCc(upThis.#ch, 11));
 				if (trueMode) {
-					if (sum.chContr[chOff + ccToPos[10]] < 128) {
-						upThis.element.getBm(`Pan_${Math.floor(sum.chContr[chOff + ccToPos[10]] / 9.85)}`)?.render((e, x, y) => {
+					if (sum.chContr[upThis.device?.getChCc(upThis.#ch, 10)] < 128) {
+						upThis.element.getBm(`Pan_${Math.floor(upThis.device?.getChCc(upThis.#ch, 10) / 9.85)}`)?.render((e, x, y) => {
 							upThis.#nmdb[y * 144 + x + 48] = e ? upThis.#pixelLit : upThis.#pixelOff;
 						});
 					} else {
@@ -378,12 +377,12 @@ let Ns5rDisplay = class extends RootDisplay {
 						});
 					};
 				} else {
-					upThis.#renderCompass(53, 7, sum.chContr[chOff + ccToPos[10]]);
+					upThis.#renderCompass(53, 7, upThis.device?.getChCc(upThis.#ch, 10));
 				};
-				upThis.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[91]]);
-				upThis.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), sum.chContr[chOff + ccToPos[93]]);
+				upThis.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), upThis.device?.getChCc(upThis.#ch, 91));
+				upThis.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), upThis.device?.getChCc(upThis.#ch, 93));
 				if (!trueMode) {
-					upThis.#renderParamBox(88, sum.chContr[chOff + ccToPos[74]]);
+					upThis.#renderParamBox(88, upThis.device?.getChCc(upThis.#ch, 74));
 				};
 			};
 			// Render bitmap displays
