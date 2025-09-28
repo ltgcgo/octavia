@@ -479,15 +479,23 @@ let OctaviaDevice = class extends CustomEventSource {
 			let metaChosen = (upThis.#trkAsReq[track] - 1) * 16 + part;
 			return metaChosen;
 		} else if (upThis.#mode === modeMap.sc || upThis.#mode === modeMap.sd) {
-			// Do not conquer channels if requested.
+			// Do not allocate channels if requested.
 			if (noConquer === 1) {
 				return part;
 			};
+			// If a track is already allocate, ignore all subsequent assignments
+			for (let shiftedPart = 0; shiftedPart < allocated.ch; shiftedPart ++) {
+				if (upThis.#trkRedir[shiftedPart] === track) {
+					return (shiftedPart & 112) | (part & 15);
+					break;
+				};
+			};
 			let shift = 0, unmet = true;
 			while (unmet) {
+				//getDebugState() && console.debug(part, shift, unmet);
 				if (upThis.#trkRedir[part + shift] === 0) {
 					upThis.#trkRedir[part + shift] = track;
-					console.debug(`Assign track ${track} to channel ${part + shift + 1}.`);
+					console.info(`Allocated track ${track} to channel ${part + shift + 1}.`);
 					unmet = false;
 				} else if (this.#trkRedir[part + shift] === track) {
 					unmet = false;
@@ -499,6 +507,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 				};
 			};
+			//getDebugState() && console.debug(part, shift, unmet);
 			return part + shift;
 		} else {
 			return part;
@@ -3166,7 +3175,8 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.#metaChannel = data[0] + 1;
 		};
 		upThis.#metaRun[33] = function (data, track) {
-			getDebugState() && console.debug(`Track ${track} requests getting assigned to port ${data}.`);
+			// Standard port assign
+			getDebugState() && console.debug(`Track ${track} requests assigning to port ${data}.`);
 			upThis.#trkAsReq[track] = data + 1;
 		};
 		upThis.#metaRun[81] = function (data, track) {
@@ -3187,7 +3197,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		};
 		upThis.#metaSeq.add([67, 0, 1], (msg, track) => {
 			// XGworks port assign
-			getDebugState() && console.debug(`XGworks port assign requests assigning track ${track} to port ${msg[0]}.`);
+			getDebugState() && console.debug(`XGworks requests assigning track ${track} to port ${msg[0]}.`);
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		}).add([67, 123, 1], (msg, track) => {
 			// XF chords
@@ -7354,7 +7364,7 @@ let OctaviaDevice = class extends CustomEventSource {
 export {
 	OctaviaDevice,
 	allocated,
-	ccToPos as mappedCcBufferOffset,
+	ccToPos as ccBufferOffset,
 	dnToPos,
 	overrides,
 	getDebugState,
