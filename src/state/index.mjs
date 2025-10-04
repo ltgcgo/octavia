@@ -3317,12 +3317,12 @@ let OctaviaDevice = class extends CustomEventSource {
 				slot = slot << 7;
 				slot |= e;
 			});
-			msg.subarray(paramStart, valueStart).forEach((e, i) => {
+			/*msg.subarray(paramStart, valueStart).forEach((e, i) => {
 				param |= e << (i * 7);
 			});
 			msg.subarray(valueStart).forEach((e, i) => {
 				value |= e << (i * 7);
-			});
+			});*/
 			getDebugState() && console.debug(`GM2 global parameter: (${msg.subarray(3, paramStart)}; p: ${param}, v: ${value})`);
 			switch (slot) {
 				case 129: {
@@ -6955,10 +6955,12 @@ let OctaviaDevice = class extends CustomEventSource {
 									};
 								};
 								upThis.setChCc(part, 0, e);
+								//console.debug(upThis.getChCc(part, 0));
 								upThis.pushChPrimitives(part);
 							}, () => {
 								// cc32
-								upThis.#cc[chOff + ccToPos[32]] = e;
+								upThis.setChCc(part, 32, e);
+								//console.debug(upThis.getChCc(part, 32));
 								upThis.pushChPrimitives(part);
 							}, () => {
 								// PC#
@@ -7038,13 +7040,14 @@ let OctaviaDevice = class extends CustomEventSource {
 							// GM2 set
 							if (upThis.#chType[part]) {
 								// Drums
-								upThis.#cc[chOff + ccToPos[0]] = 104 | e;
+								upThis.setChCc(part, 0, 104 | e)
 								upThis.pushChPrimitives(part);
 							} else {
 								// Melodic
-								upThis.#cc[chOff + ccToPos[0]] = 96 | e;
+								upThis.setChCc(part, 0, 96 | e)
 								upThis.pushChPrimitives(part);
 							};
+							//console.debug(upThis.getChCc(part, 0));
 							upThis.pushChPrimitives(part);
 						} else {
 							console.debug(`Unknown SD-90 global CH${part + 1} param setup message:\n%o`, msg);

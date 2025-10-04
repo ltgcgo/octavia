@@ -1,8 +1,14 @@
 {
 	default_bind 0.0.0.0
+	log {
+		level WARN
+	}
 }
 
 :8010 {
+	log devSvr {
+		level INFO
+	}
 	file_server {
 		index index.htm index.html default.htm default.html
 		browse {

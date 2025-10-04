@@ -87,11 +87,13 @@ const metaNames = {
 	"ChordCtl",
 	"MidStamp",
 	"RhrslMrk",
+	"XfSngRgn",
 	"XfSongBt",
 	"XfSngIns",
 	"XfSngVoc",
+	"XfMeloCh",
 	"XfLyrOff",
-	"XfSngRgn"
+	"XfLyrEnc"
 ];
 const lineDash = [[], [4, 2], [3, 2]];
 const portPos = [{l: 0, t: 0}, {l: 0, t: 416}, {l: 960, t: 0}, {l: 960, t: 416}];
