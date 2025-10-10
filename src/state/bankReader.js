@@ -14,6 +14,14 @@ const noVoxCatPool = {
 	"s90es": "SE",
 	"motif": "ME"
 };
+const allowedStandards = {
+	"g2": new Set("gm,GM,g2,G2".split(",")),
+	"xg": new Set()
+};
+for (let e of "XG,MU,AN,AP,DR,DX,PC,PF,SG,VL".split(",")) {
+	allowedStandards.xg.add(e);
+	allowedStandards.xg.add(e.toLowerCase());
+};
 
 let halfHex = function (n) {
 	let segA = Math.floor(n / 10), segB = n % 10;
@@ -923,6 +931,49 @@ let VoiceBank = class {
 		};
 		switch (mode) {
 			// Strict mode matching
+			case "xg": {
+				let tMsb = 0, tLsb = 0, tStd = "GM", silenced = false, replace = false;
+				if (allowedStandards.xg.has(standard) || allowedStandards.g2.has(standard)) {
+					if (ending !== " ") {
+						//console.debug(`${ending},${standard}`);
+						if (msb >> 4 === 6) {
+							// Is this ever going to be reached?
+							replace = true;
+						} else {
+							silenced = true;
+						};
+					} else if (iid[2] !== eid[2] && (msb === 81 || msb === 97)) {
+						if (lsb >> 3 === 14) {
+							tMsb = 97, tLsb = 112;
+							replace = true, tStd = "VL";
+						} else if (lsb >> 3 === 15) {
+							silenced = true;
+						};
+					};
+				} else {
+					if (msb >> 4 === 6) {
+						replace = true;
+					} else {
+						silenced = true;
+					};
+				};
+				if (silenced) {
+					bankName = "Silence";
+					ending = "?";
+					standard = "??";
+				} else if (replace) {
+					let bankObject = this.#bankInfo[prg][(tMsb << 8) | tLsb];
+					standard = tStd;
+					bankName = bankObject?.name;
+					bankPoly = bankObject?.poly || bankPoly;
+					bankType = bankObject?.type || bankType;
+					bankDrum = bankObject?.drum;
+					bankLevel = bankObject?.level;
+					bankVoice = bankObject?.voice;
+					ending = "^";
+				};
+				break;
+			};
 		};
 		if (ending !== " ") {
 			switch (mode) {
@@ -960,6 +1011,9 @@ let VoiceBank = class {
 					};
 				};
 			};
+		};
+		if (ending === "?") {
+			bankPoly = 0;
 		};
 		/*
 		Invalid voice names:
@@ -1122,5 +1176,6 @@ let VoiceBank = class {
 };
 
 export {
-	VoiceBank
+	VoiceBank,
+	allowedStandards
 };

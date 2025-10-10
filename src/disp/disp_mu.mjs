@@ -1,6 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
+import {allowedStandards} from "../state/bankReader.js";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
@@ -541,10 +542,10 @@ let MuDisplay = class extends RootDisplay {
 					//getDebugState() && console.debug(`SysEx prompt reset.`);
 				};
 				upThis.#bmst = 0;
-				let standard = upThis.getChVoice(upThis.#ch).standard.toLowerCase(),
-				chVox = upThis.getChVoice(upThis.#ch);
+				let chVox = upThis.getChVoice(upThis.#ch),
+				standard = chVox.standard.toLowerCase();
 				useBm = upThis.voxBm.getBm(chVox.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
-				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
+				if (standard !== upThis.device?.getChMode(upThis.#ch) && allowedStandards.xg.has(standard)) {
 					switch ((upThis.getChPrimitive(upThis.#ch, 1)) >> 4) {
 						case 2: {
 							// Internal
@@ -583,14 +584,35 @@ let MuDisplay = class extends RootDisplay {
 							break;
 						};
 						case 64: {
-							useBm = upThis.sysBm.getBm("cat_sfx");
+							switch (chVox.ending) {
+								case " ":
+								case "^": {
+									useBm = upThis.sysBm.getBm("cat_sfx");
+									break;
+								};
+								default: {
+									useBm = upThis.sysBm.getBm("no_vox");
+								};
+							};
 							break;
 						};
 						default: {
 							if (chVox.ending === "?") {
 								useBm = upThis.sysBm.getBm("no_vox");
 							} else if (upThis.getChPrimitive(upThis.#ch, 1) < 48) {
-								useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
+								switch (upThis.getChPrimitive(upThis.#ch, 1)) {
+									case 16:
+									case 32:
+									case 33:
+									case 34:
+									case 35:
+									case 36: {
+										break;
+									};
+									default: {
+										useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
+									};
+								};
 							};
 						};
 					};
