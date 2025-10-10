@@ -3849,7 +3849,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				if (ri === 8) {
 					console.debug(`${dPref}LCD contrast: ${e}.`);
 				} else if (ri === 18) {
-					upThis.#subDb[modeMap.xg][1] = [0, 126, 143][e] ?? 127;
+					upThis.#subDb[modeMap.xg][1] = [0, 126, 152][e] ?? 127;
 					console.debug(`${dPref}default bank: ${["MU Basic", "MU100 Native", "PSR/LE"][e] ?? e}.`);
 					upThis.modelEx.xg.map = e;
 					upThis.dispatchEvent("banklevel", {

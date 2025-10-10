@@ -541,8 +541,9 @@ let MuDisplay = class extends RootDisplay {
 					//getDebugState() && console.debug(`SysEx prompt reset.`);
 				};
 				upThis.#bmst = 0;
-				let standard = upThis.getChVoice(upThis.#ch).standard.toLowerCase();
-				useBm = upThis.voxBm.getBm(upThis.getChVoice(upThis.#ch).name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
+				let standard = upThis.getChVoice(upThis.#ch).standard.toLowerCase(),
+				chVox = upThis.getChVoice(upThis.#ch);
+				useBm = upThis.voxBm.getBm(chVox.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
 				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
 					switch ((upThis.getChPrimitive(upThis.#ch, 1)) >> 4) {
 						case 2: {
@@ -568,15 +569,32 @@ let MuDisplay = class extends RootDisplay {
 				} else if (standard === "kr") {
 					useBm = upThis.sysBm.getBm(`st_korg`);
 				};
-				if (!useBm && (upThis.getChPrimitive(upThis.#ch, 1) < 48 || upThis.getChPrimitive(upThis.#ch, 1) === 56 || upThis.getChPrimitive(upThis.#ch, 1) === 121 || (upThis.getChPrimitive(upThis.#ch, 1) && upThis.getChPrimitive(upThis.#ch, 1)))) {
-					useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
-				};
-				if (!useBm && (upThis.getChPrimitive(upThis.#ch, 1)) === 126) {
-					useBm = upThis.sysBm.getBm("cat_smpl");
-				};
-				if (!useBm && (upThis.getChPrimitive(upThis.#ch, 1)) === 64) {
-					useBm = upThis.sysBm.getBm("cat_sfx");
-				};
+				//if (!useBm) {
+					switch (upThis.getChPrimitive(upThis.#ch, 1)) {
+						case 56:
+						case 121: {
+							useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
+							break;
+						};
+						case 126: {
+							if (upThis.getChPrimitive(upThis.#ch, 0) >> 4 === 7) {
+								useBm = upThis.sysBm.getBm("cat_smpl");
+							};
+							break;
+						};
+						case 64: {
+							useBm = upThis.sysBm.getBm("cat_sfx");
+							break;
+						};
+						default: {
+							if (chVox.ending === "?") {
+								useBm = upThis.sysBm.getBm("no_vox");
+							} else if (upThis.getChPrimitive(upThis.#ch, 1) < 48) {
+								useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
+							};
+						};
+					};
+				//};
 				if (!useBm) {
 					useBm = upThis.sysBm.getBm("no_abm");
 				};

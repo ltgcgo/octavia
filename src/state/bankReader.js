@@ -40,12 +40,13 @@ let VoiceBank = class {
 					case 0: {
 						if (hint === 2) {
 							if (lsb >> 4 === 7) {
-								args[2] += 16;
+								args[2] += 16; // 112~127 - 128~143
+							} else if (lsb >> 3 === 13) {
+								args[2] += 40; // 104~111 - 144-151
 							};
 						} else {
 							switch (lsb) {
-								case 127:
-								case 125: {
+								case 127: {
 									args[2] = 0; // MU Basic
 									break;
 								};
@@ -759,7 +760,7 @@ let VoiceBank = class {
 						break;
 					};
 					case "xg": {
-						if (lsb === 126 || lsb === 143) {
+						if (lsb === 126 || lsb === 152) {
 							ending = " ";
 						};
 						break;
@@ -920,6 +921,9 @@ let VoiceBank = class {
 				};
 			};
 		};
+		switch (mode) {
+			// Strict mode matching
+		};
 		if (ending !== " ") {
 			switch (mode) {
 				case "krs":
@@ -938,6 +942,13 @@ let VoiceBank = class {
 				case "pa": {
 					if (ending === "^") {
 						bankName = "Unknown";
+						ending = "?";
+					};
+					break;
+				};
+				case "xg": {
+					if (ending !== "^") {
+						bankName = "Silence";
 						ending = "?";
 					};
 					break;
