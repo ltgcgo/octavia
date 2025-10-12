@@ -1,0 +1,1 @@
+# Every time anyone loses their sanity maintaining the codebase, scream here.

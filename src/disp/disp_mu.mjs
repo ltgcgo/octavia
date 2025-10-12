@@ -552,6 +552,12 @@ let MuDisplay = class extends RootDisplay {
 							useBm = upThis.sysBm.getBm(`ext_${standard}I`);
 							break;
 						};
+						case 3: {
+							if (upThis.getChPrimitive(upThis.#ch, 1) === 48) {
+								useBm = upThis.sysBm.getBm(`boot_3`);
+							};
+							break;
+						};
 						case 6: {
 							// XG-proxy (XG-B)
 							useBm = upThis.sysBm.getBm(`ext_${standard}P`);
@@ -565,7 +571,7 @@ let MuDisplay = class extends RootDisplay {
 					};
 				} else if (sum.chType[upThis.#ch]) {
 					useBm = upThis.sysBm.getBm(`cat_drm`);
-				} else if (["mu", "es"]. indexOf(standard) > -1) {
+				} else if (["es"].indexOf(standard) > -1) {
 					useBm = upThis.sysBm.getBm(`boot_3`);
 				} else if (standard === "kr") {
 					useBm = upThis.sysBm.getBm(`st_korg`);

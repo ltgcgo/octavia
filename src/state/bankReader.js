@@ -942,12 +942,16 @@ let VoiceBank = class {
 						} else {
 							silenced = true;
 						};
-					} else if (iid[2] !== eid[2] && (msb === 81 || msb === 97)) {
-						if (lsb >> 3 === 14) {
-							tMsb = 97, tLsb = 112;
-							replace = true, tStd = "VL";
-						} else if (lsb >> 3 === 15) {
-							silenced = true;
+					} else if (iid[2] !== eid[2]) {
+						if (msb === 81) {
+							if (lsb >> 3 === 14) {
+								tMsb = 97, tLsb = 112;
+								replace = true, tStd = "VL";
+							} else if (lsb >> 3 === 15) {
+								silenced = true;
+							};
+						} else if (msb === 97) {
+							replace = true;
 						};
 					};
 				} else {
@@ -956,6 +960,9 @@ let VoiceBank = class {
 					} else {
 						silenced = true;
 					};
+				};
+				if (replace && msb === 0 && lsb === 0) {
+					tLsb = [0, 126, 152][hint];
 				};
 				if (silenced) {
 					bankName = "Silence";
