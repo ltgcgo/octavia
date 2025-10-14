@@ -920,32 +920,32 @@ let OctaviaDevice = class extends CustomEventSource {
 					case 0: {
 						// Detect mode via bank MSB
 						if (getDebugState()) {
-							console.debug(`${modeIdx[this.#mode]}, CH${part + 1}: ${det.data[1]}`);
+							console.debug(`${modeIdx[upThis.#mode]}, CH${part + 1}: ${det.data[1]}`);
 						};
 						if (this.#mode === 0) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
-								if (this.#chType[part] > 0) {
-									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getChCc(part, 0)*/;
+								if (upThis.#chType[part] > 0) {
+									det.data[1] = upThis.getChPrimitive(part, 1, false) /*this.getChCc(part, 0)*/;
 									det.data[1] = modeDetailsData.gs[2];
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
 								if (det.data[1] > 0) {
 									console.debug(`Roland GS detected with MSB: ${det.data[1]}`);
-									this.switchMode("gs");
+									upThis.switchMode("gs", 0);
 								};
 							} else if (det.data[1] === 56) {
-								this.switchMode(this.#detect.x5 === 82 ? "x5d" : "05rw");
+								upThis.switchMode(upThis.#detect.x5 === 82 ? "x5d" : "05rw", 0);
 							} else if (det.data[1] === 62) {
-								this.switchMode(this.#detect.x5 === 82 ? "x5d" : "05rw");
+								upThis.switchMode(upThis.#detect.x5 === 82 ? "x5d" : "05rw", 0);
 							} else if (det.data[1] === 63) {
-								this.switchMode(modeIdx[this.#detect.ds]);
+								upThis.switchMode(modeIdx[upThis.#detect.ds], 0);
 							} else if (det.data[1] === 64 || det.data[1] === 127) {
-								this.switchMode("xg");
+								upThis.switchMode("xg", 0);
 							} else if (det.data[1] === 120 || det.data[1] === 121) {
-								this.switchMode("g2");
+								upThis.switchMode("g2", 0);
 							};
-						} else if (this.#mode === modeMap.gs || this.#mode === modeMap.sc) {
+						} else if (upThis.#mode === modeMap.gs || upThis.#mode === modeMap.sc) {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
@@ -959,11 +959,11 @@ let OctaviaDevice = class extends CustomEventSource {
 								// Do not change drum channel to a melodic
 								if (this.#chType[part] > 0) {
 									det.data[1] = modeDetailsData.gs[2];
-									this.switchMode("gs", true);
+									this.switchMode("gs", 1);
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
 								};
 							} else if (det.data[1] === 64 || det.data[1] === 127) {
-								this.switchMode("xg", true);
+								this.switchMode("xg", 1);
 							};
 						}/* else if (this.#mode === modeMap.x5d) {
 							if (det.data[1] > 0 && det.data[1] < 8) {
@@ -1458,7 +1458,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		127: (id, msg, track) => {
 			// Universal realtime
-			this.switchMode("gm");
+			this.switchMode("gm", 1);
 			this.#seUr.run(msg, track, id);
 		}
 	};
@@ -2314,7 +2314,6 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.pushEffectType(i);
 		};
 		upThis.dispatchEvent("reset");
-		upThis.switchMode("?");
 		return;
 	};
 	setChMode(part, modeId) {
@@ -2448,13 +2447,30 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	switchMode(mode, forced = false, setTarget = false) {
 		// The global fallback mode
+		/*
+		forced level:
+		0: change only when without set mode, without reset
+		1: change with reset without set mode, without reset otherwise
+		2: change with reset regardless
+		*/
 		let upThis = this;
 		let idx = modeMap[mode];
 		if (idx > -1) {
 			if (upThis.#mode === 0 || forced) {
 				//let oldMode = upThis.#mode;
-				if (upThis.initOnReset && forced) {
-					upThis.init(1);
+				if (upThis.initOnReset) {
+					switch (forced) {
+						case 1: {
+							if (upThis.#mode === 0) {
+								upThis.init(1);
+							};
+							break;
+						};
+						case 2: {
+							upThis.init(1);
+							break;
+						};
+					};
 					//oldMode = modeMap["?"];
 				};
 				upThis.#bitmapPage = 0; // Restore page
@@ -3279,7 +3295,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Mode reset section
 		upThis.#seUnr.add([9], (msg, track, id) => {
 			// General MIDI reset.
-			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], true);
+			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], 2);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, [modeMap.gm, modeMap["?"], upThis.#detect.g2][msg[0] - 1]);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 			console.info(`MIDI reset: ${["GM", "Init", "GM2"][msg[0] - 1]}`);
@@ -3353,11 +3369,12 @@ let OctaviaDevice = class extends CustomEventSource {
 					// XG drum reset
 					upThis.initDrums();
 					console.info(`XG drum setup reset on drum kit ${msg[1]}.`);
+					// FIX THIS
 					break;
 				};
 				case 126: {
 					// Yamaha XG reset
-					upThis.switchMode("xg", true);
+					upThis.switchMode("xg", 2);
 					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.xg);
 					upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 					console.info("MIDI reset: XG");
@@ -3981,7 +3998,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (msg[0]) {
 				case 126: {
 					console.info(`${dPref}mode set to: ${["VL-XG", "VL70-m voice"][msg[1]] ?? `invalid (${msg[1]})`}`);
-					upThis.switchMode("xg", true);
+					upThis.switchMode("xg", 1);
 					upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
 					break;
 				};
@@ -4066,7 +4083,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([1, 20], (msg, track, id) => {
 			if (id === 115) {
 				// DOC reset
-				upThis.switchMode("doc", true);
+				upThis.switchMode("doc", 2);
 				upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.doc);
 				console.info("MIDI reset: DOC");
 			} else {
@@ -4531,7 +4548,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// GS SysEx section
 		this.#seGs.add([66, 18, 0, 0, 127], (msg, track, id) => {
 			// GS mode set
-			upThis.switchMode("sc", true);
+			upThis.switchMode("sc", 2);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.sc);
 			// MUST REVISIT AND UPDATE!!!
 			/*upThis.setChCc(9, 0, 120);
@@ -4546,7 +4563,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			switch (msg[0]) {
 				case 127: {
 					// Roland GS reset
-					upThis.switchMode("gs", true);
+					upThis.switchMode("gs", 2);
 					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.gs);
 					/*upThis.setChCc(9, 0, 120);
 					upThis.setChCc(25, 0, 120);
@@ -5042,7 +5059,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		this.#seAi.add([54, 65], (msg, track) => {
 			// X5D multi parameters (part setup)
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
-			upThis.switchMode(x5Target, true);
+			upThis.switchMode(x5Target, 1);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
@@ -5119,7 +5136,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// X5D program dump
 			upThis.invokeSysExIndicator();
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
-			upThis.switchMode(x5Target);
+			upThis.switchMode(x5Target, 1);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let name = "", msb = upThis.#detect.x5, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
@@ -5165,7 +5182,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// X5D combi dump
 			upThis.invokeSysExIndicator();
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
-			upThis.switchMode(x5Target);
+			upThis.switchMode(x5Target, 1);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
@@ -5199,14 +5216,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([54, 78], (msg, track) => {
 			// X5D mode switch
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
-			upThis.switchMode(x5Target);
+			upThis.switchMode(x5Target, 0);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			console.debug(`X5D mode switch requested: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]} mode.`);
 		}).add([54, 85], (msg, track) => {
 			// X5D effect dump
 			upThis.invokeSysExIndicator();
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
-			upThis.switchMode(x5Target);
+			upThis.switchMode(x5Target, 1);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			korgFilter(msg, (e, i) => {
 				if (i > 0 && i < 3) {
@@ -5218,7 +5235,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// X5D extended multi setup dump
 			upThis.invokeSysExIndicator();
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
-			upThis.switchMode(x5Target, true);
+			upThis.switchMode(x5Target, 1);
 			let port = upThis.getTrackPort(track);
 			if (upThis.#portMode[port] && upThis.#portMode[port] !== modeMap[x5Target]) {
 				if (upThis.#conf.dumpLimit === upThis.DUMP_MODE) {
@@ -5320,14 +5337,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		// Roland MT-32 or C/M SysEx section
 		this.#seGs.add([22, 18, 127], (msg, track, id) => {
 			// MT-32 reset all params
-			upThis.switchMode("mt32", true);
+			upThis.switchMode("mt32", 2);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.mt32);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
 			console.info("MIDI reset: MT-32");
 		}).add([22, 18, 0], (msg, track, id) => {
 			// MT-32 Part Patch Setup (temp)
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			let part = upThis.chRedir(id, track, true);
 			let offset = msg[1];
 			msg.subarray(2).forEach((e, i) => {
@@ -5375,7 +5392,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([22, 18, 1], (msg, track, id) => {
 			// MT-32 Part Drum/Rhythm Setup (temp)
 			//this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			//let part = upThis.chRedir(/*id*/9, track, true);
 			let slot = id & 7;
 			console.debug(`MT-32 slot #${id + 1} Drum: ${msg}`);
@@ -5403,7 +5420,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([22, 18, 2], (msg, track, id) => {
 			// MT-32 Part Timbre Setup (temp)
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			let part = upThis.chRedir(id, track, true);
 			let offset = msg[1] + (msg[0] << 7);
 			if (offset < 10) {
@@ -5418,7 +5435,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.pushChPrimitives(part);
 		}).add([22, 18, 3], (msg, track, id) => {
 			// MT-32 Part Patch Setup (dev)
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			let slot = id & 7;
 			if (msg[0]) {
 				// Rhythm setup
@@ -5495,7 +5512,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			//console.debug(`MT-32 Part Patch: ${msg}`);
 		}).add([22, 18, 4], (msg, track, id) => {
 			// MT-32 Part Timbre Setup (dev)
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			let offsetTotal = msg[1] + (msg[0] << 7);
 			let parts = [];
 			msg.subarray(2).forEach((e, i) => {
@@ -5517,7 +5534,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		}).add([22, 18, 5], (msg, track, id) => {
 			// MT-32 Patch Memory Write
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			let offset = (msg[0] << 7) + msg[1];
 			msg.subarray(2).forEach((e, i) => {
 				let realIndex = (offset + i);
@@ -5545,7 +5562,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.forceVoiceRefresh();
 		}).add([22, 18, 8], (msg, track, id) => {
 			// MT-32 Timbre Memory Write
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			let offset = ((msg[0] & 1) << 7) + msg[1];
 			let patch = msg[0] >> 1, wroteName = false;
 			msg.subarray(2).forEach((e, i) => {
@@ -5564,7 +5581,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.forceVoiceRefresh();
 		}).add([22, 18, 16], (msg, track, id) => {
 			// MT-32 System Setup
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			let offset = msg[1];
 			let updateRch = false;
 			let setMidiRch = function (e, i) {
@@ -5605,7 +5622,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			};
 		}).add([22, 18, 32], (msg, track, id) => {
 			// MT-32 Text Display
-			upThis.switchMode("mt32");
+			upThis.switchMode("mt32", 1);
 			let offset = msg[1];
 			let text = " ".repeat(offset);
 			msg.subarray(2).forEach((e) => {
@@ -5632,14 +5649,14 @@ let OctaviaDevice = class extends CustomEventSource {
 		// KORG NS5R SysEx section
 		this.#seAi.add([66, 0], (msg, track) => {
 			// Mode switch
-			upThis.switchMode("ns5r", true);
+			upThis.switchMode("ns5r", 1);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.ns5r);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			console.debug(`NS5R mode switch requested: ${["global", "multi", "prog edit", "comb edit", "drum edit", "effect edit"][msg[0]]} mode.`);
 		}).add([66, 1], (msg, track) => {
 			// Map switch
 			let n5Target = ["ns5r", "05rw"][msg[0]];
-			upThis.switchMode(n5Target, true);
+			upThis.switchMode(n5Target, 1);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap[n5Target]);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 		}).add([66, 18, 0, 0], (msg, track) => {
@@ -5649,7 +5666,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 124: // all param reset
 				case 126: // XG reset for NS5R
 				case 127: { // GS reset for NS5R
-					upThis.switchMode("ns5r", true);
+					upThis.switchMode("ns5r", 2);
 					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.ns5r);
 					upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 					break;
@@ -5657,6 +5674,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 125: {// drum reset
 					upThis.initDrums();
 					console.info(`NS5R drum setup reset on drum kit ${msg[1]}.`);
+					// FIX THIS
 					break;
 				};
 				default: {
@@ -5842,7 +5860,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			sysExDrumsY(7, msg);
 		}).add([66, 52], (msg, track) => {
 			// Currect effect dump
-			upThis.switchMode("ns5r");
+			upThis.switchMode("ns5r", 1);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			//console.debug(`Dumped raw data: ${korgUnpack(msg).join(", ")}`);
 			let efxName = "";
@@ -5863,7 +5881,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([66, 53], (msg, track) => {
 			// Current multi dump
 			upThis.invokeSysExIndicator();
-			upThis.switchMode("ns5r");
+			upThis.switchMode("ns5r", 1);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			let efxName = "";
 			let checksum = msg[msg.length - 1],
@@ -6019,7 +6037,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// All program dump
 			// Yup this one is also ported from old code
 			upThis.invokeSysExIndicator();
-			upThis.switchMode("ns5r");
+			upThis.switchMode("ns5r", 1);
 			/*let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
 			expected = gsChecksum(msgData);
@@ -6073,7 +6091,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// All combination dump
 			// Just modified from above
 			upThis.invokeSysExIndicator();
-			upThis.switchMode("ns5r");
+			upThis.switchMode("ns5r", 1);
 			let name = "", msb = 88, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -6140,7 +6158,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let dPref = "K11 ";
 			([() => {
 				// GMega bank set
-				upThis.switchMode("k11", true);
+				upThis.switchMode("k11", 2);
 				upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.k11);
 				upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 				upThis.#subDb[modeMap.k11][1] = e ? 4 : 0;
@@ -6347,7 +6365,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						};
 						case 127: {
 							// SG reset
-							upThis.switchMode("sg", true);
+							upThis.switchMode("sg", 2);
 							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.sg);
 							break;
 						};
@@ -6395,9 +6413,10 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.debug(`GZ set effect: ${["stage reverb", "hall reverb", "room reverb", "chorus", "tremolo", "phaser", "rotary speaker", "enhancer", "flanger", "EQ"][msg[0]] || "off"}`);
 		});
 		// Yamaha S90 ES or Motif ES
+		// FIX THIS
 		this.#seXg.add([127, 0], (msg, track, id) => {
 			// Motif ES to S90 ES redirector
-			upThis.switchMode("motif");
+			upThis.switchMode("motif", 1);
 			let newMsg = new Uint8Array([127, 1, ...msg]);
 			upThis.#seXg.run(newMsg, track, id);
 		}).add([127, 1, 0, 0], (msg, track, id) => {
@@ -6648,7 +6667,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			console.debug(`CS6x bulk dump for ${bulkTarget} ended.`);
 		}).add([100, 76, 112], (msg, track, id) => {
 			upThis.switchMode("cs6x");
-			// CS6x voice plugin extra
+			// CS6x (Modular Synthesis) voice plugin extra
 			let part = 0;
 			let offset = msg[0];
 			msg.subarray(1).forEach((e, i) => {
@@ -6853,7 +6872,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		// SD-90 part setup (part)
 		this.#seGs.add([0, 72, 18, 0, 0, 0, 0], (msg, track, id) => {
 			// SD-90 Native System On
-			upThis.switchMode("sd", true);
+			upThis.switchMode("sd", 2);
 			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.sd);
 			console.info(`MIDI reset: SD`);
 		})/*.add([0, 72, 18, 1, 0, 0], (msg, track, id) => {
@@ -7084,14 +7103,14 @@ let OctaviaDevice = class extends CustomEventSource {
 			// Part setup (part)
 		})*/;
 		upThis.#seAi.add([0, 1, 73, 78], (msg, track, id) => {
-			upThis.switchMode("krs");
+			upThis.switchMode("krs", 1);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.krs);
 			console.debug("Might be KORG KROSS 2 mode reset... Not sure.");
 		}).add([0, 1, 73, 117, 2, 37], (msg, track, id) => {
 			// KORG KROSS 2 BMT1 bundled multi-track dump
 			/*let unpacked = korgUnpack(msg);
 			console.debug(unpacked);*/
-			upThis.switchMode("krs");
+			upThis.switchMode("krs", 1);
 			let port = upThis.getTrackPort(track);
 			if (upThis.#portMode[port] && upThis.#portMode[port] !== modeMap.krs) {
 				if (upThis.#conf.dumpLimit === upThis.DUMP_MODE) {
@@ -7265,13 +7284,13 @@ let OctaviaDevice = class extends CustomEventSource {
 					// device mode
 					switch (e) {
 						case 1: {
-							upThis.switchMode("xg", true);
+							upThis.switchMode("xg", 2);
 							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
 							console.debug(`Yamaha CS1x set to XG mode.`);
 							break;
 						};
 						case 3: {
-							upThis.switchMode("cs1x", true);
+							upThis.switchMode("cs1x", 2);
 							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs1x);
 							console.debug(`Yamaha CS1x set to performance mode.`);
 							break;
