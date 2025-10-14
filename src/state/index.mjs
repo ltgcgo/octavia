@@ -3747,7 +3747,7 @@ let OctaviaDevice = class extends CustomEventSource {
 				upThis.setDrumFirstWrite(part);
 			};
 		}).add([76, 9], (msg, track) => {
-			// PLG-VL Part Setup
+			// PLG-VL XG Part Setup
 			let part = upThis.chRedir(msg[0], track, true),
 			id = msg[1],
 			chOff = ccOffTable[part];
@@ -3975,6 +3975,20 @@ let OctaviaDevice = class extends CustomEventSource {
 			upThis.dispatchEvent("channelmin", port << 4);
 			upThis.dispatchEvent("channelmax", (port << 4) | 15);
 			getDebugState() && console.debug(`MU1000 native channel switch: `, msg);*/
+		}).add([87, 0, 0], (msg, track) => {
+			// VL70-m sound module
+			let dPref = `VL70-m sound module `;
+			switch (msg[0]) {
+				case 126: {
+					console.info(`${dPref}mode set to: ${["VL-XG", "VL70-m voice"][msg[1]] ?? `invalid (${msg[1]})`}`);
+					upThis.switchMode("xg", true);
+					upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
+					break;
+				};
+				default: {
+					console.info(`Unknown ${dPref}address: ${msg[0]}`);
+				};
+			};
 		}).add([93, 3], (msg, track) => {
 			// PLG-SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
