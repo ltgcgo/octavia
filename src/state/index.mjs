@@ -416,6 +416,11 @@ let OctaviaDevice = class extends CustomEventSource {
 			"insPart": new Uint8Array(5) // Var, In1~4
 		},
 		"yPlg": [],
+		"vl": {
+			"module": 0, // PLG-VL, VL-XG, Voice
+			"breath": 1, // PLG-VL system breath mode
+			"voiceCh": 16 // VL70-m voice receive format
+		},
 		"sc": {
 			"showBar": true,
 			"invBar": false,
@@ -454,7 +459,6 @@ let OctaviaDevice = class extends CustomEventSource {
 	#selectPort = 0;
 	#receiveRS = true; // Receive remote switch
 	#modeKaraoke = 0;
-	#vlSysBreathMode = 1; // PLG-VL system breath mode
 	#receiveTree;
 	#maskNewLyric = false;
 	#lastSysExSize = 0;
@@ -1650,7 +1654,12 @@ let OctaviaDevice = class extends CustomEventSource {
 		let view = this.#ext.subarray(start, start + allocated.ext);
 		let copy = new Uint8Array(view.length);
 		copy.set(view);
-		copy[1] = copy[1] || this.#vlSysBreathMode;
+		switch (copy[0]) {
+			case this.EXT_VL: {
+				copy[1] = copy[1] || this.modelEx.vl.breath;
+				break;
+			};
+		};
 		return copy;
 	};
 	getPitch() {
@@ -3376,6 +3385,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Yamaha XG reset
 					upThis.switchMode("xg", 2);
 					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.xg);
+					upThis.mode.modelEx.vl.module = 0;
 					upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 					console.info("MIDI reset: XG");
 					break;
@@ -3999,6 +4009,9 @@ let OctaviaDevice = class extends CustomEventSource {
 				case 126: {
 					console.info(`${dPref}mode set to: ${["VL-XG", "VL70-m voice"][msg[1]] ?? `invalid (${msg[1]})`}`);
 					upThis.switchMode("xg", 1);
+					if (msg[1] < 2) {
+						upThis.mode.modelEx.vl.module = msg[1] + 1;
+					};
 					upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
 					break;
 				};
