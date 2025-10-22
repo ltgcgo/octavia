@@ -419,7 +419,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		"vl": {
 			"module": 0, // PLG-VL, VL-XG, Voice
 			"breath": 1, // PLG-VL system breath mode
-			"voiceCh": 16 // VL70-m voice receive format
+			"voiceCh": allocated.invalidCh // VL70-m voice receive format
 		},
 		"sc": {
 			"showBar": true,
@@ -1462,7 +1462,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		},
 		127: (id, msg, track) => {
 			// Universal realtime
-			this.switchMode("gm", 1);
+			this.switchMode("gm", 0);
 			this.#seUr.run(msg, track, id);
 		}
 	};
@@ -2454,7 +2454,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			return this.#drumFirstWrite.subarray(ds << 1, (ds + 1) << 1);
 		};
 	};
-	switchMode(mode, forced = false, setTarget = false) {
+	switchMode(mode, forced = 0, setTarget = false) {
 		// The global fallback mode
 		/*
 		forced level:
@@ -2462,6 +2462,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		1: change with reset without set mode, without reset otherwise
 		2: change with reset regardless
 		*/
+		getDebugState() && console.debug(`Requested level ${forced} mode change to "${mode}".`);
 		let upThis = this;
 		let idx = modeMap[mode];
 		if (idx > -1) {
@@ -3385,7 +3386,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					// Yamaha XG reset
 					upThis.switchMode("xg", 2);
 					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.xg);
-					upThis.mode.modelEx.vl.module = 0;
+					upThis.modelEx.vl.module = 0;
 					upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 					console.info("MIDI reset: XG");
 					break;
@@ -4010,7 +4011,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					console.info(`${dPref}mode set to: ${["VL-XG", "VL70-m voice"][msg[1]] ?? `invalid (${msg[1]})`}`);
 					upThis.switchMode("xg", 1);
 					if (msg[1] < 2) {
-						upThis.mode.modelEx.vl.module = msg[1] + 1;
+						upThis.modelEx.vl.module = msg[1] + 1;
 					};
 					upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
 					break;

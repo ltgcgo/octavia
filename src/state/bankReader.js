@@ -72,14 +72,14 @@ let VoiceBank = class {
 						if (lsb > 125) {
 							args[2] = 0; // cc reset
 						};
-						args[2] += 4; // PLG-150AP redirection
+						args[2] += 4; // PLG150-AP redirection
 						break;
 					};
 					case 33: {
 						if (lsb > 125 || lsb === 3) {
 							args[2] = 0; // cc reset
 						};
-						args[2] += 5; // PLG-150VL redirection
+						args[2] += 5; // PLG150-VL redirection
 						break;
 					};
 					case 34: // I guess this is for PF, but I'm not sure
@@ -88,7 +88,7 @@ let VoiceBank = class {
 						if (lsb > 125) {
 							args[2] = 0; // cc reset
 						};
-						args[2] += 5; // PLG-150DX/AN redirection
+						args[2] += 5; // PLG150-DX/AN redirection
 						break;
 					};
 					case 79:
@@ -97,12 +97,12 @@ let VoiceBank = class {
 					case 82:
 					case 83:
 					case 84: {
-						// 79: PLG-150DR + PLG-150PC redirection
-						// 80: PLG-150PF + PLG-150AP redirection
-						// 81: PLG-150VL redirection
-						// 82: PLG-100SG redirection
-						// 83: PLG-150DX redirection
-						// 84: PLG-150AN redirection
+						// 79: PLG150-DR + PLG150-PC redirection
+						// 80: PLG150-PF + PLG150-AP redirection
+						// 81: PLG150-VL redirection
+						// 82: PLG100-SG redirection
+						// 83: PLG150-DX redirection
+						// 84: PLG150-AN redirection
 						args[0] += 16;
 					};
 					case 95:
@@ -312,14 +312,14 @@ let VoiceBank = class {
 						if (lsb > 125) {
 							args[2] = 0; // cc reset
 						};
-						args[2] += 4; // PLG-150AP redirection
+						args[2] += 4; // PLG150-AP redirection
 						break;
 					};
 					case 33: {
 						if (lsb > 125 || lsb === 3) {
 							args[2] = 0; // cc reset
 						};
-						args[2] += 5; // PLG-150VL redirection
+						args[2] += 5; // PLG150-VL redirection
 						break;
 					};
 					case 34: // I guess this is for PF, but I'm not sure
@@ -328,7 +328,7 @@ let VoiceBank = class {
 						if (lsb > 125) {
 							args[2] = 0; // cc reset
 						};
-						args[2] += 5; // PLG-150DX/AN redirection
+						args[2] += 5; // PLG150-DX/AN redirection
 						break;
 					};
 					case 79:
@@ -337,12 +337,12 @@ let VoiceBank = class {
 					case 82:
 					case 83:
 					case 84: {
-						// 79: PLG-150DR + PLG-150PC redirection
-						// 80: PLG-150PF + PLG-150AP redirection
-						// 81: PLG-150VL redirection
-						// 82: PLG-100SG redirection
-						// 83: PLG-150DX redirection
-						// 84: PLG-150AN redirection
+						// 79: PLG150-DR + PLG150-PC redirection
+						// 80: PLG150-PF + PLG150-AP redirection
+						// 81: PLG150-VL redirection
+						// 82: PLG100-SG redirection
+						// 83: PLG150-DX redirection
+						// 84: PLG150-AN redirection
 						args[0] += 16;
 					};
 					case 95:
@@ -865,7 +865,7 @@ let VoiceBank = class {
 			};
 			case 67:
 			case 99: {
-				standard = args[2] >> 4 === 1 ? "SD" : "DX"; // PLG-150DX
+				standard = args[2] >> 4 === 1 ? "SD" : "DX"; // PLG150-DX
 				break;
 			};
 			case 81: {
@@ -873,7 +873,7 @@ let VoiceBank = class {
 				break;
 			};
 			case 95: {
-				standard = ["DR", "PC"][args[2]]; // PLG-150DR/PC
+				standard = ["DR", "PC"][args[2]]; // PLG150-DR/PC
 				break;
 			};
 			case 96: {
@@ -881,15 +881,15 @@ let VoiceBank = class {
 				break;
 			};
 			case 97: {
-				standard = args[2] >> 4 === 1 ? "SD" : "VL"; // PLG-150VL / SONDIUS-XG
+				standard = args[2] >> 4 === 1 ? "SD" : "VL"; // PLG150-VL / SONDIUS-XG
 				break;
 			};
 			case 98: {
-				standard = args[2] >> 4 === 1 ? "SD" : "SG"; // PLG-100SG
+				standard = args[2] >> 4 === 1 ? "SD" : "SG"; // PLG100-SG
 				break;
 			};
 			case 100: {
-				standard = "AN"; // PLG-150AN
+				standard = "AN"; // PLG150-AN
 				break;
 			};
 			case 104:
