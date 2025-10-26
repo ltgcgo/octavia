@@ -186,7 +186,7 @@ let MuDisplay = class extends RootDisplay {
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
 	isMetreAffectedByPan = false;
 	msActive = 200;
-	msExhaust = 250;
+	msExhaust = 200;
 	clockSource;
 	constructor() {
 		super(new OctaviaDevice());
@@ -628,7 +628,7 @@ let MuDisplay = class extends RootDisplay {
 				if (useBm) {
 					let activeAs = upThis.getChBmState(upThis.#ch, useBm.length >> 8);
 					useBm = useBm.subarray(activeAs << 8, (activeAs + 1) << 8);
-					console.debug(activeAs);
+					//console.debug(activeAs);
 				} else {
 					useBm = upThis.sysBm.getBm("no_abm");
 				};

@@ -611,6 +611,7 @@ let RootDisplay = class extends CustomEventSource {
 		return this.#chLastNoteAt[part];
 	};
 	getChLastNoteExhausted(part) {
+		//console.debug(this.#chLastNoteExhausted[part]);
 		return this.#chLastNoteExhausted[part];
 	};
 	eachVoice(iter, all = false) {
@@ -796,6 +797,8 @@ let RootDisplay = class extends CustomEventSource {
 		});
 		upThis.addEventListener("reset", ({data}) => {
 			upThis.#polyCache.fill(1);
+			upThis.#chLastNoteAt.fill(0);
+			upThis.#chLastNoteExhausted.fill(0);
 		});
 		upThis.#polyCache.fill(1);
 		upThis.#metaRun[3] = function (type, data) {
