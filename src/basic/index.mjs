@@ -295,10 +295,16 @@ let RootDisplay = class extends CustomEventSource {
 		if (!forcedRefreshObject) {
 			switch (upThis.device.getChMode(ch)) {
 				case "xg": {
-					if (upThis.device.getChType(ch) > 0 && voice.ending === "!") {
-						refresh = false;
-						cachedVoice.refreshFailure = true;
-						console.debug("Cached voice persisted due to invalid drum kit.");
+					if (upThis.device.getChType(ch) > 0) {
+						switch (voice.ending) {
+							case "!":
+							case "?": {
+								refresh = false;
+								cachedVoice.refreshFailure = true;
+								console.debug("Cached voice persisted due to invalid drum kit.");
+								break;
+							};
+						};
 					};
 					break;
 				};
@@ -349,7 +355,10 @@ let RootDisplay = class extends CustomEventSource {
 					break;
 				};
 				default: {
-					if (arrayCompare(cachedVoice.sid, updatedVoice)[1] !== 0) {
+					if (
+						arrayCompare(cachedVoice.sid, updatedVoice)[1] !== 0
+						|| cachedVoice.name === "Unloaded"
+					) {
 						//console.debug(2);
 						return upThis.refreshCachedChVoice(ch);
 					} else {
@@ -604,7 +613,7 @@ let RootDisplay = class extends CustomEventSource {
 	getPool() {
 		return this.#midiPool;
 	};
-	getChCachedVoice(part) {
+	getChCachedVoiceRaw(part) {
 		return this.#voiceCache[part];
 	};
 	getChLastNoteAt(part) {

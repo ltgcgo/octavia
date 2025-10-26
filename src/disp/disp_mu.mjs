@@ -329,7 +329,7 @@ let MuDisplay = class extends RootDisplay {
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
 		let showLsb = upThis.getChPrimitive(upThis.#ch, 1) === 0;
-		let voiceObj = upThis.getChVoice(upThis.#ch);
+		let voiceObj = upThis.getCachedChVoice(upThis.#ch);
 		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
 			// Show display text
 			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
@@ -410,7 +410,7 @@ let MuDisplay = class extends RootDisplay {
 						showLsb = true;
 					};
 				};
-				let bnkInfo = `\u0080${bnkSel}\u0081${((sum.chProgr[upThis.#ch] || 0) + 1).toString().padStart(3, "0")}`;
+				let bnkInfo = `\u0080${bnkSel}\u0081${((voiceObj.sid[1]) + 1).toString().padStart(3, "0")}`;
 				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
 					let regionX = 0, regionY = 0;
