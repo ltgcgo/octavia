@@ -240,6 +240,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 	});
 	if (location.search.indexOf("minimal") > -1) {
 		self.scroll(0, dispCanv.offsetTop - 4);
+		midwIndicator.click();
 	};
 });
 
@@ -253,7 +254,6 @@ audioPlayer.onended = function () {
 (async function () {
 	if (location.search.indexOf("minimal") > -1) {
 		self.scroll(0, dispCanv.offsetTop - 4);
-		midwIndicator.click();
 	} else {
 		visualizer.reset();
 		let midiBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.mid")).blob();

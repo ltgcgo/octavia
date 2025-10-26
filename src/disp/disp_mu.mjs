@@ -585,6 +585,12 @@ let MuDisplay = class extends RootDisplay {
 							useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
 							break;
 						};
+						case 16: {
+							if (upThis.device.getChMode(upThis.#ch) === "xg") {
+								useBm = upThis.sysBm.getBm("cat_svox");
+							};
+							break;
+						};
 						case 126: {
 							if (upThis.getChPrimitive(upThis.#ch, 0) >> 4 === 7) {
 								useBm = upThis.sysBm.getBm("cat_smpl");
