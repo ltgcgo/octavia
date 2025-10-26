@@ -148,13 +148,13 @@ $e("#openAudio").addEventListener("click", async function () {
 });
 midwIndicator.addEventListener("click", function () {
 	stDemo.to(-1);
+	visualizer.init();
 	visualizer.device.initOnReset = true;
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
 	audioBlob = null;
 	audioPlayer.src = "";
-	visualizer.init();
 	currentPerformance = undefined;
 	useMidiBus = true;
 	midwIndicator.classList.on("active");
@@ -240,7 +240,6 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 	});
 	if (location.search.indexOf("minimal") > -1) {
 		self.scroll(0, dispCanv.offsetTop - 4);
-		midwIndicator.click();
 	};
 });
 
@@ -252,17 +251,22 @@ audioPlayer.onended = function () {
 	audioPlayer.currentTime = 0;
 };
 (async function () {
-	visualizer.reset();
-	let midiBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.mid")).blob();
-	demoBlobs.KANDI8 = {};
-	demoBlobs.KANDI8.midi = midiBlob;
-	visualizer.loadFile(midiBlob);
-	if (audioBlob) {
-		URL.revokeObjectURL(audioBlob);
+	if (location.search.indexOf("minimal") > -1) {
+		self.scroll(0, dispCanv.offsetTop - 4);
+		midwIndicator.click();
+	} else {
+		visualizer.reset();
+		let midiBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.mid")).blob();
+		demoBlobs.KANDI8 = {};
+		demoBlobs.KANDI8.midi = midiBlob;
+		visualizer.loadFile(midiBlob);
+		if (audioBlob) {
+			URL.revokeObjectURL(audioBlob);
+		};
+		audioBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.opus")).blob();
+		demoBlobs.KANDI8.wave = audioBlob;
+		audioPlayer.src = URL.createObjectURL(audioBlob);
 	};
-	audioBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.opus")).blob();
-	demoBlobs.KANDI8.wave = audioBlob;
-	audioPlayer.src = URL.createObjectURL(audioBlob);
 })();
 let lastTime = 0;
 let renderThread = setInterval(function () {
