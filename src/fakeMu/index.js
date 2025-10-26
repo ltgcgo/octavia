@@ -154,7 +154,8 @@ midwIndicator.addEventListener("click", function () {
 	};
 	audioBlob = null;
 	audioPlayer.src = "";
-	visualizer.reset();
+	visualizer.init();
+	currentPerformance = undefined;
 	useMidiBus = true;
 	midwIndicator.classList.on("active");
 });
@@ -211,6 +212,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 		e.addEventListener("click", async function () {
 			audioPlayer.pause();
 			visualizer.device.initOnReset = false;
+			midwIndicator.classList.off("active");
+			useMidiBus = false;
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
 				audioPlayer.src = "about:blank";
@@ -264,7 +267,12 @@ audioPlayer.onended = function () {
 let lastTime = 0;
 let renderThread = setInterval(function () {
 	if (/*!audioPlayer.paused*/true) {
-		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
+		let curTime;
+		if (useMidiBus) {
+			curTime = performance.now() / 1000;
+		} else {
+			curTime = audioPlayer.currentTime - (self.audioDelay || 0);
+		};
 		if (curTime < lastTime) {
 		};
 		if (currentPerformance) {
@@ -287,7 +295,7 @@ getBridge().addEventListener("message", function (ev) {
 });
 
 self.visualizer = visualizer;
-self.performance = currentPerformance;
+self.currentPerformance = currentPerformance;
 
 // Hardcoded animation reference
 {

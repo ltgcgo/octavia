@@ -178,7 +178,7 @@ let MxBm256 = class {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
 				if (arr[1][0] !== "@") {
-					let bm = new Uint8Array(256);
+					let bm = new Uint8Array(256 << ((arr[1].length >> 6)) - 1);
 					Array.from(arr[1]).forEach(function (e, i) {
 						let iOff = i * 4,
 						proxy = parseInt(e, 16), dp = 3;

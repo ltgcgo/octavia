@@ -185,6 +185,8 @@ let MuDisplay = class extends RootDisplay {
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
 	isMetreAffectedByPan = false;
+	msActive = 200;
+	msExhaust = 250;
 	clockSource;
 	constructor() {
 		super(new OctaviaDevice());
@@ -264,6 +266,7 @@ let MuDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
+		//console.debug(upThis.#ch, upThis.getChLastNoteAt(upThis.#ch));
 		// Fill with green
 		//ctx.fillStyle = "#af2";
 		ctx.fillStyle = `${backlight.grYellow}64`;
@@ -326,6 +329,7 @@ let MuDisplay = class extends RootDisplay {
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
 		let showLsb = upThis.getChPrimitive(upThis.#ch, 1) === 0;
+		let voiceObj = upThis.getChVoice(upThis.#ch);
 		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
 			// Show display text
 			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
@@ -384,8 +388,7 @@ let MuDisplay = class extends RootDisplay {
 			};
 			// Render fonts
 			if (rendMode < 2) {
-				let voiceObj = upThis.getChVoice(upThis.#ch),
-				voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " "),
+				let voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " "),
 				primBuf = upThis.getChPrimitives(upThis.#ch);
 				let bnkSel = (primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");
 				switch (primBuf[0]) {
@@ -542,9 +545,8 @@ let MuDisplay = class extends RootDisplay {
 					//getDebugState() && console.debug(`SysEx prompt reset.`);
 				};
 				upThis.#bmst = 0;
-				let chVox = upThis.getChVoice(upThis.#ch),
-				standard = chVox.standard.toLowerCase();
-				useBm = upThis.voxBm.getBm(chVox.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
+				let standard = voiceObj.standard.toLowerCase();
+				useBm = upThis.voxBm.getBm(voiceObj.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
 				if (standard !== upThis.device?.getChMode(upThis.#ch) && allowedStandards.xg.has(standard)) {
 					switch ((upThis.getChPrimitive(upThis.#ch, 1)) >> 4) {
 						case 2: {
@@ -590,7 +592,7 @@ let MuDisplay = class extends RootDisplay {
 							break;
 						};
 						case 64: {
-							switch (chVox.ending) {
+							switch (voiceObj.ending) {
 								case " ":
 								case "^": {
 									useBm = upThis.sysBm.getBm("cat_sfx");
@@ -603,7 +605,7 @@ let MuDisplay = class extends RootDisplay {
 							break;
 						};
 						default: {
-							if (chVox.ending === "?") {
+							if (voiceObj.ending === "?") {
 								useBm = upThis.sysBm.getBm("no_vox");
 							} else if (upThis.getChPrimitive(upThis.#ch, 1) < 48) {
 								switch (upThis.getChPrimitive(upThis.#ch, 1)) {
@@ -623,7 +625,11 @@ let MuDisplay = class extends RootDisplay {
 						};
 					};
 				//};
-				if (!useBm) {
+				if (useBm) {
+					let activeAs = upThis.getChBmState(upThis.#ch, useBm.length >> 8);
+					useBm = useBm.subarray(activeAs << 8, (activeAs + 1) << 8);
+					console.debug(activeAs);
+				} else {
 					useBm = upThis.sysBm.getBm("no_abm");
 				};
 				useBm = useBm?.slice() || blank256Buffer;

@@ -35,8 +35,10 @@ let RootDisplay = class extends CustomEventSource {
 	#titleName = "";
 	#metaRun = [];
 	#noteEvents = [];
-	#mimicStrength = new Uint8ClampedArray(128);
-	#beforeStrength = new Uint8ClampedArray(128);
+	#mimicStrength = new Uint8ClampedArray(allocated.ch);
+	#beforeStrength = new Uint8ClampedArray(allocated.ch);
+	#chLastNoteAt = new Uint32Array(allocated.ch);
+	#chLastNoteExhausted = new Uint32Array(allocated.ch);
 	// Used to provide tempo, tSig and bar information
 	#noteBInt = 0.5;
 	#noteTempo = 120;
@@ -49,6 +51,9 @@ let RootDisplay = class extends CustomEventSource {
 	#polyCache = new Uint8Array(allocated.ch);
 	// Recursion guard
 	#getCachedInstanceCount = 0;
+	msActive = 200;
+	msFrame = 100;
+	msExhaust = 300;
 	smoothAttack = 0;
 	smoothDecay = 0;
 	reset() {
@@ -522,6 +527,21 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		return data;
 	};
+	getChBmState(part, frames = 1) {
+		// 0 for inactive, animations loop from 1 to the maximum frame
+		let upThis = this;
+		let elapsed = Math.floor(upThis.#noteTime * 1000) - upThis.getChLastNoteExhausted(part);
+		if (elapsed < upThis.msExhaust) {
+			if (elapsed > 0 && elapsed < upThis.msActive) {
+				frames -= 1; // First frame is used for the inactive state
+				if (frames < 1) {
+					return 0;
+				};
+				return Math.floor(elapsed / upThis.msFrame) % frames + 1;
+			};
+		};
+		return 0;
+	};
 	getProps(voiceObject) {
 		let upThis = this;
 		let props, lastEid, loopGuard = 0, sourceObject = voiceObject;
@@ -581,8 +601,17 @@ let RootDisplay = class extends CustomEventSource {
 	getTempo() {
 		return this.#noteTempo;
 	};
+	getPool() {
+		return this.#midiPool;
+	};
 	getChCachedVoice(part) {
 		return this.#voiceCache[part];
+	};
+	getChLastNoteAt(part) {
+		return this.#chLastNoteAt[part];
+	};
+	getChLastNoteExhausted(part) {
+		return this.#chLastNoteExhausted[part];
 	};
 	eachVoice(iter, all = false) {
 		let upThis = this;
@@ -754,6 +783,13 @@ let RootDisplay = class extends CustomEventSource {
 		upThis.addEventListener("note", function ({data}) {
 			upThis.#noteEvents.push(data);
 			//console.debug(data);
+			if (data.state === 3) { // Which ever state that's invoked on note presses
+				let msTime = Math.floor(upThis.#noteTime * 1000);
+				upThis.#chLastNoteAt[data.part] = msTime;
+				if (msTime - upThis.#chLastNoteExhausted[data.part] >= upThis.msExhaust) {
+					upThis.#chLastNoteExhausted[data.part] = msTime;
+				};
+			};
 		});
 		upThis.addEventListener("voice", ({data}) => {
 			upThis.refreshCachedChVoice(data.part);
