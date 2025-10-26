@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<head>
+	<meta http-equiv="200" charset="utf-8" />
+	<title>Binary to bitmap</title>
+	<meta content="true" name="HandheldFriendly" />
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<link rel="stylesheet" href="../css/water.min.css" />
+	<link rel="stylesheet" href="../css/fonts.css" />
+	<style>td{text-align:center;vertical-align:middle;cursor:default;}td>input{margin:0;float:left;}canvas{outline:4px solid #fff5;background:#7f0;}</style>
+</head>
+<body>
+	<p>Press left/right to shift 1 byte, up/down to shift 32 bytes, page up/down to shift 256 bytes. You can also modify the offset directly.</p>
+	<p>
+		<b id="openImage">Open binary</b>.
+	</p>
+	<p>
+		<table style="width: max-content;">
+			<tbody>
+				<tr>
+					<td><b>Offset</b></td>
+					<td><input type="number" id="binOffset" min="0" max="2147483647" value="0" /></td>
+				</tr>
+				<tr>
+					<td><b>Size</b></td>
+					<td><code id="binFileSize">0</code> (<span id="binNaturalSize">0 B</span>)</td>
+				</tr>
+				<tr>
+					<td><b>Width</b></td>
+					<td><input type="number" id="binWidth" min="1" max="64" value="16" /></td>
+				</tr>
+				<tr>
+					<td><b>Height</b></td>
+					<td><input type="number" id="binHeight" min="1" max="64" value="16" /></td>
+				</tr>
+				<tr>
+					<td><b>Stretch?</b></td>
+					<td><input type="checkbox" id="binStretch" checked /></td>
+				</tr>
+			</tbody>
+		</table>
+	</p>
+	<p>
+		<code id="result"></code><br/><br/>
+		<canvas width="16" height="16"></canvas>
+	</p>
+	<script src ="../js/binView.js"></script>
+</body>
