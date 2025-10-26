@@ -186,7 +186,7 @@ let MuDisplay = class extends RootDisplay {
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
 	isMetreAffectedByPan = false;
 	msActive = 200;
-	msExhaust = 200;
+	msExhaust = 250;
 	clockSource;
 	constructor() {
 		super(new OctaviaDevice());

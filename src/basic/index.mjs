@@ -540,14 +540,15 @@ let RootDisplay = class extends CustomEventSource {
 		// 0 for inactive, animations loop from 1 to the maximum frame
 		let upThis = this;
 		let elapsed = Math.floor(upThis.#noteTime * 1000) - upThis.getChLastNoteExhausted(part);
-		if (elapsed < upThis.msExhaust) {
-			if (elapsed > 0 && elapsed < upThis.msActive) {
-				frames -= 1; // First frame is used for the inactive state
-				if (frames < 1) {
-					return 0;
-				};
-				return Math.floor(elapsed / upThis.msFrame) % frames + 1;
+		if (upThis.getChLastNoteExhausted(part) <= 0) {
+			return 0;
+		};
+		if (elapsed < upThis.msActive) {
+			frames -= 1; // First frame is used for the inactive state
+			if (frames < 1) {
+				return 0;
 			};
+			return Math.floor(elapsed / upThis.msFrame) % frames + 1;
 		};
 		return 0;
 	};
