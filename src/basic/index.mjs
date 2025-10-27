@@ -295,7 +295,7 @@ let RootDisplay = class extends CustomEventSource {
 		if (!forcedRefreshObject) {
 			switch (upThis.device.getChMode(ch)) {
 				case "xg": {
-					if (upThis.device.getChType(ch) > 0) {
+					if (upThis.device.getChType(ch) > 0 && upThis.device.getChPrimitive(ch, 1) !== 126) {
 						switch (voice.ending) {
 							case "!":
 							case "?": {

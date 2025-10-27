@@ -571,8 +571,19 @@ let MuDisplay = class extends RootDisplay {
 							break;
 						};
 					};
-				} else if (sum.chType[upThis.#ch]) {
-					useBm = upThis.sysBm.getBm(`cat_drm`);
+				} else if (upThis?.device.getChType(upThis.#ch)) {
+					let chType = upThis?.device.getChType(upThis.#ch);
+					switch (voiceObj.ending) {
+						case "!":
+						case "?":
+						case "*": {
+							useBm = upThis.sysBm.getBm(chType > 1 && chType < 6 ? `cat_dS${chType - 1}` : "cat_drS");
+							break;
+						};
+						default: {
+							useBm = upThis.sysBm.getBm(chType > 1 && chType < 10 ? `cat_dr${chType - 1}` : "cat_drm");
+						};
+					};
 				} else if (["es"].indexOf(standard) > -1) {
 					useBm = upThis.sysBm.getBm(`boot_3`);
 				} else if (standard === "kr") {

@@ -982,6 +982,7 @@ let VoiceBank = class {
 				break;
 			};
 		};
+		// Additional error handling
 		if (ending !== " ") {
 			switch (mode) {
 				case "krs":
@@ -1006,7 +1007,17 @@ let VoiceBank = class {
 				};
 				case "xg": {
 					if (ending !== "^") {
-						bankName = "Silence";
+						switch (msb) {
+							case 120:
+							case 127:
+							case 126: {
+								bankName = "SilntKit";
+								break;
+							};
+							default: {
+								bankName = "Silence";
+							};
+						};
 						ending = "?";
 					};
 					break;
