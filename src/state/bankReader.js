@@ -939,7 +939,7 @@ let VoiceBank = class {
 						if (msb >> 4 === 6) {
 							// Is this ever going to be reached?
 							replace = true;
-						} else {
+						} else if (msb !== 0) {
 							silenced = true;
 						};
 					} else if (iid[2] !== eid[2]) {
