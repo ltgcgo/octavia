@@ -9,6 +9,10 @@
 	log devSvr {
 		level INFO
 	}
+	encode {
+		zstd fastest
+		gzip 1
+	}
 	file_server {
 		index index.htm index.html default.htm default.html
 		browse {

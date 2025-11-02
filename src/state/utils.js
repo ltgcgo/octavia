@@ -126,10 +126,10 @@ let x5dSendLevel = function (sendParam) {
 };
 
 let getDebugState = function () {
-	if (self.Bun) {
-		return true; // If run on Bun.js, output all possible logs
-	};
-	return self.debugMode ?? false;
+	// Direct variable modification is required for performance, as global variable fallback is expensive in SpiderMonkey.
+	// If run on Bun.js or Node.js, output all possible logs
+	return (typeof self?.require !== "undefined") || (self?.debugMode ?? false);
+	//return false;
 };
 
 let ascii64Dec = function (text) {
