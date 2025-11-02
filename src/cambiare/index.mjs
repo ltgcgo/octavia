@@ -91,6 +91,7 @@ const metaNames = {
 	"XfSongBt",
 	"XfSngIns",
 	"XfSngVoc",
+	"XfKarLng",
 	"XfMeloCh",
 	"XfLyrOff",
 	"XfLyrEnc"
