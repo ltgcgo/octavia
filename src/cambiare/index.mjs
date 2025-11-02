@@ -246,6 +246,10 @@ HTMLElement.prototype.setTextRaw = function (text) {
 	};
 };
 
+if (typeof self?.require !== "undefined") {
+	throw(new Error("Environments supporting CommonJS is not supported."));
+};
+
 let Cambiare = class extends RootDisplay {
 	#metaGcLine = 16;
 	#metaGcStart = 32;

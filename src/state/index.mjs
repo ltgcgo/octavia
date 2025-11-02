@@ -326,6 +326,10 @@ Extensions:
   2: ACMP toggle
 */
 
+if (typeof self?.require !== "undefined") {
+	throw(new Error("Environments supporting CommonJS is not supported."));
+};
+
 let OctaviaDevice = class extends CustomEventSource {
 	// Constants
 	NOTE_IDLE = 0;

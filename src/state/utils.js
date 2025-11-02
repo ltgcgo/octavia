@@ -126,10 +126,11 @@ let x5dSendLevel = function (sendParam) {
 };
 
 let getDebugState = function () {
-	// Direct variable modification is required for performance, as global variable fallback is expensive in SpiderMonkey.
+	// Direct variable modification is required for performance, as global variable fallback is expensive.
 	// If run on Bun.js or Node.js, output all possible logs
-	return (typeof self?.require !== "undefined") || (self?.debugMode ?? false);
-	//return false;
+	//return (typeof self?.require !== "undefined") || (self?.debugMode ?? false);
+	return self?.debugMode ?? false;
+	return false;
 };
 
 let ascii64Dec = function (text) {

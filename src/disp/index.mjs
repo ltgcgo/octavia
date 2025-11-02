@@ -10,6 +10,10 @@ import Sc8850Display from "./disp_sc8850.mjs";
 import QyDisplay from "./disp_qy.mjs";
 import PsrDisplay from "./disp_psr.mjs";
 
+if (typeof self?.require !== "undefined") {
+	throw(new Error("Environments supporting CommonJS is not supported."));
+};
+
 export {
 	MuDisplay,
 	ScDisplay,

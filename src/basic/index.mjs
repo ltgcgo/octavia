@@ -26,6 +26,10 @@ const nameFromPath = (path) => {
 	return nameArray[nameArray.length - 1] || nameArray[nameArray.length - 2] || "(remote)";
 };
 
+if (typeof self?.require !== "undefined") {
+	throw(new Error("Environments supporting CommonJS is not supported."));
+};
+
 let RootDisplay = class extends CustomEventSource {
 	device;
 	#midiPool;

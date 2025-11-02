@@ -9,6 +9,10 @@ import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "../basic/transform.js";
 import {customInterpreter} from "../state/utils.js";
 
+if (typeof self?.require !== "undefined") {
+	throw(new Error("Environments supporting CommonJS is not supported."));
+};
+
 MidiParser.customInterpreter = customInterpreter;
 
 let getBridge = function () {
