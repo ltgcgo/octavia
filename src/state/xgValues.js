@@ -302,6 +302,7 @@ let getVlCtrlSrc = function (ctrlNo) {
 };
 
 let xfEncLabels = {
+	"": ["l9", "Undefined fallback"],
 	"u8": ["utf-8", "Unicode"], // Custom extension
 	"l1": ["l9", "Pan-Latin"],
 	"jp": ["sjis", "Japanese"],

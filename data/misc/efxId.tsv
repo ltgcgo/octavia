@@ -7,6 +7,7 @@ MSB	LSB	Name
 01	07	XG Hall Large
 01	10	XG Hall 3
 01	11	XG Hall 4
+01	12	XG Hall 5
 01	17	XG Cathedral
 02	00	XG Room 1
 02	01	XG Room 2
@@ -14,8 +15,9 @@ MSB	LSB	Name
 02	05	XG Room Small
 02	06	XG Room Medium
 02	07	XG Room Large
-02	11	XG Room 4
-02	13	XG Room 5
+02	10	XG Room 4
+02	11	XG Room 5
+02	13	XG Room 6
 03	00	XG Stage 1
 03	01	XG Stage 2
 03	10	XG Stage 3

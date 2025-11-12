@@ -528,9 +528,8 @@ let OctaviaDevice = class extends CustomEventSource {
 	forceVoiceRefresh() {
 		for (let part = 0; part < allocated.ch; part ++) {
 			if (this.#chActive[part]) {
-				this.dispatchEvent("voice", {
-					part
-				});
+				this.dispatchEvent("voice", {part});
+				//this.dispatchEvent("voice", {part}); // Need to find why the first doesn't update for XG bank select to get rid of the second event.
 			};
 		};
 	};

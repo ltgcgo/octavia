@@ -171,6 +171,7 @@ Pwr.Fret	PowerFretles
 TalkinBa	Talking Bass
 SynFretl	SynthFretles
 SmthFrtl	SmoothFrtles
+FrtlsBa*	FretlesBass*
 SlapBas#	Slap Bass #
 ResoSlap	ResonantSlap
 PunchThm	PunchThumbBs
@@ -207,6 +208,7 @@ PlnPulse	Plain Pulse
 PowerSaw	Powered Saw
 SynthAtk	Synth Attack
 SmoothBs	Smooth Bass
+AnalgBa*	Analog Bass*
 Oct.Bass	Octave Bass
 SlwVioln	Slow Violin
 CadenzDk	Dark Cadenza
@@ -328,6 +330,9 @@ AnlSforz	Analog Sforz
 SyBrsSub	SynthBrasSub
 AnVelBrs	AnalgVeloBrs
 AnalgBrs	Analog Brass
+SynBras*	Synth Brass*
+TechnoBr	Techno Brass
+HbrCmpBr	HybrCompBras
 SynBras4	SynthBrass 4
 ChoirBrs	Choir Brass
 Ana.Horn	Analog Horn
@@ -391,6 +396,8 @@ ModulSaw	Modular Saw.
 SimplSaw	Simple Saw.
 SeqAnalg	Seq. Analog
 SawLead*	Sawtooth Ld*
+Analogon	AnalogonLead
+FireWire	Fire Wire *
 NoviceLd	Novice Lead
 ElecPrim	ElecPrimtive
 DistLead	Distort.Lead

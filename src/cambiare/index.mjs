@@ -92,6 +92,7 @@ const metaNames = {
 	"XfSngIns",
 	"XfSngVoc",
 	"XfKarLng",
+	"XfKarNme",
 	"XfMeloCh",
 	"XfLyrOff",
 	"XfLyrEnc"

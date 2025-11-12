@@ -189,6 +189,7 @@ Pwr.Fret	PwrFretles
 TalkinBa	TalkinBass
 SynFretl	SynFretles
 SmthFrtl	SmthFrtles
+FrtlsBa*	FrtlesBas*
 SlapBas#	Slap Bass#
 ResoSlap	Reson.Slap
 PunchThm	PunchThmBs
@@ -235,6 +236,7 @@ PlnPulse	PlainPulse
 PowerSaw	Power Saw
 SynthAtk	SynthAttak
 SmoothBs	SmoothBass
+AnalgBa*	AnalogBas*
 Oct.Bass	OctaveBass
 PowerBas	Power Bass
 SlwVioln	SlowViolin
@@ -386,6 +388,9 @@ JumpBras	Jump Brass
 SyBrsSub	SynBrasSub
 AnVelBrs	An.VeloBrs
 AnalgBrs	AnalogBras
+SynBras*	SynthBras*
+TechnoBr	TechnoBras
+HbrCmpBr	HybridComp
 SoftBras	Soft Brass
 SynBras4	SynthBras4
 ChoirBrs	ChoirBrass
@@ -439,6 +444,8 @@ AlumLead	Alum Lead
 FMSlwSwp	FMSlwSweep
 Curse Ld	Curse Lead
 OctvBeep	OctaveBeep
+MiniLead	Mini Lead
+Vinyl Ld	Vinyl Lead
 SawLead2	Saw Lead 2
 ThickSaw	Thick Saw
 Dyna.Saw	DynamicSaw
@@ -457,6 +464,10 @@ ModulSaw	ModularSaw
 SimplSaw	Simple Saw
 SeqAnalg	Seq.Analog
 SawLead*	Saw. Lead*
+Analogon	AnalogonLd
+FireWire	Fire Wire
+Early Ld	Early Lead
+Fargo Ld	Fargo Lead
 NoviceLd	NoviceLead
 VentSyn.	Vent Synth
 PureLead	Pure Lead
@@ -491,6 +502,7 @@ Shwimmer	ShwimmerPd
 Converge	ConvergePd
 PolarPad	Polar Pad
 Celstial	Celestial
+Wv2001Pd	Wave 2001
 ClaviPad	Clavi. Pad
 HrmoRain	Harmo.Rain
 AfrcWind	AfricaWind
