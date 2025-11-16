@@ -8,7 +8,7 @@
 let fileBuffer = await Deno.readFile(Deno.args[0]),
 fileLen = fileBuffer.length;
 console.error(`Loaded "${Deno.args[0]}", ${fileLen} bytes in total.\n`);
-let demoPtr = parseInt(Deno.args[1]), demoTrk = 64;
+let demoPtr = parseInt(Deno.args[1]), demoTrk = 4;
 
 if (!(demoPtr >= 0)) {
 	throw(new Error(`Invalid start pointer offset specified.`));
@@ -25,7 +25,7 @@ const readI32 = (buf) => {
 };
 
 let smfName = `./0x${demoPtr.toString(16).padStart(6, "0")}.mid`;
-let smfStart = Uint8Array.from([0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x01, 0x01, 0xe0]);
+let smfStart = Uint8Array.from([0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x00, 0x01, 0x01, 0xe0]);
 let smfTrack = Uint8Array.from([77, 84, 114, 107]);
 await Deno.writeFile(smfName, smfStart, {createNew: true});
 
@@ -73,3 +73,4 @@ for (let idx = 0; idx < demoTrk; idx ++) {
 		break;
 	};
 };
+console.error(`\nDumped ${demoTrk} tracks in total.`);

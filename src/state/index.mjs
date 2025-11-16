@@ -2655,6 +2655,10 @@ let OctaviaDevice = class extends CustomEventSource {
 	};
 	runJson(json) {
 		// Execute transformed JSON event
+		if (json === undefined || json === null) {
+			console.warn(new Error(`Invalid JSON data provided.`));
+			return;
+		};
 		if (json.type > 14) {
 			if (json.type === 15 && json.data.constructor !== Uint8Array) {
 				json.data = Uint8Array.from(json.data);
