@@ -59,7 +59,7 @@ ClkGspOr	Click Gospel Organ
 Mood Org	Moody Organ
 PercOrg#	Percussive Organ #
 70sPcOrg	70s' Percussive Org
-DetPrcOr	Detuned Perc Organ
+DetPrcOr	Detuned Perc. Organ
 PercOrg2	Percussive Organ 2
 WarmJazz	Warm Jazz Organ
 SlwRotar	Slow Rotary Organ
@@ -103,6 +103,7 @@ FunkGtr2	Funk Guitar 2
 WrenchGt	Wrench Guitar
 GrvyMtGt	Groovy Muted Guitar
 Mu.DstGt	Muted Distortion Guitar
+MutedGt*	Muted Guitar *
 Ovrdriv#	Overdriven Guitar #
 OvdrGtDt	Detuned Overdrive Guitar
 BrtMnhtn	Bright Manhattan Guitar
@@ -688,3 +689,11 @@ ANHardBr	AN Hard Brass
 DirtySaw	Dirty Sawtooth Lead
 BPF Step	Band Passed Steps
 Dist.5th	Distorted Fifth
+ClassGt*	Classic Guitar *
+Ovrdriv*	Overdriven Guitar *
+AltoSax*	Alto Saxophone *
+SwtAltSx	Sweet! Alto Sax
+TrmStcEP	Cool! Trem. Suitcase EP
+SoloTrp*	Solo Trumpet *
+SwtTrmpt	Sweet Trumpet
+PickBas*	Picked Bass *

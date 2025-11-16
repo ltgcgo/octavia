@@ -40,7 +40,7 @@ export class SeamstressStrictWriter {
 export class Seamstress {
 	/** Masks endianness of length values. 0 for BE, 1 for LE. */
 	static MASK_ENDIAN: number;
-	/** Masks encoding of length values. 0 for VLV-8, 1 for u32. "Little-endian VLV-8" is invalid and error out. */
+	/** Masks encoding of length values. 0 for VLV-8, 1 for u32. "Little-endian VLV-8" is invalid and will error out. */
 	static MASK_LENGTH: number;
 	/** Masks the boolean of if the chunk payloads are padded or not. A true value will treat chunks as padded to even bytes. */
 	static MASK_PADDED: number;
