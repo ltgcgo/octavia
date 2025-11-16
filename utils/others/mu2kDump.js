@@ -3,6 +3,7 @@
 // MU2000 Dumper - Automated sniffing and extraction of demo data in MU2000.
 // Licensed under CC0.
 // Usage: deno run --allow-all in.bin 0x1234
+// Special thanks to ValleyBell for the pointer and dump slice discovery.
 
 let fileBuffer = await Deno.readFile(Deno.args[0]),
 fileLen = fileBuffer.length;
