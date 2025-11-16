@@ -1,5 +1,8 @@
 "use strict";
 
+// SMF Sniffer - Automated sniffing and extraction of SMF data.
+// Licensed under CC0.
+
 let fileBuffer = await Deno.readFile(Deno.args[0]),
 fileLen = fileBuffer.length;
 console.error(`Loaded "${Deno.args[0]}", ${fileLen} bytes in total.`);
