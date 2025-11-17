@@ -380,6 +380,10 @@ let OctaviaDevice = class extends CustomEventSource {
 	set #bitmap(value) {
 		this.#bitmapStore[this.#bitmapPage] = value;
 	};
+	#lcdContrast = 16; // 0 ~ 16, 0% ~ 100%
+	get lcdContrast() {
+		return this.#lcdContrast;
+	};
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
 	#chType = new Uint8Array(allocated.ch); // Types of channels
@@ -3927,8 +3931,33 @@ let OctaviaDevice = class extends CustomEventSource {
 			// But in practice... They are channel switching commands.
 			let cmd = msg[0];
 			let dPref = `MU1000 RS${upThis.#receiveRS ? "" : " (ignored)"}: `;
+			if (msg[1] !== 0) {
+				console.info(`${dPref}button ${cmd} pressed.`);
+				return;
+			};
 			if (cmd < 16) {
 				switch (cmd) {
+					case 0: {
+						// Show 16 channels
+						//let e = upThis.chRedir(0, track, true);
+						if (upThis.#receiveRS) {
+							upThis.dispatchEvent("portrange", 1);
+							//upThis.dispatchEvent("portstart", e);
+						};
+						console.info(`${dPref}Show single port`);
+						break;
+					};
+					case 1: {
+						// Show 32 channels, but hide info
+						// Hide info should probably not be supported by Octavia.
+						let e = upThis.chRedir(0, track, true);
+						if (upThis.#receiveRS) {
+							upThis.dispatchEvent("portrange", 1);
+							upThis.dispatchEvent("portstart", e);
+						};
+						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}, hide info`);
+						break;
+					};
 					case 2: {
 						// Show all 64 channels
 						let e = upThis.chRedir(0, track, true);
@@ -3941,16 +3970,22 @@ let OctaviaDevice = class extends CustomEventSource {
 					};
 					case 3: {
 						// Show 32 channels
-						let e = upThis.chRedir(msg[1] << 5, track, true);
+						let e = upThis.chRedir(0, track, true);
 						if (upThis.#receiveRS) {
 							upThis.dispatchEvent("portrange", 2);
 							upThis.dispatchEvent("portstart", e);
 						};
-						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}`);
+						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}, hide info.`);
 						break;
 					};
 					default: {
-						console.debug(`${dPref}unknown switch ${cmd} invoked.`);
+						if (cmd >= 4 && cmd < 12) {
+							// MU LCD contrast set
+							// Not sure if this should be supported
+							console.debug(`${dPref}LCD contrast set to ${cmd - 3}.`);
+						} else {
+							console.debug(`${dPref}unknown switch ${cmd} invoked.`);
+						};
 					};
 				};
 			} else if (cmd < 32) {
