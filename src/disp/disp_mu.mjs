@@ -7,7 +7,9 @@ import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
 import {
 	backlight,
-	contrastCache
+	contrastCache,
+	inactivePixel as iPxl,
+	activePixel as aPxl
 } from "./colour.js";
 
 import {getDebugState} from "../state/utils.js";
@@ -198,6 +200,7 @@ let MuDisplay = class extends RootDisplay {
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
 	isMetreAffectedByPan = false;
+	isLcdContrastEnabled = false;
 	msFrame = 75;
 	msActive = 150;
 	msExhaust = 250;
@@ -280,12 +283,18 @@ let MuDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
-		setContrast(upThis.device?.lcdContrast);
+		if (upThis.isLcdContrastEnabled) {
+			setContrast(upThis.device?.lcdContrast);
+			ctx.fillStyle = `${backlight.grYellow}`;
+		} else {
+			inactivePixel = iPxl;
+			activePixel = aPxl;
+			ctx.fillStyle = `${backlight.grYellow}64`;
+		};
 		//console.debug(upThis.#ch, upThis.getChLastNoteAt(upThis.#ch));
 		// Fill with green
 		//ctx.fillStyle = "#af2";
 		//ctx.fillStyle = `${backlight.grYellow}64`;
-		ctx.fillStyle = `${backlight.grYellow}`;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		// Main matrix display
 		upThis.#mmdb.fill(0);
