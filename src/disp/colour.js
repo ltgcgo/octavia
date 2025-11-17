@@ -17,19 +17,12 @@ lcdPixel = {
 	active: 0xaa,
 	range: 0x94
 },
-contrastsActive = [
-	26,
-	35, 44, 53, 62,
-	71, 80, 89, 98,
-	107, 116, 125, 134,
-	143, 152, 161, 170
-],
-contrastsInactive = [
-	6,
-	7, 8, 9, 10,
-	11, 12, 13, 14,
-	15, 16, 17, 18,
-	19, 20, 21, 22
+contrastValues = [
+	[6, 26],
+	[7, 35], [8, 44], [9, 53], [10, 62],
+	[11, 71], [12, 80], [13, 89], [14, 98],
+	[15, 107], [16, 116], [17, 125], [18, 134],
+	[19, 143], [20, 152], [21, 161], [22, 170]
 ];
 
 // Generate caches for easier implementation
@@ -41,8 +34,9 @@ for (let colour in lcdPixel) {
 	});
 };
 let contrastCache = [];
-for (let i = 0; i < contrastsActive.length; i ++) {
-	contrastCache.push([`${lcdPixel.black}${contrastsInactive[i].toString(16).padStart(2, "0")}`, `${lcdPixel.black}${contrastsActive[i].toString(16).padStart(2, "0")}`]);
+for (let contrast of contrastValues) {
+	contrastCache.push([`${lcdPixel.black}${contrast[0].toString(16).padStart(2, "0")}`, `${lcdPixel.black}${contrast[1].toString(16).padStart(2, "0")}`]);
+	contrast.push(contrast[1] - contrast[0]);
 };
 console.debug(contrastCache);
 
@@ -66,5 +60,6 @@ export {
 	backlight,
 	lcdPixel,
 	lcdCache,
+	contrastValues,
 	contrastCache
 };

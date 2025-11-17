@@ -8,10 +8,9 @@ import {getDebugState} from "../state/utils.js";
 
 import {
 	backlight,
-	inactivePixel,
-	activePixel,
-	lcdPixel,
-	lcdCache
+	contrastCache,
+	contrastValues,
+	lcdPixel
 } from "./colour.js";
 
 const exExhaust = 400, exDuration = 1000;
@@ -73,6 +72,7 @@ let Sc8850Display = class extends RootDisplay {
 	#unresolvedEx = false;
 	#awaitEx = 0;
 	#promptEx = 0;
+	#fullRefreshRequest = false;
 	#dumpExpire = 0;
 	#booted = 0;
 	#bootFrame = 0;
@@ -132,6 +132,9 @@ let Sc8850Display = class extends RootDisplay {
 					upThis.#lingerPress[data.part] = 1;
 				};
 			};
+		});
+		upThis.device.addEventListener("lcdcontrast", (ev) => {
+			upThis.#fullRefreshRequest = true;
 		});
 		upThis.bootBm.load(`RsrcName\tBitmap\nboot_mr\t009e003efffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ffffffffffffffffe3ffffffffffffffffffe0007fffffffffffffff8ffffffffffffffffffe0000fffffe3ffffffffffffffffffffffffffff01e01fffff8ffffffffffffffffffffffffffff03ff07f83f007c0787e187f01ffffffffffffff83ffe0f003803800e1f8e3e003fffffffffffffe1fff83838787c18187c70f0607fffffffffffff07ffe0c3f3e3e1f861e3c787e1fffffffffffffc3fff863fff0f1fe1871e1c7f87ffffffffffffe0fffc10fffc787f8e18f8e1fe3fffffffffffff83fff0c7fff1e3fe3847e38ff8fffffffffffffe0fff831fff878ff0e03f0e3fc3fffffffffffffc1ff81c7f3e3e3f8781fc78fe1ffffffffffffff00f01f06070f8301e0fe1e0c07fffffffffffffe0000fe003c7e000f83f8f8003ffffffffffffffc000ffc07e1fe063e1fc3f818fffffffffffffffe01fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\nbs_0\t000700073880000000000\nbs_1\t000700073888081020000\nbs_2\t0007000738080810288e0\nbs_3\t00070007388a0c18288e0\nbs_4\t00070007000a0c18288e0\nbs_5\t0007000700020408088e0\nbs_6\t000700070002040808000\nbs_7\t000700070000000000000`);
 		(async () => {
@@ -620,6 +623,11 @@ let Sc8850Display = class extends RootDisplay {
 				};
 			};
 		});
+		if (upThis.#fullRefreshRequest) {
+			fullRefresh = true;
+			upThis.#fullRefreshRequest = false;
+		};
+		//console.log(`${fullRefresh}, ${upThis.#fullRefreshRequest}`);
 		// Do the actual drawing
 		upThis.#dmdb.forEach((e, i) => {
 			let pX = i % totalWidth, pY = Math.floor(i / totalWidth);
@@ -629,11 +637,16 @@ let Sc8850Display = class extends RootDisplay {
 				ctx.fillStyle = backlight.orange;
 				ctx.fillRect(posX, posY, 5, 5);
 				if (e <= upThis.#pixelOff) {
-					ctx.fillStyle = lcdCache.black[3];
+					ctx.fillStyle = contrastCache[upThis.device?.lcdContrast][0];
 				} else if (e >= upThis.#pixelLit) {
-					ctx.fillStyle = lcdCache.black[4];
+					ctx.fillStyle = contrastCache[upThis.device?.lcdContrast][1];
 				} else {
-					ctx.fillStyle = `${lcdPixel.black}${(Math.ceil(e * lcdPixel.range / 255) + lcdPixel.inactive).toString(16)}`
+					//ctx.fillStyle = `${lcdPixel.black}${(Math.ceil(e * lcdPixel.range / 255) + lcdPixel.inactive).toString(16)}`;
+					let pixelDynRange = upThis.#pixelLit - upThis.#pixelOff,
+					rangedRatio = (e - upThis.#pixelOff) / pixelDynRange,
+					rangedAlpha = Math.round(contrastValues[upThis.device?.lcdContrast][2] * rangedRatio) + contrastValues[upThis.device?.lcdContrast][0];
+					//console.debug(rangedRatio);
+					ctx.fillStyle = `${lcdPixel.black}${rangedAlpha.toString(16)}`;
 				};
 				ctx.fillRect(posX, posY, 4.5, 4.5);
 				self.pixelUpdates = (self.pixelUpdates || 0) + 1;

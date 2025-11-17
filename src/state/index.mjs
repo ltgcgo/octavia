@@ -44,7 +44,10 @@ import {
 	ascii64Dec,
 	getDebugState
 } from "./utils.js";
-import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
+import {
+	contrastCache
+} from "../disp/colour.js"
+//import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
 
 const modeIdx = [
 	"?",
@@ -383,6 +386,13 @@ let OctaviaDevice = class extends CustomEventSource {
 	#lcdContrast = 16; // 0 ~ 16, 0% ~ 100%
 	get lcdContrast() {
 		return this.#lcdContrast;
+	};
+	set lcdContrast(value) {
+		if (value < 0 || value >= contrastCache.length) {
+			value = contrastCache.length - 1;
+		};
+		this.#lcdContrast = value;
+		this.dispatchEvent("lcdcontrast", value);
 	};
 	#chActive = new Uint8Array(allocated.ch); // Whether the channel is in use
 	#chReceive = new Uint8Array(allocated.ch); // Determine the receiving channel
@@ -2207,7 +2217,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.modelEx.sg.splitMask = false;
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
-		upThis.#lcdContrast = 16; // Full contrast
+		upThis.lcdContrast = 16; // Full contrast
 		for (let i = 0; i < upThis.#bitmapStore.length; i ++) {
 			upThis.#bitmap.fill(0);
 		};
@@ -3983,7 +3993,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						if (cmd >= 4 && cmd < 12) {
 							// MU LCD contrast set
 							// Not sure if this should be supported
-							upThis.#lcdContrast = (12 - cmd) << 1;
+							upThis.lcdContrast = (12 - cmd) << 1;
 							console.debug(`${dPref}LCD contrast set to ${cmd - 3}.`);
 						} else {
 							console.debug(`${dPref}unknown switch ${cmd} invoked.`);
