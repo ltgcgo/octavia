@@ -185,7 +185,8 @@ let MuDisplay = class extends RootDisplay {
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
 	isMetreAffectedByPan = false;
-	msActive = 200;
+	msFrame = 75;
+	msActive = 150;
 	msExhaust = 250;
 	clockSource;
 	constructor() {

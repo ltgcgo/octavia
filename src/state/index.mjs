@@ -2207,6 +2207,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.modelEx.sg.splitMask = false;
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
+		upThis.#lcdContrast = 16; // Full contrast
 		for (let i = 0; i < upThis.#bitmapStore.length; i ++) {
 			upThis.#bitmap.fill(0);
 		};
@@ -3944,7 +3945,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.dispatchEvent("portrange", 1);
 							//upThis.dispatchEvent("portstart", e);
 						};
-						console.info(`${dPref}Show single port`);
+						console.info(`${dPref}Show single port.`);
 						break;
 					};
 					case 1: {
@@ -3952,10 +3953,10 @@ let OctaviaDevice = class extends CustomEventSource {
 						// Hide info should probably not be supported by Octavia.
 						let e = upThis.chRedir(0, track, true);
 						if (upThis.#receiveRS) {
-							upThis.dispatchEvent("portrange", 1);
+							upThis.dispatchEvent("portrange", 2);
 							upThis.dispatchEvent("portstart", e);
 						};
-						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}, hide info`);
+						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}.`);
 						break;
 					};
 					case 2: {
@@ -3965,7 +3966,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.dispatchEvent("portrange", 4);
 							upThis.dispatchEvent("portstart", e);
 						};
-						console.info(`${dPref}Show CH${e + 1}~CH${e + 64}`);
+						console.info(`${dPref}Show CH${e + 1}~CH${e + 64}.`);
 						break;
 					};
 					case 3: {
@@ -4000,7 +4001,7 @@ let OctaviaDevice = class extends CustomEventSource {
 					upThis.dispatchEvent("portstart", e >> 4);
 					upThis.#selectPort = cmd - 32;
 				};
-				console.info(`${dPref}Show CH${e + 1}~CH${e + 16}`);
+				console.info(`${dPref}Show CH${e + 1}~CH${e + 16}.`);
 			};
 		}).add([73, 11, 0], (msg, track) => {
 			// MU1000/2000 native channel switch
