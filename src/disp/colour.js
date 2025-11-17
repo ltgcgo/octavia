@@ -16,7 +16,21 @@ lcdPixel = {
 	medium: 0x3b,
 	active: 0xaa,
 	range: 0x94
-};
+},
+contrastsActive = [
+	26,
+	35, 44, 53, 62,
+	71, 80, 89, 98,
+	107, 116, 125, 134,
+	143, 152, 161, 170
+],
+contrastsInactive = [
+	6,
+	7, 8, 9, 10,
+	11, 12, 13, 14,
+	15, 16, 17, 18,
+	19, 20, 21, 22
+];
 
 // Generate caches for easier implementation
 let lcdCache = {}, lcdCacheTransparency = "06,68,2a,16,aa,3b".split(",");
@@ -26,6 +40,11 @@ for (let colour in lcdPixel) {
 		lcdCache[colour].push(`${lcdPixel[colour]}${e}`);
 	});
 };
+let contrastCache = [];
+for (let i = 0; i < contrastsActive.length; i ++) {
+	contrastCache.push([`${lcdPixel.black}${contrastsInactive[i].toString(16).padStart(2, "0")}`, `${lcdPixel.black}${contrastsActive[i].toString(16).padStart(2, "0")}`]);
+};
+console.debug(contrastCache);
 
 // For backwards compatibility
 let bgOrange = `${backlight.orange}64`,
@@ -46,5 +65,6 @@ export {
 	activePixel,
 	backlight,
 	lcdPixel,
-	lcdCache
+	lcdCache,
+	contrastCache
 };

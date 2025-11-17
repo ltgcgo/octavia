@@ -7,11 +7,24 @@ import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
 import {
 	backlight,
-	inactivePixel,
-	activePixel
+	contrastCache
 } from "./colour.js";
 
 import {getDebugState} from "../state/utils.js";
+
+let currentContrast = 16;
+let inactivePixel,
+activePixel;
+const setContrast = (contrast) => {
+	if (contrast < 0 || contrast > contrastCache.length) {
+		currentContrast = contrastCache.length - 1;
+	} else {
+		currentContrast = contrast;
+	};
+	inactivePixel = contrastCache[currentContrast][0];
+	activePixel = contrastCache[currentContrast][1];
+	//console.debug(activePixel);
+};
 
 const mprWidth = 8,
 mpaWidth = 7,
@@ -267,10 +280,12 @@ let MuDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = Date.now();
+		setContrast(upThis.device?.lcdContrast);
 		//console.debug(upThis.#ch, upThis.getChLastNoteAt(upThis.#ch));
 		// Fill with green
 		//ctx.fillStyle = "#af2";
-		ctx.fillStyle = `${backlight.grYellow}64`;
+		//ctx.fillStyle = `${backlight.grYellow}64`;
+		ctx.fillStyle = `${backlight.grYellow}`;
 		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		// Main matrix display
 		upThis.#mmdb.fill(0);
