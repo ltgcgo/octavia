@@ -85,6 +85,17 @@ visualizer.addEventListener("banklevel", (ev) => {
 });
 
 const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
+
+// Sanitize filename to prevent path traversal attacks
+let sanitizeFilename = function(filename) {
+	if (typeof filename !== 'string') {
+		return '';
+	}
+	// Remove path traversal sequences and directory separators
+	// Allow alphanumeric, dots, hyphens, and underscores
+	return filename.replace(/\.\./g, '').replace(/[\/\\]/g, '').replace(/^\.+/, '');
+};
+
 let getBlobFrom = async function (filename) {
 	let i = 0;
 	while (i < srcPaths.length) {

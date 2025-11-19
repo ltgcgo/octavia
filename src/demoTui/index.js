@@ -44,6 +44,17 @@ let resizer = function () {
 let demoPool = new SheetData();
 let stList = $e("span#demo-list"), stDemo = [];
 const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
+
+// Sanitize filename to prevent path traversal attacks
+let sanitizeFilename = function(filename) {
+	if (typeof filename !== 'string') {
+		return '';
+	}
+	// Remove path traversal sequences and directory separators
+	// Allow alphanumeric, dots, hyphens, and underscores
+	return filename.replace(/\.\./g, '').replace(/[\/\\]/g, '').replace(/^\.+/, '');
+};
+
 let getBlobFrom = async function (filename) {
 	let i = 0;
 	while (i < srcPaths.length) {
@@ -90,8 +101,9 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
 				textDisplay.innerHTML = `Loading demo ${e.innerText.toUpperCase()}.${"<br/>".repeat(23)}`;
-				demoBlobs[e.title].midi = await (await getBlobFrom(`${e.title}.mid`)).blob();
-				demoBlobs[e.title].wave = await (await getBlobFrom(`${e.title}.opus`)).blob();
+				let sanitizedTitle = sanitizeFilename(e.title);
+				demoBlobs[e.title].midi = await (await getBlobFrom(`${sanitizedTitle}.mid`)).blob();
+				demoBlobs[e.title].wave = await (await getBlobFrom(`${sanitizedTitle}.opus`)).blob();
 			};
 			textDisplay.innerHTML = `Demo ${e.innerText.toUpperCase()} ready.${"<br/>".repeat(23)}`;
 			audioPlayer.currentTime = 0;
