@@ -34,6 +34,19 @@ const modeNames = {
 	"motif": "YmhMotif"
 };
 
+// HTML escape function to prevent XSS attacks
+let escapeHtml = function (text) {
+	if (typeof text !== 'string') {
+		return text;
+	}
+	return text
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#039;');
+};
+
 // Velocity to brightness
 let velToLuma = function (velo) {
 	let newVel = velo * 2 + 1;
@@ -72,7 +85,7 @@ let TuiDisplay = class extends RootDisplay {
 					if (sum.efxSink[i]) {
 						partName = `<u>${partName}</u>`;
 					};
-					fields[line] = `${partName}:${voiceName.name.slice(0, 8).padEnd(8, " ")}${voiceName.ending}${voiceName.standard} ${sum.chType[i]} ${map[upThis.device?.getChCc(i, 7) >> 1]}${map[upThis.device?.getChCc(i, 7) >> 1]}${waveMap[upThis.device?.getChCc(i, 1) >> 5]} ${map[upThis.device?.getChCc(i, 91) >> 1]}${map[upThis.device?.getChCc(i, 93)]}${map[upThis.device?.getChCc(i, 94)]}${map[upThis.device?.getChCc(i, 74)]}${map[upThis.device?.getChCc(i, 71)]}${(upThis.device?.getChCc(i, 65) >> 6) ? map[upThis.device?.getChCc(i, 5) >> 1] : " "}${sum.ace[0] ? map[upThis.device.getChAce(i, 0) >> 1] : " "}${sum.ace[1] ? map[upThis.device.getChAce(i, 1) >> 1] : " "} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(upThis.device?.getChCc(i, 10))}:`;
+					fields[line] = `${partName}:${escapeHtml(voiceName.name.slice(0, 8).padEnd(8, " "))}${escapeHtml(voiceName.ending)}${escapeHtml(voiceName.standard)} ${sum.chType[i]} ${map[upThis.device?.getChCc(i, 7) >> 1]}${map[upThis.device?.getChCc(i, 7) >> 1]}${waveMap[upThis.device?.getChCc(i, 1) >> 5]} ${map[upThis.device?.getChCc(i, 91) >> 1]}${map[upThis.device?.getChCc(i, 93)]}${map[upThis.device?.getChCc(i, 94)]}${map[upThis.device?.getChCc(i, 74)]}${map[upThis.device?.getChCc(i, 71)]}${(upThis.device?.getChCc(i, 65) >> 6) ? map[upThis.device?.getChCc(i, 5) >> 1] : " "}${sum.ace[0] ? map[upThis.device.getChAce(i, 0) >> 1] : " "}${sum.ace[1] ? map[upThis.device.getChAce(i, 1) >> 1] : " "} ${textedPitchBend(sum.chPitch[i])} ${textedPanning(upThis.device?.getChCc(i, 10))}:`;
 					sum.chKeyPr[i].forEach(function (e1, i1) {
 						if (e1.v > 0) {
 							fields[line] += ` <span style="opacity:${Math.round(e1.v / 1.27) / 100}" class="${{4: "state-hold"}[e1.s] || ""}">${noteNames[i1 % 12]}${noteRegion[Math.floor(i1 / 12)]}</span>`;
@@ -87,7 +100,7 @@ let TuiDisplay = class extends RootDisplay {
 			st = fields.length - 1;
 			while (st >= line) {
 				if (sum.texts[metaLine]?.data.length) {
-					fields[st] = `${sum.texts[metaLine].mask ? "        " : sum.texts[metaLine].type.padStart(8, " ")}: ${(sum.texts[metaLine].data || "")}`.padEnd(100, " ");
+					fields[st] = `${sum.texts[metaLine].mask ? "        " : escapeHtml(sum.texts[metaLine].type).padStart(8, " ")}: ${escapeHtml(sum.texts[metaLine].data || "")}`.padEnd(100, " ");
 				};
 				if (sum.texts[metaLine]?.data.length > 0 || sum.texts[metaLine]?.data.length === undefined) {
 					st --;
