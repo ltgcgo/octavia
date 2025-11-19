@@ -28,7 +28,9 @@ Diploid3	Diploid E. Piano 3
 Easy EP	Easy Electric Piano
 Cheap EP	Cheap E. Piano
 Funky EP	Funky E. Piano
+TrmStcEP	Cool! Trem. Suitcase EP
 GalaxyEP	Cool! Galaxy EP
+Trem.EP*	Cool! Tremolo EP
 EPiano2#	Electric Piano 2 #
 EPiano2K	Electric Piano 2 KSP
 VX EPno2	VX Electric Piano 2
@@ -74,6 +76,7 @@ NylonGt2	Nylon Guitar 2
 NylonGt3	Nylon Guitar 3
 VelGtHrm	Velo Guitar Harmonics
 DecayEsG	Decay Spanish Guitar
+ClassGt*	Classic Guitar *
 SteelGt#	Steel Guitar #
 SteelGt2	Steel Guitar 2
 12StrGtr	12-String Guitar
@@ -107,6 +110,7 @@ MutedGt*	Muted Guitar *
 Ovrdriv#	Overdriven Guitar #
 OvdrGtDt	Detuned Overdrive Guitar
 BrtMnhtn	Bright Manhattan Guitar
+Ovrdriv*	Overdriven Guitar *
 Dist.Gt#	Distortion Guitar #
 DstRthmG	Distorted Rhythm Guitar
 DistGtr2	Distortion Guitar 2
@@ -138,6 +142,7 @@ PickBas2	Picked Bass 2
 M.PkBass	Muted Picked Bass
 HardPick	Hard Picked Bass
 RzHardPk	Resonant Hard Pick Bass
+PickBas*	Picked Bass *
 Fretles#	Fretless Bass #
 Fretles2	Fretless Bass 2
 Fretles3	Fretless Bass 3
@@ -187,6 +192,8 @@ SlwTrStr	Slow Tremolo Strings
 Susp.Str	Suspense Strings
 Det.Fear	Detuned Fear Strings
 BrTrmStr	Bright Tremolo Strings
+TremStr*	Tremolo Strings *
+LvTrmStr	Live! Tremolo Strings
 PizzOct.	Pizzcato Octave
 ElecHarp	Electric Harp
 DtVliHrp	Detuned Violin Harp
@@ -202,10 +209,14 @@ SolidStr	Solid Strings
 SwellStr	Swell Strings
 3 OctStr	3 Octave Strings
 5PartStr	5-Part Strings
-Str.Ens*	String Ensemble *
+StrngEns	Strings Ensemble *
+OrchStr*	Live! Orchestra Strings
 StSlwStr	Stereo Slow Strings
 LegatoSt	Legato Strings
 ChmbrStr	Chamber Strings
+StrQuart	Strings Quartet
+Marcato*	Marcato Strings *
+ArcoStr*	Live! Arco Strings
 ZephyrS.	Zephyr Strings
 Reso Str	Resonant Strings
 Syn.Str3	Synth Strings 3
@@ -234,6 +245,8 @@ SweetTrp	Sweet Trumpet
 MlSwtTrp	Mellow Sweet Trumpet
 NormlTrp	Normal Trumpet
 Bril Trp	Brilliant Trumpet
+SoloTrp*	Solo Trumpet *
+SwtTrmpt	Sweet! Trumpet
 BrtTromb	Bright Trombone
 MelloTrb	Mellow Trombone
 BrilTrmb	Brilliant Trombone
@@ -281,6 +294,8 @@ PwrAltSx	Power Alto Sax
 FakeAlto	Fake Alto Sax
 FakeAlt+	Fake Alto Plus
 DFakeAlt	Dark Fake Alto Sax
+AltoSax*	Alto Saxophone *
+SwtAltSx	Sweet! Alto Sax
 BrthTnSx	Breathy Tenor Sax
 SoftTenr	Soft Tenor Sax
 TenrSax2	Tenor Saxophone 2
@@ -289,7 +304,7 @@ SuprTnr+	Super Tenor Plus
 SupTnrSt	Super Tenor Stereo
 Tenr&Alt	Tenor & Alto Sax
 BrthTnr2	Breathy Tenor Sax 2
-SwtTenor	Sweet Tenor Sax
+SwtTenor	Sweet! Tenor Sax
 BariSax*	Baritone Sax *
 Oboe   #	Oboe #
 HeinzUni	Heinz Unison Oboe
@@ -298,7 +313,8 @@ BasClari	Bass Clarinet
 Flute  #	Flute #
 NeatBrth	Neat Breathy Flute
 BthBoehm	Breathy Boehm
-SwtPanFl	Sweet Pan Flute
+SwtFlute	Sweet! Flute
+SwtPanFl	Sweet! Pan Flute
 BotlLgto	Bottle Legato
 SqrLead2	Square Lead 2
 LMSquare	LM Square Lead
@@ -398,16 +414,16 @@ S. Latin	Small Latin Kit
 AfroCuba	Live! Afro-Cuban Kit
 AfrCuba2	Live! Afro-Cuban Kit 2
 BrazilKt	Live! Brazillian Kit
-PopLatin	Pop Laton Kit
+PopLatin	Pop Latin Kit
 StndKit#	Standard Kit #
 DarkRoom	Dark Room Kit
 NtrlFunk	Natural Funk Kit
 Lv StdKt	Live! Standard Kit
 LvFunkKt	Live! Funk Kit
 Lv Brush	Live! Brush Kit
-Std&Perc	Live! Standard+Perc Kit
-FunkPerc	Live! Funk + Perc Kit
-Brush&P.	Live! Brush + Perc Kit
+Std&Perc	Live! Stand. + Perc. Kit
+FunkPerc	Live! Funk + Perc. Kit
+Brush&P.	Live! Brush + Perc. Kit
 LiveRm A	Live! Room Kit A
 LiveRm B	Live! Room Kit B
 GrdPnoSt	Grand Piano Stereo
@@ -689,11 +705,3 @@ ANHardBr	AN Hard Brass
 DirtySaw	Dirty Sawtooth Lead
 BPF Step	Band Passed Steps
 Dist.5th	Distorted Fifth
-ClassGt*	Classic Guitar *
-Ovrdriv*	Overdriven Guitar *
-AltoSax*	Alto Saxophone *
-SwtAltSx	Sweet! Alto Sax
-TrmStcEP	Cool! Trem. Suitcase EP
-SoloTrp*	Solo Trumpet *
-SwtTrmpt	Sweet Trumpet
-PickBas*	Picked Bass *

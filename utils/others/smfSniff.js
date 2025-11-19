@@ -8,7 +8,7 @@ fileLen = fileBuffer.length;
 console.error(`Loaded "${Deno.args[0]}", ${fileLen} bytes in total.`);
 
 let l9Dec = new TextDecoder("l9"),
-smfMinSize = 4096, smfMaxSize = 1048576, smfIndex = 0;
+smfMinSize = 64, smfMaxSize = 1048576, smfIndex = 0;
 
 const readI32 = (buf) => {
 	let gatedLength = Math.min(4, buf.length);

@@ -29,7 +29,9 @@ VX E.Pno	VX El. Piano
 Diploid1	Diploid EP 1
 Diploid2	Diploid EP 2
 Diploid3	Diploid EP 3
-Easy EP	Easy EP.
+Easy EP	Easy E.Piano
+TrmStcEP	TremSuitcsEP
+Trem.EP*	Tremolo EP *
 EPiano2#	El. Piano 2#
 EPiano2K	El.Piano 2 K
 Chor.EP2	Chorus EP 2
@@ -80,6 +82,7 @@ RockOrg#	Rock Organ #
 RotaryOr	Rotary Organ
 SlwRotar	Slow Rotary
 FstRotar	Fast Rotary
+RockOrg*	Rock Organ *
 ChurOrg3	ChurchOrgan3
 ChurOrg2	ChurchOrgan2
 OrgFlute	Organ Flute
@@ -92,6 +95,7 @@ NylonGt2	Nylon Gtr. 2
 NylonGt3	Nylon Gtr. 3
 VelGtHrm	VelGtHrmonix
 DecayEsG	DecayEspaGtr
+ClassGt*	Classic Gtr*
 SteelGt#	Steel Gtr. #
 SteelGt2	Steel Gtr. 2
 12StrGtr	12-Str Gtr.
@@ -128,6 +132,7 @@ Ovrdriv#	Overdriven #
 OvdrGtDt	OvrdrvGtrDet
 Gt.Pinch	Guitar Pinch
 BrtMnhtn	Bright Mnhtn
+Ovrdriv*	Overdriven *
 Dist.Gt#	Dist. Gtt. #
 DstRthmG	DistRhythmGt
 DistGtr2	Dist. Gtr. 2
@@ -159,10 +164,12 @@ Mod Bass	ModulateBass
 RezChase	Reso. Chase
 FW EBass	FlatWndEBass
 MelFgrBa	MellowFinger
+Alp.Bass	Alpine Bass
 PickBas2	Picked Bass2
 M.PkBass	MutedPikBass
 HardPick	HardPickBass
 RzHardPk	ResoHardPick
+PickBas*	Picked Bass*
 Fretles#	FretlesBass#
 Fretles2	FretlessBas2
 Fretles3	FretlessBas3
@@ -178,6 +185,7 @@ PunchThm	PunchThumbBs
 Thum&Slp	Thumb & Slap
 SlapBa2#	Slap Bass 2#
 VeloSlap	VeloSwchSlap
+FunkBas*	Funk Bass *
 SynBs1Dk	DarkSynBass1
 FastResB	FastReso.Bas
 ResoBass	ResonantBass
@@ -225,12 +233,15 @@ SlCelloS	SlowCelloSec
 ContrSec	Contr. Sect.
 HdContrS	HardContrSec
 SlContrS	SlowContrSec
+Contrbs*	Contrabass *
 TremStr#	Tremolo Str#
 SlwTrStr	SlowTremStr.
 Susp.Str	Suspense Str
 Fear Str	Fear Strings
 Det.Fear	Detuned Fear
 BrTrmStr	BriteTremStr
+TremStr*	TremStrings*
+LvTrmStr	LiveTremStr.
 PizzOct.	Pizz. Octave
 ElecHarp	ElectricHarp
 VlinHarp	Violin Harp
@@ -253,13 +264,17 @@ SolidStr	Solid String
 SwellStr	SwellStrings
 3 OctStr	3 Oct. Str.
 5PartStr	5 Part Str.
-Str.Ens*	StringsEns.*
+StrngEns	Strings Ens.
+OrchStr*	OrchStrings*
 Strngs2#	Strings 2 #
 StSlwStr	St.Slow Str.
 LegatoSt	Legato Str.
 Warm Str	Warm Strings
 70s Str	70s' Strings
 ChmbrStr	Chamber Str.
+StrQuart	StrngQuartet
+Marcato*	Marcato Str*
+ArcoStr*	ArcoStrings*
 ZephyrS.	Zephyr Strs.
 Reso Str	Resonant Str
 Syn.Str3	Synth Str. 3
@@ -294,6 +309,8 @@ MlSwtTrp	Mel.SweetTrp
 NormlTrp	Normal Trmpt
 Bril Trp	BrilliantTrp
 FlugelHr	Flugel Horn
+SoloTrp*	SoloTrumpet*
+SwtTrmpt	SweetTrumpet
 BrtTromb	Brt Trombone
 MelloTrb	Mellow Tromb
 BrilTrmb	BrillintTrmb
@@ -348,6 +365,8 @@ PwrAltSx	Power Alt Sx
 FakeAlto	Fake Alto Sx
 FakeAlt+	Fake Alto +
 DFakeAlt	DarkFakeAlto
+AltoSax*	Alto Sax. *
+SwtAltSx	Swt Alto Sax
 BrthTnSx	BrthyTenorSx
 SoftTenr	SoftTenorSax
 TenrSax2	Tenor Sax 2
@@ -819,15 +838,3 @@ AbacabLd	Abacab Lead
 Radio Nz	Radio Noise
 FreeRthm	Free Rhythm
 Dist.5th	Distorted5th
-ClassGt*	Classic Gtr*
-Ovrdriv*	Overdriven *
-RockOrg*	Rock Organ *
-AltoSax*	Alto Sax. *
-SwtAltSx	Swt Alto Sax
-TrmStcEP	TremSuitcsEP
-SoloTrp*	SoloTrumpet*
-SwtTrmpt	SweetTrumpet
-Alp.Bass	Alpine Bass
-FunkBas*	Funk Bass *
-PickBas*	Picked Bass*
-Easy EP	Easy E.Piano

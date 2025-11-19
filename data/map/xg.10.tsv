@@ -32,7 +32,9 @@ Diploid2	Diploid 2
 Diploid3	Diploid 3
 Easy EP	Easy ElPno
 Cheap EP	Cheap EP.
+TrmStcEP	TremStcsEP
 GalaxyEP	Galaxy EP
+Trem.EP*	Trem. EP *
 EPiano2#	El.Piano2#
 EPiano2K	ElPiano 2K
 Chor.EP2	ChorusEP.2
@@ -92,6 +94,7 @@ RockOrg#	RockOrgan#
 RotaryOr	RotaryOrgn
 SlwRotar	SlowRotary
 FstRotar	FastRotary
+RockOrg*	RockOrgan*
 ChurOrg3	ChurchOrg3
 ChurOrg2	ChurchOrg2
 NotreDam	Notre Dame
@@ -106,6 +109,7 @@ NylonGt2	Nylon Gt.2
 NylonGt3	Nylon Gt.3
 VelGtHrm	VelGtHrmnx
 DecayEsG	DecayEspGt
+ClassGt*	ClassicGt*
 SteelGt#	Steel Gt.#
 SteelGt2	Steel Gt.2
 12StrGtr	12-Str Gt.
@@ -143,6 +147,7 @@ Ovrdriv#	Overdrive#
 OvdrGtDt	OvdrGtrDet
 Gt.Pinch	Gtr. Pinch
 BrtMnhtn	BriteMnhtn
+Ovrdriv*	Overdrive*
 Dist.Gt#	Dist. Gt.#
 DstRthmG	DistRthmGt
 DistGtr2	Dist.Gtr 2
@@ -177,10 +182,12 @@ RezChase	Reso.Chase
 BlueBass	Blues Bass
 FW EBass	FltWdEBass
 MelFgrBa	MelFingrBa
+Alp.Bass	AlpineBass
 PickBas2	PickedBas2
 M.PkBass	MutePkBass
 HardPick	Hard Pick
 RzHardPk	ResoHardPk
+PickBas*	PickedBas*
 Fretles#	FretlesBs#
 Fretles2	FretlesBs2
 Fretles3	FretlesBs3
@@ -196,6 +203,7 @@ PunchThm	PunchThmBs
 Thum&Slp	Thumb&Slap
 SlapBa2#	SlapBass2#
 VeloSlap	VeloSwSlap
+FunkBas*	Funk Bass*
 SynBs1Dk	SynBass1Dk
 FastResB	FastResoBs
 AcidBass	Acid Bass
@@ -244,16 +252,19 @@ CadenzDk	DarkCadnza
 ViolinSc	ViolinSect
 HdVlnSec	HardVlnSec
 SlVlnSec	SlowVlnSec
+Viola  *	Viola *
 DblViola	DoublViola
 ViolaSec	Viola Sect
 HdVlaSec	HardVlaSec
 SlVlaSec	SlowVlaSec
+Cello  *	Cello *
 CellSect	Cello Sect
 HdCelloS	HdCelloSec
 SlCelloS	SlCelloSec
 ContrSec	ContrbSect
 HdContrS	HdContrSec
 SlContrS	SlContrSec
+Contrbs*	Contrabas*
 TremStr#	Trem.Str #
 SlwTrStr	SlowTrmStr
 Susp.Str	Susp. Str.
@@ -261,7 +272,11 @@ Fear Str	FearString
 Det.Fear	DetuneFear
 Apoclyps	Apocalypse
 BrTrmStr	BrtTremStr
+TremStr*	TremStrng*
+LvTrmStr	LvTremStr.
 PizzOct.	PizzOctave
+Harp   *	Harp *
+Hakbrett	Hackbrett
 YangChin	Yang Chin
 ElecHarp	Elec. Harp
 VlinHarp	ViolinHarp
@@ -285,7 +300,8 @@ SolidStr	SolidStrng
 SwellStr	Swell Str.
 3 OctStr	3 Oct.Str.
 5PartStr	5-Part Str
-Str.Ens*	StringEns*
+StrngEns	StringsEns
+OrchStr*	OrchStrng*
 Strngs2#	Strings 2#
 StSlwStr	St.SlowStr
 LegatoSt	Legato Str
@@ -293,6 +309,9 @@ Warm Str	WarmString
 70s Str	70s'String
 Strings3	Strings 3
 ChmbrStr	ChamberStr
+StrQuart	StrQuartet
+Marcato*	MarctoStr*
+ArcoStr*	Arco Str.*
 ZephyrS.	ZephyrStr.
 Reso Str	Reso. Str.
 Syn.Str3	SynthStr.3
@@ -341,6 +360,8 @@ MlSwtTrp	Mel.SwtTrp
 NormlTrp	Normal Trp
 Bril Trp	Brill. Trp
 FlugelHr	FlugelHorn
+SoloTrp*	SoloTrmpt*
+SwtTrmpt	SweetTrmpt
 Trombon#	Trombone #
 Trombon2	Trombone 2
 BrtTromb	BrtTrombon
@@ -408,6 +429,8 @@ PwrAltSx	PowerAltSx
 FakeAlto	Fake Alto
 FakeAlt+	Fake Alto+
 DFakeAlt	DrkFakeAlt
+AltoSax*	Alto Sax *
+SwtAltSx	SwtAltoSax
 BrthTnSx	BrthyTnrSx
 SoftTenr	SoftTenrSx
 TenrSax2	TenorSax 2
@@ -421,6 +444,7 @@ BariSax*	Bari. Sax*
 HeinzUni	HeinzUnisn
 Exp.Oboe	Expr. Oboe
 BasClari	BassClari.
+Piccolo*	Piccolo *
 NeatBrth	NeatBreath
 BthBoehm	BrthyBoehm
 Pastoral	Pastorale
@@ -550,10 +574,14 @@ Reso&Pan	Reso.&Pan.
 Ana.Echo	AnalogEcho
 DetSitar	Det. Sitar
 Syn.Raga	Synth Raga
+Sitar  *	Sitar *
 MuteBnjo	MutedBanjo
 ElecBnjo	Elec.Banjo
 Gopichnt	Gopichant
+Banjo  *	Banjo *
+Shmisen*	Shamisen *
 TaishoKn	Taisho-Kin
+Koto   *	Koto *
 BigKlmba	BigKalimba
 Hichriki	Hichiriki
 TiklBell	TickleBell
@@ -1085,15 +1113,3 @@ BPF Step	BPF Steps
 Dist.5th	Dist.Fifth
 HardNoiz	Hard Noise
 Celuloid	Celluloid
-Piccolo*	Piccolo *
-ClassGt*	ClassicGt*
-Ovrdriv*	Overdrive*
-RockOrg*	RockOrgan*
-AltoSax*	Alto Sax *
-SwtAltSx	SwtAltoSax
-TrmStcEP	TremStcsEP
-SoloTrp*	SoloTrmpt*
-SwtTrmpt	SweetTrmpt
-Alp.Bass	AlpineBass
-FunkBas*	Funk Bass*
-PickBas*	PickedBas*
