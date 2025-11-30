@@ -412,7 +412,7 @@ let MuDisplay = class extends RootDisplay {
 				rendPos ++;
 			};
 			// Render fonts
-			if (rendMode < 2) {
+			if (rendMode === 0 || (rendMode === 1 && upThis.device?.lcdHideBankInfo === false)) {
 				let voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " "),
 				primBuf = upThis.getChPrimitives(upThis.#ch);
 				let bnkSel = (primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");

@@ -494,6 +494,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	polyIndexShrink = true;
 	polyIndexLatest = 0;
 	polyIndexLast = 0;
+	lcdHideBankInfo = false;
 	chRedir(part, track, noConquer) {
 		let upThis = this;
 		if (upThis.#trkAsReq[track]) {
@@ -2218,6 +2219,7 @@ let OctaviaDevice = class extends CustomEventSource {
 		upThis.#bitmapExpire = 0;
 		upThis.#bitmapPage = 0;
 		upThis.lcdContrast = 16; // Full contrast
+		upThis.lcdHideBankInfo = false;
 		for (let i = 0; i < upThis.#bitmapStore.length; i ++) {
 			upThis.#bitmap.fill(0);
 		};
@@ -3956,6 +3958,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							//upThis.dispatchEvent("portstart", e);
 						};
 						console.info(`${dPref}Show single port.`);
+						upThis.lcdHideBankInfo = false;
 						break;
 					};
 					case 1: {
@@ -3967,6 +3970,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.dispatchEvent("portstart", e);
 						};
 						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}.`);
+						upThis.lcdHideBankInfo = false;
 						break;
 					};
 					case 2: {
@@ -3977,6 +3981,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.dispatchEvent("portstart", e);
 						};
 						console.info(`${dPref}Show CH${e + 1}~CH${e + 64}.`);
+						upThis.lcdHideBankInfo = false;
 						break;
 					};
 					case 3: {
@@ -3987,6 +3992,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							upThis.dispatchEvent("portstart", e);
 						};
 						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}, hide info.`);
+						upThis.lcdHideBankInfo = true;
 						break;
 					};
 					default: {
