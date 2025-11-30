@@ -487,7 +487,7 @@ let MuDisplay = class extends RootDisplay {
 			};
 		};
 		// Show bottom caps
-		ctx.fillStyle = activePixel;
+		ctx.fillStyle = upThis.isLcdContrastEnabled ? "#000" : activePixel;
 		ctx.fillText("CHANNEL     SEC     PART", 118, 254);
 		ctx.fillText("VOL", 420, 254);
 		ctx.fillText("EXP", 468, 254);
