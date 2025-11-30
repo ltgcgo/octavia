@@ -313,6 +313,7 @@ self.currentPerformance = currentPerformance;
 	demoInfo["PhoenixA"] = mu1kAni;
 	demoInfo["PhoenixB"] = {class: "munativ", fps: 8, size: 32, offset: 6};
 	demoInfo["R-love"] = mu1kAni;
+	demoInfo["R-loveLM"] = mu1kAni;
 };
 
 // Hardcoded performance
