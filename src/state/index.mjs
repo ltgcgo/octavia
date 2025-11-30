@@ -3895,10 +3895,11 @@ let OctaviaDevice = class extends CustomEventSource {
 		}).add([73, 0, 0], (msg, track) => {
 			// MU1000/2000 System
 			let offset = msg[0];
-			let dPref = `MU1000 System - `;
+			let dPref = `MU System - `;
 			msg.subarray(1).forEach((e, i) => {
 				let ri = offset + i;
 				if (ri === 8) {
+					upThis.lcdContrast = Math.max(0, Math.min(8, 9 - e)) << 2;
 					console.debug(`${dPref}LCD contrast: ${e}.`);
 				} else if (ri === 18) {
 					upThis.#subDb[modeMap.xg][1] = [0, 126, 152][e] ?? 127;
@@ -3943,7 +3944,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// MU1000 remote switch
 			// But in practice... They are channel switching commands.
 			let cmd = msg[0];
-			let dPref = `MU1000 RS${upThis.#receiveRS ? "" : " (ignored)"}: `;
+			let dPref = `MU RS${upThis.#receiveRS ? "" : " (ignored)"}: `;
 			if (msg[1] !== 0) {
 				console.info(`${dPref}button ${cmd} pressed.`);
 				return;
