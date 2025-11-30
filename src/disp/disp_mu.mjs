@@ -384,12 +384,12 @@ let MuDisplay = class extends RootDisplay {
 				} else if (chPan > 64) {
 					curStrnL = Math.round(curStrnR * (128 - chPan) >> 6);
 				};
-				if (rendMode) {
-					curStrnL >>= 5;
-					curStrnR >>= 5;
-				} else {
+				if (rendMode === 0 || (rendMode === 1 && upThis.device?.lcdHideBankInfo)) {
 					curStrnL >>= 4;
 					curStrnR >>= 4;
+				} else {
+					curStrnL >>= 5;
+					curStrnR >>= 5;
 				};
 				if (rendMode === 0 || rendMode === 1) {
 					// 16 channel
