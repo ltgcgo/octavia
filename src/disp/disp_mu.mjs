@@ -716,7 +716,7 @@ let MuDisplay = class extends RootDisplay {
 			for (let i = 6; i >= 0; i --) {
 				upThis.#waveBuffer[i + 1] = upThis.#waveBuffer[i];
 			};
-			upThis.#waveBuffer[0] = +(sum.velo[upThis.#ch] > 159);
+			upThis.#waveBuffer[0] = +(sum.velo[upThis.#ch] > 127);
 		};
 		// Show param
 		normParamPaint(upThis.device.getChCc(upThis.#ch, 7), 404, ctx); // vol
