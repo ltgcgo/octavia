@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>GM2 Reset Example - Octavia</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			max-width: 800px;
+			margin: 50px auto;
+			padding: 20px;
+			line-height: 1.6;
+		}
+		.code-block {
+			background-color: #f4f4f4;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			padding: 15px;
+			margin: 15px 0;
+			overflow-x: auto;
+		}
+		button {
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 10px 2px;
+			cursor: pointer;
+			border-radius: 4px;
+		}
+		button:hover {
+			background-color: #45a049;
+		}
+		.info {
+			background-color: #e7f3fe;
+			border-left: 4px solid #2196F3;
+			padding: 10px;
+			margin: 15px 0;
+		}
+		#output {
+			background-color: #f9f9f9;
+			border: 1px solid #ddd;
+			padding: 15px;
+			margin-top: 20px;
+			min-height: 100px;
+			border-radius: 4px;
+		}
+	</style>
+</head>
+<body>
+	<h1>GM2 Reset Example</h1>
+	
+	<div class="info">
+		<strong>About GM2 Reset:</strong> The General MIDI Level 2 (GM2) reset is a SysEx message that resets a MIDI device to its GM2 default state. This ensures consistent playback across different devices and clears all current settings.
+	</div>
+
+	<h2>GM2 Reset SysEx Message</h2>
+	<p>The GM2 reset message is a Universal Non-Realtime SysEx message with the following structure:</p>
+	<div class="code-block">
+		<code>F0 7E 7F 09 03 F7</code>
+	</div>
+	<ul>
+		<li><strong>F0</strong> - SysEx start byte</li>
+		<li><strong>7E</strong> - Universal Non-Realtime message</li>
+		<li><strong>7F</strong> - Device ID (7F = all devices)</li>
+		<li><strong>09</strong> - Sub-ID #1 (General MIDI message)</li>
+		<li><strong>03</strong> - Sub-ID #2 (GM2 System On)</li>
+		<li><strong>F7</strong> - SysEx end byte</li>
+	</ul>
+
+	<h2>How to Send GM2 Reset</h2>
+	<p>Click the button below to send a GM2 reset message using Octavia:</p>
+	<button id="sendGm2Reset">Send GM2 Reset</button>
+	<button id="sendGmReset">Send GM Reset (for comparison)</button>
+
+	<h2>Output:</h2>
+	<div id="output">Click a button to see the output...</div>
+
+	<h2>Code Example</h2>
+	<div class="code-block">
+<pre><code>// Import the state module from Octavia
+import OctaviaState from './dist/state.mjs';
+
+// Create a new Octavia state instance
+const octavia = new OctaviaState();
+
+// Create the GM2 reset SysEx message
+// F0 7E 7F 09 03 F7
+const gm2ResetMessage = new Uint8Array([0xF0, 0x7E, 0x7F, 0x09, 0x03, 0xF7]);
+
+// Send the GM2 reset via sendCmd
+octavia.sendCmd({
+	type: 15,  // Type 15 indicates a SysEx message
+	track: 0,  // Track number (0 for default)
+	data: gm2ResetMessage
+});
+
+console.log('GM2 reset sent successfully!');
+</code></pre>
+	</div>
+
+	<h2>Other Reset Messages</h2>
+	<div class="code-block">
+<pre><code>// GM (General MIDI Level 1) Reset: F0 7E 7F 09 01 F7
+const gmResetMessage = new Uint8Array([0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7]);
+
+// Init/Turn Off: F0 7E 7F 09 02 F7
+const initMessage = new Uint8Array([0xF0, 0x7E, 0x7F, 0x09, 0x02, 0xF7]);
+
+// Send any of these messages using the same method
+octavia.sendCmd({
+	type: 15,
+	track: 0,
+	data: gmResetMessage  // or initMessage, or gm2ResetMessage
+});
+</code></pre>
+	</div>
+
+	<script type="module">
+		// This is a simplified demonstration
+		// In a real application, you would import the actual Octavia library
+		
+		// Import statement (commented out for this standalone demo)
+		// import OctaviaState from '../dist/state.mjs';
+
+		const output = document.getElementById('output');
+		
+		// Mock Octavia for demonstration purposes
+		// In a real scenario, you would use the actual Octavia library
+		class MockOctavia {
+			sendCmd(message) {
+				if (message.type === 15) {
+					const data = message.data;
+					const hexString = Array.from(data)
+						.map(byte => byte.toString(16).toUpperCase().padStart(2, '0'))
+						.join(' ');
+					
+					let messageType = 'Unknown';
+					if (data[0] === 0xF0 && data[1] === 0x7E && data[3] === 0x09) {
+						switch(data[4]) {
+							case 0x01:
+								messageType = 'GM (General MIDI Level 1) Reset';
+								break;
+							case 0x02:
+								messageType = 'Init/Turn Off';
+								break;
+							case 0x03:
+								messageType = 'GM2 (General MIDI Level 2) Reset';
+								break;
+						}
+					}
+					
+					return {
+						success: true,
+						hexString: hexString,
+						messageType: messageType
+					};
+				}
+				return { success: false };
+			}
+		}
+		
+		const octavia = new MockOctavia();
+		
+		document.getElementById('sendGm2Reset').addEventListener('click', () => {
+			// GM2 Reset SysEx: F0 7E 7F 09 03 F7
+			const gm2ResetMessage = new Uint8Array([0xF0, 0x7E, 0x7F, 0x09, 0x03, 0xF7]);
+			
+			const result = octavia.sendCmd({
+				type: 15,
+				track: 0,
+				data: gm2ResetMessage
+			});
+			
+			output.innerHTML = `
+				<strong>✓ GM2 Reset Sent Successfully!</strong><br><br>
+				<strong>Message Type:</strong> ${result.messageType}<br>
+				<strong>Hex Data:</strong> ${result.hexString}<br><br>
+				<em>Note: In this demo, we're using a mock Octavia instance. 
+				In a real application with the full Octavia library, this would 
+				reset the MIDI state to GM2 defaults and log "MIDI reset: GM2" 
+				to the console.</em>
+			`;
+		});
+		
+		document.getElementById('sendGmReset').addEventListener('click', () => {
+			// GM Reset SysEx: F0 7E 7F 09 01 F7
+			const gmResetMessage = new Uint8Array([0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7]);
+			
+			const result = octavia.sendCmd({
+				type: 15,
+				track: 0,
+				data: gmResetMessage
+			});
+			
+			output.innerHTML = `
+				<strong>✓ GM Reset Sent Successfully!</strong><br><br>
+				<strong>Message Type:</strong> ${result.messageType}<br>
+				<strong>Hex Data:</strong> ${result.hexString}<br><br>
+				<em>Note: This is GM Level 1 reset, not GM2. For comparison purposes.</em>
+			`;
+		});
+	</script>
+</body>
+</html>
