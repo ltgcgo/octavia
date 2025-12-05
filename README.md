@@ -19,7 +19,7 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 
 > **Warning**
 > 
-> While using AI to help understand the codebase is allowed, using AI to write code without knowledge is strictly forbidden for this project. People using AI models to code without understanding will be banned. Read [AGENT.md](AGENT.md) for further details.
+> While using AI to help understand the codebase is allowed, using AI to contribute without knowledge is strictly forbidden for this project. People using AI models to contribute without understanding will be banned. Read [AGENT.md](AGENT.md) for further details.
 
 ## What is Octavia?
 The current MIDI landscape is a dumpster fire, at least in the FOSS world. Only proprietary software solutions respect existing MIDI standards, while the FOSS ecosystem largely ignores or even violates the conventions, with TiMidity as the single exception. Octavia, born out of being fed up by the existing antics exhibited by existing FOSS solutions, aims to reach full compliance with existing MIDI standards (MT-32, GM, XG, GS, GM2 and etc.), while exposing simple yet powerful interfaces for developers to build upon.
