@@ -9,6 +9,7 @@ ConGrndK	Concert Grand KSP
 DblConGr	Double Concert Grand
 OldAcPno	Old Acoustic Piano
 GrandP *	Live! Grand Piano
+StGrdPf*	Live! Stereo Grand
 BriteP #	Bright Piano #
 BritPnoK	Bright Piano KSP
 StBrtPno	Stereo Bright Piano
@@ -36,6 +37,7 @@ EPiano2K	Electric Piano 2 KSP
 VX EPno2	VX Electric Piano 2
 Shirakwa	Shirakawa E. Piano
 ShivrDX+	Shivering DX EP Plus
+HyprTine	Hyper Tines EP
 HpschrdK	Harpsichord KSP
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
@@ -350,7 +352,7 @@ PolyPd80	Poly Synth Pad 80
 Wv2001Pd	Wave 2001 Pad
 ClaviPad	Clavichord Pad
 HrmoRain	Harmonic Rain
-SynDrCmp	Synth Drum Comp
+SynDrCmp	Comped Synth Drum
 RndGlock	Round Glockenspiel
 GlokChim	Glockenspiel Chimes
 ChorBell	Choir & Bells

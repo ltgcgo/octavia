@@ -799,7 +799,7 @@ let VoiceBank = class {
 					standard = "GM";
 				} else if (args[2] === 5 || args[2] === 7) {
 					standard = "KG";
-				} else if (args[2] < 144) {
+				} else if (args[2] < 154) {
 					standard = "XG";
 				};
 				break;

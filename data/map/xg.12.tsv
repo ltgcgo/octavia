@@ -10,6 +10,7 @@ ConGrndK	ConcrtGrandK
 DblConGr	DoublConGrnd
 OldAcPno	OldAcouPiano
 GrandP *	LvGrandPiano
+StGrdPf*	LvStGrandPno
 BriteP #	BrightPiano#
 BritPnoK	BrightPianoK
 StBrtPno	StBritePiano
@@ -39,8 +40,11 @@ DXLegend	DX Legend EP
 DX Phase	DX Phase EP
 DXAnalog	DX Analog EP
 VX EPno2	VX El.Piano2
+DX Malet	DX Mallet EP
 Shirakwa	Shirakawa EP
 ShivrDX+	Shiver DX +
+DXModern	DX Modern EP
+HyprTine	Hyper Tines
 HpschrdK	HarpsichordK
 Hpschrd2	Harpsichord2
 Hpschrd3	Harpsichord3
@@ -434,7 +438,7 @@ Converge	Converge Pad
 ClaviPad	Clavich. Pad
 HrmoRain	HarmonicRain
 AfrcWind	African Wind
-SynDrCmp	Syn.DrumComp
+SynDrCmp	CompSyn.Drum
 RndGlock	RoundGlocken
 GlokChim	GlockenChime
 ClearBel	Clear Bells

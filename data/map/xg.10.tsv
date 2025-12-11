@@ -10,6 +10,7 @@ ConGrndK	Con.GrandK
 DblConGr	DblConGrnd
 OldAcPno	OldAcPiano
 GrandP *	LvGrandPno
+StGrdPf*	LvStGrdPno
 BriteP #	BritPiano#
 BritPnoK	BritPianoK
 StBrtPno	StBritePno
@@ -43,8 +44,11 @@ DXLegend	DX Legend
 DXAnalog	DX Analog
 DX Kt EP	DX Koto EP
 VX EPno2	VX EPiano2
+DX Malet	DX Mallet
 Shirakwa	Shirakawa
 ShivrDX+	ShiverDX +
+DXModern	DX Modern
+HyprTine	HyperTines
 HpschrdK	HrpsichrdK
 Hpschrd2	Hrpsichrd2
 Hpschrd3	Hrpsichrd3
@@ -531,7 +535,7 @@ ClaviPad	Clavi. Pad
 HrmoRain	Harmo.Rain
 AfrcWind	AfricaWind
 Ancestrl	Ancestral
-SynDrCmp	SynDrmComp
+SynDrCmp	CompSynDrm
 TinyBell	Tiny Bells
 RndGlock	RoundGlock
 GlokChim	GlockChime
