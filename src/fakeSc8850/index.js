@@ -286,6 +286,7 @@ audioPlayer.onended = function () {
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 	visualizer.loadMapPaths([
+		`./data/map/gsCap.12.tsv`,
 		`./data/map/gm.12.tsv`,
 		`./data/map/ns5r.12.tsv`,
 		`./data/map/xg.12.tsv`,

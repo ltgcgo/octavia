@@ -92,6 +92,26 @@ Oboe   #	@Eng.Horn
 Flute  #	@Flute
 PanFlut#	@PanFlute
 Acou.Ba#	@Aco.Bass
+GrandP**	@GrandPno
+Dulcimr*	@Glocken
+DrawOrg*	@DrawOrgn
+PercOrg*	@DrawOrgn
+RokOrg**	@DrawOrgn
+Bndneon*	@TangoAcd
+ClnGtr**	@OvrDrvGt
+SynBas2*	@Aco.Bass
+TrmStr**	@Violin
+PizStr**	@Violin
+OrchHt**	@Strings1
+SynBrs2*	@Trumpet
+Oboe  **	@Eng.Horn
+Shkhch**	@Shakhchi
+Agogo  *	@TnklBell
+MelodTm*	@Taiko
+Fret.Nz*	@FretNoiz
+Brth.Nz*	@BrthNoiz
+Helcptr*	@Helicptr
+Applauz*	@Applause
 Acou.Gtr	@NylonGtr
 Acou.Tom	@Taiko
 Agogo	@TnklBell

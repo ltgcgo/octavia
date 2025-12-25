@@ -1588,7 +1588,7 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 004	012	128	Room L/R	16	4	gs4:Room L/R
 004	013	128	HouseKit	16	4	gs4:HouseKit
 000	016	128	PowerKit	16	1	gs1:PowerKit
-000	024	128	Electro	16	1	gs1:Electro
+000	024	128	ElectrKt	16	1	gs1:ElectrKt
 000	025	128	AnalogKt	16	1	gs1:AnalogKt
 002	026	128	DanceKit	16	2	gs2:DanceKit
 003	027	128	CR-78 Kt	16	3	gs3:CR-78 Kt

@@ -247,7 +247,7 @@ gs1:CleanGtr	1	0.625
 gs2:CleanGtr		
 gs3:CleanGtr		
 gs3:ClnHalfG		
-gs3:OpnHrdGt		
+gs3:OpnHrdGt	0	0.9375
 gs3:OpnHrdG2		
 gs3:JC ClnGt		
 gs4:AtkClnGt		
@@ -267,7 +267,7 @@ gs1:MutedGtr	1	0.75
 gs2:MutedGtr		
 gs3:MutedGtr		
 gs2:Mu.DstGt		
-gs3:TCMuteGt		
+gs3:TCMuteGt	0	1	
 gs1:Funk Gtr	2	0.5
 gs2:Funk Pop		
 gs1:FunkGtr2	1	0.5625
@@ -275,8 +275,8 @@ gs4:Jazz Man
 gs1:OvrDrvGt	1	0.6875
 gs2:OvrDrvGt		
 gs3:OvrDrvGt		
-gs3:OvrDrGt2		
-gs3:OvrDrGt3		
+gs3:OvrDrGt2	0	0.8125
+gs3:OvrDrGt3	0	0.5625
 gs3:MoDrvGtr		
 gs4:Gt.Pinch		
 gs4:AtkDrvGt		
@@ -295,7 +295,7 @@ gs3:FstDstGt
 gs4:AtkDstGt		
 gs1:FeedbkGt	2	0.5
 gs2:FeedbkG2		
-gs2:PowerGtr		
+gs2:PowerGtr	0	0.75
 gs2:PowerGt2		
 gs2:5thDist.		
 gs2:RockRthm		
@@ -330,8 +330,8 @@ gs1:PickBass	1	0.75
 gs2:PickBass		
 gs3:PickBass		
 gs3:PickBas2		
-gs3:PickBas3		
-gs3:PickBas4		
+gs3:PickBas3	1	0.75
+gs3:PickBas4	1	0.75
 gs4:DblPikBa		
 gs2:M.PkBass		
 gs3:PkBa/Hrm		
@@ -1553,7 +1553,7 @@ gs3:TechnoKt	0	1
 gs4:Room L/R	0	1
 gs4:HouseKit	0	1
 gs1:PowerKit	0	1
-gs1:Electro	0	1
+gs1:ElectrKt	0	1
 gs1:AnalogKt	0	1
 gs2:DanceKit	0	1
 gs3:CR-78 Kt	0	1
