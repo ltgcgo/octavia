@@ -456,11 +456,11 @@ gs1:Trem.Str	1	0.5625
 gs2:Trem.Str		
 gs4:TrmStrSt		
 gs2:SlwTrStr		
-gs2:Susp.Str		
+gs2:Susp.Str	0	0.625
 gs4:SuspStr2		
 gs1:Pizz.Str	1	0.75
 gs2:Pizz.Str		
-gs3:VcCbPizz		
+gs3:VcCbPizz	0	0.625
 gs3:ChmbrPiz		
 gs3:St. Pizz		
 gs3:SoloPizz		
@@ -479,12 +479,12 @@ gs1:Timpani	1	1
 gs2:Timpani		
 gs1:Strings1	1	0.6875
 gs2:Strings1		
-gs3:Strings1		
+gs3:Strings1	0	0.8125
 gs4:Strings1		
 gs2:Slow Str		
 gs3:BriteStr		
 gs3:ChmbrStr		
-gs3:CellSect		
+gs3:CellSect	0	0.625
 gs4:Brt.Str2		
 gs4:Brt.Str3		
 gs4:Quad Str		
@@ -509,7 +509,7 @@ gs4:ContraSc
 gs4:60s Strs		
 gs1:Strings2	1	0.4375
 gs2:Strings2		
-gs3:Strings2		
+gs3:Strings2	1	0.625
 gs4:Strings2		
 gs2:SlowStr2		
 gs4:SlowStr3		
@@ -665,7 +665,7 @@ gs1:FrHorn 2	1	0.5625
 gs3:Hrn+Orch		
 gs3:WideFrHr		
 gs2:FrHrSolo		
-gs3:SlwFrHrn		
+gs3:SlwFrHrn	0	0.625
 gs3:DualFrHr		
 gs2:HornOrch		
 gs3:Syn.Horn		

@@ -2336,6 +2336,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			let redirOff = ch * allocated.redir;
 			upThis.#ccCapturer[redirOff + 8] = 13;
 		};
+		upThis.switchMode("?", 3);
 		upThis.buildRchTree();
 		upThis.buildRccMap();
 		upThis.dispatchEvent("mastervolume", upThis.#masterVol);
@@ -2481,12 +2482,13 @@ let OctaviaDevice = class extends CustomEventSource {
 		0: change only when without set mode, without reset
 		1: change with reset without set mode, without reset otherwise
 		2: change with reset regardless
+		3: do not reset
 		*/
 		getDebugState() && console.debug(`Requested level ${forced} mode change to "${mode}".`);
 		let upThis = this;
 		let idx = modeMap[mode];
 		if (idx > -1) {
-			if (upThis.#mode === 0 || forced) {
+			if ((upThis.#mode === 0 && forced !== 3) || forced) {
 				//let oldMode = upThis.#mode;
 				if (upThis.initOnReset) {
 					switch (forced) {
