@@ -5,6 +5,8 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/fa5aeaf4ba4c9b2d50e2/maintainability)](https://codeclimate.com/github/ltgcgo/octavia/maintainability)
 
+> The Octavia repository is currently owned by [JayB](https://github.com/JayB1988) ([jaybmusic.net](https://www.jaybmusic.net)). The GNU LGPL 3.0 license is still in effect, the repository still welcomes contributions as normal.
+
 > **Warning**
 >
 > Due to a critical bug affecting the SysEx processing flow (#55), Octavia is planned to have a major rewrite. The rewrite may happen at any time once version 0.5.2 is fully released.

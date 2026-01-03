@@ -12,8 +12,8 @@ PianoStr	Piano + Strings 1
 Pno+Str2	Piano + Strings 2
 DreamP.2	Dream Piano 2
 Piano 2w	Wide Bright Piano
-EGRhode1	E. Guitar + Rhodes 1
-EGRhode2	E. Guitar + Rhodes 2
+EGRhode1	E. Grand + Rhodes 1
+EGRhode2	E. Grand + Rhodes 2
 Piano 3w	Wide Electric Grand
 Old Uprt	Old Upright Piano
 StSoftEP	Stereo Soft EP
@@ -253,6 +253,8 @@ BariSax2	Baritone Sax 2
 Bari&Tnr	Baritone & Tenor Sax
 Exp.Oboe	Expressive Oboe
 BsClari.	Bass Clarinet
+MultiWnd	Multi Woodwind
+QuadWind	Quad Woodwind
 ExpFlute	Expressive Flute
 TrvFlute	Travelso Flute
 FluteVln	Flute + Violin
