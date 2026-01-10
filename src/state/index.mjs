@@ -4989,6 +4989,7 @@ let OctaviaDevice = class extends CustomEventSource {
 							pitch: upThis.getPitchShift(part)
 						});
 					}, false // pitch offset
+					, false // pitch offset LSB
 					, () => {
 						// volume
 						upThis.#cc[chOff + ccToPos[7]] = e;
@@ -4996,7 +4997,9 @@ let OctaviaDevice = class extends CustomEventSource {
 					, false // velocity sense offset
 					, () => {
 						// pan
-						upThis.#cc[chOff + ccToPos[10]] = e || 128;
+						//upThis.#cc[chOff + ccToPos[10]] = e || 128;
+						upThis.setChCc(part, 10, e || 128);
+						console.debug(part, e);
 					}, false // note upperbound
 					, false // note lowerbound
 					, () => {
