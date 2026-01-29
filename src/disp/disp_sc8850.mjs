@@ -56,6 +56,7 @@ let Sc8850Display = class extends RootDisplay {
 	#pixelLit = 255;
 	#pixelOff = 0;
 	#lastBg = 0;
+	#loadRound = 10;
 	#nmdb = new Uint8Array(totalPixelCount);
 	#dmdb = new Uint8Array(totalPixelCount);
 	#omdb = new Uint8Array(totalPixelCount);
@@ -166,23 +167,17 @@ let Sc8850Display = class extends RootDisplay {
 			upThis.#nmdb.fill(0);
 		};
 		// Prepare the canvas
-		if (timeNow - upThis.#lastBg >= 3600000) {
+		let fullRefreshCountdown = upThis.#loadRound === 0 ? 1800000 : 500;
+		if (timeNow - upThis.#lastBg >= fullRefreshCountdown) {
 			ctx.fillStyle = backlight.orange;
 			ctx.fillRect(0, 0, 808, ctx.canvas.height);
-			// Show text
-			ctx.fillStyle = "#000";
-			ctx.fillRect(808, 0, ctx.canvas.width - 808, ctx.canvas.height);
-			ctx.fillStyle = backlight.orange;
-			ctx.textAlign = "left";
-			ctx.font = '400 14px "Work Sans"';
-			ctx.textRendering = "geometricPrecision";
-			ctx.fillText("EFX", 810, 121);
-			ctx.fillText("8850", 810, 166);
-			ctx.fillText("Pro", 810, 192);
-			ctx.fillText("88", 810, 216);
-			ctx.fillText("55", 810, 241);
 			upThis.#lastBg = timeNow;
 			fullRefresh = true;
+			if (upThis.#loadRound > 0) {
+				upThis.#loadRound --;
+				//console.debug(upThis.#loadRound);
+			};
+			//console.debug(`Requested a full screen refresh.`);
 		};
 		// Booted?
 		if (timeNow < upThis.#dumpExpire) {
@@ -629,6 +624,21 @@ let Sc8850Display = class extends RootDisplay {
 		};
 		//console.log(`${fullRefresh}, ${upThis.#fullRefreshRequest}`);
 		// Do the actual drawing
+		if (fullRefresh) {
+			console.debug(`Initiated a full screen refresh.`);
+			// Show text
+			ctx.fillStyle = "#000";
+			ctx.fillRect(808, 0, ctx.canvas.width - 808, ctx.canvas.height);
+			ctx.fillStyle = backlight.orange;
+			ctx.textAlign = "left";
+			ctx.font = '400 14px "Work Sans"';
+			ctx.textRendering = "geometricPrecision";
+			ctx.fillText("EFX", 810, 121);
+			ctx.fillText("8850", 810, 166);
+			ctx.fillText("Pro", 810, 192);
+			ctx.fillText("88", 810, 216);
+			ctx.fillText("55", 810, 241);
+		};
 		upThis.#dmdb.forEach((e, i) => {
 			let pX = i % totalWidth, pY = Math.floor(i / totalWidth);
 			if (fullRefresh || upThis.#omdb[i] !== e) {
