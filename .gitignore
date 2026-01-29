@@ -11,3 +11,5 @@ dist/deno.json
 .zsh_history
 src/identity/identity.bin
 src/identity/identity.txt
+c*.png
+c*.webp

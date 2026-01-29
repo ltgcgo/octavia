@@ -2404,6 +2404,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			return;
 		};
 		upThis.#portModeInitial[port] = modeId; // Leaves room for improvement with scenarios needing different devices on different ports, but with same standard. Examples include JayB's Micro Sequencing.
+		//console.debug(upThis.#portModeInitial);
 		for (let sect = port; sect < port + range; sect ++) {
 			let initializedModeOnPort = upThis.#portModeInitial[sect];
 			if (range > 1 && initializedModeOnPort !== 0 && initializedModeOnPort !== modeId) {
@@ -4999,7 +5000,6 @@ let OctaviaDevice = class extends CustomEventSource {
 						// pan
 						//upThis.#cc[chOff + ccToPos[10]] = e || 128;
 						upThis.setChCc(part, 10, e || 128);
-						console.debug(part, e);
 					}, false // note upperbound
 					, false // note lowerbound
 					, () => {
