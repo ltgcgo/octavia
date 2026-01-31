@@ -998,6 +998,7 @@ MM-Pno 2	MM-Piano 2
 El.Grd 1	El.Grand 1
 El.Grd 2	El.Grand 2
 El.Grd 3	El.Grand 3
+RatioDob	RatioDobEG
 El.Grd 4	El.Grand 4
 DX-Road1	DX-Rhode 1
 DX-Road2	DX-Rhode 2
@@ -1079,6 +1080,7 @@ MM-Vce 4	MM-Voice 4
 DX-Clar1	DX-Clari.1
 DX-Clar2	DX-Clari.2
 DX-Clar3	DX-Clari.3
+Fuhppps!	Fuhpps!Btl
 DX-Bottl	DX-Bottle
 DX-SLd 9	DX-SqrLd 9
 DX-SyLd1	DX-Syn.Ld1
@@ -1091,6 +1093,7 @@ DX-SyLd7	DX-Syn.Ld7
 DX-SyLd8	DX-Syn.Ld8
 DX-SyLd9	DX-Syn.Ld9
 Dstrcted	Destructed
+ElctrAtm	Electr.Atm
 BellStr1	BellStrng1
 BellStr2	BellStrng2
 Chi-S&H1	Chiff-S&H1

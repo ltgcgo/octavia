@@ -32,7 +32,7 @@ div.cambiare:has(div.cambiare-canvas.cambiare-scheme-luma) {
 div.cambiare-canvas.cambiare-scheme-light {
 	--background-color: #fff;
 	--foreground-color: #000;
-	--accent-color: #742b81;
+	--accent-color: #6c007f;
 	--white-keys: var(--foreground-color);
 	--black-keys: var(--accent-color);
 }
@@ -118,7 +118,7 @@ div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-motif,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-cs6x,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-an1x,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-cs1x {
-	--accent-color: #006415;
+	--accent-color: #007f00;
 }
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gm,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-g2,
@@ -128,7 +128,7 @@ div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-gm,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-g2,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-pa,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-krs {
-	--accent-color: #005e88;
+	--accent-color: #006dc4;
 }
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gs,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sc,
@@ -138,7 +138,7 @@ div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-gs,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sc,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-mt32,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sd {
-	--accent-color: #804e00;
+	--accent-color: #ec5a00;
 }
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-sg,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-sg {

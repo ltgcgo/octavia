@@ -746,6 +746,7 @@ FrtePno2	FortePiano 2
 El.Grd 1	El. Grand 1
 El.Grd 2	El. Grand 2
 El.Grd 3	El. Grand 3
+RatioDob	RatioDobEGrd
 El.Grd 4	El. Grand 4
 DX-Road1	DX-Rhodes 1
 DX-Road2	DX-Rhodes 2
@@ -813,6 +814,7 @@ MM-Vce 4	MM-Voices 4
 DX-Clar1	DX-Clarinet1
 DX-Clar2	DX-Clarinet2
 DX-Clar3	DX-Clarinet3
+Fuhppps!	Fuhppps!Botl
 DX-Bottl	DX-BottleBlw
 DX-SLd 9	DX-SquareLd9
 DX-SyLd1	DX-Syn.Lead1
@@ -824,6 +826,7 @@ DX-SyLd6	DX-Syn.Lead6
 DX-SyLd7	DX-Syn.Lead7
 DX-SyLd8	DX-Syn.Lead8
 DX-SyLd9	DX-Syn.Lead9
+ElctrAtm	ElectricAtms
 BellStr1	Bell String1
 BellStr2	Bell String2
 Chi-S&H1	Chiff-Smp&H1
