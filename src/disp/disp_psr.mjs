@@ -482,7 +482,7 @@ let PsrDisplay = class extends RootDisplay {
 			};
 		}
 		if (useBm) {
-			useBm.width = useBm.length / 16;
+			useBm.width = useBm.length >> 4;
 		};
 		useBm?.render((e, x, y) => {
 			ctx.fillStyle = e ? activePixel : inactivePixel;
