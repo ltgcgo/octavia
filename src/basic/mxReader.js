@@ -1,6 +1,7 @@
 "use strict";
 
 import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.mjs";
+import {bitFieldPack, bitFieldUnpack} from "../state/utils";
 
 let blankFont = new Uint8Array(40);
 
@@ -53,26 +54,6 @@ let BitmapMatrix = class BitmapMatrix {
 	};
 	set length(e) {};
 	id;
-	packBitField(sourceBuffer, targetBuffer, isStrict = true) {
-		if (typeof sourceBuffer?.length !== "number") {
-			throw(new SyntaxError("The source buffer must be an array-like object."));
-		};
-		let desiredSize = (sourceBuffer.length >>> 3) + (sourceBuffer.length & 7 ? 1 : 0);
-		if (targetBuffer) {
-			if (typeof targetBuffer?.length !== "number") {
-				throw(new SyntaxError("The target buffer must be an array-like object."));
-			};
-			if (isStrict && targetBuffer < desiredSize) {
-				throw(new Error("The target buffer cannot satisfy the packed bit field."));
-			};
-		} else {
-			targetBuffer = new Uint8Array(desiredSize);
-		};
-		for (let i = 0; i < sourceBuffer.length; i ++) {
-			targetBuffer[i >>> 3] |= (sourceBuffer[i] ? 1 : 0) << (i & 7);
-		};
-		return targetBuffer;
-	};
 	getFrame(frameId = 0) {
 		let upThis = this;
 		if (frameId < 0 || frameId > upThis.#frames) {

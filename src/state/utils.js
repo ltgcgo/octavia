@@ -155,6 +155,57 @@ const noteRoot = "CDEFGAB";
 const noteAcciTet12 = "♭𝄫,𝄫,♭,,♯,𝄪,𝄪♯".split(",");
 let getChordName = (root, acciTet48, type) => {};
 
+let bitFieldPack = (sourceBuffer, targetBuffer, isStrict = true) => {
+	if (typeof sourceBuffer?.length !== "number") {
+		throw(new SyntaxError("The source buffer must be an array-like object."));
+	};
+	let desiredSize = (sourceBuffer.length >>> 3) + (sourceBuffer.length & 7 ? 1 : 0);
+	if (targetBuffer) {
+		if (typeof targetBuffer?.length !== "number") {
+			throw(new SyntaxError("The target buffer must be an array-like object."));
+		};
+		if (isStrict && targetBuffer < desiredSize) {
+			throw(new Error("The target buffer cannot satisfy the packed bit field."));
+		};
+	} else {
+		targetBuffer = new Uint8Array(desiredSize);
+	};
+	for (let i = 0; i < sourceBuffer.length; i ++) {
+		targetBuffer[i >>> 3] |= (sourceBuffer[i] ? 1 : 0) << (i & 7);
+	};
+	return targetBuffer;
+};
+let bitFieldUnpack = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true) => {
+	if (sourceBuffer?.BYTES_PER_ELEMENT !== 1) {
+		throw(new SyntaxError("The source buffer must be Uint8Array."));
+	};
+	let desiredSize = sourceBuffer.length << 3;
+	if (maxSize > 0) {
+		desiredSize = Math.min(desiredSize, maxSize);
+	};
+	console.debug(sourceBuffer.length, desiredSize);
+	if (targetBuffer) {
+		if (typeof targetBuffer?.length !== "number") {
+			throw(new SyntaxError("The target buffer must be an array-like object."));
+		};
+		if (isStrict && targetBuffer < desiredSize) {
+			throw(new Error("The target buffer cannot satisfy the packed bit field."));
+		};
+	} else {
+		targetBuffer = new Uint8Array(desiredSize);
+	};
+	let rollingByte = 0;
+	for (let i = 0; i < desiredSize; i ++) {
+		if (i & 7) {
+			rollingByte >>= 1;
+		} else {
+			rollingByte = sourceBuffer[i >>> 3];
+		};
+		targetBuffer[i] = rollingByte & 1;
+	};
+	return targetBuffer;
+};
+
 export {
 	arrayCompare,
 	toDecibel,
@@ -162,6 +213,8 @@ export {
 	korgFilter,
 	korgUnpack,
 	korgPack,
+	bitFieldPack,
+	bitFieldUnpack,
 	halfByteFilter,
 	halfByteUnpack,
 	x5dSendLevel,
