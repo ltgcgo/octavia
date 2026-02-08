@@ -31,6 +31,7 @@ let BitmapMatrix = class BitmapMatrix {
 	// Dimensions capped at 4095 by 4095.
 	#buffer;
 	#cachedFrameSize;
+	#cachedDivisor = 0;
 	#width = 0;
 	#height = 0;
 	#frames = 0; // How many frames are there in this bitmap resource
@@ -50,8 +51,9 @@ let BitmapMatrix = class BitmapMatrix {
 		return this.#buffer.length;
 	};
 	set length(e) {};
+	id;
 	getFrame(frameId = 0) {};
-	render(receiveFunc) {};
+	render(receiveFunc, frameId = 0) {};
 	constructor(width, height, buffer) {
 		let upThis = this;
 		upThis.#buffer = buffer;
@@ -63,6 +65,7 @@ let BitmapMatrix = class BitmapMatrix {
 		upThis.#width = width;
 		upThis.#height = height;
 		upThis.#cachedFrameSize = width * height;
+		upThis.#cachedDivisor = Math.ceil(1048576 / width); // (2 ** 20)
 		upThis.#frames = Math.floor(buffer.length / upThis.#cachedFrameSize);
 	};
 };
@@ -287,9 +290,7 @@ let MxBmDef = class MxBmDef {
 							dp --;
 						};
 					});
-					bm.width = bmWidth;
-					bm.height = bmHeight;
-					upThis.#bm[arr[0]] = bm;
+					upThis.#bm[arr[0]] = new BitmapMatrix(bmWidth, bmHeight, bm);
 					//console.debug(`W:${bmWidth} H:${bmHeight} L:${bm.length} ${arr[0]}`);
 				} else {
 					upThis.#bm[arr[0]] = upThis.#bm[arr[1].slice(1)];
