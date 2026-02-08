@@ -38,7 +38,7 @@ for (let contrast of contrastValues) {
 	contrastCache.push([`${lcdPixel.black}${contrast[0].toString(16).padStart(2, "0")}`, `${lcdPixel.black}${contrast[1].toString(16).padStart(2, "0")}`]);
 	contrast.push(contrast[1] - contrast[0]);
 };
-console.debug(contrastCache);
+//console.debug(contrastCache);
 
 // For backwards compatibility
 let bgOrange = `${backlight.orange}64`,

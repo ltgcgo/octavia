@@ -570,7 +570,8 @@ let MuDisplay = class extends RootDisplay {
 					//getDebugState() && console.debug(`SysEx prompt reset.`);
 				};
 				upThis.#bmst = 0;
-				let standard = voiceObj.standard.toLowerCase();
+				useBm = upThis.getChBm(upThis.#ch);
+				/* let standard = voiceObj.standard.toLowerCase();
 				useBm = upThis.voxBm.getBm(voiceObj.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
 				if (standard !== upThis.device?.getChMode(upThis.#ch) && allowedStandards.xg.has(standard)) {
 					switch ((upThis.getChPrimitive(upThis.#ch, 1)) >> 4) {
@@ -688,11 +689,12 @@ let MuDisplay = class extends RootDisplay {
 						};
 					});
 				};
+				*/
 			} else {
 				if (upThis.#bmst === 2) {
 					if (upThis.#unresolvedEx) {
 						upThis.#unresolvedEx = 0;
-						getDebugState() &&  console.debug(`SysEx prompt cancelled.`);
+						getDebugState() && console.debug(`SysEx prompt cancelled.`);
 					};
 					useBm.forEach((e, i, a) => {
 						let crit = Math.floor((upThis.#bmex - timeNow) / blinkSpeedMode);

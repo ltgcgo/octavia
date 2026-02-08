@@ -27,7 +27,47 @@ Uint8Array.prototype.render = function (receiveFunc) {
 	};
 };
 
-let MxFont40 = class {
+let BitmapMatrix = class BitmapMatrix {
+	// Dimensions capped at 4095 by 4095.
+	#buffer;
+	#cachedFrameSize;
+	#width = 0;
+	#height = 0;
+	#frames = 0; // How many frames are there in this bitmap resource
+	get width() {
+		return this.#width;
+	};
+	set width(e) {};
+	get height() {
+		return this.#height;
+	};
+	set height(e) {};
+	get frames() {
+		return this.#frames;
+	};
+	set frames(e) {};
+	get length() {
+		return this.#buffer.length;
+	};
+	set length(e) {};
+	getFrame(frameId = 0) {};
+	render(receiveFunc) {};
+	constructor(width, height, buffer) {
+		let upThis = this;
+		upThis.#buffer = buffer;
+		if (width <= 0 || width >= 4096) {
+			throw(new RangeError(`Width of the bitmap cannot be greater than 4095 or less than 1, received ${width} instead.`));
+		} else if (height <= 0 || height >= 4096) {
+			throw(new RangeError(`Height of the bitmap cannot be greater than 4095 or less than 1, received ${height} instead.`));
+		};
+		upThis.#width = width;
+		upThis.#height = height;
+		upThis.#cachedFrameSize = width * height;
+		upThis.#frames = Math.floor(buffer.length / upThis.#cachedFrameSize);
+	};
+};
+
+let MxFont40 = class MxFont40 {
 	#fonts = [];
 	loaded = new MiniSignal();
 	async load(text, allowOverwrite = false, source = "(internal)") {
@@ -98,7 +138,7 @@ let MxFont40 = class {
 		return this.#fonts[key];
 	};
 };
-let MxFont176 = class {
+let MxFont176 = class MxFont176 {
 	#fonts = [];
 	loaded = new MiniSignal();
 	async load(text, allowOverwrite = false, source = "(internal)") {
@@ -169,7 +209,7 @@ let MxFont176 = class {
 		return this.#fonts[key];
 	};
 };
-let MxBm256 = class {
+let MxBm256 = class MxBm256 {
 	#bm = {};
 	loaded = new MiniSignal();
 	async load(text) {
@@ -223,7 +263,7 @@ let MxBm256 = class {
 		return this.#bm[key];
 	};
 };
-let MxBmDef = class {
+let MxBmDef = class MxBmDef {
 	#bm = {};
 	loaded = new MiniSignal();
 	async load(text) {
@@ -285,6 +325,7 @@ let MxBmDef = class {
 };
 
 export {
+	BitmapMatrix,
 	MxFont40,
 	MxFont176,
 	MxBm256,

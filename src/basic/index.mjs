@@ -391,7 +391,7 @@ let RootDisplay = class extends CustomEventSource {
 		return this.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;
 	};
 	getVoxBm(voiceObject) {
-		// Get voice bitmap
+		// Get voice bitmap (universal)
 		if (!voiceObject) {
 			throw(new Error("Voice object must be valid"));
 		};
@@ -475,7 +475,7 @@ let RootDisplay = class extends CustomEventSource {
 		return result;
 	};
 	getChBm(ch, voiceObject) {
-		// Get part bitmap
+		// Get part bitmap (universal)
 		let upThis = this;
 		voiceObject = voiceObject ?? upThis.getChVoice(ch);
 		let data = upThis.getVoxBm(voiceObject);
@@ -487,7 +487,7 @@ let RootDisplay = class extends CustomEventSource {
 				case "xg": {
 					switch (voiceObject.sid[0]) {
 						case 126: {
-							if (voiceObject.sid[1] >> 1 === 56) {
+							if (voiceObject.sid[1] >> 2 === 28) {
 								data = upThis.sysBm.getBm("cat_smpl");
 							};
 							break;
