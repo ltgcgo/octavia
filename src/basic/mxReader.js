@@ -31,7 +31,8 @@ let BitmapMatrix = class BitmapMatrix {
 	// Dimensions capped at 4095 by 4095.
 	#buffer;
 	#cachedFrameSize;
-	#cachedDivisor = 0;
+	// #cachedDivisor = 0;
+	#isPacked = false; // If the bitmap's encoded as a little-endian packed bit field. Unused.
 	#width = 0;
 	#height = 0;
 	#frames = 0; // How many frames are there in this bitmap resource
@@ -52,11 +53,34 @@ let BitmapMatrix = class BitmapMatrix {
 	};
 	set length(e) {};
 	id;
-	getFrame(frameId = 0) {};
-	render(receiveFunc, frameId = 0) {};
-	constructor(width, height, buffer) {
+	getFrame(frameId = 0) {
 		let upThis = this;
-		upThis.#buffer = buffer;
+		if (frameId < 0 || frameId > upThis.#frames) {
+			throw(new RangeError(`Cannot select frame ${frameId} in a bitmap with ${upThis.#frames} frame(s).`));
+		};
+		let startIndex = upThis.#cachedFrameSize * frameId;
+		return upThis.#buffer.subarray(startIndex, startIndex + upThis.#cachedFrameSize);
+	};
+	render(receiveFunc, frameId = 0) {
+		let frame = this.getFrame(frameId);
+		let x = 0, y = 0;
+		for (let i = 0; i < frame.length; i ++) {
+			receiveFunc(frame[i], x, y, frame);
+			x ++;
+			if (x >= this.#width) {
+				x = 0;
+				y ++;
+			};
+		};
+	};
+	constructor(width, height, packed = false, buffer) {
+		let upThis = this;
+		if (buffer) {
+			upThis.#buffer = buffer;
+			upThis.#isPacked = packed;
+		} else {
+			throw(new Error("Cannot construct a bitmap matrix with no buffer."));
+		};
 		if (width <= 0 || width >= 4096) {
 			throw(new RangeError(`Width of the bitmap cannot be greater than 4095 or less than 1, received ${width} instead.`));
 		} else if (height <= 0 || height >= 4096) {
@@ -65,7 +89,7 @@ let BitmapMatrix = class BitmapMatrix {
 		upThis.#width = width;
 		upThis.#height = height;
 		upThis.#cachedFrameSize = width * height;
-		upThis.#cachedDivisor = Math.ceil(1048576 / width); // (2 ** 20)
+		//upThis.#cachedDivisor = Math.ceil(1048576 / width); // (2 ** 20)
 		upThis.#frames = Math.floor(buffer.length / upThis.#cachedFrameSize);
 	};
 };
@@ -290,7 +314,8 @@ let MxBmDef = class MxBmDef {
 							dp --;
 						};
 					});
-					upThis.#bm[arr[0]] = new BitmapMatrix(bmWidth, bmHeight, bm);
+					upThis.#bm[arr[0]] = new BitmapMatrix(bmWidth, bmHeight, false, bm);
+					upThis.#bm[arr[0]].id = arr[0];
 					//console.debug(`W:${bmWidth} H:${bmHeight} L:${bm.length} ${arr[0]}`);
 				} else {
 					upThis.#bm[arr[0]] = upThis.#bm[arr[1].slice(1)];
