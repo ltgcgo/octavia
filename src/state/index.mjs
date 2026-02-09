@@ -336,21 +336,24 @@ if (typeof self?.require !== "undefined") {
 let TimeMuxer = class TimeMuxer {
 	#attached;
 	#realtime = true; // The indicative toggle
-	autoRealtime = true;
+	autoRealtime = false; // (WIP) Auto realtime should follow pauses and speed changes. When ended or emptied, it should follow system time flow.
 	detach() {
 		this.#attached = undefined;
 		this.#realtime = true;
+		this.autoRealtime = false;
 	};
-	attach(source) {
+	attach(source, autoRealtime) {
+		// autoRealtime should make the custom clock respond to speed changes
 		if (typeof source !== "undefined" && typeof source.currentTime === "number") {
 			this.#attached = source;
 			this.#realtime = false;
+			this.autoRealtime = true;
 		} else {
 			throw(new TypeError("Not a valid time source."));
 		};
 	};
 	get realtime() {
-		return this.#realtime || typeof this.#attached === "undefined" || (this.autoRealtime && this.#attached?.currentTime === 0);
+		return this.#realtime || typeof this.#attached === "undefined";
 	};
 	set realtime(toggle) {
 		if (toggle) {
@@ -377,12 +380,9 @@ let TimeMuxer = class TimeMuxer {
 			return Math.round(this.#attached.currentTime * 1000);
 		};
 	};
-	get horni() {
-		return true;
-	};
 	constructor(clockSource) {
-		if (typeof source !== "undefined" && typeof source.currentTime === "number") {
-			this.#attached = source;
+		if (clockSource) {
+			this.attach(clockSource);
 		};
 	};
 };

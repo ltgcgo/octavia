@@ -252,7 +252,7 @@ audioPlayer.onended = function () {
 	audioPlayer.currentTime = 0;
 };
 visualizer.clockSource.attach(audioPlayer);
-visualizer.clockSource.realtime = false;
+visualizer.clockSource.realtime = true;
 (async function () {
 	if (location.search.indexOf("minimal") > -1) {
 		self.scroll(0, dispCanv.offsetTop - 4);
