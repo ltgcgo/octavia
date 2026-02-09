@@ -329,7 +329,14 @@ let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxL
 										rollingByte >>= 2;
 									};
 								};
-							} else {};
+							} else {
+								if (window3Nibble < 3) {
+									buffer[window3Triple + window3Nibble] = (decodedByte << ((window3Nibble + 1) << 1)) & 255;
+								};
+								if (window3Nibble > 0) {
+									buffer[window3Triple + window3Nibble - 1] |= decodedByte >> ((3 - window3Nibble) << 1);
+								};
+							};
 							readRawSize ++;
 						} else {
 							throw(new SyntaxError(`"${string[i]}" caused an unexpected error.`));
