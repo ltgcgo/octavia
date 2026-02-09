@@ -397,8 +397,6 @@ let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxL
 	return buffer;
 };
 let bufferTo = (alphabet = "base64", string, omitPadding = false) => {};
-
-self.bufferFrom = bufferFrom;
 self.bufferTo = bufferTo;
 
 export {

@@ -704,10 +704,10 @@ let MuDisplay = class extends RootDisplay {
 			};
 		};
 		for (let i = 0; i < 256; i ++) {
-			let pX = i % 16;
-			let pY = Math.floor(i / 16);
+			let pX = i & 15;
+			let pY = i >> 4;
 			ctx.fillStyle = inactivePixel;
-			if (useBm && useBm[i]) {
+			if (upThis.#bmdb) {
 				ctx.fillStyle = activePixel;
 			};
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);

@@ -54,8 +54,6 @@ let BitmapMatrix = class BitmapMatrix {
 	};
 	set length(e) {};
 	id;
-	static packBitField = packBitField;
-	static unpackBitField = unpackBitField;
 	getFrame(frameId = 0) {
 		let upThis = this;
 		if (frameId < 0 || frameId > upThis.#frames) {
@@ -259,9 +257,8 @@ let MxBm256 = class MxBm256 {
 							dp --;
 						};
 					});
-					bm.width = 16;
-					bm.height = 16;
-					upThis.#bm[arr[0]] = bm;
+					upThis.#bm[arr[0]] = new BitmapMatrix(16, 16, false, bm);
+					upThis.#bm[arr[0]].id = arr[0];
 				} else {
 					upThis.#bm[arr[0]] = upThis.#bm[arr[1].slice(1)];
 				};
@@ -284,7 +281,7 @@ let MxBm256 = class MxBm256 {
 		})();
 	};
 	getBm(rscNme) {
-		return this.#bm[rscNme]?.slice();
+		return this.#bm[rscNme];
 	};
 	keys() {
 		return Object.keys(this.#bm);
