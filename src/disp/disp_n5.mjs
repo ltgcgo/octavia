@@ -65,7 +65,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			console.debug(ev);
 			if (ev.data.type === "ns5r") {
 				upThis.#dumpData = ev.data.data;
-				upThis.#dumpExpire = Date.now() + 1600;
+				upThis.#dumpExpire = upThis.clockSource.now() + 1600;
 			};
 		});
 		upThis.useBlur = !!conf?.useBlur;
@@ -176,7 +176,7 @@ let Ns5rDisplay = class extends RootDisplay {
 	render(time, ctx, trueMode) {
 		let sum = super.render(time);
 		let upThis = this;
-		let timeNow = Date.now();
+		let timeNow = upThis.clockSource.now();
 		if (upThis.#refreshFrame < 500) {
 			if (upThis.#refreshFrame % 50 === 0) {
 				upThis.#refreshed = true;

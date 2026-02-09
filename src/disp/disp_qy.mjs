@@ -36,7 +36,7 @@ let QyDisplay = class extends RootDisplay {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;
-			upThis.#bmex = Date.now() + 1600;
+			upThis.#bmex = upThis.clockSource.now() + 1600;
 		});
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
@@ -122,7 +122,7 @@ let QyDisplay = class extends RootDisplay {
 	render(time, ctx, mixerView, id = 0, trueMode = false) {
 		let sum = super.render(time);
 		let upThis = this;
-		let timeNow = Date.now();
+		let timeNow = upThis.clockSource.now();
 		let usedFont = trueMode ? this.qyFont : this.xgFont;
 		// Channel test
 		let alreadyMin = false;

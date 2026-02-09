@@ -52,7 +52,7 @@ let PsrDisplay = class extends RootDisplay {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;
-			upThis.#bmex = Date.now() + 1600;
+			upThis.#bmex = upThis.clockSource.now() + 1600;
 		});
 		this.addEventListener("channelactive", (ev) => {
 			this.#ch = ev.data;
@@ -136,7 +136,7 @@ let PsrDisplay = class extends RootDisplay {
 	};
 	#renderDotMatrix(str, ctx, trueMode = false, offsetX, offsetY, cursor = -1, scaleX = 8, scaleY = 8, skew = -0.15) {
 		let upThis = this;
-		let timeNow = Date.now();
+		let timeNow = upThis.clockSource.now();
 		ctx.setTransform(1, 0, skew, 1, 0, 0);
 		// Determine the used font
 		let usedFont = trueMode ? upThis.trueFont : upThis.xgFont;
@@ -180,7 +180,7 @@ let PsrDisplay = class extends RootDisplay {
 	render(time, ctx, backlightColor = "#b7bfaf64", mixerView, tempoView, id = 0, trueMode = false, rhythmView = true) {
 		let sum = super.render(time);
 		let upThis = this;
-		let timeNow = Date.now();
+		let timeNow = upThis.clockSource.now();
 		// Channel test
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;

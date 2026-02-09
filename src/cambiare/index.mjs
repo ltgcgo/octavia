@@ -437,7 +437,7 @@ let Cambiare = class extends RootDisplay {
 	};
 	#scrollMeta(resetTime) {
 		let upThis = this;
-		if (Date.now() - upThis.#metaLastWheel > 4000) {
+		if (upThis.clockSource.now() - upThis.#metaLastWheel > 4000) {
 			upThis.#metaMoveX = 0;
 			upThis.#metaMoveY = 142 - upThis.#sectMeta.view.clientHeight;
 			if ((upThis.#metaLastLine?.clientWidth || 0) > 840) {
@@ -471,7 +471,7 @@ let Cambiare = class extends RootDisplay {
 		let upThis = this,
 		clock = upThis.#clockSource?.currentTime || 0,
 		sum = upThis.render(clock),
-		timeNow = Date.now();
+		timeNow = upThis.clockSource.now();
 		let curPoly = sum.curPoly + sum.extraPoly;
 		let curPolyEC = sum.curPolyEC + sum.extraPolyEC;
 		if (upThis.#maxPoly < curPoly) {
@@ -1466,7 +1466,7 @@ let Cambiare = class extends RootDisplay {
 					upThis.#metaLastLine
 				]);
 				if (upThis.#sectMeta.view.children.length > upThis.#metaGcStart) {
-					upThis.#metaGcAt = Date.now() + 500;
+					upThis.#metaGcAt = upThis.clockSource.now() + 500;
 					if (upThis.#metaGcScheduled === 0) {
 						console.debug(`Meta event garbage collector triggered.`);
 					};
@@ -1485,7 +1485,7 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
 		upThis.#metaGcThread = setInterval(async () => {
-			let timeNow = Date.now();
+			let timeNow = upThis.clockSource.now();
 			if (upThis.#metaGcScheduled === 0) {
 				return;
 			};

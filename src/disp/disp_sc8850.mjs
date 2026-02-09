@@ -121,7 +121,7 @@ let Sc8850Display = class extends RootDisplay {
 					upThis.#bmdb[data.offset + i] = data.data[i] ? 255 : 0;
 				};
 			};
-			upThis.#dumpExpire = Date.now() + 5000;
+			upThis.#dumpExpire = upThis.clockSource.now() + 5000;
 		});
 		upThis.device.addEventListener("letter", (ev) => {
 			upThis.#letterMode = upThis.#mode;
@@ -160,7 +160,7 @@ let Sc8850Display = class extends RootDisplay {
 	render(time, ctx) {
 		let sum = super.render(time);
 		let upThis = this;
-		let timeNow = Date.now();
+		let timeNow = upThis.clockSource.now();
 		let fullRefresh = false;
 		let scConf = upThis.device.modelEx.sc;
 		if (timeNow >= upThis.#dumpExpire) {

@@ -90,7 +90,7 @@ let ScDisplay = class extends RootDisplay {
 					upThis.#sysMsg = `Sys:${{"?":"Init","g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motif":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`;
 				};
 			};
-			upThis.#sysTime = Date.now() + 800;
+			upThis.#sysTime = upThis.clockSource.now() + 800;
 			//this.device.setLetterDisplay(textArr);
 		});
 		upThis.addEventListener("channelactive", (ev) => {
@@ -127,7 +127,7 @@ let ScDisplay = class extends RootDisplay {
 	render(time, ctx) {
 		let sum = super.render(time);
 		let upThis = this;
-		let timeNow = Date.now();
+		let timeNow = upThis.clockSource.now();
 		let fullRefresh = false;
 		let scConf = upThis.device.modelEx.sc;
 		upThis.#nmdb.fill(0);
@@ -201,8 +201,10 @@ let ScDisplay = class extends RootDisplay {
 		if (upThis.#bootFrame < 50) {
 			upThis.#bootFrame ++;
 		} else if (upThis.#bootFrame < 250 || upThis.#booted < 1) {
-			let data = upThis.bootBm.getBm("boot");
-			let mask = upThis.bootBm.getBm("mask");
+			let bootBm = upThis.bootBm.getBm("boot"),
+			data = bootBm.getFrame(0);
+			data.width = bootBm.width;
+			let mask = upThis.bootBm.getBm("mask").getFrame(0);
 			if (data) {
 				let sX = (upThis.#bootFrame - 68) >> 2;
 				sX = Math.max(-6, Math.min(27, sX));
@@ -225,7 +227,7 @@ let ScDisplay = class extends RootDisplay {
 						upThis.#bmdb[pX + ((pY + 2) << 4)] = value ? 255 : 0;
 					};
 				};
-				let textData = upThis.bootBm.getBm("text"), textY = Math.min(3, (upThis.#bootFrame - 50)  >> 5) << 3;
+				let textData = upThis.bootBm.getBm("text").getFrame(0), textY = Math.min(3, (upThis.#bootFrame - 50)  >> 5) << 3;
 				for (let pX = 0; pX < 95; pX ++) {
 					for (let pY = 0; pY < 7; pY ++) {
 						upThis.#tmdb[pX + textMultiTable[pY]] = textData[pX + (pY + textY) * 95] ? 255 : 0;

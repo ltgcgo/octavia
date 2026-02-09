@@ -764,7 +764,7 @@ let MuDisplay = class extends RootDisplay {
 		// Paint down triangles
 		paintTriDown(ctx, 180, 170, false);
 		paintTriDown(ctx, 292, 170, false);
-		paintTriDown(ctx, 356, 170, !(upThis.demoInfo && time) && (Math.floor((time || upThis.clockSource.now()) * 20) % 8)); // Ignore when under demo
+		paintTriDown(ctx, 356, 170, !(upThis.demoInfo && time) && (Math.floor((time || upThis.clockSource.currentTime) * 10) & 3)); // Ignore when under demo
 		paintTriDown(ctx, 420, 170, false);
 		paintTriDown(ctx, 468, 170, false);
 		paintTriDown(ctx, 516, 170, false);

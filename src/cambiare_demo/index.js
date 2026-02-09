@@ -48,6 +48,7 @@ Object.defineProperty(timeMuxer, "realtime", {
 	}
 });
 let visualizer = new Cambiare($e(".cambiare"), timeMuxer);
+//visualizer.clockSource.attach(audioFilePlayer);
 visualizer.reset();
 
 Alpine.store("play", "smf");

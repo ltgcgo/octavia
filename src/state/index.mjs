@@ -352,6 +352,15 @@ let TimeMuxer = class TimeMuxer {
 			throw(new TypeError("Not a valid time source."));
 		};
 	};
+	timeMs() {
+		if (typeof performance?.now === "function") {
+			return performance.now();
+		} else if (Object.hasOwn(self, "Temporal")) {
+			return Temporal.Now.instant().epochMilliseconds;
+		} else {
+			return Date.now();
+		};
+	};
 	get realtime() {
 		return this.#realtime || typeof this.#attached === "undefined";
 	};
@@ -367,7 +376,7 @@ let TimeMuxer = class TimeMuxer {
 	get currentTime() {
 		// In seconds, as float
 		if (this.realtime || !this.#attached) {
-			return performance.now() * 0.001;
+			return this.timeMs() * 0.001;
 		} else {
 			return this.#attached.currentTime;
 		};
@@ -375,7 +384,7 @@ let TimeMuxer = class TimeMuxer {
 	now() {
 		// In milliseconds, rounded down
 		if (this.realtime || !this.#attached) {
-			return Math.floor(performance.now());
+			return Math.floor(this.timeMs());
 		} else {
 			return Math.round(this.#attached.currentTime * 1000);
 		};
