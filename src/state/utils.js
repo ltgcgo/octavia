@@ -1,5 +1,7 @@
 "use strict";
 
+const u8Enc = new TextEncoder();
+
 let arrayCompare = (arr1, arr2) => {
 	let minLength = Math.min(arr1.length, arr2.length);
 	let result = 0;
@@ -155,7 +157,8 @@ const noteRoot = "CDEFGAB";
 const noteAcciTet12 = "♭𝄫,𝄫,♭,,♯,𝄪,𝄪♯".split(",");
 let getChordName = (root, acciTet48, type) => {};
 
-let bitFieldPack = (sourceBuffer, targetBuffer, isStrict = true) => {
+// The functions below are better put in a dedicated library.
+let packBitField = (sourceBuffer, targetBuffer, isStrict = true) => {
 	if (typeof sourceBuffer?.length !== "number") {
 		throw(new SyntaxError("The source buffer must be an array-like object."));
 	};
@@ -175,7 +178,7 @@ let bitFieldPack = (sourceBuffer, targetBuffer, isStrict = true) => {
 	};
 	return targetBuffer;
 };
-let bitFieldUnpack = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true) => {
+let unpackBitField = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true) => {
 	if (sourceBuffer?.BYTES_PER_ELEMENT !== 1) {
 		throw(new SyntaxError("The source buffer must be Uint8Array."));
 	};
@@ -205,6 +208,84 @@ let bitFieldUnpack = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true) 
 	};
 	return targetBuffer;
 };
+const bufferMaps = [new Map(), new Map()]; // encode and decode array
+bufferMaps[0].set("base64", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")); // Defer to browser support when available
+bufferMaps[0].set("base64url", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")); // Defer to browser support when available
+bufferMaps[0].set("hex", u8Enc.encode("0123456789abcdef")); // Defer to browser support when available
+bufferMaps[0].set("ovm43", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"));
+bufferMaps[0].set("radix64", u8Enc.encode("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/"));
+bufferMaps[0].set("radix64url", u8Enc.encode("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"));
+bufferMaps[0].set("xx", u8Enc.encode("+-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
+bufferMaps[0].set("xxurl", u8Enc.encode("_-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
+bufferMaps[0].set("z64", u8Enc.encode("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/"));
+bufferMaps[0].set("z64url", u8Enc.encode("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"));
+for (let [key, value] of bufferMaps[0]) {
+	let decodeMap = (new Uint8Array(128)).fill(255); // 255: invalid
+	for (let i = 0; i < value.length; i ++) {
+		decodeMap[value[i]] = i;
+	};
+	// 254: ignore
+	switch (key) {
+		case "hex": {
+			for (let i = 10; i < 16; i ++) {
+				decodeMap[i + 55] = i;
+			};
+			break;
+		};
+		default: {
+			decodeMap[9] = 254;
+			decodeMap[10] = 254;
+			decodeMap[12] = 254;
+			decodeMap[13] = 254;
+			decodeMap[32] = 254;
+		};
+	};
+	bufferMaps[1].set(key, decodeMap);
+};
+console.debug(bufferMaps);
+let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxLength = 1073741823) => {
+	if (typeof string !== "string") {
+		throw(new TypeError("Input is not a string."));
+	};
+	if (!bufferMaps[1].has(alphabet)) {
+		throw(new TypeError(`Alphabet "${alphabet}" is not supported.`));
+	};
+	let decodeMap = bufferMaps[1].get(alphabet);
+	let maxReadLength = Math.min(string.length, Math.ceil((maxLength << 2) / 3));
+	let buffer;
+	switch (alphabet) {
+		case "hex": {
+			if (string.length & 1) {
+				throw(new SyntaxError("The hex string must have an even number of characters."));
+			};
+			let maxReadLength = Math.min(string.length, maxLength << 1);
+			buffer = new Uint8Array(maxReadLength >>> 1);
+			for (let i = 0; i < maxReadLength; i ++) {
+				let decodedByte = decodeMap[string.charCodeAt(i)];
+				console.debug(decodedByte);
+				switch (decodedByte) {
+					case 254: {};
+					case 255: {
+						throw(new SyntaxError(`"${string[i]}" is not a valid hex-digit.`));
+					};
+					default: {
+						if (decodedByte < 16) {
+							buffer[i >> 1] |= decodedByte << (i & 1 ? 0 : 4);
+						} else {
+							throw(new SyntaxError(`"${string[i]}" caused an unexpected error.`));
+						};
+					};
+				};
+			};
+			break;
+		};
+	};
+	return buffer;
+};
+let bufferTo = (alphabet = "base64", string, omitPadding = false) => {};
+
+self.bufferFrom = bufferFrom;
+self.bufferTo = bufferTo;
 
 export {
 	arrayCompare,
@@ -213,12 +294,14 @@ export {
 	korgFilter,
 	korgUnpack,
 	korgPack,
-	bitFieldPack,
-	bitFieldUnpack,
 	halfByteFilter,
 	halfByteUnpack,
 	x5dSendLevel,
 	customInterpreter,
 	ascii64Dec,
-	getDebugState
+	getDebugState,
+	packBitField,
+	unpackBitField,
+	bufferFrom,
+	bufferTo
 };

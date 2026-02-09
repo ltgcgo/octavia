@@ -1,7 +1,7 @@
 "use strict";
 
 import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.mjs";
-import {bitFieldPack, bitFieldUnpack} from "../state/utils";
+import {packBitField, unpackBitField} from "../state/utils";
 
 let blankFont = new Uint8Array(40);
 
@@ -54,6 +54,8 @@ let BitmapMatrix = class BitmapMatrix {
 	};
 	set length(e) {};
 	id;
+	static packBitField = packBitField;
+	static unpackBitField = unpackBitField;
 	getFrame(frameId = 0) {
 		let upThis = this;
 		if (frameId < 0 || frameId > upThis.#frames) {
