@@ -292,6 +292,19 @@ let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxL
 		};
 		default: {
 			// Base64 with various alphabets
+			if (Object.hasOwn(Uint8Array, "fromBase64")) {
+				// Use the built-in method whenever available.
+				switch (alphabet) {
+					case "base64":
+					case "base64url": {
+						return Uint8Array.fromBase64(string, {
+							alphabet,
+							lastChunkHandling
+						});
+						break;
+					};
+				};
+			};
 			let maxReadLength = Math.min(string.length, Math.ceil((maxLength << 2) / 3));
 			buffer = new Uint8Array((maxReadLength * 3) >> 2);
 			let readRawSize = 0, window3Triple = 0;
