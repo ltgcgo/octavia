@@ -251,22 +251,8 @@ audioPlayer.onended = function () {
 	currentPerformance?.resetIndex();
 	audioPlayer.currentTime = 0;
 };
-let timeMuxer = {};
-Object.defineProperty(timeMuxer, "currentTime", {
-	get: () => {
-		if (useMidiBus) {
-			return audioPlayer.currentTime || (Date.now() * 0.001);
-		} else {
-			return audioPlayer.currentTime;
-		};
-	}
-});
-Object.defineProperty(timeMuxer, "realtime", {
-	get: () => {
-		return useMidiBus && !audioPlayer.currentTime;
-	}
-});
-visualizer.device.clockSource = timeMuxer;
+visualizer.clockSource.attach(audioPlayer);
+visualizer.clockSource.realtime = false;
 (async function () {
 	if (location.search.indexOf("minimal") > -1) {
 		self.scroll(0, dispCanv.offsetTop - 4);

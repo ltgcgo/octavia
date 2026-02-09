@@ -69,6 +69,8 @@ let RootDisplay = class extends CustomEventSource {
 	set clockSource(x) {
 		if (this.device) {
 			this.device.clockSource = x;
+		} else {
+			throw(new Error("OctaviaDevice is not ready."));
 		};
 	};
 	reset() {

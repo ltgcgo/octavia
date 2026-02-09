@@ -203,7 +203,6 @@ let MuDisplay = class extends RootDisplay {
 	msFrame = 75;
 	msActive = 150;
 	msExhaust = 250;
-	clockSource;
 	constructor() {
 		super(new OctaviaDevice());
 		let upThis = this;
@@ -213,7 +212,7 @@ let MuDisplay = class extends RootDisplay {
 				upThis.#bmdb.set(modeBm.getFrame(0));
 			};
 			upThis.#bmst = 2;
-			upThis.#bmex = Date.now() + blinkSpeedMode * 4;
+			upThis.#bmex = upThis.clockSource.now() + blinkSpeedMode * 4;
 		});
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
@@ -253,7 +252,6 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#scheduledEx = data;
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
 		});
-		upThis.clockSource = upThis.device.clockSource;
 		(async () => {
 			await Promise.all([upThis.trueFont.loaded.wait(), upThis.xgFont.loaded.wait(), upThis.sysBm.loaded.wait(), upThis.aniBm.loaded.wait()]);
 			upThis.#booted = 1;
@@ -278,7 +276,7 @@ let MuDisplay = class extends RootDisplay {
 	render(time, ctx) {
 		let sum = super.render(time);
 		let upThis = this;
-		let timeNow = Date.now();
+		let timeNow = upThis.clockSource.now();
 		if (upThis.isLcdContrastEnabled) {
 			setContrast(upThis.device?.lcdContrast);
 			ctx.fillStyle = `${backlight.grYellow}`;

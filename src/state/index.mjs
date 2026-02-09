@@ -335,7 +335,8 @@ if (typeof self?.require !== "undefined") {
 
 let TimeMuxer = class TimeMuxer {
 	#attached;
-	#realtime; // The indicative toggle
+	#realtime = true; // The indicative toggle
+	autoRealtime = true;
 	detach() {
 		this.#attached = undefined;
 		this.#realtime = true;
@@ -343,12 +344,13 @@ let TimeMuxer = class TimeMuxer {
 	attach(source) {
 		if (typeof source !== "undefined" && typeof source.currentTime === "number") {
 			this.#attached = source;
+			this.#realtime = false;
 		} else {
 			throw(new TypeError("Not a valid time source."));
 		};
 	};
 	get realtime() {
-		return this.#realtime || typeof this.#attached === "undefined";
+		return this.#realtime || typeof this.#attached === "undefined" || (this.autoRealtime && this.#attached?.currentTime === 0);
 	};
 	set realtime(toggle) {
 		if (toggle) {
@@ -374,6 +376,9 @@ let TimeMuxer = class TimeMuxer {
 		} else {
 			return Math.round(this.#attached.currentTime * 1000);
 		};
+	};
+	get horni() {
+		return true;
 	};
 	constructor(clockSource) {
 		if (typeof source !== "undefined" && typeof source.currentTime === "number") {
@@ -2046,8 +2051,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				invalidCp.add(e);
 			};
 		});
-		upThis.#letterSet = Date.now();
-		upThis.#letterExpire = Date.now() + delay;
+		upThis.#letterSet = upThis.clockSource.now();
+		upThis.#letterExpire = upThis.clockSource.now() + delay;
 		upThis.dispatchEvent("letter");
 		//upThis.#letterDisp = upThis.#letterDisp.padEnd(16, " ");
 		if (invalidCp) {
@@ -3721,13 +3726,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				upThis.setLetterDisplay(msg.subarray(1), "XG letter display", offset);
 			} else {
 				// Expire all existing letter display
-				upThis.#letterExpire = Date.now();
+				upThis.#letterExpire = upThis.clockSource.now();
 			};
 		}).add([76, 7, 0], (msg, track, id) => {
 			// XG Bitmap Display
 			let offset = msg[0];
 			upThis.#bitmapPage = 0;
-			upThis.#bitmapExpire = Date.now() + 3200;
+			upThis.#bitmapExpire = upThis.clockSource.now() + 3200;
 			//upThis.#bitmap.fill(0); // Init
 			let workArr = msg.subarray(1);
 			workArr.forEach(function (e, ir) {
@@ -4138,7 +4143,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// PLG-SG singing voice
 			let part = upThis.chRedir(msg[0], track, true),
 			dPref = `PLG-SG CH${part + 1} `,
-			timeNow = Date.now(),
+			timeNow = upThis.clockSource.now(),
 			sgConf = upThis.modelEx.sg;
 			if (msg[1] === 0) {
 				// Vocal information
@@ -4657,7 +4662,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// TG300 display bitmap
 			// Same as XG bitmap display
 			upThis.#bitmapPage = 0;
-			upThis.#bitmapExpire = Date.now() + 3200;
+			upThis.#bitmapExpire = upThis.clockSource.now() + 3200;
 			//upThis.#bitmap.fill(0); // Init
 			msg.forEach(function (e, i) {
 				let ln = i >> 4, co = i & 15;
@@ -4905,7 +4910,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					break;
 				};
 				case 32: {
-					upThis.#bitmapExpire = Date.now() + 3200;
+					upThis.#bitmapExpire = upThis.clockSource.now() + 3200;
 					if (msg[1] === 0) {
 						// GS display page
 						if (msg[2]) {
@@ -4913,7 +4918,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							getDebugState() && console.debug(`GS switch display page ${msg[2] - 1}.`);
 						} else {
 							upThis.#bitmapPage = 0;
-							upThis.#bitmapExpire = Date.now();
+							upThis.#bitmapExpire = upThis.clockSource.now();
 							getDebugState() && console.debug(`GS disable display page.`);
 						};
 					};
@@ -4927,7 +4932,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						};
 						let realPage = ((msg[0] - 1) << 1) | (msg[1]) >> 6;
 						if (upThis.#bitmapPage === realPage) {
-							upThis.#bitmapExpire = Date.now() + 3200;
+							upThis.#bitmapExpire = upThis.clockSource.now() + 3200;
 						};
 						if (!upThis.#bitmapStore[realPage]?.length) {
 							upThis.#bitmapStore[realPage] = new Uint8Array(256);
@@ -5763,7 +5768,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				};
 			});
 			upThis.#letterDisp = text.padStart(20, " ");
-			upThis.#letterExpire = Date.now() + 3200;
+			upThis.#letterExpire = upThis.clockSource.now() + 3200;
 			//console.info(msg);
 		}).add([22, 18, 82], (msg, track) => {
 			// MT-32 alt reset?
@@ -5946,7 +5951,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			} else {
 				// Bitmap display
 				let bitOffset = offset - 32;
-				upThis.#bitmapExpire = Date.now() + 3200;
+				upThis.#bitmapExpire = upThis.clockSource.now() + 3200;
 				upThis.#bitmapPage = 10; // Use bitmap 11 that holds 512 pixels
 				//upThis.#bitmap.fill(0); // Init
 				let workArr = msg.subarray(1);
