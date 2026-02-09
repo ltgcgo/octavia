@@ -459,13 +459,19 @@ let RootDisplay = class extends CustomEventSource {
 					};
 					break;
 				};
-				default: {
+				case "05rw":
+				case "x5d":
+				case "ns5r": {
 					switch (voiceObject.sid[0]) {
 						case 56: {
-							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], 0, voiceObject.mode).name);
+							result = upThis.voxBm.getBm(upThis.getVoice(0, voiceObject.sid[1], 0, "gm").name);
 							break;
 						};
 					};
+					break;
+				};
+				default: {
+					//
 				};
 			};
 		};

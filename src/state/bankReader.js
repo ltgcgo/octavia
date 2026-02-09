@@ -827,7 +827,8 @@ let VoiceBank = class {
 				};
 				break;
 			};
-			case 56: {
+			case 56:
+			case 62: {
 				standard = "AG";
 				break;
 			};
@@ -840,7 +841,6 @@ let VoiceBank = class {
 				standard = "AI";
 				break;
 			};
-			case 62:
 			case 82:
 			case 90: {
 				standard = "XD";
