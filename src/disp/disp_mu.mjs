@@ -548,9 +548,10 @@ let MuDisplay = class extends RootDisplay {
 			let stepFrame = Math.floor((time * stepTime + stepOffset) % stepSize);
 			let stepId = `${sequence}_${stepFrame}`;
 			//console.debug(stepId);
-			useBm = upThis.aniBm?.getBm(stepId) || upThis.sysBm?.getBm(stepId) || upThis.sysBm?.getBm("no_abm");
-			if (!useBm) {
-				useBm = upThis.#bmdb.slice();
+			useBm = (upThis.aniBm?.getBm(stepId) || upThis.sysBm?.getBm(stepId) || upThis.sysBm?.getBm("no_abm"))?.getFrame(0);
+			if (useBm) {
+				console.debug(stepId);
+				upThis.#bmdb.set(useBm);
 			};
 		} else {
 			upThis.muWriteBm(upThis.#bmdb, upThis.#ch, voiceObj);

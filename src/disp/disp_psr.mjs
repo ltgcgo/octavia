@@ -450,41 +450,13 @@ let PsrDisplay = class extends RootDisplay {
 			let stepFrame = Math.floor((time * stepTime + stepOffset) % stepSize);
 			let stepId = `${sequence}_${stepFrame}`;
 			//console.debug(stepId);
-			useBm = this.aniBm?.getBm(stepId) || this.sysBm?.getBm(stepId) || this.sysBm?.getBm("no_abm");
-			if (!useBm) {
-				useBm = this.#bmdb.slice();
+			useBm = (upThis.aniBm?.getBm(stepId) || upThis.sysBm?.getBm(stepId) || upThis.sysBm?.getBm("no_abm"))?.getFrame(0);
+			if (useBm) {
+				console.debug(stepId);
+				upThis.#bmdb.set(useBm);
 			};
 		} else {
 			upThis.muWriteBm(this.#bmdb, upThis.#ch);
-			// Use stored pic
-			/* useBm = this.#bmdb.slice();
-			if (timeNow >= this.#bmex) {
-				this.#bmst = 0;
-				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
-				useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(upThis.device?.getChCc(upThis.#ch, 0), sum.chProgr[this.#ch], 0, sum.mode).name);
-				if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-					useBm = this.sysBm.getBm(`ext_${standard}`);
-				};
-				if (!useBm && (upThis.device?.getChCc(upThis.#ch, 0) < 48 || upThis.device?.getChCc(upThis.#ch, 0) === 56)) {
-					useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
-				};
-				if (!useBm && upThis.device?.getChCc(upThis.#ch, 0) === 126) {
-					useBm = this.sysBm.getBm("cat_smpl");
-				};
-				if (!useBm && upThis.device?.getChCc(upThis.#ch, 0) === 64) {
-					useBm = this.sysBm.getBm("cat_sfx");
-				};
-				if (!useBm) {
-					useBm = this.sysBm.getBm("no_abm");
-				};
-			} else {
-				if (this.#bmst === 2) {
-					useBm.forEach((e, i, a) => {
-						let crit = Math.floor((this.#bmex - timeNow) / 400);
-						a[i] = crit % 2 === e;
-					});
-				};
-			}; */
 		};
 		upThis.#bmdb.forEach((e, i) => {
 			let x = i & 15, y = i >> 4;
