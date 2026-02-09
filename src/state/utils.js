@@ -212,7 +212,7 @@ const bufferMaps = [new Map(), new Map()]; // encode and decode array
 bufferMaps[0].set("base64", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")); // Defer to browser support when available
 bufferMaps[0].set("base64url", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")); // Defer to browser support when available
 bufferMaps[0].set("hex", u8Enc.encode("0123456789abcdef")); // Defer to browser support when available
-bufferMaps[0].set("ovm43", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"));
+bufferMaps[0].set("ovm43", u8Enc.encode("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"));
 bufferMaps[0].set("radix64", u8Enc.encode("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/"));
 bufferMaps[0].set("radix64url", u8Enc.encode("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_"));
 bufferMaps[0].set("xx", u8Enc.encode("+-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"));
@@ -238,12 +238,13 @@ for (let [key, value] of bufferMaps[0]) {
 			decodeMap[12] = 254;
 			decodeMap[13] = 254;
 			decodeMap[32] = 254;
+			decodeMap[61] = 254;
 		};
 	};
 	bufferMaps[1].set(key, decodeMap);
 };
 console.debug(bufferMaps);
-let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxLength = 1073741823) => {
+let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxLength = 536870911) => {
 	if (typeof string !== "string") {
 		throw(new TypeError("Input is not a string."));
 	};
@@ -251,25 +252,35 @@ let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxL
 		throw(new TypeError(`Alphabet "${alphabet}" is not supported.`));
 	};
 	let decodeMap = bufferMaps[1].get(alphabet);
-	let maxReadLength = Math.min(string.length, Math.ceil((maxLength << 2) / 3));
+	let encodeMapSize = bufferMaps[0].get(alphabet).length;
 	let buffer;
 	switch (alphabet) {
 		case "hex": {
+			if (Object.hasOwn(Uint8Array, "fromHex")) {
+				// Use the built-in method whenever available.
+				return Uint8Array.fromHex(string);
+			};
 			if (string.length & 1) {
 				throw(new SyntaxError("The hex string must have an even number of characters."));
 			};
 			let maxReadLength = Math.min(string.length, maxLength << 1);
 			buffer = new Uint8Array(maxReadLength >>> 1);
 			for (let i = 0; i < maxReadLength; i ++) {
-				let decodedByte = decodeMap[string.charCodeAt(i)];
-				console.debug(decodedByte);
+				let charCode = string.charCodeAt(i);
+				if (charCode >= decodeMap.length) {
+					throw(new SyntaxError(`"${string[i]}" exceeded decoding capabilities.`));
+				};
+				let decodedByte = decodeMap[charCode];
 				switch (decodedByte) {
-					case 254: {};
+					case 254: {
+						break;
+					};
 					case 255: {
 						throw(new SyntaxError(`"${string[i]}" is not a valid hex-digit.`));
+						break;
 					};
 					default: {
-						if (decodedByte < 16) {
+						if (decodedByte < encodeMapSize) {
 							buffer[i >> 1] |= decodedByte << (i & 1 ? 0 : 4);
 						} else {
 							throw(new SyntaxError(`"${string[i]}" caused an unexpected error.`));
@@ -278,6 +289,89 @@ let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxL
 				};
 			};
 			break;
+		};
+		default: {
+			// Base64 with various alphabets
+			let maxReadLength = Math.min(string.length, Math.ceil((maxLength << 2) / 3));
+			buffer = new Uint8Array((maxReadLength * 3) >> 2);
+			let readRawSize = 0, window3Triple = 0;
+			for (let i = 0; i < maxReadLength; i ++) {
+				let window3Nibble = readRawSize & 3;
+				let charCode = string.charCodeAt(i);
+				if (charCode >= decodeMap.length) {
+					throw(new SyntaxError(`"${string[i]}" exceeded decoding capabilities.`));
+				};
+				let decodedByte = decodeMap[charCode];
+				//console.debug(decodedByte, i & 3);
+				switch (decodedByte) {
+					case 254: {
+						break;
+					};
+					case 255: {
+						throw(new SyntaxError(`"${string[i]}" is not a valid hex-digit.`));
+						break;
+					};
+					default: {
+						if (decodedByte < encodeMapSize) {
+							if (alphabet === "ovm43") {
+								if (window3Nibble) {
+									// Payload
+									buffer[window3Triple - 1 + window3Nibble] |= decodedByte;
+									if (window3Nibble === 3) {
+										window3Triple += 3;
+									};
+								} else {
+									// Overlay
+									let recursionGate = Math.min(3, maxReadLength - window3Triple),
+									rollingByte = decodedByte;
+									for (let i0 = 0; i0 < recursionGate; i0 ++) {
+										buffer[window3Triple + i0] = (rollingByte & 3) << 6;
+										rollingByte >>= 2;
+									};
+								};
+							} else {};
+							readRawSize ++;
+						} else {
+							throw(new SyntaxError(`"${string[i]}" caused an unexpected error.`));
+						};
+					};
+				};
+			};
+			let readSizeValidate = readRawSize & 3;
+			switch (readSizeValidate) {
+				case 0: {
+					// Complete Base64.
+					break;
+				};
+				case 1: {
+					throw(new SyntaxError("Unexpected incomplete base64 chunk."));
+					break;
+				};
+				case 2:
+				case 3: {
+					switch (lastChunkHandling) {
+						case "strict": {
+							let lastPadAt = string.length, i = 0;
+							//console.debug(lastPadAt);
+							while (string.charCodeAt(lastPadAt - 1) === 61 && lastPadAt > 0) {
+								lastPadAt --;
+								//console.debug(lastPadAt);
+							};
+							if (((string.length - lastPadAt + readSizeValidate) & 3) !== 0) {
+								throw(new SyntaxError("Unexpected incomplete base64 chunk."));
+							};
+							break;
+						};
+						case "stop-before-partial": {
+							break;
+						};
+						default: {
+							// Same as "loose"
+						};
+					};
+					break;
+				};
+			};
 		};
 	};
 	return buffer;
