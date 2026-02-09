@@ -18,8 +18,11 @@ let QyDisplay = class extends RootDisplay {
 	#backlight = bgWhite;
 	#bmst = 0;
 	#bmex = 0;
-	#bmdb = new Uint8Array(256);
+	#bmdb = new Uint8Array(512);
 	songTitle = "";
+	msFrame = 75;
+	msActive = 150;
+	msExhaust = 250;
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	qyFont = new MxFont40("./data/bitmaps/xg/qyTrue.tsv", "./data/bitmaps/xg/font.tsv");
 	sqrFont = new MxFont40("./data/bitmaps/xg/qySqr.tsv");
@@ -31,13 +34,7 @@ let QyDisplay = class extends RootDisplay {
 	constructor() {
 		super(new OctaviaDevice(), 0, 0.95);
 		let upThis = this;
-		upThis.addEventListener("mode", function (ev) {
-			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
-				upThis.#bmdb[i] = e;
-			});
-			upThis.#bmst = 2;
-			upThis.#bmex = upThis.clockSource.now() + 1600;
-		});
+		upThis.attachState("mu");
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
 		});
@@ -333,52 +330,11 @@ let QyDisplay = class extends RootDisplay {
 				});
 			};
 			// Fetch voice bitmap
+			upThis.muWriteBm(upThis.#bmdb, upThis.#ch);
 			// Commit to bitmap screen
-			let useBm;
-			if (timeNow < sum.bitmap.expire) {
-				// Use provided bitmap
-				useBm = sum.bitmap.bitmap;
-			} else {
-				// Use stored pic
-				useBm = this.#bmdb.slice();
-				if (timeNow >= this.#bmex) {
-					this.#bmst = 0;
-					let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
-					useBm = this.voxBm.getBm(upThis.getChVoice(this.#ch).name) || this.voxBm.getBm(upThis.getVoice(primBuf[0], primBuf[1], 0, sum.mode).name);
-					if (["an", "ap", "dr", "dx", "pc", "pf", "sg", "vl"].indexOf(standard) > -1) {
-						useBm = this.sysBm.getBm(`ext_${standard}`);
-					};
-					if (!useBm && (primBuf[0] < 48 || upThis.device?.getChCc(upThis.#ch, 0) === 56)) {
-						useBm = this.voxBm.getBm(upThis.getVoice(0, sum.chProgr[this.#ch], 0, sum.mode).name)
-					};
-					if (!useBm && primBuf[0] === 126) {
-						useBm = this.sysBm.getBm("cat_smpl");
-					};
-					if (!useBm && primBuf[0] === 64) {
-						useBm = this.sysBm.getBm("cat_sfx");
-					};
-					if (!useBm) {
-						useBm = this.sysBm.getBm("no_abm");
-					};
-				} else {
-					if (this.#bmst === 2) {
-						useBm.forEach((e, i, a) => {
-							let crit = Math.floor((this.#bmex - timeNow) / 400); // divided by 400
-							a[i] = (crit & 1) === e;
-						});
-					};
-				};
-			};
-			if (useBm) {
-				useBm.width = useBm.length >> 4;
-			};
-			useBm?.render((e, x, y) => {
-				if (useBm.width < 32) {
-					upThis.#nmdb[6217 + (x << 1)+ (y << 7)] = e;
-					upThis.#nmdb[6218 + (x << 1)+ (y << 7)] = e;
-				} else {
-					upThis.#nmdb[6217 + x + (y << 7)] = e;
-				};
+			upThis.#bmdb?.forEach((e, i) => {
+				let x = i & 31, y = i >> 5;
+				upThis.#nmdb[6217 + x + (y << 7)] = e ? 1 : 0;
 			});
 		};
 		{

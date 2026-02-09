@@ -759,7 +759,7 @@ let RootDisplay = class extends CustomEventSource {
 		if (buffer?.BYTES_PER_ELEMENT !== 1) {
 			throw(new TypeError("Buffer must be Uint8Array."));
 		};
-		let upThis = this, amplifier = (buffer >> 8) || 1;
+		let upThis = this, amplifier = (buffer.length >> 8) || 1;
 		if (!upThis.dState.isMu) {
 			throw(new Error("Device state for MU is not yet attached."));
 		};
@@ -776,7 +776,7 @@ let RootDisplay = class extends CustomEventSource {
 				tempWindow = bmDisp.bitmap;
 				shouldWrite = true;
 			} else {
-				buffer.set(bmDisp.bitmap[i].subarray(0, buffer.length));
+				buffer.set(bmDisp.bitmap.subarray(0, buffer.length));
 				writtenOffload = true;
 			};
 		} else if (timeNow < upThis.dState.muBmex) {
