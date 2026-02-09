@@ -253,11 +253,7 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#scheduledEx = data;
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
 		});
-		upThis.clockSource = upThis.clockSource || {
-			now: () => {
-				return Date.now() / 1000;
-			}
-		};
+		upThis.clockSource = upThis.device.clockSource;
 		(async () => {
 			await Promise.all([upThis.trueFont.loaded.wait(), upThis.xgFont.loaded.wait(), upThis.sysBm.loaded.wait(), upThis.aniBm.loaded.wait()]);
 			upThis.#booted = 1;

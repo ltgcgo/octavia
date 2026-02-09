@@ -63,6 +63,14 @@ let RootDisplay = class extends CustomEventSource {
 	msExhaust = 300;
 	smoothAttack = 0;
 	smoothDecay = 0;
+	get clockSource() {
+		return this.device?.clockSource;
+	};
+	set clockSource(x) {
+		if (this.device) {
+			this.device.clockSource = x;
+		};
+	};
 	reset() {
 		let upThis = this;
 		// Dispatching the event
@@ -686,6 +694,9 @@ let RootDisplay = class extends CustomEventSource {
 			return Math.floor(elapsed / upThis.msFrame) % frames + 1;
 		};
 		return 0;
+	};
+	writeMuBm(part, buffer) {
+		// Supports both 256 (normal) and 512 (wide) bits.
 	};
 	getProps(voiceObject) {
 		let upThis = this;

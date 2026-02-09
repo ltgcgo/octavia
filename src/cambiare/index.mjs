@@ -216,11 +216,11 @@ let centCache = new Array(128).fill(null);
 centCache.forEach((e, i, a) => {
 	a[i] = `${Math.round(i / 1.27) / 100}`;
 });
-let setCcSvg = function (svg, value) {
+/*let setCcSvg = function (svg, value) {
 	let hV = heightCache[value];
 	svg.setAttribute("height", hV);
 	svg.setAttribute("y", 24 - hV);
-};
+};*/
 
 let setCanvasText = function (context, text, italic) {
 	context.innerText = text;

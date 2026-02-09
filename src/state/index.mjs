@@ -333,7 +333,56 @@ if (typeof self?.require !== "undefined") {
 	throw(new Error("Environments supporting CommonJS is not supported."));
 };
 
-let OctaviaDevice = class extends CustomEventSource {
+let TimeMuxer = class TimeMuxer {
+	#attached;
+	#realtime; // The indicative toggle
+	detach() {
+		this.#attached = undefined;
+		this.#realtime = true;
+	};
+	attach(source) {
+		if (typeof source !== "undefined" && typeof source.currentTime === "number") {
+			this.#attached = source;
+		} else {
+			throw(new TypeError("Not a valid time source."));
+		};
+	};
+	get realtime() {
+		return this.#realtime || typeof this.#attached === "undefined";
+	};
+	set realtime(toggle) {
+		if (toggle) {
+			this.#realtime = true;
+		} else if (typeof this.#attached === "undefined") {
+			throw(new TypeError("No attached time source is present."));
+		} else {
+			this.#realtime = false;
+		};
+	};
+	get currentTime() {
+		// In seconds, as float
+		if (this.realtime || !this.#attached) {
+			return performance.now() * 0.001;
+		} else {
+			return this.#attached.currentTime;
+		};
+	};
+	now() {
+		// In milliseconds, rounded down
+		if (this.realtime || !this.#attached) {
+			return Math.floor(performance.now());
+		} else {
+			return Math.round(this.#attached.currentTime * 1000);
+		};
+	};
+	constructor(clockSource) {
+		if (typeof source !== "undefined" && typeof source.currentTime === "number") {
+			this.#attached = source;
+		};
+	};
+};
+
+let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	// Constants
 	NOTE_IDLE = 0;
 	NOTE_ATTACK = 1;
@@ -427,6 +476,7 @@ let OctaviaDevice = class extends CustomEventSource {
 	#cmPatch = new Uint8Array(1024); // C/M device patch storage
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
 	#subDb = {};
+	clockSource = new TimeMuxer(); // Same as in Cambiare
 	modelEx = {
 		"xg": {
 			"map": 0, // MU Basic, MU100 Native, PSR/LE
@@ -7478,6 +7528,7 @@ let OctaviaDevice = class extends CustomEventSource {
 };
 
 export {
+	TimeMuxer,
 	OctaviaDevice,
 	allocated,
 	ccToPos as ccBufferOffset,
