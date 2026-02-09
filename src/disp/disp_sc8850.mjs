@@ -305,7 +305,7 @@ let Sc8850Display = class extends RootDisplay {
 					});
 				};
 			};
-			upThis.getChBm(upThis.#ch, voiceObject)?.render((e, x, y) => {
+			upThis.getChBm(upThis.#ch, upThis.BM_UNIVERSAL, voiceObject)?.render((e, x, y) => {
 				upThis.#nmdb[(y + 18) * totalWidth + x + 2] = e ? 255 : 0;
 			});
 			// Render port selection

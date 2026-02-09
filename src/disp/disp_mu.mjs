@@ -1,7 +1,6 @@
 "use strict";
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
-import {allowedStandards} from "../state/bankReader.js";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
 
@@ -209,9 +208,10 @@ let MuDisplay = class extends RootDisplay {
 		super(new OctaviaDevice());
 		let upThis = this;
 		upThis.addEventListener("mode", function (ev) {
-			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
-				upThis.#bmdb[i] = e;
-			});
+			let modeBm = upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`);
+			if (modeBm) {
+				upThis.#bmdb.set(modeBm.getFrame(0));
+			};
 			upThis.#bmst = 2;
 			upThis.#bmex = Date.now() + blinkSpeedMode * 4;
 		});
@@ -533,7 +533,7 @@ let MuDisplay = class extends RootDisplay {
 		};
 		// Fetch voice bitmap
 		// Commit to bitmap screen
-		let useBm;
+		let useBm, blinkCrit = Math.floor((upThis.#bmex - timeNow) / blinkSpeedMode) & 1;
 		if (timeNow <= sum.bitmap.expire) {
 			// Use provided bitmap
 			if (upThis.#unresolvedEx) {
@@ -570,7 +570,10 @@ let MuDisplay = class extends RootDisplay {
 					//getDebugState() && console.debug(`SysEx prompt reset.`);
 				};
 				upThis.#bmst = 0;
-				useBm = upThis.getChBm(upThis.#ch);
+				let voiceBm = upThis.getChBm(upThis.#ch, upThis.BM_YAMAHA_MU, voiceObj),
+				frameBm = upThis.getChBmState(upThis.#ch, voiceBm.frames);
+				upThis.#bmdb.set(voiceBm.getFrame(frameBm));
+				//console.debug(upThis.#ch, frameBm);
 				/* let standard = voiceObj.standard.toLowerCase();
 				useBm = upThis.voxBm.getBm(voiceObj.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
 				if (standard !== upThis.device?.getChMode(upThis.#ch) && allowedStandards.xg.has(standard)) {
@@ -696,9 +699,11 @@ let MuDisplay = class extends RootDisplay {
 						upThis.#unresolvedEx = 0;
 						getDebugState() && console.debug(`SysEx prompt cancelled.`);
 					};
-					useBm.forEach((e, i, a) => {
-						let crit = Math.floor((upThis.#bmex - timeNow) / blinkSpeedMode);
-						a[i] = (crit & 1) === e;
+					upThis.#bmdb.forEach((e, i, a) => {
+						a[i] = blinkCrit === e;
+						/*if (i === 0) {
+							console.debug(blinkCrit, e, a[i]);
+						};*/
 					});
 				};
 			};
@@ -707,7 +712,7 @@ let MuDisplay = class extends RootDisplay {
 			let pX = i & 15;
 			let pY = i >> 4;
 			ctx.fillStyle = inactivePixel;
-			if (upThis.#bmdb) {
+			if (upThis.#bmdb[i]) {
 				ctx.fillStyle = activePixel;
 			};
 			ctx.fillRect(260 + pX * mprWidth, 180 + pY * mprHeight, mpaWidth, mpaHeight);

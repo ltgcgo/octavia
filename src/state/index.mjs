@@ -839,7 +839,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			// CC event, directly assign values to the register.
 			if ([0, 32].indexOf(det.data[0]) > -1) {
 				(() => {
-					switch(this.#mode) {
+					switch (this.#mode) {
 						case modeMap.s90es:
 						case modeMap.motif: {
 							if (det.data[0] === 0) {
@@ -994,7 +994,7 @@ let OctaviaDevice = class extends CustomEventSource {
 						}*/;
 						switch (this.#mode) {
 							case modeMap.xg: {
-								if ([79, 95, 126, 127].indexOf(det.data[1]) > -1) {
+								if ([79, 95, 120, 126, 127].indexOf(det.data[1]) > -1) {
 									if (this.#chType[part] === 0) {
 										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
@@ -1023,8 +1023,8 @@ let OctaviaDevice = class extends CustomEventSource {
 										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
-								} else if ([80, 81, 82, 83].indexOf(det.data[1]) > -1) {
-									/*let voiceObject = this.getVoice(
+								} /*else if ([80, 81, 82, 83].indexOf(det.data[1]) > -1) {
+									let voiceObject = this.getVoice(
 										this.getChCc(part, 0),
 										this.#prg[part],
 										this.getChCc(part, 32),
@@ -1034,8 +1034,8 @@ let OctaviaDevice = class extends CustomEventSource {
 									if (this.#chType[part] === 0) {
 										//this.setChType(part, this.CH_MELODIC);
 										console.debug(`CH${part + 1} set to ${voiceIdx[(voiceObject.type || 0) & 1]} by MSB.`);
-									};*/
-								} else {
+									};
+								}*/ else {
 									if (this.#chType[part] !== this.CH_MELODIC) {
 										this.setChType(part, this.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
@@ -3157,7 +3157,7 @@ let OctaviaDevice = class extends CustomEventSource {
 			});
 		};
 		upThis.#metaRun[7] = function (data) {
-			switch(data[0]) {
+			switch (data[0]) {
 				case "$": {
 					if (data.substring(1, 5) === "Lyrc") {
 						// XF karaoke lyrics trigger & config

@@ -11,6 +11,7 @@ import {
 	arrayCompare,
 	customInterpreter
 } from "../state/utils.js";
+import {allowedStandards} from "../state/bankReader.js";
 import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
 import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 
@@ -31,6 +32,8 @@ if (typeof self?.require !== "undefined") {
 };
 
 let RootDisplay = class extends CustomEventSource {
+	BM_UNIVERSAL = 0;
+	BM_YAMAHA_MU = 1;
 	device;
 	#midiPool;
 	#mapList = {};
@@ -172,7 +175,7 @@ let RootDisplay = class extends CustomEventSource {
 			if (i) {
 				let id = 0, name;
 				e.split(`\t`).forEach((e0, i0) => {
-					switch(i0) {
+					switch (i0) {
 						case fieldMsb: {
 							id |= ((parseInt(e0, 16) & 255) << 8);
 							break;
@@ -197,7 +200,7 @@ let RootDisplay = class extends CustomEventSource {
 				allCount ++;
 			} else {
 				e.split(`\t`).forEach((e0, i0) => {
-					switch(e0) {
+					switch (e0) {
 						case "MSB": {
 							fieldMsb = i0;
 							break;
@@ -390,7 +393,7 @@ let RootDisplay = class extends CustomEventSource {
 		let id = (msb << 8) | lsb;
 		return this.#efxList[id] || `0x${id.toString(16).padStart(4, "0")}`;
 	};
-	getVoxBm(voiceObject) {
+	getVoxBm(voiceObject, bmType = this.BM_UNIVERSAL) {
 		// Get voice bitmap (universal)
 		if (!voiceObject) {
 			throw(new Error("Voice object must be valid"));
@@ -474,21 +477,133 @@ let RootDisplay = class extends CustomEventSource {
 					//
 				};
 			};
+			switch (bmType) {
+				case upThis.BM_UNIVERSAL: {
+					break;
+				};
+				case upThis.BM_YAMAHA_MU: {
+					let standard = voiceObject.standard.toLowerCase();
+					if (standard !== voiceObject.mode && allowedStandards.xg.has(standard)) {
+						switch (voiceObject.sid[0] >> 4) {
+							case 2: {
+								// Internal
+								result = upThis.sysBm?.getBm(`ext_${standard}I`);
+								break;
+							};
+							case 3: {
+								if (voiceObject.sid[0] === 48) {
+									result = upThis.sysBm?.getBm(`boot_3`);
+								};
+								break;
+							};
+							case 6: {
+								// XG-proxy (XG-B)
+								result = upThis.sysBm.getBm(`ext_${standard}P`);
+								break;
+							};
+							default: {
+								// Should be XG Non-proxy (XG-A)
+								result = upThis.sysBm.getBm(`ext_${standard}`);
+								break;
+							};
+						};
+					} else if (["es"].indexOf(standard) > -1) {
+						result = upThis.sysBm.getBm(`boot_3`);
+					} else if (standard === "kr") {
+						result = upThis.sysBm.getBm(`st_korg`);
+					};
+					break;
+				};
+			};
 		};
 		if (!result) {
 			result = upThis.voxBm.getBm(upThis.getVoice(voiceObject.sid[0], voiceObject.sid[1], 0, voiceObject.mode).name);
 		};
 		return result;
 	};
-	getChBm(ch, voiceObject) {
+	getChBm(ch, bmType = this.BM_UNIVERSAL, voiceObject) {
 		// Get part bitmap (universal)
 		let upThis = this;
 		voiceObject = voiceObject ?? upThis.getChVoice(ch);
-		let data = upThis.getVoxBm(voiceObject);
+		let chType = upThis?.device.getChType(ch);
+		let data;
+		// Pre-selection
+		switch (bmType) {
+			case upThis.BM_UNIVERSAL: {
+				break;
+			};
+			case upThis.BM_YAMAHA_MU: {
+				let standard = voiceObject.standard.toLowerCase();
+				if (standard !== voiceObject.mode && allowedStandards.xg.has(standard)) {
+					switch (voiceObject.sid[0] >> 4) {
+						case 1: {
+							// Sampling
+							if (voiceObject.sid[0] === 16) {
+								data = upThis.sysBm.getBm("cat_svox");
+							};
+							break;
+						};
+						case 2: {
+							// Internal
+							data = upThis.sysBm?.getBm(`ext_${standard}I`);
+							break;
+						};
+						case 3: {
+							if (voiceObject.sid[0] === 48) {
+								data = upThis.sysBm?.getBm(`boot_3`);
+							};
+							break;
+						};
+						case 6: {
+							// XG-proxy (XG-B)
+							data = upThis.sysBm.getBm(`ext_${standard}P`);
+							break;
+						};
+						default: {
+							// Should be XG Non-proxy (XG-A)
+							data = upThis.sysBm.getBm(`ext_${standard}`);
+							break;
+						};
+					};
+				} else if (["es"].indexOf(standard) > -1) {
+					data = upThis.sysBm.getBm(`boot_3`);
+				} else if (standard === "kr") {
+					data = upThis.sysBm.getBm(`st_korg`);
+				} else if (standard === "xg") {
+					switch (voiceObject.sid[0]) {
+						case 126: {
+							if (voiceObject.sid[1] >> 2 === 28) {
+								data = upThis.sysBm.getBm("cat_smpl");
+							};
+							break;
+						};
+					};
+				};
+				if (!data) {
+					if (chType) {
+						switch (voiceObject.ending) {
+							case "!":
+							case "?":
+							case "*": {
+								data = upThis.sysBm.getBm(chType > 1 && chType < 6 ? `cat_dS${chType - 1}` : "cat_drS");
+								break;
+							};
+							default: {
+								data = upThis.sysBm.getBm(chType > 1 && chType < 10 ? `cat_dr${chType - 1}` : "cat_drm");
+							};
+						};
+					};
+				};
+				break;
+			};
+		};
+		// Direct selection
+		data = data || upThis.getVoxBm(voiceObject, bmType);
 		if (!data) {
 			if (!upThis.sysBm) {
 				return;
 			};
+			// Main selection
 			switch (voiceObject.mode) {
 				case "xg": {
 					switch (voiceObject.sid[0]) {
@@ -537,9 +652,19 @@ let RootDisplay = class extends CustomEventSource {
 				};
 			};
 		};
-		if (!data) {
-			if (upThis.device.getChType(ch)) {
-				data = upThis.sysBm.getBm("cat_drm");
+		// Post-selection
+		if (data) {
+			switch (voiceObject.ending) {
+				case "!":
+				case "?":
+				case "*": {
+					data = upThis.sysBm.getBm(chType ? "cat_drS" : "no_vox");
+					break;
+				};
+			};
+		} else {
+			if (chType) {
+				data = upThis.sysBm.getBm("cat_drS");
 			} else {
 				data = upThis.sysBm.getBm("no_vox");
 			};

@@ -257,6 +257,7 @@ let MxBm256 = class MxBm256 {
 							dp --;
 						};
 					});
+					//console.debug(arr[0], bm.length);
 					upThis.#bm[arr[0]] = new BitmapMatrix(16, 16, false, bm);
 					upThis.#bm[arr[0]].id = arr[0];
 				} else {
