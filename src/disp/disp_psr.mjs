@@ -26,6 +26,9 @@ let PsrDisplay = class extends RootDisplay {
 	#lastFrameBar = 0;
 	#kana = "";
 	#rhythmTextBuffer = "        ";
+	msFrame = 75;
+	msActive = 150;
+	msExhaust = 250;
 	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
@@ -47,13 +50,14 @@ let PsrDisplay = class extends RootDisplay {
 	constructor() {
 		super(new OctaviaDevice());
 		let upThis = this;
-		this.addEventListener("mode", function (ev) {
+		upThis.attachState("mu");
+		/*this.addEventListener("mode", function (ev) {
 			(upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`) || []).forEach(function (e, i) {
 				upThis.#bmdb[i] = e;
 			});
 			upThis.#bmst = 2;
 			upThis.#bmex = upThis.clockSource.now() + 1600;
-		});
+		});*/
 		this.addEventListener("channelactive", (ev) => {
 			this.#ch = ev.data;
 		});
@@ -434,11 +438,11 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.resetTransform();
 		// Fetch voice bitmap
 		// Commit to bitmap screen
-		let useBm;
-		if (timeNow <= sum.bitmap.expire) {
+		let useBm = upThis.#bmdb;
+		/* if (timeNow <= sum.bitmap.expire) {
 		// Use provided bitmap
 			useBm = sum.bitmap.bitmap;
-		} else if (this.demoInfo && time > 0) {
+		} else */if (this.demoInfo && time > 0) {
 			let sequence = this.demoInfo.class || "boot";
 			let stepTime = this.demoInfo.fps || 2;
 			let stepSize = this.demoInfo.size || 4;
@@ -451,8 +455,9 @@ let PsrDisplay = class extends RootDisplay {
 				useBm = this.#bmdb.slice();
 			};
 		} else {
+			upThis.muWriteBm(this.#bmdb, upThis.#ch);
 			// Use stored pic
-			useBm = this.#bmdb.slice();
+			/* useBm = this.#bmdb.slice();
 			if (timeNow >= this.#bmex) {
 				this.#bmst = 0;
 				let standard = upThis.getChVoice(this.#ch).standard.toLowerCase();
@@ -479,12 +484,10 @@ let PsrDisplay = class extends RootDisplay {
 						a[i] = crit % 2 === e;
 					});
 				};
-			};
-		}
-		if (useBm) {
-			useBm.width = useBm.length >> 4;
+			}; */
 		};
-		useBm?.render((e, x, y) => {
+		upThis.#bmdb.forEach((e, i) => {
+			let x = i & 15, y = i >> 4;
 			ctx.fillStyle = e ? activePixel : inactivePixel;
 			ctx.fillRect(224 + x * 6, 261 + y * 3, 5, 2);
 		});
