@@ -206,14 +206,15 @@ let MuDisplay = class extends RootDisplay {
 	constructor() {
 		super(new OctaviaDevice());
 		let upThis = this;
-		upThis.addEventListener("mode", function (ev) {
+		/*upThis.addEventListener("mode", function (ev) {
 			let modeBm = upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`);
 			if (modeBm) {
 				upThis.#bmdb.set(modeBm.getFrame(0));
 			};
 			upThis.#bmst = 2;
 			upThis.#bmex = upThis.clockSource.now() + blinkSpeedMode * 4;
-		});
+		});*/
+		upThis.attachState("mu");
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
 		});
@@ -527,15 +528,15 @@ let MuDisplay = class extends RootDisplay {
 		};
 		// Fetch voice bitmap
 		// Commit to bitmap screen
-		let useBm, blinkCrit = Math.floor((upThis.#bmex - timeNow) / blinkSpeedMode) & 1;
-		if (timeNow <= sum.bitmap.expire) {
+		let useBm;
+		/* if (timeNow <= sum.bitmap.expire) {
 			// Use provided bitmap
 			if (upThis.#unresolvedEx) {
 				upThis.#unresolvedEx = 0;
 				getDebugState() && console.debug(`SysEx prompt cancelled.`);
 			};
 			useBm = sum.bitmap.bitmap;
-		} else if (upThis.demoInfo && time > 0) {
+		} else */if (upThis.demoInfo && time > 0) {
 			if (upThis.#unresolvedEx) {
 				upThis.#unresolvedEx = 0;
 				getDebugState() && console.debug(`SysEx prompt cancelled.`);
@@ -552,8 +553,9 @@ let MuDisplay = class extends RootDisplay {
 				useBm = upThis.#bmdb.slice();
 			};
 		} else {
+			upThis.muWriteBm(upThis.#bmdb, upThis.#ch, voiceObj);
 			// Use stored pic
-			useBm = upThis.#bmdb.slice();
+			/* useBm = upThis.#bmdb.slice();
 			if (timeNow >= upThis.#bmex) {
 				if (upThis.#unresolvedEx > 0 && timeNow - upThis.#promptEx >= exExhaust) {
 					upThis.#unresolvedEx -= 16;
@@ -565,10 +567,12 @@ let MuDisplay = class extends RootDisplay {
 				};
 				upThis.#bmst = 0;
 				let voiceBm = upThis.getChBm(upThis.#ch, upThis.BM_YAMAHA_MU, voiceObj),
-				frameBm = upThis.getChBmState(upThis.#ch, voiceBm.frames);
-				upThis.#bmdb.set(voiceBm.getFrame(frameBm));
+				frameBm = upThis.getChBmState(upThis.#ch, voiceBm?.frames || 1);
+				if (voiceBm) {
+					upThis.#bmdb.set(voiceBm.getFrame(frameBm));
+				};
 				//console.debug(upThis.#ch, frameBm);
-				/* let standard = voiceObj.standard.toLowerCase();
+				let standard = voiceObj.standard.toLowerCase();
 				useBm = upThis.voxBm.getBm(voiceObj.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
 				if (standard !== upThis.device?.getChMode(upThis.#ch) && allowedStandards.xg.has(standard)) {
 					switch ((upThis.getChPrimitive(upThis.#ch, 1)) >> 4) {
@@ -686,7 +690,6 @@ let MuDisplay = class extends RootDisplay {
 						};
 					});
 				};
-				*/
 			} else {
 				if (upThis.#bmst === 2) {
 					if (upThis.#unresolvedEx) {
@@ -695,12 +698,12 @@ let MuDisplay = class extends RootDisplay {
 					};
 					upThis.#bmdb.forEach((e, i, a) => {
 						a[i] = blinkCrit === e;
-						/*if (i === 0) {
+						if (i === 0) {
 							console.debug(blinkCrit, e, a[i]);
-						};*/
+						};
 					});
 				};
-			};
+			}; */
 		};
 		for (let i = 0; i < 256; i ++) {
 			let pX = i & 15;

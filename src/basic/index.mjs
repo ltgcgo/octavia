@@ -58,6 +58,8 @@ let RootDisplay = class extends CustomEventSource {
 	#polyCache = new Uint8Array(allocated.ch);
 	// Recursion guard
 	#getCachedInstanceCount = 0;
+	// Device-specific states
+	dState;
 	msActive = 200;
 	msFrame = 100;
 	msExhaust = 300;
@@ -697,8 +699,133 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		return 0;
 	};
-	writeMuBm(part, buffer) {
+	detachState(state) {
+		let upThis = this;
+		if (upThis.dState) {
+			let dState = upThis.dState;
+			switch (state) {
+				case "mu": {
+					upThis.removeEventListener("mode", dState.muModeFunc);
+					delete dState.muModeFunc;
+					delete dState.muModeBm;
+					delete dState.muUnresolvedEx;
+					delete dState.muUseVoiceBm;
+					delete dState.muTempWindow;
+					delete dState.muBlinkSpeedMode;
+					delete dState.muBmex;
+					delete dState.muBmst;
+					delete dState.isMu;
+					break;
+				};
+			};
+			return true;
+		} else {
+			return false;
+		};
+	};
+	attachState(state) {
+		let upThis = this;
+		upThis.dState = upThis.dState ?? {};
+		let dState = upThis.dState,
+		unwritten = false;
+		switch (state) {
+			case "mu": {
+				dState.isMu = true;
+				dState.muBmst = 0;
+				dState.muBmex = 0;
+				dState.muBlinkSpeedMode = 400;
+				dState.muTempWindow = new Uint8Array(256);
+				dState.muUseVoiceBm = true;
+				dState.muUnresolvedEx = 0;
+				dState.muModeFunc = function (ev) {
+					let modeBm = upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`);
+					if (modeBm) {
+						dState.muModeBm = modeBm.getFrame(0);
+					};
+					dState.muBmst = 2;
+					dState.muBmex = upThis.clockSource.now() + dState.muBlinkSpeedMode * 4;
+				};
+				upThis.addEventListener("mode", dState.muModeFunc);
+				break;
+			};
+			default: {
+				unwritten = true;
+			};
+		};
+		return !unwritten;
+	};
+	muWriteBm(buffer, part, voiceObj) {
 		// Supports both 256 (normal) and 512 (wide) bits.
+		if (buffer?.BYTES_PER_ELEMENT !== 1) {
+			throw(new TypeError("Buffer must be Uint8Array."));
+		};
+		let upThis = this, amplifier = (buffer >> 8) || 1;
+		if (!upThis.dState.isMu) {
+			throw(new Error("Device state for MU is not yet attached."));
+		};
+		let timeNow = upThis.clockSource.now();
+		let bmDisp = upThis.device?.getBitmap();
+		let tempWindow = upThis.dState.muTempWindow;
+		let shouldWrite = false, writtenOffload = false;
+		// Demo animation is excluded
+		if (timeNow < bmDisp.expire) {
+			// Bitmap displays
+			// Cancel SysEx prompts
+			// Buffer write
+			if (bmDisp.bitmap.length <= 256) {
+				tempWindow = bmDisp.bitmap;
+				shouldWrite = true;
+			} else {
+				buffer.set(bmDisp.bitmap[i].subarray(0, buffer.length));
+				writtenOffload = true;
+			};
+		} else if (timeNow < upThis.dState.muBmex) {
+			if (upThis.dState.muBmst === 2) {
+				// Mode bitmaps with blinking
+				shouldWrite = true;
+				// Cancel SysEx prompts
+				// Buffer write
+				let blinkCrit = Math.floor((upThis.dState.muBmex - timeNow) / upThis.dState.muBlinkSpeedMode) & 1;
+				//console.debug(blinkCrit);
+				//if (blinkCrit === 0) {
+					//console.debug("Invert!", blinkCrit);
+					upThis.dState.muModeBm?.forEach((e, i) => {
+						tempWindow[i] = blinkCrit === e;
+						if (i === 0) {
+							console.debug(e, blinkCrit, blinkCrit === e, tempWindow[i]);
+						};
+					});
+				//} else {
+					//console.debug("Bypass!", blinkCrit);
+					//tempWindow = tempWindow ?? upThis.dState.muModeBm;
+				//};
+				//console.debug(tempWindow?.join(","));
+			};
+		} else if (upThis.dState.muUseVoiceBm) {
+			// Voice bitmaps with SysEx blinking
+			shouldWrite = true;
+			// Resolve SysEx prompts
+			// Get voice bitmaps
+			upThis.dState.muBmst = 0;
+			let voiceBm = upThis.getChBm(part, upThis.BM_YAMAHA_MU, voiceObj),
+			frameBm = upThis.getChBmState(part, voiceBm?.frames || 1);
+			if (voiceBm) {
+				tempWindow.set(voiceBm.getFrame(frameBm));
+			};
+			// Blink on SysEx reception
+		};
+		if (shouldWrite) {
+			let i0 = 0;
+			for (let i = 0; i < tempWindow.length; i ++) {
+				let e = tempWindow[i];
+				buffer[i0] = e ? 255 : 0;
+				if (amplifier === 2) {
+					buffer[i0 + 1] = e ? 255 : 0;
+				};
+				i0 += amplifier;
+			};
+		};
+		return shouldWrite || writtenOffload;
 	};
 	getProps(voiceObject) {
 		let upThis = this;
