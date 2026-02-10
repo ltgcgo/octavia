@@ -789,12 +789,16 @@ let RootDisplay = class extends CustomEventSource {
 				//console.debug(blinkCrit);
 				//if (blinkCrit === 0) {
 					//console.debug("Invert!", blinkCrit);
-					upThis.dState.muModeBm?.forEach((e, i) => {
-						tempWindow[i] = blinkCrit === e;
-						if (i === 0) {
-							console.debug(e, blinkCrit, blinkCrit === e, tempWindow[i]);
-						};
-					});
+					if (upThis.dState.muModeBm) {
+						upThis.dState.muModeBm?.forEach((e, i) => {
+							tempWindow[i] = blinkCrit === e;
+							if (i === 0) {
+								console.debug(e, blinkCrit, blinkCrit === e, tempWindow[i]);
+							};
+						});
+					} else {
+						tempWindow.fill(blinkCrit ? 0 : 1);
+					};
 				//} else {
 					//console.debug("Bypass!", blinkCrit);
 					//tempWindow = tempWindow ?? upThis.dState.muModeBm;

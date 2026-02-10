@@ -199,7 +199,7 @@ let QyDisplay = class extends RootDisplay {
 						upThis.#nmdb[55 + x + i * 6 + (y << 7)] = e;
 				});
 			});
-			let curCat = upThis.#getCat(upThis.#ch, upThis.device?.getChCc(upThis.#ch, 0), sum.chProgr[upThis.#ch]),
+			let curCat = upThis.#getCat(upThis.#ch, upThis.device?.getChPrimitive(upThis.#ch, 1, true), upThis.device?.getChPrimitive(upThis.#ch, 0, true)),
 			curCatBm = upThis.qyRsrc.getBm(`Vox_${curCat}`);
 			if (curCatBm) {
 				curCatBm.render((e, x, y) => {
@@ -421,9 +421,13 @@ let QyDisplay = class extends RootDisplay {
 					});
 					upThis.#renderFill(32 + tchOff, 46 + volSlid, 8, 1);
 					// Category render
-					let chType = upThis.device.getChType()[rch];
-					let curCat = upThis.#getCat(rch, upThis.device?.getChCc(rch, 0), sum.chProgr[rch]),
-					curCatBm = upThis.qyRsrc.getBm(`Vox_${[`${curCat}`, "dr", "ds1", "ds2", "ds3", "ds4", "ds5", "ds6", "ds7", "ds8"][chType]}`);
+					let chType = upThis.device.getChType(rch);
+					let curCat = upThis.#getCat(rch, upThis.device?.getChPrimitive(rch, 1), upThis.device?.getChPrimitive(rch, 0)),
+					curCatId = `Vox_${[`${curCat}`, "dr", "ds1", "ds2", "ds3", "ds4", "ds5", "ds6", "ds7", "ds8"][chType]}`,
+					curCatBm = upThis.qyRsrc.getBm(curCatId);
+					if (upThis.#ch === rch) {
+						console.debug(curCatBm?.id);
+					};
 					if (curCatBm) {
 						curCatBm.render((e, x, y) => {
 							if (e) {
