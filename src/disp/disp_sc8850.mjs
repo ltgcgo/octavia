@@ -197,7 +197,7 @@ let Sc8850Display = class extends RootDisplay {
 			// Channel test
 			let alreadyMin = false;
 			let minCh = 0, maxCh = 0;
-			sum.chInUse.forEach(function (e, i) {
+			upThis.device?.getActive().forEach(function (e, i) {
 				if (e) {
 					if (!alreadyMin) {
 						alreadyMin = true;
@@ -238,13 +238,15 @@ let Sc8850Display = class extends RootDisplay {
 			// Render bank info and voice name
 			let voiceObject = upThis.getChVoice(upThis.#ch);
 			let scLetterNative = upThis.#letterMode === "gs" || upThis.#letterMode === "sc";
-			let scLetterMode = 0;
-			if (scLetterNative && (sum.letter.set <= timeNow && timeNow < sum.letter.set + 15000)) {
-				if (sum.letter.text.length <= 16) {
-					scLetterMode = timeNow < sum.letter.expire ? 1 : 0;
-					//console.debug(`SC constant: ${sum.letter.expire - timeNow}`);
+			let scLetterMode = 0,
+			letterDisp = upThis.device?.getLetter(),
+			bitmapDisp = upThis.device?.getBitmap();
+			if (scLetterNative && (letterDisp.set <= timeNow && timeNow < letterDisp.set + 15000)) {
+				if (letterDisp.text.length <= 16) {
+					scLetterMode = timeNow < letterDisp.expire ? 1 : 0;
+					//console.debug(`SC constant: ${letterDisp.expire - timeNow}`);
 				} else {
-					let scLetterDuration = sum.letter.set + Math.min(19 + sum.letter.text.length, 51) * 300;
+					let scLetterDuration = letterDisp.set + Math.min(19 + letterDisp.text.length, 51) * 300;
 					scLetterMode = timeNow < scLetterDuration ? 2 : 0;
 					//console.debug(`SC variable: ${scLetterDuration - timeNow}`);
 				};
@@ -259,7 +261,7 @@ let Sc8850Display = class extends RootDisplay {
 						};
 					});
 				});
-				upThis.font56.getStr(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0")).forEach((e0, i0) => {
+				upThis.font56.getStr(`${upThis.device?.getChPrimitive(upThis.#ch, 0, true)}`.padStart(3, "0")).forEach((e0, i0) => {
 					let offsetX = i0 * 6 + 43;
 					e0.forEach((e1, i1) => {
 						let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
@@ -282,13 +284,13 @@ let Sc8850Display = class extends RootDisplay {
 				let displayText;
 				switch (scLetterMode) {
 					case 1: {
-						displayText = sum.letter.text;
+						displayText = letterDisp.text;
 						break;
 					};
 					case 2: {
 						let voiceNamePadded = upThis.getMapped(voiceObject.name).padEnd(12, " ");
-						displayText = `    ${voiceNamePadded}<${sum.letter.text}<    ${voiceNamePadded}`;
-						let cutoffStart = Math.floor((timeNow - sum.letter.set) / 300);
+						displayText = `    ${voiceNamePadded}<${letterDisp.text}<    ${voiceNamePadded}`;
+						let cutoffStart = Math.floor((timeNow - letterDisp.set) / 300);
 						displayText = displayText.substring(cutoffStart, cutoffStart + 16);
 						break;
 					};
@@ -360,7 +362,7 @@ let Sc8850Display = class extends RootDisplay {
 					break;
 				};
 			};
-			if (timeNow >= sum.letter.expire || (upThis.#letterMode === "gs" || upThis.#letterMode === "sc")) {
+			if (timeNow >= letterDisp.expire || (upThis.#letterMode === "gs" || upThis.#letterMode === "sc")) {
 				upThis.font56.getStr("123456789\x80\x81\x82\x83\x84\x85\x86").forEach((e0, i0) => {
 					let offsetX = i0 * 6;
 					e0.forEach((e1, i1) => {
@@ -473,13 +475,13 @@ let Sc8850Display = class extends RootDisplay {
 			});
 			//console.debug(renderRange, strengthHeight, strengthDivider);
 			// Render meters
-			if (timeNow < sum.bitmap.expire) {
+			if (timeNow < bitmapDisp.expire) {
 				// Actual bitmap
-				let colUnit = (sum.bitmap.bitmap.length > 256) ? 1 : 2;
+				let colUnit = (bitmapDisp.bitmap.length > 256) ? 1 : 2;
 				for (let i = 0; i < 512; i += colUnit) {
 					let x = i & 31, y = i >> 5;
 					let realX = x * 3 + 49, realY = (y << 1) + 15;
-					let bit = sum.bitmap.bitmap[i >> (colUnit - 1)] ? upThis.#pixelLit : upThis.#pixelOff;
+					let bit = bitmapDisp.bitmap[i >> (colUnit - 1)] ? upThis.#pixelLit : upThis.#pixelOff;
 					fillBitsInBuffer(upThis.#nmdb, totalWidth, realX, realY, 2, 2, bit);
 					if (colUnit === 2) {
 						fillBitsInBuffer(upThis.#nmdb, totalWidth, realX + 2, realY, 3, 2, bit);
@@ -529,7 +531,7 @@ let Sc8850Display = class extends RootDisplay {
 				};
 			};
 			// Letter display
-			if (timeNow < sum.letter.expire) {
+			if (timeNow < letterDisp.expire) {
 				switch (upThis.#letterMode) {
 					case "gs":
 					case "sc": {
@@ -541,7 +543,7 @@ let Sc8850Display = class extends RootDisplay {
 						fillBitsInBuffer(upThis.#nmdb, totalWidth, 47, 63, 99, 1, 255);
 						fillBitsInBuffer(upThis.#nmdb, totalWidth, 47, 47, 1, 16, 255);
 						fillBitsInBuffer(upThis.#nmdb, totalWidth, 145, 47, 1, 16, 255);
-						upThis.font56.getStr(sum.letter.text).forEach((e0, i0) => {
+						upThis.font56.getStr(letterDisp.text).forEach((e0, i0) => {
 							let offsetX = (i0 & 15) * 6;
 							e0.forEach((e1, i1) => {
 								let pX = (i1 % 5) + offsetX + 49, pY = Math.floor(i1 / 5) + 49 + 7 * (i0 >> 4);

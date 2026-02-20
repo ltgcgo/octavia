@@ -993,7 +993,6 @@ let RootDisplay = class extends CustomEventSource {
 			title: upThis.#titleName,
 			texts: upThis.device.getTexts(),
 			master: upThis.device.getMaster(),
-			mode: upThis.device.getMode(),
 			strength: upThis.#mimicStrength,
 			velo: writeStrength,
 			rpn: upThis.device.getRpn(),

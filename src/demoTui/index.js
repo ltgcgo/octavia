@@ -43,7 +43,7 @@ let resizer = function () {
 // Standard demo switching
 let demoPool = new SheetData();
 let stList = $e("span#demo-list"), stDemo = [];
-const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
+const srcPaths = ['../../midi-data/collection/octavia/', './demo/'];
 let getBlobFrom = async function (filename) {
 	let i = 0;
 	while (i < srcPaths.length) {
@@ -218,14 +218,14 @@ audioPlayer.onended = function () {
 };
 (async function () {
 	visualizer.reset();
-	let midiBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.mid")).blob();
+	let midiBlob = await (await fetch("../../midi-data/collection/octavia/KANDI8.mid")).blob();
 	demoBlobs.KANDI8 = {};
 	demoBlobs.KANDI8.midi = midiBlob;
 	visualizer.loadFile(midiBlob);
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
-	audioBlob = await (await fetch("../../midi-demo-data/collection/octavia/KANDI8.opus")).blob();
+	audioBlob = await (await fetch("../../midi-data/collection/octavia/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 	textDisplay.innerHTML = `${"<br/>".repeat(23)}`;

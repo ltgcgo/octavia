@@ -188,7 +188,7 @@ let PsrDisplay = class extends RootDisplay {
 		// Channel test
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
-		sum.chInUse.forEach(function (e, i) {
+		upThis.device?.getActive().forEach(function (e, i) {
 			if (e) {
 				if (!alreadyMin) {
 					alreadyMin = true;
@@ -388,15 +388,16 @@ let PsrDisplay = class extends RootDisplay {
 			this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 112, 15, 0.24, 0.24);
 		}
 		else if (mixerView) {
-			this.#render7seg(`${sum.chProgr[this.#ch] + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+			this.#render7seg(`${upThis.device?.getChPrimitive(upThis.#ch, 0, true)}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
 		}
 		else {
 			this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
 		}
 		// Top dot matrix display
-		if (timeNow <= sum.letter.expire) {
-			let letterDisp = sum.letter.text.trim();
-			this.#renderDotMatrix(letterDisp, ctx, trueMode, 454, 32);
+		let letterDisp = upThis.device?.getLetter();
+		if (timeNow <= letterDisp.expire) {
+			let letterDisp2 = letterDisp.text.trim();
+			this.#renderDotMatrix(letterDisp2, ctx, trueMode, 454, 32);
 		}
 		else {
 			if (rhythmView) {

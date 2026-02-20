@@ -177,6 +177,8 @@ let Ns5rDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = upThis.clockSource.now();
+		let letterDisp = upThis.device?.getLetter(),
+		bitmapDisp = upThis.device?.getBitmap();
 		if (upThis.#refreshFrame < 500) {
 			if (upThis.#refreshFrame % 50 === 0) {
 				upThis.#refreshed = true;
@@ -186,7 +188,7 @@ let Ns5rDisplay = class extends RootDisplay {
 		// Channel test
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
-		sum.chInUse.forEach(function (e, i) {
+		upThis.device?.getActive().forEach(function (e, i) {
 			if (e) {
 				if (!alreadyMin) {
 					alreadyMin = true;
@@ -276,7 +278,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 			// Render program info
 			let bankName = (upThis.getMapped(bankFetched.name)).slice(0, 12).padEnd(10, " ");
-			targetFont.getStr(`:${(sum.chProgr[upThis.#ch] + 1).toString().padStart(3, "0")}`).forEach((e0, i0) => {
+			targetFont.getStr(`:${(upThis.device?.getChPrimitive(upThis.#ch, 0, true)).toString().padStart(3, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 25;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
@@ -334,7 +336,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				});
 			});
 			// Render letter displays
-			if (timeNow < sum.letter.expire) {
+			if (timeNow < letterDisp.expire) {
 				let xShift = 19 + (+trueMode) * 3;
 				// White bounding box
 				for (let i = 0; i < 2000; i ++) {
@@ -352,7 +354,7 @@ let Ns5rDisplay = class extends RootDisplay {
 					};
 				};
 				// Actual text
-				targetFont.getStr(sum.letter.text).forEach((e0, i0) => {
+				targetFont.getStr(letterDisp.text).forEach((e0, i0) => {
 					let secX = (i0 % 16) * 6 + xShift + 2,
 					secY = Math.floor(i0 / 16) * 8 + 2;
 					e0.forEach((e1, i1) => {
@@ -367,7 +369,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				upThis.#renderParamBox(20 + xShift, upThis.device?.getChCc(upThis.#ch, 7));
 				upThis.#renderParamBox(33 + xShift, upThis.device?.getChCc(upThis.#ch, 11));
 				if (trueMode) {
-					if (sum.chContr[upThis.device?.getChCc(upThis.#ch, 10)] < 128) {
+					if (upThis.device?.getChCc(upThis.#ch, 10) < 128) {
 						upThis.element.getBm(`Pan_${Math.floor(upThis.device?.getChCc(upThis.#ch, 10) / 9.85)}`)?.render((e, x, y) => {
 							upThis.#nmdb[y * 144 + x + 48] = e ? upThis.#pixelLit : upThis.#pixelOff;
 						});
@@ -386,7 +388,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				};
 			};
 			// Render bitmap displays
-			if (timeNow < sum.bitmap.expire) {
+			if (timeNow < bitmapDisp.expire) {
 				// White bounding box
 				for (let i = 0; i < 777; i ++) {
 					let x = i % 37, y = Math.floor(i / 37);
@@ -404,11 +406,11 @@ let Ns5rDisplay = class extends RootDisplay {
 					};
 				};
 				// Actual bitmap
-				let colUnit = (sum.bitmap.bitmap.length > 256) ? 1 : 2;
+				let colUnit = (bitmapDisp.bitmap.length > 256) ? 1 : 2;
 				for (let i = 0; i < 512; i += colUnit) {
 					let x = i & 31, y = i >> 5;
 					let realX = x + 80, realY = y + 21;
-					let bit = sum.bitmap.bitmap[i >> (colUnit - 1)] ? upThis.#pixelLit : upThis.#pixelOff;
+					let bit = bitmapDisp.bitmap[i >> (colUnit - 1)] ? upThis.#pixelLit : upThis.#pixelOff;
 					upThis.#nmdb[realY * 144 + realX] = bit;
 					if (colUnit === 2) {
 						upThis.#nmdb[realY * 144 + realX + 1] = bit;

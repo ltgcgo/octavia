@@ -239,7 +239,7 @@ let ScDisplay = class extends RootDisplay {
 			// Channel test
 			let alreadyMin = false;
 			let minCh = 0, maxCh = 0;
-			sum.chInUse.forEach(function (e, i) {
+			upThis.device?.getActive().forEach(function (e, i) {
 				if (e) {
 					if (!alreadyMin) {
 						alreadyMin = true;
@@ -258,7 +258,9 @@ let ScDisplay = class extends RootDisplay {
 				upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
 			};
 			// Text matrix display
-			let infoTxt, isTextNull = sum.letter.text.trim();
+			let letterDisp = upThis.device?.getLetter(),
+			infoTxt, isTextNull = letterDisp.text.trim();
+			let deviceMode = upThis.device?.getMode();
 			while (isTextNull.indexOf("  ") > -1) {
 				isTextNull = isTextNull.replaceAll("  ", " ");
 			};
@@ -271,9 +273,9 @@ let ScDisplay = class extends RootDisplay {
 						upThis.#nmdb[textMultiTable[pY] + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 					});
 				});
-			} else if (timeNow <= sum.letter.expire && ((sum.mode !== "gs" && sum.mode !== "sc") || sum.letter.text?.length <= 16)) {
+			} else if (timeNow <= letterDisp.expire && ((deviceMode !== "gs" && deviceMode !== "sc") || letterDisp.text?.length <= 16)) {
 				infoTxt = isTextNull;
-				let original = sum.letter.text,
+				let original = letterDisp.text,
 				leftTrim = original.length - original.trimLeft().length,
 				rightTrim = original.length - original.trimRight().length;
 				if (original.length > 16 && original.length > infoTxt.length && infoTxt.length < 16) {
@@ -294,7 +296,7 @@ let ScDisplay = class extends RootDisplay {
 				};
 				let xShift = 0;
 				if (infoTxt.length > 16) {
-					xShift = Math.floor((sum.letter.expire - timeNow) / 33) - 96;
+					xShift = Math.floor((letterDisp.expire - timeNow) / 33) - 96;
 					let maxShift = (infoTxt.length - 16) * -6;
 					if (xShift < maxShift) {
 						xShift = maxShift;
@@ -313,8 +315,8 @@ let ScDisplay = class extends RootDisplay {
 					});
 				});
 			} else {
-				let deviceMode = upThis.device?.getChMode(upThis.#ch);
-				infoTxt = `${sum.chProgr[upThis.#ch] + 1}`.padStart(3, "0");
+				let deviceMode = upThis.device?.getChMode(upThis.#ch),
+				infoTxt = `${upThis.device?.getChPrimitive(upThis.#ch, 0, true) + 1}`.padStart(3, "0");
 				let primBuf = upThis.device.getChPrimitives(upThis.#ch);
 				switch (primBuf[0]) {
 					case 0: {
@@ -397,10 +399,10 @@ let ScDisplay = class extends RootDisplay {
 				};
 				infoTxt += upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ");
 				let timeOff = 0;
-				if (sum.mode === "gs" || sum.mode === "sc") {
-					if (sum.letter.text.length > 16 && timeNow < sum.letter.set + 15000) { // 50 * 300ms
-						let critTxt = `${infoTxt}<${sum.letter.text}<${infoTxt}`;
-						let critOff = sum.letter.set + (critTxt.length - 16) * 300;
+				if (deviceMode === "gs" || deviceMode === "sc") {
+					if (letterDisp.text.length > 16 && timeNow < letterDisp.set + 15000) { // 50 * 300ms
+						let critTxt = `${infoTxt}<${letterDisp.text}<${infoTxt}`;
+						let critOff = letterDisp.set + (critTxt.length - 16) * 300;
 						if (timeNow < critOff) {
 							infoTxt = critTxt;
 							timeOff = critOff - timeNow;
@@ -564,9 +566,10 @@ let ScDisplay = class extends RootDisplay {
 				};
 			};
 			//console.debug(upThis.#linger.join(", "));
-			let useBm = upThis.#nmdb.subarray(1400, 1656);
-			if (timeNow <= sum.bitmap.expire) {
-				sum.bitmap.bitmap.forEach((e, i) => {
+			let useBm = upThis.#nmdb.subarray(1400, 1656),
+			bitmapDisp = upThis.device?.getBitmap();
+			if (timeNow <= bitmapDisp.expire) {
+				bitmapDisp.bitmap.forEach((e, i) => {
 					if (e) {
 						useBm[i] = upThis.#pixelLit;
 					};

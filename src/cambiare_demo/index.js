@@ -85,7 +85,7 @@ visualizer.addEventListener("banklevel", (ev) => {
 	};
 });
 
-const srcPaths = ['../../midi-demo-data/collection/octavia/', './demo/'];
+const srcPaths = ['../../midi-data/collection/octavia/', './demo/'];
 let getBlobFrom = async function (filename) {
 	let i = 0;
 	while (i < srcPaths.length) {

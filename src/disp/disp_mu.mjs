@@ -314,7 +314,7 @@ let MuDisplay = class extends RootDisplay {
 		// Strength
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
-		sum.chInUse.forEach(function (e, i) {
+		upThis.device?.getActive().forEach(function (e, i) {
 			if (e) {
 				if (!alreadyMin) {
 					alreadyMin = true;
@@ -350,9 +350,10 @@ let MuDisplay = class extends RootDisplay {
 		rendPos = 0;
 		let showLsb = upThis.getChPrimitive(upThis.#ch, 1) === 0;
 		let voiceObj = upThis.getCachedChVoice(upThis.#ch);
-		if (timeNow <= sum.letter.expire && sum.letter.text.length > 0) {
+		let letterDisp = upThis.device?.getLetter();
+		if (timeNow <= letterDisp.expire && letterDisp.text.length > 0) {
 			// Show display text
-			upThis.xgFont.getStr(sum.letter.text.padEnd(32, " ")).forEach(function (e0, i0) {
+			upThis.xgFont.getStr(letterDisp.text.padEnd(32, " ")).forEach(function (e0, i0) {
 				let regionX = (i0 % 16) * 5 + 5,
 				regionY = Math.floor(i0 / 16) * 8;
 				e0.forEach(function (e1, i1) {
@@ -778,7 +779,7 @@ let MuDisplay = class extends RootDisplay {
 		paintTriDown(ctx, 740, 170, false);
 		paintTriDown(ctx, 800, 170, false);
 		// Paint right triangles
-		let modeSel = modeGroup[sum.mode];
+		let modeSel = modeGroup[upThis.device?.getMode()];
 		if (modeSel?.constructor !== Number) {
 			modeSel = -1;
 		};
