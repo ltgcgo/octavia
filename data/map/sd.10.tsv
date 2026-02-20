@@ -33,71 +33,85 @@ EGndPnoW	EGrndPno w
 EGrdPno2	
 SftRhode	SoftRhodes
 FatRhode	Fat Rhodes
-TrmRhode	
-Stage 73	
-Phs.Dyno	
-StCplHps	
-AtkClv 2	
+TrmRhode	TremRhodes
+Stage 73	Stage 73EP
+Phs.Dyno	PhaserDyno
+CouplHps	CouplHapsi
+StCplHps	StCouplHps
+AtkClv 2	AtakClav.2
 St.Glock	St.Glocken
 Tone Whl	Tone Wheel
 RokrSpin	RockerSpin
 StHrmnca	StHarmnica
 NylnGtr2	NylonGtr 2
+EnhGutGt	EnhGutGtr.
 SteelGt2	
 JazzGtr3	Jazz Gtr 3
-LdJazGtr	
-Strat2Rr	
+LdJazGtr	LeadJazGtr
+Strat2Rr	Strat2Rear
+335ClnGt	335 Guitar
 FdbkGtr2	FeedbkGtr2
-MtDstGtr	
-HeavyDsG	
+MtDstGtr	MutedDstGt
+HeavyDsG	HeavyDstGt
+Rokabily	Rockabilly
 FatAcBas	FatAco.Bas
-EnhAcBas	
+EnhAcBas	EnhAco.Bas
 FngrPkBa	FingrPikBa
 JazzBass	Jazz Bass
-PhsFrtls	
+Pre Bass	PrecisnBas
+PhsFrtls	PhasrFrtls
 SlapPop1	SlapPopBa1
+SynBa101	SynthBs101
 FatSynBa	FatSynthBa
-SynSawBa	
-JpSawRbr	
+SynSawBa	SynthSawBa
+JpSawRbr	JpSawRubbr
+Violin V	Violin v
 Violin2V	Violin 2v
-EnhVioln	
+EnhVioln	Enh.Violin
+Viola 2V	Viola 2v
+Cello 2V	Cello 2v
 StTrmStr	StTremStrs
 St. Pizz	
 St. Harp	StereoHarp
 St.Strs2	StStrings2
-StSlStr2	
-StkSyStr	
-StSmlAah	
-BassHit2	
+StSlStr2	StSlwStrs2
+StkSyStr	StakSynStr
+StSmlAah	StSmallAah
+BassHit2	Bass Hit 2
 Solo Trp	SoloTrumpt
 RmntcTrp	RomanticTp
-EnhTrmpt	
+EnhTrmpt	Enh.Trumpt
 TrombonV	Trombone v
 EnMuteTp	EnhMutedTp
 StFrHorn	St.Fr.Horn
 StBigBrs	StBigBrass
-SpJPBrs2	
-BrthAlto	
+SpJPBrs2	SuprJPBrs2
+BrthAlto	Brthy Alto
 AltoSaxV	Alto Sax v
 BrthTenr	BrthyTenor
 BlowTenr	BlownTenor
 BareBari	Bare Bari.
-BariSaxV	
+BariSaxV	Bari.Sax v
 ClasOboe	Class.Oboe
 Enh.Oboe	EnhnceOboe
 BrtClari	BriteClari
 JzClari2	JazzClari2
+Flute V	Flute v
 RecordrV	Recorder v
-FatSqrLd	
+FatSqrLd	FatSqrLead
+NatureLd	NatureLead
+SeqSawLd	SeqSawLead
 FatSawSl	FatSawSolo
-DelaySeq	
-FlngrSaw	
-FatSawLd	
-LdCaliop	
+HybrdSaw	Hybrid Saw
+DelaySeq	DelaySeqns
+FlngrSaw	FlangerSaw
+FatSawLd	FatSawLead
+LdCaliop	LeadCaliop
 ChiffLd3	ChifferLd3
-SuffleLd	
+Delay.Ld	Delay.Lead
+SuffleLd	SuffleLead
 ChoirPd2	ChoirPad 2
-Brt.Star	
-Goblins2	
-Goblins3	
-St.Sitar	
+Brt.Star	BrightStar
+Goblins2	Goblins 2
+Goblins3	Goblins 3
+St.Sitar	St. Sitar

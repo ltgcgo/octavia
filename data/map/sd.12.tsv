@@ -13,25 +13,51 @@ AmbBrush	Amb.BrushKit
 St.Pno 1	St. Piano 1
 St.Pno1W	St. Piano 1w
 St.Pno 2	St. Piano 2
+Enh.PnoW	EnhancedPf w
 SftRhode	Soft Rhodes
+TrmRhode	Trem. Rhodes
+Stage 73	Stage 73 EP
+Phs.Dyno	Phaser Dyno
+CouplHps	CoupledHapsi
+StCplHps	StCouplHapsi
+AtkClv 2	AttackClavi2
 St.Glock	St. Glocken
 RokrSpin	Rocker Spin
 StHrmnca	St.Harmonica
 NylnGtr2	Nylon Gtr. 2
+EnhGutGt	Enh. Gut Gtr
 JazzGtr3	Jazz Gtr. 3
+LdJazGtr	LeadJazzGtr.
+Strat2Rr	Strato2 Rear
+335ClnGt	335 Clean Gt
 FdbkGtr2	FeedbackGtr2
+MtDstGtr	MutedDistGtr
+HeavyDsG	HeavyDistGtr
+Rokabily	RockabillyBs
 FatAcBas	FatAcou.Bass
+EnhAcBas	Enh.Acou.Bas
 FngrPkBa	FingerPickBa
+Pre Bass	PrecisionBas
+PhsFrtls	PhasrFretles
 SlapPop1	SlapPopBass1
+SynBa101	SynthBass101
 FatSynBa	FatSynthBass
+SynSawBa	SynthSawBass
+JpSawRbr	JpSaw Rubber
+EnhVioln	Enh. Violin
 StTrmStr	StTremString
 St. Harp	Stereo Harp
 St.Strs2	St.Strings 2
+StkSyStr	StackSyn.Str
+StSmlAah	StSmallChoir
 Solo Trp	Solo Trumpet
 RmntcTrp	Romantic Trp
+EnhTrmpt	Enh. Trumpet
 EnMuteTp	Enh.MutedTrp
 StFrHorn	StFrenchHorn
 StBigBrs	St.Big Brass
+SpJPBrs2	SuperJPBras2
+BrthAlto	Breathy Alto
 BrthTenr	BreathyTenor
 BlowTenr	Blown Tenor
 BareBari	BareBaritone
@@ -39,6 +65,17 @@ ClasOboe	Classic Oboe
 Enh.Oboe	EnhancedOboe
 BrtClari	Brt.Clarinet
 JzClari2	Jazz Clari.2
+FatSqrLd	FatSquare Ld
+NatureLd	Natural Lead
+SeqSawLd	SequencedSaw
 FatSawSl	Fat Saw Solo
+DelaySeq	DelaySeqence
+FlngrSaw	Flanger Saw
+FatSawLd	Fat Saw Lead
+LdCaliop	LeadCalliope
 ChiffLd3	ChifferLead3
+Delay.Ld	Delayed Lead
+SuffleLd	Suffle Lead
 ChoirPd2	Cosmic Voice
+Brt.Star	Bright Star
+St.Sitar	Stereo Sitar

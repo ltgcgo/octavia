@@ -93,7 +93,7 @@ let QyDisplay = class extends RootDisplay {
 	#getCat(channel, msb, prg) {
 		let voiceInfo = this.getChVoice(channel);
 		let category;
-		if (["GM", "AG", "XG", "GS", "G2"].indexOf(voiceInfo.standard) > -1) {
+		if (["GM", "AG", "XG", "GS", "G2", "PA", "SD"].indexOf(voiceInfo.standard) > -1) {
 			switch(msb) {
 				case 64: {
 					category = "sfx";
@@ -124,7 +124,7 @@ let QyDisplay = class extends RootDisplay {
 		// Channel test
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
-		sum.chInUse.forEach(function (e, i) {
+		upThis.device?.getActive().forEach(function (e, i) {
 			if (e) {
 				if (!alreadyMin) {
 					alreadyMin = true;
@@ -144,6 +144,7 @@ let QyDisplay = class extends RootDisplay {
 		};
 		// Clear out the current working display buffer.
 		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
+		let letterDisp = upThis.device?.getLetter();
 		// Start rendering
 		if (mixerView) {
 			// Mixer view
@@ -194,7 +195,7 @@ let QyDisplay = class extends RootDisplay {
 			// Bank info
 			let voiceInfo = upThis.getChVoice(upThis.#ch);
 			let primBuf = upThis.device.getChPrimitives(upThis.#ch);
-			usedFont.getStr(`${(sum.chProgr[upThis.#ch] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || primBuf[0] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
+			usedFont.getStr(`${(primBuf[1] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || primBuf[0] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
 				e.render((e, x, y) => {
 						upThis.#nmdb[55 + x + i * 6 + (y << 7)] = e;
 				});
@@ -233,7 +234,7 @@ let QyDisplay = class extends RootDisplay {
 			upThis.#renderBox(34, 6, 65, 11);
 			upThis.#renderFill(35, 7, 13, 9);
 			upThis.#renderBox(100, 6, 28, 11); // Bar box
-			if (sum.letter.expire < timeNow) {
+			if (letterDisp?.expire < timeNow) {
 				usedFont.getStr(`${id + 1}`.padStart(2, "0")).forEach((e, i) => {
 					e.render((e, x, y) => {
 						if (e) {
@@ -379,7 +380,7 @@ let QyDisplay = class extends RootDisplay {
 				upThis.qyRsrc.getBm("CTabOff")?.render((e, x, y) => {
 					upThis.#nmdb[preCal + tchOff + x + (y << 7)] = e;
 				});
-				if (sum.chInUse[rch]) {
+				if (upThis.device?.getChActive(rch)) {
 					let cVelo = sum.strength[rch] * 1286 >> 16; // devided by 51
 					upThis.#renderFill(31 + tchOff, preCalY + 11 - cVelo, 9, cVelo + 1);
 				};
@@ -446,12 +447,12 @@ let QyDisplay = class extends RootDisplay {
 				};
 			};
 		};
-		if (timeNow <= sum.letter.expire) {
+		if (timeNow <= letterDisp?.expire) {
 			//upThis.#renderFill(12, 9, 109, 31);
 			upThis.qyRsrc.getBm("TxtDisp")?.render((e, x, y) => {
 				upThis.#nmdb[(mixerView ? 655 : 1036) + x + (y << 7)] = e;
 			});
-			usedFont.getStr(sum.letter.text).forEach((e, i) => {
+			usedFont.getStr(letterDisp?.text).forEach((e, i) => {
 				let ri = (i % 16) * 6, ry = i >> 4;
 				e.render((e, x, y) => {
 					upThis.#nmdb[(mixerView ? 1686 : 2067) + ri + x + ((y + (ry << 3)) << 7)] = e;

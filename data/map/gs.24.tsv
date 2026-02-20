@@ -3,6 +3,7 @@ ID	Name
 303SqDs3	303 Square Dist. Bass 3
 303SqrRv	303 Square Reversed
 AcouBass	Acoustic Bass 1
+BrthTnSx	Breathy Tenor Sax
 Uprt.Pno	Upright Piano
 Piano 1w	Wide Grand Piano
 UprtP. w	Wide Upright Piano
@@ -16,6 +17,7 @@ EGRhode1	E. Grand + Rhodes 1
 EGRhode2	E. Grand + Rhodes 2
 Piano 3w	Wide Electric Grand
 Old Uprt	Old Upright Piano
+Det.EP 1	Detuned E. Piano 1
 StSoftEP	Stereo Soft EP
 ChorusEP	Chorus E. Piano
 SilntRho	Silent Rhodes
@@ -23,7 +25,9 @@ Dst.EPno	Distorted E. Piano
 60sElPno	60s' Electric Piano
 Wurly EP	Wurly E. Piano
 MelRhode	Mellow Rhodes
-ElPno 2v	Wide Electric Piano 2
+Det.EP 2	Detuned E. Piano 2
+Det.EP 3	Detuned E. Piano 3
+ElPno 2v	Velo Electric Piano 2
 DX Hard 	Hard DX E. Piano
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
@@ -132,6 +136,7 @@ GtFeedbk	Guitar Feedback
 GtrFdbk2	Guitar Feedback 2
 AcGtrHmo	Ac. Guitar Harmonics
 ElBaHrmo	E. Bass Harmonics
+Rokabily	Rockabilly Bass
 WildAcBa	Wild Acoustic Bass
 AtkAcoBa	Attack Acoustic Bass
 FngrBas2	Fingered Bass 2
@@ -247,7 +252,6 @@ Ana.Brs2	Analog Brass 2
 ExpSprno	Expressive Soprano Sax
 Exp.Alto	Expressive Alto
 Alto+Trp	Alto Sax + Trumpet
-BrthTnSx	Breathy Tenor Sax
 St.TnrSx	Stereo Tenor Sax
 BariSax2	Baritone Sax 2
 Bari&Tnr	Baritone & Tenor Sax
@@ -277,7 +281,7 @@ OB2 Saw	OB2 Sawtooth Lead
 PulseSaw	Pulse Sawtooth Lead
 Dr. Lead	Doctor Lead
 ThickSaw	Thick Sawtooth Lead
-D-50 Fat	D-50 Fat Lead
+D-50 Fat	D-50 Fat Sawtooth
 CS SawLd	CS Sawtooth Lead
 MG Saw	MG Sawtooth 1
 MG Saw 2	MG Sawtooth 2

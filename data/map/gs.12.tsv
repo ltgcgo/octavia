@@ -3,6 +3,7 @@ ID	Name
 303SqDs3	303 SqDstBa3
 303SqrRv	303 Sqr. Rev
 Syn.Bass	Synth Bass 1
+BrthTnSx	BreathyTenor
 Uprt.Pno	Upright Pno.
 UprtP. w	Uprt Piano w
 MildP. w	Mild Piano w
@@ -160,6 +161,7 @@ GtFeedbk	Gt. Feedback
 GtrFdbk2	Gt.Feedback2
 AcGtrHmo	Ac.Gt.Harmnx
 ElBaHrmo	E.Bass Hrmnx
+Rokabily	RockabillyBs
 WildAcBa	Wild Ac.Bass
 AtkAcoBa	AtkAcou.Bass
 FngrBas2	Fingered Bs2
@@ -312,7 +314,6 @@ Exp.Alto	Express Alto
 Alto+Trp	Alto Sax+Trp
 Sax Sect	Sax Section
 TenrSax2	Tenor Sax 2
-BrthTnSx	BreathyTenor
 St.TnrSx	St.Tenor Sax
 BariSax2	Bari. Sax 2
 Bari&Tnr	Bari & Tenor
@@ -343,7 +344,7 @@ OB2 Saw	OB2 Sawtooth
 GR-300	GR-300 Lead
 Dr. Lead	Doctor Solo
 ThickSaw	Fat Saw Lead
-D-50 Fat	D-50 FatLead
+D-50 Fat	D-50 Fat Saw
 WaspySyn	Waspy Synth
 CS SawLd	CS Saw
 MG Saw	MG Saw 1
@@ -570,3 +571,4 @@ RyFX Kit	Rhy.FX Kit
 RyFX2 Kt	Rhy.FX Kit 2
 RyFX3 Kt	Rhy.FX Kit 3
 CymblKt2	Cymbal Kit 2
+Grow Sax	Growing Sax

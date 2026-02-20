@@ -786,24 +786,13 @@ let RootDisplay = class extends CustomEventSource {
 				// Cancel SysEx prompts
 				// Buffer write
 				let blinkCrit = Math.floor((upThis.dState.muBmex - timeNow) / upThis.dState.muBlinkSpeedMode) & 1;
-				//console.debug(blinkCrit);
-				//if (blinkCrit === 0) {
-					//console.debug("Invert!", blinkCrit);
-					if (upThis.dState.muModeBm) {
-						upThis.dState.muModeBm?.forEach((e, i) => {
-							tempWindow[i] = blinkCrit === e;
-							if (i === 0) {
-								console.debug(e, blinkCrit, blinkCrit === e, tempWindow[i]);
-							};
-						});
-					} else {
-						tempWindow.fill(blinkCrit ? 0 : 1);
-					};
-				//} else {
-					//console.debug("Bypass!", blinkCrit);
-					//tempWindow = tempWindow ?? upThis.dState.muModeBm;
-				//};
-				//console.debug(tempWindow?.join(","));
+				if (upThis.dState.muModeBm) {
+					upThis.dState.muModeBm?.forEach((e, i) => {
+						tempWindow[i] = blinkCrit === e;
+					});
+				} else {
+					tempWindow.fill(blinkCrit ? 0 : 1);
+				};
 			};
 		} else if (upThis.dState.muUseVoiceBm) {
 			// Voice bitmaps with SysEx blinking
@@ -966,12 +955,7 @@ let RootDisplay = class extends CustomEventSource {
 			upThis.dispatchEvent("meta", metaReplies);
 		};
 		// Pass params to actual displays
-		let chInUse = upThis.device.getActive(); // Active channels
 		let chKeyPr = []; // Pressed keys and their pressure
-		let chPitch = upThis.device.getPitch(); // All pitch bends
-		let chContr = upThis.device.getCcAll(); // All CC values
-		let chProgr = upThis.device.getProgram(); // All program values
-		let chType = upThis.device.getChTypes(); // All channel types
 		let chExt = [];
 		// Mimic strength variation
 		let writeStrength = upThis.device.getStrength();
@@ -989,7 +973,7 @@ let RootDisplay = class extends CustomEventSource {
 			};
 		});
 		let curPoly = 0, curPolyEC = 0;
-		chInUse.forEach(function (e, i) {
+		upThis.device?.getActive()?.forEach(function (e, i) {
 			if (e) {
 				chKeyPr[i] = upThis.device.getVel(i);
 				chExt[i] = upThis.device.getExt(i);
@@ -1003,21 +987,14 @@ let RootDisplay = class extends CustomEventSource {
 			extraNotes,
 			curPoly,
 			curPolyEC,
-			chInUse,
 			chKeyPr,
-			chPitch,
-			chProgr,
-			chContr,
-			chType,
 			chExt,
 			eventCount: events.length,
 			title: upThis.#titleName,
-			bitmap: upThis.device.getBitmap(),
-			letter: upThis.device.getLetter(),
 			texts: upThis.device.getTexts(),
 			master: upThis.device.getMaster(),
 			mode: upThis.device.getMode(),
-			strength: upThis.#mimicStrength.slice(),
+			strength: upThis.#mimicStrength,
 			velo: writeStrength,
 			rpn: upThis.device.getRpn(),
 			tSig: upThis.getTimeSig(),

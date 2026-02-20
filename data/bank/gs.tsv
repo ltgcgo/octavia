@@ -747,7 +747,7 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 002	066	049	TenorSax	1	2	gs2:TenorSax
 003	066	049	TenorSax	1	3	gs3:TenorSax
 003	066	001	TenrSax2		3	gs3:TenrSax2
-002	066	008	BrthTnSx		2	gs2:BrthTnSx
+002	066	008	BrthTenr		2	gs2:BrthTenr
 003	066	009	St.TnrSx		3	gs3:St.TnrSx
 000	067	049	Bari.Sax	0	1	gs1:Bari.Sax
 002	067	049	Bari.Sax	0	2	gs2:Bari.Sax
@@ -1030,7 +1030,7 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 000	097	002	Prologue		1	gs1:Prologue
 003	097	003	Prolog 2		3	gs3:Prolog 2
 003	097	004	Hols Str		3	gs3:Hols Str
-000	097	008	Rave		1	gs1:Rave
+002	097	008	Rave		1	gs2:Rave
 000	098	049	Crystal	1	1	gs1:Crystal
 000	098	001	SynMalet		1	gs1:SynMalet
 000	098	002	SftCryst		1	gs1:SftCryst

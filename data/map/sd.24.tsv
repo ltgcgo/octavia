@@ -13,37 +13,77 @@ GrndPnoW	Wide Grand Piano
 GrndPnoD	Dark Grand Piano
 St.Pno 1	Stereo Piano 1
 St.Pno1W	Wide Stereo Piano 1
+SDPianoW	Wide SD Piano
 BritPnoW	Wide Bright Piano
 St.Pno 2	Stereo Piano 2
+Enh.PnoW	Wide Enhanced Piano
 SftRhode	Soft Rhodes Piano
 FatRhode	Fat Rhodes Piano
+TrmRhode	Tremolo Rhodes Piano
+Stage 73	Stage 73 E. Piano
+Phs.Dyno	Phaser Dyno E. Piano
+CouplHps	Coupled Harpsichord
+StCplHps	Stereo Coupled Harpsi.
+AtkClv 2	Attack Clavinet 2
 St.Glock	Stereo Glockenspiel
 Tone Whl	Tone Wheel Organ
 RokrSpin	Rocker Spin Organ
 StHrmnca	Stereo Harmonica
 NylnGtr2	Nylon Guitar 2
+EnhGutGt	Enhanced Gut Guitar
 JazzGtr3	Jazz Guitar 3
+LdJazGtr	Lead Jazz Guitar
+Strat2Rr	Rear Stratocaster 2
+335ClnGt	335 Clean Guitar
 FdbkGtr2	Feedback Guitar 2
+MtDstGtr	Muted Distortion Guitar
+HeavyDsG	Heavy Distortion Guitar
+Rokabily	Rockabilly Bass
 FatAcBas	Fat Acoustic Bass
+EnhAcBas	Enhanced Acoustic Bass
 FngrPkBa	Fingered Pick Bass
+Pre Bass	Precision Bass
+PhsFrtls	Phaser Fretless Bass
 SlapPop1	Slap Pop Bass 1
+SynBa101	Synth Bass 101
 FatSynBa	Fat Synth Bass
-Violin2V	Velo Violin 2
+SynSawBa	Synth Sawtooth Bass
+JpSawRbr	JP Sawtooth Rubber Bass
+Violin V	Vibrato Violin
+Violin2V	Vibrato Violin 2
+EnhVioln	Enhanced Violin
+Viola 2V	Vibrato Viola 2
+Cello 2V	Vibrato Cello 2
 StTrmStr	Stereo Tremolo Strings
 St.Strs2	Stereo Strings 2
+StSlStr2	Stereo Slow Strings 2
+StkSyStr	Stack Synth Strings
+StSmlAah	Stereo Small Choir Aahs
 RmntcTrp	Romantic Trumpet
-TrombonV	Velo Trombone
+EnhTrmpt	Enhanced Trumpet
+TrombonV	Vibrato Trombone
 EnMuteTp	Enhanced Muted Trumpet
 StFrHorn	Stereo French Horn
 StBigBrs	Stereo Big Brass
-AltoSaxV	Velo Alto Sax
+SpJPBrs2	Super Jump Brass 2
+BrthAlto	Breathy Alto Sax
+AltoSaxV	Vibrato Alto Sax
 BrthTenr	Breathy Tenor Sax
 BlowTenr	Blown Tenor Sax
 BareBari	Bare Baritone Sax
+BariSaxV	Vibrato Baritone Sax
 Enh.Oboe	Enhanced Oboe
 BrtClari	Bright Clarinet
 JzClari2	Jazz Clarinet 2
-RecordrV	Velo Recorder
+Flute V	Vibrato Flute
+RecordrV	Vibrato Recorder
+FatSqrLd	Fat Square Lead
+SeqSawLd	Sequenced Sawtooth Lead
 FatSawSl	Fat Sawtooth Solo
+HybrdSaw	Hybrid Sawtooth Lead
+DelaySeq	Delayed Sequence
+FlngrSaw	Flanger Sawtooth Lead
+FatSawLd	Fat Sawtooth Lead
+LdCaliop	Lead Calliope
 ChiffLd3	Chiffer Lead 3
 ChoirPd2	Choir Pad 2

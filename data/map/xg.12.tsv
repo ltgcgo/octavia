@@ -1,5 +1,7 @@
 ID	Name
 ClvchrdK	Clavichord K
+ElctrAtm	ElectricAtms
+BrthTnSx	BrthyTenorSx
 GrandP #	Grand Piano#
 GrndPnoK	GrandPiano K
 MelloGrP	MellowGrdPno
@@ -373,7 +375,6 @@ FakeAlt+	Fake Alto +
 DFakeAlt	DarkFakeAlto
 AltoSax*	Alto Sax. *
 SwtAltSx	Swt Alto Sax
-BrthTnSx	BrthyTenorSx
 SoftTenr	SoftTenorSax
 TenrSax2	Tenor Sax 2
 SuperTnr	Super Tenor
@@ -826,7 +827,6 @@ DX-SyLd6	DX-Syn.Lead6
 DX-SyLd7	DX-Syn.Lead7
 DX-SyLd8	DX-Syn.Lead8
 DX-SyLd9	DX-Syn.Lead9
-ElctrAtm	ElectricAtms
 BellStr1	Bell String1
 BellStr2	Bell String2
 Chi-S&H1	Chiff-Smp&H1

@@ -1,5 +1,7 @@
 ID	Name
 ClvchrdK	Clavichord KSP
+ElctrAtm	Electric Atmos
+BrthTnSx	Breathy Tenor Sax
 GrandP #	Grand Piano #
 GrndPnoK	Grand Piano KSP
 MelloGrP	Mellow Grand Piano
@@ -300,7 +302,6 @@ FakeAlt+	Fake Alto Plus
 DFakeAlt	Dark Fake Alto Sax
 AltoSax*	Alto Saxophone *
 SwtAltSx	Sweet! Alto Sax
-BrthTnSx	Breathy Tenor Sax
 SoftTenr	Soft Tenor Sax
 TenrSax2	Tenor Saxophone 2
 SuperTnr	Super Tenor Sax
@@ -699,7 +700,6 @@ DX-SyLd6	DX-Synth Lead 6
 DX-SyLd7	DX-Synth Lead 7
 DX-SyLd8	DX-Synth Lead 8
 DX-SyLd9	DX-Synth Lead 9
-ElctrAtm	Electric Atmos
 BellStr1	Bell Strings 1
 BellStr2	Bell Strings 2
 Chi-S&H1	Chiffer - Sample & Hold

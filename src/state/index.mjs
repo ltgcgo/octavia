@@ -1744,9 +1744,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		};
 		return copy;
 	};
-	getPitch() {
-		return this.#pitch;
-	};
 	getProgram() {
 		return this.#prg;
 	};

@@ -6,6 +6,7 @@ SlapBa 2	Slap Bass2
 AcouBass	AcouBass 1
 Syn.Bass	Syn Bass 1
 NylonGt3	Nylon Gt.o
+BrthTnSx	BrthyTenor
 Uprt.Pno	UprightPno
 Mild Pno	Mild Piano
 UprtP. w	UprtPno. w
@@ -430,7 +431,6 @@ Exp.Alto	Expr. Alto
 Alto+Trp	AltoSx+Trp
 Sax Sect	Sax Sect.
 TenrSax2	TenorSax 2
-BrthTnSx	BrthyTenor
 St.TnrSx	St.TenorSx
 BariSax2	Bari.Sax 2
 Bari&Tnr	Bari&Tenor
@@ -477,7 +477,7 @@ VeloLead	Velo Lead
 GR-300	GR-300 Ld
 Dr. Lead	DoctorSolo
 ThickSaw	Fat Saw Ld
-D-50 Fat	D-50 FatLd
+D-50 Fat	D-50 FatSw
 WaspySyn	WaspySynth
 CS SawLd	CS Saw Ld
 MG Saw	MG SawWave
@@ -831,3 +831,4 @@ SFX Kt 2	SFX Kit 2
 VoiceKit	Voice Kit
 CymblKt2	CymbalKit2
 MT-32 Kt	MT-32 Kit
+Grow Sax	GrowingSax
