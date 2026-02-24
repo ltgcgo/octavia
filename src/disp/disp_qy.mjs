@@ -35,6 +35,7 @@ let QyDisplay = class extends RootDisplay {
 		super(new OctaviaDevice(), 0, 0.95);
 		let upThis = this;
 		upThis.attachState("mu");
+		upThis.dState.muBlinkSpeedMode = 400;
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
 		});
