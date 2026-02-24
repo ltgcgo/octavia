@@ -146,6 +146,7 @@ let QyDisplay = class extends RootDisplay {
 		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
 		let letterDisp = upThis.device?.getLetter();
 		// Start rendering
+		upThis.dState.muDisableExBlink = true;
 		if (mixerView) {
 			// Mixer view
 			// Render the upperleft
@@ -215,6 +216,7 @@ let QyDisplay = class extends RootDisplay {
 			};
 		} else {
 			// Normal view
+			upThis.dState.muDisableExBlink = false;
 			// Render the pill
 			upThis.qyRsrc.getBm("NorPill")?.render((e, x, y) => {
 				if (e) {
@@ -426,9 +428,9 @@ let QyDisplay = class extends RootDisplay {
 					let curCat = upThis.#getCat(rch, upThis.device?.getChPrimitive(rch, 1), upThis.device?.getChPrimitive(rch, 0)),
 					curCatId = `Vox_${[`${curCat}`, "dr", "ds1", "ds2", "ds3", "ds4", "ds5", "ds6", "ds7", "ds8"][chType]}`,
 					curCatBm = upThis.qyRsrc.getBm(curCatId);
-					if (upThis.#ch === rch) {
+					/*if (upThis.#ch === rch) {
 						console.debug(curCatBm?.id);
-					};
+					};*/
 					if (curCatBm) {
 						curCatBm.render((e, x, y) => {
 							if (e) {
