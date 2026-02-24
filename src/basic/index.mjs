@@ -743,7 +743,7 @@ let RootDisplay = class extends CustomEventSource {
 				// Bitmap
 				dState.muBmst = 0;
 				dState.muBmex = 0;
-				dState.muBlinkSpeedMode = 250;
+				dState.muBlinkSpeedMode = 400;
 				dState.muTempWindow = new Uint8Array(256);
 				dState.muUseVoiceBm = true;
 				// SysEx blinking

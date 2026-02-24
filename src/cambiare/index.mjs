@@ -425,7 +425,7 @@ let Cambiare = class extends RootDisplay {
 	};
 	#redrawNotesInternal(sum, overrideActiveCh) {
 		let upThis = this;
-		(sum?.chInUse || overrideActiveCh).forEach((e, part) => {
+		(upThis.device?.getActive() || overrideActiveCh).forEach((e, part) => {
 			if (e) {
 				let context = upThis.#sectPart[part >> 4][part & 15].cxt;
 				context.clearRect(0, 0, context.canvas.width, context.canvas.height);
@@ -724,22 +724,24 @@ let Cambiare = class extends RootDisplay {
 			//console.debug(part, note);
 		});
 		// Write to the new pixel display buffers
-		let ccxt = upThis.#sectPix.cxt;
-		if (timeNow > sum.bitmap.expire) {
+		let bitmapDisp = upThis.device?.getBitmap(),
+		ccxt = upThis.#sectPix.cxt;
+		if (timeNow > bitmapDisp.expire) {
 			upThis.#bufBn.fill(0);
-		} else if (sum.bitmap.bitmap.length > 256) {
-			sum.bitmap.bitmap.forEach((e, i) => {
+		} else if (bitmapDisp.bitmap.length > 256) {
+			bitmapDisp.bitmap.forEach((e, i) => {
 				upThis.#bufBn[i] = e ? upThis.pixelMax : upThis.pixelMin;
 			});
 		} else {
-			sum.bitmap.bitmap.forEach((e, i) => {
+			bitmapDisp.bitmap.forEach((e, i) => {
 				upThis.#bufBn[i << 1] = e ? upThis.pixelMax : upThis.pixelMin;
 				upThis.#bufBn[(i << 1) | 1] = e ? upThis.pixelMax : upThis.pixelMin;
 			});
 		};
 		upThis.#bufLn.fill(0);
-		if (timeNow <= sum.letter.expire) {
-			upThis.glyphs.getStr(sum.letter.text.padEnd(32, " ")).forEach((e0, i0) => {
+		let letterDisp = upThis.device?.getLetter();
+		if (timeNow <= letterDisp.expire) {
+			upThis.glyphs.getStr(letterDisp.text.padEnd(32, " ")).forEach((e0, i0) => {
 				// Per character
 				let baseX = (i0 & 15) * 5, baseY = (i0 >> 4) << 3;
 				e0.forEach((e, i) => {

@@ -215,6 +215,7 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#bmex = upThis.clockSource.now() + blinkSpeedMode * 4;
 		});*/
 		upThis.attachState("mu");
+		upThis.dState.muBlinkSpeedMode = 250;
 		upThis.addEventListener("channelactive", (ev) => {
 			upThis.#ch = ev.data;
 		});
