@@ -32,6 +32,7 @@ let updateDraw = () => {
 	floatyCursor.style.left = `${+imageShow.offsetLeft + (+cutX)}px`;
 	floatyCursor.style.width = `${cutWidth}px`;
 	floatyCursor.style.height = `${cutHeight}px`;
+	convertImage();
 };
 let canvasToBitmap = async (context) => {
 	let imageData = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
@@ -50,6 +51,9 @@ let canvasToBitmap = async (context) => {
 	};
 	if (hexPointer) {
 		hexString += "0123456789abcdef"[hexBuffer];
+	};
+	if (hexString.length & 1) {
+		hexString += "0";
 	};
 	return hexString;
 };
@@ -119,7 +123,7 @@ document.body.addEventListener("keydown", async (ev) => {
 			break;
 		};
 		case "Enter": {
-			await convertImage();
+			//await convertImage();
 			break;
 		};
 		default: {

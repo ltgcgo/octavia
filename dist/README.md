@@ -14,7 +14,8 @@ Visit our repo on [Codeberg](https://codeberg.org/ltgc/octavia/) or [GitHub](htt
 ## Files
 Only files ending in `.mjs` are meant to be used as a library. Files prefixed with `xp_` are tested to work on Windows XP (Chrome 49 and Firefox 52 ESR).
 
-* `state.mjs`: MIDI processing core.
-* `basic.mjs`: The bare minimum to get you started on writing visualizers. Requires `state.mjs`.
-* `cambiare.mjs`: Batteries-included full-blown visualizer as a module.
-* `micc.mjs`: The streaming assembler and disassembler for standard MIDI files.
+- `state.mjs`: MIDI processing core.
+- `basic.mjs`: The bare minimum to get you started on writing visualizers. Requires `state.mjs`.
+- `chord.mjs`: Chord representation parsing & serialization.
+- `cambiare.mjs`: Batteries-included full-blown visualizer as a module.
+- `micc.mjs`: The streaming assembler and disassembler for standard MIDI files.
