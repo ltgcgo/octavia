@@ -58,17 +58,35 @@ ctx.fillStyle = "#000";
 let resourceBlob, resourceViewer;
 let renderSect = function (data, offX, offY, boundX, boundY, pixelSize, isTwoByOne) {
 	if (resourceViewer && data) {
-		for (let i = 0; i < data.length; i ++) {
-			let iX = i % data.width, iY = (i - iX) / data.width;
-			if (iX < boundX && iY < boundY) {
-				let e = data[i];
-				let rX = pixelSize * (offX + iX);
-				let rY = pixelSize * (offY + iY);
-				if (isTwoByOne) {
-					rX = rX << 1;
+		if (data.getFrame) {
+			let fdata = data.getFrame(0);
+			for (let i = 0; i < fdata.length; i ++) {
+				let iX = i % data.width, iY = (i - iX) / data.width;
+				if (iX < boundX && iY < boundY) {
+					let e = fdata[i];
+					let rX = pixelSize * (offX + iX);
+					let rY = pixelSize * (offY + iY);
+					if (isTwoByOne) {
+						rX = rX << 1;
+					};
+					if (e) {
+						ctx.fillRect(rX, rY, isTwoByOne ? (pixelSize << 1) : pixelSize, pixelSize);
+					};
 				};
-				if (e) {
-					ctx.fillRect(rX, rY, isTwoByOne ? (pixelSize << 1) : pixelSize, pixelSize);
+			};
+		} else {
+			for (let i = 0; i < data.length; i ++) {
+				let iX = i % data.width, iY = (i - iX) / data.width;
+				if (iX < boundX && iY < boundY) {
+					let e = data[i];
+					let rX = pixelSize * (offX + iX);
+					let rY = pixelSize * (offY + iY);
+					if (isTwoByOne) {
+						rX = rX << 1;
+					};
+					if (e) {
+						ctx.fillRect(rX, rY, isTwoByOne ? (pixelSize << 1) : pixelSize, pixelSize);
+					};
 				};
 			};
 		};
