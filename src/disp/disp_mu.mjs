@@ -249,10 +249,10 @@ let MuDisplay = class extends RootDisplay {
 			};
 			upThis.#start = ev.data;
 		});
-		upThis.device.addEventListener("mupromptex", ({data}) => {
+		/*upThis.device.addEventListener("mupromptex", ({data}) => {
 			upThis.#scheduledEx = data;
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
-		});
+		});*/
 		(async () => {
 			await Promise.all([upThis.trueFont.loaded.wait(), upThis.xgFont.loaded.wait(), upThis.sysBm.loaded.wait(), upThis.aniBm.loaded.wait()]);
 			upThis.#booted = 1;
@@ -295,10 +295,10 @@ let MuDisplay = class extends RootDisplay {
 		upThis.#mmdb.fill(0);
 		// Part display
 		upThis.#pmdb.fill(0);
-		if (upThis.#scheduledEx > 0) {
-			let durationPer10Ms = (upThis.#scheduledEx * 85 + 4095) >> 12;
+		/*if (upThis.#scheduledEx > 0) {
+			let durationPer10Ms = (upThis.#scheduledEx * 85 + 4095) >> 12; // Divides by 48
 			if (timeNow - upThis.#promptEx > exBlinkSpeed) {
-				upThis.#unresolvedEx += (durationPer10Ms * 204 + 4095) >> 12; // Devides by 20
+				upThis.#unresolvedEx += (durationPer10Ms * 204 + 4095) >> 12; // Divides by 20
 				getDebugState() && console.debug(`SysEx prompt submitted: ${upThis.#unresolvedEx}.`);
 			} else {
 				// MIDI transmits at 4.8 KB/s or 38400 bps
@@ -310,7 +310,7 @@ let MuDisplay = class extends RootDisplay {
 			};
 			upThis.#scheduledEx = 0;
 			//upThis.#awaitEx = timeNow;
-		};
+		};*/
 		// Strength
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
@@ -538,10 +538,13 @@ let MuDisplay = class extends RootDisplay {
 			};
 			useBm = sum.bitmap.bitmap;
 		} else */if (upThis.demoInfo && time > 0) {
-			if (upThis.#unresolvedEx) {
+			if (upThis.dState) {
+				upThis.dState.muDisableExBlink = true;
+			};
+			/*if (upThis.#unresolvedEx) {
 				upThis.#unresolvedEx = 0;
 				getDebugState() && console.debug(`SysEx prompt cancelled.`);
-			};
+			};*/
 			let sequence = upThis.demoInfo.class || "boot";
 			let stepTime = upThis.demoInfo.fps || 2;
 			let stepSize = upThis.demoInfo.size || 4;
@@ -551,10 +554,13 @@ let MuDisplay = class extends RootDisplay {
 			//console.debug(stepId);
 			useBm = (upThis.aniBm?.getBm(stepId) || upThis.sysBm?.getBm(stepId) || upThis.sysBm?.getBm("no_abm"))?.getFrame(0);
 			if (useBm) {
-				console.debug(stepId);
+				//console.debug(stepId);
 				upThis.#bmdb.set(useBm);
 			};
 		} else {
+			if (upThis.dState) {
+				upThis.dState.muDisableExBlink = false;
+			};
 			upThis.muWriteBm(upThis.#bmdb, upThis.#ch, voiceObj);
 			// Use stored pic
 			/* useBm = upThis.#bmdb.slice();

@@ -15,6 +15,8 @@ import {allowedStandards} from "../state/bankReader.js";
 import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
 import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 
+import {getDebugState} from "../state/utils.js";
+
 MidiParser.customInterpreter = customInterpreter;
 
 const eventPassThru = (source, sink, type) => {
@@ -705,10 +707,17 @@ let RootDisplay = class extends CustomEventSource {
 			let dState = upThis.dState;
 			switch (state) {
 				case "mu": {
+					upThis.removeEventListener("mupromptex", dState.muScheduleSysEx);
 					upThis.removeEventListener("mode", dState.muModeFunc);
 					delete dState.muModeFunc;
 					delete dState.muModeBm;
+					delete dState.muExhaustEx;
+					delete dState.muDurationEx;
+					delete dState.muBlinkSpeedEx;
+					delete dState.muPromptEx;
+					delete dState.muScheduledEx;
 					delete dState.muUnresolvedEx;
+					delete dState.muDisableExBlink;
 					delete dState.muUseVoiceBm;
 					delete dState.muTempWindow;
 					delete dState.muBlinkSpeedMode;
@@ -731,21 +740,40 @@ let RootDisplay = class extends CustomEventSource {
 		switch (state) {
 			case "mu": {
 				dState.isMu = true;
+				// Bitmap
 				dState.muBmst = 0;
 				dState.muBmex = 0;
 				dState.muBlinkSpeedMode = 400;
 				dState.muTempWindow = new Uint8Array(256);
 				dState.muUseVoiceBm = true;
+				// SysEx blinking
+				dState.muDisableExBlink = false;
 				dState.muUnresolvedEx = 0;
+				dState.muScheduledEx = 0;
+				dState.muPromptEx = 0;
+				dState.muBlinkSpeedEx = 200;
+				dState.muDurationEx = dState.muBlinkSpeedEx * 5;
+				dState.muExhaustEx = dState.muBlinkSpeedEx << 1;
 				dState.muModeFunc = function (ev) {
 					let modeBm = upThis.sysBm.getBm(`st_${({"gm":"gm1","g2":"gm2","?":"gm1","ns5r":"korg","ag10":"korg","x5d":"korg","05rw":"korg","krs":"korg","sg":"gm1","k11":"gm1","sd":"gm2","sc":"gs"})[ev.data] || ev.data}`);
 					if (modeBm) {
 						dState.muModeBm = modeBm.getFrame(0);
 					};
 					dState.muBmst = 2;
-					dState.muBmex = upThis.clockSource.now() + dState.muBlinkSpeedMode * 4;
+					dState.muBmex = upThis.clockSource.now() + (dState.muBlinkSpeedMode << 2);
 				};
 				upThis.addEventListener("mode", dState.muModeFunc);
+				dState.muScheduleSysEx = function (ev) {
+					// ev.data is the length of the SysEx string
+					if (dState.muDisableExBlink) {
+						dState.muScheduledEx = 0;
+						getDebugState() && console.debug(`SysEx blinking cancelled due to disabled feature.`);
+					} else {
+						dState.muScheduledEx += ev.data;
+						getDebugState() && console.debug(`Scheduled a SysEx prompt at ${ev.data} B. Remaining ${dState.muScheduledEx} B unfulfilled prompts.`);
+					};
+				};
+				upThis.device?.addEventListener("mupromptex", dState.muScheduleSysEx);
 				break;
 			};
 			default: {
@@ -763,14 +791,40 @@ let RootDisplay = class extends CustomEventSource {
 		if (!upThis.dState.isMu) {
 			throw(new Error("Device state for MU is not yet attached."));
 		};
+		let dState = upThis.dState;
 		let timeNow = upThis.clockSource.now();
 		let bmDisp = upThis.device?.getBitmap();
-		let tempWindow = upThis.dState.muTempWindow;
+		let tempWindow = dState.muTempWindow;
 		let shouldWrite = false, writtenOffload = false;
+		// Fulfill and push SysEx prompts to an unresolved state
+		if (dState.muScheduledEx > 0) {
+			let durationPer10Ms = (dState.muScheduledEx * 85 + 4095) >> 12; // Divides by 48
+			if (timeNow - dState.muPromptEx > dState.muBlinkSpeedEx) {
+				// Submit blinking
+				dState.muUnresolvedEx += (durationPer10Ms * 204 + 4095) >> 12; // Divides by 20
+				getDebugState() && console.debug(`SysEx blinking submitted, now at ${dState.muUnresolvedEx}.`);
+			} else {
+				// MIDI transmits at 4.8 KB/s or 38400 bps
+				if ((((timeNow - dState.muPromptEx) * 41) >> 12 & 1) && dState.muUnresolvedEx < 8) { // Divides by 100
+					dState.muUnresolvedEx == 8;
+				};
+				dState.muUnresolvedEx += (durationPer10Ms + 1) >> 1;
+				getDebugState() && console.debug(`SysEx blinking too busy, now at ${dState.muUnresolvedEx}.`);
+			};
+			dState.muScheduledEx = 0;
+		};
+		/*if (dState.muDisableExBlink) {
+			dState.muUnresolvedEx = 0;
+			getDebugState() && console.debug(`SysEx blinking cancelled due to disabled feature.`);
+		};*/
 		// Demo animation is excluded
 		if (timeNow < bmDisp.expire) {
 			// Bitmap displays
 			// Cancel SysEx prompts
+			if (dState.muUnresolvedEx > 0) {
+				dState.muUnresolvedEx = 0;
+				getDebugState() && console.debug(`SysEx blinking cancelled by bitmap.`);
+			};
 			// Buffer write
 			if (bmDisp.bitmap.length <= 256) {
 				tempWindow = bmDisp.bitmap;
@@ -779,33 +833,62 @@ let RootDisplay = class extends CustomEventSource {
 				buffer.set(bmDisp.bitmap.subarray(0, buffer.length));
 				writtenOffload = true;
 			};
-		} else if (timeNow < upThis.dState.muBmex) {
-			if (upThis.dState.muBmst === 2) {
+		} else if (timeNow < dState.muBmex) {
+			if (dState.muBmst === 2) {
 				// Mode bitmaps with blinking
 				shouldWrite = true;
 				// Cancel SysEx prompts
+				if (dState.muUnresolvedEx > 0) {
+					dState.muUnresolvedEx = 0;
+					getDebugState() && console.debug(`SysEx blinking cancelled by mode set.`);
+				};
 				// Buffer write
-				let blinkCrit = Math.floor((upThis.dState.muBmex - timeNow) / upThis.dState.muBlinkSpeedMode) & 1;
-				if (upThis.dState.muModeBm) {
-					upThis.dState.muModeBm?.forEach((e, i) => {
+				let blinkCrit = Math.floor((dState.muBmex - timeNow) / dState.muBlinkSpeedMode) & 1;
+				if (dState.muModeBm) {
+					dState.muModeBm?.forEach((e, i) => {
 						tempWindow[i] = blinkCrit === e;
 					});
 				} else {
 					tempWindow.fill(blinkCrit ? 0 : 1);
 				};
 			};
-		} else if (upThis.dState.muUseVoiceBm) {
+		} else if (dState.muUseVoiceBm) {
 			// Voice bitmaps with SysEx blinking
 			shouldWrite = true;
 			// Resolve SysEx prompts
+			if (dState.muUnresolvedEx > 0 && timeNow - dState.muPromptEx >= dState.muExhaustEx) {
+				if (dState.muUnresolvedEx < 16) {
+					dState.muUnresolvedEx = 0;
+				} else {
+					dState.muUnresolvedEx -= 16;
+				};
+				dState.muPromptEx = timeNow;
+				getDebugState() && console.debug(`SysEx blinking resolved to ${dState.muUnresolvedEx}.`);
+			} else if (dState.muUnresolvedEx < 0) {
+				dState.muUnresolvedEx = 0;
+				//getDebugState() && console.debug(`SysEx prompt reset.`);
+			};
 			// Get voice bitmaps
-			upThis.dState.muBmst = 0;
+			dState.muBmst = 0;
 			let voiceBm = upThis.getChBm(part, upThis.BM_YAMAHA_MU, voiceObj),
 			frameBm = upThis.getChBmState(part, voiceBm?.frames || 1);
 			if (voiceBm) {
 				tempWindow.set(voiceBm.getFrame(frameBm));
 			};
 			// Blink on SysEx reception
+			let exBlink = timeNow - dState.muPromptEx;
+			if (exBlink <= dState.muDurationEx) {
+				upThis.sysBm.getBm("sysex_m")?.getFrame(0).forEach((e, i) => {
+					if (e) {
+						tempWindow[i] = 0;
+					};
+				});
+				upThis.sysBm.getBm(`sysex_${Math.floor(exBlink / dState.muDurationEx * 5) & 1}`)?.getFrame(0).forEach((e, i) => {
+					if (e) {
+						tempWindow[i] = 1;
+					};
+				});
+			};
 		};
 		if (shouldWrite) {
 			let i0 = 0;
