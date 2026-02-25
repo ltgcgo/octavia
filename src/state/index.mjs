@@ -493,7 +493,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	clockSource = new TimeMuxer(); // Same as in Cambiare
 	modelEx = {
 		"xg": {
-			"map": 0, // MU Basic, MU100 Native, PSR/LE
+			"map": 0, // MU Basic, MU100 Native, PSR/LE, QY100
 			"varSys": false,
 			"insPart": new Uint8Array(5) // Var, In1~4
 		},
@@ -1512,21 +1512,30 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					// special-use
 					switch (id & 15) {
 						case 14: {
-							// style control
+							// YMCS style control
 							let newBuffer = new Uint8Array(msg.length + 1);
 							newBuffer[0] = 126;
 							newBuffer.set(msg, 1);
 							this.#seXg.run(newBuffer, track, 0);
 							break;
 						};
+						case 3: {
+							// Clavinova style control
+							//console.debug(`Received Yamaha Clavinova SysEx.\n%o`, msg);
+							let newBuffer = new Uint8Array(msg.length + 1);
+							newBuffer[0] = 115;
+							newBuffer.set(msg, 1);
+							this.#seXg.run(newBuffer, track, 0);
+							break;
+						};
 						default: {
-							console.warn(`Unknown Yamaha special SysEx type: ${id}.`);
+							console.warn(`Unknown Yamaha special SysEx type: ${id}.\n%o`, msg);
 						};
 					};
 					break;
 				};
 				default: {
-					console.warn(`Unknown Yamaha SysEx type: ${id >> 4}.`);
+					console.warn(`Unknown Yamaha SysEx type: ${id >> 4} (${id}).\n%o`, msg);
 				};
 			};
 		},
@@ -3966,7 +3975,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					upThis.lcdContrast = Math.max(0, Math.min(8, 9 - e)) << 2;
 					console.debug(`${dPref}LCD contrast: ${e}.`);
 				} else if (ri === 18) {
-					upThis.#subDb[modeMap.xg][1] = [0, 126, 152][e] ?? 127;
+					upThis.#subDb[modeMap.xg][1] = [0, 126, 152, 0][e] ?? 127;
 					console.debug(`${dPref}default bank: ${["MU Basic", "MU100 Native", "PSR/LE"][e] ?? e}.`);
 					upThis.modelEx.xg.map = e;
 					upThis.dispatchEvent("banklevel", {
