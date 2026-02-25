@@ -428,6 +428,7 @@ TransBrs	Transbrass
 ExpSprno	ExpSoprano
 HyprAlto	Hyper Alto
 Exp.Alto	Expr. Alto
+Grow Sax	GrowingSax
 Alto+Trp	AltoSx+Trp
 Sax Sect	Sax Sect.
 TenrSax2	TenorSax 2
@@ -831,4 +832,3 @@ SFX Kt 2	SFX Kit 2
 VoiceKit	Voice Kit
 CymblKt2	CymbalKit2
 MT-32 Kt	MT-32 Kit
-Grow Sax	GrowingSax
