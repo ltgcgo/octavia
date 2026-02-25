@@ -8,6 +8,7 @@
 		"./basic": "./dist/basic.mjs",
 		"./bridge": "./dist/bridge.mjs",
 		"./cambiare": "./dist/cambiare.mjs",
+		"./chord": "./dist/chord.d.mts",
 		"./state": "./dist/state.mjs",
 		"./disp": "./dist/disp.mjs",
 		"./xp_basic": "./dist/xp_basic.mjs",
