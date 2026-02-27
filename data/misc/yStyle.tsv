@@ -1,24 +1,24 @@
 model	id	shortName	fullName
 0000	00	 --OFF--	Off
-0255	00	 --OFF--	Off
-0255	05	Drm&Bas2	Drum & Bass 2
-0255	13	Smooth 2	Smooth 2
-0255	1c	PsychRck	Psychedelic Rock
-0255	26	Brit.Pop	British Pop
-0255	29	HardRock	Hard Rock
-0255	4d	BluesShf	Blues Shuffle
-0255	58	16Contry	16-beat Country Rock
-0255	59	CW Balad	Country Ballad
-0255	5d	ComboJz2	Combo Jazz 2
-0255	5e	Big Band	Big Band Jazz
-0255	7f	SpaceOpr	Space Opera
-0434	00	 --OFF--	Off
-0434	01	80sMixtr	80's Mixture Rock
-0434	02	HardCore	Hard Core Punk
-0434	09	BritRock	British Rock
-0434	13	LatinRck	Latin Rock
-0434	16	80sHdRk2	80's Hard Rock 2
-0434	19	USHrdRk1	American Hard Rock 1
-0434	1d	PwrMetal	Power Metal
-0434	43	SoulShfl	Soul Shuffle
-0434	48	Rck&Roll	Rock & Roll
+0155	00	 --OFF--	Off
+0155	05	Drm&Bas2	Drum & Bass 2
+0155	13	Smooth 2	Smooth 2
+0155	1c	PsychRck	Psychedelic Rock
+0155	26	Brit.Pop	British Pop
+0155	29	HardRock	Hard Rock
+0155	4d	BluesShf	Blues Shuffle
+0155	58	16Contry	16-beat Country Rock
+0155	59	CW Balad	Country Ballad
+0155	5d	ComboJz2	Combo Jazz 2
+0155	5e	Big Band	Big Band Jazz
+0155	7f	SpaceOpr	Space Opera
+0234	00	 --OFF--	Off
+0234	01	80sMixtr	80's Mixture Rock
+0234	02	HardCore	Hard Core Punk
+0234	09	BritRock	British Rock
+0234	13	LatinRck	Latin Rock
+0234	16	80sHdRk2	80's Hard Rock 2
+0234	19	USHrdRk1	American Hard Rock 1
+0234	1d	PwrMetal	Power Metal
+0234	43	SoulShfl	Soul Shuffle
+0234	48	Rck&Roll	Rock & Roll

@@ -262,7 +262,19 @@ let QyDisplay = class extends RootDisplay {
 					});
 				} else {
 					upThis.dState.muUseVoiceBm = false;
-					// YMCS Section
+					// YMCS style
+					usedFont.getStr(`${upThis.device?.modelEx?.xg.styleId ?? 0}`.padStart(3, "0")).forEach((e, i) => {
+						e.render((e, x, y) => {
+							upThis.#nmdb[6145 + 6 * i + x + (y << 7)] = e;
+						});
+					});
+					let styleInfo = upThis.styles.getStyle(upThis.device?.modelEx?.xg.styleDev ?? 0, upThis.device?.modelEx?.xg.styleId ?? 0);
+					usedFont.getStr(styleInfo ? styleInfo.short : " Invalid").forEach((e, i) => {
+						e.render((e, x, y) => {
+							upThis.#nmdb[6163 + 6 * i + x + (y << 7)] = e;
+						});
+					});
+					// YMCS section
 					let yBank = upThis.device?.modelEx?.xg.map,
 					ySect = upThis.device?.modelEx?.xg.section;
 					usedFont.getStr(`[${getYSect(yBank, ySect, true) ?? `N/A ${ySect}`}]`).forEach((e, i) => {
