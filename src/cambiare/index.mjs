@@ -1125,7 +1125,7 @@ let Cambiare = class extends RootDisplay {
 			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1431, w: 36, h: 33, i: "Var", a: "right"}),
 			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 478, w: 31, h: 33, i: "Var"}),
 			upThis.#sectInfo.delay,
-			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1666, w: 36, h: 33, i: "In1", a: "right"}),
+			createElement("span", ["field", "field-key", "pcp-font7"], {t: 1, l: 1666, w: 36, h: 33, i: "Ins", a: "right"}),
 			//createElement("span", ["field", "field-key", "pcp-font7"], {t: 35, l: 713, w: 27, h: 33, i: "Ins"}),
 			upThis.#sectInfo.insert,
 			upThis.#sectInfo.inscon1,
