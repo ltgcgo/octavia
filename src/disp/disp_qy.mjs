@@ -152,11 +152,7 @@ let QyDisplay = class extends RootDisplay {
 				// Default view
 				upThis.dState.muDisableExBlink = false;
 				// Render the pill
-				upThis.qyRsrc.getBm("NorPill")?.render((e, x, y) => {
-					if (e) {
-						upThis.#nmdb[x + (y << 7)] = 1;
-					};
-				});
+				upThis.qyRsrc.getBm("NorPill")?.write(upThis.#nmdb, 128, 0);
 				// Carve out the text on that pill
 				usedFont.getStr("SONG").forEach((e, i) => {
 					e.render((e, x, y) => {
@@ -226,9 +222,7 @@ let QyDisplay = class extends RootDisplay {
 					});
 				});
 				// Placeholder
-				upThis.qyRsrc.getBm("Vtfj")?.render((e, x, y) => {
-					upThis.#nmdb[2338 + x + (y << 7)] = e;
-				});
+				upThis.qyRsrc.getBm("Vtfj")?.write(upThis.#nmdb, 128, 0, 34, 18);
 				// Transpose render
 				{
 					let tPit = upThis.device.getPitchShift(upThis.#ch);
@@ -284,11 +278,7 @@ let QyDisplay = class extends RootDisplay {
 			case 1: {
 				// Mixer view
 				// Render the upperleft
-				upThis.qyRsrc.getBm("MixPill")?.render((e, x, y) => {
-					if (e) {
-						upThis.#nmdb[x + (y << 7)] = 1;
-					};
-				});
+				upThis.qyRsrc.getBm("MixPill")?.write(upThis.#nmdb, 128, 0);
 				upThis.qyRsrc.getBm("MixIcon")?.render((e, x, y) => {
 					if (e) {
 						upThis.#nmdb[10 + x + (y << 7)] = 1;
@@ -467,42 +457,26 @@ let QyDisplay = class extends RootDisplay {
 						upThis.#renderFill(34 + tchOff, 43, 1, 18);
 						upThis.#renderFill(35 + tchOff, 45, 1, 16, 0);
 						upThis.#renderFill(31 + tchOff, 63, 10, 1);
-						upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
-							upThis.#nmdb[4255 + tchOff + x + (y << 7)] = e;
-						});
+						upThis.qyRsrc.getBm("PanIcon")?.write(upThis.#nmdb, 128, 0, 31 + tchOff, 33);
 						upThis.#renderNeedle(tchOff + 35, 36, upThis.device?.getChCc(rch, 10));
 						let volSlid = 15 - (upThis.device?.getChCc(rch, 7) >> 3);
-						upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
-							upThis.#nmdb[5535 + tchOff + x + ((volSlid + y) << 7)] = e;
-						});
+						upThis.qyRsrc.getBm("VolSlid")?.write(upThis.#nmdb, 128, 0, 31 + tchOff, 43 + volSlid);
 						upThis.#renderFill(32 + tchOff, 46 + volSlid, 8, 1);
 						break;
 					};
 					case 3: {
-						upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
-							upThis.#nmdb[4255 + tchOff + x + (y << 7)] = e;
-						});
+						upThis.qyRsrc.getBm("PanIcon")?.write(upThis.#nmdb, 128, 0, 31 + tchOff, 33);
 						upThis.#renderNeedle(tchOff + 35, 36, upThis.device?.getChCc(rch, 91));
-						upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
-							upThis.#nmdb[5279 + tchOff + x + (y << 7)] = e;
-						});
+						upThis.qyRsrc.getBm("PanIcon")?.write(upThis.#nmdb, 128, 0, 31 + tchOff, 41);
 						upThis.#renderNeedle(tchOff + 35, 44, upThis.device?.getChCc(rch, 93));
 						if (upThis.device.getChMode(rch) !== "xg" || upThis.device?.modelEx?.xg.varSys) {
-							upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
-								upThis.#nmdb[6303 + tchOff + x + (y << 7)] = e;
-							});
+							upThis.qyRsrc.getBm("PanIcon")?.write(upThis.#nmdb, 128, 0, 31 + tchOff, 49);
 							upThis.#renderNeedle(tchOff + 35, 52, upThis.device?.getChCc(rch, 94));
-							upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
-								upThis.#nmdb[7327 + tchOff + x + (y << 7)] = e;
-							});
+							upThis.qyRsrc.getBm("PanIcon")?.write(upThis.#nmdb, 128, 0, 31 + tchOff, 57);
 							upThis.#renderNeedle(tchOff + 35, 60, upThis.device?.getChCc(rch, 128));
 						} else {
 							upThis.#renderFill(33 + tchOff, 51, 5, 3, 0);
-							upThis.qyRsrc.getBm(upThis.device?.modelEx?.xg.insPart[0] === rch ? "Box_1" : "Box_0")?.render((e, x, y) => {
-								if (e) {
-									upThis.#nmdb[6432 + tchOff + x + (y << 7)] = 1;
-								};
-							});
+							upThis.qyRsrc.getBm(upThis.device?.modelEx?.xg.insPart[0] === rch ? "Box_1" : "Box_0")?.write(upThis.#nmdb, 128, 0, 32 + tchOff, 50, 0);
 						};
 						break;
 					};

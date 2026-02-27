@@ -89,7 +89,7 @@ let BitmapMatrix = class BitmapMatrix {
 		let upThis = this;
 		let startOffset = startX + startY * targetWidth;
 		let p = upThis.getFrame(frameId), pX = 0, pY = 0, pLineOffset = 0;
-		while (pY <= upThis.#height) {
+		while (pY < upThis.#height) {
 			let data = p[pLineOffset + pX];
 			if (mode & 2 || data) {
 				targetBuffer[startOffset + pX] = data ^ (mode & 1);
