@@ -147,7 +147,7 @@ let QyDisplay = class extends RootDisplay {
 		let letterDisp = upThis.device?.getLetter();
 		// Start rendering
 		upThis.dState.muDisableExBlink = true;
-		switch (viewId) {
+		switch (viewId >> 1) {
 			case 0: {
 				// Default view
 				upThis.dState.muDisableExBlink = false;
@@ -253,7 +253,10 @@ let QyDisplay = class extends RootDisplay {
 				});
 				// Bank info
 				let primBuf = upThis.device.getChPrimitives(upThis.#ch);
-				{
+				// Fetch voice bitmap
+				let isBitmapWritten = upThis.muWriteBm(upThis.#bmdb, upThis.#ch);
+				if (viewId & 1) {
+					upThis.dState.muUseVoiceBm = true;
 					let voiceName = upThis.getChVoice(this.#ch);
 					usedFont.getStr(`${primBuf[0].toString().padStart(3, "0")} ${primBuf[1].toString().padStart(3, "0")} ${primBuf[2].toString().padStart(3, "0")}`).forEach((e, i) => {
 						e.render((e, x, y) => {
@@ -265,9 +268,12 @@ let QyDisplay = class extends RootDisplay {
 							upThis.#nmdb[7169 + 6 * i + x + (y << 7)] = e;
 						});
 					});
+				} else {
+					upThis.dState.muUseVoiceBm = false;
+					if (!isBitmapWritten) {
+						upThis.#bmdb.fill(0);
+					};
 				};
-				// Fetch voice bitmap
-				upThis.muWriteBm(upThis.#bmdb, upThis.#ch);
 				// Commit to bitmap screen
 				upThis.#bmdb?.forEach((e, i) => {
 					let x = i & 31, y = i >> 5;
@@ -292,34 +298,36 @@ let QyDisplay = class extends RootDisplay {
 				upThis.qyRsrc.getBm("MsVoice")?.render((e, x, y) => {
 					upThis.#nmdb[2176 + x + (y << 7)] = e;
 				});
-				upThis.qyRsrc.getBm("ElPan")?.render((e, x, y) => {
-					upThis.#nmdb[4096 + x + (y << 7)] = e;
-				});
-				upThis.qyRsrc.getBm("ElVol")?.render((e, x, y) => {
-					upThis.#nmdb[4864 + x + (y << 7)] = e;
-				});
-				upThis.qyRsrc.getBm("ElMsPa")?.render((e, x, y) => {
-					upThis.#nmdb[5634 + x + (y << 7)] = e;
-				});
-				// Global mosaic
-				upThis.#renderMosaic(0, 50, 5, 14, 1);
-				upThis.#renderFill(5, 50, 1, 14);
-				upThis.#renderMosaic(7, 50, 10, 14, 0);
-				upThis.#renderFill(10, 52, 1, 10);
-				upThis.#renderFill(11, 52, 1, 10, 0);
-				upThis.#renderFill(17, 50, 1, 14);
-				upThis.#renderMosaic(19, 50, 10, 14, 0);
-				upThis.#renderFill(22, 52, 1, 10);
-				upThis.#renderFill(23, 52, 1, 10, 0);
-				let masterVol = 9 - (sum.master.volume * 6489 >> 16); // 9 - Math.floor(mV / 10.1)
-				upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
-					upThis.#nmdb[7 + x + ((50 + masterVol + y) << 7)] = e;
-				});
-				upThis.#renderFill(8, 53 + masterVol, 8, 1);
-				upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
-					upThis.#nmdb[6419 + x + (y << 7)] = e;
-				});
-				upThis.#renderFill(20, 53, 8, 1);
+				if (viewId & 1) {} else {
+					upThis.qyRsrc.getBm("ElPan")?.render((e, x, y) => {
+						upThis.#nmdb[4096 + x + (y << 7)] = e;
+					});
+					upThis.qyRsrc.getBm("ElVol")?.render((e, x, y) => {
+						upThis.#nmdb[4864 + x + (y << 7)] = e;
+					});
+					upThis.qyRsrc.getBm("ElMsPa")?.render((e, x, y) => {
+						upThis.#nmdb[5634 + x + (y << 7)] = e;
+					});
+					// Global mosaic
+					upThis.#renderMosaic(0, 50, 5, 14, 1);
+					upThis.#renderFill(5, 50, 1, 14);
+					upThis.#renderMosaic(7, 50, 10, 14, 0);
+					upThis.#renderFill(10, 52, 1, 10);
+					upThis.#renderFill(11, 52, 1, 10, 0);
+					upThis.#renderFill(17, 50, 1, 14);
+					upThis.#renderMosaic(19, 50, 10, 14, 0);
+					upThis.#renderFill(22, 52, 1, 10);
+					upThis.#renderFill(23, 52, 1, 10, 0);
+					let masterVol = 9 - (sum.master.volume * 6489 >> 16); // 9 - Math.floor(mV / 10.1)
+					upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
+						upThis.#nmdb[7 + x + ((50 + masterVol + y) << 7)] = e;
+					});
+					upThis.#renderFill(8, 53 + masterVol, 8, 1);
+					upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
+						upThis.#nmdb[6419 + x + (y << 7)] = e;
+					});
+					upThis.#renderFill(20, 53, 8, 1);
+				};
 				upThis.#renderFill(29, 24, 1, 40);
 				// Bank info
 				let voiceInfo = upThis.getChVoice(upThis.#ch);
@@ -348,10 +356,10 @@ let QyDisplay = class extends RootDisplay {
 		{
 			// Channel tabs
 			let curSeg = this.#ch >> 3;
-			let preCal = viewId ? 1310 : 4254,
-			preCalY = viewId ? 10 : 33;
+			let preCal = (viewId >> 1) ? 1310 : 4254,
+			preCalY = (viewId >> 1) ? 10 : 33;
 			// Channel info box
-			if (viewId) {
+			if (viewId >> 1) {
 				upThis.#renderFill(28, preCalY - 1, 99, 15);
 				upThis.#renderFill(29, preCalY, 97, 13, 0);
 			} else {
@@ -359,16 +367,16 @@ let QyDisplay = class extends RootDisplay {
 			};
 			// Arrows
 			if (curSeg < (maxCh >> 3)) {
-				upThis.qyRsrc.getBm(`ArrowR${+viewId + 1}`)?.render((e, x, y) => {
+				upThis.qyRsrc.getBm(`ArrowR${(viewId >> 1) + 1}`)?.render((e, x, y) => {
 					upThis.#nmdb[preCal + 735 + x + (y << 7)] = e;
 				});
 			};
 			if (curSeg > (minCh >> 3)) {
-				upThis.qyRsrc.getBm(`ArrowL${+viewId + 1}`)?.render((e, x, y) => {
-					upThis.#nmdb[preCal + 610 + (+viewId * 27) + x + (y << 7)] = e;
+				upThis.qyRsrc.getBm(`ArrowL${(viewId >> 1) + 1}`)?.render((e, x, y) => {
+					upThis.#nmdb[preCal + 610 + ((viewId >> 1) * 27) + x + (y << 7)] = e;
 				});
 			};
-			if (!viewId) {
+			if (!(viewId >> 1)) {
 				// PtCdTm
 				upThis.qyRsrc.getBm("PtCdTm")?.render((e, x, y) => {
 					upThis.#nmdb[4227 + x + (y << 7)] = e;
@@ -394,7 +402,7 @@ let QyDisplay = class extends RootDisplay {
 				if (this.#ch === rch) {
 					textTarget = 0;
 					upThis.#renderFill(31 + tchOff, preCalY, 9, 5);
-					if (viewId) {
+					if (viewId >> 1) {
 						upThis.#renderFill(30 + tchOff, preCalY + 14, 13, 8);
 					};
 				};
@@ -413,21 +421,10 @@ let QyDisplay = class extends RootDisplay {
 						});
 					});
 				};
-				if (viewId) {
+				if (viewId >> 1) {
 					upThis.#renderMosaic(31 + tchOff, 32, 10, 32, 0);
 					upThis.#renderFill(41 + tchOff, 32, 1, 32);
-					upThis.#renderFill(34 + tchOff, 43, 1, 18);
-					upThis.#renderFill(35 + tchOff, 45, 1, 16, 0);
 					upThis.#renderFill(31 + tchOff, 63, 10, 1);
-					upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
-						upThis.#nmdb[4255 + tchOff + x + (y << 7)] = e;
-					});
-					upThis.#renderNeedle(tchOff + 35, 36, upThis.device?.getChCc(rch, 10));
-					let volSlid = 15 - (upThis.device?.getChCc(rch, 7) >> 3);
-					upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
-						upThis.#nmdb[5535 + tchOff + x + ((volSlid + y) << 7)] = e;
-					});
-					upThis.#renderFill(32 + tchOff, 46 + volSlid, 8, 1);
 					// Category render
 					let chType = upThis.device.getChType(rch);
 					let curCat = upThis.#getCat(rch, upThis.device?.getChPrimitive(rch, 1), upThis.device?.getChPrimitive(rch, 0)),
@@ -452,17 +449,34 @@ let QyDisplay = class extends RootDisplay {
 						});
 					};
 				};
+				switch (viewId) {
+					case 2: {
+						upThis.#renderFill(34 + tchOff, 43, 1, 18);
+						upThis.#renderFill(35 + tchOff, 45, 1, 16, 0);
+						upThis.#renderFill(31 + tchOff, 63, 10, 1);
+						upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
+							upThis.#nmdb[4255 + tchOff + x + (y << 7)] = e;
+						});
+						upThis.#renderNeedle(tchOff + 35, 36, upThis.device?.getChCc(rch, 10));
+						let volSlid = 15 - (upThis.device?.getChCc(rch, 7) >> 3);
+						upThis.qyRsrc.getBm("VolSlid")?.render((e, x, y) => {
+							upThis.#nmdb[5535 + tchOff + x + ((volSlid + y) << 7)] = e;
+						});
+						upThis.#renderFill(32 + tchOff, 46 + volSlid, 8, 1);
+						break;
+					};
+				};
 			};
 		};
 		if (timeNow <= letterDisp?.expire) {
 			//upThis.#renderFill(12, 9, 109, 31);
 			upThis.qyRsrc.getBm("TxtDisp")?.render((e, x, y) => {
-				upThis.#nmdb[(viewId ? 655 : 1036) + x + (y << 7)] = e;
+				upThis.#nmdb[(viewId >> 1 ? 655 : 1036) + x + (y << 7)] = e;
 			});
 			usedFont.getStr(letterDisp?.text).forEach((e, i) => {
 				let ri = (i % 16) * 6, ry = i >> 4;
 				e.render((e, x, y) => {
-					upThis.#nmdb[(viewId ? 1686 : 2067) + ri + x + ((y + (ry << 3)) << 7)] = e;
+					upThis.#nmdb[(viewId >> 1 ? 1686 : 2067) + ri + x + ((y + (ry << 3)) << 7)] = e;
 				});
 			});
 		};

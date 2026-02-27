@@ -228,14 +228,29 @@ visualizer.addEventListener("meta", function (ev) {
 // Get canvas
 let dispCanv = $e("#qyScreen");
 let dispCtx = dispCanv.getContext("2d");
-let mixerView = false;
+let viewId = 1;
 dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
-	let ch = visualizer.getCh();
-	if (ev.deltaY > 0) {
-		visualizer.setCh(ch + 1);
+	//console.debug(ev);
+	if (ev.shiftKey) {
+		if (ev.deltaY > 0) {
+			viewId ++;
+			if (viewId > viewCount) {
+				viewId = 0;
+			};
+		} else {
+			viewId --;
+			if (viewId < 0) {
+				viewId = viewCount;
+			};
+		};
 	} else {
-		visualizer.setCh(ch - 1);
+		let ch = visualizer.getCh();
+		if (ev.deltaY > 0) {
+			visualizer.setCh(ch + 1);
+		} else {
+			visualizer.setCh(ch - 1);
+		};
 	};
 	ev.preventDefault();
 	ev.stopImmediatePropagation();
@@ -244,6 +259,7 @@ dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
 	ev.stopImmediatePropagation();
 }); */
+const viewCount = 3; // actual count minus one
 dispCanv.addEventListener("mousedown", function (ev) {
 	let ch = visualizer.getCh();
 	if (ev.button === 0) {
@@ -252,7 +268,15 @@ dispCanv.addEventListener("mousedown", function (ev) {
 		} else if (ev.offsetX >= 717) {
 			visualizer.setCh(ch + 1);
 		} else if (ev.offsetY < 72) {
-			mixerView = !mixerView;
+			viewId --;
+			if (viewId < 0) {
+				viewId = viewCount;
+			};
+		} else if (ev.offsetY >= 452) {
+			viewId ++;
+			if (viewId > viewCount) {
+				viewId = 0;
+			};
 		};
 	};
 });
@@ -296,7 +320,7 @@ let renderThread = setInterval(function () {
 				visualizer.sendCmd(e.data);
 			});
 		};
-		visualizer.render(curTime, dispCtx, mixerView, useMidiBus ? 0 : demoId, location.hash === "#trueMode");
+		visualizer.render(curTime, dispCtx, viewId, useMidiBus ? 0 : demoId, location.hash === "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);

@@ -765,7 +765,7 @@ let RootDisplay = class extends CustomEventSource {
 				upThis.addEventListener("mode", dState.muModeFunc);
 				dState.muScheduleSysEx = function (ev) {
 					// ev.data is the length of the SysEx string
-					if (dState.muDisableExBlink) {
+					if (dState.muDisableExBlink || !dState.muUseVoiceBm) {
 						dState.muScheduledEx = 0;
 						getDebugState() && console.debug(`SysEx blinking cancelled due to disabled feature.`);
 					} else {
