@@ -74,6 +74,35 @@ let BitmapMatrix = class BitmapMatrix {
 			};
 		};
 	};
+	write(targetBuffer, targetWidth, frameId = 0, startX = 0, startY = 0, mode = 2) {
+		// 0b00000001: output invert toggle
+		// 0b00000010: don't treat data as mask toggle
+		if (typeof targetWidth !== "number" || targetWidth <= 0) {
+			throw(new TypeError("Invalid target buffer width."));
+		};
+		if (startX >= targetWidth || startX < 0) {
+			throw(new RangeError("Invalid X value for the starting point."));
+		};
+		if (startY < 0 || startY * targetWidth >= targetBuffer.length) {
+			throw(new RangeError("Invalid Y value for the starting point."));
+		};
+		let upThis = this;
+		let startOffset = startX + startY * targetWidth;
+		let p = upThis.getFrame(frameId), pX = 0, pY = 0, pLineOffset = 0;
+		while (pY <= upThis.#height) {
+			let data = p[pLineOffset + pX];
+			if (mode & 2 || data) {
+				targetBuffer[startOffset + pX] = data ^ (mode & 1);
+			};
+			pX ++;
+			if (pX >= upThis.#width) {
+				pX = 0;
+				pY ++;
+				startOffset += targetWidth;
+				pLineOffset += upThis.#width;
+			};
+		};
+	};
 	constructor(width, height, packed = false, buffer) {
 		let upThis = this;
 		if (buffer) {
