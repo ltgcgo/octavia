@@ -53,7 +53,7 @@ let RootDisplay = class extends CustomEventSource {
 	#noteTempo = 120;
 	#noteNomin = 4;
 	#noteDenom = 4;
-	#noteBarOffset = 0;
+	noteBarOffset = 0;
 	#noteTime = 0;
 	// A cache for providing fast poly calculation
 	#voiceCache = new Array(allocated.ch);
@@ -92,7 +92,7 @@ let RootDisplay = class extends CustomEventSource {
 		upThis.#noteTempo = 120;
 		upThis.#noteNomin = 4;
 		upThis.#noteDenom = 4;
-		upThis.#noteBarOffset = 0;
+		upThis.noteBarOffset = 0;
 		upThis.#noteTime = 0;
 		upThis.dispatchEvent("tempo", upThis.#noteTempo);
 		upThis.dispatchEvent("title", upThis.#titleName);
@@ -941,7 +941,7 @@ let RootDisplay = class extends CustomEventSource {
 		return this.#noteTime / this.#noteBInt;
 	};
 	get noteOverall() {
-		return (this.noteProgress - this.#noteBarOffset) * this.#noteDenom / 4;
+		return (this.noteProgress - this.noteBarOffset) * this.#noteDenom / 4;
 	};
 	get noteBar() {
 		return Math.floor(this.noteOverall / this.#noteNomin);
@@ -954,7 +954,7 @@ let RootDisplay = class extends CustomEventSource {
 		return beat;
 	};
 	get noteOffset() {
-		return this.#noteBarOffset;
+		return this.noteBarOffset;
 	};
 	getTimeSig() {
 		return [this.#noteNomin, this.#noteDenom];
@@ -1161,7 +1161,7 @@ let RootDisplay = class extends CustomEventSource {
 			let lastBInt = upThis.#noteBInt || 0.5;
 			upThis.#noteTempo = 60000000 / data;
 			upThis.#noteBInt = data / 1000000;
-			upThis.#noteBarOffset += noteProgress * (lastBInt / upThis.#noteBInt) - noteProgress;
+			upThis.noteBarOffset += noteProgress * (lastBInt / upThis.#noteBInt) - noteProgress;
 			upThis.dispatchEvent("tempo", upThis.#noteTempo);
 		};
 		upThis.#metaRun[88] = function (type, data) {
@@ -1177,14 +1177,14 @@ let RootDisplay = class extends CustomEventSource {
 			//let metroClick = 24 * (32 / data[3]) / data[2];
 			let targetBar = Math.round(curBar + curBeat / oldNomin);
 			if (oldNomin !== upThis.#noteNomin) {
-				upThis.#noteBarOffset -= targetBar * (upThis.#noteNomin - oldNomin) * (4 / upThis.#noteDenom);
+				upThis.noteBarOffset -= targetBar * (upThis.#noteNomin - oldNomin) * (4 / upThis.#noteDenom);
 			};
 			if (oldDenom !== upThis.#noteDenom) {
 				console.debug(`${curBar}/${curBeat}`);
 				if (oldDenom < upThis.#noteDenom) {
-					upThis.#noteBarOffset += targetBar * (upThis.#noteDenom - oldDenom) * (oldDenom / upThis.#noteDenom);
+					upThis.noteBarOffset += targetBar * (upThis.#noteDenom - oldDenom) * (oldDenom / upThis.#noteDenom);
 				} else {
-					upThis.#noteBarOffset += targetBar * (upThis.#noteDenom - oldDenom) * (upThis.#noteDenom / oldDenom);
+					upThis.noteBarOffset += targetBar * (upThis.#noteDenom - oldDenom) * (upThis.#noteDenom / oldDenom);
 				};
 			};
 			upThis.dispatchEvent("tsig", upThis.getTimeSig());
