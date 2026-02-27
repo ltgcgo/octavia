@@ -330,6 +330,33 @@ let xfVocalists = {
 	"no": "Instrumental"
 };
 
+const ymcsSections = new Array(4);
+ymcsSections[0] = [, , , , , , , , ["Intro"], ["Main A"], ["Main B"], ["FillAB", "Fill-in AB"], ["FillBA", "Fill-in BA"], ["Ending"], ["Blank"]];
+ymcsSections[1] = ymcsSections[0];
+ymcsSections[3] = ymcsSections[0];
+ymcsSections[2] = [["IntroA", "Intro A"], ["IntroB", "Intro B"], ["IntroC", "Intro C"], ["IntroD", "Intro D"], , , , , ["Main A"], ["Main B"], ["Main C"], ["Main D"], , , , , ["FillAA", "Fill-in AA"], ["FillBB", "Fill-in BB"], ["FillCC", "Fill-in CC"], ["FillDD", "Fill-in DD"], , , , , ["BreakA", "Break-fill A"], ["BreakB", "Break-fill B"], ["BreakC", "Break-fill C"], ["BreakD", "Break-fill D"], , , , , ["EndinA", "Ending A"], ["EndinB", "Ending B"], ["EndinC", "Ending C"], ["EndinD", "Ending D"]];
+const getYSect = (bank = 0, sect = 8, raw = false) => {
+	let resultA = ymcsSections[bank];
+	if (!resultA?.length) {
+		return;
+		throw(new RangeError(`Invalid section bank ${bank}.`));
+	};
+	let resultB = resultA[sect];
+	if (resultB) {
+		let result = resultB[1];
+		if (!result || raw) {
+			result = resultB[0];
+		};
+		if (raw) {
+			result = result.padEnd(6, " ");
+		};
+		return result;
+	} else {
+		return;
+		throw(new RangeError(`Invalid section number ${sect}.`))
+	};
+};
+
 export {
 	xgEffType,
 	xgPartMode,
@@ -343,5 +370,6 @@ export {
 	getSgKana,
 	getXgRevTime,
 	getXgDelayOffset,
-	getVlCtrlSrc
+	getVlCtrlSrc,
+	getYSect
 };

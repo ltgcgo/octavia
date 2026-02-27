@@ -20,7 +20,8 @@ import {
 	getSgKana,
 	getXgRevTime,
 	getXgDelayOffset,
-	getVlCtrlSrc
+	getVlCtrlSrc,
+	getYSect
 } from "./xgValues.js";
 import {
 	gsRevType,
@@ -494,6 +495,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	modelEx = {
 		"xg": {
 			"map": 0, // MU Basic, MU100 Native, PSR/LE, QY100
+			"section": 8, // Defaults to 8, meaning varies between models
+			"sectSwitch": false,
 			"varSys": false,
 			"insPart": new Uint8Array(5) // Var, In1~4
 		},
@@ -2347,6 +2350,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		// Reset MT-32 user bank
 		upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
 		// Reset XG-exclusive params
+		upThis.modelEx.xg.section = 8;
+		upThis.modelEx.xg.sectSwitch = false;
 		upThis.modelEx.xg.varSys = false;
 		upThis.modelEx.xg.insPart.fill(allocated.invalidCh);
 		for (let i = 0; i < yPlgConf.length; i ++) {
@@ -4259,25 +4264,30 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		}).add([126, 0], (msg, track, id) => {
 			// YMCS section control
 			// Yamaha Music Communications System
+			//self.getYSect = getYSect;
 			switch (msg[1]) {
 				case 0: {
 					// Section control off
+					upThis.modelEx.xg.sectSwitch = false;
+					upThis.modelEx.xg.section = 8;
 					upThis.dispatchEvent("metacommit", {
 						type: "YMCSSect",
 						data: `Disabled`,
-						raw: "Intro "
+						raw: getYSect(upThis.modelEx.xg.map, 8, true)
 					});
 					console.debug(`Yamaha Section Control is off.`);
 					break;
 				};
 				case 127: {
 					// Section control on
+					upThis.modelEx.xg.sectSwitch = true;
+					upThis.modelEx.xg.section = msg[0];
 					upThis.dispatchEvent("metacommit", {
 						type: "YMCSSect",
-						data: ["Intro", "Main A", "Main B", "Fill-in AB", "Fill-in BA", "Ending", "Blank"][msg[0] - 8] ?? `invalid section ${msg[0]}`,
-						raw: ["Intro ", "Main A", "Main B", "FillAB", "FillBA", "Ending", "Blank "][msg[0] - 8] ?? `ID: ${msg[0]}`
+						data: getYSect(upThis.modelEx.xg.map, msg[0]) ?? `invalid section ${msg[0]}`,
+						raw: getYSect(upThis.modelEx.xg.map, msg[0], true) ?? `ID: ${msg[0]}`
 					});
-					console.debug(`Yamaha Section Control switches to "${["intro", "main A", "main B", "fill-in AB", "fill-in BA", "ending", "blank"][msg[0] - 8] ?? `Invalid section ${msg[0]}`}".`);
+					//console.debug(`Yamaha Section Control switches to "${getYSect(upThis.modelEx.xg.map, msg[0]) ?? `Invalid section ${msg[0]}`}".`);
 					break;
 				};
 				default: {
