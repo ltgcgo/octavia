@@ -4276,6 +4276,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					// Section control off
 					upThis.modelEx.xg.sectSwitch = false;
 					upThis.modelEx.xg.section = 8;
+					/*upThis.modelEx.xg.styleDev = 0;
+					upThis.modelEx.xg.styleId = 0;*/
 					upThis.dispatchEvent("metacommit", {
 						type: "YMCSSect",
 						data: `Disabled`

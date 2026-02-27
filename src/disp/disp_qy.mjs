@@ -376,6 +376,10 @@ let QyDisplay = class extends RootDisplay {
 				upThis.qyRsrc.getBm("PtCdTm")?.write(upThis.#nmdb, 128, 0, 3, 33)?.render((e, x, y) => {
 					upThis.#nmdb[4227 + x + (y << 7)] = e;
 				});
+				// The pattern pill
+				if (upThis.device?.modelEx?.xg.styleDev || upThis.device?.modelEx?.xg.styleId) {
+					upThis.qyRsrc.getBm("ActPill")?.write(upThis.#nmdb, 128, 0, 3, 40);
+				};
 				// The tempo pill
 				if (sum.tempo !== 120 || upThis.noteBarOffset !== 0) {
 					upThis.qyRsrc.getBm("ActPill")?.write(upThis.#nmdb, 128, 0, 21, 40);
