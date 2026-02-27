@@ -246,9 +246,9 @@ let QyDisplay = class extends RootDisplay {
 				// Bank info
 				let primBuf = upThis.device.getChPrimitives(upThis.#ch);
 				// Fetch voice bitmap
-				let isBitmapWritten = upThis.muWriteBm(upThis.#bmdb, upThis.#ch);
 				if (viewId & 1) {
 					upThis.dState.muUseVoiceBm = true;
+					upThis.muWriteBm(upThis.#bmdb, upThis.#ch)
 					let voiceName = upThis.getChVoice(this.#ch);
 					usedFont.getStr(`${primBuf[0].toString().padStart(3, "0")} ${primBuf[1].toString().padStart(3, "0")} ${primBuf[2].toString().padStart(3, "0")}`).forEach((e, i) => {
 						e.render((e, x, y) => {
@@ -262,7 +262,7 @@ let QyDisplay = class extends RootDisplay {
 					});
 				} else {
 					upThis.dState.muUseVoiceBm = false;
-					if (!isBitmapWritten) {
+					if (!upThis.muWriteBm(upThis.#bmdb, upThis.#ch)) {
 						upThis.#bmdb.fill(0);
 					};
 				};
