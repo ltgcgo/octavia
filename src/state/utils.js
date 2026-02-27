@@ -243,7 +243,7 @@ for (let [key, value] of bufferMaps[0]) {
 	};
 	bufferMaps[1].set(key, decodeMap);
 };
-console.debug(bufferMaps);
+//console.debug(bufferMaps);
 let bufferFrom = (alphabet = "base64", string, lastChunkHandling = "loose", maxLength = 536870911) => {
 	if (typeof string !== "string") {
 		throw(new TypeError("Input is not a string."));

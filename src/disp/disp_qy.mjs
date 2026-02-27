@@ -1,6 +1,6 @@
 "use strict";
 
-import {OctaviaDevice} from "../state/index.mjs";
+import {OctaviaDevice, getYSect} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
 
@@ -262,6 +262,14 @@ let QyDisplay = class extends RootDisplay {
 					});
 				} else {
 					upThis.dState.muUseVoiceBm = false;
+					// YMCS Section
+					let yBank = upThis.device?.modelEx?.xg.map,
+					ySect = upThis.device?.modelEx?.xg.section;
+					usedFont.getStr(`[${getYSect(yBank, ySect, true) ?? `N/A ${ySect}`}]`).forEach((e, i) => {
+						e.render((e, x, y) => {
+							upThis.#nmdb[7187 + 6 * i + x + (y << 7)] = e;
+						});
+					});
 					if (!upThis.muWriteBm(upThis.#bmdb, upThis.#ch)) {
 						upThis.#bmdb.fill(0);
 					};

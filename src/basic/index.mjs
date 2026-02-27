@@ -14,6 +14,7 @@ import {
 import {allowedStandards} from "../state/bankReader.js";
 import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
 import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
+import StylePool from "./styleLoad.js";
 
 import {getDebugState} from "../state/utils.js";
 
@@ -67,6 +68,8 @@ let RootDisplay = class extends CustomEventSource {
 	msExhaust = 300;
 	smoothAttack = 0;
 	smoothDecay = 0;
+	// Expected a style pool here if needed
+	styles;
 	get clockSource() {
 		return this.device?.clockSource;
 	};
@@ -1206,6 +1209,7 @@ let RootDisplay = class extends CustomEventSource {
 
 export {
 	RootDisplay,
+	StylePool,
 	dnToPos,
 	allocated
 };

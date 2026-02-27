@@ -497,6 +497,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			"map": 0, // MU Basic, MU100 Native, PSR/LE, QY100
 			"section": 8, // Defaults to 8, meaning varies between models
 			"sectSwitch": false,
+			"styleDev": 0, // u16
+			"styleId": 0, // u16
 			"varSys": false,
 			"insPart": new Uint8Array(5) // Var, In1~4
 		},
@@ -2352,6 +2354,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		// Reset XG-exclusive params
 		upThis.modelEx.xg.section = 8;
 		upThis.modelEx.xg.sectSwitch = false;
+		upThis.modelEx.xg.styleDev = 0;
+		upThis.modelEx.xg.styleId = 0;
 		upThis.modelEx.xg.varSys = false;
 		upThis.modelEx.xg.insPart.fill(allocated.invalidCh);
 		for (let i = 0; i < yPlgConf.length; i ++) {
@@ -3370,6 +3374,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				data[1] = data[1] << 7;
 				data[1] |= e & 127;
 			});
+			upThis.modelEx.xg.styleDev = data[0];
+			upThis.modelEx.xg.styleId = data[1];
 			upThis.dispatchEvent("metacommit", {
 				type: "YStyleId",
 				data
@@ -4272,8 +4278,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					upThis.modelEx.xg.section = 8;
 					upThis.dispatchEvent("metacommit", {
 						type: "YMCSSect",
-						data: `Disabled`,
-						raw: getYSect(upThis.modelEx.xg.map, 8, true)
+						data: `Disabled`
 					});
 					console.debug(`Yamaha Section Control is off.`);
 					break;
@@ -4284,8 +4289,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					upThis.modelEx.xg.section = msg[0];
 					upThis.dispatchEvent("metacommit", {
 						type: "YMCSSect",
-						data: getYSect(upThis.modelEx.xg.map, msg[0]) ?? `invalid section ${msg[0]}`,
-						raw: getYSect(upThis.modelEx.xg.map, msg[0], true) ?? `ID: ${msg[0]}`
+						data: getYSect(upThis.modelEx.xg.map, msg[0]) ?? `invalid section ${msg[0]}`
 					});
 					//console.debug(`Yamaha Section Control switches to "${getYSect(upThis.modelEx.xg.map, msg[0]) ?? `Invalid section ${msg[0]}`}".`);
 					break;
@@ -7565,5 +7569,6 @@ export {
 	dnToPos,
 	overrides,
 	getDebugState,
+	getYSect,
 	effectSlots
 };
