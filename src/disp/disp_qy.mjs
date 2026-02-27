@@ -298,7 +298,20 @@ let QyDisplay = class extends RootDisplay {
 				upThis.qyRsrc.getBm("MsVoice")?.render((e, x, y) => {
 					upThis.#nmdb[2176 + x + (y << 7)] = e;
 				});
-				if (viewId & 1) {} else {
+				if (viewId & 1) {
+					upThis.qyRsrc.getBm("ElRev")?.render((e, x, y) => {
+						upThis.#nmdb[4352 + x + (y << 7)] = e;
+					});
+					upThis.qyRsrc.getBm("ElCho")?.render((e, x, y) => {
+						upThis.#nmdb[5376 + x + (y << 7)] = e;
+					});
+					upThis.qyRsrc.getBm("ElVar")?.render((e, x, y) => {
+						upThis.#nmdb[6400 + x + (y << 7)] = e;
+					});
+					upThis.qyRsrc.getBm("ElDry")?.render((e, x, y) => {
+						upThis.#nmdb[7424 + x + (y << 7)] = e;
+					});
+				} else {
 					upThis.qyRsrc.getBm("ElPan")?.render((e, x, y) => {
 						upThis.#nmdb[4096 + x + (y << 7)] = e;
 					});
@@ -463,6 +476,34 @@ let QyDisplay = class extends RootDisplay {
 							upThis.#nmdb[5535 + tchOff + x + ((volSlid + y) << 7)] = e;
 						});
 						upThis.#renderFill(32 + tchOff, 46 + volSlid, 8, 1);
+						break;
+					};
+					case 3: {
+						upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
+							upThis.#nmdb[4255 + tchOff + x + (y << 7)] = e;
+						});
+						upThis.#renderNeedle(tchOff + 35, 36, upThis.device?.getChCc(rch, 91));
+						upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
+							upThis.#nmdb[5279 + tchOff + x + (y << 7)] = e;
+						});
+						upThis.#renderNeedle(tchOff + 35, 44, upThis.device?.getChCc(rch, 93));
+						if (upThis.device.getChMode(rch) !== "xg" || upThis.device?.modelEx?.xg.varSys) {
+							upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
+								upThis.#nmdb[6303 + tchOff + x + (y << 7)] = e;
+							});
+							upThis.#renderNeedle(tchOff + 35, 52, upThis.device?.getChCc(rch, 94));
+							upThis.qyRsrc.getBm("PanIcon")?.render((e, x, y) => {
+								upThis.#nmdb[7327 + tchOff + x + (y << 7)] = e;
+							});
+							upThis.#renderNeedle(tchOff + 35, 60, upThis.device?.getChCc(rch, 128));
+						} else {
+							upThis.#renderFill(33 + tchOff, 51, 5, 3, 0);
+							upThis.qyRsrc.getBm(upThis.device?.modelEx?.xg.insPart[0] === rch ? "Box_1" : "Box_0")?.render((e, x, y) => {
+								if (e) {
+									upThis.#nmdb[6432 + tchOff + x + (y << 7)] = 1;
+								};
+							});
+						};
 						break;
 					};
 				};
