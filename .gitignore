@@ -1,6 +1,7 @@
 *.map
 *.swp
 .~lock.*
+deno.lock
 dist/*.js
 dist/*.gz
 dist/*.br

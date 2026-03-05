@@ -11,15 +11,18 @@ import {
 } from "jsr:@luca/esbuild-deno-loader@^0.11.1";
 
 for await (let entry of DSVParser.parseObjects(0, TextReader.line((await Deno.open(Deno.args[0] ?? "./deno/bundle/targets.tsv")).readable))) {
-	console.debug(entry);
+	if (!entry.url) {
+		continue;
+	};
+	console.debug(`Building ${entry.name} from ${entry.url} ...`);
+	let result = await esbuild.build({
+		"plugins": [...denoPlugins()],
+		"outfile": `./deno/artifact/${entry.name}.js`,
+		"bundle": true,
+		"format": "esm",
+		"entryPoints": [entry.url]
+	});
+	console.debug(result.outputFiles);
 };
 
-/* await esbuild.build({
-	"plugins": [...denoPlugins()],
-	"outfile": `./deno/artifact/${Deno.args[0]}.js`,
-	"bundle": true,
-	"format": "esm",
-	"entryPoints": [Deno.args[1]]
-});
-
-esbuild.stop(); */
+esbuild.stop();
