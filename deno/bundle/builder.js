@@ -25,4 +25,5 @@ for await (let entry of DSVParser.parseObjects(0, TextReader.line((await Deno.op
 	console.debug(result.outputFiles);
 };
 
+console.debug(`Deno bundling finished.`);
 esbuild.stop();

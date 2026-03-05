@@ -3,8 +3,8 @@
 
 "use strict";
 
-import chordData from "./generated/chords.json";
-//import chordData from "./generated/chords.json" with {type: "json"};
+//import chordData from "./generated/chords.json";
+import chordData from "./generated/chords.json" with {type: "json"};
 
 const asciiToneShift = "bbb,bb,b, ,#,##,###".split(",");
 const actualToneShift = "♭𝄫,𝄫,♭,♮,♯,𝄪,𝄪♯".split(",");
