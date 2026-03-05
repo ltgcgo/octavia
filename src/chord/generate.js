@@ -20,3 +20,9 @@ for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.ope
 //console.debug(finalObj);
 
 await Deno.writeTextFile("./src/chord/generated/chords.json", JSON.stringify(finalObj));
+
+let planSet1 = new Set(), planSet2 = new Set();
+
+for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.open("./src/chord/qyChordPlan.tsv")).readable))) {
+	console.debug(line);
+};

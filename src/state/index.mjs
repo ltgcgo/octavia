@@ -48,6 +48,7 @@ import {
 import {
 	contrastCache
 } from "../disp/colour.js"
+import {ChordDict} from "../chord/index.mjs";
 //import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
 
 const modeIdx = [
@@ -3333,25 +3334,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.#trkAsReq[track] = msg[0] + 1;
 		}).add([67, 123, 1], (msg, track) => {
 			// XF chords
-			let data = [];
-			for (let i = 0; i < msg.length; i += 2) {
-				let chordAccidental = msg[i] >> 4;
-				let chordRoot = msg[i] & 15;
-				if (chordAccidental < 7 && chordRoot && chordRoot < 8) {
-					let chordIdNative = new Uint8Array(5);
-					chordIdNative[0] = chordRoot - 1;
-					chordIdNative[1] = (chordAccidental - 3) << 2;
-					chordIdNative[2] = msg[i | 1]; // XF ID
-					// Write the actual chord type here at 3 and 4
-					data.push(chordIdNative);
-				};
-			};
+			let data = ChordDict.parseYamaha(msg, true);
 			upThis.dispatchEvent("metacommit", {
 				type: "ChordCtl",
 				src: "yxf",
 				data
 			});
-			console.debug(`Yamaha XF chord data: %o`, data);
+			getDebugState() && console.debug(`Yamaha XF chord data: [${ChordDict.stringify(data)}] %o`, data);
 		}).add([67, 123, 2], (msg, track) => {
 			// XF rehearsal mark
 			let data = new Uint8Array(2);
@@ -4303,25 +4292,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			};
 		}).add([126, 2], (msg, track, id) => {
 			// YMCS chord control
-			let data = [];
-			for (let i = 0; i < msg.length; i += 2) {
-				let chordAccidental = msg[i] >> 4;
-				let chordRoot = msg[i] & 15;
-				if (chordAccidental < 7 && chordRoot && chordRoot < 8) {
-					let chordIdNative = new Uint8Array(5);
-					chordIdNative[0] = chordRoot - 1;
-					chordIdNative[1] = (chordAccidental - 3) << 2;
-					chordIdNative[2] = msg[i | 1]; // XF ID
-					// Write the actual chord type here at 3 and 4
-					data.push(chordIdNative);
-				};
-			};
+			let data = ChordDict.parseYamaha(msg, true);
 			upThis.dispatchEvent("metacommit", {
 				type: "ChordCtl",
 				src: "ymcs",
 				data
 			});
-			console.debug(`YMCS chord data: %o`, data);
+			getDebugState() && console.debug(`YMCS chord data: [${ChordDict.stringify(data)}] %o`, data);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {

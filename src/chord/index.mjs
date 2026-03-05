@@ -6,7 +6,7 @@
 //import chordData from "./generated/chords.json";
 import chordData from "./generated/chords.json" with {type: "json"};
 
-const asciiToneShift = "bbb,bb,b, ,#,##,###".split(",");
+const asciiToneShift = "bbb,bb,b,,#,##,###".split(",");
 const actualToneShift = "♭𝄫,𝄫,♭,♮,♯,𝄪,𝄪♯".split(",");
 
 const chordTypeMap = new Map(); // From chord IDs to other info
@@ -70,6 +70,50 @@ let ChordDict = class ChordDict {
 		} else {
 			throw(new RangeError(`Unknown XF ID ${chordXf}.`));
 		};
+	};
+	static parseYamaha(buffer, strict = false) {
+		let data = [];
+		if (buffer.length & 1) {
+			throw(new Error("Buffer size isn't even."));
+		};
+		if (strict && buffer.length !== 4) {
+			throw(new Error("Buffer size isn't 4."))
+		};
+		for (let i = 0; i < buffer.length; i += 2) {
+			if (buffer[i | 1] >= 0x78) {
+				if (i === 0) {
+					data.push((buffer[i] << 8) | this.fromChordType("---"));
+				};
+				continue;
+			} else if (buffer[i | 1] <= 0x22) {
+				data.push((buffer[i] << 8) | this.fromChordXF(buffer[i | 1]));
+			} else {
+				console.warn(`"0x${buffer[i | 1].toString(16)}" is not a valid XF chord.`);
+			};
+		};
+		return data;
+	};
+	static MASK_STRICT_ACCIDENTAL = 1;
+	static MASK_NATIVE_ACCIDENTAL = 2;
+	static MASK_SPACED_DELIMITER = 4;
+	static PRESET_TUNE = 1;
+	static PRESET_SOLTON = 4;
+	static stringify(chords, flags = 6) {
+		let result = "";
+		for (let chord of chords) {
+			if (result.length > 0) {
+				result += (flags & this.MASK_SPACED_DELIMITER) ? " " : "/";
+			};
+			result += this.getChordRoot(chord);
+			let accidental = (flags & this.MASK_NATIVE_ACCIDENTAL ? actualToneShift : asciiToneShift)[this.getChordShiftRaw(chord)];
+			if (accidental.length === 0 && flags & this.MASK_STRICT_ACCIDENTAL) {
+				result += " ";
+			} else {
+				result += accidental;
+			};
+			result += this.getChordType(this.getChordId(chord));
+		};
+		return result;
 	};
 };
 
