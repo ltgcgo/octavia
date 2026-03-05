@@ -10,8 +10,12 @@
 export class ChordDict {
 	/** Return the root note of a chord as a single-letter string. */
 	static getChordRoot(chord: number): string;
+	/** Return the root note of a chord as a number starting at 1 for C. */
+	static getChordRootRaw(chord: number): string;
 	/** Return the semitone shift of a chord as a signed integer. 0 for natural. */
 	static getChordShift(chord: number): number;
+	/** Return the semitone shift of a chord as an unsigned integer. 3 for natural. */
+	static getChordShiftRaw(chord: number): number;
 	/** Return the native ID of a chord. Basically just returning the lower byte. */
 	static getChordId(chord: number): number;
 	/** Return the identifier of a native chord ID. */

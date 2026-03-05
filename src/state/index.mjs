@@ -500,6 +500,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			"sectSwitch": false,
 			"styleDev": 0, // u16
 			"styleId": 0, // u16
+			"chords": [], // blank for no chords
 			"varSys": false,
 			"insPart": new Uint8Array(5) // Var, In1~4
 		},
@@ -2357,6 +2358,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.modelEx.xg.sectSwitch = false;
 		upThis.modelEx.xg.styleDev = 0;
 		upThis.modelEx.xg.styleId = 0;
+		upThis.modelEx.xg.chords = [];
 		upThis.modelEx.xg.varSys = false;
 		upThis.modelEx.xg.insPart.fill(allocated.invalidCh);
 		for (let i = 0; i < yPlgConf.length; i ++) {
@@ -3335,6 +3337,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		}).add([67, 123, 1], (msg, track) => {
 			// XF chords
 			let data = ChordDict.parseYamaha(msg, true);
+			upThis.modelEx.xg.chords = data;
 			upThis.dispatchEvent("metacommit", {
 				type: "ChordCtl",
 				src: "yxf",
@@ -4293,12 +4296,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		}).add([126, 2], (msg, track, id) => {
 			// YMCS chord control
 			let data = ChordDict.parseYamaha(msg, true);
+			upThis.modelEx.xg.chords = data;
 			upThis.dispatchEvent("metacommit", {
 				type: "ChordCtl",
 				src: "ymcs",
 				data
 			});
-			getDebugState() && console.debug(`YMCS chord data: [${ChordDict.stringify(data)}] %o`, data);
+			/*getDebugState() && */console.debug(`YMCS chord data: [${ChordDict.stringify(data)}] %o`, data);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {

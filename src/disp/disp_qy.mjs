@@ -3,6 +3,7 @@
 import {OctaviaDevice, getYSect} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
+import {ChordDict, getQyPlan} from "../chord/index.mjs";
 
 import {
 	bgWhite,
@@ -29,6 +30,7 @@ let QyDisplay = class extends RootDisplay {
 	qy35Font = new MxFont40("./data/bitmaps/xg/qyCh35.tsv");
 	qy55Font = new MxFont40("./data/bitmaps/xg/qyCh55.tsv");
 	qyRsrc = new MxBmDef("./data/bitmaps/xg/qyRsrc.tsv");
+	qyChord = new MxBmDef("./data/bitmaps/xg/qyChord.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	constructor() {
@@ -284,6 +286,22 @@ let QyDisplay = class extends RootDisplay {
 					});
 					if (!upThis.muWriteBm(upThis.#bmdb, upThis.#ch)) {
 						upThis.#bmdb.fill(0);
+						// Chords
+						let deviceChords = upThis.device?.modelEx?.xg.chords,
+						showRoot = 0, showAcci = 3, showMain = "m---", showSub;
+						if (deviceChords?.length > 0) {
+							showRoot = ChordDict.getChordRootRaw(deviceChords[0]);
+							showAcci = ChordDict.getChordShiftRaw(deviceChords[0]);
+							let showPlan = getQyPlan(ChordDict.getChordId(deviceChords[0]));
+							showMain = showPlan.m;
+							showSub = showPlan.s;
+						};
+						upThis.qyChord.getBm(`r${showRoot}`)?.write(upThis.#bmdb, 32, 0, 5, 4);
+						upThis.qyChord.getBm(`a${showAcci}`)?.write(upThis.#bmdb, 32, 0, 12, 1);
+						upThis.qyChord.getBm(showMain)?.write(upThis.#bmdb, 32, 0, 12, 8);
+						if (showSub) {
+							upThis.qyChord.getBm(showSub)?.write(upThis.#bmdb, 32, 0, 18, 1);
+						};
 					};
 				};
 				// Commit to bitmap screen
@@ -379,6 +397,10 @@ let QyDisplay = class extends RootDisplay {
 				// The pattern pill
 				if (upThis.device?.modelEx?.xg.styleDev || upThis.device?.modelEx?.xg.styleId) {
 					upThis.qyRsrc.getBm("ActPill")?.write(upThis.#nmdb, 128, 0, 3, 40);
+				};
+				// The chord pill
+				if (upThis.device?.modelEx?.xg.chords?.length > 0) {
+					upThis.qyRsrc.getBm("ActPill")?.write(upThis.#nmdb, 128, 0, 12, 40);
 				};
 				// The tempo pill
 				if (sum.tempo !== 120 || upThis.noteBarOffset !== 0) {
