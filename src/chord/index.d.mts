@@ -14,10 +14,12 @@ export class ChordDict {
 	static getChordShift(chord: number): number;
 	/** Return the native ID of a chord. Basically just returning the lower byte. */
 	static getChordId(chord: number): number;
-	/** Return the identifier of a chord. */
+	/** Return the identifier of a native chord ID. */
 	static getChordType(chord: number): string;
 	/** Return the native chord ID from a valid specifier. */
 	static fromChordType(chordSpecifier: string): number;
+	/** Return the native chord ID from a valid Yamaha XF ID. */
+	static fromChordXF(chordXf: number): number;
 	/** Preset for TUNE chords expression. */
 	static PRESET_TUNE: number;
 	/** Preset for Solton chords expression. */
