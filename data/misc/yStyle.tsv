@@ -1,6 +1,6 @@
 model	id	shortName	fullName
 0000	00	 --OFF--	Off
-0155	00	 --OFF--	Off
+0155	00	GoaTran1	Goa Trance 1
 0155	05	Drm&Bas2	Drum & Bass 2
 0155	13	Smooth 2	Smooth 2
 0155	1c	PsychRck	Psychedelic Rock
@@ -12,7 +12,7 @@ model	id	shortName	fullName
 0155	5d	ComboJz2	Combo Jazz 2
 0155	5e	Big Band	Big Band Jazz
 0155	7f	SpaceOpr	Space Opera
-0234	00	 --OFF--	Off
+0234	00	HdCMixtr	Hardcore Mixture
 0234	01	80sMixtr	80's Mixture Rock
 0234	02	HardCore	Hard Core Punk
 0234	09	BritRock	British Rock

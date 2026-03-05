@@ -1,5 +1,6 @@
 *.map
 *.swp
+.~lock.*
 dist/*.js
 dist/*.gz
 dist/*.br

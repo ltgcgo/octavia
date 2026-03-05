@@ -263,7 +263,7 @@ let QyDisplay = class extends RootDisplay {
 				} else {
 					upThis.dState.muUseVoiceBm = false;
 					// YMCS style
-					usedFont.getStr(`${upThis.device?.modelEx?.xg.styleId ?? 0}`.padStart(3, "0")).forEach((e, i) => {
+					usedFont.getStr(`${(upThis.device?.modelEx?.xg.styleId ?? 0) + (upThis.device?.modelEx?.xg.styleDev ? 1 : 0)}`.padStart(3, "0")).forEach((e, i) => {
 						e.render((e, x, y) => {
 							upThis.#nmdb[6145 + 6 * i + x + (y << 7)] = e;
 						});
