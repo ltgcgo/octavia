@@ -302,6 +302,17 @@ let QyDisplay = class extends RootDisplay {
 						if (showSub) {
 							upThis.qyChord.getBm(showSub)?.write(upThis.#bmdb, 32, 0, 18, 1);
 						};
+						// Additional chord
+						if (deviceChords?.length > 1) {
+							usedFont.getStr(`/${ChordDict.getChordRoot(deviceChords[1])}`).forEach((e, i) => {
+								e.render((e, x, y) => {
+									if (e) {
+										upThis.#nmdb[7277 + x + i * 6 + (y << 7)] = 1;
+									};
+								});
+							});
+							upThis.qyChord.getBm(`a${showAcci}`)?.write(upThis.#nmdb, 128, 0, 121, 57);
+						};
 					};
 				};
 				// Commit to bitmap screen
