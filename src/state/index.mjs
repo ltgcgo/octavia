@@ -3343,7 +3343,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				src: "yxf",
 				data
 			});
-			getDebugState() && console.debug(`Yamaha XF chord data: [${ChordDict.stringify(data)}] %o`, data);
+			getDebugState() && console.debug(`Yamaha XF chord data: [${ChordDict.stringify(data)}] %o`, msg);
 		}).add([67, 123, 2], (msg, track) => {
 			// XF rehearsal mark
 			let data = new Uint8Array(2);
@@ -4302,7 +4302,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				src: "ymcs",
 				data
 			});
-			/*getDebugState() && */console.debug(`YMCS chord data: [${ChordDict.stringify(data)}] %o`, data);
+			/*getDebugState() && */console.debug(`YMCS chord data: [${ChordDict.stringify(data)}] %o`, msg);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {

@@ -26,16 +26,16 @@ for (let chord of chordData) {
 	};
 };
 let ChordDict = class ChordDict {
-	static getChordRootRaw(chord) {
+	static getChordRootRaw(chord, loose = false) {
 		let root = (chord >> 8) & 7;
-		if (root > 0) {
+		if (root > 0 || loose) {
 			return root;
 		} else {
 			throw(new Error("Invalid chord root."));
 		};
 	};
-	static getChordRoot(chord) {
-		return " CDEFGAB"[this.getChordRootRaw(chord)];
+	static getChordRoot(chord, loose = false) {
+		return "-CDEFGAB"[this.getChordRootRaw(chord, loose)];
 	};
 	static getChordShiftRaw(chord) {
 		let shift = chord >> 12;
@@ -107,7 +107,7 @@ let ChordDict = class ChordDict {
 			if (result.length > 0) {
 				result += (flags & this.MASK_SPACED_DELIMITER) ? " " : "/";
 			};
-			result += this.getChordRoot(chord);
+			result += this.getChordRoot(chord, true);
 			let accidental = (flags & this.MASK_NATIVE_ACCIDENTAL ? actualToneShift : asciiToneShift)[this.getChordShiftRaw(chord)];
 			if (accidental.length === 0 && flags & this.MASK_STRICT_ACCIDENTAL) {
 				result += " ";

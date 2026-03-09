@@ -290,7 +290,7 @@ let QyDisplay = class extends RootDisplay {
 						let deviceChords = upThis.device?.modelEx?.xg.chords,
 						showRoot = 0, showAcci = 3, showMain = "m---", showSub;
 						if (deviceChords?.length > 0) {
-							showRoot = ChordDict.getChordRootRaw(deviceChords[0]);
+							showRoot = ChordDict.getChordRootRaw(deviceChords[0], true);
 							showAcci = ChordDict.getChordShiftRaw(deviceChords[0]);
 							let showPlan = getQyPlan(ChordDict.getChordId(deviceChords[0]));
 							showMain = showPlan.m;
@@ -304,7 +304,7 @@ let QyDisplay = class extends RootDisplay {
 						};
 						// Additional chord
 						if (deviceChords?.length > 1) {
-							usedFont.getStr(`/${ChordDict.getChordRoot(deviceChords[1])}`).forEach((e, i) => {
+							usedFont.getStr(`/${ChordDict.getChordRoot(deviceChords[1], true)}`).forEach((e, i) => {
 								e.render((e, x, y) => {
 									if (e) {
 										upThis.#nmdb[7277 + x + i * 6 + (y << 7)] = 1;

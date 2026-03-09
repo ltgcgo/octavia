@@ -153,10 +153,6 @@ let ascii64Dec = function (text) {
 	return result;
 };
 
-const noteRoot = "CDEFGAB";
-const noteAcciTet12 = "♭𝄫,𝄫,♭,,♯,𝄪,𝄪♯".split(",");
-let getChordName = (root, acciTet48, type) => {};
-
 // The functions below are better put in a dedicated library.
 let packBitField = (sourceBuffer, targetBuffer, isStrict = true) => {
 	if (typeof sourceBuffer?.length !== "number") {
