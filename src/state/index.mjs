@@ -4296,7 +4296,11 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				msgCopy.fill(0x7f);
 				msgCopy.set(msg);
 				for (let i = 0; i < msgCopy.length; i += 2) {
-					msgCopy[i] = [0x31, 0x41, 0x32, 0x23, 0x33, 0x34, 0x44, 0x35, 0x26, 0x36, 0x27, 0x37][msgCopy[i]]; // Conversion table hypothesized by GFHK-SDGM
+					let e = msgCopy[i];
+					if (e >= 12) {
+						continue;
+					};
+					msgCopy[i] = [0x31, 0x41, 0x32, 0x23, 0x33, 0x34, 0x44, 0x35, 0x26, 0x36, 0x27, 0x37][e]; // Conversion table hypothesized by GFHK-SDGM
 				};
 			};
 			let data = ChordDict.parseYamaha(msgCopy, true);
