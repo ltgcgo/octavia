@@ -204,6 +204,21 @@ let unpackBitField = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true) 
 	};
 	return targetBuffer;
 };
+
+let bufferToDHex = function (msg, maxLength = 8) {
+	let hexaText = "";
+	for (let i = 0; i < maxLength && i < msg.length; i ++) {
+		if (i > 0) {
+			hexaText += " ";
+		};
+		hexaText += msg[i].toString(16).padStart(2, "0").toUpperCase();
+	};
+	if (msg.length > maxLength) {
+		hexaText += " ...";
+	};
+	return hexaText;
+};
+
 const bufferMaps = [new Map(), new Map()]; // encode and decode array
 bufferMaps[0].set("base64", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")); // Defer to browser support when available
 bufferMaps[0].set("base64url", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")); // Defer to browser support when available
@@ -410,6 +425,7 @@ export {
 	getDebugState,
 	packBitField,
 	unpackBitField,
+	bufferToDHex,
 	bufferFrom,
 	bufferTo
 };

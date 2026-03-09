@@ -43,7 +43,8 @@ import {
 	halfByteUnpack,
 	x5dSendLevel,
 	ascii64Dec,
-	getDebugState
+	getDebugState,
+	bufferToDHex
 } from "./utils.js";
 import {
 	contrastCache
@@ -3324,11 +3325,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		// Sequencer/Implementation-specific meta event
 		// No refactoring needed.
 		upThis.#metaSeq.default = function (seq) {
-			let hexaText = [];
-			for (let i = 0; i < 8 && i < seq.length; i ++) {
-				hexaText.push(seq[i].toString(16).padStart(2, "0").toUpperCase());
-			};
-			console.warn(`Unrecognized implementation-specific byte sequence: ${hexaText.join(" ")}${seq.length > 8 ? " ..." : ""}\n%o`, seq);
+			console.warn(`Unrecognized implementation-specific byte sequence: ${bufferToDHex(msg)}\n%o`, seq);
 		};
 		upThis.#metaSeq.add([67, 0, 1], (msg, track) => {
 			// XGworks port assign
@@ -3343,7 +3340,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				src: "yxf",
 				data
 			});
-			getDebugState() && console.debug(`Yamaha XF chord data: [${ChordDict.stringify(data)}] %o`, msg);
+			getDebugState() && console.debug(`Yamaha XF chord data: [${ChordDict.stringify(data)}] - ${bufferToDHex(msg)}`);
 		}).add([67, 123, 2], (msg, track) => {
 			// XF rehearsal mark
 			let data = new Uint8Array(2);
@@ -3386,11 +3383,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		let cs6xDump = new BinaryMatch("DX7+ Dump");
 		// Notifies unrecognized SysEx strings with their vendors
 		let syxDefaultErr = function (msg) {
-			let hexaText = [];
-			for (let i = 0; i < 8 && i < msg.length; i ++) {
-				hexaText.push(msg[i].toString(16).padStart(2, "0").toUpperCase());
-			};
-			console.info(`Unrecognized SysEx in "${this.name}" set: ${hexaText.join(" ")}${msg.length > 8 ? " ..." : ""}\n%o`, msg);
+			console.info(`Unrecognized SysEx in "${this.name}" set: ${bufferToDHex(msg)}\n%o`, msg);
 		};
 		upThis.#seUnr.default = syxDefaultErr;
 		upThis.#seUr.default = syxDefaultErr;
@@ -4302,7 +4295,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				src: "ymcs",
 				data
 			});
-			/*getDebugState() && */console.debug(`YMCS chord data: [${ChordDict.stringify(data)}] %o`, msg);
+			/*getDebugState() && */console.debug(`YMCS chord data: [${ChordDict.stringify(data)}] - ${bufferToDHex(msg)}`);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {

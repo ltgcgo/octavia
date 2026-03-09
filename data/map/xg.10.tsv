@@ -52,6 +52,12 @@ ShivrDX+	ShiverDX +
 DXModern	DX Modern
 HyprTine	HyperTines
 BVenusEP	BelVenusEP
+ModernEP	Modern EP
+NwTineEP	New TineEP
+SuprDXEP	Super DXEP
+JzChrsEP	JzChorusEP
+SmthTine	SmoothTine
+ChrBelEP	ChorBellEP
 HpschrdK	HrpsichrdK
 Hpschrd2	Hrpsichrd2
 Hpschrd3	Hrpsichrd3
@@ -369,7 +375,17 @@ NormlTrp	Normal Trp
 Bril Trp	Brill. Trp
 FlugelHr	FlugelHorn
 SoloTrp*	SoloTrmpt*
+FluglHr*	FlugelHrn*
+SoftTrp*	SoftTrmpt*
 SwtTrmpt	SweetTrmpt
+JazzTrp*	JazzTrmpt*
+Air Trp*	Air Trmpt*
+SwtFlugl	SweetFlugl
+SwCornet	Swt!Cornet
+MelTrmp*	MelloTrmp*
+SilvrTrp	Silver Trp
+Gold Trp	Gold Trmpt
+BrsBand*	Brass Band
 Trombon#	Trombone #
 Trombon2	Trombone 2
 BrtTromb	BrtTrombon

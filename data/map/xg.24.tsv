@@ -41,6 +41,9 @@ Shirakwa	Shirakawa E. Piano
 ShivrDX+	Shivering DX EP Plus
 HyprTine	Hyper Tines EP
 BVenusEP	Bell Venus EP
+JzChrsEP	Jazz Chorus EP
+SmthTine	Smooth Tines EP
+ChrBelEP	Chorus Bells EP
 HpschrdK	Harpsichord KSP
 Hpschrd2	Harpsichord 2
 Hpschrd3	Harpsichord 3
@@ -252,7 +255,17 @@ MlSwtTrp	Mellow Sweet Trumpet
 NormlTrp	Normal Trumpet
 Bril Trp	Brilliant Trumpet
 SoloTrp*	Solo Trumpet *
+FluglHr*	Flugel Horn *
+SoftTrp*	Soft Trumpet *
 SwtTrmpt	Sweet! Trumpet
+JazzTrp*	Jazz Trumpet *
+Air Trp*	Air Trumpet *
+SwtFlugl	Sweet! Flugel Horn
+SwCornet	Sweet! Cornet
+MelTrmp*	Sweet! Mellow Trumpet *
+SilvrTrp	Sweet! Silver Trumpet
+Gold Trp	Sweet! Gold Trumpet
+BrsBand*	Live! Brass Band
 BrtTromb	Bright Trombone
 MelloTrb	Mellow Trombone
 BrilTrmb	Brilliant Trombone
