@@ -4288,14 +4288,25 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			};
 		}).add([126, 2], (msg, track, id) => {
 			// YMCS chord control
-			let data = ChordDict.parseYamaha(msg, true);
+			let msgCopy = msg, fixed = false;
+			if (msg[0] < 12 || msg[2] < 12) {
+				// Fix the crappy chords from non-standard PSR models
+				fixed = true;
+				msgCopy = new Uint8Array(4);
+				msgCopy.fill(0x7f);
+				msgCopy.set(msg);
+				for (let i = 0; i < msgCopy.length; i += 2) {
+					msgCopy[i] = [0x31, 0x41, 0x32, 0x23, 0x33, 0x34, 0x44, 0x35, 0x26, 0x36, 0x27, 0x37][msgCopy[i]]; // Conversion table hypothesized by GFHK-SDGM
+				};
+			};
+			let data = ChordDict.parseYamaha(msgCopy, true);
 			upThis.modelEx.xg.chords = data;
 			upThis.dispatchEvent("metacommit", {
 				type: "ChordCtl",
 				src: "ymcs",
 				data
 			});
-			/*getDebugState() && */console.debug(`YMCS chord data: [${ChordDict.stringify(data)}] - ${bufferToDHex(msg)}`);
+			/*getDebugState() && */console.debug(`YMCS chord data: [${ChordDict.stringify(data)}${fixed ? " (fixed)" : ""}] - ${bufferToDHex(msg)}`);
 		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {
