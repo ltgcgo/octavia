@@ -5,7 +5,7 @@
 
 import {OctaviaDevice, allocated, getDebugState} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
-import {MxFont40} from "../basic/mxReader.js";
+import {MxFont40, MxBmDef} from "../basic/mxReader.js";
 
 const targetRatio = 16 / 9;
 const pixelBlurSpeed = 64;
@@ -286,6 +286,8 @@ let Cambiare = class extends RootDisplay {
 	#bufCo = new Uint8Array(304 * chordMax); // n×(6×11+17×14)
 	#bufCm = new Uint8Array(304 * chordMax);
 	#bufCn = new Uint8Array(304 * chordMax);
+	#bufCnR; // Chord roots
+	#bufCnD; // Chord details
 	#hideCh = new Uint8Array(allocated.ch);
 	#clockSource;
 	#visualizer;
@@ -311,6 +313,7 @@ let Cambiare = class extends RootDisplay {
 	panStyle = 11; // Block, Pin, Arc, Dash
 	pixelMin = 12;
 	pixelMax = 255;
+	freeChord = new MxBmDef(); // Close recreation
 	#drawNote(context, note, velo, state = 0, pitch = 0, part) {
 		// Param calculation
 		let upThis = this;
@@ -481,6 +484,8 @@ let Cambiare = class extends RootDisplay {
 		clock = upThis.#clockSource?.currentTime || 0,
 		sum = upThis.render(clock),
 		timeNow = upThis.clockSource.now();
+		const chordRootWidth = chordMax * 6,
+		chordDetailWidth = chordMax * 17;
 		let curPoly = sum.curPoly + sum.extraPoly;
 		let curPolyEC = sum.curPolyEC + sum.extraPolyEC;
 		if (upThis.#maxPoly < curPoly) {
@@ -819,9 +824,7 @@ let Cambiare = class extends RootDisplay {
 				};
 			};
 		});
-		let chordBreakpoint = chordMax * 66,
-		chordRootWidth = chordMax * 6,
-		chordDetailWidth = chordMax * 17;
+		let chordBreakpoint = chordMax * 66;
 		upThis.#bufCo.forEach((e, i) => {
 			let refresh = false;
 			if (i < chordBreakpoint) {
@@ -1616,6 +1619,8 @@ let Cambiare = class extends RootDisplay {
 			upThis.#underlinedCh = allocated.invalidCh;
 			upThis.#chAccent.fill(null);
 			upThis.#chMode.fill(null);
+			upThis.#bufCnR = upThis.#bufCn.subarray(0, 66 * chordMax);
+			upThis.#bufCnD = upThis.#bufCn.subarray(66 * chordMax);
 			classOff(upThis.#sectInfo.inscon1, ["field-active"]);
 			classOff(upThis.#sectInfo.inscon2, ["field-active"]);
 			classOff(upThis.#sectInfo.inscon3, ["field-active"]);
