@@ -6,7 +6,7 @@ import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 let finalObj = [];
 let spToId = new Map();
 
-for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.open("./src/chord/chords.tsv")).readable))) {
+for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.open("./src/data/chords.tsv")).readable))) {
 	let tmpObj = {};
 	if (line.id && line.sp) {
 		tmpObj.id = parseInt(line.id, 16);
@@ -23,12 +23,12 @@ for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.ope
 
 //console.debug(finalObj);
 
-await Deno.writeTextFile("./src/chord/generated/chords.json", JSON.stringify(finalObj));
+await Deno.writeTextFile("./src/data/generated/chords.json", JSON.stringify(finalObj));
 
 //let planSet1 = new Set(), planSet2 = new Set();
 let qyPlan = [];
 
-for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.open("./src/chord/qyChordPlan.tsv")).readable))) {
+for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.open("./src/data/qyChordPlan.tsv")).readable))) {
 	let plan = [spToId.get(line.chord), `m${line.main ?? ""}`];
 	if (line.main) {
 		//planSet1.add(line.main);
@@ -40,4 +40,4 @@ for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.ope
 	qyPlan.push(plan);
 };
 //console.debug(planSet1, planSet2);
-await Deno.writeTextFile("./src/chord/generated/qyChordPlan.json", JSON.stringify(qyPlan));
+await Deno.writeTextFile("./src/data/generated/qyChordPlan.json", JSON.stringify(qyPlan));

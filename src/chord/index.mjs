@@ -4,8 +4,8 @@
 "use strict";
 
 //import chordData from "./generated/chords.json";
-import chordData from "./generated/chords.json" with {type: "json"};
-import qyPlanRawData from "./generated/qyChordPlan.json" with {type: "json"};
+import chordData from "../data/generated/chords.json" with {type: "json"};
+import qyPlanRawData from "../data/generated/qyChordPlan.json" with {type: "json"};
 
 // Chord dictionary
 

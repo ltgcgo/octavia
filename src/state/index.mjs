@@ -3325,7 +3325,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		// Sequencer/Implementation-specific meta event
 		// No refactoring needed.
 		upThis.#metaSeq.default = function (seq) {
-			console.warn(`Unrecognized implementation-specific byte sequence: ${bufferToDHex(msg)}\n%o`, seq);
+			console.warn(`Unrecognized implementation-specific byte sequence: ${bufferToDHex(seq)}\n%o`, seq);
 		};
 		upThis.#metaSeq.add([67, 0, 1], (msg, track) => {
 			// XGworks port assign
