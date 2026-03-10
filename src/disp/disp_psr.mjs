@@ -3,6 +3,7 @@
 import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
+import {ChordDict} from "../chord/index.mjs";
 import psr170PlanRaw from "../data/generated/psr170ChordPlan.json" with {type: "json"};
 
 import {
@@ -477,32 +478,52 @@ let PsrDisplay = class extends RootDisplay {
 			ctx.fillRect(224 + x * 6, 261 + y * 3, 5, 2);
 		});
 		// Chord display
-		let chordTypePlan = getPsr170PlanType(upThis.device?.modelEx?.xg.chords[0] ?? 255);
+		let chordTypePlan = getPsr170PlanType(ChordDict.getChordId(upThis.device?.modelEx?.xg.chords[0] ?? 0x31ff)),
+		chordAccidental = ChordDict.getChordShiftRaw(upThis.device?.modelEx?.xg.chords[0] ?? 0x31ff);
+		//console.debug(chordTypePlan);
 		ctx.fillStyle = inactivePixel;
 		ctx.font = '18px "Arial Web"';
 		ctx.fillText("ACMP", 430, 275);
 		ctx.fillText("ON", 430, 295);
 		ctx.fill(new Path2D("M482 296 L482 312 L462 304 Z"));
-		this.#render7seg(" ", ctx, 32, 300, 0.25, 0.25);
+		let chordRoot = ChordDict.getChordRoot(upThis.device?.modelEx?.xg.chords[0] ?? 0x30ff, true);
+		if (chordRoot === "-") {
+			chordRoot = " ";
+		};
+		this.#render7seg(chordRoot, ctx, 32, 300, 0.25, 0.25);
 		ctx.font = 'bold 53px "Arial Web"';
+		ctx.fillStyle = (chordTypePlan & 0x0002) ? activePixel : inactivePixel;
 		ctx.fillText("m", 82, 375);
+		ctx.fillStyle = (chordTypePlan & 0x0001) ? activePixel : inactivePixel;
 		ctx.fillText("M", 130, 375);
 		ctx.font = '40px "Arial Web"';
+		ctx.fillStyle = (chordTypePlan & 0x0004) ? activePixel : inactivePixel;
 		ctx.fillText("7", 175, 375);
 		ctx.font = '30px "Arial Web"';
 		// ctx.fillText("♯", 82, 328);
 		// ctx.fillText("♭", 105, 328);
+		ctx.fillStyle = (chordAccidental === 4) ? activePixel : inactivePixel;
 		ctx.fillText("♯", 88, 328);
+		ctx.fillStyle = (chordAccidental === 2) ? activePixel : inactivePixel;
 		ctx.fillText("♭", 113, 328);
 		// ctx.fillText("6", 175, 328);
+		ctx.fillStyle = (chordTypePlan & 0x0008) ? activePixel : inactivePixel;
 		ctx.fillText("6", 185, 328);
 		// ctx.fillText("dim", 123, 328);
+		ctx.fillStyle = (chordTypePlan & 0x0040) ? activePixel : inactivePixel;
 		ctx.fillText("dim", 132, 328);
 		ctx.font = '25px "Arial Web"';
-		ctx.fillText("♭  5", 105, 277);
+		ctx.fillStyle = (chordTypePlan & 0x0200) ? activePixel : inactivePixel;
+		ctx.fillText("♭", 105, 277);
+		ctx.fillStyle = (chordTypePlan & 0x0020) ? activePixel : inactivePixel;
+		ctx.fillText("5", 131, 277);
+		ctx.fillStyle = (chordTypePlan & 0x0100) ? activePixel : inactivePixel;
 		ctx.fillText("sus4", 157, 300);
+		ctx.fillStyle = (chordTypePlan & 0x0080) ? activePixel : inactivePixel;
 		ctx.fillText("aug", 82, 300);
+		ctx.fillStyle = (chordTypePlan & 0x0010) ? activePixel : inactivePixel;
 		ctx.fillText("(9)", 157, 277);
+		ctx.fillStyle = inactivePixel;
 		// Commit to display accordingly.
 		let keyboardData = new Uint16Array([228, 238.5, 250.3, 263.5, 272.6, 295, 304.5, 317.3, 330, 339.5, 354, 361.8]);
 		this.#nkdb.forEach((e, i) => {
