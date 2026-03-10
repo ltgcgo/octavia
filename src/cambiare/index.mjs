@@ -772,14 +772,23 @@ let Cambiare = class extends RootDisplay {
 			//console.debug(upThis.device?.modelEx?.xg.chords.length);
 			//console.debug(chord);
 			if (chord >= 0x0100) { // Lowest possible packed chord
-				let rootBm = upThis.freeChord.getBm(`r${ChordDict.getChordRootRaw(chord)}`);
-				rootBm?.render((e, x, y) => {
-					upThis.#bufCnR[x + 6 * i + y * chordRootWidth] = e ? upThis.pixelMax : upThis.pixelMin;
+				upThis.freeChord.getBm(`r${ChordDict.getChordRootRaw(chord)}`)?.render((e, x, y) => {
+					upThis.#bufCnR[x + 6 * i + y * chordRootWidth] = e ? upThis.pixelMax : 0;
 				});
-				let acciBm = upThis.freeChord.getBm(`a${ChordDict.getChordShiftRaw(chord)}`);
-				acciBm?.render((e, x, y) => {
-					upThis.#bufCnD[x + 17 * i + y * chordDetailWidth] = e ? upThis.pixelMax : upThis.pixelMin;
+				upThis.freeChord.getBm(`a${ChordDict.getChordShiftRaw(chord)}`)?.render((e, x, y) => {
+					upThis.#bufCnD[x + 17 * i + y * chordDetailWidth] = e ? upThis.pixelMax : 0;
 				});
+				let chordPlan = getFreePlan(ChordDict.getChordId(chord));
+				if (chordPlan.m) {
+					upThis.freeChord.getBm(chordPlan.m)?.render((e, x, y) => {
+						upThis.#bufCnD[x + 17 * i + (y + 7) * chordDetailWidth] = e ? upThis.pixelMax : 0;
+					});
+				};
+				if (chordPlan.s) {
+					upThis.freeChord.getBm(chordPlan.s)?.render((e, x, y) => {
+						upThis.#bufCnD[x + 6 + 17 * i + y * chordDetailWidth] = e ? upThis.pixelMax : 0;
+					});
+				};
 			};
 		};
 		// Apply pixel blurs
@@ -849,7 +858,7 @@ let Cambiare = class extends RootDisplay {
 				let x = ri % chordRootWidth, y = Math.floor(ri / chordRootWidth);
 				x += 21 * Math.floor(0.166667 * x);
 				//let e = 255;
-				if (upThis.#bufLm[i] !== e) {
+				if (upThis.#bufCm[i] !== e) {
 					refresh = true;
 					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
 				}/* else if (getDebugState()) {
