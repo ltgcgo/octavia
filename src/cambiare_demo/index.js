@@ -295,7 +295,7 @@ let demoPool = new SheetData();
 		`./data/map/s90es.10.tsv`
 	]);
 	await visualizer.glyphs.loadFile("./data/bitmaps/xg/font.tsv");
-	await visualizer.freeChord.loadFile("./data/bitmaps/xg/qyChord.tsv");
+	await visualizer.freeChord.loadFile("./data/bitmaps/xg/freeChord.tsv");
 
 })();
 

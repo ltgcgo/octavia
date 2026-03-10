@@ -6,6 +6,7 @@
 import {OctaviaDevice, allocated, getDebugState} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBmDef} from "../basic/mxReader.js";
+import {ChordDict, getFreePlan} from "../chord/index.mjs";
 
 const targetRatio = 16 / 9;
 const pixelBlurSpeed = 64;
@@ -251,7 +252,9 @@ if (typeof self?.require !== "undefined") {
 	throw(new Error("Environments supporting CommonJS is not supported."));
 };
 
-const chordMax = 2;
+const chordMax = 2,
+chordRootWidth = chordMax * 6,
+chordDetailWidth = chordMax * 17;
 
 let Cambiare = class extends RootDisplay {
 	#metaGcLine = 16;
@@ -484,8 +487,6 @@ let Cambiare = class extends RootDisplay {
 		clock = upThis.#clockSource?.currentTime || 0,
 		sum = upThis.render(clock),
 		timeNow = upThis.clockSource.now();
-		const chordRootWidth = chordMax * 6,
-		chordDetailWidth = chordMax * 17;
 		let curPoly = sum.curPoly + sum.extraPoly;
 		let curPolyEC = sum.curPolyEC + sum.extraPolyEC;
 		if (upThis.#maxPoly < curPoly) {
@@ -765,6 +766,22 @@ let Cambiare = class extends RootDisplay {
 				});
 			});
 		};
+		upThis.#bufCn.fill(0);
+		for (let i = 0; i < upThis.device?.modelEx?.xg.chords.length; i ++) {
+			let chord = upThis.device?.modelEx?.xg.chords[i];
+			//console.debug(upThis.device?.modelEx?.xg.chords.length);
+			//console.debug(chord);
+			if (chord >= 0x0100) { // Lowest possible packed chord
+				let rootBm = upThis.freeChord.getBm(`r${ChordDict.getChordRootRaw(chord)}`);
+				rootBm?.render((e, x, y) => {
+					upThis.#bufCnR[x + 6 * i + y * chordRootWidth] = e ? upThis.pixelMax : upThis.pixelMin;
+				});
+				let acciBm = upThis.freeChord.getBm(`a${ChordDict.getChordShiftRaw(chord)}`);
+				acciBm?.render((e, x, y) => {
+					upThis.#bufCnD[x + 17 * i + y * chordDetailWidth] = e ? upThis.pixelMax : upThis.pixelMin;
+				});
+			};
+		};
 		// Apply pixel blurs
 		upThis.#bufBo.forEach((e, i, a) => {
 			let e0 = upThis.#bufBn[i];
@@ -835,10 +852,10 @@ let Cambiare = class extends RootDisplay {
 				if (upThis.#bufLm[i] !== e) {
 					refresh = true;
 					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
-				} else if (getDebugState()) {
+				}/* else if (getDebugState()) {
 					refresh = true;
 					ccxt.fillStyle = `#ff0000${e.toString(16).padStart(2, "0")}`;
-				};
+				}*/;
 				if (refresh) {
 					ccxt.clearRect((x + 8) << 2, (y + 4) << 2, 3, 3);
 					ccxt.fillRect((x + 8) << 2, (y + 4) << 2, 3, 3);
@@ -848,16 +865,22 @@ let Cambiare = class extends RootDisplay {
 				let x = ri % chordDetailWidth, y = Math.floor(ri / chordDetailWidth);
 				x += 10 * Math.floor(0.058824 * x);
 				//let e = 127;
-				if (upThis.#bufLm[i] !== e) {
+				if (upThis.#bufCm[i] !== e) {
 					refresh = true;
 					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
-				} else if (getDebugState()) {
+				}/* else if (getDebugState()) {
 					refresh = true;
 					ccxt.fillStyle = `#ff0000${e.toString(16).padStart(2, "0")}`;
-				};
+				}*/;
+				/*if (ri === 1) {
+					console.debug(`${e} ${refresh}`);
+				};*/
 				if (refresh) {
 					ccxt.clearRect((x + 15) << 2, (y + 1) << 2, 3, 3);
-					ccxt.fillRect((x + 15) << 2, (y + 1) << 2, 3, 3);
+					if (e) {
+						ccxt.fillRect((x + 15) << 2, (y + 1) << 2, 3, 3);
+						//console.debug(e);
+					};
 				};
 			};
 		});
@@ -1621,6 +1644,7 @@ let Cambiare = class extends RootDisplay {
 			upThis.#chMode.fill(null);
 			upThis.#bufCnR = upThis.#bufCn.subarray(0, 66 * chordMax);
 			upThis.#bufCnD = upThis.#bufCn.subarray(66 * chordMax);
+			upThis.bco = upThis.#bufCo;
 			classOff(upThis.#sectInfo.inscon1, ["field-active"]);
 			classOff(upThis.#sectInfo.inscon2, ["field-active"]);
 			classOff(upThis.#sectInfo.inscon3, ["field-active"]);

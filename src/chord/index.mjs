@@ -120,7 +120,7 @@ let ChordDict = class ChordDict {
 	};
 };
 
-// QY display plan (best effort guesses)
+// Free QY display plan (recreation, best effort guesses)
 
 const qyPlanMap = new Map();
 for (let qyPlan of qyPlanRawData) {
@@ -133,7 +133,7 @@ for (let qyPlan of qyPlanRawData) {
 		console.debug(`Duplicate plan for chord native ID ${qyPlan[0]} found.`);
 	};
 };
-let getQyPlan = function (chordId) {
+let getFreePlan = function (chordId) {
 	if (qyPlanMap.has(chordId)) {
 		return qyPlanMap.get(chordId);
 	};
@@ -141,5 +141,5 @@ let getQyPlan = function (chordId) {
 
 export {
 	ChordDict,
-	getQyPlan
+	getFreePlan
 };

@@ -3,7 +3,7 @@
 import {OctaviaDevice, getYSect} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
-import {ChordDict, getQyPlan} from "../chord/index.mjs";
+import {ChordDict, getFreePlan} from "../chord/index.mjs";
 
 import {
 	bgWhite,
@@ -30,7 +30,7 @@ let QyDisplay = class extends RootDisplay {
 	qy35Font = new MxFont40("./data/bitmaps/xg/qyCh35.tsv");
 	qy55Font = new MxFont40("./data/bitmaps/xg/qyCh55.tsv");
 	qyRsrc = new MxBmDef("./data/bitmaps/xg/qyRsrc.tsv");
-	qyChord = new MxBmDef("./data/bitmaps/xg/qyChord.tsv");
+	qyChord = new MxBmDef("./data/bitmaps/xg/freeChord.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	constructor() {
@@ -292,7 +292,7 @@ let QyDisplay = class extends RootDisplay {
 						if (deviceChords?.length > 0) {
 							showRoot = ChordDict.getChordRootRaw(deviceChords[0], true);
 							showAcci = ChordDict.getChordShiftRaw(deviceChords[0]);
-							let showPlan = getQyPlan(ChordDict.getChordId(deviceChords[0]));
+							let showPlan = getFreePlan(ChordDict.getChordId(deviceChords[0]));
 							showMain = showPlan.m;
 							showSub = showPlan.s;
 						};
