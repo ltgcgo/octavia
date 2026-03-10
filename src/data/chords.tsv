@@ -1,5 +1,5 @@
 id	xf	sp
-ff	22	---
+ff	7f	---
 00	00	M, ,
 01		b5
 02	07	aug
@@ -40,4 +40,4 @@ ff	22	---
 25	1e	1+8
 26	1f	5,1+5
 27		sus2sus4,sus2/4
-fe		cc
+fe	22	cc

@@ -3,6 +3,7 @@
 import {OctaviaDevice} from "../state/index.mjs";
 import {RootDisplay} from "../basic/index.mjs";
 import {MxFont40, MxBm256} from "../basic/mxReader.js";
+import psr170PlanRaw from "../data/generated/psr170ChordPlan.json" with {type: "json"};
 
 import {
 	inactivePixel,
@@ -12,7 +13,14 @@ import {
 
 // PSR-170 display plan
 
-const psrPlanMap = new Map();
+const psrPlanMap = new Map(psr170PlanRaw);
+let getPsr170PlanType = function (chord) {
+	if (psrPlanMap.has(chord)) {
+		return psrPlanMap.get(chord);
+	} else {
+		return 0;
+	};
+};
 
 let PsrDisplay = class extends RootDisplay {
 	// #okdb = new Uint8Array(61);
@@ -469,6 +477,7 @@ let PsrDisplay = class extends RootDisplay {
 			ctx.fillRect(224 + x * 6, 261 + y * 3, 5, 2);
 		});
 		// Chord display
+		let chordTypePlan = getPsr170PlanType(upThis.device?.modelEx?.xg.chords[0] ?? 255);
 		ctx.fillStyle = inactivePixel;
 		ctx.font = '18px "Arial Web"';
 		ctx.fillText("ACMP", 430, 275);
