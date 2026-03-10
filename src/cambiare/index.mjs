@@ -251,6 +251,8 @@ if (typeof self?.require !== "undefined") {
 	throw(new Error("Environments supporting CommonJS is not supported."));
 };
 
+const chordMax = 2;
+
 let Cambiare = class extends RootDisplay {
 	#metaGcLine = 16;
 	#metaGcStart = 32;
@@ -271,12 +273,19 @@ let Cambiare = class extends RootDisplay {
 	#renderPort = 0;
 	#lastFrame = 0;
 	#scheme = 0;
+	// Letter display buffer, old - median - new
 	#bufLo = new Uint8Array(1280);
 	#bufLm = new Uint8Array(1280);
 	#bufLn = new Uint8Array(1280);
+	// Bitmap display buffer
 	#bufBo = new Uint8Array(512);
 	#bufBm = new Uint8Array(512);
 	#bufBn = new Uint8Array(512);
+	// Chord display buffer
+	// The first 66×n elements are for chord roots
+	#bufCo = new Uint8Array(304 * chordMax); // n×(6×11+17×14)
+	#bufCm = new Uint8Array(304 * chordMax);
+	#bufCn = new Uint8Array(304 * chordMax);
 	#hideCh = new Uint8Array(allocated.ch);
 	#clockSource;
 	#visualizer;
@@ -768,6 +777,14 @@ let Cambiare = class extends RootDisplay {
 				a[i] -= Math.min(e - e0, pixelBlurSpeed);
 			};
 		});
+		upThis.#bufCo.forEach((e, i, a) => {
+			let e0 = upThis.#bufCn[i];
+			if (e0 > e) {
+				a[i] += Math.min(e0 - e, pixelBlurSpeed);
+			} else if (e0 < e) {
+				a[i] -= Math.min(e - e0, pixelBlurSpeed);
+			};
+		});
 		// Render the old pixel display buffers
 		upThis.#bufBo.forEach((e, i) => {
 			let y = i >> 5, x = i & 31;
@@ -786,7 +803,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		});
 		upThis.#bufLo.forEach((e, i) => {
-			let y = Math.floor(i / 80), x = i % 80;
+			let y = Math.floor(i * 0.0125), x = i % 80;
 			x += Math.floor(x / 5);
 			if (upThis.#bufLm[i] !== e) {
 				ccxt.clearRect(x << 2, (y | 16) << 2, 3, 3);
@@ -802,13 +819,49 @@ let Cambiare = class extends RootDisplay {
 				};
 			};
 		});
+		let chordBreakpoint = chordMax * 66,
+		chordRootWidth = chordMax * 6,
+		chordDetailWidth = chordMax * 17;
+		upThis.#bufCo.forEach((e, i) => {
+			let refresh = false;
+			if (i < chordBreakpoint) {
+				let ri = i;
+				let x = ri % chordRootWidth, y = Math.floor(ri / chordRootWidth);
+				x += 21 * Math.floor(0.166667 * x);
+				//let e = 255;
+				if (upThis.#bufLm[i] !== e) {
+					refresh = true;
+					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
+				} else if (getDebugState()) {
+					refresh = true;
+					ccxt.fillStyle = `#ff0000${e.toString(16).padStart(2, "0")}`;
+				};
+				if (refresh) {
+					ccxt.clearRect((x + 8) << 2, (y + 4) << 2, 3, 3);
+					ccxt.fillRect((x + 8) << 2, (y + 4) << 2, 3, 3);
+				};
+			} else {
+				let ri = i - chordBreakpoint;
+				let x = ri % chordDetailWidth, y = Math.floor(ri / chordDetailWidth);
+				x += 10 * Math.floor(0.058824 * x);
+				//let e = 127;
+				if (upThis.#bufLm[i] !== e) {
+					refresh = true;
+					ccxt.fillStyle = `#${upThis.#foreground}${e.toString(16).padStart(2, "0")}`;
+				} else if (getDebugState()) {
+					refresh = true;
+					ccxt.fillStyle = `#ff0000${e.toString(16).padStart(2, "0")}`;
+				};
+				if (refresh) {
+					ccxt.clearRect((x + 15) << 2, (y + 1) << 2, 3, 3);
+					ccxt.fillRect((x + 15) << 2, (y + 1) << 2, 3, 3);
+				};
+			};
+		});
 		// Update the intermediary cache
-		upThis.#bufBm.forEach((e, i, a) => {
-			a[i] = upThis.#bufBo[i];
-		});
-		upThis.#bufLm.forEach((e, i, a) => {
-			a[i] = upThis.#bufLo[i];
-		});
+		upThis.#bufBm.set(upThis.#bufBo);
+		upThis.#bufLm.set(upThis.#bufLo);
+		upThis.#bufCm.set(upThis.#bufCo);
 		// If under debug mode, also visualize the polyphonic state
 		if (getDebugState()) {
 			ccxt.clearRect(0, 0, 251, 63);
