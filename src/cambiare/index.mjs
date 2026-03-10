@@ -1051,6 +1051,9 @@ let Cambiare = class extends RootDisplay {
 			classOn(upThis.#canvas, [[null, `cambiare-scheme-light`, `cambiare-scheme-luma`][upThis.#scheme]]);
 		};
 		upThis.#accent = (modeColourPool[upThis.#mode] || ["fcdaff", "742b81", "fcdaff"])[upThis.#scheme];
+		upThis.#bufBo.fill(0);
+		upThis.#bufLo.fill(0);
+		upThis.#bufCo.fill(0);
 		for (let part = 0; part < allocated.ch; part ++) {
 			if (upThis.device.getChActive(part) === 0) {
 				continue;
