@@ -10,6 +10,10 @@ import {
 	activePixel
 } from "./colour.js";
 
+// PSR-170 display plan
+
+const psrPlanMap = new Map();
+
 let PsrDisplay = class extends RootDisplay {
 	// #okdb = new Uint8Array(61);
 	#nkdb = new Uint8Array(61);
