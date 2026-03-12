@@ -260,6 +260,36 @@ dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
 	ev.stopImmediatePropagation();
 });
+document.addEventListener("keydown", async (ev) => {
+	switch (ev.key) {
+		case "t": {
+			visualizer.trueMode = !visualizer.trueMode
+			break;
+		};
+		case "ArrowDown": {
+			viewId ++;
+			if (viewId > viewCount) {
+				viewId = 0;
+			};
+			break;
+		};
+		case "ArrowUp": {
+			viewId --;
+			if (viewId < 0) {
+				viewId = viewCount;
+			};
+			break;
+		};
+		case "ArrowLeft": {
+			visualizer.setCh(visualizer.getCh() - 1);
+			break;
+		};
+		case "ArrowRight": {
+			visualizer.setCh(visualizer.getCh() + 1);
+			break;
+		};
+	};
+});
 /* dispCanv.addEventListener("contextmenu", function (ev) {
 	ev.preventDefault();
 	ev.stopImmediatePropagation();
@@ -325,7 +355,7 @@ let renderThread = setInterval(function () {
 				visualizer.sendCmd(e.data);
 			});
 		};
-		visualizer.render(curTime, dispCtx, viewId, useMidiBus ? 0 : demoId, location.hash === "#trueMode");
+		visualizer.render(curTime, dispCtx, viewId, useMidiBus ? 0 : demoId);
 		lastTime = curTime;
 	};
 }, 20);
@@ -334,6 +364,12 @@ getBridge().addEventListener("message", function (ev) {
 	if (useMidiBus) {
 		visualizer.sendCmd(ev.data);
 	};
+});
+
+visualizer.trueMode = location.hash === "#trueMode";
+addEventListener("hashchange", async (ev) => {
+	//console.debug(ev);
+	visualizer.trueMode = location.hash === "#trueMode";
 });
 
 {

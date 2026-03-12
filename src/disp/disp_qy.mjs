@@ -118,11 +118,11 @@ let QyDisplay = class extends RootDisplay {
 		};
 		return category;
 	};
-	render(time, ctx, viewId, id = 0, trueMode = false) {
+	render(time, ctx, viewId, id = 0) {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = upThis.clockSource.now();
-		let usedFont = trueMode ? this.qyFont : this.xgFont;
+		let usedFont = upThis.trueMode ? this.qyFont : this.xgFont;
 		// Channel test
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;
@@ -224,16 +224,18 @@ let QyDisplay = class extends RootDisplay {
 					});
 				});
 				// Placeholder
-				upThis.qyRsrc.getBm("Vtfj")?.write(upThis.#nmdb, 128, 0, 34, 18);
+				upThis.qyRsrc.getBm(upThis.trueMode ? "Vtfjr" : "Vtfj")?.write(upThis.#nmdb, 128, 0, 34, 18);
 				// Transpose render
 				{
-					let rPit = upThis.device.getChRawPitch(upThis.#ch),
-					rawPitchX = (rPit + 8192) >> 11;
-					if (rPit > 0) {
-						rawPitchX ++;
+					if (!upThis.trueMode) {
+						let rPit = upThis.device.getChRawPitch(upThis.#ch),
+						rawPitchX = (rPit + 8192) >> 11;
+						if (rPit > 0) {
+							rawPitchX ++;
+						};
+						upThis.#renderFill(58 + rawPitchX, 18, 4, 5);
+						upThis.#renderFill(59 + rawPitchX, 19, 2, 3, 0);
 					};
-					upThis.#renderFill(58 + rawPitchX, 18, 4, 5);
-					upThis.#renderFill(59 + rawPitchX, 19, 2, 3, 0);
 					let tPit = upThis.device.getPitchShift(upThis.#ch);
 					let tStr = tPit < 0 ? "-" : "+";
 					tStr += `${Math.round(Math.abs(tPit))}`.padStart(2, "0");
