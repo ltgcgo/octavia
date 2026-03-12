@@ -1549,6 +1549,18 @@ let Cambiare = class extends RootDisplay {
 						upThis.#metaLastLine = createElement("span", ["field", "meta-data"], {i: text ?? `${meta.data?.msg}`});
 						break;
 					};
+					case "YStyleId": {
+						// Readable Yamaha device-specific style patterns
+						let styleName = upThis.styles?.getStyle(upThis.device?.modelEx?.xg.styleDev ?? 0, upThis.device?.modelEx?.xg.styleId ?? 0),
+						text;
+						if (styleName) {
+							text = styleName.full;
+						} else {
+							text = `Unknown style ${meta.data}`;
+						};
+						upThis.#metaLastLine = createElement("span", ["field", "meta-data"], {i: text ?? `${meta.data?.msg}`});
+						break;
+					};
 					default: {
 						upThis.#metaLastLine = createElement("span", ["field", "meta-data"], {i: meta.data});
 					};

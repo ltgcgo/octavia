@@ -5,6 +5,7 @@ import {SheetData} from "../basic/sheetLoad.js";
 import {
 	getBridge
 } from "../bridge/index.mjs";
+import StylePool from "../basic/styleLoad.js";
 
 import {Alpine} from "../../libs/alpine@alpinejs/alpine.min.js";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
@@ -50,6 +51,10 @@ Object.defineProperty(timeMuxer, "realtime", {
 let visualizer = new Cambiare($e(".cambiare"), timeMuxer);
 //visualizer.clockSource.attach(audioFilePlayer);
 visualizer.reset();
+(async () => {
+	visualizer.styles = new StylePool();
+	visualizer.styles.load((await fetch("./data/misc/yStyle.tsv")).body);
+})();
 
 Alpine.store("play", "smf");
 Alpine.store("sound", "file");
