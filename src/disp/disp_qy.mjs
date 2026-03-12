@@ -34,7 +34,7 @@ let QyDisplay = class extends RootDisplay {
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	constructor() {
-		super(new OctaviaDevice(), 0, 0.95, true);
+		super(new OctaviaDevice(), 0, 0.96875, true);
 		let upThis = this;
 		upThis.attachState("mu");
 		upThis.addEventListener("channelactive", (ev) => {
