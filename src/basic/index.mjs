@@ -1089,7 +1089,6 @@ let RootDisplay = class extends CustomEventSource {
 			ace: upThis.device.getAce(),
 			rawVelo: upThis.device.getStrength(),
 			rawStrength: upThis.device.getRawStrength(),
-			rawPitch: upThis.device.getRawPitch(),
 			efxSink: upThis.device.getEffectSink()
 		};
 		return repObj;

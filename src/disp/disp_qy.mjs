@@ -227,6 +227,13 @@ let QyDisplay = class extends RootDisplay {
 				upThis.qyRsrc.getBm("Vtfj")?.write(upThis.#nmdb, 128, 0, 34, 18);
 				// Transpose render
 				{
+					let rPit = upThis.device.getChRawPitch(upThis.#ch),
+					rawPitchX = (rPit + 8192) >> 11;
+					if (rPit > 0) {
+						rawPitchX ++;
+					};
+					upThis.#renderFill(58 + rawPitchX, 18, 4, 5);
+					upThis.#renderFill(59 + rawPitchX, 19, 2, 3, 0);
 					let tPit = upThis.device.getPitchShift(upThis.#ch);
 					let tStr = tPit < 0 ? "-" : "+";
 					tStr += `${Math.round(Math.abs(tPit))}`.padStart(2, "0");

@@ -1973,8 +1973,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		};
 		return voice;
 	};
-	getRawPitch() {
-		return this.#pitch;
+	getChRawPitch(part) {
+		return this.#pitch[part];
 	};
 	getPitchShift(part) {
 		let upThis = this;
