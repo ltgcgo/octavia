@@ -68,6 +68,7 @@ let RootDisplay = class extends CustomEventSource {
 	msExhaust = 300;
 	smoothAttack = 0;
 	smoothDecay = 0;
+	smoothLinear = false;
 	// Expected a style pool here if needed
 	styles;
 	get clockSource() {
@@ -1048,14 +1049,24 @@ let RootDisplay = class extends CustomEventSource {
 		writeStrength.forEach(function (e, i, a) {
 			a[i] = Math.max(upThis.#beforeStrength[i], e);
 			let diff = a[i] - upThis.#mimicStrength[i];
-			if (diff >= 0) {
-				// cc73 = 0, atkPower = 4
-				// cc73 = 127, atkPower = 0.25
-				let atkPower = 4 * (0.25 ** (upThis.device.getChCc(i, 73) / 64));
-				upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothAttack ** atkPower)));
+			if (upThis.smoothLinear) {
+				if (diff >= 0) {
+					let linearAttackGate = Math.min(255, 256 * (1 - upThis.smoothAttack));
+					upThis.#mimicStrength[i] += Math.min(linearAttackGate, diff);
+				} else {
+					let linearDecayGate = Math.max(-255, 256 * (upThis.smoothDecay - 1));
+					upThis.#mimicStrength[i] += Math.max(linearDecayGate, diff);
+				};
 			} else {
-				let rlsPower = 4 * (0.25 ** (upThis.device.getChCc(i, 72) / 64));
-				upThis.#mimicStrength[i] += Math.floor(diff - (diff * (upThis.smoothDecay ** rlsPower)));
+				if (diff >= 0) {
+					// cc73 = 0, atkPower = 4
+					// cc73 = 127, atkPower = 0.25
+					let atkPower = 4 * (0.25 ** (upThis.device.getChCc(i, 73) / 64));
+					upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothAttack ** atkPower)));
+				} else {
+					let rlsPower = 4 * (0.25 ** (upThis.device.getChCc(i, 72) / 64));
+					upThis.#mimicStrength[i] += Math.floor(diff - (diff * (upThis.smoothDecay ** rlsPower)));
+				};
 			};
 		});
 		let curPoly = 0, curPolyEC = 0;
@@ -1093,11 +1104,12 @@ let RootDisplay = class extends CustomEventSource {
 		};
 		return repObj;
 	};
-	constructor(device, atk = 0.5, dcy = 0.5) {
+	constructor(device, atk = 0.5, dcy = 0.5, linear = false) {
 		super();
 		let upThis = this;
 		upThis.smoothAttack = atk;
 		upThis.smoothDecay = dcy;
+		upThis.smoothLinear = linear;
 		upThis.device = device;
 		upThis.addEventListener("meta", function (raw) {
 			raw?.data?.forEach(function (e) {

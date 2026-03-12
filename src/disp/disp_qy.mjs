@@ -34,7 +34,7 @@ let QyDisplay = class extends RootDisplay {
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	constructor() {
-		super(new OctaviaDevice(), 0, 0.95);
+		super(new OctaviaDevice(), 0, 0.95, true);
 		let upThis = this;
 		upThis.attachState("mu");
 		upThis.addEventListener("channelactive", (ev) => {
@@ -435,8 +435,11 @@ let QyDisplay = class extends RootDisplay {
 					upThis.#nmdb[preCal + tchOff + x + (y << 7)] = e;
 				});
 				if (upThis.device?.getChActive(rch)) {
-					let cVelo = sum.strength[rch] * 1286 >> 16; // devided by 51
-					upThis.#renderFill(31 + tchOff, preCalY + 11 - cVelo, 9, cVelo + 1);
+					upThis.#renderFill(31 + tchOff, preCalY + 11, 9, 1);
+					let cVelo = sum.strength[rch] >> 6; // devided by 51
+					if (sum.strength[rch] > 0) {
+						upThis.#renderFill(31 + tchOff, preCalY + 10 - cVelo, 9, cVelo + 1);
+					};
 				};
 				if (this.#ch === rch) {
 					textTarget = 0;
