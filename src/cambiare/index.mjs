@@ -671,7 +671,7 @@ let Cambiare = class extends RootDisplay {
 				e.extVis.fillStyle = `#${upThis.#foreground}`;
 				switch (sum.chExt[part][0]) {
 					case upThis.device.EXT_VL: {
-						let mouth = (upThis.device?.getChCc(part, 136) - 64) / 64 || sum.rawPitch[part] / 8192;
+						let mouth = (upThis.device?.getChCc(part, 136) - 64) / 64 || upThis.device?.getChRawPitch(part) / 8192;
 						mouth = mouth * -4 + 4;
 						// Enabling global mod wheel locking will cause ghost activations. Must improve later.
 						let velocity = +(sum.rawVelo[part] > 0 || upThis.device?.getChCc(part, 1) > 0) * (upThis.device?.getChCc(part, 129) * upThis.device?.getChCc(part, 11) / 16129);
