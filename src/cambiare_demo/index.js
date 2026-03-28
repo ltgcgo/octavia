@@ -47,6 +47,8 @@ let createDropDown = function (mountedElement, opt = {}) {
 	let dropdownIconCollapsed = createElement("div", ["iconcut", "size-24"]);
 	let dropdownIconExpanded = createElement("div", ["iconcut", "size-24"]);
 	let dropdownContent = createElement("div", ["dropdown-content"]);
+	let dropdownTemplate = createElement("template");
+	let dropdownOption = createElement("a", ["dropdown-item"]);
 	// Define attributes
 	if (typeof opt.minWidth === "string") {
 		dropdownTrigger.style.minWidth = opt.minWidth;
@@ -54,22 +56,39 @@ let createDropDown = function (mountedElement, opt = {}) {
 	dropdownMenu.setAttribute("role", "menu");
 	dropdownMenu.id = `dropdown-${dropdownId}`;
 	dropdownButton.setAttribute("aria-haspopup", "true");
-	if (typeof opt.displayText === "string") {
-		dropdownDisplay.setAttribute("x-text", opt.displayText);
-	};
 	dropdownIconCollapsed.style.maskImage = "url('./img/feather/chevron-down.svg')";
 	dropdownIconExpanded.style.maskImage = "url('./img/feather/chevron-up.svg')";
 	// Reactivity via AlpineJS
 	mountedElement.setAttribute(":active", `active[${opt.activeSlot}]`);
 	mountedElement.setAttribute(":class", `\x60column column-option column-button column-nowrap dropdown\x24{active[${opt.activeSlot}]?' is-active':''}\x60`);
 	dropdownTrigger.setAttribute("@click", `active[${opt.activeSlot}]=!active[${opt.activeSlot}]`);
+	if (typeof opt.displayText === "string") {
+		dropdownDisplay.setAttribute("x-text", opt.displayText);
+	};
 	dropdownIconCollapsed.setAttribute("x-show", `!active[${opt.activeSlot}]`);
 	dropdownIconExpanded.setAttribute("x-show", `active[${opt.activeSlot}]`);
+	if (typeof opt.optionText === "string") {
+		dropdownOption.setAttribute("x-text", opt.optionText);
+	};
+	if (typeof opt.optionDesc === "string") {
+		dropdownOption.setAttribute(":title", opt.optionDesc);
+	};
+	if (typeof opt.optionActive === "string") {
+		dropdownOption.setAttribute(":active", `${opt.optionActive}?'true':'false'`);
+	};
+	if (typeof opt.optionClick === "string") {
+		dropdownOption.setAttribute("@click", `${opt.optionClick};active[${opt.activeSlot}]=false`);
+	};
+	dropdownTemplate.content.append(dropdownOption);
+	if (typeof opt.eachExpr === "string") {
+		dropdownTemplate.setAttribute("x-for", opt.eachExpr);
+	};
 	// Mount the structure
+	mountElement(dropdownContent, [dropdownTemplate]);
 	mountElement(dropdownButton, [dropdownDisplay]);
 	mountElement(dropdownIcon, [dropdownIconCollapsed, dropdownIconExpanded]);
-	mountElement(dropdownMenu, [dropdownContent]);
 	mountElement(dropdownTrigger, [dropdownButton, dropdownIcon]);
+	mountElement(dropdownMenu, [dropdownContent]);
 	mountElement(mountedElement, [dropdownTrigger, dropdownMenu]);
 };
 
@@ -440,8 +459,13 @@ getBridge().addEventListener("message", function (ev) {
 // Create the dropdown menus
 createDropDown($e("div#dropmount-levelGs"), {
 	"activeSlot": 1,
-	"minWidth": "7rem",
-	"displayText": "gsLvls[($store.gsLvl??4)-1][1]||'Invalid'"
+	"minWidth": "7.5rem",
+	"displayText": "gsLvls[($store.gsLvl??4)-1][1]||'Invalid'",
+	"eachExpr": "gsLvl in gsLvls",
+	"optionText": "gsLvl[1]",
+	"optionDesc": "`Internal ID: (${gsLvl[0]})`",
+	"optionActive": "($store.gsLvl||4)==gsLvl[0]",
+	"optionClick": "gGsLvl(gsLvl[0])"
 });
 
 Alpine.start();
