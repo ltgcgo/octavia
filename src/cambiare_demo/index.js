@@ -135,6 +135,17 @@ createDropDown($e("div#dropmount-levelX5"), {
 	"optionActive": "($store.x5Lvl||3)==x5Lvl[0]",
 	"optionClick": "gX5Lvl(x5Lvl[0])"
 });
+createDropDown($e("div#dropmount-framerate"), {
+	"activeSlot": 2,
+	"minWidth": "5rem",
+	"displayText": "frames[$store.frameTime??20][0]||'N/A'",
+	"eachExpr": "(frame, frametime) in frames",
+	"optionText": "frame[0]",
+	"optionDesc": "frame[1]",
+	"optionActive": "`${$store.frameTime??20}`==frametime",
+	"optionClick": "gFrameTime(parseInt(frametime))"
+});
+
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
 	if (baseTime === newTime) {
