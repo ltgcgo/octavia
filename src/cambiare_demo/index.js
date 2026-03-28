@@ -102,7 +102,7 @@ createDropDown($e("div#dropmount-levelXg"), {
 	"eachExpr": "xgLvl in xgLvls",
 	"optionText": "xgLvl[1]",
 	"optionDesc": "`Internal ID: (${xgLvl[0]})`",
-	"optionActive": "($store.xgLvl||4)==xgLvl[0]",
+	"optionActive": "($store.xgLvl||4)===xgLvl[0]",
 	"optionClick": "gXgLvl(xgLvl[0])"
 });
 createDropDown($e("div#dropmount-levelGs"), {
@@ -112,7 +112,7 @@ createDropDown($e("div#dropmount-levelGs"), {
 	"eachExpr": "gsLvl in gsLvls",
 	"optionText": "gsLvl[1]",
 	"optionDesc": "`Internal ID: (${gsLvl[0]})`",
-	"optionActive": "($store.gsLvl||4)==gsLvl[0]",
+	"optionActive": "($store.gsLvl||4)===gsLvl[0]",
 	"optionClick": "gGsLvl(gsLvl[0])"
 });
 createDropDown($e("div#dropmount-levelSc"), {
@@ -122,7 +122,7 @@ createDropDown($e("div#dropmount-levelSc"), {
 	"eachExpr": "scLvl in scLvls",
 	"optionText": "scLvl[1]",
 	"optionDesc": "`Internal ID: (${scLvl[0]})`",
-	"optionActive": "($store.scLvl||3)==scLvl[0]",
+	"optionActive": "($store.scLvl||3)===scLvl[0]",
 	"optionClick": "gScLvl(scLvl[0])"
 });
 createDropDown($e("div#dropmount-levelX5"), {
@@ -132,7 +132,7 @@ createDropDown($e("div#dropmount-levelX5"), {
 	"eachExpr": "x5Lvl in x5Lvls",
 	"optionText": "x5Lvl[1]",
 	"optionDesc": "`Internal ID: (${x5Lvl[0]})`",
-	"optionActive": "($store.x5Lvl||3)==x5Lvl[0]",
+	"optionActive": "($store.x5Lvl||82)===x5Lvl[0]",
 	"optionClick": "gX5Lvl(x5Lvl[0])"
 });
 createDropDown($e("div#dropmount-framerate"), {
@@ -142,9 +142,20 @@ createDropDown($e("div#dropmount-framerate"), {
 	"eachExpr": "(frame, frametime) in frames",
 	"optionText": "frame[0]",
 	"optionDesc": "frame[1]",
-	"optionActive": "`${$store.frameTime??20}`==frametime",
+	"optionActive": "`${$store.frameTime??20}`===frametime",
 	"optionClick": "gFrameTime(parseInt(frametime))"
 });
+createDropDown($e("div#dropmount-notestyle"), {
+	"activeSlot": 0,
+	"minWidth": "6.5rem",
+	"displayText": "styles[$store.noteStyle||'comb']||'N/A'",
+	"eachExpr": "(name, id) in styles",
+	"optionText": "name",
+	"optionDesc": "`Internal ID: (${id})`",
+	"optionActive": "($store.noteStyle||'comb')===id",
+	"optionClick": "gStyle(id)"
+});
+
 
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
