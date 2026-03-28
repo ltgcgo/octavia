@@ -1,6 +1,9 @@
 "use strict";
 
-import {Cambiare} from "../cambiare/index.mjs";
+import {
+	Cambiare,
+	createElement, mountElement, classOff, classOn
+} from "../cambiare/index.mjs";
 import {SheetData} from "../basic/sheetLoad.js";
 import {
 	getBridge
@@ -23,6 +26,52 @@ HTMLElement.prototype.$a = function (selector) {
 	return this.querySelectorAll(selector);
 };
 self.Alpine = Alpine;
+
+let createDropDown = function (mountedElement, opt = {}) {
+	/*
+	activeSlot: number
+	*/
+	if (typeof opt.activeSlot !== "number") {
+		throw(new Error("The active dropdown slot is not defined."));
+	};
+	let dropdownId;
+	if (mountedElement.id.includes("dropmount-")) {
+		dropdownId = mountedElement.id.substring(10);
+	};
+	// Define the overall structure
+	let dropdownTrigger = createElement("div", ["dropdown-trigger"]);
+	let dropdownMenu = createElement("div", ["dropdown-menu"]);
+	let dropdownButton = createElement("button");
+	let dropdownDisplay = createElement("div");
+	let dropdownIcon = createElement("div", ["iconset", "attach-right"]);
+	let dropdownIconCollapsed = createElement("div", ["iconcut", "size-24"]);
+	let dropdownIconExpanded = createElement("div", ["iconcut", "size-24"]);
+	let dropdownContent = createElement("div", ["dropdown-content"]);
+	// Define attributes
+	if (typeof opt.minWidth === "string") {
+		dropdownTrigger.style.minWidth = opt.minWidth;
+	};
+	dropdownMenu.setAttribute("role", "menu");
+	dropdownMenu.id = `dropdown-${dropdownId}`;
+	dropdownButton.setAttribute("aria-haspopup", "true");
+	if (typeof opt.displayText === "string") {
+		dropdownDisplay.setAttribute("x-text", opt.displayText);
+	};
+	dropdownIconCollapsed.style.maskImage = "url('./img/feather/chevron-down.svg')";
+	dropdownIconExpanded.style.maskImage = "url('./img/feather/chevron-up.svg')";
+	// Reactivity via AlpineJS
+	mountedElement.setAttribute(":active", `active[${opt.activeSlot}]`);
+	mountedElement.setAttribute(":class", `\x60column column-option column-button column-nowrap dropdown\x24{active[${opt.activeSlot}]?' is-active':''}\x60`);
+	dropdownTrigger.setAttribute("@click", `active[${opt.activeSlot}]=!active[${opt.activeSlot}]`);
+	dropdownIconCollapsed.setAttribute("x-show", `!active[${opt.activeSlot}]`);
+	dropdownIconExpanded.setAttribute("x-show", `active[${opt.activeSlot}]`);
+	// Mount the structure
+	mountElement(dropdownButton, [dropdownDisplay]);
+	mountElement(dropdownIcon, [dropdownIconCollapsed, dropdownIconExpanded]);
+	mountElement(dropdownMenu, [dropdownContent]);
+	mountElement(dropdownTrigger, [dropdownButton, dropdownIcon]);
+	mountElement(mountedElement, [dropdownTrigger, dropdownMenu]);
+};
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
 	if (baseTime === newTime) {
@@ -387,6 +436,13 @@ getBridge().addEventListener("message", function (ev) {
 		console.info(`Development build detected.`);
 	};
 })();
+
+// Create the dropdown menus
+createDropDown($e("div#dropmount-levelGs"), {
+	"activeSlot": 1,
+	"minWidth": "7rem",
+	"displayText": "gsLvls[($store.gsLvl??4)-1][1]||'Invalid'"
+});
 
 Alpine.start();
 self.visualizer = visualizer;

@@ -333,7 +333,7 @@ Extensions:
 */
 
 if (typeof self?.require !== "undefined") {
-	throw(new Error("Environments supporting CommonJS is not supported."));
+	throw(new Error("Environments supporting CommonJS are not supported."));
 };
 
 let TimeMuxer = class TimeMuxer {

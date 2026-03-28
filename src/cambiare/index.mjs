@@ -1728,5 +1728,6 @@ let Cambiare = class extends RootDisplay {
 };
 
 export {
-	Cambiare
+	Cambiare,
+	createElement, mountElement, classOff, classOn
 };

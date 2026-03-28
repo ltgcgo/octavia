@@ -76,12 +76,30 @@
 			</template>-->
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native'],[2,'PSR/LE'],[3,'QY100']],gsLvls:[[1,'SC-55'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native'],[2,'PSR/LE'],[3,'QY100']],gsLvls:[[1,'SC-55'],[2,'SC-88'],[3,'SC-88 Pro'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']],active:[0, 0]}">
 			<div class="column column-option"><b>XG level</b></div>
-			<template x-for="xgLvl in xgLvls">
+			<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
+				<div class="dropdown-trigger" style="min-width: 9.5rem" @click="active[0]=!active[0]">
+					<button aria-haspopup="true">
+						<div x-text="xgLvls[$store.xgLvl??0][1]||'Invalid'"></div>
+					</button><div class="iconset attach-right">
+						<div class="iconcut size-24" x-show="!active[0]" style="mask-image:url('./img/feather/chevron-down.svg')"></div>
+						<div class="iconcut size-24" x-show="active[0]" style="mask-image:url('./img/feather/chevron-up.svg')"></div>
+					</div>
+				</div>
+				<div class="dropdown-menu" role="menu" id="dropdown-levelXg">
+					<div class="dropdown-content">
+						<template x-for="xgLvl in xgLvls">
+							<a class="dropdown-item" :active="($store.xgLvl||0)==xgLvl[0]?'true':'false'" x-text="xgLvl[1]" :title="`Internal ID: (${xgLvl[0]})`" @click="gXgLvl(xgLvl[0]);active[0]=false"></a>
+						</template>
+					</div>
+				</div>
+			</div>
+			<!--<template x-for="xgLvl in xgLvls">
 				<div class="column column-option column-button" @click="gXgLvl(xgLvl[0])" x-text="xgLvl[1]" :active="($store.xgLvl||0)==xgLvl[0]?'true':'false'"></div>
-			</template>
+			</template>-->
 			<div class="column column-option"><b>GS level</b></div>
+			<div id="dropmount-levelGs"></div>
 			<template x-for="gsLvl in gsLvls">
 				<div class="column column-option column-button" @click="gGsLvl(gsLvl[0])" x-text="gsLvl[1]" :active="($store.gsLvl||4)==gsLvl[0]?'true':'false'"></div>
 			</template>
