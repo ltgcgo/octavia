@@ -62,7 +62,12 @@ let createDropDown = function (mountedElement, opt = {}) {
 	mountedElement.setAttribute(":active", `active[${opt.activeSlot}]`);
 	mountedElement.setAttribute(":class", `\x60column column-option column-button column-nowrap dropdown\x24{active[${opt.activeSlot}]?' is-active':''}\x60`);
 	//dropdownTrigger.setAttribute("@click", `"";for(let i=0;i<active.length;i++){if(i==${opt.activeSlot}){active[${opt.activeSlot}]=!active[${opt.activeSlot}]}else{active[i]=0}}`);
-	dropdownTrigger.setAttribute("@click", `active[${opt.activeSlot}]=!active[${opt.activeSlot}]`);
+	try {
+		// The @ character may error out on some browsers.
+		dropdownTrigger.setAttribute("@click", `active[${opt.activeSlot}]=!active[${opt.activeSlot}]`);
+	} catch (err) {
+		alert(`The current version of browser is not compliant to the W3C specification.\n${err.stack}`);
+	};
 	if (typeof opt.displayText === "string") {
 		dropdownDisplay.setAttribute("x-text", opt.displayText);
 	};
