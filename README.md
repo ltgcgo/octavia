@@ -12,6 +12,9 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 > **If you're accessing the online version, it is advised to [use the stable branch instead](https://gh.ltgc.cc/octavia-stable/) in case of a massive break.** If you can see the address bar already at `/octavia-stable/` or you're running a local development build, ignore the warning.
 
 > **Warning**
+> Some versions of browsers (e.g. Firefox) may error out with Cambiare due to a W3C specification compliance bug.
+
+> **Warning**
 >
 > Octavia may work on Node.js, but support for it is never intended. Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. There is no plan to ever support runtimes that offers non-ES compliance with Node.js ecosystem, like Node.js or Bun, and issues raised from those runtimes will be ignored, unless reproducible from other runtimes as well.
 >
