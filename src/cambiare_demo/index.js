@@ -155,6 +155,16 @@ createDropDown($e("div#dropmount-notestyle"), {
 	"optionActive": "($store.noteStyle||'comb')===id",
 	"optionClick": "gStyle(id)"
 });
+createDropDown($e("div#dropmount-panstyle"), {
+	"activeSlot": 1,
+	"minWidth": "6.5rem",
+	"displayText": "pans[$store.panStyle??11]||'N/A'",
+	"eachExpr": "(name, id) in pans",
+	"optionText": "name",
+	"optionDesc": "`Internal ID: (${id})`",
+	"optionActive": "`${$store.panStyle??11}`===id",
+	"optionClick": "gPanStyle(id)"
+});
 
 
 
