@@ -61,6 +61,7 @@ let createDropDown = function (mountedElement, opt = {}) {
 	// Reactivity via AlpineJS
 	mountedElement.setAttribute(":active", `active[${opt.activeSlot}]`);
 	mountedElement.setAttribute(":class", `\x60column column-option column-button column-nowrap dropdown\x24{active[${opt.activeSlot}]?' is-active':''}\x60`);
+	//dropdownTrigger.setAttribute("@click", `"";for(let i=0;i<active.length;i++){if(i==${opt.activeSlot}){active[${opt.activeSlot}]=!active[${opt.activeSlot}]}else{active[i]=0}}`);
 	dropdownTrigger.setAttribute("@click", `active[${opt.activeSlot}]=!active[${opt.activeSlot}]`);
 	if (typeof opt.displayText === "string") {
 		dropdownDisplay.setAttribute("x-text", opt.displayText);
@@ -77,6 +78,7 @@ let createDropDown = function (mountedElement, opt = {}) {
 		dropdownOption.setAttribute(":active", `${opt.optionActive}?'true':'false'`);
 	};
 	if (typeof opt.optionClick === "string") {
+		//dropdownOption.setAttribute("@click", `${opt.optionClick};active[${opt.activeSlot}]=false`);
 		dropdownOption.setAttribute("@click", `${opt.optionClick};active[${opt.activeSlot}]=false`);
 	};
 	dropdownTemplate.content.append(dropdownOption);
@@ -91,6 +93,48 @@ let createDropDown = function (mountedElement, opt = {}) {
 	mountElement(dropdownMenu, [dropdownContent]);
 	mountElement(mountedElement, [dropdownTrigger, dropdownMenu]);
 };
+
+// Create the dropdown menus
+createDropDown($e("div#dropmount-levelXg"), {
+	"activeSlot": 0,
+	"minWidth": "9.5rem",
+	"displayText": "xgLvls[$store.xgLvl??0][1]||'Invalid'",
+	"eachExpr": "xgLvl in xgLvls",
+	"optionText": "xgLvl[1]",
+	"optionDesc": "`Internal ID: (${xgLvl[0]})`",
+	"optionActive": "($store.xgLvl||4)==xgLvl[0]",
+	"optionClick": "gXgLvl(xgLvl[0])"
+});
+createDropDown($e("div#dropmount-levelGs"), {
+	"activeSlot": 1,
+	"minWidth": "7.5rem",
+	"displayText": "gsLvls[($store.gsLvl??4)-1][1]||'Invalid'",
+	"eachExpr": "gsLvl in gsLvls",
+	"optionText": "gsLvl[1]",
+	"optionDesc": "`Internal ID: (${gsLvl[0]})`",
+	"optionActive": "($store.gsLvl||4)==gsLvl[0]",
+	"optionClick": "gGsLvl(gsLvl[0])"
+});
+createDropDown($e("div#dropmount-levelSc"), {
+	"activeSlot": 2,
+	"minWidth": "7.5rem",
+	"displayText": "scLvls[($store.scLvl??3)-2][1]||'Invalid'",
+	"eachExpr": "scLvl in scLvls",
+	"optionText": "scLvl[1]",
+	"optionDesc": "`Internal ID: (${scLvl[0]})`",
+	"optionActive": "($store.scLvl||3)==scLvl[0]",
+	"optionClick": "gScLvl(scLvl[0])"
+});
+createDropDown($e("div#dropmount-levelX5"), {
+	"activeSlot": 3,
+	"minWidth": "6.4rem",
+	"displayText": "x5Lvls[($store.x5Lvl??82)-81][1]||'Invalid'",
+	"eachExpr": "x5Lvl in x5Lvls",
+	"optionText": "x5Lvl[1]",
+	"optionDesc": "`Internal ID: (${x5Lvl[0]})`",
+	"optionActive": "($store.x5Lvl||3)==x5Lvl[0]",
+	"optionClick": "gX5Lvl(x5Lvl[0])"
+});
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
 	if (baseTime === newTime) {
@@ -455,18 +499,6 @@ getBridge().addEventListener("message", function (ev) {
 		console.info(`Development build detected.`);
 	};
 })();
-
-// Create the dropdown menus
-createDropDown($e("div#dropmount-levelGs"), {
-	"activeSlot": 1,
-	"minWidth": "7.5rem",
-	"displayText": "gsLvls[($store.gsLvl??4)-1][1]||'Invalid'",
-	"eachExpr": "gsLvl in gsLvls",
-	"optionText": "gsLvl[1]",
-	"optionDesc": "`Internal ID: (${gsLvl[0]})`",
-	"optionActive": "($store.gsLvl||4)==gsLvl[0]",
-	"optionClick": "gGsLvl(gsLvl[0])"
-});
 
 Alpine.start();
 self.visualizer = visualizer;

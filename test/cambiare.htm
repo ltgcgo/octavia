@@ -76,9 +76,10 @@
 			</template>-->
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native'],[2,'PSR/LE'],[3,'QY100']],gsLvls:[[1,'SC-55'],[2,'SC-88'],[3,'SC-88 Pro'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']],active:[0, 0]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native'],[2,'PSR/LE'],[3,'QY100']],gsLvls:[[1,'SC-55'],[2,'SC-88'],[3,'SC-88 Pro'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']],active:[0,0,0,0]}">
 			<div class="column column-option"><b>XG level</b></div>
-			<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
+			<div id="dropmount-levelXg"></div>
+			<!--<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
 				<div class="dropdown-trigger" style="min-width: 9.5rem" @click="active[0]=!active[0]">
 					<button aria-haspopup="true">
 						<div x-text="xgLvls[$store.xgLvl??0][1]||'Invalid'"></div>
@@ -94,23 +95,25 @@
 						</template>
 					</div>
 				</div>
-			</div>
+			</div>-->
 			<!--<template x-for="xgLvl in xgLvls">
 				<div class="column column-option column-button" @click="gXgLvl(xgLvl[0])" x-text="xgLvl[1]" :active="($store.xgLvl||0)==xgLvl[0]?'true':'false'"></div>
 			</template>-->
 			<div class="column column-option"><b>GS level</b></div>
 			<div id="dropmount-levelGs"></div>
-			<template x-for="gsLvl in gsLvls">
+			<!--<template x-for="gsLvl in gsLvls">
 				<div class="column column-option column-button" @click="gGsLvl(gsLvl[0])" x-text="gsLvl[1]" :active="($store.gsLvl||4)==gsLvl[0]?'true':'false'"></div>
-			</template>
+			</template>-->
 			<div class="column column-option"><b>SC level</b></div>
-			<template x-for="scLvl in scLvls">
+			<div id="dropmount-levelSc"></div>
+			<!--<template x-for="scLvl in scLvls">
 				<div class="column column-option column-button" @click="gScLvl(scLvl[0])" x-text="scLvl[1]" :active="($store.scLvl||3)==scLvl[0]?'true':'false'"></div>
-			</template>
+			</template>-->
 			<div class="column column-option"><b>X5 target</b></div>
-			<template x-for="x5Lvl in x5Lvls">
+			<div title="WIP" id="dropmount-levelX5"></div>
+			<!--<template x-for="x5Lvl in x5Lvls">
 				<div class="column column-option column-button" @click="gX5Lvl(x5Lvl[0])" x-text="x5Lvl[1]" :active="($store.x5Lvl||82)==x5Lvl[0]?'true':'false'"></div>
-			</template>
+			</template>-->
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4},ecModes:[[false,'Ignore'],[true,'Used']]}">
