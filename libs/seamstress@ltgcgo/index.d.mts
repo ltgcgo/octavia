@@ -38,7 +38,10 @@ export class SeamstressStrictWriter {
 };
 
 export class Seamstress {
-	/** Masks endianness of length values. 0 for BE, 1 for LE. */
+	/**
+	* Masks endianness of length values. 0 for BE, 1 for LE.
+	* Big-endian VLV denotes VLV-8, while "little-endian VLV" denotes RVLV-8, despite RVLV-8 still being big endian.
+	*/
 	static MASK_ENDIAN: number;
 	/** Masks encoding of length values. 0 for VLV-8, 1 for u32. "Little-endian VLV-8" is invalid and will error out. */
 	static MASK_LENGTH: number;
