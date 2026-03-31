@@ -7,19 +7,35 @@
 * @module
 */
 
-export class VLVHandler {
-	/** Reads standard MIDI VLV-8 to a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
+export class IntegerHandler {
+	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
 	static readVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
-	/** Reads standard MIDI VLV-8 to a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 4 bytes, after which it will error out. */
+	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 4 bytes, after which it will error out. */
 	static readVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
-	/** Counts the size of the standard MIDI VLV-8 in bytes. Will return 0 when failed. */
+	/** Counts the size of a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
 	static sizeVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
-	/** Reads reversible VLV-8 to a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 16 bytes, after which it will error out. */
+	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 16 bytes, after which it will error out. */
 	static readRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
-	/** Reads reversible VLV-8 to a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. */
+	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. */
 	static readRVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
-	/** Counts the size of the reversible VLV-8 in bytes. Will return 0 when failed. */
+	/** Counts the size of a reversible VLV-8 value in bytes. Will return 0 when failed. */
 	static sizeRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Reads a boolean. Will error out if out of bounds. A 1-sized array has 8 boolean values, 2-sized has 16, and vice versa. */
+	static readBool(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Reads an int8 value. Will error out if out of bounds. */
+	static readInt8(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Reads an int16 value. Will error out if out of bounds. */
+	static readInt16(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): number;
+	/** Reads a uint16 value. Will error out if out of bounds. */
+	static readUint16(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): number;
+	/** Reads an int32 value. Will error out if out of bounds. */
+	static readInt32(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): number;
+	/** Reads a uint32 value. Will error out if out of bounds. */
+	static readUint32(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): number;
+	/** Reads an int64 value. Will error out if out of bounds. */
+	static readInt64(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): BigInt;
+	/** Reads a uint64 value. Will error out if out of bounds. */
+	static readUint64(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): BigInt;
 }
 
 export interface SeamstressContext {
@@ -85,6 +101,8 @@ export class Seamstress {
 	delList(type: string): boolean;
 	/** Defines the size of the header. 0 for MIDI files, 12 for RIFF files. Defaults to 0. */
 	headerSize: number;
+	/** The type flags of the Seamstress instance. */
+	type: number;
 	/** Handles the header chunk. Returns an object detailing on how to handle the header chunk. Only invoked upon reading.
 	* @param buffer The header getting passed into the handler.
 	* @returns The parsed object that will modify the reader behaviour and provide as the initial context for the streams.

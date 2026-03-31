@@ -1,13 +1,13 @@
 "use strict";
 
 import {
-	VLVHandler,
+	IntegerHandler,
 	Seamstress
 } from "../../libs/seamstress@ltgcgo/index.mjs";
 
 console.debug("HORNY")
 
-self.VLVHandler = VLVHandler;
+self.IntegerHandler = IntegerHandler;
 /*self.a = new Uint8Array([127, 0, 0, 0]);
 self.b = new Uint8Array([129, 127, 0, 0]);
 self.c = new Uint8Array([129, 129, 127, 0]);

@@ -3,7 +3,7 @@
 
 "use strict";
 
-let VLVHandler = class VLVHandler {
+let IntegerHandler = class IntegerHandler {
 	static #MASK_VLV = 128;
 	static #MASK_RVLV = 192;
 	static #RVLV_START = 192;
@@ -82,6 +82,7 @@ let Seamstress = class Seamstress {
 	static TYPE_VLV = 0;
 	static TYPE_4CC = 8;
 	headerSize = 0;
+	type = 10; // 0 for non-reversible SEAM stream, 10 for SMF
 	readStream(stream) {};
 	readChunks(stream) {};
 	writeStrict(headerSerializer) {};
@@ -89,15 +90,65 @@ let Seamstress = class Seamstress {
 	async getMapFromStream(stream) {
 		let upThis = this;
 		let skipLength = upThis.headerSize,
-		consumedSize = 0;
+		chunkStart = 0,
+		consumedSize = 0,
+		map = new Map();
 		for await (let chunk of stream) {
-
+			let ptr = skipLength,
+			lastSkippedAt = 0;
+			skipLength = 0;
+			if (ptr >= chunk.length) {
+				skipLength = ptr - chunk.length;
+				console.debug(`Skipped the chunk altogether. ${chunk.length} B skipped, ${skipLength} B remaining.`);
+				continue;
+			};
+			while (ptr < chunk.length) {
+				if (upThis.type & upThis.MASK_TYPE === upThis.TYPE_4CC) {
+					// Typical FourCC types
+					skipLength = 4;
+				} else if (upThis.type & upThis.MASK_ENDIAN === upThis.ENDIAN_L) {
+					// Reversible VLV
+					skipLength = VLVHandler.sizeRVLV(chunk, ptr);
+				} else {
+					// Standard VLV
+					skipLength = VLVHandler.sizeVLV(chunk, ptr);
+				};
+				console.debug(`Skip type size set to ${skipLength} B`);
+				if (upThis.type & upThis.MASK_LENGTH === upThis.LENGTH_U32) {
+					// Typical FourCC types
+					let lengthSize = 4;
+					skipLength += lengthSize;
+				} else if (upThis.type & upThis.MASK_ENDIAN === upThis.ENDIAN_L) {
+					// Reversible VLV
+					let lengthSize = VLVHandler.sizeRVLV(chunk, ptr + skipLength);
+					skipLength += lengthSize;
+				} else {
+					// Standard VLV
+					let lengthSize = VLVHandler.sizeVLV(chunk, ptr + skipLength);
+					skipLength += lengthSize;
+				};
+				console.debug(`Skip type and length size set to ${skipLength} B`);
+				if (skipLength > 0) {
+					lastSkippedAt = ptr;
+					ptr += skipLength;
+				} else {
+					console.debug(`Type and length read failed. Continuing iteration to prevent infinite loops.`);
+					ptr ++;
+				};
+				skipLength = 0;
+			};
+			if (skipLength > 0) {
+				console.debug(`Skipped to the next chunk. ${skipLength} B skipped at ${lastSkippedAt}/${chunk.length}, ${skipLength + lastSkippedAt - chunk.length} B remaining.`);
+				skipLength += lastSkippedAt - chunk.length;
+			};
+			chunkStart += chunk.length;
 		};
+		return map;
 	};
 };
 
 export {
-	VLVHandler,
+	IntegerHandler,
 	Seamstress,
 	SeamstressChunk,
 	SeamstressStrictWriter
