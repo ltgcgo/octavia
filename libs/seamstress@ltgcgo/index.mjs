@@ -27,6 +27,36 @@ let VLVHandler = class VLVHandler {
 		if (buffer.BYTES_PER_ELEMENT !== 1 || typeof buffer?.buffer?.byteLength !== "number") {
 			throw(new TypeError("Input must be a Uint8Array."));
 		};
+		switch (buffer[offset] & this.#MASK_RVLV) {
+			case this.#RVLV_SINGLE: {
+				return 1;
+				break;
+			};
+			case this.#RVLV_MIDDLE:
+			case this.#RVLV_END: {
+				//console.debug(`Invalid start state. (${offset} + 0)`);
+				return 0;
+				break;
+			};
+		};
+		// The only valid state for the first offset byte in the buffer at this point is RVLV_START.
+		let storedState = 3, // 1-3: END, MIDDLE, START
+		breakCrit = Math.min(buffer.length, 16);
+		for (let i = 1; i < breakCrit; i ++) {
+			let e = buffer[i + offset],
+			currentState = e >> 6;
+			if (
+				currentState === 0 ||
+				(storedState === 3 && (0b00001001 >> currentState & 1)) ||
+				(storedState === 2 && currentState > storedState)
+			) {
+				//console.debug(`Invalid transitioning state: ${storedState} → ${currentState}. (${offset} + 0)`);
+				return 0;
+			} else if (currentState === 1) {
+				return i + 1;
+			};
+			storedState = currentState;
+		};
 	};
 };
 
@@ -69,5 +99,6 @@ let Seamstress = class Seamstress {
 export {
 	VLVHandler,
 	Seamstress,
+	SeamstressChunk,
 	SeamstressStrictWriter
 }
