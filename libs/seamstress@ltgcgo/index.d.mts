@@ -3,6 +3,7 @@
 
 /**
 * An insanely safe IFF-like byte stream handler.
+* @license LGPL-3.0-only
 * @module
 */
 
@@ -16,6 +17,8 @@ export interface SeamstressChunk {
 	id: number;
 	/** Type of the (streamed) chunk as Latin-9 strings. */
 	type: number|string;
+	/** The offset of the chunk. Chunks from `readChunk()` and first chunk from `readStream()` are all  */
+	offset: number;
 	/** The (streamed) payload of the chunk. */
 	data: Uint8Array;
 	/** The context properties passed from header. */
@@ -55,13 +58,13 @@ export class Seamstress {
 	static LENGTH_U32: number;
 	static TYPE_VLV: number;
 	static TYPE_4CC: number;
-	/** Returns if the list chunk type already exists. Only valid with FourCC types. */
+	/** (Non-finalized) Returns if the list chunk type already exists. Only valid with FourCC types. */
 	hasList(type: string): boolean;
-	/** Registers a type of list chunk, and returns true when successful (isn't already registered). Only valid with FourCC types. Useful for FourCC-typed list chunks containing subchunks. "LIST" will always be registered for IFF/RIFF files.
+	/** (Non-finalized) Registers a type of list chunk, and returns true when successful (isn't already registered). Only valid with FourCC types. Useful for FourCC-typed list chunks containing subchunks. "LIST" will always be registered for IFF/RIFF files.
 	* @param type FourCC in a Latin-9 string.
 	*/
 	addList(type: string): boolean;
-	/** Removes a type of list chunk, and returns true when successful (is registered). Only valid with FourCC types.
+	/** (Non-finalized) Removes a type of list chunk, and returns true when successful (is registered). Only valid with FourCC types.
 	* @param type FourCC in a Latin-9 string.
 	*/
 	delList(type: string): boolean;
@@ -76,7 +79,7 @@ export class Seamstress {
 	readStream(stream: ReadableStream<Uint8Array>): ReadableStream<SeamstressChunk>;
 	/** Reads the incoming stream, and emits a stream of fully buffered chunks. */
 	readChunks(stream: ReadableStream<Uint8Array>): ReadableStream<SeamstressChunk>;
-	/** Writes chunks with strict checks. Providing a serializer with a 0-sized header or not providing a serializer when header's expected will both result in an error. */
+	/** Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error. */
 	writeStrict(headerSerializer?: Function): SeamstressStrictWriter;
 	/** Writes chunks in an easier way. Providing a serialized header with a 0-sized header or not providing a serialized header when header's expected will both result in an error. */
 	writeChunks(serializedHeader?: Uint8Array): TransformStream<SeamstressChunk, Uint8Array>;
