@@ -3,6 +3,33 @@
 
 "use strict";
 
+let VLVHandler = class VLVHandler {
+	static #MASK_VLV = 128;
+	static #MASK_RVLV = 192;
+	static #RVLV_START = 192;
+	static #RVLV_MIDDLE = 128;
+	static #RVLV_END = 64;
+	static #RVLV_SINGLE = 0;
+	static sizeVLV(buffer, offset = 0) {
+		if (buffer.BYTES_PER_ELEMENT !== 1 || typeof buffer?.buffer?.byteLength !== "number") {
+			throw(new TypeError("Input must be a Uint8Array."));
+		};
+		let breakCrit = Math.min(buffer.length, 16);
+		for (let i = 0; i < breakCrit; i ++) {
+			let e = buffer[i + offset];
+			if ((e & this.#MASK_VLV) === 0) {
+				return i + 1;
+			};
+		};
+		return 0; // Failure
+	};
+	static sizeRVLV(buffer, offset = 0) {
+		if (buffer.BYTES_PER_ELEMENT !== 1 || typeof buffer?.buffer?.byteLength !== "number") {
+			throw(new TypeError("Input must be a Uint8Array."));
+		};
+	};
+};
+
 let SeamstressChunk = class SeamstressChunk {
 	id = 0;
 	type = null;
@@ -29,10 +56,18 @@ let Seamstress = class Seamstress {
 	readChunks(stream) {};
 	writeStrict(headerSerializer) {};
 	writeChunks(serializedHeader) {};
-	getMapFromStream(stream) {};
+	async getMapFromStream(stream) {
+		let upThis = this;
+		let skipLength = upThis.headerSize,
+		consumedSize = 0;
+		for await (let chunk of stream) {
+
+		};
+	};
 };
 
 export {
+	VLVHandler,
 	Seamstress,
 	SeamstressStrictWriter
 }

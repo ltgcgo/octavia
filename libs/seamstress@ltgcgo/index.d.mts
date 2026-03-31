@@ -7,6 +7,21 @@
 * @module
 */
 
+export class VLVHandler {
+	/** Reads standard MIDI VLV-8 to a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
+	static readVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Reads standard MIDI VLV-8 to a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 4 bytes, after which it will error out. */
+	static readVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
+	/** Counts the size of the standard MIDI VLV-8 in bytes. Will return 0 when failed. */
+	static sizeVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Reads reversible VLV-8 to a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 16 bytes, after which it will error out. */
+	static readRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Reads reversible VLV-8 to a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. */
+	static readRVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
+	/** Counts the size of the reversible VLV-8 in bytes. Will return 0 when failed. */
+	static sizeRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+}
+
 export interface SeamstressContext {
 	/** Defines the maximum length of the stream that's expected. If the stream exceeds the specified size, it will be cut off at the specified size (length <= size + headerSize). It's always desired to keep the size sealed once parsed. */
 	size?: number;
@@ -33,7 +48,7 @@ export class SeamstressStrictWriter {
 	/** Writes the start of a new chunk. Will error out if unfinished writes still exist (the unsatisfied size is still a positive integer). Does not support LIST subchunks directly, pre-serialization is required. */
 	writeChunkHead(type: number|string, size: number): void;
 	/** Writes a slice of chunk to the serialized stream. */
-	writeChunkData(data: Uint8Array): void;
+	writeChunkData(data: Uint8Array|Uint8ClampedArray): void;
 	/** Finalizes the serialized stream. Will error out if unfinished writes still exist (the unsatisfied size is still a positive integer). */
 	finalize(): void;
 	/** Takes over the reader of the output stream, and emit everything as a single ArrayBuffer. */
@@ -76,13 +91,13 @@ export class Seamstress {
 	*/
 	headerHandler?(buffer: Uint8Array): SeamstressContext|undefined;
 	/** Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered. */
-	readStream(stream: ReadableStream<Uint8Array>): ReadableStream<SeamstressChunk>;
+	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
 	/** Reads the incoming stream, and emits a stream of fully buffered chunks. */
-	readChunks(stream: ReadableStream<Uint8Array>): ReadableStream<SeamstressChunk>;
+	readChunks(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
 	/** Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error. */
 	writeStrict(headerSerializer?: Function): SeamstressStrictWriter;
 	/** Writes chunks in an easier way. Providing a serialized header with a 0-sized header or not providing a serialized header when header's expected will both result in an error. */
 	writeChunks(serializedHeader?: Uint8Array): TransformStream<SeamstressChunk, Uint8Array>;
 	/** Parses the incoming stream, and emits a map of header types, each with an array of offsets and sizes. This function is virtually useless if the original content of the stream is not kept. */
-	getMapFromStream(stream: ReadableStream<Uint8Array>): Promise<Map<number|string, Array<Array<number>>>>;
+	getMapFromStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): Promise<Map<number|string, Array<Array<number>>>>;
 }
