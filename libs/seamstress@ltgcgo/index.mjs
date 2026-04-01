@@ -246,6 +246,7 @@ let Seamstress = class Seamstress {
 	static LENGTH_U32 = 2;
 	static TYPE_VLV = 0;
 	static TYPE_4CC = 8;
+	#u8Dec = new TextDecoder("l9");
 	headerSize = 0;
 	type = 10; // 0 for non-reversible SEAM stream, 10 for SMF
 	readStream(stream) {};
@@ -258,6 +259,7 @@ let Seamstress = class Seamstress {
 		chunkStart = 0,
 		consumedSize = 0,
 		map = new Map();
+		// It's better to rewrite the thing below as a single-byte reading state machine instead for maximum robustness. The current implementation has a potential bug when reading chunk types and sizes near the end of the streamed chunk.
 		for await (let chunk of stream) {
 			let ptr = skipLength,
 			lastSkippedAt = 0;
@@ -268,29 +270,49 @@ let Seamstress = class Seamstress {
 				continue;
 			};
 			while (ptr < chunk.length) {
-				if (upThis.type & upThis.MASK_TYPE === upThis.TYPE_4CC) {
+				let chunkType;
+				if ((upThis.type & upThis.MASK_TYPE) === upThis.TYPE_4CC) {
 					// Typical FourCC types
 					skipLength = 4;
-				} else if (upThis.type & upThis.MASK_ENDIAN === upThis.ENDIAN_L) {
+					chunkType = upThis.#u8Dec.decode(buffer.subarray(ptr, ptr + skipLength));
+				} else if ((upThis.type & upThis.MASK_ENDIAN) === upThis.ENDIAN_L) {
 					// Reversible VLV
-					skipLength = VLVHandler.sizeRVLV(chunk, ptr);
+					skipLength = IntegerHandler.sizeRVLV(chunk, ptr);
+					if (skipLength > 0) {
+						chunkType = IntegerHandler.readRVLV(chunk, ptr);
+					};
 				} else {
 					// Standard VLV
-					skipLength = VLVHandler.sizeVLV(chunk, ptr);
+					skipLength = IntegerHandler.sizeVLV(chunk, ptr);
+					if (skipLength > 0) {
+						chunkType = IntegerHandler.readVLV(chunk, ptr);
+					};
 				};
-				console.debug(`Skip type size set to ${skipLength} B`);
-				if (upThis.type & upThis.MASK_LENGTH === upThis.LENGTH_U32) {
+				console.debug(`Skip type size set to ${skipLength} B. Current chunk type is "${chunkType}".`);
+				if (typeof chunkType === "undefined") {
+					throw(new Error(`Invalid chunk type encountered at offset ${chunkStart + ptr}.`));
+				};
+				if ((upThis.type & upThis.MASK_LENGTH) === upThis.LENGTH_U32) {
 					// Typical FourCC types
 					let lengthSize = 4;
-					skipLength += lengthSize;
-				} else if (upThis.type & upThis.MASK_ENDIAN === upThis.ENDIAN_L) {
+					skipLength += lengthSize + IntegerHandler.readUint32(chunk, ptr + skipLength);
+				} else if ((upThis.type & upThis.MASK_ENDIAN) === upThis.ENDIAN_L) {
 					// Reversible VLV
-					let lengthSize = VLVHandler.sizeRVLV(chunk, ptr + skipLength);
+					let lengthSize = IntegerHandler.sizeRVLV(chunk, ptr + skipLength);
+					if (lengthSize > 0) {
+						skipLength += IntegerHandler.readRVLV(chunk, ptr + skipLength);
+					} else {
+						throw(new Error(`Invalid RVLV-8 encountered at offset ${chunkStart + ptr + skipLength}.`));
+					};
 					skipLength += lengthSize;
-
 				} else {
 					// Standard VLV
-					let lengthSize = VLVHandler.sizeVLV(chunk, ptr + skipLength);
+					let lengthSize = IntegerHandler.sizeVLV(chunk, ptr + skipLength);
+					if (lengthSize > 0) {
+						skipLength += IntegerHandler.readVLV(chunk, ptr + skipLength);
+					} else {
+						throw(new Error(`Invalid VLV-8 encountered at offset ${chunkStart + ptr + skipLength}.`));
+					};
 					skipLength += lengthSize;
 				};
 				console.debug(`Skip type and length size set to ${skipLength} B`);
