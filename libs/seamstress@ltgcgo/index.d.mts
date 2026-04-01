@@ -113,8 +113,11 @@ export class Seamstress {
 	* When returning any non-positive integer, the chunk will not be truncated in any way, and the rest of the stream chunk for the current chunk will bypass the regulator method altogether. Returning an integer that's larger than the size of the current stream chunk, the whole chunk will be buffered and wait for merging with the next chunk. If a chunk contains many subchunks, this method will help ensure that the incomplete chunks received will always contain complete subchunks.
 	*/
 	regulateStream?(chunkInfo: SeamstressChunk): number;
-	/** Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered. */
-	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
+	/**
+	* Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered.
+	* @param bypassRegulator When true, the stream chunk regulation method will never be called.
+	*/
+	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, bypassRegulator: boolean): ReadableStream<SeamstressChunk>;
 	/** Reads the incoming stream, and emits a stream of fully buffered chunks. */
 	readChunks(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
 	/** Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error. */
