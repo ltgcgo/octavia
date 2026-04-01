@@ -287,7 +287,7 @@ let Seamstress = class Seamstress {
 			let ptr = skipLength;
 			skipLength = 0;
 			while (ptr < chunk.length) {
-				console.debug(`${chunkStart + ptr}(${chunkStart} + ${ptr}) - ${readState}`);
+				//console.debug(`${chunkStart + ptr}(${chunkStart} + ${ptr}) - ${readState}`);
 				let e = chunk[ptr];
 				switch (readState) {
 					case 0: {
@@ -413,7 +413,7 @@ let Seamstress = class Seamstress {
 					} else {
 						skipLength = chunkSize;
 					};
-					console.debug(`Chunk ${JSON.stringify(chunkType)}: ${chunkSize} B`);
+					//console.debug(`Chunk ${JSON.stringify(chunkType)}: ${chunkSize} B`);
 					if (!map.has(chunkType)) {
 						map.set(chunkType, []);
 					};

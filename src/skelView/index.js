@@ -52,7 +52,7 @@ let showResult = async (stream, props = {}) => {
 				break;
 			};
 		};
-		resultDisplay.append(`\nType          Offset    Size`);
+		resultDisplay.append(`\nType          No.     Offset      Size`);
 	} catch (err) {
 		resultDisplay.append(`\nUncaught ${err.name}: ${err.message ?? "No error message was provided."}\n${err.stack}`);
 	};
@@ -62,14 +62,14 @@ let showResult = async (stream, props = {}) => {
 			showKey = `0x${key.toString(16)}`;
 		};
 		showKey = showKey.padEnd(10, " ");
-		let isFirst = true;
+		let count = 1;
 		for (let [offset, size] of value) {
-			if (isFirst) {
-				isFirst = false;
-				resultDisplay.append(`\n${showKey}  - 0x${offset.toString(16).padStart(8, "0")}  ${size} B`);
+			if (count === 1) {
+				resultDisplay.append(`\n${showKey}  - #${`${count}`.padStart(4, "0")}   0x${offset.toString(16).padStart(8, "0")}  ${size} B`);
 			} else {
-				resultDisplay.append(`\n            - 0x${offset.toString(16).padStart(8, "0")}  ${size} B`);
+				resultDisplay.append(`\n            - #${`${count}`.padStart(4, "0")}   0x${offset.toString(16).padStart(8, "0")}  ${size} B`);
 			};
+			count ++;
 		};
 	};
 };
