@@ -206,7 +206,7 @@ let IntegerHandler = class IntegerHandler {
 		};
 		let result = buffer[offset];
 		if (isLittleEndian) {
-			for (let i = 1; i < 3; i ++) {
+			for (let i = 1; i < 4; i ++) {
 				result |= buffer[offset + i] << (i << 3);
 			};
 		} else {
