@@ -10,10 +10,49 @@ let IntegerHandler = class IntegerHandler {
 	static #RVLV_MIDDLE = 128;
 	static #RVLV_END = 64;
 	static #RVLV_SINGLE = 0;
-	static sizeVLV(buffer, offset = 0) {
+	static #ensureU8(buffer) {
 		if (buffer.BYTES_PER_ELEMENT !== 1 || typeof buffer?.buffer?.byteLength !== "number") {
 			throw(new TypeError("Input must be a Uint8Array."));
 		};
+	};
+	static readVLV(buffer, offset = 0) {
+		// VLV-8 are all big-endian.
+		let upThis = this;
+		upThis.#ensureU8(buffer);
+		let breakCrit = Math.min(buffer.length, 4),
+		result = 0;
+		for (let i = 0; i < breakCrit; i ++) {
+			let e = buffer[i + offset];
+			if (i > 0) {
+				result <<= 7;
+			};
+			result |= e & 127;
+			if ((e & this.#MASK_VLV) === 0) {
+				break;
+			};
+		};
+		return result;
+	};
+	static readVLVBigInt(buffer, offset = 0) {
+		// VLV-8 are all big-endian.
+		let upThis = this;
+		upThis.#ensureU8(buffer);
+		let breakCrit = Math.min(buffer.length, 16),
+		result = 0n;
+		for (let i = 0; i < breakCrit; i ++) {
+			let e = buffer[i + offset];
+			if (i > 0) {
+				result <<= 7n;
+			};
+			result |= BigInt(e & 127);
+			if ((e & this.#MASK_VLV) === 0) {
+				break;
+			};
+		};
+		return result;
+	};
+	static sizeVLV(buffer, offset = 0) {
+		this.#ensureU8(buffer);
 		let breakCrit = Math.min(buffer.length, 16);
 		for (let i = 0; i < breakCrit; i ++) {
 			let e = buffer[i + offset];
@@ -24,9 +63,7 @@ let IntegerHandler = class IntegerHandler {
 		return 0; // Failure
 	};
 	static sizeRVLV(buffer, offset = 0) {
-		if (buffer.BYTES_PER_ELEMENT !== 1 || typeof buffer?.buffer?.byteLength !== "number") {
-			throw(new TypeError("Input must be a Uint8Array."));
-		};
+		this.#ensureU8(buffer);
 		switch (buffer[offset] & this.#MASK_RVLV) {
 			case this.#RVLV_SINGLE: {
 				return 1;

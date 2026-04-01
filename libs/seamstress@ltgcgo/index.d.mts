@@ -14,9 +14,9 @@ export class IntegerHandler {
 	static readVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
 	/** Counts the size of a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
 	static sizeVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
-	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 16 bytes, after which it will error out. */
+	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 16 bytes, after which it will error out. Invalid RVLV values will also error out. */
 	static readRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
-	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. */
+	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. Invalid RVLV values will also error out. */
 	static readRVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
 	/** Counts the size of a reversible VLV-8 value in bytes. Will return 0 when failed. */
 	static sizeRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
