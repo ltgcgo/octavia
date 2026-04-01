@@ -62,6 +62,80 @@ let IntegerHandler = class IntegerHandler {
 		};
 		return 0; // Failure
 	};
+	static readRVLV(buffer, offset = 0) {
+		this.#ensureU8(buffer);
+		switch (buffer[offset] & this.#MASK_RVLV) {
+			case this.#RVLV_SINGLE: {
+				return buffer[offset] & 63;
+				break;
+			};
+			case this.#RVLV_MIDDLE:
+			case this.#RVLV_END: {
+				throw(new Error(`Invalid RVLV start state. (${offset} + 0)`));
+				break;
+			};
+		};
+		// The only valid state for the first offset byte in the buffer at this point is RVLV_START.
+		let storedState = 3, // 1-3: END, MIDDLE, START
+		breakCrit = Math.min(buffer.length, 4),
+		result = buffer[offset] & 63;
+		for (let i = 1; i < breakCrit; i ++) {
+			let e = buffer[i + offset],
+			currentState = e >> 6;
+			if (
+				currentState === 0 ||
+				(storedState === 3 && (0b00001001 >> currentState & 1)) ||
+				(storedState === 2 && currentState > storedState)
+			) {
+				throw(new Error(`Invalid transitioning state: ${storedState} → ${currentState}. (${offset} + 0)`));
+				return;
+			};
+			result <<= 6;
+			result |= e & 63;
+			if (currentState === 1) {
+				break;
+			};
+			storedState = currentState;
+		};
+		return result;
+	};
+	static readRVLVBigInt(buffer, offset = 0) {
+		this.#ensureU8(buffer);
+		switch (buffer[offset] & this.#MASK_RVLV) {
+			case this.#RVLV_SINGLE: {
+				return BigInt(buffer[offset] & 63);
+				break;
+			};
+			case this.#RVLV_MIDDLE:
+			case this.#RVLV_END: {
+				throw(new Error(`Invalid RVLV start state. (${offset} + 0)`));
+				break;
+			};
+		};
+		// The only valid state for the first offset byte in the buffer at this point is RVLV_START.
+		let storedState = 3, // 1-3: END, MIDDLE, START
+		breakCrit = Math.min(buffer.length, 4),
+		result = BigInt(buffer[offset] & 63);
+		for (let i = 1; i < breakCrit; i ++) {
+			let e = buffer[i + offset],
+			currentState = e >> 6;
+			if (
+				currentState === 0 ||
+				(storedState === 3 && (0b00001001 >> currentState & 1)) ||
+				(storedState === 2 && currentState > storedState)
+			) {
+				throw(new Error(`Invalid transitioning state: ${storedState} → ${currentState}. (${offset} + 0)`));
+				return;
+			};
+			result <<= 6n;
+			result |= BigInt(e & 63);
+			if (currentState === 1) {
+				break;
+			};
+			storedState = currentState;
+		};
+		return result;
+	};
 	static sizeRVLV(buffer, offset = 0) {
 		this.#ensureU8(buffer);
 		switch (buffer[offset] & this.#MASK_RVLV) {
