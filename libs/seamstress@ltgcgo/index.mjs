@@ -221,6 +221,8 @@ let IntegerHandler = class IntegerHandler {
 		let result = this.readInt32(buffer, isLittleEndian, offset);
 		if (result >>> 31) {
 			return 4294967296 + result;
+		} else {
+			return result;
 		};
 	};
 };
@@ -246,9 +248,19 @@ let Seamstress = class Seamstress {
 	static LENGTH_U32 = 2;
 	static TYPE_VLV = 0;
 	static TYPE_4CC = 8;
+	MASK_ENDIAN = 1;
+	MASK_LENGTH = 2;
+	MASK_PADDED = 4;
+	MASK_TYPE = 8;
+	ENDIAN_B = 0;
+	ENDIAN_L = 1;
+	LENGTH_VLV = 0;
+	LENGTH_U32 = 2;
+	TYPE_VLV = 0;
+	TYPE_4CC = 8;
 	#u8Dec = new TextDecoder("l9");
 	headerSize = 0;
-	type = 10; // 0 for non-reversible SEAM stream, 10 for SMF
+	type = 0; // 0 for non-reversible SEAM stream, 10 for SMF
 	readStream(stream, bypassRegulator = false) {};
 	readChunks(stream) {};
 	writeStrict(headerSerializer) {};
@@ -407,13 +419,11 @@ let Seamstress = class Seamstress {
 					map.get(chunkType).push([chunkStart + ptr + 1, chunkSize]);
 					readState = 0;
 				};
+				ptr ++;
 				if (skipLength > 0) {
 					ptr += skipLength;
 					skipLength = 0;
-				} else {
-					ptr ++;
-				};
-				if (skipLength < 0) {
+				} else if (skipLength < 0) {
 					skipLength = 0;
 				};
 			};

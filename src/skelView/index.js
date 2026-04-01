@@ -19,7 +19,7 @@ self.b = new Uint8Array([0b11000001, 0b01111111, 0, 0]);
 self.c = new Uint8Array([0b11000001, 0b10010101, 0b01111111, 0]);
 self.d = new Uint8Array([0b11000001, 0b10010101, 0b10010101, 0b01111111, 0]);*/
 
-const resultDisplay = $e("pre");
+const resultDisplay = $e("div#results");
 const fileProps = JSON.parse('{"extensions":[],"startIn":"pictures","id":"binOpener","description":"Open a file in a tag-length-value structure."}');
 for (let extension of "mid,kar,aiff,dls,jpeg,jpg,rmi,sf2,wav,webp,rseam,vseam".split(",")) {
 	fileProps.extensions.push(extension.toLowerCase());

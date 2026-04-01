@@ -76,19 +76,19 @@ export class Seamstress {
 	* Masks endianness of length values. 0 for BE, 1 for LE.
 	* Big-endian VLV denotes VLV-8, while "little-endian VLV" denotes RVLV-8, despite RVLV-8 still being big endian.
 	*/
-	static MASK_ENDIAN: number;
+	MASK_ENDIAN: number;
 	/** Masks encoding of length values. 0 for VLV-8, 1 for u32. "Little-endian VLV-8" is invalid and will error out. */
-	static MASK_LENGTH: number;
+	MASK_LENGTH: number;
 	/** Masks the boolean of if the chunk payloads are padded or not. A true value will treat chunks as padded to even bytes. */
-	static MASK_PADDED: number;
+	MASK_PADDED: number;
 	/** Masks type of type chunks. 0 for VLV-8, 1 for FourCC (i32 BE). */
-	static MASK_TYPE: number;
-	static ENDIAN_B: number;
-	static ENDIAN_L: number;
-	static LENGTH_VLV: number;
-	static LENGTH_U32: number;
-	static TYPE_VLV: number;
-	static TYPE_4CC: number;
+	MASK_TYPE: number;
+	ENDIAN_B: number;
+	ENDIAN_L: number;
+	LENGTH_VLV: number;
+	LENGTH_U32: number;
+	TYPE_VLV: number;
+	TYPE_4CC: number;
 	/** (Non-finalized) Returns if the list chunk type already exists. Only valid with FourCC types. */
 	hasList(type: string): boolean;
 	/** (Non-finalized) Registers a type of list chunk, and returns true when successful (isn't already registered). Only valid with FourCC types. Useful for FourCC-typed list chunks containing subchunks. "LIST" will always be registered for IFF/RIFF files.
