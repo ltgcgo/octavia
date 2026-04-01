@@ -285,6 +285,7 @@ let Seamstress = class Seamstress {
 				continue;
 			};
 			let ptr = skipLength;
+			skipLength = 0;
 			while (ptr < chunk.length) {
 				console.debug(`${chunkStart + ptr}(${chunkStart} + ${ptr}) - ${readState}`);
 				let e = chunk[ptr];
@@ -421,8 +422,13 @@ let Seamstress = class Seamstress {
 				};
 				ptr ++;
 				if (skipLength > 0) {
-					ptr += skipLength;
-					skipLength = 0;
+					if (skipLength + ptr < chunk.length) {
+						ptr += skipLength;
+						skipLength = 0;
+					} else {
+						skipLength += ptr - chunk.length;
+						ptr = chunk.length;
+					};
 				} else if (skipLength < 0) {
 					skipLength = 0;
 				};

@@ -41,7 +41,7 @@ let showResult = async (stream, props = {}) => {
 	while (resultDisplay.childNodes.length > 0) {
 		resultDisplay.childNodes[0].remove();
 	};
-	resultDisplay.append(`Showing structure of binary stream "${props.name}" (${props.size >= 0 ? props.size : "N/A"} B).\nMode: ${props.targetMode}\n`);
+	resultDisplay.append(`Showing the structure of binary stream "${props.name}" (${props.size >= 0 ? props.size : "N/A"} B).\nMode: ${props.targetMode}\n`);
 	try {
 		switch (props.targetMode) {
 			case "smf": {
@@ -52,6 +52,7 @@ let showResult = async (stream, props = {}) => {
 				break;
 			};
 		};
+		resultDisplay.append(`\nType          Offset    Size`);
 	} catch (err) {
 		resultDisplay.append(`\nUncaught ${err.name}: ${err.message ?? "No error message was provided."}\n${err.stack}`);
 	};
@@ -61,7 +62,15 @@ let showResult = async (stream, props = {}) => {
 			showKey = `0x${key.toString(16)}`;
 		};
 		showKey = showKey.padEnd(10, " ");
-		resultDisplay.append(`\n${showKey}  ${JSON.stringify(value)}`);
+		let isFirst = true;
+		for (let [offset, size] of value) {
+			if (isFirst) {
+				isFirst = false;
+				resultDisplay.append(`\n${showKey}  - 0x${offset.toString(16).padStart(8, "0")}  ${size} B`);
+			} else {
+				resultDisplay.append(`\n            - 0x${offset.toString(16).padStart(8, "0")}  ${size} B`);
+			};
+		};
 	};
 };
 
