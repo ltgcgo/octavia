@@ -20,6 +20,7 @@ let IntegerHandler = class IntegerHandler {
 		let upThis = this;
 		upThis.#ensureU8(buffer);
 		let breakCrit = Math.min(buffer.length, 4),
+		breakTest = breakCrit - 1,
 		result = 0;
 		for (let i = 0; i < breakCrit; i ++) {
 			let e = buffer[i + offset];
@@ -29,6 +30,8 @@ let IntegerHandler = class IntegerHandler {
 			result |= e & 127;
 			if ((e & this.#MASK_VLV) === 0) {
 				break;
+			} else if (breakTest >= breakCrit) {
+				throw(new Error(`VLV-8 did not terminate at the end of the read buffer.`));
 			};
 		};
 		return result;
@@ -38,6 +41,7 @@ let IntegerHandler = class IntegerHandler {
 		let upThis = this;
 		upThis.#ensureU8(buffer);
 		let breakCrit = Math.min(buffer.length, 16),
+		breakTest = breakCrit - 1,
 		result = 0n;
 		for (let i = 0; i < breakCrit; i ++) {
 			let e = buffer[i + offset];
@@ -47,6 +51,8 @@ let IntegerHandler = class IntegerHandler {
 			result |= BigInt(e & 127);
 			if ((e & this.#MASK_VLV) === 0) {
 				break;
+			} else if (breakTest >= breakCrit) {
+				throw(new Error(`VLV-8 did not terminate at the end of the read buffer.`));
 			};
 		};
 		return result;
@@ -78,6 +84,7 @@ let IntegerHandler = class IntegerHandler {
 		// The only valid state for the first offset byte in the buffer at this point is RVLV_START.
 		let storedState = 3, // 1-3: END, MIDDLE, START
 		breakCrit = Math.min(buffer.length, 4),
+		breakTest = breakCrit - 1,
 		result = buffer[offset] & 63;
 		for (let i = 1; i < breakCrit; i ++) {
 			let e = buffer[i + offset],
@@ -94,6 +101,8 @@ let IntegerHandler = class IntegerHandler {
 			result |= e & 63;
 			if (currentState === 1) {
 				break;
+			} else if (i >= breakTest) {
+				throw(new Error(`RVLV-8 did not terminate at the end of the read buffer.`));
 			};
 			storedState = currentState;
 		};
@@ -115,6 +124,7 @@ let IntegerHandler = class IntegerHandler {
 		// The only valid state for the first offset byte in the buffer at this point is RVLV_START.
 		let storedState = 3, // 1-3: END, MIDDLE, START
 		breakCrit = Math.min(buffer.length, 4),
+		breakTest = breakCrit - 1,
 		result = BigInt(buffer[offset] & 63);
 		for (let i = 1; i < breakCrit; i ++) {
 			let e = buffer[i + offset],
@@ -131,6 +141,8 @@ let IntegerHandler = class IntegerHandler {
 			result |= BigInt(e & 63);
 			if (currentState === 1) {
 				break;
+			} else if (i >= breakTest) {
+				throw(new Error(`RVLV-8 did not terminate at the end of the read buffer.`));
 			};
 			storedState = currentState;
 		};
@@ -275,6 +287,7 @@ let Seamstress = class Seamstress {
 					// Reversible VLV
 					let lengthSize = VLVHandler.sizeRVLV(chunk, ptr + skipLength);
 					skipLength += lengthSize;
+
 				} else {
 					// Standard VLV
 					let lengthSize = VLVHandler.sizeVLV(chunk, ptr + skipLength);
