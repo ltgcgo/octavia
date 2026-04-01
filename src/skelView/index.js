@@ -20,12 +20,26 @@ self.c = new Uint8Array([0b11000001, 0b10010101, 0b01111111, 0]);
 self.d = new Uint8Array([0b11000001, 0b10010101, 0b10010101, 0b01111111, 0]);*/
 
 const resultDisplay = $e("div#results");
+const typeSelector = $e("select#loaderType");
 const fileProps = JSON.parse('{"extensions":[],"startIn":"pictures","id":"binOpener","description":"Open a file in a tag-length-value structure."}');
-for (let extension of "mid,kar,aiff,dls,jpeg,jpg,rmi,sf2,wav,webp,rseam,vseam".split(",")) {
-	fileProps.extensions.push(extension.toLowerCase());
-	fileProps.extensions.push(extension.toUpperCase());
+const fileTypes = {
+	"mid": "smf",
+	"kar": "smf",
+	"aif": "iff",
+	"aiff": "iff",
+	"dls": "riff",
+	"rmi": "riff",
+	"sf2": "riff",
+	"wav": "riff",
+	"webp": "riff",
+	"rseam": "rseam",
+	"vseam": "vseam"
 };
-console.debug(fileProps);
+for (let extension in fileTypes) {
+	fileProps.extensions.push(`.${extension.toLowerCase()}`);
+	fileProps.extensions.push(`.${extension.toUpperCase()}`);
+};
+//console.debug(fileProps);
 
 let showResult = async (stream, props = {}) => {
 	if (!props.targetMode) {
@@ -51,6 +65,23 @@ let showResult = async (stream, props = {}) => {
 				map = await rawParser.getMapFromStream(stream);
 				break;
 			};
+			case "iff": {
+				let rawParser = new Seamstress();
+				rawParser.headerSize = 12;
+				rawParser.type = rawParser.TYPE_4CC | rawParser.ENDIAN_B | rawParser.LENGTH_U32 | rawParser.MASK_PADDED;
+				map = await rawParser.getMapFromStream(stream);
+				break;
+			};
+			case "riff": {
+				let rawParser = new Seamstress();
+				rawParser.headerSize = 12;
+				rawParser.type = rawParser.TYPE_4CC | rawParser.ENDIAN_L | rawParser.LENGTH_U32 | rawParser.MASK_PADDED;
+				map = await rawParser.getMapFromStream(stream);
+				break;
+			};
+			default: {
+				throw(new TypeError(`Stream type "${props.targetMode}" is not yet supported.`));
+			};
 		};
 		resultDisplay.append(`\nType          No.     Offset      Size`);
 	} catch (err) {
@@ -74,10 +105,33 @@ let showResult = async (stream, props = {}) => {
 	};
 };
 
+let invokeAction = async () => {
+	if (self.selectedFile) {
+		self.selectedFile = selectedFile;
+		let intendedMode = typeSelector.value;
+		if (intendedMode === "auto") {
+			let extensionIdx = selectedFile.name?.lastIndexOf(".");
+			if (extensionIdx > 0) {
+				let extensionName = selectedFile.name.substring(extensionIdx + 1).toLowerCase();
+				intendedMode = fileTypes[extensionName];
+				if (!intendedMode) {
+					resultDisplay.append(`\nAssociation for extension "${extensionName}" is not found for: ${selectedFile.name}.`);
+					return;
+				};
+			} else {
+				resultDisplay.append(`\nInvalid extension for name: ${selectedFile.name}.`);
+				return;
+			};
+		};
+		selectedFile.targetMode = intendedMode;
+		await showResult(selectedFile.stream(), selectedFile);
+	};
+};
 $e("b#openFile").addEventListener("mouseup", async () => {
 	let selectedFile = await fileOpen(fileProps);
 	if (selectedFile) {
-		selectedFile.targetMode = "smf";
-		await showResult(selectedFile.stream(), selectedFile);
+		self.selectedFile = selectedFile;
 	};
+	await invokeAction();
 });
+typeSelector.addEventListener("change", invokeAction);

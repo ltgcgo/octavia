@@ -402,7 +402,7 @@ let Seamstress = class Seamstress {
 						throw(new Error(`Chunk type read failed at offset ${chunkStart + ptr}.`));
 					};
 					if ((upThis.type & upThis.MASK_LENGTH) === upThis.LENGTH_U32) {
-						chunkSize = IntegerHandler.readUint32(sizeBuffer);
+						chunkSize = IntegerHandler.readUint32(sizeBuffer, (upThis.type & upThis.MASK_ENDIAN) === upThis.ENDIAN_L);
 					} else if ((upThis.type & upThis.MASK_ENDIAN) === upThis.ENDIAN_L) {
 						chunkSize = IntegerHandler.readRVLV(sizeBuffer);
 					} else {
@@ -412,6 +412,10 @@ let Seamstress = class Seamstress {
 						throw(new Error(`Chunk size read failed at offset ${chunkStart + ptr}.`));
 					} else {
 						skipLength = chunkSize;
+						if ((upThis.type & upThis.MASK_PADDED) && (chunkSize & 1)) {
+							// Pad to a multiple of 2 when specified.
+							skipLength += 1;
+						};
 					};
 					//console.debug(`Chunk ${JSON.stringify(chunkType)}: ${chunkSize} B`);
 					if (!map.has(chunkType)) {
