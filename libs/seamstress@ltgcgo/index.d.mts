@@ -20,22 +20,22 @@ export class IntegerHandler {
 	static readRVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
 	/** Counts the size of a reversible VLV-8 value in bytes. Will return 0 when failed. */
 	static sizeRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
-	/** Reads a boolean. Will error out if out of bounds. A 1-sized array has 8 boolean values, 2-sized has 16, and vice versa. */
+	/** Reads a boolean. Will error out if out of bounds. A 1-sized array has 8 boolean values, 2-sized has 16, and vice versa. `85` will be expanded to `[1, 0, 1, 0, 1, 0, 1, 0]`, while `170` will be expanded to `[0, 1, 0, 1, 0, 1, 0, 1]`. */
 	static readBool(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Reads an int8 value. Will error out if out of bounds. */
 	static readInt8(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Reads an int16 value. Will error out if out of bounds. */
-	static readInt16(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): number;
+	static readInt16(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): number;
 	/** Reads a uint16 value. Will error out if out of bounds. */
-	static readUint16(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): number;
+	static readUint16(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): number;
 	/** Reads an int32 value. Will error out if out of bounds. */
-	static readInt32(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): number;
+	static readInt32(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): number;
 	/** Reads a uint32 value. Will error out if out of bounds. */
-	static readUint32(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): number;
+	static readUint32(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): number;
 	/** Reads an int64 value. Will error out if out of bounds. */
-	static readInt64(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): BigInt;
+	static readInt64(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): BigInt;
 	/** Reads a uint64 value. Will error out if out of bounds. */
-	static readUint64(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian: boolean, offset?: number): BigInt;
+	static readUint64(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): BigInt;
 }
 
 export interface SeamstressContext {

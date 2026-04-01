@@ -11,7 +11,7 @@ let IntegerHandler = class IntegerHandler {
 	static #RVLV_END = 64;
 	static #RVLV_SINGLE = 0;
 	static #ensureU8(buffer) {
-		if (buffer.BYTES_PER_ELEMENT !== 1 || typeof buffer?.buffer?.byteLength !== "number") {
+		if (buffer.constructor !== Uint8Array && buffer.constructor !== Uint8ClampedArray) {
 			throw(new TypeError("Input must be a Uint8Array."));
 		};
 	};
@@ -167,6 +167,48 @@ let IntegerHandler = class IntegerHandler {
 				return i + 1;
 			};
 			storedState = currentState;
+		};
+	};
+	static readBool(buffer, offset = 0) {
+		this.#ensureU8(buffer);
+		if (offset < 0 || offset > 4294967295 || (offset >>> 3) >= buffer.length) {
+			throw(new RangeError(`Invalid binary offset. (${offset})`));
+		};
+		return (buffer[offset >> 3] >> (offset & 7) & 1) !== 0;
+	};
+	static readInt8(buffer, offset = 0) {
+		this.#ensureU8(buffer);
+		if (offset < 0 || offset >= buffer.length) {
+			throw(new RangeError(`Invalid offset. (${offset})`));
+		};
+		let result = buffer[offset];
+		if (result >> 7) {
+			result -= 256;
+		};
+		return result;
+	};
+	static readInt32(buffer, isLittleEndian = false, offset = 0) {
+		this.#ensureU8(buffer);
+		if (offset < 0 || offset + 3 >= buffer.length) {
+			throw(new RangeError(`Invalid offset. (${offset})`));
+		};
+		let result = buffer[offset];
+		if (isLittleEndian) {
+			for (let i = 1; i < 3; i ++) {
+				result |= buffer[offset + i] << (i << 3);
+			};
+		} else {
+			for (let i = 1; i < 4; i ++) {
+				result <<= 8;
+				result |= buffer[offset + i];
+			};
+		};
+		return result;
+	};
+	static readUint32(buffer, isLittleEndian = false, offset = 0) {
+		let result = this.readInt32(buffer, isLittleEndian, offset);
+		if (result >>> 31) {
+			return 4294967296 + result;
 		};
 	};
 };
