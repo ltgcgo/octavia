@@ -360,6 +360,9 @@ let Seamstress = class Seamstress {
 		*/
 		(async () => {
 			for await (let chunk of stream) {
+				if (streamHost.closed) {
+					break;
+				};
 				let dPrefix = `Stream chunk ${chunkId}`;
 				if (skipLength > chunk.length) {
 					let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
@@ -400,6 +403,9 @@ let Seamstress = class Seamstress {
 				let ptr = skipLength;
 				skipLength = 0;
 				while (ptr < chunk.length) {
+					if (streamHost.closed) {
+						break;
+					};
 					let dPrefix2 = `${dPrefix} (${chunkStart + ptr}, ${chunkStart} + ${ptr})`;
 					//console.debug(`${chunkStart + ptr}(${chunkStart} + ${ptr}) - ${readState}`);
 					let e = chunk[ptr];
@@ -421,6 +427,7 @@ let Seamstress = class Seamstress {
 								if (readState === 0) {
 									if (rvlvState === IntegerHandler.RVLV_SINGLE) {
 										readState = 4;
+										ptr ++;
 										continue;
 									} else if (rvlvState !== IntegerHandler.RVLV_START) {
 										throw(new Error(`Invalid RVLV-8 type read state ${readState} encountered at offset ${chunkStart + ptr}: Did not start RVLV-8 on the first byte.`));
@@ -469,6 +476,7 @@ let Seamstress = class Seamstress {
 								if (readState === 4) {
 									if (rvlvState === IntegerHandler.RVLV_SINGLE) {
 										readState = 8;
+										ptr ++;
 										continue;
 									} else if (rvlvState !== IntegerHandler.RVLV_START) {
 										throw(new Error(`Invalid RVLV-8 size read state ${readState} encountered at offset ${chunkStart + ptr}: Did not start RVLV-8 on the first byte.`));
@@ -569,7 +577,9 @@ let Seamstress = class Seamstress {
 				console.info(`Incoming stream may have ended early, with ${skipLength} B still expected.${isHeaderRead ? "" : " The header still hasn't been read."}`);
 			};
 			streamHost.close();
-		})();
+		})().catch((err) => {
+			streamHost.error(err);
+		});
 		return streamHost.readable;
 	};
 	readChunks(stream) {};

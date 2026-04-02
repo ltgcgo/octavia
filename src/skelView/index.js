@@ -41,6 +41,10 @@ for (let extension in fileTypes) {
 };
 //console.debug(fileProps);
 
+let summarizeSeamstressChunk = (sChunk) => {
+	return `#${sChunk.id} (${sChunk.type}, #${sChunk.chunkId}): ${sChunk.offset}/${sChunk.size}, ${sChunk.data.length} B.`;
+};
+
 let showResult = async (stream, props = {}) => {
 	if (!props.targetMode) {
 		throw(new Error("A target mode must be defined."));
@@ -66,7 +70,7 @@ let showResult = async (stream, props = {}) => {
 				let splitStream = stream.tee();
 				(async () => {
 					for await (let chunk of rawParser.readStream(splitStream[1])) {
-						console.debug(chunk);
+						console.debug(summarizeSeamstressChunk(chunk));
 					};
 					console.info("Finished chunk skimming.");
 				})();
@@ -89,7 +93,7 @@ let showResult = async (stream, props = {}) => {
 				let splitStream = stream.tee();
 				(async () => {
 					for await (let chunk of rawParser.readStream(splitStream[1])) {
-						console.debug(chunk);
+						console.debug(summarizeSeamstressChunk(chunk));
 					};
 					console.info("Finished chunk skimming.");
 				})();
