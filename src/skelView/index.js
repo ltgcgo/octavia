@@ -63,7 +63,11 @@ let showResult = async (stream, props = {}) => {
 				rawParser.headerSize = 0;
 				rawParser.type = Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32;
 				let splitStream = stream.tee();
-				rawParser.readStream(splitStream[1]);
+				(async () => {
+					for await (let chunk of rawParser.readStream(splitStream[1])) {
+						console.debug(chunk);
+					};
+				})();
 				map = await rawParser.getMapFromStream(splitStream[0]);
 				break;
 			};

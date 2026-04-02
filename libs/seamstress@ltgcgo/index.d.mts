@@ -66,6 +66,14 @@ export interface SeamstressChunk {
 	data: Uint8Array;
 	/** The context properties passed from header. */
 	context?: SeamstressContext;
+	/**
+	* @param id Same as `SeamstressChunk.id`.
+	* @param chunkId Same as `SeamstressChunk.chunkId`.
+	* @param type Same as `SeamstressChunk.type`.
+	* @param offset Same as `SeamstressChunk.offset`.
+	* @param size Same as `SeamstressChunk.size`.
+	*/
+	constructor(id: number, chunkId: number, type: number|string, offset: number, size: number);
 }
 
 export class SeamstressStrictWriter {
@@ -101,6 +109,8 @@ export class Seamstress {
 	LENGTH_U32: number;
 	TYPE_VLV: number;
 	TYPE_4CC: number;
+	/** Set to true to emit verbose debug messages. */
+	debugMode: boolean;
 	/** (Non-finalized, WIP) Returns if the list chunk type already exists. Only valid with FourCC types. */
 	hasList(type: string): boolean;
 	/** (Non-finalized, WIP) Registers a type of list chunk, and returns true when successful (isn't already registered). Only valid with FourCC types. Useful for FourCC-typed list chunks containing subchunks. "LIST" will always be registered for IFF/RIFF files.

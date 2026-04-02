@@ -233,10 +233,66 @@ let IntegerHandler = class IntegerHandler {
 
 let SeamstressChunk = class SeamstressChunk {
 	id = 0;
-	type = null;
+	chunkId = 0;
+	type = undefined;
 	offset = 0;
-	data = null;
-	context = null;
+	size = 0;
+	data = undefined;
+	context = undefined;
+	get isFinal() {
+		if (this.data.length + this.offset === size) {
+			return true;
+		};
+		return false;
+	};
+	get isBuffered() {
+		if (
+			this.offset === 0 &&
+			this.data.length === size
+		) {
+			return true;
+		};
+		return false;
+	};
+	constructor(id, chunkId, type, offset, size) {
+		if (typeof id === "number" && id >= 0) {
+			this.id = id;
+		} else {
+			throw(new TypeError(`Provided invalid value for "id". Must be a non-negative integer.`));
+		};
+		if (typeof chunkId === "number" && id >= 0) {
+			this.chunkId = chunkId;
+		} else {
+			throw(new TypeError(`Provided invalid value for "chunkId". Must be a non-negative integer.`));
+		};
+		switch (typeof type) {
+			case "number": {
+				if (type >= 0) {
+					this.type = type;
+				} else {
+					throw(new RangeError(`Provided invalid value for "type". Must be a non-negative integer or a string.`));
+				};
+				break;
+			};
+			case "string": {
+				this.type = type;
+				break;
+			};
+			default: {
+				throw(new TypeError(`Provided invalid value for "type". Must be a non-negative integer or a string.`));
+			};
+		};
+		if (typeof size === "number" && size >= 0) {
+			this.size = size;
+		} else {
+			throw(new TypeError(`Provided invalid value for "size". Must be a non-negative integer.`));
+		};
+		if (typeof offset === "number" && offset >= 0 && offset <= size) {
+			this.offset = offset;
+		} else {
+			throw(new TypeError(`Provided invalid value for "offset". Must be a non-negative integer.`));
+		};
+	};
 };
 
 let SeamstressStrictWriter = class SeamstressStrictWriter {};
@@ -262,7 +318,22 @@ let Seamstress = class Seamstress {
 	LENGTH_U32 = 2;
 	TYPE_VLV = 0;
 	TYPE_4CC = 8;
+	debugMode = true;
 	#u8Dec = new TextDecoder("l9");
+	#increaseInMap(map, key) {
+		if (map.has(key)) {
+			let value = map.get(key);
+			if (typeof value === "number" && value >= 0) {
+				map.set(key, ++ value);
+				return value;
+			} else {
+				throw(new TypeError(`Key "${key}" in the provided map must contain non-negative numeric values.`));
+			};
+		} else {
+			map.set(key, 0);
+			return 0;
+		};
+	};
 	headerSize = 0;
 	type = 0; // 0 for non-reversible SEAM stream, 10 for SMF
 	readStream(stream, bypassRegulator = false) {
@@ -273,6 +344,11 @@ let Seamstress = class Seamstress {
 		sizeBuffer = new Uint8Array(4),
 		readState = 0,
 		isHeaderRead = upThis.headerSize === 0;
+		let seamChunkId = 0, seamChunkMap = new Map(),
+		seamContext = (upThis.headerSize > 0 && upThis.headerHandler !== undefined) ? undefined : {};
+		if (upThis.headerSize > 0 && upThis.headerHandler !== undefined && typeof upThis.headerHandler !== "function") {
+			throw(new TypeError("Seamstress.headerHandler must be a function."));
+		};
 		let chunkType, chunkSize;
 		/*
 		`readState` has the following states.
@@ -284,25 +360,29 @@ let Seamstress = class Seamstress {
 			for await (let chunk of stream) {
 				let dPrefix = `Stream chunk ${chunkId}`;
 				if (skipLength > chunk.length) {
-					console.debug(`${dPrefix} (${chunkStart}): Should buffer the entire chunk.`);
+					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should buffer the entire chunk.`);
 					skipLength -= chunk.length;
+					chunkStart += chunk.length;
 					continue;
 				} else if (skipLength === chunk.length) {
-					console.debug(`${dPrefix} (${chunkStart}): Should commit the entire chunk and flush the buffer.`);
+					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should commit the entire chunk and flush the buffer.`);
 					if (isHeaderRead) {
-						console.debug(`Committed the buffer as a normal chunk, size ${skipLength} B.`);
+						upThis.debugMode && console.debug(`Committed the buffer as a normal chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
+						seamChunkId ++;
 					} else {
-						console.debug(`Committed the buffer as a header chunk, size ${skipLength} B.`);
+						upThis.debugMode && console.debug(`Committed the buffer as a header chunk, size ${skipLength} B.`);
 						isHeaderRead = true;
 					};
 					skipLength = 0;
+					chunkStart += chunk.length;
 					continue;
 				} else if (skipLength > 0) {
-					console.debug(`${dPrefix} (${chunkStart}): Should flush the buffer.`);
+					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should flush the buffer.`);
 					if (isHeaderRead) {
-						console.debug(`Committed the buffer as a normal chunk, size ${skipLength} B.`);
+						upThis.debugMode && console.debug(`Committed the buffer as a normal chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
+						seamChunkId ++;
 					} else {
-						console.debug(`Committed the buffer as a header chunk, size ${skipLength} B.`);
+						upThis.debugMode && console.debug(`Committed the buffer as a header chunk, size ${skipLength} B.`);
 						isHeaderRead = true;
 					};
 				};
@@ -330,6 +410,7 @@ let Seamstress = class Seamstress {
 								if (readState === 0) {
 									if (rvlvState === IntegerHandler.RVLV_SINGLE) {
 										readState = 4;
+										continue;
 									} else if (rvlvState !== IntegerHandler.RVLV_START) {
 										throw(new Error(`Invalid RVLV-8 type read state ${readState} encountered at offset ${chunkStart + ptr}: Did not start RVLV-8 on the first byte.`));
 									};
@@ -377,6 +458,7 @@ let Seamstress = class Seamstress {
 								if (readState === 4) {
 									if (rvlvState === IntegerHandler.RVLV_SINGLE) {
 										readState = 8;
+										continue;
 									} else if (rvlvState !== IntegerHandler.RVLV_START) {
 										throw(new Error(`Invalid RVLV-8 size read state ${readState} encountered at offset ${chunkStart + ptr}: Did not start RVLV-8 on the first byte.`));
 									};
@@ -441,20 +523,23 @@ let Seamstress = class Seamstress {
 								skipLength += 1;
 							};
 						};
-						// Enqueue logic here
-						console.debug(`${dPrefix2}: Set chunk ${JSON.stringify(chunkType)}, size ${chunkSize} B.`);
+						upThis.debugMode && console.debug(`${dPrefix2}: Set chunk ${JSON.stringify(chunkType)} (#${upThis.#increaseInMap(seamChunkMap, chunkType) + 1}), size ${chunkSize} B.`);
 						readState = 0;
 					};
 					ptr ++;
 					if (skipLength > 0) {
 						if (skipLength + ptr < chunk.length) {
-							console.debug(`${dPrefix2}: Enqueue a complete chunk "${chunkType}", size ${skipLength} B.`);
+							upThis.debugMode && console.debug(`${dPrefix2}: Enqueue a complete chunk "${chunkType}" (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
 							ptr += skipLength;
 							skipLength = 0;
+							seamChunkId ++;
 						} else {
-							console.debug(`${dPrefix2}: Enqueue a potentially incomplete chunk "${chunkType}", size ${chunk.length - ptr} B.`);
+							upThis.debugMode && console.debug(`${dPrefix2}: Enqueue a potentially incomplete chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}) "${chunkType}", size ${chunk.length - ptr} B.`);
 							skipLength += ptr - chunk.length;
 							ptr = chunk.length;
+							if (skipLength === 0) {
+								seamChunkId ++;
+							};
 						};
 					} else if (skipLength < 0) {
 						skipLength = 0;
@@ -464,7 +549,7 @@ let Seamstress = class Seamstress {
 				chunkId ++;
 			};
 			if (skipLength > 0) {
-				console.info(`Incoming stream may have ended early, with ${skipLength} B still expected.`);
+				console.info(`Incoming stream may have ended early, with ${skipLength} B still expected.${isHeaderRead ? "" : " The header still hasn't been read."}`);
 			};
 		})();
 	};
@@ -488,6 +573,7 @@ let Seamstress = class Seamstress {
 		for await (let chunk of stream) {
 			if (skipLength >= chunk.length) {
 				skipLength -= chunk.length;
+				chunkStart += chunk.length;
 				continue;
 			};
 			let ptr = skipLength;
