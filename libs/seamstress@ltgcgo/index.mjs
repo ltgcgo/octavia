@@ -273,6 +273,7 @@ let Seamstress = class Seamstress {
 		sizeBuffer = new Uint8Array(4),
 		readState = 0,
 		isHeaderRead = upThis.headerSize === 0;
+		let chunkType, chunkSize;
 		/*
 		`readState` has the following states.
 		0-3: TYPE_READ_B0...3
@@ -288,20 +289,20 @@ let Seamstress = class Seamstress {
 					continue;
 				} else if (skipLength === chunk.length) {
 					console.debug(`${dPrefix} (${chunkStart}): Should commit the entire chunk and flush the buffer.`);
-					skipLength = 0;
 					if (isHeaderRead) {
-						console.debug(`Committed the buffer as a normal chunk.`);
+						console.debug(`Committed the buffer as a normal chunk, size ${skipLength} B.`);
 					} else {
-						console.debug(`Committed the buffer as a header chunk.`);
+						console.debug(`Committed the buffer as a header chunk, size ${skipLength} B.`);
 						isHeaderRead = true;
 					};
+					skipLength = 0;
 					continue;
 				} else if (skipLength > 0) {
 					console.debug(`${dPrefix} (${chunkStart}): Should flush the buffer.`);
 					if (isHeaderRead) {
-						console.debug(`Committed the buffer as a normal chunk.`);
+						console.debug(`Committed the buffer as a normal chunk, size ${skipLength} B.`);
 					} else {
-						console.debug(`Committed the buffer as a header chunk.`);
+						console.debug(`Committed the buffer as a header chunk, size ${skipLength} B.`);
 						isHeaderRead = true;
 					};
 				};
@@ -412,7 +413,8 @@ let Seamstress = class Seamstress {
 					};
 					if (readState === 8) {
 						// Read both type and size at once.
-						let chunkType, chunkSize;
+						chunkType = undefined;
+						chunkSize = undefined;
 						if ((upThis.type & upThis.MASK_TYPE) === upThis.TYPE_4CC) {
 							chunkType = upThis.#u8Dec.decode(typeBuffer);
 						} else if ((upThis.type & upThis.MASK_ENDIAN) === upThis.ENDIAN_L) {
@@ -440,15 +442,17 @@ let Seamstress = class Seamstress {
 							};
 						};
 						// Enqueue logic here
-						console.debug(`${dPrefix2}: Enqueue chunk ${JSON.stringify(chunkType)}, size ${chunkSize} B.`);
+						console.debug(`${dPrefix2}: Set chunk ${JSON.stringify(chunkType)}, size ${chunkSize} B.`);
 						readState = 0;
 					};
 					ptr ++;
 					if (skipLength > 0) {
 						if (skipLength + ptr < chunk.length) {
+							console.debug(`${dPrefix2}: Enqueue a complete chunk "${chunkType}", size ${skipLength} B.`);
 							ptr += skipLength;
 							skipLength = 0;
 						} else {
+							console.debug(`${dPrefix2}: Enqueue a potentially incomplete chunk "${chunkType}", size ${chunk.length - ptr} B.`);
 							skipLength += ptr - chunk.length;
 							ptr = chunk.length;
 						};
@@ -458,6 +462,9 @@ let Seamstress = class Seamstress {
 				};
 				chunkStart += chunk.length;
 				chunkId ++;
+			};
+			if (skipLength > 0) {
+				console.info(`Incoming stream may have ended early, with ${skipLength} B still expected.`);
 			};
 		})();
 	};
