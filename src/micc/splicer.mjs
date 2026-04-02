@@ -1,4 +1,4 @@
-// Copyright 2024-2025 (C) Lightingale Community
+// Copyright 2024-2026 (C) Lightingale Community
 // Licensed under GNU LGPL 3.0
 
 // This is a part of Rochelle stream splicer. Currently placed here for the ease of development, however this should not be considered as if this component belongs here.

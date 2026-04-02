@@ -1,4 +1,4 @@
-// Copyright 2025 (C) Lightingale Community
+// 2025-2026 © Lightingale Community
 // Licensed under GNU LGPL 3.0
 
 /**
