@@ -39,21 +39,33 @@ export class IntegerHandler {
 }
 
 export interface SeamstressContext {
-	/** Defines the maximum length of the stream that's expected. If the stream exceeds the specified size, it will be cut off at the specified size (length <= size + headerSize). It's always desired to keep the size sealed once parsed. */
+	/** Defines the maximum length of the stream that's expected. If the stream exceeds the specified size, it will be cut off at the specified size (length <= size + headerSize). It's always desired to keep the size sealed once parsed. Keep undefined when the size is not or cannot be known. */
 	size?: number;
+	/** Defines the base structure type of the stream. Common values include `RIFF` for RIFF streams and `FORM` for IFF streams. */
+	binaryType?: string;
+	/** Defines the upper format of the stream. Common values include `WAVE` for the Microsoft `.wav` files, and `AIFF` for the Apple `.aif` files. */
+	binaryFormat?: string;
 }
 
 export interface SeamstressChunk {
 	/** Index of the (streamed) chunk in u32, starts from 0 and increases by 1 only when a new chunk is progressed. This is to easily differentiate chunks. */
 	id: number;
-	/** Type of the (streamed) chunk as Latin-9 strings. */
+	/** Cumulative index of the current chunk in u32, starts from 0 and increases by 1 when a new chunk of the same type is progressed. */
+	chunkId: number;
+	/** Type of the current chunk as either integers or Latin-9 strings. */
 	type: number|string;
-	/** The offset of the chunk. Chunks from `readChunk()` and first chunk from `readStream()` are all  */
+	/** The offset of the current (sub)chunk. Chunks from `readChunk()` and the first chunk from `readStream()` have this value always set to 0. */
 	offset: number;
+	/** The full size of the current chunk. */
+	size: number;
+	/** When `true`, the current (streamed) chunk is the last subchunk of the full chunk. Fully buffered chunks always has this value set to `true`. */
+	isFinal: boolean;
+	/** When `true`, the current (streamed) chunk is a fully buffered chunk. */
+	isBuffered: boolean;
 	/** The (streamed) payload of the chunk. */
 	data: Uint8Array;
 	/** The context properties passed from header. */
-	context: SeamstressContext|undefined;
+	context?: SeamstressContext;
 }
 
 export class SeamstressStrictWriter {
@@ -89,13 +101,13 @@ export class Seamstress {
 	LENGTH_U32: number;
 	TYPE_VLV: number;
 	TYPE_4CC: number;
-	/** (Non-finalized) Returns if the list chunk type already exists. Only valid with FourCC types. */
+	/** (Non-finalized, WIP) Returns if the list chunk type already exists. Only valid with FourCC types. */
 	hasList(type: string): boolean;
-	/** (Non-finalized) Registers a type of list chunk, and returns true when successful (isn't already registered). Only valid with FourCC types. Useful for FourCC-typed list chunks containing subchunks. "LIST" will always be registered for IFF/RIFF files.
+	/** (Non-finalized, WIP) Registers a type of list chunk, and returns true when successful (isn't already registered). Only valid with FourCC types. Useful for FourCC-typed list chunks containing subchunks. "LIST" will always be registered for IFF/RIFF files.
 	* @param type FourCC in a Latin-9 string.
 	*/
 	addList(type: string): boolean;
-	/** (Non-finalized) Removes a type of list chunk, and returns true when successful (is registered). Only valid with FourCC types.
+	/** (Non-finalized, WIP) Removes a type of list chunk, and returns true when successful (is registered). Only valid with FourCC types.
 	* @param type FourCC in a Latin-9 string.
 	*/
 	delList(type: string): boolean;
@@ -109,7 +121,7 @@ export class Seamstress {
 	*/
 	headerHandler?(buffer: Uint8Array): SeamstressContext|undefined;
 	/**
-	* Regulates the incoming stream. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the chunk for the stream reader, with the truncated buffer prepended to the next stream chunk.
+	* (WIP) Regulates the incoming stream. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the chunk for the stream reader, with the truncated buffer prepended to the next stream chunk.
 	* When returning any non-positive integer, the chunk will not be truncated in any way, and the rest of the stream chunk for the current chunk will bypass the regulator method altogether. Returning an integer that's larger than the size of the current stream chunk, the whole chunk will be buffered and wait for merging with the next chunk. If a chunk contains many subchunks, this method will help ensure that the incomplete chunks received will always contain complete subchunks.
 	*/
 	regulateStream?(chunkInfo: SeamstressChunk): number;
@@ -120,9 +132,9 @@ export class Seamstress {
 	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, bypassRegulator: boolean): ReadableStream<SeamstressChunk>;
 	/** Reads the incoming stream, and emits a stream of fully buffered chunks. */
 	readChunks(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
-	/** Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error. */
+	/** (WIP) Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error. */
 	writeStrict(headerSerializer?: Function): SeamstressStrictWriter;
-	/** Writes chunks in an easier way. Providing a serialized header with a 0-sized header or not providing a serialized header when header's expected will both result in an error. */
+	/** (WIP) Writes chunks in an easier way. Providing a serialized header with a 0-sized header or not providing a serialized header when header's expected will both result in an error. */
 	writeChunks(serializedHeader?: Uint8Array): TransformStream<SeamstressChunk, Uint8Array>;
 	/** Parses the incoming stream, and emits a map of header types, each with an array of offsets and sizes. This function is virtually useless if the original content of the stream is not kept. */
 	getMapFromStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): Promise<Map<number|string, Array<Array<number>>>>;
