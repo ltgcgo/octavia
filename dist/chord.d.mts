@@ -8,13 +8,31 @@
  */
 
 export class ChordDict {
-	/** Return the root note of a chord as a single-letter string. */
-	static getChordRoot(chord: number): string;
-	/** Return the semitone shift of a chord as a signed integer. 0 for natural. */
+	/** Return the root note of a chord as a single-letter string.
+	* @param chord A pack chord.
+	* @param loose When true, let invalid root notes fail silently.
+	*/
+	static getChordRoot(chord: number, loose?: boolean): string;
+	/** Return the root note of a chord as a number starting at 1 for C.
+	* @param chord A pack chord.
+	* @param loose When true, let invalid root notes fail silently.
+	*/
+	static getChordRootRaw(chord: number, loose?: boolean): number;
+	/** Return the semitone shift of a chord as a signed integer. 0 for natural.
+	* @param chord A pack chord.
+	*/
 	static getChordShift(chord: number): number;
-	/** Return the native ID of a chord. Basically just returning the lower byte. */
+	/** Return the semitone shift of a chord as an unsigned integer. 3 for natural.
+	* @param chord A pack chord.
+	*/
+	static getChordShiftRaw(chord: number): number;
+	/** Return the native ID of a chord. Basically just returning the lower byte.
+	* @param chord A pack chord.
+	*/
 	static getChordId(chord: number): number;
-	/** Return the identifier of a native chord ID. */
+	/** Return the identifier of a native chord ID.
+	* @param chord A pack chord.
+	*/
 	static getChordType(chord: number): string;
 	/** Return the native chord ID from a valid specifier. */
 	static fromChordType(chordSpecifier: string): number;
@@ -28,12 +46,12 @@ export class ChordDict {
 	* @param chords An array of packed chords.
 	* @param flags A bitmask of formatting toggles. 0x1 for strict accidental.
 	*/
-	static stringify(chords: Array<number>, flags: number): string;
+	static stringify(chords: Array<number>, flags?: number): string;
 	/** Parse a natural chord expression into a chord.
 	* @param chordExpr The natural chord expression.
 	* @param flags A bitmask of formatting toggles. Same as in `stringify()`.
 	*/
-	static parse(chordExpr: string, flags: number): Array<number>;
+	static parse(chordExpr: string, flags?: number): Array<number>;
 	/** Serialize chords into a Yamaha-compliant buffer.
 	* @param chords An array of packed chords.
 	* @param strict Strictly limit to only two chords. Defaults to false.
