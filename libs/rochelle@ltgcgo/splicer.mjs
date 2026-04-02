@@ -1,7 +1,7 @@
-// Copyright 2024-2026 (C) Lightingale Community
+// 2024-2026 © Lightingale Community
 // Licensed under GNU LGPL 3.0
 
-// This is a part of Rochelle stream splicer. Currently placed here for the ease of development, however this should not be considered as if this component belongs here.
+"use strict";
 
 const StreamQueue = class StreamQueue {
 	#controller;
@@ -95,4 +95,4 @@ export {
 	StreamQueue,
 	StreamServe,
 	ChokerStream
-}
+};
