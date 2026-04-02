@@ -62,11 +62,13 @@ let showResult = async (stream, props = {}) => {
 				let rawParser = new Seamstress();
 				rawParser.headerSize = 0;
 				rawParser.type = Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32;
+				rawParser.debugMode = true;
 				let splitStream = stream.tee();
 				(async () => {
 					for await (let chunk of rawParser.readStream(splitStream[1])) {
 						console.debug(chunk);
 					};
+					console.info("Finished chunk skimming.");
 				})();
 				map = await rawParser.getMapFromStream(splitStream[0]);
 				break;
@@ -75,6 +77,7 @@ let showResult = async (stream, props = {}) => {
 				let rawParser = new Seamstress();
 				rawParser.headerSize = 12;
 				rawParser.type = rawParser.TYPE_4CC | rawParser.ENDIAN_B | rawParser.LENGTH_U32 | rawParser.MASK_PADDED;
+				rawParser.debugMode = true;
 				map = await rawParser.getMapFromStream(stream);
 				break;
 			};
@@ -82,7 +85,15 @@ let showResult = async (stream, props = {}) => {
 				let rawParser = new Seamstress();
 				rawParser.headerSize = 12;
 				rawParser.type = rawParser.TYPE_4CC | rawParser.ENDIAN_L | rawParser.LENGTH_U32 | rawParser.MASK_PADDED;
-				map = await rawParser.getMapFromStream(stream);
+				rawParser.debugMode = true;
+				let splitStream = stream.tee();
+				(async () => {
+					for await (let chunk of rawParser.readStream(splitStream[1])) {
+						console.debug(chunk);
+					};
+					console.info("Finished chunk skimming.");
+				})();
+				map = await rawParser.getMapFromStream(splitStream[0]);
 				break;
 			};
 			default: {

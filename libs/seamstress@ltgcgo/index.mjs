@@ -318,7 +318,7 @@ let Seamstress = class Seamstress {
 	LENGTH_U32 = 2;
 	TYPE_VLV = 0;
 	TYPE_4CC = 8;
-	debugMode = true;
+	debugMode = false;
 	#u8Dec = new TextDecoder("l9");
 	#increaseInMap(map, key) {
 		if (map.has(key)) {
@@ -349,6 +349,8 @@ let Seamstress = class Seamstress {
 		if (upThis.headerSize > 0 && upThis.headerHandler !== undefined && typeof upThis.headerHandler !== "function") {
 			throw(new TypeError("Seamstress.headerHandler must be a function."));
 		};
+		let streamHost = new StreamQueue();
+		//streamHost.debugMode = true;
 		let chunkType, chunkSize;
 		/*
 		`readState` has the following states.
@@ -360,6 +362,9 @@ let Seamstress = class Seamstress {
 			for await (let chunk of stream) {
 				let dPrefix = `Stream chunk ${chunkId}`;
 				if (skipLength > chunk.length) {
+					let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
+					subchunkData.data = chunk;
+					await streamHost.enqueue(subchunkData);
 					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should buffer the entire chunk.`);
 					skipLength -= chunk.length;
 					chunkStart += chunk.length;
@@ -367,10 +372,13 @@ let Seamstress = class Seamstress {
 				} else if (skipLength === chunk.length) {
 					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should commit the entire chunk and flush the buffer.`);
 					if (isHeaderRead) {
-						upThis.debugMode && console.debug(`Committed the buffer as a normal chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
+						let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
+						subchunkData.data = chunk;
+						await streamHost.enqueue(subchunkData);
+						upThis.debugMode && console.debug(`Committed the entire buffer as a normal chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
 						seamChunkId ++;
 					} else {
-						upThis.debugMode && console.debug(`Committed the buffer as a header chunk, size ${skipLength} B.`);
+						upThis.debugMode && console.debug(`Committed the entire buffer as a header chunk, size ${skipLength} B.`);
 						isHeaderRead = true;
 					};
 					skipLength = 0;
@@ -379,6 +387,9 @@ let Seamstress = class Seamstress {
 				} else if (skipLength > 0) {
 					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should flush the buffer.`);
 					if (isHeaderRead) {
+						let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
+						subchunkData.data = chunk.subarray(0, skipLength);
+						await streamHost.enqueue(subchunkData);
 						upThis.debugMode && console.debug(`Committed the buffer as a normal chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
 						seamChunkId ++;
 					} else {
@@ -529,11 +540,17 @@ let Seamstress = class Seamstress {
 					ptr ++;
 					if (skipLength > 0) {
 						if (skipLength + ptr < chunk.length) {
+							let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, 0, chunkSize);
+							subchunkData.data = chunk.subarray(ptr, ptr + skipLength);
+							await streamHost.enqueue(subchunkData);
 							upThis.debugMode && console.debug(`${dPrefix2}: Enqueue a complete chunk "${chunkType}" (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
 							ptr += skipLength;
 							skipLength = 0;
 							seamChunkId ++;
 						} else {
+							let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, 0, chunkSize);
+							subchunkData.data = chunk.subarray(ptr);
+							await streamHost.enqueue(subchunkData);
 							upThis.debugMode && console.debug(`${dPrefix2}: Enqueue a potentially incomplete chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}) "${chunkType}", size ${chunk.length - ptr} B.`);
 							skipLength += ptr - chunk.length;
 							ptr = chunk.length;
@@ -551,7 +568,9 @@ let Seamstress = class Seamstress {
 			if (skipLength > 0) {
 				console.info(`Incoming stream may have ended early, with ${skipLength} B still expected.${isHeaderRead ? "" : " The header still hasn't been read."}`);
 			};
+			streamHost.close();
 		})();
+		return streamHost.readable;
 	};
 	readChunks(stream) {};
 	writeStrict(headerSerializer) {};

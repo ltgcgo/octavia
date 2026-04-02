@@ -2,7 +2,8 @@
 	"name": "@ltgc/octavia",
 	"version": "0.0.7",
 	"imports": {
-		"@ltgc/rochelle": "jsr:@ltgcgo/rochelle@^0.2.0"
+		"@ltgc/rochelle": "jsr:@ltgcgo/rochelle@^0.2.9",
+		"@ltgc/seamstress": "jsr:@ltgcgo/rochelle@^0.1"
 	},
 	"exports": {
 		"./basic": "./dist/basic.mjs",

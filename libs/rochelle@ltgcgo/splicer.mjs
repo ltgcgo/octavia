@@ -7,6 +7,7 @@ const StreamQueue = class StreamQueue {
 	#controller;
 	#pullPromise;
 	#closedResolve;
+	debugMode = false;
 	closed = false;
 	closure;
 	cancelled;
@@ -21,19 +22,20 @@ const StreamQueue = class StreamQueue {
 			upThis.#closedResolve = p;
 		})
 		upThis.readable = new ReadableStream({
-			"type": underlyingSource.type,
-			"autoAllocateChunkSize": underlyingSource.autoAllocateChunkSize,
+			"type": underlyingSource?.type,
+			"autoAllocateChunkSize": underlyingSource?.autoAllocateChunkSize,
 			"cancel": async (reason) => {
 				enqueueReject(reason);
 				cancelledResolve(reason);
 				upThis.#closedResolve();
 				upThis.closed = true;
-				underlyingSource.cancelled?.call(upThis, reason);
+				underlyingSource?.cancelled?.call(upThis, reason);
+				upThis.debugMode && console.debug(`Stream cancel.`);
 			},
 			"start": async (controller) => {
 				upThis.#controller = controller;
-				console.debug(`Stream start.`);
-				underlyingSource.start?.call(upThis, new Proxy(controller, {
+				upThis.debugMode && console.debug(`Stream start.`);
+				underlyingSource?.start?.call(upThis, new Proxy(controller, {
 					"get": (target, key) => {
 						switch (key) {
 							case "enqueue":
@@ -48,7 +50,7 @@ const StreamQueue = class StreamQueue {
 						};
 					}
 				}));
-				console.debug(`Source start called.`);
+				upThis.debugMode && console.debug(`Source start called.`);
 				upThis.#pullPromise = new Promise((p, r) => {
 					enqueueResolve = p;
 					enqueueReject = r;
@@ -60,7 +62,7 @@ const StreamQueue = class StreamQueue {
 					enqueueResolve = p;
 					enqueueReject = r;
 				});
-				console.debug(`Stream pull.`);
+				upThis.debugMode && console.debug(`Stream pull.`);
 			}
 		}, queuingStrategy);
 	};
