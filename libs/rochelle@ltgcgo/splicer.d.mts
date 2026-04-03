@@ -1,4 +1,4 @@
-// Copyright 2024 (C) Lightingale Community
+// 2024-2026 © Lightingale Community
 // Licensed under GNU LGPL 3.0
 
 /**
@@ -23,7 +23,7 @@ export class StreamQueue {
      */
 	constructor(underlyingSource?: object, queuingStrategy?: object);
 	/**
-	 * Enqueue a chunk into the stream with apparent backpressure. Will only resolve when the internal backpressure is relieved.
+	 * Enqueue a chunk into the stream with enforced backpressure. Will only resolve when the internal backpressure is relieved. If trying to enqueue a chunk without respecting backpressure, the method will immediately error out.
 	 * @param chunk The chunk to enqueue.
 	 */
 	enqueue(chunk: any): Promise<void>;

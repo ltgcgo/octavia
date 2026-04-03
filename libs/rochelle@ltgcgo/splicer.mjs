@@ -7,6 +7,7 @@ const StreamQueue = class StreamQueue {
 	#controller;
 	#pullPromise;
 	#closedResolve;
+	#isBusy = false;
 	debugMode = false;
 	closed = false;
 	closure;
@@ -57,6 +58,7 @@ const StreamQueue = class StreamQueue {
 				});
 			},
 			"pull": async (controller) => {
+				upThis.#isBusy = false;
 				enqueueResolve();
 				upThis.#pullPromise = new Promise((p, r) => {
 					enqueueResolve = p;
@@ -67,7 +69,11 @@ const StreamQueue = class StreamQueue {
 		}, queuingStrategy);
 	};
 	enqueue(chunk) {
+		if (this.#isBusy) {
+			throw(new Error("Tried to enqueue data without backpressure relief."));
+		};
 		this.#controller.enqueue(chunk);
+		this.#isBusy = true;
 		return this.#pullPromise;
 	};
 	close() {
