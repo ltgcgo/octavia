@@ -334,6 +334,10 @@ let Seamstress = class Seamstress {
 			return 0;
 		};
 	};
+	#mergeBuffer(bufferIterator) {
+		let summedSize = 0, summedBuffer;
+		for (let buffer of bufferIterator) {};
+	};
 	headerSize = 0;
 	type = 0; // 0 for non-reversible SEAM stream, 10 for SMF
 	readStream(stream, bypassRegulator = false) {
@@ -582,7 +586,18 @@ let Seamstress = class Seamstress {
 		});
 		return streamHost.readable;
 	};
-	readChunks(stream) {};
+	readChunks(stream) {
+		let upThis = this;
+		let streamHost = new StreamQueue();
+		let unbuffered = upThis.readStream(stream, true);
+		let buffer = []; // Maybe a linked list will fit better here? Dynamic arrays could be expensive.
+		(async () => {
+			streamHost.close();
+		})().catch((err) => {
+			streamHost.error(err);
+		});
+		return streamHost.readable;
+	};
 	writeStrict(headerSerializer) {};
 	writeChunks(serializedHeader) {};
 	async getMapFromStream(stream) {
