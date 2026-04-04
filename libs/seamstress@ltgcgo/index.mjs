@@ -353,7 +353,7 @@ let Seamstress = class Seamstress {
 	};
 	headerSize = 0;
 	type = 0; // 0 for non-reversible SEAM stream, 10 for SMF
-	readStream(stream, bypassRegulator = false) {
+	readStream(stream) {
 		let upThis = this;
 		let skipLength = upThis.headerSize,
 		chunkStart = 0, chunkId = 0,
@@ -599,10 +599,11 @@ let Seamstress = class Seamstress {
 		});
 		return streamHost.readable;
 	};
+	readRegulated(stream) {};
 	readChunks(stream, flushAll = false) {
 		let upThis = this;
 		let streamHost = new StreamQueue();
-		let unbuffered = upThis.readStream(stream, true);
+		let unbuffered = upThis.readStream(stream);
 		let buffer = []; // Maybe a linked list will fit better here? Dynamic arrays could be expensive.
 		let inProgress = false;
 		let id, chunkId, type, size, context;

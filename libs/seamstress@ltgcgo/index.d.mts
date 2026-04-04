@@ -2,7 +2,7 @@
 // Licensed under GNU LGPL 3.0
 
 /**
-* An insanely safe IFF-like byte stream handler. Can be customized to handle SMF, IFF, RIFF and more, under the umbrella of SEAM (Simple Extensible Arbitrary Messaging).
+* A safe tag-length-value byte stream handler. Can be customized to handle SMF, IFF, RIFF and more, under the umbrella of SEAM (Simple Extensible Arbitrary Messaging).
 * @license LGPL-3.0-only
 * @module
 */
@@ -73,7 +73,7 @@ export interface SeamstressChunk {
 	* @param offset Same as `SeamstressChunk.offset`.
 	* @param size Same as `SeamstressChunk.size`.
 	*/
-	constructor(id: number, chunkId: number, type: number|string, offset: number, size: number);
+	constructor(id: number, chunkId: number, type: number|string, offset: number, size: number): SeamstressChunk;
 }
 
 export class SeamstressStrictWriter {
@@ -139,7 +139,11 @@ export class Seamstress {
 	* Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered.
 	* @param bypassRegulator When true, the stream chunk regulation method will never be called.
 	*/
-	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, bypassRegulator: boolean): ReadableStream<SeamstressChunk>;
+	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
+	/**
+	* (WIP) Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered, however when the regulator is present, it can be used to ensure that the partial structure of each (in)complete subchunk will be intact. The stream chunk regulation method will be called on each incomplete chunk to regulate the sizes. The final subchunk of each chunk will not have the regulator called. If there is no regulator, this method will error out immediately.
+	*/
+	readRegulated(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
 	/**
 	* Reads the incoming stream, and emits a stream of fully buffered chunks.
 	* @param flushAll When true, unfinished chunks will also be flushed instead of discarded.
