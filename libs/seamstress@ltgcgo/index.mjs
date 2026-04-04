@@ -334,9 +334,22 @@ let Seamstress = class Seamstress {
 			return 0;
 		};
 	};
+	#countBuffer(bufferIterator) {
+		let summedSize = 0;
+		for (let buffer of bufferIterator) {
+			summedSize += buffer.length;
+		};
+		return summedSize;
+	};
 	#mergeBuffer(bufferIterator) {
-		let summedSize = 0, summedBuffer;
-		for (let buffer of bufferIterator) {};
+		// The buffer iterator must be usable twice! Preferrably a linked list over an array resized relentlessly.
+		let summedBuffer = new Uint8Array(this.#countBuffer(bufferIterator));
+		let summedPointer = 0;
+		for (let buffer of bufferIterator) {
+			summedBuffer.set(buffer, summedPointer);
+			summedPointer += buffer.length;
+		};
+		return summedBuffer;
 	};
 	headerSize = 0;
 	type = 0; // 0 for non-reversible SEAM stream, 10 for SMF
@@ -578,7 +591,7 @@ let Seamstress = class Seamstress {
 				chunkId ++;
 			};
 			if (skipLength > 0) {
-				console.info(`Incoming stream may have ended early, with ${skipLength} B still expected.${isHeaderRead ? "" : " The header still hasn't been read."}`);
+				console.warn(`Incoming stream may have ended early, with ${skipLength} B still expected.${isHeaderRead ? "" : " The header still hasn't been read."}`);
 			};
 			streamHost.close();
 		})().catch((err) => {
@@ -586,12 +599,64 @@ let Seamstress = class Seamstress {
 		});
 		return streamHost.readable;
 	};
-	readChunks(stream) {
+	readChunks(stream, flushAll = false) {
 		let upThis = this;
 		let streamHost = new StreamQueue();
 		let unbuffered = upThis.readStream(stream, true);
 		let buffer = []; // Maybe a linked list will fit better here? Dynamic arrays could be expensive.
+		let inProgress = false;
+		let id, chunkId, type, size, context;
 		(async () => {
+			for await (let unbufferedChunk of unbuffered) {
+				let sizeSum = unbufferedChunk.offset + unbufferedChunk.data.length;
+				if (sizeSum > unbufferedChunk.size) {
+					throw(new Error(`The total sum of size exceeded declaration (${sizeSum} > ${unbufferedChunk.size}).`));
+				} else if (sizeSum === unbufferedChunk.size) {
+					// Commit now!
+					if (unbufferedChunk.offset === 0) {
+						// The chunk was already fully buffered.
+						await streamHost.enqueue(unbufferedChunk);
+						console.debug(`Committed a fully buffered chunk.`);
+					} else {
+						// Use the information stored on the first chunk buffer.
+						buffer.push(unbufferedChunk.data);
+						let bufferedChunk = new SeamstressChunk(id, chunkId, type, 0, size);
+						bufferedChunk.data = upThis.#mergeBuffer(buffer);
+						buffer.splice(0);
+						bufferedChunk.context = context;
+						await streamHost.enqueue(bufferedChunk);
+						console.debug(`Committed a buffered chunk.`);
+						inProgress = false;
+					};
+					continue;
+				} else if (unbufferedChunk.offset === 0) {
+					if (inProgress) {
+						if (flushAll) {
+							let bufferedChunk = new SeamstressChunk(id, chunkId, type, 0, size);
+							bufferedChunk.data = upThis.#mergeBuffer(buffer);
+							bufferedChunk.context = context;
+							await streamHost.enqueue(bufferedChunk);
+						};
+						console.warn(`Chunk #${id} (${type}, #${chunkId}) has ended early, with ${upThis.#countBuffer(buffer)} B still unflushed.`);
+						buffer.splice(0);
+						//inProgress = false;
+					};
+					inProgress = true;
+					({id, chunkId, type, size, context} = unbufferedChunk);
+				};
+				buffer.push(unbufferedChunk.data);
+			};
+			if (buffer.length > 0) {
+				if (flushAll) {
+					let bufferedChunk = new SeamstressChunk(id, chunkId, type, 0, size);
+					bufferedChunk.data = upThis.#mergeBuffer(buffer);
+					buffer.splice(0);
+					bufferedChunk.context = context;
+					await streamHost.enqueue(bufferedChunk);
+				} else {
+					console.warn(`Incoming stream may have ended early, with ${upThis.#countBuffer(buffer)} B still unflushed.`);
+				};
+			};
 			streamHost.close();
 		})().catch((err) => {
 			streamHost.error(err);

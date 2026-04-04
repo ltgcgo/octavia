@@ -140,8 +140,11 @@ export class Seamstress {
 	* @param bypassRegulator When true, the stream chunk regulation method will never be called.
 	*/
 	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, bypassRegulator: boolean): ReadableStream<SeamstressChunk>;
-	/** Reads the incoming stream, and emits a stream of fully buffered chunks. */
-	readChunks(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
+	/**
+	* Reads the incoming stream, and emits a stream of fully buffered chunks.
+	* @param flushAll When true, unfinished chunks will also be flushed instead of discarded.
+	*/
+	readChunks(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, flushAll?: boolean): ReadableStream<SeamstressChunk>;
 	/** (WIP) Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error. */
 	writeStrict(headerSerializer?: Function): SeamstressStrictWriter;
 	/** (WIP) Writes chunks in an easier way. Providing a serialized header with a 0-sized header or not providing a serialized header when header's expected will both result in an error. */

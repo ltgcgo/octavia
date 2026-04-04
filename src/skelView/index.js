@@ -69,7 +69,7 @@ let showResult = async (stream, props = {}) => {
 				rawParser.debugMode = true;
 				let splitStream = stream.tee();
 				(async () => {
-					for await (let chunk of rawParser.readStream(splitStream[1])) {
+					for await (let chunk of rawParser.readChunks(splitStream[1])) {
 						console.debug(summarizeSeamstressChunk(chunk));
 					};
 					console.info("Finished chunk skimming.");
@@ -92,7 +92,7 @@ let showResult = async (stream, props = {}) => {
 				rawParser.debugMode = true;
 				let splitStream = stream.tee();
 				(async () => {
-					for await (let chunk of rawParser.readStream(splitStream[1])) {
+					for await (let chunk of rawParser.readChunks(splitStream[1])) {
 						console.debug(summarizeSeamstressChunk(chunk));
 					};
 					console.info("Finished chunk skimming.");
