@@ -2,7 +2,7 @@
 // Licensed under GNU LGPL 3.0
 
 /**
-* An insanely safe IFF-like byte stream handler.
+* An insanely safe IFF-like byte stream handler. Can be customized to handle SMF, IFF, RIFF and more, under the umbrella of SEAM (Simple Extensible Arbitrary Messaging).
 * @license LGPL-3.0-only
 * @module
 */

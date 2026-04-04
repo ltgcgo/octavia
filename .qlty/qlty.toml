@@ -1,0 +1,16 @@
+config_version = "0"
+
+exclude_patterns = [
+	"conf/**",
+	"data/**",
+	"deno/**",
+	"dist/**",
+	"ghp/**",
+	"libs/**",
+	"nix/**",
+	"oldsrc/**",
+	"sh/**",
+	"src/xp_*/**",
+	"test/**",
+	"utils/**"
+]
