@@ -7,14 +7,17 @@
 * @module
 */
 
+/**
+* Reading and writing various forms of numeric values.
+*/
 export class IntegerHandler {
 	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
 	static readVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
-	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 4 bytes, after which it will error out. */
+	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. */
 	static readVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
 	/** Counts the size of a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
 	static sizeVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
-	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 16 bytes, after which it will error out. Invalid RVLV values will also error out. */
+	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. Invalid RVLV values will also error out. */
 	static readRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. Invalid RVLV values will also error out. */
 	static readRVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): BigInt;
@@ -38,15 +41,30 @@ export class IntegerHandler {
 	static readUint64(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): BigInt;
 }
 
+/**
+* The context object in use in a stream reading or writing session.
+*/
 export interface SeamstressContext {
-	/** Defines the maximum length of the stream that's expected. If the stream exceeds the specified size, it will be cut off at the specified size (length <= size + headerSize). It's always desired to keep the size sealed once parsed. Keep undefined when the size is not or cannot be known. */
+	/**
+	* This field may not be present.
+	* Defines the maximum length of the stream that's expected. If the stream exceeds the specified size, it will be cut off at the specified size (length <= size + headerSize). It's always desired to keep the size sealed once parsed. Keep undefined when the size is not or cannot be known.
+	*/
 	size?: number;
-	/** Defines the base structure type of the stream. Common values include `RIFF` for RIFF streams and `FORM` for IFF streams. */
+	/**
+	* This field may not be present.
+	* Defines the base structure type of the stream. Common values include `RIFF` for RIFF streams and `FORM` for IFF streams.
+	*/
 	binaryType?: string;
-	/** Defines the upper format of the stream. Common values include `WAVE` for the Microsoft `.wav` files, and `AIFF` for the Apple `.aif` files. */
+	/**
+	* This field may not be present.
+	* Defines the upper format of the stream. Common values include `WAVE` for the Microsoft `.wav` files, and `AIFF` for the Apple `.aif` files.
+	*/
 	binaryFormat?: string;
 }
 
+/**
+* A subchunk of a Seamstress stream. Can be non-buffered, slightly buffered or fully buffered.
+*/
 export interface SeamstressChunk {
 	/** Index of the (streamed) chunk in u32, starts from 0 and increases by 1 only when a new chunk is progressed. This is to easily differentiate chunks. */
 	id: number;
@@ -76,6 +94,9 @@ export interface SeamstressChunk {
 	constructor(id: number, chunkId: number, type: number|string, offset: number, size: number): SeamstressChunk;
 }
 
+/**
+* Strictly validated Seamstress binary stream serializer.
+*/
 export class SeamstressStrictWriter {
 	/** The result of the serialized stream. */
 	readable: ReadableStream<Uint8Array>;
@@ -91,6 +112,24 @@ export class SeamstressStrictWriter {
 	buffer(): Promise<ArrayBuffer>;
 }
 
+/**
+* An insanely safe TLV reader and writer. Configure an instance to match the format you want to handle, then use the methods provided.
+* ```js
+* let binaryParser = new Seamstress();
+* // Configure Seamstress to handle Standard MIDI Files.
+* binaryParser.headerSize = 0;
+* binaryParser.type = Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32;
+* (async () => {
+* 	// If you want to read subchunks without any buffering guarantees.
+* 	for await (let subchunk of binaryParser.readStream(req.body)) {
+* 		// Read the chunks here.
+* 	};
+* 	// Use "readRegulated" for slightly buffered subchunks, or "readChunks" for fully buffered chunks.
+* })().catch((err) => {
+* 	// Error handling here.
+* });
+* ````
+*/
 export class Seamstress {
 	/**
 	* Masks endianness of length values. 0 for BE, 1 for LE.
@@ -125,7 +164,7 @@ export class Seamstress {
 	headerSize: number;
 	/** The type flags of the Seamstress instance. */
 	type: number;
-	/** Handles the header chunk. Returns an object detailing on how to handle the header chunk. Only invoked upon reading.
+	/** (WIP) Handles the header chunk. Returns an object detailing on how to handle the header chunk. Only invoked upon reading.
 	* @param buffer The header getting passed into the handler.
 	* @returns The parsed object that will modify the reader behaviour and provide as the initial context for the streams.
 	*/

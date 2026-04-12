@@ -203,6 +203,32 @@ let IntegerHandler = class IntegerHandler {
 		};
 		return result;
 	};
+	static readUint16(buffer, isLittleEndian = false, offset = 0) {
+		this.#ensureU8(buffer);
+		if (offset < 0 || offset + 1 >= buffer.length) {
+			throw(new RangeError(`Invalid offset. (${offset})`));
+		};
+		let result = buffer[offset];
+		if (isLittleEndian) {
+			for (let i = 1; i < 2; i ++) {
+				result |= buffer[offset + i] << (i << 3);
+			};
+		} else {
+			for (let i = 1; i < 2; i ++) {
+				result <<= 8;
+				result |= buffer[offset + i];
+			};
+		};
+		return result;
+	};
+	static readInt16(buffer, isLittleEndian = false, offset = 0) {
+		let result = this.readUint16(buffer, isLittleEndian, offset);
+		if (result >>> 15) {
+			return result - 65536;
+		} else {
+			return result;
+		};
+	};
 	static readInt32(buffer, isLittleEndian = false, offset = 0) {
 		this.#ensureU8(buffer);
 		if (offset < 0 || offset + 3 >= buffer.length) {
@@ -225,6 +251,32 @@ let IntegerHandler = class IntegerHandler {
 		let result = this.readInt32(buffer, isLittleEndian, offset);
 		if (result >>> 31) {
 			return 4294967296 + result;
+		} else {
+			return result;
+		};
+	};
+	static readUint64(buffer, isLittleEndian = false, offset = 0) {
+		this.#ensureU8(buffer);
+		if (offset < 0 || offset + 7 >= buffer.length) {
+			throw(new RangeError(`Invalid offset. (${offset})`));
+		};
+		let result = BigInt(buffer[offset]);
+		if (isLittleEndian) {
+			for (let i = 1; i < 8; i ++) {
+				result |= BigInt(buffer[offset + i]) << BigInt(i << 3);
+			};
+		} else {
+			for (let i = 1; i < 8; i ++) {
+				result <<= 8n;
+				result |= BigInt(buffer[offset + i]);
+			};
+		};
+		return result;
+	};
+	static readInt64(buffer, isLittleEndian = false, offset = 0) {
+		let result = this.readUint64(buffer, isLittleEndian, offset);
+		if (result >> 63n) {
+			return result - 18446744073709551616n;
 		} else {
 			return result;
 		};

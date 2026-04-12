@@ -249,7 +249,7 @@ HTMLElement.prototype.setTextRaw = function (text) {
 };
 
 if (typeof self?.require !== "undefined") {
-	throw(new Error("Environments supporting CommonJS is not supported."));
+	throw(new Error("Environments supporting CommonJS are not supported."));
 };
 
 const chordMax = 2,

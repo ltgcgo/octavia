@@ -31,7 +31,7 @@ const nameFromPath = (path) => {
 };
 
 if (typeof self?.require !== "undefined") {
-	throw(new Error("Environments supporting CommonJS is not supported."));
+	throw(new Error("Environments supporting CommonJS are not supported."));
 };
 
 let RootDisplay = class extends CustomEventSource {

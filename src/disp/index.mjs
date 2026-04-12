@@ -11,7 +11,7 @@ import QyDisplay from "./disp_qy.mjs";
 import PsrDisplay from "./disp_psr.mjs";
 
 if (typeof self?.require !== "undefined") {
-	throw(new Error("Environments supporting CommonJS is not supported."));
+	throw(new Error("Environments supporting CommonJS are not supported."));
 };
 
 export {
