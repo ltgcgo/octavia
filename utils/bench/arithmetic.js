@@ -21,3 +21,12 @@ Deno.bench(function algoAddition () {
 Deno.bench(function algoBitShift () {
 	return (getRandom() << 1) | 1;
 });
+Deno.bench(function divideNative () {
+	return Math.ceil(getRandom() / 48);
+});
+Deno.bench(function divideNative2 () {
+	return Math.floor(getRandom() / 48);
+});
+Deno.bench(function divideBitwise () {
+	return (getRandom() * 85 + 4095) >> 12
+});
