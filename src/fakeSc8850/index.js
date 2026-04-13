@@ -286,20 +286,20 @@ audioPlayer.onended = function () {
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
 	visualizer.loadMapPaths([
-		`./data/map/gsCap.12.tsv`,
-		`./data/map/gm.12.tsv`,
-		`./data/map/ns5r.12.tsv`,
-		`./data/map/xg.12.tsv`,
-		`./data/map/gs.12.tsv`,
-		`./data/map/sd.12.tsv`,
-		`./data/map/s90es.12.tsv`,
-		`./data/map/gm.10.tsv`,
-		`./data/map/ns5r.10.tsv`,
-		`./data/map/xg.10.tsv`,
-		`./data/map/gs.10.tsv`,
-		`./data/map/sd.10.tsv`,
-		`./data/map/cs2x.10.tsv`,
-		`./data/map/s90es.10.tsv`
+		`../../midi-db/map/gsCap.12.tsv`,
+		`../../midi-db/map/gm.12.tsv`,
+		`../../midi-db/map/ns5r.12.tsv`,
+		`../../midi-db/map/xg.12.tsv`,
+		`../../midi-db/map/gs.12.tsv`,
+		`../../midi-db/map/sd.12.tsv`,
+		`../../midi-db/map/s90es.12.tsv`,
+		`../../midi-db/map/gm.10.tsv`,
+		`../../midi-db/map/ns5r.10.tsv`,
+		`../../midi-db/map/xg.10.tsv`,
+		`../../midi-db/map/gs.10.tsv`,
+		`../../midi-db/map/sd.10.tsv`,
+		`../../midi-db/map/cs2x.10.tsv`,
+		`../../midi-db/map/s90es.10.tsv`
 	]);
 })();
 let lastTime = 0;

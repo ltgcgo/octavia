@@ -1182,7 +1182,7 @@ let VoiceBank = class {
 		let upThis = this;
 		type.forEach(async function (e, i) {
 			try {
-				upThis.load(await (await fetch(`./data/bank/${e}.tsv`)).text(), false, e, i);
+				upThis.load(await (await fetch(`../../midi-db/bank/${e}.tsv`)).text(), false, e, i);
 			} catch (err) {
 				console.error(`Failed loading "${e}.tsv".`);
 			};

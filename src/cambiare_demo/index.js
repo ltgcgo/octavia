@@ -202,7 +202,7 @@ let visualizer = new Cambiare($e(".cambiare"), timeMuxer);
 visualizer.reset();
 (async () => {
 	visualizer.styles = new StylePool();
-	visualizer.styles.load((await fetch("./data/misc/yStyle.tsv")).body);
+	visualizer.styles.load((await fetch("../../midi-db/misc/yStyle.tsv")).body);
 })();
 
 Alpine.store("play", "smf");
@@ -423,33 +423,33 @@ let demoPool = new SheetData();
 (async () => {
 	demoPool.load(await (await getBlobFrom(`list.tsv`)).text());
 	Alpine.store("demo", demoPool.data);
-	visualizer.loadEfx(await(await fetch(`./data/misc/efxId.tsv`)).text());
+	visualizer.loadEfx(await(await fetch(`../../midi-db/misc/efxId.tsv`)).text());
 	visualizer.loadMapPaths([
-		`./data/map/gm.24.tsv`,
-		`./data/map/ns5r.24.tsv`,
-		`./data/map/xg.24.tsv`,
-		`./data/map/gs.24.tsv`,
-		`./data/map/sd.24.tsv`,
-		`./data/map/cs2x.24.tsv`,
-		`./data/map/s90es.24.tsv`,
-		`./data/map/kross.24.tsv`,
-		`./data/map/pa.24.tsv`,
-		`./data/map/gm.12.tsv`,
-		`./data/map/ns5r.12.tsv`,
-		`./data/map/xg.12.tsv`,
-		`./data/map/gs.12.tsv`,
-		`./data/map/sd.12.tsv`,
-		`./data/map/s90es.12.tsv`,
-		`./data/map/gm.10.tsv`,
-		`./data/map/ns5r.10.tsv`,
-		`./data/map/xg.10.tsv`,
-		`./data/map/gs.10.tsv`,
-		`./data/map/sd.10.tsv`,
-		`./data/map/cs2x.10.tsv`,
-		`./data/map/s90es.10.tsv`
+		`../../midi-db/map/gm.24.tsv`,
+		`../../midi-db/map/ns5r.24.tsv`,
+		`../../midi-db/map/xg.24.tsv`,
+		`../../midi-db/map/gs.24.tsv`,
+		`../../midi-db/map/sd.24.tsv`,
+		`../../midi-db/map/cs2x.24.tsv`,
+		`../../midi-db/map/s90es.24.tsv`,
+		`../../midi-db/map/kross.24.tsv`,
+		`../../midi-db/map/pa.24.tsv`,
+		`../../midi-db/map/gm.12.tsv`,
+		`../../midi-db/map/ns5r.12.tsv`,
+		`../../midi-db/map/xg.12.tsv`,
+		`../../midi-db/map/gs.12.tsv`,
+		`../../midi-db/map/sd.12.tsv`,
+		`../../midi-db/map/s90es.12.tsv`,
+		`../../midi-db/map/gm.10.tsv`,
+		`../../midi-db/map/ns5r.10.tsv`,
+		`../../midi-db/map/xg.10.tsv`,
+		`../../midi-db/map/gs.10.tsv`,
+		`../../midi-db/map/sd.10.tsv`,
+		`../../midi-db/map/cs2x.10.tsv`,
+		`../../midi-db/map/s90es.10.tsv`
 	]);
-	await visualizer.glyphs.loadFile("./data/bitmaps/xg/font.tsv");
-	await visualizer.freeChord.loadFile("./data/bitmaps/xg/freeChord.tsv");
+	await visualizer.glyphs.loadFile("../../midi-db/bitmaps/xg/font.tsv");
+	await visualizer.freeChord.loadFile("../../midi-db/bitmaps/xg/freeChord.tsv");
 
 })();
 
