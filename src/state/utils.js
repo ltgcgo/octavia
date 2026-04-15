@@ -127,12 +127,25 @@ let x5dSendLevel = function (sendParam) {
 	};
 };
 
-let getDebugState = function () {
-	// Direct variable modification is required for performance, as global variable fallback is expensive.
-	// If run on Bun.js or Node.js, output all possible logs
+// Direct variable modification is required for performance, as global variable fallback is expensive. The implementation below adapts by directly modifying the export.
+let getDebugState;
+if (Object.hasOwn(self, "chrome") || Object.hasOwn(self, "Deno")) {
+	getDebugState = function () {
+		return self?.debugMode ?? false;
+	};
+} else if (Object.hasOwn(self, "require")) {
+	// If run on Bun.js or Node.js, output all possible logs.
+	// Node.js will likely throw an error, it requires "globalThis" instead of "self". Node.js support is denied within the project anyway.
 	//return (typeof self?.require !== "undefined") || (self?.debugMode ?? false);
-	return Object.hasOwn(self, "debugMode") ? self.debugMode : false;
-	return false;
+	getDebugState = function () {
+		return true;
+	};
+} else {
+	getDebugState = function () {
+		return Object.hasOwn(self, "debugMode") ? self.debugMode : false;
+		// Uncomment below to temporarily suppress all debug output.
+		//return false;
+	};
 };
 
 let ascii64Dec = function (text) {
