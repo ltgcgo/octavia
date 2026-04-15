@@ -358,17 +358,20 @@ self.gOpenSmf = async function () {
 		case "syx": {
 			// Load SysEx blobs
 			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+			console.debug("Loaded an SYX blob.");
 			break;
 		};
 		case "s7e":
 		case "pcg": {
 			// Load sound banks
 			visualizer.device.loadBank(ext, file);
+			console.debug(`Loaded ${ext.toUpperCase()} voice banks.`);
 			break;
 		};
 		case "mdat": {
 			// Load ID to name maps
 			visualizer.loadMap(await file.text(), true);
+			console.debug("Loaded a voice name map.");
 			break;
 		};
 		default: {
@@ -379,6 +382,7 @@ self.gOpenSmf = async function () {
 			await visualizer.loadFile(file);
 			visualizer.dispatchEvent("title", ``);
 			visualizer.device.initOnReset = false;
+			console.debug("Loaded a MIDI file.");
 			Alpine.store("play", "smf");
 		};
 	};
