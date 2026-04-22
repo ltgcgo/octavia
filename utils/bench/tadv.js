@@ -15,6 +15,7 @@ let dummyDv = new DataView(dummyArray.buffer);
 let dummyAi32 = new Int32Array(dummyArray.buffer);
 
 //IntegerHandler.unsafeType = true;
+IntegerHandler.useNative = true;
 
 benchmark(function warmUp() {
 	return Math.log2(Math.random());
@@ -35,11 +36,12 @@ benchmark(function noiseFloor32() {
 		nullMethod();
 	};
 });
-benchmark(function ensureU8() {
+/*benchmark(function dvCache() {
+	let dummyVar;
 	for (let i = 0; i < dummyArray.length; i ++) {
-		IntegerHandler.ensureU8(dummyArray);
+		dummyVar = IntegerHandler.obtainDataView(dummyArray);
 	};
-});
+});*/
 benchmark(function vlvSize() {
 	let dummyVar;
 	for (let i = 0; i < dummyArray.length; i += 4) {

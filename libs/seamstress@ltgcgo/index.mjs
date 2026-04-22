@@ -45,8 +45,8 @@ let IntegerHandler = class IntegerHandler {
 			this.#ensureU8 = this.#ensureU8Safe;
 		};
 	};
-	static #obtainDataView(typedArray) {
-		if (!Object.hasOwn(typedArray, this.#hiddenDataView)) {
+	static obtainDataView(typedArray) {
+		if (!typedArray[this.#hiddenDataView]) {
 			typedArray[this.#hiddenDataView] = new DataView(typedArray.buffer);
 		};
 		return typedArray[this.#hiddenDataView];
@@ -314,7 +314,6 @@ let IntegerHandler = class IntegerHandler {
 			return result;
 		};
 	};
-	static ensureU8 = this.#ensureU8;
 };
 
 let SeamstressChunk = class SeamstressChunk {
