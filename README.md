@@ -12,6 +12,7 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 > **If you're accessing the online version, it is advised to [use the stable branch instead](https://gh.ltgc.cc/octavia-stable/) in case of a massive break.** If you can see the address bar already at `/octavia-stable/` or you're running a local development build, ignore the warning.
 
 > **Warning**
+> 
 > Some versions of browsers (e.g. Firefox) may error out with Cambiare due to a W3C specification compliance bug.
 
 > **Warning**

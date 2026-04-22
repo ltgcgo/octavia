@@ -74,6 +74,8 @@ export interface SeamstressChunk {
 	type: number|string;
 	/** The offset of the current (sub)chunk. Chunks from `readChunk()` and the first chunk from `readStream()` have this value always set to 0. */
 	offset: number;
+	/** The offset of the current data (sub)chunk compared to the rest of the binary stream. */
+	offsetData: number;
 	/** The full size of the current chunk. */
 	size: number;
 	/** When `true`, the current (streamed) chunk is the last subchunk of the full chunk. Fully buffered chunks always has this value set to `true`. */
@@ -164,25 +166,27 @@ export class Seamstress {
 	headerSize: number;
 	/** The type flags of the Seamstress instance. */
 	type: number;
-	/** (WIP) Handles the header chunk. Returns an object detailing on how to handle the header chunk. Only invoked upon reading.
+	/** Handles the header chunk. Returns an object detailing on how to handle the header chunk. Only invoked upon reading.
 	* @param buffer The header getting passed into the handler.
 	* @returns The parsed object that will modify the reader behaviour and provide as the initial context for the streams.
 	*/
 	headerHandler?(buffer: Uint8Array): SeamstressContext|undefined;
 	/**
-	* (WIP) Regulates the incoming stream. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the chunk for the stream reader, with the truncated buffer prepended to the next stream chunk.
-	* When returning any non-positive integer, the chunk will not be truncated in any way, and the rest of the stream chunk for the current chunk will bypass the regulator method altogether. Returning an integer that's larger than the size of the current stream chunk, the whole chunk will be buffered and wait for merging with the next chunk. If a chunk contains many subchunks, this method will help ensure that the incomplete chunks received will always contain complete subchunks.
+	* Regulates the incoming stream into desired subchunks. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the chunk for the stream reader.
+	* A non-zero value will cause the specified length from the current subchunk to be emitted, which the process repeats until the current subchunk depletes or the method returns a zero. A zero cause the current remaining section to be buffered and prepended to the next subchunk, until the entire chunk ends causing a forced flush, essentially making an all-zero regulated stream a fully-buffered stream. Any other numeric values will cause an error.
+	* @param startOffset The intended read start offset of the provided buffer.
+	* @param chunkInfo The unmodified info of the current (sub)chunk.
 	*/
-	regulateStream?(chunkInfo: SeamstressChunk): number;
+	regulateStream?(startOffset: number, chunkInfo: SeamstressChunk): number;
 	/**
 	* Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered.
-	* @param bypassRegulator When true, the stream chunk regulation method will never be called.
 	*/
 	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
 	/**
-	* (WIP) Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered, however when the regulator is present, it can be used to ensure that the partial structure of each (in)complete subchunk will be intact. The stream chunk regulation method will be called on each incomplete chunk to regulate the sizes. The final subchunk of each chunk will not have the regulator called. If there is no regulator, this method will error out immediately.
+	* Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered, however when the regulator is present, it can be used to ensure that the partial structure of each (in)complete subchunk will be intact. The stream chunk regulation method will be called on each incomplete chunk to regulate the sizes. If there is no regulator, this method will error out immediately.
+	* @param flushAll When true, unfinished chunks will also be flushed instead of discarded.
 	*/
-	readRegulated(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
+	readRegulated(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, flushAll?: boolean): ReadableStream<SeamstressChunk>;
 	/**
 	* Reads the incoming stream, and emits a stream of fully buffered chunks.
 	* @param flushAll When true, unfinished chunks will also be flushed instead of discarded.

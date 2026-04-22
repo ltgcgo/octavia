@@ -70,7 +70,7 @@ let IntegerHandler = class IntegerHandler {
 				return i + 1;
 			};
 		};
-		return 0; // Failure
+		return 0; // Failure.
 	};
 	static readRVLV(buffer, offset = 0) {
 		this.#ensureU8(buffer);
@@ -184,6 +184,7 @@ let IntegerHandler = class IntegerHandler {
 			};
 			storedState = currentState;
 		};
+		return 0; // Failure.
 	};
 	static readBool(buffer, offset = 0) {
 		this.#ensureU8(buffer);
@@ -288,11 +289,12 @@ let SeamstressChunk = class SeamstressChunk {
 	chunkId = 0;
 	type = undefined;
 	offset = 0;
+	offsetData = 0;
 	size = 0;
 	data = undefined;
 	context = undefined;
 	get isFinal() {
-		if (this.data.length + this.offset === size) {
+		if (this.data.length + this.offset === this.size) {
 			return true;
 		};
 		return false;
@@ -300,7 +302,7 @@ let SeamstressChunk = class SeamstressChunk {
 	get isBuffered() {
 		if (
 			this.offset === 0 &&
-			this.data.length === size
+			this.data.length === this.size
 		) {
 			return true;
 		};
@@ -312,7 +314,7 @@ let SeamstressChunk = class SeamstressChunk {
 		} else {
 			throw(new TypeError(`Provided invalid value for "id". Must be a non-negative integer.`));
 		};
-		if (typeof chunkId === "number" && id >= 0) {
+		if (typeof chunkId === "number" && chunkId >= 0) {
 			this.chunkId = chunkId;
 		} else {
 			throw(new TypeError(`Provided invalid value for "chunkId". Must be a non-negative integer.`));
@@ -405,6 +407,7 @@ let Seamstress = class Seamstress {
 	};
 	headerSize = 0;
 	type = 0; // 0 for non-reversible SEAM stream, 10 for SMF
+	headerHandler;
 	readStream(stream) {
 		let upThis = this;
 		let skipLength = upThis.headerSize,
@@ -415,8 +418,13 @@ let Seamstress = class Seamstress {
 		isHeaderRead = upThis.headerSize === 0;
 		let seamChunkId = 0, seamChunkMap = new Map(),
 		seamContext = (upThis.headerSize > 0 && upThis.headerHandler !== undefined) ? undefined : {};
-		if (upThis.headerSize > 0 && upThis.headerHandler !== undefined && typeof upThis.headerHandler !== "function") {
-			throw(new TypeError("Seamstress.headerHandler must be a function."));
+		let headerBuffer;
+		if (upThis.headerSize > 0) {
+			if (upThis.headerHandler !== undefined && typeof upThis.headerHandler !== "function") {
+				throw(new TypeError("Seamstress.headerHandler must be a function."));
+			} else {
+				headerBuffer = [];
+			};
 		};
 		let streamHost = new StreamQueue();
 		//streamHost.debugMode = true;
@@ -434,10 +442,16 @@ let Seamstress = class Seamstress {
 				};
 				let dPrefix = `Stream chunk ${chunkId}`;
 				if (skipLength > chunk.length) {
-					let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
-					subchunkData.data = chunk;
-					await streamHost.enqueue(subchunkData);
-					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should buffer the entire chunk.`);
+					if (isHeaderRead) {
+						let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
+						subchunkData.data = chunk;
+						subchunkData.offsetData = chunkStart;
+						subchunkData.context = seamContext;
+						await streamHost.enqueue(subchunkData);
+						upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should buffer the entire chunk.`);
+					} else {
+						headerBuffer.push(chunk);
+					};
 					skipLength -= chunk.length;
 					chunkStart += chunk.length;
 					continue;
@@ -446,11 +460,16 @@ let Seamstress = class Seamstress {
 					if (isHeaderRead) {
 						let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
 						subchunkData.data = chunk;
+						subchunkData.offsetData = chunkStart;
+						subchunkData.context = seamContext;
 						await streamHost.enqueue(subchunkData);
 						upThis.debugMode && console.debug(`Committed the entire buffer as a normal chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
 						seamChunkId ++;
 					} else {
 						upThis.debugMode && console.debug(`Committed the entire buffer as a header chunk, size ${skipLength} B.`);
+						headerBuffer.push(chunk);
+						seamContext = upThis.headerHandler(upThis.#mergeBuffer(headerBuffer)) ?? {};
+						headerBuffer = undefined;
 						isHeaderRead = true;
 					};
 					skipLength = 0;
@@ -461,11 +480,16 @@ let Seamstress = class Seamstress {
 					if (isHeaderRead) {
 						let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
 						subchunkData.data = chunk.subarray(0, skipLength);
+						subchunkData.offsetData = chunkStart;
+						subchunkData.context = seamContext;
 						await streamHost.enqueue(subchunkData);
 						upThis.debugMode && console.debug(`Committed the buffer as a normal chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
 						seamChunkId ++;
 					} else {
 						upThis.debugMode && console.debug(`Committed the buffer as a header chunk, size ${skipLength} B.`);
+						headerBuffer.push(chunk.subarray(0, skipLength));
+						seamContext = upThis.headerHandler(upThis.#mergeBuffer(headerBuffer)) ?? {};
+						headerBuffer = undefined;
 						isHeaderRead = true;
 					};
 				};
@@ -497,7 +521,7 @@ let Seamstress = class Seamstress {
 									if (rvlvState === IntegerHandler.RVLV_SINGLE) {
 										readState = 4;
 										ptr ++;
-										continue;
+										break;
 									} else if (rvlvState !== IntegerHandler.RVLV_START) {
 										throw(new Error(`Invalid RVLV-8 type read state ${readState} encountered at offset ${chunkStart + ptr}: Did not start RVLV-8 on the first byte.`));
 									};
@@ -546,7 +570,7 @@ let Seamstress = class Seamstress {
 									if (rvlvState === IntegerHandler.RVLV_SINGLE) {
 										readState = 8;
 										ptr ++;
-										continue;
+										break;
 									} else if (rvlvState !== IntegerHandler.RVLV_START) {
 										throw(new Error(`Invalid RVLV-8 size read state ${readState} encountered at offset ${chunkStart + ptr}: Did not start RVLV-8 on the first byte.`));
 									};
@@ -619,6 +643,8 @@ let Seamstress = class Seamstress {
 						if (skipLength + ptr < chunk.length) {
 							let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, 0, chunkSize);
 							subchunkData.data = chunk.subarray(ptr, ptr + skipLength);
+							subchunkData.offsetData = chunkStart + ptr;
+							subchunkData.context = seamContext;
 							await streamHost.enqueue(subchunkData);
 							upThis.debugMode && console.debug(`${dPrefix2}: Enqueue a complete chunk "${chunkType}" (${seamChunkId}, ${seamChunkMap.get(chunkType)}), size ${skipLength} B.`);
 							ptr += skipLength;
@@ -627,6 +653,8 @@ let Seamstress = class Seamstress {
 						} else {
 							let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, 0, chunkSize);
 							subchunkData.data = chunk.subarray(ptr);
+							subchunkData.offsetData = chunkStart + ptr;
+							subchunkData.context = seamContext;
 							await streamHost.enqueue(subchunkData);
 							upThis.debugMode && console.debug(`${dPrefix2}: Enqueue a potentially incomplete chunk (${seamChunkId}, ${seamChunkMap.get(chunkType)}) "${chunkType}", size ${chunk.length - ptr} B.`);
 							skipLength += ptr - chunk.length;
@@ -651,19 +679,100 @@ let Seamstress = class Seamstress {
 		});
 		return streamHost.readable;
 	};
-	readRegulated(stream) {};
+	regulateStream;
+	readRegulated(stream, flushAll = false) {
+		let upThis = this;
+		if (typeof upThis.regulateStream !== "function") {
+			throw(new TypeError("The stream regulator must be a defined function."));
+		};
+		let streamHost = new StreamQueue();
+		let unbuffered = upThis.readStream(stream);
+		let buffer = []; // Maybe a linked list will fit better here? Dynamic arrays could be expensive.
+		let id, chunkId, type, size, context;
+		let isOffsetWritten = false, offset = 0, offsetData = 0;
+		(async () => {
+			for await (let unbufferedChunk of unbuffered) {
+				({id, chunkId, type, size, context} = unbufferedChunk);
+				let inChunkPtr = 0;
+				while (inChunkPtr < unbufferedChunk.data.length) {
+					let readLength = upThis.regulateStream(inChunkPtr, unbufferedChunk),
+					remainingSize = unbufferedChunk.data.length - inChunkPtr;
+					if (readLength > remainingSize) {
+						throw(new RangeError(`Instructed read length ${readLength} exceeds the boundary of the current subchunk.`));
+					} else if (readLength > 0) {
+						let subChunk = new SeamstressChunk(id, chunkId, type, unbufferedChunk.offset + inChunkPtr, size);
+						subChunk.offsetData = unbufferedChunk.offsetData + inChunkPtr;
+						subChunk.context = context;
+						if (buffer.length > 0) {
+							buffer.push(unbufferedChunk.data.subarray(inChunkPtr, inChunkPtr + readLength));
+							subChunk.data = upThis.#mergeBuffer(buffer);
+							buffer = [];
+							offset = 0;
+							offsetData = 0;
+							isOffsetWritten = false;
+						} else {
+							subChunk.data = unbufferedChunk.data.subarray(inChunkPtr, inChunkPtr + readLength);
+						};
+						await streamHost.enqueue(subChunk);
+						inChunkPtr += readLength;
+					} else if (readLength === 0) {
+						if (unbufferedChunk.isFinal) {
+							let subChunk = new SeamstressChunk(id, chunkId, type, unbufferedChunk.offset + inChunkPtr, size);
+							subChunk.offsetData = unbufferedChunk.offsetData + inChunkPtr;
+							subChunk.context = context;
+							buffer.push(unbufferedChunk.data.subarray(inChunkPtr));
+							subChunk.data = upThis.#mergeBuffer(buffer);
+							buffer = [];
+							offset = 0;
+							offsetData = 0;
+							isOffsetWritten = false;
+							await streamHost.enqueue(subChunk);
+						} else {
+							if (isOffsetWritten === false) {
+								offset = unbufferedChunk.offset + inChunkPtr;
+								offsetData = unbufferedChunk.offsetData + inChunkPtr;
+								isOffsetWritten = true;
+							};
+							buffer.push(unbufferedChunk.data.subarray(inChunkPtr));
+						};
+						break;
+					} else {
+						throw(new Error(`Instructed read length is invalid.`));
+					};
+				};
+			};
+			if (buffer.length > 0) {
+				if (flushAll) {
+					let bufferedChunk = new SeamstressChunk(id, chunkId, type, offset, size);
+					bufferedChunk.data = upThis.#mergeBuffer(buffer);
+					bufferedChunk.offsetData = offsetData;
+					buffer = [];
+					bufferedChunk.context = context;
+					await streamHost.enqueue(bufferedChunk);
+				} else {
+					console.warn(`Incoming stream may have ended early, with ${upThis.#countBuffer(buffer)} B still unflushed.`);
+				};
+			};
+			streamHost.close();
+		})().catch((err) => {
+			streamHost.error(err);
+		});
+		return streamHost.readable;
+	};
 	readChunks(stream, flushAll = false) {
 		let upThis = this;
 		let streamHost = new StreamQueue();
 		let unbuffered = upThis.readStream(stream);
 		let buffer = []; // Maybe a linked list will fit better here? Dynamic arrays could be expensive.
 		let inProgress = false;
-		let id, chunkId, type, size, context;
+		let id, chunkId, type, size, context, offsetData;
 		(async () => {
 			for await (let unbufferedChunk of unbuffered) {
 				let sizeSum = unbufferedChunk.offset + unbufferedChunk.data.length;
 				if (sizeSum > unbufferedChunk.size) {
-					throw(new Error(`The total sum of size exceeded declaration (${sizeSum} > ${unbufferedChunk.size}).`));
+					if (!(upThis.type & upThis.MASK_PADDED && unbufferedChunk.size + 1 === sizeSum)) {
+						throw(new Error(`The total sum of size exceeded declaration (${sizeSum} > ${unbufferedChunk.size}).`));
+					};
 				} else if (sizeSum === unbufferedChunk.size) {
 					// Commit now!
 					if (unbufferedChunk.offset === 0) {
@@ -675,7 +784,8 @@ let Seamstress = class Seamstress {
 						buffer.push(unbufferedChunk.data);
 						let bufferedChunk = new SeamstressChunk(id, chunkId, type, 0, size);
 						bufferedChunk.data = upThis.#mergeBuffer(buffer);
-						buffer.splice(0);
+						bufferedChunk.offsetData = offsetData;
+						buffer = [];
 						bufferedChunk.context = context;
 						await streamHost.enqueue(bufferedChunk);
 						console.debug(`Committed a buffered chunk.`);
@@ -687,15 +797,16 @@ let Seamstress = class Seamstress {
 						if (flushAll) {
 							let bufferedChunk = new SeamstressChunk(id, chunkId, type, 0, size);
 							bufferedChunk.data = upThis.#mergeBuffer(buffer);
+							bufferedChunk.offsetData = offsetData;
 							bufferedChunk.context = context;
 							await streamHost.enqueue(bufferedChunk);
 						};
 						console.warn(`Chunk #${id} (${type}, #${chunkId}) has ended early, with ${upThis.#countBuffer(buffer)} B still unflushed.`);
-						buffer.splice(0);
+						buffer = [];
 						//inProgress = false;
 					};
 					inProgress = true;
-					({id, chunkId, type, size, context} = unbufferedChunk);
+					({id, chunkId, type, size, context, offsetData} = unbufferedChunk);
 				};
 				buffer.push(unbufferedChunk.data);
 			};
@@ -703,7 +814,8 @@ let Seamstress = class Seamstress {
 				if (flushAll) {
 					let bufferedChunk = new SeamstressChunk(id, chunkId, type, 0, size);
 					bufferedChunk.data = upThis.#mergeBuffer(buffer);
-					buffer.splice(0);
+					bufferedChunk.offsetData = offsetData;
+					buffer = [];
 					bufferedChunk.context = context;
 					await streamHost.enqueue(bufferedChunk);
 				} else {
