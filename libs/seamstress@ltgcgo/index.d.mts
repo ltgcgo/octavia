@@ -16,7 +16,7 @@ export class IntegerHandler {
 	*/
 	static useNative: bool;
 	/**
-	* When set to true, methods will no longer conduct type checks. Usually has negligible performance impact.
+	* When set to true, methods will no longer conduct type checks. Usually has negligible performance impact unless on poorly-optimized runtimes.
 	*/
 	static unsafeType: bool;
 	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */

@@ -16,6 +16,7 @@ let dummyAi32 = new Int32Array(dummyArray.buffer);
 
 //IntegerHandler.unsafeType = true;
 IntegerHandler.useNative = true;
+//IntegerHandler.useNative = false;
 
 benchmark(function warmUp() {
 	return Math.log2(Math.random());
@@ -92,7 +93,7 @@ benchmark(function i32TypedArrayA() {
 });
 benchmark(function i32TypedArrayB() {
 	let dummyVar;
-	for (let i = 0; (i << 2) < dummyArray.length; i ++) {
+	for (let i = 0; i < dummyArray.length; i += 4) {
 		dummyVar = IntegerHandler.readInt32(dummyArray, false, i);
 	};
 });

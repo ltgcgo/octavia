@@ -15,7 +15,7 @@ let IntegerHandler = class IntegerHandler {
 	static RVLV_END = 64;
 	static RVLV_SINGLE = 0;
 	static #unsafeType = false;
-	static useNative = false;
+	static useNative = true;
 	static #hiddenDataView = Symbol("Key for the hidden DataView.");
 	static #ensureU8Unsafe() {};
 	static #ensureU8Safe(buffer) {
@@ -45,7 +45,7 @@ let IntegerHandler = class IntegerHandler {
 			this.#ensureU8 = this.#ensureU8Safe;
 		};
 	};
-	static obtainDataView(typedArray) {
+	static #obtainDataView(typedArray) {
 		if (!typedArray[this.#hiddenDataView]) {
 			typedArray[this.#hiddenDataView] = new DataView(typedArray.buffer);
 		};
@@ -226,92 +226,120 @@ let IntegerHandler = class IntegerHandler {
 		return (buffer[offset >> 3] >> (offset & 7) & 1) !== 0;
 	};
 	static readInt8(buffer, offset = 0) {
-		this.#ensureU8(buffer);
-		if (offset < 0 || offset >= buffer.length) {
-			throw(new RangeError(`Invalid offset. (${offset})`));
+		if (this.useNative) {
+			return this.#obtainDataView(buffer).getInt8(offset, isLittleEndian);
+		} else {
+			this.#ensureU8(buffer);
+			if (offset < 0 || offset >= buffer.length) {
+				throw(new RangeError(`Invalid offset. (${offset})`));
+			};
+			let result = buffer[offset];
+			if (result >> 7) {
+				result -= 256;
+			};
+			return result;
 		};
-		let result = buffer[offset];
-		if (result >> 7) {
-			result -= 256;
-		};
-		return result;
 	};
 	static readUint16(buffer, isLittleEndian = false, offset = 0) {
-		this.#ensureU8(buffer);
-		if (offset < 0 || offset + 1 >= buffer.length) {
-			throw(new RangeError(`Invalid offset. (${offset})`));
-		};
-		let result = buffer[offset];
-		if (isLittleEndian) {
-			for (let i = 1; i < 2; i ++) {
-				result |= buffer[offset + i] << (i << 3);
-			};
+		if (this.useNative) {
+			return this.#obtainDataView(buffer).getUint16(offset, isLittleEndian);
 		} else {
-			for (let i = 1; i < 2; i ++) {
-				result <<= 8;
-				result |= buffer[offset + i];
+			this.#ensureU8(buffer);
+			if (offset < 0 || offset + 1 >= buffer.length) {
+				throw(new RangeError(`Invalid offset. (${offset})`));
 			};
+			let result = buffer[offset];
+			if (isLittleEndian) {
+				for (let i = 1; i < 2; i ++) {
+					result |= buffer[offset + i] << (i << 3);
+				};
+			} else {
+				for (let i = 1; i < 2; i ++) {
+					result <<= 8;
+					result |= buffer[offset + i];
+				};
+			};
+			return result;
 		};
-		return result;
 	};
 	static readInt16(buffer, isLittleEndian = false, offset = 0) {
-		let result = this.readUint16(buffer, isLittleEndian, offset);
-		if (result >>> 15) {
-			return result - 65536;
+		if (this.useNative) {
+			return this.#obtainDataView(buffer).getInt16(offset, isLittleEndian);
 		} else {
-			return result;
+			let result = this.readUint16(buffer, isLittleEndian, offset);
+			if (result >>> 15) {
+				return result - 65536;
+			} else {
+				return result;
+			};
 		};
 	};
 	static readInt32(buffer, isLittleEndian = false, offset = 0) {
-		this.#ensureU8(buffer);
-		if (offset < 0 || offset + 3 >= buffer.length) {
-			throw(new RangeError(`Invalid offset. (${offset})`));
-		};
-		let result = buffer[offset];
-		if (isLittleEndian) {
-			for (let i = 1; i < 4; i ++) {
-				result |= buffer[offset + i] << (i << 3);
-			};
+		if (this.useNative) {
+			return this.#obtainDataView(buffer).getInt32(offset, isLittleEndian);
 		} else {
-			for (let i = 1; i < 4; i ++) {
-				result <<= 8;
-				result |= buffer[offset + i];
+			this.#ensureU8(buffer);
+			if (offset < 0 || offset + 3 >= buffer.length) {
+				throw(new RangeError(`Invalid offset. (${offset})`));
 			};
+			let result = buffer[offset];
+			if (isLittleEndian) {
+				for (let i = 1; i < 4; i ++) {
+					result |= buffer[offset + i] << (i << 3);
+				};
+			} else {
+				for (let i = 1; i < 4; i ++) {
+					result <<= 8;
+					result |= buffer[offset + i];
+				};
+			};
+			return result;
 		};
-		return result;
 	};
 	static readUint32(buffer, isLittleEndian = false, offset = 0) {
-		let result = this.readInt32(buffer, isLittleEndian, offset);
-		if (result >>> 31) {
-			return 4294967296 + result;
+		if (this.useNative) {
+			return this.#obtainDataView(buffer).getUint32(offset, isLittleEndian);
 		} else {
-			return result;
+			let result = this.readInt32(buffer, isLittleEndian, offset);
+			if (result >>> 31) {
+				return 4294967296 + result;
+			} else {
+				return result;
+			};
 		};
 	};
 	static readUint64(buffer, isLittleEndian = false, offset = 0) {
-		this.#ensureU8(buffer);
-		if (offset < 0 || offset + 7 >= buffer.length) {
-			throw(new RangeError(`Invalid offset. (${offset})`));
-		};
-		let result = BigInt(buffer[offset]);
-		if (isLittleEndian) {
-			for (let i = 1; i < 8; i ++) {
-				result |= BigInt(buffer[offset + i]) << BigInt(i << 3);
-			};
+		if (this.useNative) {
+			return this.#obtainDataView(buffer).getBigUint64(offset, isLittleEndian);
 		} else {
-			for (let i = 1; i < 8; i ++) {
-				result <<= 8n;
-				result |= BigInt(buffer[offset + i]);
+			this.#ensureU8(buffer);
+			if (offset < 0 || offset + 7 >= buffer.length) {
+				throw(new RangeError(`Invalid offset. (${offset})`));
 			};
+			let result = BigInt(buffer[offset]);
+			if (isLittleEndian) {
+				for (let i = 1; i < 8; i ++) {
+					result |= BigInt(buffer[offset + i]) << BigInt(i << 3);
+				};
+			} else {
+				for (let i = 1; i < 8; i ++) {
+					result <<= 8n;
+					result |= BigInt(buffer[offset + i]);
+				};
+			};
+			return result;
 		};
-		return result;
 	};
 	static readInt64(buffer, isLittleEndian = false, offset = 0) {
-		let result = this.readUint64(buffer, isLittleEndian, offset);
-		if (result >> 63n) {
-			return result - 18446744073709551616n;
+		if (this.useNative) {
+			return this.#obtainDataView(buffer).getBigInt64(offset, isLittleEndian);
 		} else {
-			return result;
+			let result = this.readUint64(buffer, isLittleEndian, offset);
+			if (result >> 63n) {
+				return result - 18446744073709551616n;
+			} else {
+				return result;
+			};
 		};
 	};
 };
