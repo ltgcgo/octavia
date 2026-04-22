@@ -14,10 +14,42 @@ let IntegerHandler = class IntegerHandler {
 	static RVLV_MIDDLE = 128;
 	static RVLV_END = 64;
 	static RVLV_SINGLE = 0;
-	static #ensureU8(buffer) {
-		if (buffer.constructor !== Uint8Array && buffer.constructor !== Uint8ClampedArray) {
+	static #unsafeType = false;
+	static useNative = false;
+	static #hiddenDataView = Symbol("Key for the hidden DataView.");
+	static #ensureU8Unsafe() {};
+	static #ensureU8Safe(buffer) {
+		/*if (buffer.constructor !== Uint8Array && buffer.constructor !== Uint8ClampedArray) {
 			throw(new TypeError("Input must be a Uint8Array."));
+		};*/
+		switch (buffer.constructor) {
+			case Uint8Array:
+			case Uint8ClampedArray:{
+				return;
+				break;
+			};
+			default: {
+				throw(new TypeError("Input must be a Uint8Array."));
+			};
 		};
+	};
+	static #ensureU8 = this.#ensureU8Safe;
+	static get unsafeType() {
+		return this.#unsafeType;
+	};
+	static set unsafeType(value) {
+		this.#unsafeType = value;
+		if (value) {
+			this.#ensureU8 = this.#ensureU8Unsafe;
+		} else {
+			this.#ensureU8 = this.#ensureU8Safe;
+		};
+	};
+	static #obtainDataView(typedArray) {
+		if (!Object.hasOwn(typedArray, this.#hiddenDataView)) {
+			typedArray[this.#hiddenDataView] = new DataView(typedArray.buffer);
+		};
+		return typedArray[this.#hiddenDataView];
 	};
 	static readVLV(buffer, offset = 0) {
 		// VLV-8 are all big-endian.
@@ -282,6 +314,7 @@ let IntegerHandler = class IntegerHandler {
 			return result;
 		};
 	};
+	static ensureU8 = this.#ensureU8;
 };
 
 let SeamstressChunk = class SeamstressChunk {
