@@ -1,6 +1,6 @@
 "use strict";
 
-const rounds = 4194304;
+const rounds = 262144;
 
 export default function liteBench(intake) {
 	let startTime = Date.now();
