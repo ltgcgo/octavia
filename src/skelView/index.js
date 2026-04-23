@@ -77,13 +77,11 @@ let showResult = async (stream, props = {}) => {
 							delete eventContext.dataPos; // f0, ff
 							let deltaSize = IntegerHandler.sizeVLV(subchunk.data, offset);
 							if (deltaSize <= 0 || deltaSize > 4) {
-								if (deltaSize === 0 && subchunk.data.length - offset < 4 && !eventContext.coDelta) {
-									eventContext.coDelta = true;
+								if (deltaSize === 0 && subchunk.data.length - offset < 4) {
 									return 0;
 								};
 								throw(new Error(`Delta time is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
 							};
-							eventContext.coDelta = false; // Reset the carryover flag.
 							let statusPos = offset + deltaSize;
 							eventContext.statusPos = deltaSize;
 							let fullStatusPos = statusPos + subchunk.offsetData;
