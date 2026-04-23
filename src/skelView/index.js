@@ -66,10 +66,87 @@ let showResult = async (stream, props = {}) => {
 				let rawParser = new Seamstress();
 				rawParser.headerSize = 0;
 				rawParser.type = Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32;
-				rawParser.debugMode = true;
+				rawParser.regulateStream = (offset, subchunk) => {
+					switch (subchunk.type) {
+						case "MTrk":
+						case "XFIH":
+						case "XFKM": {
+							let deltaSize = IntegerHandler.sizeVLV(subchunk.data, offset);
+							let statusPos = offset + deltaSize;
+							let fullStatusPos = statusPos + subchunk.offsetData;
+							let statusByte = 0, isStale = false;
+							if (subchunk.data[statusPos] & 0x80) {
+								// Status byte
+								statusByte = subchunk.data[statusPos];
+								subchunk.context.runningStatus = statusByte;
+								console.debug(`Status (fresh): ${subchunk.context.runningStatus.toString(16)}`);
+							} else {
+								// Re-use running status
+								if ((subchunk.offset + offset) === 0) {
+									throw(new Error(`Stale running status should never be at the start of the chunk at 0x${fullStatusPos.toString(16).padStart(6, "0")}`));
+								} else if (subchunk.context.runningStatus >= 0xf0) {
+									throw(new Error(`Stale running status should never be ${subchunk.context.runningStatus.toString(16)} at 0x${fullStatusPos.toString(16).padStart(6, "0")}`));
+								} else {
+									statusByte = subchunk.context.runningStatus;
+									isStale = true;
+									console.debug(`Status (stale): ${statusByte.toString(16)}`);
+								};
+							};
+							let fullSize = deltaSize;
+							switch (statusByte) {
+								case 0xf0:
+								case 0xf7: {
+									// SysEx and SysEx continuation
+									fullSize += 1 + IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 1) + IntegerHandler.readVLV(subchunk.data, offset + deltaSize + 1);
+									break;
+								};
+								case 0xff: {
+									// Metadata
+									fullSize += 2 + IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 2) + IntegerHandler.readVLV(subchunk.data, offset + deltaSize + 2);
+									break;
+								};
+								default: {
+									switch (statusByte >> 4) {
+										case 8:
+										case 9:
+										case 10:
+										case 11:
+										case 14: {
+											// Normal events.
+											fullSize += isStale ? 2 : 3;
+											break;
+										};
+										case 12:
+										case 13: {
+											// Normal events.
+											fullSize += isStale ? 1 : 2;
+											break;
+										};
+										case 15: {
+											throw(new Error(`Unknown SMF status 0x${statusByte.toString(16)} at 0x${(fullStatusPos).toString(16).padStart(6, "0")}.`));
+											break;
+										};
+										default: {
+											// Malformed SMF data!
+											throw(new Error(`SMF data malformed at 0x${(fullStatusPos).toString(16).padStart(6, "0")}.`));
+										};
+									};
+								};
+							};
+							console.debug(`0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")} (${offset}): ${deltaSize} %o`, subchunk.data.subarray(offset, offset + fullSize));
+							return fullSize;
+							break;
+						};
+						case "MThd":
+						default: {
+							return 0;
+						};
+					};
+				};
+				//rawParser.debugMode = true;
 				let splitStream = stream.tee();
 				(async () => {
-					for await (let chunk of rawParser.readChunks(splitStream[1])) {
+					for await (let chunk of rawParser.readRegulated(splitStream[1])) {
 						console.debug(summarizeSeamstressChunk(chunk));
 					};
 					console.info("Finished chunk skimming.");
@@ -81,7 +158,7 @@ let showResult = async (stream, props = {}) => {
 				let rawParser = new Seamstress();
 				rawParser.headerSize = 12;
 				rawParser.type = rawParser.TYPE_4CC | rawParser.ENDIAN_B | rawParser.LENGTH_U32 | rawParser.MASK_PADDED;
-				rawParser.debugMode = true;
+				//rawParser.debugMode = true;
 				map = await rawParser.getMapFromStream(stream);
 				break;
 			};
@@ -89,7 +166,7 @@ let showResult = async (stream, props = {}) => {
 				let rawParser = new Seamstress();
 				rawParser.headerSize = 12;
 				rawParser.type = rawParser.TYPE_4CC | rawParser.ENDIAN_L | rawParser.LENGTH_U32 | rawParser.MASK_PADDED;
-				rawParser.debugMode = true;
+				//rawParser.debugMode = true;
 				let splitStream = stream.tee();
 				(async () => {
 					for await (let chunk of rawParser.readChunks(splitStream[1])) {

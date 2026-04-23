@@ -708,7 +708,8 @@ let Seamstress = class Seamstress {
 								skipLength += 1;
 							};
 						};
-						upThis.debugMode && console.debug(`${dPrefix2}: Set chunk ${JSON.stringify(chunkType)} (#${upThis.#increaseInMap(seamChunkMap, chunkType) + 1}), size ${chunkSize} B.`);
+						upThis.#increaseInMap(seamChunkMap, chunkType);
+						upThis.debugMode && console.debug(`${dPrefix2}: Set chunk ${JSON.stringify(chunkType)} (#${seamChunkMap.get(chunkType) + 1}), size ${chunkSize} B.`);
 						readState = 0;
 					};
 					ptr ++;
@@ -851,7 +852,7 @@ let Seamstress = class Seamstress {
 					if (unbufferedChunk.offset === 0) {
 						// The chunk was already fully buffered.
 						await streamHost.enqueue(unbufferedChunk);
-						console.debug(`Committed a fully buffered chunk.`);
+						upThis.debugMode && console.debug(`Committed a fully buffered chunk.`);
 					} else {
 						// Use the information stored on the first chunk buffer.
 						buffer.push(unbufferedChunk.data);
@@ -861,7 +862,7 @@ let Seamstress = class Seamstress {
 						buffer = [];
 						bufferedChunk.context = context;
 						await streamHost.enqueue(bufferedChunk);
-						console.debug(`Committed a buffered chunk.`);
+						upThis.debugMode && console.debug(`Committed a buffered chunk.`);
 						inProgress = false;
 					};
 					continue;
