@@ -66,43 +66,68 @@ let showResult = async (stream, props = {}) => {
 				let rawParser = new Seamstress();
 				rawParser.headerSize = 0;
 				rawParser.type = Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32;
-				rawParser.regulateStream = (offset, subchunk) => {
+				rawParser.regulateStream = function (offset, subchunk) {
 					switch (subchunk.type) {
 						case "MTrk":
 						case "XFIH":
 						case "XFKM": {
+							let eventContext = subchunk.context;
+							delete eventContext.statusPos;
+							delete eventContext.sizePos; // f0, ff
+							delete eventContext.dataPos; // f0, ff
 							let deltaSize = IntegerHandler.sizeVLV(subchunk.data, offset);
+							if (deltaSize <= 0 || deltaSize > 4) {
+								if (deltaSize === 0 && subchunk.data.length - offset < 4 && !eventContext.coDelta) {
+									eventContext.coDelta = true;
+									return 0;
+								};
+								throw(new Error(`Delta time is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
+							};
+							eventContext.coDelta = false; // Reset the carryover flag.
 							let statusPos = offset + deltaSize;
+							eventContext.statusPos = deltaSize;
 							let fullStatusPos = statusPos + subchunk.offsetData;
 							let statusByte = 0, isStale = false;
 							if (subchunk.data[statusPos] & 0x80) {
-								// Status byte
+								// Status byte.
 								statusByte = subchunk.data[statusPos];
-								subchunk.context.runningStatus = statusByte;
-								console.debug(`Status (fresh): ${subchunk.context.runningStatus.toString(16)}`);
+								eventContext.status = statusByte;
+								this.debugMode && console.debug(`Status (fresh): ${statusByte.toString(16)}`);
 							} else {
-								// Re-use running status
+								// Re-use running status.
 								if ((subchunk.offset + offset) === 0) {
 									throw(new Error(`Stale running status should never be at the start of the chunk at 0x${fullStatusPos.toString(16).padStart(6, "0")}`));
-								} else if (subchunk.context.runningStatus >= 0xf0) {
-									throw(new Error(`Stale running status should never be ${subchunk.context.runningStatus.toString(16)} at 0x${fullStatusPos.toString(16).padStart(6, "0")}`));
+								} else if (eventContext.status >= 0xf0) {
+									throw(new Error(`Stale running status should never be ${eventContext.status.toString(16)} at 0x${fullStatusPos.toString(16).padStart(6, "0")}`));
 								} else {
-									statusByte = subchunk.context.runningStatus;
+									statusByte = eventContext.status;
 									isStale = true;
-									console.debug(`Status (stale): ${statusByte.toString(16)}`);
+									this.debugMode && console.debug(`Status (stale): ${statusByte.toString(16)}`);
 								};
 							};
 							let fullSize = deltaSize;
 							switch (statusByte) {
 								case 0xf0:
 								case 0xf7: {
-									// SysEx and SysEx continuation
-									fullSize += 1 + IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 1) + IntegerHandler.readVLV(subchunk.data, offset + deltaSize + 1);
+									// SysEx and SysEx continuation.
+									let seSizeSize = IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 1);
+									if (seSizeSize <= 0 || seSizeSize > 4) {
+										throw(new Error(`SysEx size is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
+									};
+									eventContext.sizePos = deltaSize + 1;
+									eventContext.dataPos = eventContext.sizePos + seSizeSize;
+									fullSize += 1 + seSizeSize + IntegerHandler.readVLV(subchunk.data, offset + deltaSize + 1);
 									break;
 								};
 								case 0xff: {
-									// Metadata
-									fullSize += 2 + IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 2) + IntegerHandler.readVLV(subchunk.data, offset + deltaSize + 2);
+									// Metadata.
+									let mdSizeSize = IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 2);
+									if (mdSizeSize <= 0 || mdSizeSize > 4) {
+										throw(new Error(`Metadata size is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
+									};
+									eventContext.sizePos = deltaSize + 2;
+									eventContext.dataPos = eventContext.sizePos + mdSizeSize;
+									fullSize += 2 + mdSizeSize + IntegerHandler.readVLV(subchunk.data, offset + deltaSize + 2);
 									break;
 								};
 								default: {
@@ -133,7 +158,7 @@ let showResult = async (stream, props = {}) => {
 									};
 								};
 							};
-							console.debug(`0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")} (${offset}): ${deltaSize} %o`, subchunk.data.subarray(offset, offset + fullSize));
+							this.debugMode && console.debug(`0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")} (${offset}): ${deltaSize} %o`, subchunk.data.subarray(offset, offset + fullSize));
 							return fullSize;
 							break;
 						};
@@ -143,7 +168,7 @@ let showResult = async (stream, props = {}) => {
 						};
 					};
 				};
-				//rawParser.debugMode = true;
+				rawParser.debugMode = true;
 				let splitStream = stream.tee();
 				(async () => {
 					for await (let chunk of rawParser.readRegulated(splitStream[1])) {
