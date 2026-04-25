@@ -1,96 +1,121 @@
-// 2022-2025 (C) Lightingale Community
-// Licensed under GNU LGPL v3.0 license.
-
 "use strict";
 
-const readVLV = (buffer) => {
-	// Expects Uint8Array or the likes
-	let result = 0, ptr = 0, resume = true;
-	while (ptr < 4 && resume) {
-		if (ptr) {
-			result = result << 7;
-		};
-		result |= buffer[ptr] & 127;
-		if (buffer[ptr] < 128) {
-			resume = false;
-		};
-		ptr ++;
-	};
-	return [result, ptr];
-};
-const buildVLV = (number) => {
-	if (!Number.isInteger(number)) {
-		throw(new TypeError(`Must be an integer`));
-	};5
-	if (number >= 268435456) {
-		throw(new RangeError(`Must be within 28 bits (0x0 to 0x0fffffff)`));
-	};
-	let rawVLVBuffer = new Uint8Array(4);
-	let startByte = 3, workInt = number;
-	for (let i = 3; i >= 0; i --) {
-		if (workInt > 0) {
-			rawVLVBuffer[i] = workInt & 127 | (i === 3 ? 0 : 128);
-			workInt >>>= 7;
-			startByte = i;
-		};
-	};
-	return rawVLVBuffer.subarray(startByte);
-};
-const readUintBE = (buffer, byteLength) => {
-	if (byteLength > 6) {
-		throw(new RangeError(`Cannot read more than 48 bits`));
-	};
-	if (byteLength > buffer.length) {
-		throw(new RangeError(`Trying to read out of bounds`));
-	};
-	let result = 0, ptr = 0;
-	while (ptr < byteLength) {
-		if (ptr < 3) {
-			if (ptr) {
-				result = result << 8;
+let smfEventRegulator = function (offset, subchunk) {
+	switch (subchunk.type) {
+		case "MTrk":
+		case "XFIH":
+		case "XFKM": {
+			let eventContext = subchunk.context;
+			delete eventContext.statusPos;
+			delete eventContext.sizePos; // f0, ff
+			delete eventContext.dataPos; // f0, ff
+			let deltaSize = IntegerHandler.sizeVLV(subchunk.data, offset);
+			let remainingSize = subchunk.data.length - offset;
+			if (deltaSize <= 0 || deltaSize > 4) {
+				if (deltaSize === 0 && remainingSize < 4) {
+					return 0;
+				};
+				throw(new Error(`Delta time is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
 			};
-			result |= buffer[ptr];
-		} else {
-			result *= 256;
-			result += buffer[ptr];
+			if (deltaSize >= remainingSize) {
+				return 0;
+			};
+			let statusPos = offset + deltaSize;
+			eventContext.statusPos = deltaSize;
+			let fullStatusPos = statusPos + subchunk.offsetData;
+			let statusByte = 0, isStale = false;
+			if (subchunk.data[statusPos] & 0x80) {
+				// Status byte.
+				statusByte = subchunk.data[statusPos];
+				eventContext.status = statusByte;
+				this.debugMode && console.debug(`Status (fresh): ${statusByte.toString(16)}`);
+			} else {
+				// Re-use running status.
+				if ((subchunk.offset + offset) === 0) {
+					throw(new Error(`Stale running status should never be at the start of the chunk at 0x${fullStatusPos.toString(16).padStart(6, "0")}`));
+				} else if (eventContext.status >= 0xf0) {
+					throw(new Error(`Stale running status should never be ${eventContext.status.toString(16)} at 0x${fullStatusPos.toString(16).padStart(6, "0")}`));
+				} else {
+					statusByte = eventContext.status;
+					isStale = true;
+					this.debugMode && console.debug(`Status (stale): ${statusByte.toString(16)}`);
+				};
+			};
+			let fullSize = deltaSize;
+			switch (statusByte) {
+				case 0xf0:
+				case 0xf7: {
+					// SysEx and SysEx continuation.
+					let seSizeSize = IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 1);
+					let seRSize = remainingSize - deltaSize - 1;
+					if (seSizeSize <= 0 || seSizeSize > 4) {
+						if (seSizeSize === 0 && seRSize < 4) {
+							return 0;
+						};
+						throw(new Error(`SysEx size is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
+					};
+					eventContext.sizePos = deltaSize + 1;
+					eventContext.dataPos = eventContext.sizePos + seSizeSize;
+					fullSize += 1 + seSizeSize + IntegerHandler.readVLV(subchunk.data, offset + deltaSize + 1);
+					break;
+				};
+				case 0xff: {
+					// Metadata.
+					let mdSizeSize = IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 2);
+					let mdRSize = remainingSize - deltaSize - 2;
+					if (mdSizeSize <= 0 || mdSizeSize > 4) {
+						if (mdSizeSize === 0 && mdRSize < 4) {
+							return 0;
+						};
+						throw(new Error(`Metadata size is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
+					};
+					eventContext.sizePos = deltaSize + 2;
+					eventContext.dataPos = eventContext.sizePos + mdSizeSize;
+					fullSize += 2 + mdSizeSize + IntegerHandler.readVLV(subchunk.data, offset + deltaSize + 2);
+					break;
+				};
+				default: {
+					switch (statusByte >> 4) {
+						case 8:
+						case 9:
+						case 10:
+						case 11:
+						case 14: {
+							// Normal events.
+							fullSize += isStale ? 2 : 3;
+							break;
+						};
+						case 12:
+						case 13: {
+							// Normal events.
+							fullSize += isStale ? 1 : 2;
+							break;
+						};
+						case 15: {
+							throw(new Error(`Unknown SMF status 0x${statusByte.toString(16)} at 0x${(fullStatusPos).toString(16).padStart(6, "0")}.`));
+							break;
+						};
+						default: {
+							// Malformed SMF data!
+							throw(new Error(`SMF data malformed at 0x${(fullStatusPos).toString(16).padStart(6, "0")}.`));
+						};
+					};
+				};
+			};
+			if (remainingSize < fullSize) {
+				return 0;
+			};
+			this.debugMode && console.debug(`0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")} (${offset}): ${deltaSize} %o`, subchunk.data.subarray(offset, offset + fullSize));
+			return fullSize;
+			break;
 		};
-		ptr ++;
-	};
-	return result;
-};
-const buildUintBE = (number, byteLength) => {
-	if (byteLength > 6) {
-		throw(new RangeError(`Cannot write more than 48 bits`));
-	};
-	if (byteLength > buffer.length) {
-		throw(new RangeError(`Trying to write out of bounds`));
-	};
-	if (!Number.isInteger(number)) {
-		throw(new TypeError(`Must be an integer`));
-	};
-	let result = new Uint8Array(byteLength), ptr = byteLength;
-	let workInt = number;
-	while (ptr > 0) {
-		ptr --;
-		if (workInt > 2147483647) {
-			result[ptr] = workInt % 256;
-			workInt /= 256;
-		} else {
-			result[ptr] = workInt & 255;
-			workInt >>>= 8;
+		case "MThd":
+		default: {
+			return 0;
 		};
 	};
-	return result;
-};
-const commitData = (controller, data) => {
-	controller.unsent = false;
-	controller.enqueue(data);
 };
 
 export {
-	readVLV,
-	buildVLV,
-	readUintBE,
-	buildUintBE,
-	commitData
+	smfEventRegulator
 };
