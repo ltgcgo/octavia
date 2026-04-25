@@ -137,30 +137,30 @@ let showResult = async (stream, props = {}) => {
 
 let invokeAction = async () => {
 	if (self.selectedFile) {
-		self.selectedFile = selectedFile;
+		let selectedFileBlob = self.selectedFile;
 		let intendedMode = typeSelector.value;
 		if (intendedMode === "auto") {
-			let extensionIdx = selectedFile.name?.lastIndexOf(".");
+			let extensionIdx = selectedFileBlob.name?.lastIndexOf(".");
 			if (extensionIdx > 0) {
-				let extensionName = selectedFile.name.substring(extensionIdx + 1).toLowerCase();
+				let extensionName = selectedFileBlob.name.substring(extensionIdx + 1).toLowerCase();
 				intendedMode = fileTypes[extensionName];
 				if (!intendedMode) {
-					resultDisplay.append(`\nAssociation for extension "${extensionName}" is not found for: ${selectedFile.name}.`);
+					resultDisplay.append(`\nAssociation for extension "${extensionName}" is not found for: ${selectedFileBlob.name}.`);
 					return;
 				};
 			} else {
-				resultDisplay.append(`\nInvalid extension for name: ${selectedFile.name}.`);
+				resultDisplay.append(`\nInvalid extension for name: ${selectedFileBlob.name}.`);
 				return;
 			};
 		};
-		selectedFile.targetMode = intendedMode;
-		await showResult(selectedFile.stream(), selectedFile);
+		selectedFileBlob.targetMode = intendedMode;
+		await showResult(selectedFileBlob.stream(), selectedFileBlob);
 	};
 };
 $e("b#openFile").addEventListener("mouseup", async () => {
-	let selectedFile = await fileOpen(fileProps);
-	if (selectedFile) {
-		self.selectedFile = selectedFile;
+	let selectedFileBlob = await fileOpen(fileProps);
+	if (selectedFileBlob) {
+		self.selectedFile = selectedFileBlob;
 	};
 	await invokeAction();
 });
