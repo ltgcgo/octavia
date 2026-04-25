@@ -55,7 +55,7 @@ let showResult = async (stream, props = {}) => {
 	if (!props.size) {
 		props.size = -1;
 	};
-	let map;
+	let readStream;
 	while (resultDisplay.childNodes.length > 0) {
 		resultDisplay.childNodes[0].remove();
 	};
@@ -188,8 +188,10 @@ let showResult = async (stream, props = {}) => {
 						rawParser.debugMode && console.debug(summarizeSeamstressChunk(chunk));
 					};
 					console.info("Finished chunk skimming.");
-				})();
-				map = rawParser.readChunks(splitStream[0]);
+				})().catch((err) => {
+					resultDisplay.append(`\n\nChunk skimmer: Uncaught ${err.name}: ${err.message}\n${err.stack}`);
+				});
+				readStream = rawParser.readChunks(splitStream[0]);
 				break;
 			};
 			case "iff": {
@@ -197,7 +199,7 @@ let showResult = async (stream, props = {}) => {
 				rawParser.headerSize = 12;
 				rawParser.type = rawParser.TYPE_4CC | rawParser.ENDIAN_B | rawParser.LENGTH_U32 | rawParser.MASK_PADDED;
 				//rawParser.debugMode = true;
-				map = rawParser.readChunks(stream);
+				readStream = rawParser.readChunks(stream);
 				break;
 			};
 			case "riff": {
@@ -211,8 +213,10 @@ let showResult = async (stream, props = {}) => {
 						console.debug(summarizeSeamstressChunk(chunk));
 					};
 					console.info("Finished chunk skimming.");
-				})();
-				map = rawParser.readChunks(splitStream[0]);
+				})().catch((err) => {
+					resultDisplay.append(`\n\nChunk skimmer: Uncaught ${err.name}: ${err.message}\n${err.stack}`);
+				});
+				readStream = rawParser.readChunks(splitStream[0]);
 				break;
 			};
 			default: {
@@ -223,19 +227,23 @@ let showResult = async (stream, props = {}) => {
 	} catch (err) {
 		resultDisplay.append(`\nUncaught ${err.name}: ${err.message ?? "No error message was provided."}\n${err.stack}`);
 	};
-	for await (let chunk of map) {
-		let showKey = chunk.type;
-		if (typeof key === "number") {
-			showKey = `0x${key.toString(16)}`;
+	try {
+		for await (let chunk of readStream) {
+			let showKey = chunk.type;
+			if (typeof chunk.type === "number") {
+				showKey = `0x${chunk.type.toString(16)}`;
+			};
+			showKey = showKey.padEnd(10, " ");
+			if (chunk.chunkId === 0) {
+				resultDisplay.append(`\n${showKey}  - #${`${chunk.chunkId + 1}`.padStart(4, "0")}   0x${chunk.offsetData.toString(16).padStart(8, "0")}  ${chunk.data.length} B`);
+			} else {
+				resultDisplay.append(`\n            - #${`${chunk.chunkId + 1}`.padStart(4, "0")}   0x${chunk.offsetData.toString(16).padStart(8, "0")}  ${chunk.data.length} B`);
+			};
 		};
-		showKey = showKey.padEnd(10, " ");
-		if (chunk.chunkId === 0) {
-			resultDisplay.append(`\n${showKey}  - #${`${chunk.chunkId + 1}`.padStart(4, "0")}   0x${chunk.offsetData.toString(16).padStart(8, "0")}  ${chunk.data.length} B`);
-		} else {
-			resultDisplay.append(`\n            - #${`${chunk.chunkId + 1}`.padStart(4, "0")}   0x${chunk.offsetData.toString(16).padStart(8, "0")}  ${chunk.data.length} B`);
-		};
+		resultDisplay.append(`\n\nStructure validation finished.`);
+	} catch (err) {
+		resultDisplay.append(`\n\nChunk scanner: Uncaught ${err.name}: ${err.message}\n${err.stack}`);
 	};
-	resultDisplay.append(`\n\nStructure validation finished.`);
 };
 
 let invokeAction = async () => {
