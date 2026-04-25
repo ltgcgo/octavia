@@ -76,11 +76,15 @@ let showResult = async (stream, props = {}) => {
 							delete eventContext.sizePos; // f0, ff
 							delete eventContext.dataPos; // f0, ff
 							let deltaSize = IntegerHandler.sizeVLV(subchunk.data, offset);
+							let remainingSize = subchunk.data.length - offset;
 							if (deltaSize <= 0 || deltaSize > 4) {
-								if (deltaSize === 0 && subchunk.data.length - offset < 4) {
+								if (deltaSize === 0 && remainingSize < 4) {
 									return 0;
 								};
 								throw(new Error(`Delta time is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
+							};
+							if (deltaSize >= remainingSize) {
+								return 0;
 							};
 							let statusPos = offset + deltaSize;
 							eventContext.statusPos = deltaSize;
@@ -109,7 +113,11 @@ let showResult = async (stream, props = {}) => {
 								case 0xf7: {
 									// SysEx and SysEx continuation.
 									let seSizeSize = IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 1);
+									let seRSize = remainingSize - deltaSize - 1;
 									if (seSizeSize <= 0 || seSizeSize > 4) {
+										if (seSizeSize === 0 && seRSize < 4) {
+											return 0;
+										};
 										throw(new Error(`SysEx size is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
 									};
 									eventContext.sizePos = deltaSize + 1;
@@ -120,7 +128,11 @@ let showResult = async (stream, props = {}) => {
 								case 0xff: {
 									// Metadata.
 									let mdSizeSize = IntegerHandler.sizeVLV(subchunk.data, offset + deltaSize + 2);
+									let mdRSize = remainingSize - deltaSize - 2;
 									if (mdSizeSize <= 0 || mdSizeSize > 4) {
+										if (mdSizeSize === 0 && mdRSize < 4) {
+											return 0;
+										};
 										throw(new Error(`Metadata size is invalid at 0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")}`));
 									};
 									eventContext.sizePos = deltaSize + 2;
@@ -155,6 +167,9 @@ let showResult = async (stream, props = {}) => {
 										};
 									};
 								};
+							};
+							if (remainingSize < fullSize) {
+								return 0;
 							};
 							this.debugMode && console.debug(`0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")} (${offset}): ${deltaSize} %o`, subchunk.data.subarray(offset, offset + fullSize));
 							return fullSize;

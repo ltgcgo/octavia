@@ -772,7 +772,7 @@ let Seamstress = class Seamstress {
 					let readLength = upThis.regulateStream(inChunkPtr, unbufferedChunk),
 					remainingSize = unbufferedChunk.data.length - inChunkPtr;
 					if (readLength > remainingSize) {
-						throw(new RangeError(`Instructed read length ${readLength} exceeds the boundary of the current subchunk.`));
+						throw(new RangeError(`Instructed read length ${readLength} exceeds the boundary of the current subchunk, only ${remainingSize} B remains.`));
 					} else if (readLength > 0) {
 						let subChunk = new SeamstressChunk(id, chunkId, type, unbufferedChunk.offset + inChunkPtr, size);
 						subChunk.offsetData = unbufferedChunk.offsetData + inChunkPtr;
@@ -811,7 +811,7 @@ let Seamstress = class Seamstress {
 						};
 						break;
 					} else {
-						throw(new Error(`Instructed read length is invalid.`));
+						throw(new Error(`Instructed read length is invalid (${readLength}).`));
 					};
 				};
 			};
