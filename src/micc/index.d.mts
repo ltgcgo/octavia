@@ -96,9 +96,17 @@ export class MICCFile {
 	*/
 	finalized: Promise<void>;
 	/**
+	* When set to true, the finalizer will not be called, and the related promise will resolve instantly when the raw data has been fully parsed.
+	*/
+	noFinalization: boolean;
+	/**
 	* Used by parsers to mark the file as finalized.
 	*/
 	markFinalized(): Promise<void>;
+	/**
+	* Runs the finalization process. Re-runs are useful for programs that mutate events, e.g. editors.
+	*/
+	finalize(): Promise<void>;
 	/**
 	* Used by parsers to reject the file.
 	* @param err The error object to be passed to both promise objects.
