@@ -80,12 +80,71 @@ export class MIDIEventWithContext {
 	chunk: number;
 }
 /**
+* A file parsed or to be serialized by MICC.
+*/
+export class MICCFile {
+	/**
+	* Resolves when baseline usability is met, e.g. the raw data has been fully parsed.
+	*/
+	ready: Promise<void>;
+	/**
+	* Used by parsers to mark the file as ready.
+	*/
+	markReady(): Promise<void>;
+	/**
+	* Resolves when full usability is met, e.g. the finalizer has been run.
+	*/
+	finalized: Promise<void>;
+	/**
+	* Used by parsers to mark the file as finalized.
+	*/
+	markFinalized(): Promise<void>;
+	/**
+	* (WIP) Serialize the file into an SMF file.
+	*/
+	serializeSmf(): ReadableStream<Uint8Array>;
+	/**
+	* (WIP) Disassemble the file into MIA instructions.
+	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available.
+	*/
+	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
+};
+/**
 * Parse raw MIDI events from buffers.
 * @param buffer The input buffer.
 * @param context The context object or a boolean. If boolean is provided, setting it to true will include delta time parsing. If a context object is provided, delta time parsing will always be present.
 */
 export function smfEventParser(buffer: Uint8Array, context?: boolean|SeamstressContext): NakedMIDIEvent;
-
+/**
+* The MIDI serializer.
+*/
+export class MICC {
+	/**
+	* A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used.
+	*/
+	decoders: Array<TextDecoder>;
+	/**
+	* Parse the incoming Standard MIDI File byte stream.
+	*/
+	parseSmf(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	/**
+	* Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of SMF files) stream.
+	*/
+	parseMia(data: ReadableStream<Uint8Array>, label?: string): MICCFile;
+	/**
+	* (WIP) Parse the incoming RMI byte stream.
+	*/
+	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	/**
+	* Directly assemble MIA into SMF without going through a file object.
+	*/
+	assemble(data: ReadableStream<string>, context?: object): ReadableStream<Uint8Array>;
+	/**
+	* Directly disassemble SMF into MIA without going through a file object.
+	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available.
+	*/
+	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
+};
 
 // Compatibility layers
 /**
