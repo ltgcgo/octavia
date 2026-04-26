@@ -12,7 +12,69 @@ import {
 */
 
 // Native implementations
-export class NakedMIDIEvent {}
+export class NakedMIDIEvent {
+	/**
+	* Delta time. The time difference of the current event and the previous event.
+	*/
+	delta: number;
+	/**
+	* MIDI event type. Type `8` to `15`, and `241` to `255` are all available.
+	*/
+	type: number;
+	/**
+	* The desinated channel of the MIDI event. Valid values range from `0` to `127` for events without port defined, or `0` to `15` for events with ports. Will not appear for `0xf0`-`0xff` events.
+	*/
+	part?: number;
+	/**
+	* The meta event type. Only applicable for `0xff` (meta) events.
+	*/
+	meta?: number;
+	/**
+	* The raw data of the MIDI event.
+	*/
+	data: Uint8Array;
+	/**
+	* True means that the running status of the current event was inherited from the previous event. `0xf0`-`0xff` events always have this byte set to false. Valid omissions will be reflected in serializers.
+	*/
+	isStale = false;
+	/**
+	* The offset of the current event in the original event stream, if the current event is created by a parser. Useful for debugging.
+	*/
+	offset?: number;
+	/**
+	* The parsed value of the event set by the finalizer, can be decoded strings. Only applicable to `0xff` (meta) events.
+	*/
+	parsed?: any;
+	/**
+	* The parsed time in seconds set by the finalizer.
+	*/
+	time?: number;
+	/**
+	* If set to true, the current event has port defined.
+	*/
+	hasPort = false;
+	/**
+	* The port for the event, usually set by the finalizer.
+	*/
+	port = 0;
+}
+/**
+* An intermediate object consumed by Octavia's parser and serializer.
+*/
+export class MIDIEventWithContext {
+	/**
+	* The actual MIDI event.
+	*/
+	event: NakedMIDIEvent;
+	/**
+	* Chunk type. Same as `SeamstressChunk.type`.
+	*/
+	type: number | string;
+	/**
+	* Chunk ID. Same as `SeamstressChunk.chunkId`.
+	*/
+	chunk: number;
+}
 /**
 * Parse raw MIDI events from buffers.
 * @param buffer The input buffer.
@@ -108,7 +170,7 @@ export class ColxiMIDIView {
 	readStr(readSize: number): string;
 };
 /**
-* Mostly a drop-in replacement for `colxi/midi-parser-js`.
+* Mostly a drop-in replacement for `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission), migrating to Octavia's compatibility layer may help handle those files.
 */
 export class ColxiMIDIParser {
 	/**
