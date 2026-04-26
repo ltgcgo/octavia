@@ -1,23 +1,5 @@
 "use strict";
 
-let NakedMIDIEvent = class NakedMIDIEvent {
-	delta = 0; // delta time
-	type = 255; // event type
-	part = 0; // MIDI channel
-	meta; // optional meta event type
-	data; // actual Uint8Array raw data
-	isStale = false; // true if the original event omitted the running status
-	text; // decoded string of meta events, not available until a decoder/finalizer is run
-	time; // parsed time in seconds, not available until a finalizer is run
-	hasPort = false;
-	port = 0; // designated virtual port, only use this after ensuring it as parsed
-};
-let MIDIEventWithContext = class MIDIEventWithContext {
-	event; // the NakedMIDIEvent object
-	type; // subchunk.type
-	chunk; // subchunk.chunkId
-};
-
 let smfEventRegulator = function (offset, subchunk) {
 	switch (subchunk.type) {
 		case "MTrk":
@@ -133,18 +115,7 @@ let smfEventRegulator = function (offset, subchunk) {
 		};
 	};
 };
-let smfEventParser = function (buffer) {
-	let nakedEvent = {};
-	return nakedEvent;
-};
-let smfEventContextParser = function (chunkInfo) {
-	let parsedEvent = smfEventParser(chunkInfo.data);
-	return parsedEvent;
-};
 
 export {
-	smfEventRegulator,
-	smfEventParser,
-	smfEventContextParser,
-	NakedMIDIEvent
+	smfEventRegulator
 };
