@@ -22,7 +22,7 @@ export class NakedMIDIEvent {
 	*/
 	type: number;
 	/**
-	* The desinated channel of the MIDI event. Valid values range from `0` to `127` for events without port defined, or `0` to `15` for events with ports. Will not appear for `0xf0`-`0xff` events.
+	* The desinated channel of the MIDI event. Valid values range from `0` to `127` for events without port defined, or `0` to `15` for events with port defined. Will not appear for `0xf0`-`0xff` events.
 	*/
 	part?: number;
 	/**
@@ -84,7 +84,7 @@ export class MIDIEventWithContext {
 */
 export class MICCFile {
 	/**
-	* Resolves when baseline usability is met, e.g. the raw data has been fully parsed.
+	* Resolves when baseline usability is met, e.g. the raw data has been fully parsed. Will reject when the parser fails with parser error.
 	*/
 	ready: Promise<void>;
 	/**
@@ -92,13 +92,18 @@ export class MICCFile {
 	*/
 	markReady(): Promise<void>;
 	/**
-	* Resolves when full usability is met, e.g. the finalizer has been run.
+	* Resolves when full usability is met, e.g. the finalizer has been run. Will reject when the parser fails with parser error.
 	*/
 	finalized: Promise<void>;
 	/**
 	* Used by parsers to mark the file as finalized.
 	*/
 	markFinalized(): Promise<void>;
+	/**
+	* Used by parsers to reject the file.
+	* @param err The error object to be passed to both promise objects.
+	*/
+	reject(err: any): void;
 	/**
 	* (WIP) Serialize the file into an SMF file.
 	*/
@@ -135,6 +140,10 @@ export class MICC {
 	* (WIP) Parse the incoming RMI byte stream.
 	*/
 	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	/**
+	* (WIP) Parse the incoming XWS byte stream.
+	*/
+	parseXws(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
 	/**
 	* Directly assemble MIA into SMF without going through a file object.
 	*/
