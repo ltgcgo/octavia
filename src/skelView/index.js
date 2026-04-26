@@ -28,6 +28,7 @@ const fileProps = JSON.parse('{"extensions":[],"startIn":"pictures","id":"binOpe
 const fileTypes = {
 	"mid": "smf",
 	"kar": "smf",
+	"xws": "xws",
 	"aif": "iff",
 	"aiff": "iff",
 	"dls": "riff",
@@ -106,6 +107,14 @@ let showResult = async (stream, props = {}) => {
 					resultDisplay.append(`\n\nChunk skimmer: Uncaught ${err.name}: ${err.message}\n${err.stack}`);
 				});
 				readStream = rawParser.readChunks(splitStream[0]);
+				break;
+			};
+			case "xws": {
+				let rawParser = new Seamstress();
+				rawParser.headerSize = 0;
+				rawParser.type = Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32;
+				rawParser.debugMode = true;
+				readStream = rawParser.readChunks(stream);
 				break;
 			};
 			default: {
