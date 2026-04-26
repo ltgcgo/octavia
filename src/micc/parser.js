@@ -1,5 +1,7 @@
 "use strict";
 
+// Octavia native
+
 let NakedMIDIEvent = class NakedMIDIEvent {
 	delta = 0; // delta time
 	type = 255; // event type
@@ -18,20 +20,8 @@ let MIDIEventWithContext = class MIDIEventWithContext {
 	type; // subchunk.type
 	chunk; // subchunk.chunkId
 };
-let ColxiMIDIEvent = class ColxiMIDIEvent {
-	deltaTime = 0;
-	type = 255;
-	metaType;
-	data;
-};
-let ColxiMIDIFile = class ColxiMIDIFile {
-	formatType = 0;
-	timeDivision = 480;
-	tracks;
-	track = [];
-};
 
-let smfEventParser = function (buffer) {
+let smfEventParser = function (buffer, context) {
 	let nakedEvent = {};
 	return nakedEvent;
 };
@@ -40,10 +30,31 @@ let smfEventContextParser = function (chunkInfo) {
 	return parsedEvent;
 };
 
+// Colxi compatibility
+
+let ColxiMIDIEvent = class ColxiMIDIEvent {
+	deltaTime = 0;
+	type = 255;
+	metaType;
+	data;
+};
+let ColxiMIDITrack;
+let ColxiMIDIFile = class ColxiMIDIFile {
+	formatType = 0;
+	timeDivision = 480;
+	tracks;
+	track = [];
+};
+let ColxiMIDIView;
+let ColxiMIDIParser;
+
 export {
 	NakedMIDIEvent,
 	smfEventParser,
 	smfEventContextParser,
 	ColxiMIDIEvent,
-	ColxiMIDIFile
+	ColxiMIDITrack,
+	ColxiMIDIFile,
+	ColxiMIDIView,
+	ColxiMIDIParser
 };
