@@ -121,6 +121,10 @@ export class MICCFile {
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available.
 	*/
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
+	/**
+	* (WIP, will only implement when needed) Serialize the file into an XWS file.
+	*/
+	serializeXws(): ReadableStream<Uint8Array>;
 };
 /**
 * Parse raw MIDI events from buffers.
