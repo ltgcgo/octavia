@@ -678,6 +678,7 @@ let Seamstress = class Seamstress {
 							throw(new Error(`${dPrefix2}: Invalid read state ${readState} encountered.`));
 						};
 					};
+					let shouldEnqueue = false;
 					if (readState === 8) {
 						// Read both type and size at once.
 						chunkType = undefined;
@@ -708,12 +709,13 @@ let Seamstress = class Seamstress {
 								skipLength += 1;
 							};
 						};
+						shouldEnqueue = true;
 						upThis.#increaseInMap(seamChunkMap, chunkType);
 						upThis.debugMode && console.debug(`${dPrefix2}: Set chunk ${JSON.stringify(chunkType)} (#${seamChunkMap.get(chunkType) + 1}), size ${chunkSize} B.`);
 						readState = 0;
 					};
 					ptr ++;
-					if (skipLength > 0) {
+					if (skipLength > 0 || shouldEnqueue) {
 						if (skipLength + ptr < chunk.length) {
 							let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, 0, chunkSize);
 							subchunkData.data = chunk.subarray(ptr, ptr + skipLength);
