@@ -44,10 +44,10 @@ class MICCConstants {
 	static MIDI_ACTIVE_SENSE: number;
 	/** Metadata events. */
 	static MIDI_METADATA: number;
-	/** XGworks track block: normal. */
-	static XWTB_NORMAL: number;
-	/** XGworks track block: linked (pointer). */
-	static XWTB_LINKED: number;
+	/** Track pointer block: normal. Compatible with XGworks. */
+	static PTRB_NORMAL: number;
+	/** Track pointer block: linked (pointer). Compatible with XGworks. */
+	static PTRB_LINKED: number;
 }
 /** Base type that can populate `MICCTrack`. */
 export class MICCBaseElement {
@@ -124,7 +124,7 @@ export class WrappedMIDIEvent {
 }
 /** A pointer to the actual clip tracks. The group specifier is `ltgc.pointer`. */
 export class MICCPointer extends MICCBaseElement {
-	/** A track containing events. */
+	/** Type of the current pointer. Largely follows XGworks. */
 	type: number;
 	/** Starting MIDI tick of the referred block. */
 	start: number;
@@ -132,8 +132,12 @@ export class MICCPointer extends MICCBaseElement {
 	end: number;
 	/** Selected block ID. */
 	block: number;
-	/** Name of the current block. */
+	/** Name of the current block. Empty names will become undefined. */
 	name?: string;
+	/** The starting time of the current pointer, supplied by a finalizer. */
+	time?: number;
+	/** Direct object reference to the normal block, supplied by a finalizer. */
+	parsed?: MICCTrack;
 };
 /** A track containing events. */
 export class MICCTrack {
