@@ -21,20 +21,59 @@ export class NakedMIDIEvent {}
 export function smfEventParser(buffer: Uint8Array, context?: boolean|SeamstressContext): NakedMIDIEvent;
 
 // Compatibility layers
+/**
+* A MIDI event in Colxi's scheme.
+*/
 export class ColxiMIDIEvent {
+	/**
+	* MIDI delta time.
+	*/
 	deltaTime: number;
+	/**
+	* MIDI event type.
+	*/
 	type: number;
-	metaType: number;
+	/**
+	* If the event is a meta event, the meta event type.
+	*/
+	metaType?: number;
+	/**
+	* Actual data of the event.
+	*/
 	data: number | Uint8Array | string;
 }
+/**
+* A MIDI track containing events in Colxi's scheme.
+*/
 export class ColxiMIDITrack {
+	/**
+	* List of events populated by the track.
+	*/
 	event: Array<ColxiMIDIEvent>;
+	/**
+	* The type of the track. Not present in the original implementation.
+	*/
 	type: string;
 }
+/**
+* The representation of a parsed MIDI file in Colxi's scheme.
+*/
 export class ColxiMIDIFile {
+	/**
+	* MIDI file type (0, 1, 2).
+	*/
 	formatType: number;
+	/**
+	* The time division used by files. 480 is the most common value.
+	*/
 	timeDivision: number;
+	/**
+	* Number of expected tracks specified by the MIDI file. Not guaranteed to the the exact number of tracks supplied by the MIDI file.
+	*/
 	tracks: number;
+	/**
+	* Actual tracks with events.
+	*/
 	track: Array<ColxiMIDITrack>;
 }
 /**
@@ -60,7 +99,7 @@ export class ColxiMIDIView {
 	*/
 	readInt(readSize: number): number;
 	/**
-	* Read VLV-8 on the current pointer;
+	* Read VLV-8 on the current pointer.
 	*/
 	readIntVLV(): number;
 	/**
@@ -68,8 +107,25 @@ export class ColxiMIDIView {
 	*/
 	readStr(readSize: number): string;
 };
+/**
+* Mostly a drop-in replacement for `colxi/midi-parser-js`.
+*/
 export class ColxiMIDIParser {
+	/**
+	* Parses the input into a structured representation. Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used.
+	* @param input MIDI file data to be parsed. Can be a `File` object, one of the two uint8 arrays, and a Base64 string.
+	* @param callback The method to invoke when parsing is finished.
+	*/
 	static parse(input: File | Uint8Array | Uint8ClampedArray | string, callback: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
-	static customInterpreter?: (type: number, view: object, metaLength: number) => any;
+	/**
+	* Defines custom interpreter behaviour, should only invoked by the parser. The returned value will populate the data property. Returning `false` will assume default behaviour.
+	* @param type The event type.
+	* @param view A view into the MIDI data currently being parsed.
+	* @param metaLength Length of the meta event. Will only be present for 0xff events.
+	*/
+	static customInterpreter?: (type: number, view: ColxiMIDIView, metaLength?: number) => any;
+	/**
+	* A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings.
+	*/
 	static decoders?: Array<TextDecoder>;
 }
