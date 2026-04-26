@@ -219,7 +219,7 @@ export class MICCFile {
 	/**
 	* The resource pool of the current file, usually used by pointer events. SMF files don't create this.
 	*/
-	pool?: Map<string, MICCBaseElement>;
+	pool?: Map<string, Array<MICCBaseElement>>;
 	/**
 	* Tracks contained by the current file.
 	*/
