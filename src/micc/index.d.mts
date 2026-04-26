@@ -36,7 +36,7 @@ export class NakedMIDIEvent {
 	/**
 	* True means that the running status of the current event was inherited from the previous event. `0xf0`-`0xff` events always have this byte set to false. Valid omissions will be reflected in serializers.
 	*/
-	isStale = false;
+	isStale: boolean;
 	/**
 	* The offset of the current event in the original event stream, if the current event is created by a parser. Useful for debugging.
 	*/
@@ -46,17 +46,21 @@ export class NakedMIDIEvent {
 	*/
 	parsed?: any;
 	/**
+	* Populated if the parsed value has additional data. If the parsed value is a string, this property can denote the text encoding used.
+	*/
+	label?: any;
+	/**
 	* The parsed time in seconds set by the finalizer.
 	*/
 	time?: number;
 	/**
 	* If set to true, the current event has port defined.
 	*/
-	hasPort = false;
+	hasPort: boolean;
 	/**
 	* The port for the event, usually set by the finalizer.
 	*/
-	port = 0;
+	port?: number;
 }
 /**
 * An intermediate object consumed by Octavia's parser and serializer.
@@ -81,6 +85,7 @@ export class MIDIEventWithContext {
 * @param context The context object or a boolean. If boolean is provided, setting it to true will include delta time parsing. If a context object is provided, delta time parsing will always be present.
 */
 export function smfEventParser(buffer: Uint8Array, context?: boolean|SeamstressContext): NakedMIDIEvent;
+
 
 // Compatibility layers
 /**

@@ -11,9 +11,10 @@ let NakedMIDIEvent = class NakedMIDIEvent {
 	isStale = false;
 	offset;
 	parsed;
+	label;
 	time;
 	hasPort = false;
-	port = 0;
+	port;
 };
 let MIDIEventWithContext = class MIDIEventWithContext {
 	event;
