@@ -12,7 +12,52 @@ import {
 */
 
 // Native implementations
-export class NakedMIDIEvent {
+/** Utility constants for MICC. */
+class MICCConstants {
+	/** Note off events. */
+	static MIDI_NOTE_OFF: number;
+	/** Note on events. */
+	static MIDI_NOTE_ON: number;
+	/** Note/polyphonic aftertouch events. */
+	static MIDI_NOTE_AT: number;
+	/** Control change events. */
+	static MIDI_CONTROL: number;
+	/** Program change events. */
+	static MIDI_PROGRAM: number;
+	/** Channel aftertouch events. */
+	static MIDI_CHANNEL_AT: number;
+	/** Channel pitch bend events. */
+	static MIDI_CHANNEL_PITCH: number;
+	/** New SysEx events. */
+	static MIDI_SYSEX_NEW: number;
+	/** Resumed SysEx events. */
+	static MIDI_SYSEX_RESUME: number;
+	/** MIDI clock events. Should not appear in files. */
+	static MIDI_CLOCK: number;
+	/** MIDI play control start events. Should not appear in files. */
+	static MIDI_START: number;
+	/** MIDI play control continue events. Should not appear in files. */
+	static MIDI_RESUME: number;
+	/** MIDI play control stop events. Should not appear in files. */
+	static MIDI_STOP: number;
+	/** MIDI active sensing events. Should not appear in files. */
+	static MIDI_ACTIVE_SENSE: number;
+	/** Metadata events. */
+	static MIDI_METADATA: number;
+	/** XGworks track block: normal. */
+	static XWTB_NORMAL: number;
+	/** XGworks track block: linked (pointer). */
+	static XWTB_LINKED: number;
+}
+/** Base type that can populate `MICCTrack`. */
+export class MICCBaseElement {
+	/**
+	* The assigned group specifier. For standard MIDI events, this is always set to `mma.midiEvent`.
+	*/
+	group: string;
+}
+/** Representation of a MIDI event. The group specifier is `mma.midiEvent`. */
+export class NakedMIDIEvent extends MICCBaseElement {
 	/**
 	* Delta time. The time difference of the current event and the previous event.
 	*/
@@ -62,10 +107,8 @@ export class NakedMIDIEvent {
 	*/
 	port?: number;
 }
-/**
-* An intermediate object consumed by Octavia's parser and serializer.
-*/
-export class MIDIEventWithContext {
+/** An intermediate object consumed by Octavia's parser and serializer. */
+export class WrappedMIDIEvent {
 	/**
 	* The actual MIDI event.
 	*/
@@ -78,6 +121,46 @@ export class MIDIEventWithContext {
 	* Chunk ID. Same as `SeamstressChunk.chunkId`.
 	*/
 	chunk: number;
+}
+/** A pointer to the actual clip tracks. The group specifier is `ltgc.pointer`. */
+export class MICCPointer extends MICCBaseElement {
+	/** A track containing events. */
+	type: number;
+	/** Starting MIDI tick of the referred block. */
+	start: number;
+	/** Expected ending MIDI tick of the referred block. */
+	end: number;
+	/** Selected block ID. */
+	block: number;
+	/** Name of the current block. */
+	name?: string;
+};
+/** A track containing events. */
+export class MICCTrack {
+	/** Track type. For SMF and XWS files, this is usually the FourCC type. */
+	type: string;
+	/** Vendor specifier of the track type. */
+	vendor: string;
+	/** Data carried by the chunk, usually a list of events. */
+	data: Array<MICCBaseElement>;
+}
+/** The contained metadata of the current file. */
+export class MICCFileMetadata {
+	/** The full format specifier of the current file. */
+	format: string;
+	/** MIDI time division. `480` is the most common. */
+	division: number;
+	/**
+	* Definition vary by file type.
+	* For SMF files, this indicates the SMF file type.
+	*/
+	type?: number;
+	/** Amount of expected tracks. */
+	track?: number;
+	/** For files utilizing pointers, amount of expected normal MICI blocks/clips. */
+	clip?: number;
+	/** For files utilizing styles, amount of expected styles. Currently unused. */
+	style?: number;
 }
 /**
 * A file parsed or to be serialized by MICC.
@@ -125,6 +208,18 @@ export class MICCFile {
 	* (WIP, will only implement when needed) Serialize the file into an XWS file.
 	*/
 	serializeXws(): ReadableStream<Uint8Array>;
+	/**
+	* The metadata of the current file.
+	*/
+	meta: MICCFileMetadata;
+	/**
+	* The resource pool of the current file, usually used by pointer events. SMF files don't create this.
+	*/
+	pool?: Map<string, MICCBaseElement>;
+	/**
+	* Tracks contained by the current file.
+	*/
+	track: Array<MICCTrack>;
 };
 /**
 * Parse raw MIDI events from buffers.
@@ -135,7 +230,7 @@ export function smfEventParser(buffer: Uint8Array, context?: boolean|SeamstressC
 /**
 * The MIDI serializer.
 */
-export class MICC {
+export class MICC extends MICCConstants {
 	/**
 	* A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used.
 	*/
@@ -149,7 +244,7 @@ export class MICC {
 	*/
 	parseMia(data: ReadableStream<Uint8Array>, label?: string): MICCFile;
 	/**
-	* (WIP) Parse the incoming RMI byte stream.
+	* (WIP) Parse the incoming RMI byte stream. Contained SMF files will be flattened.
 	*/
 	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
 	/**

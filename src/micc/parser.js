@@ -16,7 +16,7 @@ let NakedMIDIEvent = class NakedMIDIEvent {
 	hasPort = false;
 	port;
 };
-let MIDIEventWithContext = class MIDIEventWithContext {
+let WrappedMIDIEvent = class MIDIEventWithContext {
 	event;
 	type;
 	chunk;
@@ -51,7 +51,7 @@ let ColxiMIDIParser;
 
 export {
 	NakedMIDIEvent,
-	MIDIEventWithContext,
+	WrappedMIDIEvent,
 	smfEventParser,
 	smfEventContextParser,
 	ColxiMIDIEvent,
