@@ -18,7 +18,7 @@
 </head>
 <body>
 	<div class="container" x-data="{}">
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{profiles:[['none','None'],['chromium','Chromium'],['macos','macOS']],dumps:[[0,'All','Place no restrictions on dumps.'],[2,'Mode','Only dumps with the same mode as the channel are allowed.']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],profiles:{'none':'None','chromium':'Chrome','macos':'macOS'},dumps:[[0,'All','Place no restrictions on dumps.'],[2,'Mode','Only dumps with the same mode as the channel are allowed.']]}">
 			<div class="column column-option"><b>Open from</b></div>
 			<div class="column column-option column-button" @click="gOpenSmf()" :active="$store.play=='smf'?'true':'false'" title="Open MIDI files, SysEx blobs or bank files.">MIDI</div>
 			<div class="column column-option column-button" @click="gOpenSnd()" :active="$store.sound=='file'?'true':'false'" title="Open synchronized audio tracks.">audio</div>
@@ -26,9 +26,10 @@
 			<div class="column column-option column-button" @click="gOpenLni()" :active="$store.useMidiBus" title="Reset and receive raw MIDI inputs from middleware.">line in</div>
 			<div class="column column-option column-button" @click="gOpenLno()" :active="$store.play=='lno'?'true':'false'" title="Reset and receive MIDI events emitted from middleware.">line out</div>
 			<div class="column column-option"><b>Pixel correction</b></div>
-			<template x-for="profile in profiles">
-				<div class="column column-option column-button" @click="gPixelC(profile[0])" x-text="profile[1]" :active="($store.pixelProfile||'none')==profile[0]?'true':'false'"></div>
-			</template>
+			<div id="dropmount-pixelprofile"></div>
+			<!--<template x-for="(name, id) in profiles">
+				<div class="column column-option column-button" @click="gPixelC(id)" x-text="name" :active="($store.pixelProfile??'none')===id?'true':'false'"></div>
+			</template>-->
 			<div class="column column-option"><b>Limit Dump</b></div>
 			<template x-for="dump in dumps">
 				<div class="column column-option column-button" @click="gLimitDump(dump[0])" x-text="dump[1]" :title="dump[2]" :active="($store.limitDump||2)==dump[0]?'true':'false'"></div>

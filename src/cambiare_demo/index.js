@@ -190,6 +190,16 @@ createDropDown($e("div#dropmount-colourscheme"), {
 	"optionActive": "($store.scheme ?? 0)===id",
 	"optionClick": "gSetScheme(id)"
 });
+createDropDown($e("div#dropmount-pixelprofile"), {
+	"activeSlot": 0,
+	"minWidth": "6.75rem",
+	"displayText": "profiles[$store.pixelProfile??'none']||'N/A'",
+	"eachExpr": "(name, id) in profiles",
+	"optionText": "name",
+	"optionDesc": "`Internal ID: (${id})`",
+	"optionActive": "($store.pixelProfile??'none')===id",
+	"optionClick": "gPixelC(id)"
+});
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
 	if (baseTime === newTime) {
