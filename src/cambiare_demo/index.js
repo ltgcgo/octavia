@@ -170,8 +170,16 @@ createDropDown($e("div#dropmount-panstyle"), {
 	"optionActive": "`${$store.panStyle??11}`===id",
 	"optionClick": "gPanStyle(id)"
 });
-
-
+createDropDown($e("div#dropmount-ecmode"), {
+	"activeSlot": 3,
+	"minWidth": "6.5rem",
+	"displayText": "ecModes[($store.useElementCount??true) ? 1 : 0][1]||'N/A'",
+	"eachExpr": "([id, name], idx) in ecModes",
+	"optionText": "name",
+	"optionDesc": "`Internal ID: (${id})`",
+	"optionActive": "`${$store.useElementCount??true}`===id",
+	"optionClick": "gEcMode(id)"
+});
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
 	if (baseTime === newTime) {

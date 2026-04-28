@@ -35,7 +35,7 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{cats:['Pre-GM','GM 1','GM 2'],modes:{'?':['Auto Detect',255],'gm':['General MIDI',1],'xg':['Yamaha XG',1],'gs':['Roland GS',1],'sc':['Roland SC',1],'ns5r':['KORG NS5R',1],'05rw':['KORG 05R/W',1],'x5d':['KORG X5D',1],'k11':['Kawai GMega',1],'sg':['Akai SG',1],'g2':['General MIDI 2',2],'sd':['Roland SD',2],'pa':['KORG PA',2],'krs':['KORG KROSS 2',2],'cs1x':['Yamaha CS1x',1],'cs6x':['Yamaha CS6x',1],'s90es':['Yamaha S90 ES',1],'motif':['Yamaha Motif ES',1],'trin':['KORG Trinity',1],'mt32':['Roland MT-32',0],'doc':['Yamaha DOC',0],'qy10':['Yamaha QY10',0],'qy20':['Yamaha QY20',0]},active:[0,0,0],value:{cat:1},frames:{'7':[144,'PC screen'],'9':[120,'PC screen'],'10':[100,'PC screen'],'12':[90,'Phone screen'],'14':[75,'Phone screen'],'17':[60,'NTSC'],'20':[50,'PAL (native)'],'21':[48,'Film'],'34':[30,'NTSC'],'40':[25,'PAL'],'42':[24,'Film'],'100':[10,'Economic'],'500':[2,'Economic']}}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{cats:['Pre-GM','GM 1','GM 2'],modes:{'?':['Auto Detect',255],'gm':['General MIDI',1],'xg':['Yamaha XG',1],'gs':['Roland GS',1],'sc':['Roland SC',1],'ns5r':['KORG NS5R',1],'05rw':['KORG 05R/W',1],'x5d':['KORG X5D',1],'k11':['Kawai GMega',1],'sg':['Akai SG',1],'g2':['General MIDI 2',2],'sd':['Roland SD',2],'pa':['KORG PA',2],'krs':['KORG KROSS 2',2],'cs1x':['Yamaha CS1x',1],'cs6x':['Yamaha CS6x',1],'s90es':['Yamaha S90 ES',1],'motif':['Yamaha Motif ES',1],'trin':['KORG Trinity',1],'mt32':['Roland MT-32',0],'doc':['Yamaha DOC',0],'qy10':['Yamaha QY10',0],'qy20':['Yamaha QY20',0]},value:{cat:1},frames:{'7':[144,'PC screen'],'9':[120,'PC screen'],'10':[100,'PC screen'],'12':[90,'Phone screen'],'14':[75,'Phone screen'],'17':[60,'NTSC'],'20':[50,'PAL (native)'],'21':[48,'Film'],'34':[30,'NTSC'],'40':[25,'PAL'],'42':[24,'Film'],'100':[10,'Economic'],'500':[2,'Economic']},ecModes:[[false,'Ignore'],[true,'Used']],active:[0,0,0,0]}">
 			<div class="column column-option"><b>Global mode</b></div>
 			<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
 				<div class="dropdown-trigger" style="min-width: 6.5rem" @click="active[1]=false;active[0]=!active[0]">
@@ -79,6 +79,8 @@
 			<!--<template x-for="frame in frames">
 				<div class="column column-option column-button" @click="gFrameTime(frame[0])" x-text="frame[1]" :active="($store.frameTime||20)==frame[0]?'true':'false'" :title="frame[2]"></div>
 			</template>-->
+			<div class="column column-option"><b>Element count</b></div>
+			<div id="dropmount-ecmode"></div>
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native'],[2,'PSR/LE'],[3,'QY100']],gsLvls:[[1,'SC-55'],[2,'SC-88'],[3,'SC-88 Pro'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']],active:[0,0,0,0]}">
@@ -121,11 +123,10 @@
 			</template>-->
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4},ecModes:[[false,'Ignore'],[true,'Used']]}">
-			<div class="column column-option"><b>Element count</b></div>
-			<template x-for="ecMode in ecModes">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4}}">
+			<!--<template x-for="ecMode in ecModes">
 				<div class="column column-option column-button" @click="gEcMode(ecMode[0])" x-text="ecMode[1]" :active="($store.useElementCount??true)==ecMode[0]?'true':'false'"></div>
-			</template>
+			</template>-->
 			<div class="column column-option"><b>Display mode</b></div>
 			<template x-for="range in ranges">
 				<div class="column column-option column-button" @click="gRange(range[0])" x-text="range[1]" :active="($store.showRange||'port1')==range[0]?'true':'false'"></div>
