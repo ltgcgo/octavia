@@ -172,13 +172,23 @@ createDropDown($e("div#dropmount-panstyle"), {
 });
 createDropDown($e("div#dropmount-ecmode"), {
 	"activeSlot": 3,
-	"minWidth": "6.5rem",
+	"minWidth": "7rem",
 	"displayText": "ecModes[($store.useElementCount??true) ? 1 : 0][1]||'N/A'",
 	"eachExpr": "([id, name], idx) in ecModes",
 	"optionText": "name",
 	"optionDesc": "`Internal ID: (${id})`",
-	"optionActive": "`${$store.useElementCount??true}`===id",
+	"optionActive": "($store.useElementCount??true)===id",
 	"optionClick": "gEcMode(id)"
+});
+createDropDown($e("div#dropmount-colourscheme"), {
+	"activeSlot": 0,
+	"minWidth": "6.5rem",
+	"displayText": "schemes[$store.scheme ?? 0]||'N/A'",
+	"eachExpr": "(name, id) in schemes",
+	"optionText": "name",
+	"optionDesc": "`Internal ID: (${id})`",
+	"optionActive": "($store.scheme ?? 0)===id",
+	"optionClick": "gSetScheme(id)"
 });
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
