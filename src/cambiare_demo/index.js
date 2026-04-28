@@ -100,6 +100,36 @@ let createDropDown = function (mountedElement, opt = {}) {
 };
 
 // Create the dropdown menus
+createDropDown($e("div#dropmount-pixelprofile"), {
+	"activeSlot": 0,
+	"minWidth": "6.75rem",
+	"displayText": "profiles[$store.pixelProfile??'none']||'N/A'",
+	"eachExpr": "(name, id) in profiles",
+	"optionText": "name",
+	"optionDesc": "`Internal ID: (${id})`",
+	"optionActive": "($store.pixelProfile??'none')===id",
+	"optionClick": "gPixelC(id)"
+});
+createDropDown($e("div#dropmount-framerate"), {
+	"activeSlot": 2,
+	"minWidth": "5rem",
+	"displayText": "frames[$store.frameTime??20][0]||'N/A'",
+	"eachExpr": "(frame, frametime) in frames",
+	"optionText": "frame[0]",
+	"optionDesc": "frame[1]",
+	"optionActive": "`${$store.frameTime??20}`===frametime",
+	"optionClick": "gFrameTime(parseInt(frametime))"
+});
+createDropDown($e("div#dropmount-ecmode"), {
+	"activeSlot": 3,
+	"minWidth": "7rem",
+	"displayText": "ecModes[($store.useElementCount??true) ? 1 : 0][1]||'N/A'",
+	"eachExpr": "([id, name], idx) in ecModes",
+	"optionText": "name",
+	"optionDesc": "`Internal ID: (${id})`",
+	"optionActive": "($store.useElementCount??true)===id",
+	"optionClick": "gEcMode(id)"
+});
 createDropDown($e("div#dropmount-levelXg"), {
 	"activeSlot": 0,
 	"minWidth": "9.5rem",
@@ -140,16 +170,6 @@ createDropDown($e("div#dropmount-levelX5"), {
 	"optionActive": "($store.x5Lvl||82)===x5Lvl[0]",
 	"optionClick": "gX5Lvl(x5Lvl[0])"
 });
-createDropDown($e("div#dropmount-framerate"), {
-	"activeSlot": 2,
-	"minWidth": "5rem",
-	"displayText": "frames[$store.frameTime??20][0]||'N/A'",
-	"eachExpr": "(frame, frametime) in frames",
-	"optionText": "frame[0]",
-	"optionDesc": "frame[1]",
-	"optionActive": "`${$store.frameTime??20}`===frametime",
-	"optionClick": "gFrameTime(parseInt(frametime))"
-});
 createDropDown($e("div#dropmount-notestyle"), {
 	"activeSlot": 0,
 	"minWidth": "6.5rem",
@@ -170,15 +190,14 @@ createDropDown($e("div#dropmount-panstyle"), {
 	"optionActive": "`${$store.panStyle??11}`===id",
 	"optionClick": "gPanStyle(id)"
 });
-createDropDown($e("div#dropmount-ecmode"), {
-	"activeSlot": 3,
-	"minWidth": "7rem",
-	"displayText": "ecModes[($store.useElementCount??true) ? 1 : 0][1]||'N/A'",
-	"eachExpr": "([id, name], idx) in ecModes",
+createDropDown($e("div#dropmount-accenttype"), {
+	"activeSlot": 2,
+	"displayText": "accents[$store.accentType ?? 0][0]||'N/A'",
+	"eachExpr": "([name, desc], id) in accents",
 	"optionText": "name",
-	"optionDesc": "`Internal ID: (${id})`",
-	"optionActive": "($store.useElementCount??true)===id",
-	"optionClick": "gEcMode(id)"
+	"optionDesc": "desc",
+	"optionActive": "($store.accentType ?? 0)===id",
+	"optionClick": "gAccentType(id)"
 });
 createDropDown($e("div#dropmount-colourscheme"), {
 	"activeSlot": 0,
@@ -190,15 +209,15 @@ createDropDown($e("div#dropmount-colourscheme"), {
 	"optionActive": "($store.scheme ?? 0)===id",
 	"optionClick": "gSetScheme(id)"
 });
-createDropDown($e("div#dropmount-pixelprofile"), {
-	"activeSlot": 0,
-	"minWidth": "6.75rem",
-	"displayText": "profiles[$store.pixelProfile??'none']||'N/A'",
-	"eachExpr": "(name, id) in profiles",
+createDropDown($e("div#dropmount-background"), {
+	"activeSlot": 1,
+	"minWidth": "7rem",
+	"displayText": "backgrounds[$store.bgGroup ?? 'soft'][0]||'N/A'",
+	"eachExpr": "([name, desc], id) in backgrounds",
 	"optionText": "name",
-	"optionDesc": "`Internal ID: (${id})`",
-	"optionActive": "($store.pixelProfile??'none')===id",
-	"optionClick": "gPixelC(id)"
+	"optionDesc": "desc",
+	"optionActive": "($store.bgGroup ?? 'soft')===id",
+	"optionClick": "gBgGroup(id)"
 });
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
