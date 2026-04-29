@@ -118,7 +118,7 @@
 				<div class="column column-option column-button" @click="gScLvl(scLvl[0])" x-text="scLvl[1]" :active="($store.scLvl||3)==scLvl[0]?'true':'false'"></div>
 			</template>-->
 			<div class="column column-option"><b>X5 target</b></div>
-			<div title="WIP" id="dropmount-levelX5"></div>
+			<div id="dropmount-levelX5" class="wip"></div>
 			<!--<template x-for="x5Lvl in x5Lvls">
 				<div class="column column-option column-button" @click="gX5Lvl(x5Lvl[0])" x-text="x5Lvl[1]" :active="($store.x5Lvl||82)==x5Lvl[0]?'true':'false'"></div>
 			</template>-->
@@ -150,7 +150,7 @@
 				<div class="column column-option column-button" @click="gPanStyle(pan[0])" x-text="pan[1]" :active="($store.panStyle??11)==pan[0]?'true':'false'"></div>
 			</template>-->
 			<div class="column column-option"><b>Accent</b></div>
-			<div id="dropmount-accenttype"></div>
+			<div id="dropmount-accenttype" class="wip"></div>
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],schemes:['Dark','Light'],backgrounds:{'soft':['Soft','General-purpose soft colour-fill background.'],'luma':['Luma','Colour-fill background for luma keying.'],'colour':['Colour','Custom colour-fill background.'],'imageLuma':['Image','Custom image background. Opacity mixed with luma colours.'],'imageColour':['Image +','Custom image background. Opacity mixed with custom colours.']}}">
@@ -159,7 +159,7 @@
 			<!--<template x-for="scheme in schemes">
 				<div class="column column-option column-button" @click="gSetScheme(scheme[0])" x-text="scheme[1]" :active="($store.scheme||0)==scheme[0]?'true':'false'"></div>
 			</template>-->
-			<div id="dropmount-background"></div>
+			<div id="dropmount-background" class="wip"></div>
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered">

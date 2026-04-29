@@ -5,6 +5,9 @@ body {
 .is-full-height {
 	min-height: 100vh;
 }
+button {
+	cursor: inherit;
+}
 
 :root {
 	--page-button-bg: #0000;
@@ -14,14 +17,28 @@ body {
 	--page-option-border-select: #0002;
 	--page-option-border-active: #0008;
 }
+.column-option.wip {
+	--page-button-bg-hover: #f001;
+	--page-button-bg-active: #f003;
+	--page-option-border: #f000;
+	--page-option-border-select: #f002;
+	--page-option-border-active: #f008;
+}
 @media (prefers-color-scheme: dark) {
 	:root {
 		--page-button-bg: #fff0;
 		--page-button-bg-hover: #fff1;
 		--page-button-bg-active: #fff4;
 		--page-option-border: #fff0;
-		--page-option-border-select: #fff3;
+		--page-option-border-select: #fff5;
 		--page-option-border-active: #fffa;
+	}
+	.column-option.wip {
+		--page-button-bg-hover: #f551;
+		--page-button-bg-active: #f554;
+		--page-option-border: #f550;
+		--page-option-border-select: #f555;
+		--page-option-border-active: #f55a;
 	}
 }
 
@@ -91,6 +108,7 @@ body {
 .column-button {
 	background: var(--page-button-bg);
 	transition: background 0.2s;
+	cursor: pointer;
 }
 .column-button:hover {
 	background: var(--page-button-bg-hover);
@@ -107,4 +125,8 @@ body {
 	max-height: 100vw;
 	width: 100vw;
 	height: 100vh;
+}
+
+.wip {
+	cursor: not-allowed !important;
 }
