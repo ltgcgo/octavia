@@ -2362,7 +2362,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		// Reset AI EFX display name
 		upThis.aiEfxName = "";
 		// Reset MT-32 user bank
-		upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
+		upThis.userBank.clearRange({msb: 49, lsb: 127, prg: [0, 127]});
 		// Reset XG-exclusive params
 		upThis.modelEx.xg.section = 8;
 		upThis.modelEx.xg.sectSwitch = false;
@@ -5506,7 +5506,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.switchMode("mt32", 2);
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.mt32);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
-			upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
+			upThis.userBank.clearRange({msb: 49, lsb: 127, prg: [0, 127]});
 			upThis.modelEx.mt32.writeTimbre = true;
 			console.info("MIDI reset: MT-32");
 		}).add([22, 18, 0], (msg, track, id) => {
