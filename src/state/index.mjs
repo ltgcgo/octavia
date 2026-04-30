@@ -528,6 +528,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			"runLineLen": 0,
 			"maxLineLen": 32,
 			"splitMask": false
+		},
+		"mt32": {
+			"writeTimbre": true
 		}
 	};
 	#detect;
@@ -1850,7 +1853,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					};
 				});
 				let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${prg}\t${userBank}`;
-				//console.debug(loadTsv);
+				getDebugState() && console.debug(`MT-32 instrument load:\n${loadTsv}`);
 				upThis.userBank.load(loadTsv, true);
 				bank.name = userBank;
 				bank.ending = " ";
@@ -2374,6 +2377,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.modelEx.sc.peakHold = 1;
 		// Reset CS1x-exclusive params
 		upThis.modelEx.cs1x.perfCh = 0;
+		// Reset MT-32 params
+		upThis.modelEx.mt32.writeTimbre = true;
 		for (let ch = 0; ch < allocated.ch; ch ++) {
 			// Reset custom voice name buffers
 			upThis.resetChCvn(ch);
@@ -2730,7 +2735,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				});*/
 			};
 		} else {
-			throw(new Error(`Unknown mode ${mode}`));
+			throw(new Error(`Unknown mode "${mode}".`));
 		};
 	};
 	getRawStrength() {
@@ -5496,6 +5501,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.mt32);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			upThis.userBank.clearRange({msb: 0, lsb: 127, prg: [0, 127]});
+			upThis.modelEx.mt32.writeTimbre = true;
 			console.info("MIDI reset: MT-32");
 		}).add([22, 18, 0], (msg, track, id) => {
 			// MT-32 Part Patch Setup (temp)
@@ -5707,10 +5713,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						} else {
 							name = upThis.baseBank.get(0, e + (timbreGroup << 6), 127, "mt32").name;
 						};
-						upThis.userBank.clearRange({msb: 0, lsb: 127, prg: patch});
+						upThis.userBank.clearRange({msb: 49, lsb: 127, prg: patch});
 						let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${patch}\t${name}`;
-						//console.debug(loadTsv);
-						upThis.userBank.load(loadTsv, true);
+						getDebugState() && console.info(`MT-32 patch memory write:\n${loadTsv}`);
+						if (upThis.modelEx.mt32.writeTimbre) {
+							upThis.userBank.load(loadTsv, true);
+						} else {
+							console.warn(`Blocked MT-32 patch writes to instrument "${name}" on program ${patch}.`);
+						};
 					};
 				}][slot] || (() => {}))();
 			});
@@ -5720,19 +5730,26 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.switchMode("mt32", 1);
 			let offset = ((msg[0] & 1) << 7) + msg[1];
 			let patch = msg[0] >> 1, wroteName = false;
+			if (offset < allocated.cmt) {
+				getDebugState() && console.debug(`MT-32 timbre "${decoderL9.decode(msg.subarray(2, 12))}" written to slot ${msg[0] >> 1}.`);
+			};
 			msg.subarray(2).forEach((e, i) => {
 				let ri = offset + i;
 				if (ri < allocated.cmt) {
-					//console.debug(`MT-32 timbre written to slot ${msg[0] >> 1}.`);
 					upThis.#cmTimbre[patch * allocated.cmt + ri] = e;
 					wroteName = true;
 				};
 			});
-			if (wroteName) {
-				upThis.userBank.clearRange({msb: 0, lsb: 127, prg: patch});
+			/*if (wroteName) {
+				upThis.userBank.clearRange({msb: 49, lsb: 127, prg: patch});
 				let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${patch}\tMT-m:${patch}`;
-				upThis.userBank.load(loadTsv, true);
-			};
+				getDebugState() && console.info(`MT-32 timbre memory write:\n${loadTsv}`);
+				if (upThis.modelEx.mt32.writeTimbre) {
+					upThis.userBank.load(loadTsv, true);
+				} else {
+					console.warn(`Blocked MT-32 timbre writes to instrument "${userBank}" on program ${prg}.`);
+				};
+			};*/
 			upThis.forceVoiceRefresh();
 		}).add([22, 18, 16], (msg, track, id) => {
 			// MT-32 System Setup
@@ -5799,6 +5816,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					upThis.#prg[partBase + part] = mt32DefProg[part - 1];
 				};
 			};
+			//upThis.modelEx.mt32.writeTimbre = false;
 			console.info(`MT-32 alt reset complete.`);
 		});
 		// KORG NS5R SysEx section
