@@ -1846,17 +1846,23 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				// Device patch
 				let patch = parseInt(bank.name.slice(5)),
 				timbreOff = patch * allocated.cmt,
-				userBank = "";
+				voiceName = "", nameSize = 0;
 				upThis.#cmTimbre.subarray(timbreOff, timbreOff + 10).forEach((e) => {
 					if (e > 31) {
-						userBank += String.fromCharCode(e);
+						voiceName += String.fromCharCode(e);
+						if (e !== 32) {
+							nameSize ++;
+						};
 					};
 				});
-				let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${prg}\t${userBank}`;
-				getDebugState() && console.debug(`MT-32 instrument load:\n${loadTsv}`);
-				upThis.userBank.load(loadTsv, true);
-				bank.name = userBank;
-				bank.ending = " ";
+				// This process is still destructive.
+				if (nameSize === 0) {} else {
+					let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${prg}\t${voiceName}`;
+					console.debug(`MT-32 voice resolve:\n${loadTsv}`);
+					upThis.userBank.load(loadTsv, true);
+					bank.name = voiceName;
+					bank.ending = " ";
+				};
 			};
 		};
 		if (bank.ending !== " " || !bank.name.length) {
@@ -5740,6 +5746,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					wroteName = true;
 				};
 			});
+			upThis.forceVoiceRefresh();
 			/*if (wroteName) {
 				upThis.userBank.clearRange({msb: 49, lsb: 127, prg: patch});
 				let loadTsv = `MSB\tLSB\tPRG\tNME\n49\t127\t${patch}\tMT-m:${patch}`;
