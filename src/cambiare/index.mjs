@@ -644,7 +644,24 @@ let Cambiare = class extends RootDisplay {
 				// Render strength metre
 				e.metre.clearRect(0, 0, 121, 25);
 				e.metre.fillStyle = `#${upThis.#foreground}`;
+				e.metre.strokeStyle = `#${upThis.#foreground}`;
+				e.metre.lineWidth = 1;
 				e.metre.globalCompositeOperation = "source-over";
+				let metreLength = sum.strength[part] * 121 / 255;
+				switch (e.metre.decoration) {
+					case 1: {
+						// Outline.
+						e.metre.fillRect(0, 0, 121, 25);
+						if (metreLength > 120) {
+							e.metre.clearRect(0, 1, 121, 23);
+						} else if (metreLength > 1) {
+							e.metre.clearRect(0, 1, 120, 23);
+						} else {
+							e.metre.clearRect(1, 1, 119, 23);
+						};
+						break;
+					};
+				};
 				if (e.metre.rWidth > e.metre.canvas.width) {
 					if (e.metre.rNew) {
 						e.metre.rNew = false;
@@ -658,14 +675,38 @@ let Cambiare = class extends RootDisplay {
 						offsetX = 0;
 					};
 					e.metre.fillText(e.metre.innerText, offsetX, 3 + upThis.#pixelProfile.cfont4[0]);
+					if (e.metre.decoration === 2) {
+						e.metre.globalCompositeOperation = "xor";
+						e.metre.beginPath();
+						e.metre.moveTo(0, 12.5);
+						e.metre.lineTo(Math.min(121, e.metre.rWidth + offsetX), 12.5);
+						e.metre.stroke();
+						e.metre.globalCompositeOperation = "source-over";
+					};
 					if (Math.abs(offsetX) > runBoundary) {
 						e.metre.fillText(e.metre.innerText, offsetX + e.metre.rWidth + runPadding, 3 + upThis.#pixelProfile.cfont4[0]);
+						if (e.metre.decoration === 2) {
+							e.metre.globalCompositeOperation = "xor";
+							e.metre.beginPath();
+							e.metre.moveTo(offsetX + e.metre.rWidth + runPadding, 12.5);
+							e.metre.lineTo(121, 12.5);
+							e.metre.stroke();
+							e.metre.globalCompositeOperation = "source-over";
+						};
 					};
 				} else {
 					e.metre.fillText(e.metre.innerText, 0, 3 + upThis.#pixelProfile.cfont4[0]);
+					if (e.metre.decoration === 2) {
+						e.metre.globalCompositeOperation = "xor";
+						e.metre.beginPath();
+						e.metre.moveTo(0, 12.5);
+						e.metre.lineTo(e.metre.rWidth, 12.5);
+						e.metre.stroke();
+						e.metre.globalCompositeOperation = "source-over";
+					};
 				};
 				e.metre.globalCompositeOperation = "xor";
-				e.metre.fillRect(0, 0, sum.strength[part] * 121 / 255, 25);
+				e.metre.fillRect(0, 0, metreLength, 25);
 				// Extensible visualizer
 				e.extVis.clearRect(0, 0, 47, 25);
 				e.extVis.fillStyle = `#${upThis.#foreground}`;
@@ -1389,18 +1430,18 @@ let Cambiare = class extends RootDisplay {
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
 			//console.debug(voice.refreshFailure);
 			// 0 for nothing, 1 for outline box, 2 for strikethrough.
-			target.decoration = voice.refreshFailure ? 2 : 0;
+			target.metre.decoration = voice.refreshFailure ? 2 : 0;
 			let useItalic = false;
 			switch (voice.ending) {
 				case " ": {
 					break;
 				};
 				case "~": {
-					target.decoration = 1;
+					target.metre.decoration = 1;
 					break;
 				};
 				case "?": {
-					target.decoration = 2;
+					target.metre.decoration = 2;
 					break;
 				};
 				default: {
