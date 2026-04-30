@@ -1388,7 +1388,26 @@ let Cambiare = class extends RootDisplay {
 			voicePrimitives = upThis.getChPrimitives(data.part, true),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
 			//console.debug(voice.refreshFailure);
-			setCanvasText(target.metre, upThis.getMapped(voice.name), voice.refreshFailure || voice.ending !== " ");
+			// 0 for nothing, 1 for outline box, 2 for strikethrough.
+			target.decoration = voice.refreshFailure ? 2 : 0;
+			let useItalic = false;
+			switch (voice.ending) {
+				case " ": {
+					break;
+				};
+				case "~": {
+					target.decoration = 1;
+					break;
+				};
+				case "?": {
+					target.decoration = 2;
+					break;
+				};
+				default: {
+					useItalic = true;
+				};
+			};
+			setCanvasText(target.metre, upThis.getMapped(voice.name), useItalic);
 			target.type.setTextRaw(chTypes[upThis.device.getChType(data.part)]);
 			target.std.setTextRaw(voice.standard);
 			target.msb.setTextRaw(`${voicePrimitives[0]}`.padStart(3, "0"));
