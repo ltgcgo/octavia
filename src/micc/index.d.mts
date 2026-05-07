@@ -203,7 +203,7 @@ export class MICCTrackerMetadata {
 	* This field should be superceded with a field more capable of defining effect flows.
 	*/
 	linkEffects: boolean;
-	/** If true, the sliders are all linear. Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	/** If true, the sliders are all linear. Some trackers for older systems may set this field to `false` to use hardware-accelerated sliders (e.g. Amiga). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	isLinear: boolean;
 	/** If true, edit history is attached. Defaults to `false`. */
 	useEditHistory: boolean;
