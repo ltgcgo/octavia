@@ -13,7 +13,7 @@ import {
 
 // Native implementations
 /** Utility constants for MICC. */
-class MICCConstants {
+declare class MICCConstants {
 	/** Note off events. */
 	static MIDI_NOTE_OFF: number;
 	/** Note on events. */
@@ -152,7 +152,7 @@ export class MICCPointer extends MICCBaseElement {
 	time?: number;
 	/** Direct object reference to the normal block, supplied by a finalizer. */
 	parsed?: MICCTrack;
-};
+}
 /** A track containing events. */
 export class MICCTrack {
 	/** Track type. For SMF and XWS files, this is usually the FourCC type. */
@@ -170,10 +170,10 @@ export class MICCFileMetadata {
 	division: number;
 	/**
 	* Definition vary by file type.
-	* For SMF files, this indicates the SMF file type.
+	* For SMF files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`.
 	*/
-	type?: number;
-	/** Amount of expected tracks. */
+	type: number;
+	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead. */
 	track?: number;
 	/** For files utilizing pointers, amount of expected normal MICI blocks/clips. */
 	clip?: number;
@@ -214,18 +214,20 @@ export class MICCFile {
 	*/
 	reject(err: any): void;
 	/**
-	* (WIP) Serialize the file into an SMF file.
+	* (WIP) Serialize the current `MICCFile` object into a file.
+	* @param format The format to be serialized into. Supports `smf`, `xws` (WIP).
 	*/
-	serializeSmf(): ReadableStream<Uint8Array>;
+	serialize(format: string): ReadableStream<Uint8Array>;
 	/**
-	* (WIP) Disassemble the file into MIA instructions.
+	* (WIP) Flatten the current `MICCFile` object into a defined structure, usually before serialization. This action is destructive and irreversible.
+	* @param format The formatted structure to be serialized into. Supports `smf`, `seq` (WIP), `trk`.
+	*/
+	flatten(format: string): Promise<void>;
+	/**
+	* (WIP) Disassemble the file into MIA instructions. Will error out if the file type isn't one of `SMF_SINGLE`, `SMF_MULTIPLE` and `SMF_SEQUENTIAL`.
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available.
 	*/
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
-	/**
-	* (WIP, will only implement when needed) Serialize the file into an XWS file.
-	*/
-	serializeXws(): ReadableStream<Uint8Array>;
 	/**
 	* The metadata of the current file.
 	*/
@@ -238,7 +240,7 @@ export class MICCFile {
 	* Tracks contained by the current file.
 	*/
 	track: Array<MICCTrack>;
-};
+}
 /**
 * Parse raw MIDI events from buffers.
 * @param buffer The input buffer.
@@ -286,7 +288,7 @@ export class MICC extends MICCConstants {
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available.
 	*/
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
-};
+}
 
 // Compatibility layers
 /**
@@ -374,7 +376,7 @@ export class ColxiMIDIView {
 	* Read a string. If the `decoders` property of the parser object can be accessed, it will attempt to decode string supplied by the decoders in the `decoders` property, advancing to the next one whenever the current decoder fails. The catch-all decoder is X-ASCII.
 	*/
 	readStr(readSize: number): string;
-};
+}
 /**
 * Mostly a drop-in replacement for `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission), migrating to Octavia's compatibility layer may help handle those files.
 */
