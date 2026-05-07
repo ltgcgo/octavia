@@ -168,7 +168,7 @@ export class MICCFileMetadata {
 	format: string;
 	/**
 	* MIDI time division. `480` is the most common.
-	* For tracker music with 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 24, 30, 32, 40, 48, 60, 80, 96, 120, 160, 240 or 480 rows per beat, `480` will be used. `600` will be used with 25, 50, 75, 100, 150, 200, 300 or 600 rows. `720` will be used with 9, 18, 36, 40, 45, 72, 144, 180, 360, 720 rows. `960` will be used with 64, 192, 320 or 960 rows. Any other value that doesn't have an existing mapping will cause the value `4096` be used, with the actual tick time be rounded to the nearest value.
+	* For tracker music with 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 24, 30, 32, 40, 48, 60, 80, 96, 120, 160 or 240 rows per beat, `480` will be used. `600` will be used with 25, 50, 75, 100, 150, 200, 300 or 600 rows. `720` will be used with 9, 18, 36, 40, 45, 72, 144, 180, 360, 720 rows. `960` will be used with 64, 192, 320, 480 or 960 rows. Any other value that doesn't have an existing mapping will cause the value `4096` be used, with the actual tick time be rounded to the nearest value.
 	* Patterns (measures) with overridden row numbers of beats, overiiden row numbers of measures, derived denominators not a power of 2, or derived non-integer nominators will have the value rounded up to the nearest equivalent valid MIDI time signature in the raw time signature MIDI event, then have custom meta events that shifts the offset map.
 	*/
 	division: number;
@@ -196,8 +196,18 @@ export class MICCTrackerMetadata {
 	compatible?: number;
 	/** The amount of expected audio channels. Default value is `2`. */
 	channels: number;
-	/** Global volume. `uint16`, with `32768` denoting the maximum possible value. */
-	volume: number;
+	/** Initial ticking speed. Default value design is postponed. */
+	initSpeed: number;
+	/** Initial tempo. Defaults to `120` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	initTempo: number;
+	/** Rows per beat. Default value design is postponed. */
+	rowBeat: number;
+	/** Rows per measure. Default value design is postponed. */
+	rowMeasure: number;
+	/** Global volume. `uint16`, with `32768` denoting the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	volumeGlobal: number;
+	/** Mixing volume. `uint16`, with `32768` denoting the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	volumeMix: number;
 	/**
 	* If true, G effect will be linked with E and F. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
 	* This field should be superceded with a field more capable of defining effect flows.
