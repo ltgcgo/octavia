@@ -3,7 +3,7 @@
 
 import {
     SeamstressContext
-} from "../../libs/seamstress@ltgcgo/index.d.mts";
+} from "../../libs/seamstress@ltgcgo/index.mjs";
 
 /**
 * Musical Instructions Compiler Collection. Handles MIDI-adjacent file parsing and serialization.
@@ -48,6 +48,20 @@ class MICCConstants {
 	static PTRB_NORMAL: number;
 	/** Track pointer block: linked (pointer). Compatible with XGworks. */
 	static PTRB_LINKED: number;
+	/** File type: SMF type 0 - single track. */
+	static FILE_SMF_SINGLE: number;
+	/** File type: SMF type 1 - multiple tracks. */
+	static FILE_SMF_MULTIPLE: number;
+	/** File type: SMF type 2 - sequential tracks. */
+	static FILE_SMF_SEQUENTIAL: number;
+	/** File type: XGworks project. */
+	static FILE_SEQ_XGWORKS: number;
+	/** File type: FastTracker II (XM). */
+	static FILE_TRK_FAST2: number;
+	/** File type: Scream Tracker 3 (S3M). */
+	static FILE_TRK_SCREAM3: number;
+	/** File type: Impulse Tracker (IT). */
+	static FILE_TRK_IMPULSE: number;
 }
 /** Base type that can populate `MICCTrack`. */
 export class MICCBaseElement {
@@ -239,6 +253,7 @@ export class MICC extends MICCConstants {
 	* A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used.
 	*/
 	decoders: Array<TextDecoder>;
+	// Pure MIDI.
 	/**
 	* Parse the incoming Standard MIDI File byte stream.
 	*/
@@ -251,10 +266,17 @@ export class MICC extends MICCConstants {
 	* (WIP) Parse the incoming RMI byte stream. Contained SMF files will be flattened.
 	*/
 	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	// MIDI-containing project files.
 	/**
 	* (WIP) Parse the incoming XWS byte stream.
 	*/
 	parseXws(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	// Tracker files.
+	/**
+	* (WIP) Parse the incoming Impulse Tracker byte stream.
+	*/
+	parseIt(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	// Assembly and disassembly.
 	/**
 	* Directly assemble MIA into SMF without going through a file object.
 	*/
