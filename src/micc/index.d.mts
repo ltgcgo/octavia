@@ -56,9 +56,9 @@ declare class MICCConstants {
 	static FILE_SMF_SEQUENTIAL: number;
 	/** File type: XGworks project. */
 	static FILE_SEQ_XGWORKS: number;
-	/** File type: FastTracker II (XM). */
+	/** File type: FastTracker II (XM). Support postponed until needed. */
 	static FILE_TRK_FAST2: number;
-	/** File type: Scream Tracker 3 (S3M). */
+	/** File type: Scream Tracker 3 (S3M). Support postponed until needed. */
 	static FILE_TRK_SCREAM3: number;
 	/** File type: Impulse Tracker (IT). */
 	static FILE_TRK_IMPULSE: number;
@@ -109,7 +109,7 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	*/
 	label?: any;
 	/**
-	* The parsed time in seconds set by the finalizer.
+	* The parsed time in MIDI ticks set by the finalizer. Use a time offset map to grab the actual seconds.
 	*/
 	time?: number;
 	/**
@@ -166,7 +166,11 @@ export class MICCTrack {
 export class MICCFileMetadata {
 	/** The full format specifier of the current file. */
 	format: string;
-	/** MIDI time division. `480` is the most common. */
+	/**
+	* MIDI time division. `480` is the most common.
+	* For tracker music with 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 24, 30, 32, 40, 48, 60, 80, 96, 120, 160, 240 or 480 rows per beat, `480` will be used. `600` will be used with 25, 50, 75, 100, 150, 200, 300 or 600 rows. `720` will be used with 9, 18, 36, 40, 45, 72, 144, 180, 360, 720 rows. `960` will be used with 64, 192, 320 or 960 rows. Any other value that doesn't have an existing mapping will cause the value `4096` be used, with the actual tick time be rounded to the nearest value.
+	* Patterns (measures) with overridden row numbers of beats, overiiden row numbers of measures, derived denominators not a power of 2, or derived non-integer nominators will have the value rounded up to the nearest equivalent valid MIDI time signature in the raw time signature MIDI event, then have custom meta events that shifts the offset map.
+	*/
 	division: number;
 	/**
 	* Definition vary by file type.
@@ -175,10 +179,44 @@ export class MICCFileMetadata {
 	type: number;
 	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead. */
 	track?: number;
-	/** For files utilizing pointers, amount of expected normal MICI blocks/clips. */
+	/** For files utilizing pointers, amount of expected normal MICI blocks/clips. This is typically seen in project (sequencer) files and tracker music. */
 	clip?: number;
 	/** For files utilizing styles, amount of expected styles. Currently unused. */
 	style?: number;
+	/** For formats directly specifying names. Pure SMF files and XWS files don't have this field, but formats like tracker music modules and KORG SNG have it. */
+	title?: string;
+}
+/**
+* The contained additional metadata of the current file, only makes sense for trackers. Aims at 100% compatibility with [Impulse Tracker](https://breezewiki.com/fileformats/wiki/Impulse_tracker).
+*/
+export class MICCTrackerMetadata {
+	/** The "created" field. */
+	created?: number;
+	/** The "compatible" field. */
+	compatible?: number;
+	/** The amount of expected audio channels. Default value is `2`. */
+	channels: number;
+	/** Global volume. `uint16`, with `32768` denoting the maximum possible value. */
+	volume: number;
+	/**
+	* If true, G effect will be linked with E and F. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	* This field should be superceded with a field more capable of defining effect flows.
+	*/
+	linkEffects: boolean;
+	/** If true, the sliders are all linear. Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	isLinear: boolean;
+	/** If true, edit history is attached. Defaults to `false`. */
+	useEditHistory: boolean;
+	/** If true, highlights are embedded. Defaults to `false`. */
+	useHighlights: boolean;
+	/** If true, indicates that MIDI macros are used. Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	useMidiMacros: boolean;
+	/** If true, use legacy effects. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.*/
+	useOldEfx: boolean;
+	/** If true, song messages are attached. Defaults to `false`. */
+	useSongMessages: boolean;
+	/** If true, the file uses instruments/voices instead of raw oscillators (e.g. samples, FM oscillators). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	useVoices: boolean;
 }
 /**
 * A file parsed or to be serialized by MICC.
@@ -228,10 +266,10 @@ export class MICCFile {
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available.
 	*/
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
-	/**
-	* The metadata of the current file.
-	*/
+	/** The metadata of the current file. */
 	meta: MICCFileMetadata;
+	/** If the current file is a tracker, the additional metadata of the current file. */
+	tracker: MICCTrackerMetadata;
 	/**
 	* The resource pool of the current file, usually used by pointer events. SMF files don't create this.
 	*/
@@ -239,7 +277,11 @@ export class MICCFile {
 	/**
 	* Tracks contained by the current file.
 	*/
-	track: Array<MICCTrack>;
+	tracks: Array<MICCTrack>;
+	/**
+	* The offset map for the track mapping time to ticks and time signature changes.
+	*/
+	offset: Object;
 }
 /**
 * Parse raw MIDI events from buffers.

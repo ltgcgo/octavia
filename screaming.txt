@@ -1,2 +1,5 @@
 # Every time anyone loses their sanity maintaining the codebase, scream here.
 # Inspiration: https://github.com/KiltMC/Kilt/blob/version/1.20.1/screaming.txt
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!
+# For trying to also support trackers, using Impulse Tracker as a starting point.
