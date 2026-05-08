@@ -3,7 +3,7 @@
 > 
 > While using AI to help understand the codebase is allowed, using AI to contribute without knowledge is strictly forbidden for this project. People using AI models to contribute without understanding will be banned. Read [AGENT.md](AGENT.md) for further details.
 
-🎻 Event-driven multi-standard MIDI state-tracking library.
+🎻 Event-driven multi-standard MIDI tool chain. State tracking, parsing, serializing.
 
 Made with ❤️ by Lightingale Community. Repository available on [Codeberg](https://codeberg.org/ltgc/octavia/) and [GitHub](https://github.com/ltgcgo/octavia/).
 
@@ -21,9 +21,9 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 
 > **Warning**
 >
-> Octavia may work on Node.js, but support for it is never intended. Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. There is no plan to ever support runtimes that offers non-ES compliance with Node.js ecosystem, like Node.js or Bun, and issues raised from those runtimes will be ignored, unless reproducible from other runtimes as well.
+> Octavia may work on Node.js, but support for it is never intended. Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. Except for the included compatibility layers, there is no plan to ever support runtimes that offers non-ES compliance with Node.js ecosystem, like Node.js or Bun, and issues raised from those runtimes will be ignored, unless reproducible from other runtimes as well.
 >
-> Octavia is only ever published to [Deno Deploy](https://deno.land/x/octavia_deno) and [JSR](https://jsr.io/@ltgc/octavia). If you see Octavia published to other registries, report those fake packages immediately as they may contain malware.
+> Octavia is only ever published to [Deno Deploy](https://deno.land/x/octavia_deno) and [JSR](https://jsr.io/@ltgc/octavia), with only its compatibility layers published to NPM to help transition off Node.js ecosystems. If you see Octavia fully published to other registries, report those fake packages immediately as they may contain malware.
 
 ## What is Octavia?
 The current MIDI landscape is a dumpster fire, at least in the FOSS world. Only proprietary software solutions respect existing MIDI standards, while the FOSS ecosystem largely ignores or even violates the conventions, with TiMidity as the single exception. Octavia, born out of being fed up by the existing antics exhibited by existing FOSS solutions, aims to reach full compliance with existing MIDI standards (MT-32, GM, XG, GS, GM2 and etc.), while exposing simple yet powerful interfaces for developers to build upon.

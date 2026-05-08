@@ -354,8 +354,8 @@ export class MICCFile {
 	tempoFromMPM(mpm: number): number;
 	/** Turn tempo into microseconds-per-minute for MIDI. The final result will be rounded to the nearest integer. */
 	tempoToMPM(tempo: number): number;
-	/** Get tempo from tracker tick speed and rows-per-beat. */
-	tempoFromTracker(rows: number, tickSpeed: number): number;
+	/** Get tempo from declared tempo, tracker tick speed and rows-per-beat. */
+	tempoFromTracker(rows: number, tickSpeed: number, definedTempo: number): number;
 }
 /**
 * Parse raw MIDI events from buffers.
