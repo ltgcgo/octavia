@@ -11,6 +11,27 @@ import {
 * @module
 */
 
+/** The helper string decoder allowing re-interpretation. */
+export class BinaryString {
+	/** The attached list of decoders. When all of them fail, Latin 9 will be the fallback. Defaults to UTF-8 only. */
+	decoders?: Iterable<TextDecoder>;
+	/** The attached buffer to decode. */
+	buffer?: Uint8Array | Uint8ClampedArray;
+	/** The decoded result. */
+	text?: string;
+	/** The text encoding label used in the decoded result. */
+	label?: string;
+	/** Decode the buffer, both return it and overwrite the `text` property. Will error out if there's no attached buffer.
+	* @param buffer When this argument is supplied, the `buffer` property will be overridden with it.
+	*/
+	decode(buffer?: Uint8Array | Uint8ClampedArray): string;
+	/** Encode the result into a buffer, both return it and overwrite the `buffer` property. Defaults to UTF-8 encoding with no labels. Will error out if there's no attached text.
+	* @param text When this argument is supplied, the `text` property will be overridden with it.
+	* @param label When this argument is supplied, the `label` property will be overridden with it.
+	*/
+	encode(text?: string, label?: string): Uint8Array;
+}
+
 // Native implementations
 /** Utility constants for MICC. */
 declare class MICCConstants {
@@ -160,8 +181,19 @@ export class MICCTrack {
 	/** Vendor specifier of the track type. */
 	vendor: string;
 	/** Data carried by the chunk, usually a list of events. */
-	data: Array<MICCBaseElement>;
+	data: MICCBaseElement[];
 }
+/** The base class for oscillators and instruments. */
+declare class MICCBaseVoice {
+	/** The group type. `0` for single oscillators, `1` for grouped oscillators, `2` for instruments. */
+	group: number;
+}
+/** A defined oscillator. Represents a single oscillator (PCM samples, FM parameters, VL parameters, AN parameters...). */
+export class MICCOscillator extends MICCBaseVoice {}
+/** A defined multi-oscillator. Represents a set of oscillators, commonly seen in KORG AI² synths in the form of multi-samples. Will always be referred to by an instrument, and direct usage in tracks will error out. */
+export class MICCOscillatorGroup extends MICCBaseVoice {}
+/** A defined instrument. */
+export class MICCInstrument extends MICCBaseVoice {}
 /** The contained metadata of the current file. */
 export class MICCFileMetadata {
 	/** The full format specifier of the current file. */
@@ -174,45 +206,57 @@ export class MICCFileMetadata {
 	division: number;
 	/**
 	* Definition vary by file type.
+	*
 	* For SMF files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`.
 	*/
 	type: number;
 	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead. */
 	track?: number;
-	/** For files utilizing pointers, amount of expected normal MICI blocks/clips. This is typically seen in project (sequencer) files and tracker music. */
+	/** For files utilizing pointers, amount of expected normal MIDI blocks/clips. This is typically seen in project (sequencer) files and tracker music. */
 	clip?: number;
 	/** For files utilizing styles, amount of expected styles. Currently unused. */
 	style?: number;
 	/** For formats directly specifying names. Pure SMF files and XWS files don't have this field, but formats like tracker music modules and KORG SNG have it. */
 	title?: string;
 }
+/** (WIP) A single edit record. */
+export class MICCEditRecord {}
+/** (WIP) A single MIDI macro. */
+export class MICCMacroMIDI {}
 /**
 * The contained additional metadata of the current file, only makes sense for trackers. Aims at 100% compatibility with [Impulse Tracker](https://breezewiki.com/fileformats/wiki/Impulse_tracker).
 */
 export class MICCTrackerMetadata {
+	/** If the file is a tracker. */
+	isTracker: boolean;
+	/**
+	* If true, G effect will be linked with E and F. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	*
+	* This field should be superceded with a field more capable of defining effect flows.
+	*/
+	linkEffects: boolean;
 	/** The "created" field. */
 	created?: number;
 	/** The "compatible" field. */
 	compatible?: number;
 	/** The amount of expected audio channels. Default value is `2`. */
 	channels: number;
-	/** Initial ticking speed. Default value design is postponed. */
+	/** Initial ticking speed.  Defaults to `1` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	initSpeed: number;
-	/** Initial tempo. Defaults to `120` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	/** Initial tempo. Should *not* treat the defined tempo values as the real tempo. Defaults to `120` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	initTempo: number;
-	/** Rows per beat. Default value design is postponed. */
+	/** Panpot separation. Valid values are integers in [0, 128]. */
+	panSplit?: number;
+	/** Pitch bend sensitivity. Valid values are [-24, 24].  Defaults to `2` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	pitchDepth: number;
+	/** Rows per beat. Defaults to `24` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	rowBeat: number;
-	/** Rows per measure. Default value design is postponed. */
+	/** Rows per measure. Defaults to `96` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.. */
 	rowMeasure: number;
 	/** Global volume. `uint16`, with `32768` denoting the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	volumeGlobal: number;
 	/** Mixing volume. `uint16`, with `32768` denoting the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	volumeMix: number;
-	/**
-	* If true, G effect will be linked with E and F. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
-	* This field should be superceded with a field more capable of defining effect flows.
-	*/
-	linkEffects: boolean;
 	/** If true, the sliders are all linear. Some trackers for older systems may set this field to `false` to use hardware-accelerated sliders (e.g. Amiga). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	isLinear: boolean;
 	/** If true, edit history is attached. Defaults to `false`. */
@@ -227,6 +271,20 @@ export class MICCTrackerMetadata {
 	useSongMessages: boolean;
 	/** If true, the file uses instruments/voices instead of raw oscillators (e.g. samples, FM oscillators). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	useVoices: boolean;
+	/** Initial channel panpot. Unlike MIDI, it's an integer in the range of [0, 128]. 0 is full left, 128 is full right. Initializes to `64` for MIDI compatibility. */
+	initChPan?: number[];
+	/** Initial channel volume. Initializes to `100` for MIDI compatibility. */
+	initChVol?: number[];
+	/** (WIP) List of MIDI macros. */
+	macros?: MICCMacroMIDI[];
+	/** The attached message in the tracker. */
+	message?: BinaryString;
+	/** List of oscillators used. */
+	oscillators?: MICCOscillator[];
+	/** (WIP) List of edit records. */
+	records?: MICCEditRecord[];
+	/** List of instruments used. */
+	voices?: MICCInstrument[];
 }
 /**
 * A file parsed or to be serialized by MICC.
@@ -283,15 +341,21 @@ export class MICCFile {
 	/**
 	* The resource pool of the current file, usually used by pointer events. SMF files don't create this.
 	*/
-	pool?: Map<string, Array<MICCBaseElement>>;
+	pool?: Map<string, MICCBaseElement[]>;
 	/**
 	* Tracks contained by the current file.
 	*/
-	tracks: Array<MICCTrack>;
+	tracks: MICCTrack[];
 	/**
 	* The offset map for the track mapping time to ticks and time signature changes.
 	*/
 	offset: Object;
+	/** Get tempo from microseconds-per-minute for MIDI. */
+	tempoFromMPM(mpm: number): number;
+	/** Turn tempo into microseconds-per-minute for MIDI. The final result will be rounded to the nearest integer. */
+	tempoToMPM(tempo: number): number;
+	/** Get tempo from tracker tick speed and rows-per-beat. */
+	tempoFromTracker(rows: number, tickSpeed: number): number;
 }
 /**
 * Parse raw MIDI events from buffers.
@@ -306,7 +370,7 @@ export class MICC extends MICCConstants {
 	/**
 	* A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used.
 	*/
-	decoders: Array<TextDecoder>;
+	decoders: Iterable<TextDecoder>;
 	// Pure MIDI.
 	/**
 	* Parse the incoming Standard MIDI File byte stream.
@@ -371,7 +435,7 @@ export class ColxiMIDITrack {
 	/**
 	* List of events populated by the track.
 	*/
-	event: Array<ColxiMIDIEvent>;
+	event: ColxiMIDIEvent[];
 	/**
 	* The type of the track. Not present in the original implementation.
 	*/
@@ -396,7 +460,7 @@ export class ColxiMIDIFile {
 	/**
 	* Actual tracks with events.
 	*/
-	track: Array<ColxiMIDITrack>;
+	track: ColxiMIDITrack[];
 }
 /**
 * View into each MIDI event, supplied to `ColxiMIDIParser.customInterpreter`. Will only be supplied for 0xf0 events.
@@ -449,5 +513,5 @@ export class ColxiMIDIParser {
 	/**
 	* A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings.
 	*/
-	static decoders?: Array<TextDecoder>;
+	static decoders?: Iterable<TextDecoder>;
 }

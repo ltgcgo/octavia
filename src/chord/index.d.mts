@@ -2,36 +2,38 @@
 // Licensed under GNU LGPL v3.0 license.
 
 /**
- * Definitions of different chord representations, for parsing, serializing and more.
- * Chords are packed u16 numbers, with the upper byte defining root note and accidental in the XF format, and the lower byte defining the type of chord, like 0x3100 always denote a C major.
- * @module
- */
+* Definitions of different chord representations, for parsing, serializing and more.
+*
+* Chords are packed u16 numbers, with the upper byte defining root note and accidental in the XF format, and the lower byte defining the type of chord, like 0x3100 always denote a C major.
+* @module
+*/
 
+/** The master chord dictionary. */
 export class ChordDict {
 	/** Return the root note of a chord as a single-letter string.
-	* @param chord A pack chord.
+	* @param chord A packed chord.
 	* @param loose When true, let invalid root notes fail silently.
 	*/
 	static getChordRoot(chord: number, loose?: boolean): string;
 	/** Return the root note of a chord as a number starting at 1 for C.
-	* @param chord A pack chord.
+	* @param chord A packed chord.
 	* @param loose When true, let invalid root notes fail silently.
 	*/
 	static getChordRootRaw(chord: number, loose?: boolean): number;
 	/** Return the semitone shift of a chord as a signed integer. 0 for natural.
-	* @param chord A pack chord.
+	* @param chord A packed chord.
 	*/
 	static getChordShift(chord: number): number;
 	/** Return the semitone shift of a chord as an unsigned integer. 3 for natural.
-	* @param chord A pack chord.
+	* @param chord A packed chord.
 	*/
 	static getChordShiftRaw(chord: number): number;
 	/** Return the native ID of a chord. Basically just returning the lower byte.
-	* @param chord A pack chord.
+	* @param chord A packed chord.
 	*/
 	static getChordId(chord: number): number;
 	/** Return the identifier of a native chord ID.
-	* @param chord A pack chord.
+	* @param chord A packed chord.
 	*/
 	static getChordType(chord: number): string;
 	/** Return the native chord ID from a valid specifier. */

@@ -11,13 +11,9 @@
 * Reading and writing various forms of numeric values.
 */
 export class IntegerHandler {
-	/**
-	* When set to true, methods will use runtime-native APIs and WebAssembly over the pure-JS implementation.
-	*/
+	/** When set to true, methods will use runtime-native APIs and WebAssembly over the pure-JS implementation. */
 	static useNative: boolean;
-	/**
-	* When set to true, methods will no longer conduct type checks. Usually has negligible performance impact unless on poorly-optimized runtimes.
-	*/
+	/** When set to true, methods will no longer conduct type checks. Usually has negligible performance impact unless on poorly-optimized runtimes. */
 	static unsafeType: boolean;
 	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
 	static readVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
@@ -55,16 +51,19 @@ export class IntegerHandler {
 export interface SeamstressContext {
 	/**
 	* This field may not be present.
+	* 
 	* Defines the maximum length of the stream that's expected. If the stream exceeds the specified size, it will be cut off at the specified size (length <= size + headerSize). It's always desired to keep the size sealed once parsed. Keep undefined when the size is not or cannot be known.
 	*/
 	size?: number;
 	/**
 	* This field may not be present.
+	* 
 	* Defines the base structure type of the stream. Common values include `RIFF` for RIFF streams and `FORM` for IFF streams.
 	*/
 	binaryType?: string;
 	/**
 	* This field may not be present.
+	* 
 	* Defines the upper format of the stream. Common values include `WAVE` for the Microsoft `.wav` files, and `AIFF` for the Apple `.aif` files.
 	*/
 	binaryFormat?: string;
@@ -143,6 +142,7 @@ export class SeamstressStrictWriter {
 export class Seamstress {
 	/**
 	* Masks endianness of length values. 0 for BE, 1 for LE.
+	* 
 	* Big-endian VLV denotes VLV-8, while "little-endian VLV" denotes RVLV-8, despite RVLV-8 still being big endian.
 	*/
 	MASK_ENDIAN: number;
@@ -181,6 +181,7 @@ export class Seamstress {
 	headerHandler?(buffer: Uint8Array): SeamstressContext|undefined;
 	/**
 	* Regulates the incoming stream into desired subchunks, specified manually. Called by `Seamstress.regulateStream()`. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the chunk for the stream reader.
+	* 
 	* A non-zero value will cause the specified length from the current subchunk to be emitted, which the process repeats until the current subchunk depletes or the method returns a zero. A zero cause the current remaining section to be buffered and prepended to the next subchunk, until the entire chunk ends causing a forced flush, essentially making an all-zero regulated stream a fully-buffered stream. Any other numeric values will cause an error.
 	* @param startOffset The intended read start offset of the provided buffer.
 	* @param chunkInfo The unmodified info of the current (sub)chunk.
