@@ -82,7 +82,7 @@ export class EnsembleResamplerRegistry {
 	/** Register an interpolation algorithm with a specifier. */
 	static readonly register(id: string, entry: EnsembleResamplerEntry): void;
 	/** Returns `true` if the specifier has already been registered. */
-	static readonly has(id: string);
+	static readonly has(id: string): boolean;
 	/** Returns the specifiers of existing entries. */
 	static readonly keys(): Iterable<string>;
 }

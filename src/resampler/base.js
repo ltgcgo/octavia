@@ -58,7 +58,7 @@ const EnsembleResampler = class EnsembleResampler {
 		upThis.#id = id;
 		upThis.#sampleRatioSetter = entry.setSampleRatio?.bind(this);
 		upThis.#stepSetter = entry.setStep?.bind(this);
-		upThis.get = entry.get;
+		upThis.get = entry.get.bind(this);
 		upThis.setStep(entry.step ?? DEFAULT_STEP);
 		upThis.setSampleRatio(entry.sampleRatio ?? DEFAULT_SAMPLE_RATIO);
 	};
