@@ -6,6 +6,10 @@ import {
 	EnsembleResamplerEntry,
 	EnsembleResampler
 } from "./base.js";
+import {
+	ResampleNearestNeighbour,
+	ResampleLinear
+} from "./stock.js";
 
 const EnsembleResamplerRegistry = class EnsembleResamplerRegistry {
 	static #registry = new Map();
@@ -41,6 +45,9 @@ const EnsembleResamplerRegistry = class EnsembleResamplerRegistry {
 		reg.set(id, entry);
 	};
 };
+
+EnsembleResamplerRegistry.register("nearest", ResampleNearestNeighbour);
+EnsembleResamplerRegistry.register("linear", ResampleLinear);
 
 export {
 	EnsembleUtilMethods,
