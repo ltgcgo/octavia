@@ -32,8 +32,8 @@ export class EnsembleUtilMethods {
 export class EnsembleResampler {
 	/** Specifier of the interpolation algorithm. Valid values from vanilla releases are listed below.
 	* - `nearest`: Neareset neighbour.
-	* - `linear`: Linear. Any sample ratio below 1 causes it to switch to weighted linear instead for aliasing mitigation, with window size capped at `23` for 54 semitones.
-	* - `hermite`: Catmull-Rom Hermite cubic. Any sample ratio below `0.7937` (`2^(−4/12)`) causes it to switch to triangle (Barlett window) instead for aliasing mitigation, with window size capped at `16` for 42 semitones (actually 43). Default for feedback resampling.
+	* - `linear`: Linear. Any sample ratio below 1 causes it to switch to weighted linear instead for aliasing mitigation, with window size capped at `24` (12 on either side) for 54 + 1 semitones.
+	* - `hermite`: Catmull-Rom Hermite cubic. Any sample ratio below `0.7937` (`2^(−4/12)`) causes it to switch to triangle (Barlett window) instead for aliasing mitigation, with window size capped at `12` for 42 semitones (actually 43). Default for feedback resampling.
 	* - `lanczos`: Lanczos `sinc` with aliasing mitigation. Default for direct output resampling (e.g. PCM resampling).
 	* - `kaiser`: Anchored integer Kaiser `sinc` with aliasing mitigation.
 	* - `kaiserFrac`: Fractional Kaiser 8-tap `sinc` with aliasing mitigation.

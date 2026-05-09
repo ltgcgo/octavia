@@ -26,8 +26,8 @@ ResampleLinear.setSampleRatio = function (x) {
 		this.precomputed[2] = 1;
 	} else {
 		let preDivisor = 1 / x;
-		if (preDivisor > 23) {
-			preDivisor = 23; // 54 semitones ceil(2^(54/12))
+		if (preDivisor > 12) {
+			preDivisor = 12; // Actual window size at 22, 54 semitones `ceil(2^(54/12))` intended.
 		};
 		this.precomputed[1] = Math.ceil(preDivisor);
 		this.precomputed[2] = preDivisor - Math.floor(preDivisor);
