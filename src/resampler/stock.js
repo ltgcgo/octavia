@@ -14,7 +14,7 @@ ResampleNearestNeighbour.get = function (timeStep, samples, oldSamples) {
 
 // Linear
 let ResampleLinear = new EnsembleResamplerEntry();
-ResampleLinear.pcaSize = 2;
+ResampleLinear.pcaSize = 3;
 ResampleLinear.setSampleRatio = function (x) {
 	// 0: Pre-computed divisor-equivalent factor for the sum.
 	// 1: Window size on either side of the time step.
@@ -26,8 +26,8 @@ ResampleLinear.setSampleRatio = function (x) {
 		this.precomputed[2] = 1;
 	} else {
 		let preDivisor = 1 / x;
-		if (preDivisor > 48) {
-			preDivisor = 48;
+		if (preDivisor > 23) {
+			preDivisor = 23; // 54 semitones ceil(2^(54/12))
 		};
 		this.precomputed[1] = Math.ceil(preDivisor);
 		this.precomputed[2] = preDivisor - Math.floor(preDivisor);
