@@ -8,7 +8,7 @@
 */
 
 /** Reusable helper functions. */
-export class EnsembleMethods {
+export class EnsembleUtilMethods {
 	/** Return the stepped sample. When `oldSamples` is not provided, values below 0 and above the last index of the `samples` array will be clamped, otherwise values below 0 will use `oldSamples` before getting clamped.
 	* @param i An integer array index.
 	*/
@@ -43,7 +43,7 @@ export class EnsembleResampler {
 	* For performance, setting this value can cause some internal values to be pre-calculated, useful in settings where pitch bends do not happen on every interpolated sample. It's recommended to re-use the same created object per-oscillator.
 	*/
 	sampleRatio: number;
-	/** The step value. Ignored by algorithms by default.
+	/** The step value, usually consistent per-oscillator. Defaults to `2`. Ignored by algorithms by default.
 	* - `3`: Recommended default for Lanczos-3 (6-tap).
 	* - `8`: Recommended default for Kaiser 8-tap.
 	*/
@@ -55,14 +55,21 @@ export class EnsembleResampler {
 	*/
 	readonly get(timeStep: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
 }
+/** The actual registry entry. */
+export interface EnsembleResamplerEntry {
+	/** Same as `EnsembleResampler.get`. Must use a normal function instead of a lambda/arrow function to obtain the correct `this` value. */
+	get(timeStep: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
+	/** The function executed on writes to `sampleRatio`, enabling pre-calculation. Must use a normal function instead of a lambda/arrow function to obtain the correct `this` value. */
+	sampleRatio?(x: number): void;
+	/** The function executed on writes to `step`, enabling pre-calculation. Must use a normal function instead of a lambda/arrow function to obtain the correct `this` value. */
+	step?(x: number): void;
+}
 /** The registry of different interpolation algorithms. */
 export class EnsembleResamplerRegistry {
 	/** Retrieve an interpolation algorithm from a specifier. */
 	static readonly get(id: string): EnsembleResampler;
-	/** Register an interpolation algorithm with a specifier.
-	* @param func The algorithm to be registered with. Must use a normal function instead of a lambda/arrow function to obtain the correct `this` value.
-	*/
-	static readonly register(id: string, func: (timeStep: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]) => number): void;
+	/** Register an interpolation algorithm with a specifier. */
+	static readonly register(id: string, entry: EnsembleResamplerEntry): void;
 	/** Returns `true` if the specifier has already been registered. */
 	static readonly has(id: string);
 	/** Returns the specifiers of existing entries. */
