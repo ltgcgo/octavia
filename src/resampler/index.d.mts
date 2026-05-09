@@ -24,8 +24,9 @@ export class EnsembleUtilMethods {
 	/** Build a Kaiser window.
 	* @param x The `x` value. Expected to be in the range of [-1, 1].
 	* @param b The beta value. Higher beta values widens main lobe and attenuates ringing more.
+	* @param preB The pre-computed value of beta against the modified Bessel function.
 	*/
-	static readonly kaiserWindow(x: number, b: number): number;
+	static readonly kaiserWindow(x: number, b: number, preB?: number): number;
 }
 /** The basic structure for other structures. */
 export class EnsembleResampler {
@@ -46,6 +47,8 @@ export class EnsembleResampler {
 	/** The step value, usually consistent per-oscillator. Defaults to `2`. Ignored by algorithms by default.
 	* - `3`: Recommended default for Lanczos-3 (6-tap).
 	* - `8`: Recommended default for Kaiser 8-tap.
+	*
+	* For performance, setting this value can cause some internal values to be pre-calculated, useful in settings where pitch bends do not happen on every interpolated sample. It's recommended to re-use the same created object per-oscillator.
 	*/
 	step: number;
 	/** Retrieve an interpolated sample.
