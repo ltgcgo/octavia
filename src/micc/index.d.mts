@@ -272,9 +272,9 @@ export class MICCTrackerMetadata {
 	/** If true, the file uses instruments/voices instead of raw oscillators (e.g. samples, FM oscillators). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	useVoices: boolean;
 	/** Initial channel panpot. Unlike MIDI, it's an integer in the range of [0, 128]. 0 is full left, 128 is full right. Initializes to `64` for MIDI compatibility. */
-	initChPan?: number[];
+	initTrackPan?: number[];
 	/** Initial channel volume. Initializes to `100` for MIDI compatibility. */
-	initChVol?: number[];
+	initTrackVol?: number[];
 	/** (WIP) List of MIDI macros. */
 	macros?: MICCMacroMIDI[];
 	/** The attached message in the tracker. */
