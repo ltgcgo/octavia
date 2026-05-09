@@ -55,6 +55,8 @@ export class EnsembleResampler {
 	readonly step: number;
 	/** Writes the step. */
 	readonly setStep(x: number): void;
+	/** The array storing the pre-computed results. Length was defined by registry entries. In AOT implementations, this could be split to `f32` and `f64` variants. */
+	precomputed?: Float64Array;
 	/** Retrieve an interpolated sample.
 	* @param timeStep The target sample. A float in the range of `[0, samples.length - 1]`.
 	* @param samples The samples to be interpolated.
@@ -74,6 +76,8 @@ export class EnsembleResamplerEntry {
 	step?: number;
 	/** The function executed on writes to `step`, enabling pre-calculation. Must use a normal function instead of a lambda/arrow function to obtain the correct `this` value. Do NOT write to either `sampleRatio` or `step` in this method. */
 	setStep?(x: number): void;
+	/** Size of the pre-compute array. Defaults to `0`, which skips array creation altogether. */
+	pcaSize?: number;
 }
 /** The registry of different interpolation algorithms. */
 export class EnsembleResamplerRegistry {

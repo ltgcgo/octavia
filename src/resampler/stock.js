@@ -14,15 +14,18 @@ ResampleNearestNeighbour.get = function (timeStep, samples, oldSamples) {
 
 // Linear
 let ResampleLinear = new EnsembleResamplerEntry();
+ResampleLinear.pcaSize = 2;
 ResampleLinear.setSampleRatio = function (x) {
+	// 0: Window size on either side of the time step.
+	// 1: The weight of the outermost sample.
 	if (x >= 1) {
-		this.preDivisor = 1;
-		this.edgeFactor = 1;
-		this.width = 1;
+		let preDivisor = 1;
+		this.precomputed[0] = 1;
+		this.precomputed[1] = 1;
 	} else {
-		this.preDivisor = 1 / x;
-		this.width = Math.ceil(this.preDivisor);
-		this.edgeFactor = this.preDivisor - Math.floor(this.preDivisor);
+		let preDivisor = 1 / x;
+		this.precomputed[0] = Math.ceil(preDivisor);
+		this.precomputed[1] = preDivisor - Math.floor(preDivisor);
 	};
 };
 ResampleLinear.get = function (timeStep, samples, oldSamples) {

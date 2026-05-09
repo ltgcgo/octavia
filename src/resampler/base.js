@@ -3,6 +3,7 @@
 
 const DEFAULT_SAMPLE_RATIO = 1;
 const DEFAULT_STEP = 2;
+const MAX_PCA_SIZE = 65536;
 
 const EnsembleResamplerEntry = class EnsembleResamplerEntry {
 	get;
@@ -10,6 +11,7 @@ const EnsembleResamplerEntry = class EnsembleResamplerEntry {
 	setSampleRatio;
 	step = DEFAULT_STEP;
 	setStep;
+	pcaSize = 0;
 };
 const EnsembleResampler = class EnsembleResampler {
 	#recursionGuard = 8;
@@ -61,6 +63,9 @@ const EnsembleResampler = class EnsembleResampler {
 		upThis.get = entry.get.bind(this);
 		upThis.setStep(entry.step ?? DEFAULT_STEP);
 		upThis.setSampleRatio(entry.sampleRatio ?? DEFAULT_SAMPLE_RATIO);
+		if (entry.pcaSize > 0) {
+			upThis.precomputed = new Float64Array(Math.min(entry.pcaSize, MAX_PCA_SIZE));
+		};
 	};
 };
 
