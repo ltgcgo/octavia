@@ -58,14 +58,14 @@ const EnsembleResampler = class EnsembleResampler {
 	constructor(id, entry) {
 		let upThis = this;
 		upThis.#id = id;
+		if (entry.pcaSize > 0) {
+			upThis.precomputed = new Float64Array(Math.min(entry.pcaSize, MAX_PCA_SIZE));
+		};
 		upThis.#sampleRatioSetter = entry.setSampleRatio?.bind(this);
 		upThis.#stepSetter = entry.setStep?.bind(this);
 		upThis.get = entry.get.bind(this);
 		upThis.setStep(entry.step ?? DEFAULT_STEP);
 		upThis.setSampleRatio(entry.sampleRatio ?? DEFAULT_SAMPLE_RATIO);
-		if (entry.pcaSize > 0) {
-			upThis.precomputed = new Float64Array(Math.min(entry.pcaSize, MAX_PCA_SIZE));
-		};
 	};
 };
 

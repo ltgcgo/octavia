@@ -19,7 +19,6 @@ ResampleLinear.setSampleRatio = function (x) {
 	// 0: Window size on either side of the time step.
 	// 1: The weight of the outermost sample.
 	if (x >= 1) {
-		let preDivisor = 1;
 		this.precomputed[0] = 1;
 		this.precomputed[1] = 1;
 	} else {
