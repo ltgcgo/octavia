@@ -2,7 +2,16 @@
 // Licensed under GNU LGPL v3.0 license.
 
 import EnsembleUtilMethods from "./utils.js";
+import {
+	EnsembleResamplerEntry,
+	EnsembleResampler
+} from "./base.js";
+
+const EnsembleResamplerRegistry = class EnsembleResamplerRegistry {};
 
 export {
-	EnsembleUtilMethods
+	EnsembleUtilMethods,
+	EnsembleResamplerEntry,
+	EnsembleResampler,
+	EnsembleResamplerRegistry
 };
