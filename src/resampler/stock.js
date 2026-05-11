@@ -69,7 +69,12 @@ ResampleLinear.get = function (timeStep, samples, oldSamples) {
 	};
 };
 
+// Catmull-Rom Hermite cubic
+let ResamplerHermite = new EnsembleResamplerEntry();
+ResamplerHermite.pcaSize = 26; // 2 + 24
+
 export {
 	ResampleNearestNeighbour,
-	ResampleLinear
+	ResampleLinear,
+	ResamplerHermite
 };

@@ -14,4 +14,3 @@ dist/deno.json
 src/identity/identity.bin
 src/identity/identity.txt
 c*.png
-c*.webp

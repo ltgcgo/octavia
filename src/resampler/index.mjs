@@ -8,7 +8,8 @@ import {
 } from "./base.js";
 import {
 	ResampleNearestNeighbour,
-	ResampleLinear
+	ResampleLinear,
+	ResamplerHermite
 } from "./stock.js";
 
 const EnsembleResamplerRegistry = class EnsembleResamplerRegistry {
@@ -48,6 +49,7 @@ const EnsembleResamplerRegistry = class EnsembleResamplerRegistry {
 
 EnsembleResamplerRegistry.register("nearest", ResampleNearestNeighbour);
 EnsembleResamplerRegistry.register("linear", ResampleLinear);
+EnsembleResamplerRegistry.register("hermite", ResamplerHermite);
 
 export {
 	EnsembleUtilMethods,
