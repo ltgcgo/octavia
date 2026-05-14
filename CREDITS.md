@@ -49,6 +49,11 @@ Octavia will never become a reality without help from the following people.
 Octavia will now dynamically load additional demos if available. [See the credits here](https://github.com/ltgcgo/midi-demo-data/blob/main/collection/octavia/list.tsv)!
 
 ## Used open assets
+### Toolchain
+- esbuild
+- Hyacinth
+- shx
+
 ### Libraries
 - [AlpineJS](https://alpinejs.dev) (MIT License)
 - [BabelJS](https://babeljs.io) (MIT License)
@@ -69,3 +74,6 @@ Octavia will now dynamically load additional demos if available. [See the credit
 - [PT Sans Narrow](https://www.paratype.com/fonts/pt/pt-sans?tab=description) (SIL OFL v1.1)
 - [Public Sans](https://public-sans.digital.gov) (SIL OFL v1.1)
 - [Work Sans](https://github.com/weiweihuanghuang/Work-Sans) (SIL OFL v1.1)
+
+### Images
+Check [image/README.md](image/README.md) for further information.
