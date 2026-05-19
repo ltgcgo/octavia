@@ -1,5 +1,5 @@
 {
-	default_bind 0.0.0.0
+	default_bind 127.0.0.1
 	log {
 		level WARN
 	}

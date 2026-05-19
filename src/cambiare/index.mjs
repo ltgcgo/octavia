@@ -26,6 +26,7 @@ const modeNames = {
 	"doc": "Yamaha DOC",
 	"qy10": "Yamaha QY10",
 	"qy20": "Yamaha QY20",
+	"gus": "Gravis UltraSound",
 	"sd": "Roland SD",
 	"x5d": "Korg X5D",
 	"05rw": "Korg 05R/W",
@@ -138,6 +139,7 @@ const modeColourPool = {
 	"g2": ["a1f3ff", "005e88", "a1f3ff"],
 	"pa": ["a1f3ff", "005e88", "a1f3ff"],
 	"krs": ["a1f3ff", "005e88", "a1f3ff"],
+	"gus": ["a1f3ff", "005e88", "a1f3ff"],
 	"gs": ["ffe1a5", "804e00", "ffe1a5"],
 	"sc": ["ffe1a5", "804e00", "ffe1a5"],
 	"mt32": ["ffe1a5", "804e00", "ffe1a5"],
@@ -1192,7 +1194,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#sectInfo.barNote = createElement("span", ["field", "pcp-font4"], {t: 1, l: 354, w: 23, h: 33});
 		upThis.#sectInfo.tempo = createElement("span", ["field", "pcp-font4"], {t: 1, l: 454, w: 64, h: 33, a: "right"});
 		upThis.#sectInfo.volume = createElement("span", ["field", "pcp-font4"], {t: 1, l: 562, w: 63, h: 33, a: "right"});
-		upThis.#sectInfo.mode = createElement("span", ["field", "pcp-font4"], {t: 1, l: 708, w: 152, h: 33});
+		upThis.#sectInfo.mode = createElement("span", ["field", "pcp-font4"], {t: 1, l: 708, w: 228, h: 33});
 		upThis.#sectInfo.reverb = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1000, w: 190, h: 33});
 		upThis.#sectInfo.chorus = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1235, w: 190, h: 33});
 		upThis.#sectInfo.delay = createElement("span", ["field", "pcp-font4"], {t: 1, l: 1471, w: 190, h: 33});

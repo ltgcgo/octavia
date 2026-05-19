@@ -231,6 +231,14 @@ let VoiceBank = class {
 				};
 				break;
 			};
+			case "gus": {
+				if (msb === 0 || msb === 120) {
+					args[2] = 128;
+					if (msb === 0) {
+						args[0] = 57;
+					};
+				};
+			};
 			case "05rw":
 			case "x5d": {
 				if (msb && msb < 56) {
@@ -463,8 +471,15 @@ let VoiceBank = class {
 				break;
 			};
 			case 57: {
-				sect = ["yDOC", "QY10", "QY20"][args[2] - 112] || "yMxv"; // Yamaha Model Exclusive Voice
-				bank = ["DOC", "QY1", "QY2"][args[2] - 112] || "057";
+				if (args[2] < 112) {
+					// No-op!
+				} else if (args[2] < 128) {
+					sect = ["yDOC", "QY10", "QY20"][args[2] - 112] || "yMxv"; // Yamaha model exclusive voice
+					bank = ["DOC", "QY1", "QY2"][args[2] - 112] || "057";
+				} else {
+					sect = ["GrUS"][args[2] - 128] || "Xtra"; // Additional sound cards
+					bank = ["GUS"][args[2] - 128] || "057";
+				};
 			};
 			case 61:
 			case 128: {
@@ -830,6 +845,19 @@ let VoiceBank = class {
 			case 56:
 			case 62: {
 				standard = "AG";
+				break;
+			};
+			case 57: {
+				switch (args[2] >> 4) {
+					case 7: {
+						standard = ["DO", "QY", "QY"][args[2] - 112] || "??";
+						break;
+					};
+					case 8: {
+						standard = ["GM"][args[2] - 128] || "??";
+						break;
+					};
+				};
 				break;
 			};
 			case 61:

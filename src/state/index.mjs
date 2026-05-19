@@ -54,7 +54,7 @@ import {ChordDict} from "../chord/index.mjs";
 
 const modeIdx = [
 	"?",
-	"gm", "gs", "sc", "xg", "g2",
+	"gm", "gs", "sc", "xg", "g2", "gus",
 	"mt32", "doc", "qy10", "qy20",
 	"ns5r", "x5d", "05rw",
 	"k11", "sg", "sd", "pa",
@@ -93,6 +93,7 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"doc": [57, 112, 127, 57, 112],
 	"qy10": [57, 113, 127, 57, 113],
 	"qy20": [57, 114, 127, 57, 114],
+	"gus": [0, 0, 120, 0, 0],
 	"ns5r": [0, 0, 61, 0, 0],
 	"x5d": [82, 0, 62, 56, 0],
 	"05rw": [81, 0, 62, 56, 0],
@@ -561,7 +562,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	// GS Track Occupation
 	#trkRedir = new Uint8Array(allocated.ch);
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
-	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es", "cs2x", "pa"); // Load all possible voice banks
+	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es", "cs2x", "pa", "ymh", "gm-extra"); // Load all possible voice banks
 	userBank = new VoiceBank("gm2"); // User-defined bank for MT-32, X5DR and NS5R
 	//bankProps = new SheetD;
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
@@ -2118,6 +2119,10 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				upThis.#detect.x5 = 81;
 				break;
 			};
+			case modeMap["gus"]: {
+				upThis.#detect.gm = modeMap.gus;
+				break;
+			};
 			case modeMap.s90es: {
 				upThis.#detect.ds = modeMap.s90es;
 				upThis.#detect.smotif = modeMap.s90es;
@@ -2711,6 +2716,10 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					case modeMap.krs: {
 						efxDefault = [45, 0, 45, 0, 0, 255, 45, 0, 45, 0, 45, 0, 45, 0, 45, 0];
 						efxBlank = [45, 0];
+						break;
+					};
+					case modeMap.gus: {
+						efxDefault = [0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};
 					default: {
@@ -3410,7 +3419,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.#seUnr.add([9], (msg, track, id) => {
 			// General MIDI reset.
 			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], 2);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, [modeMap.gm, modeMap["?"], upThis.#detect.g2][msg[0] - 1]);
+			upThis.setPortMode(upThis.getTrackPort(track), 1, [/*modeMap.gm*/upThis.#detect.gm, modeMap["?"], upThis.#detect.g2][msg[0] - 1]);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 			console.info(`MIDI reset: ${["GM", "Init", "GM2"][msg[0] - 1]}`);
 			if (msg[0] === 2) {
