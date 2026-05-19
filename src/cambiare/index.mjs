@@ -309,6 +309,7 @@ let Cambiare = class extends RootDisplay {
 	#sectPart = [];
 	#sectMeta = {};
 	#sectPix = {};
+	#sectExtra = {};
 	eventViewMode = 0; // 0 for event count, 1 for FPS
 	useElementCount = true;
 	//#noteEvents = [];
@@ -1182,6 +1183,9 @@ let Cambiare = class extends RootDisplay {
 		self.addEventListener("resize", upThis.#resizer);
 		upThis.#resizer();
 		upThis.setFrameTime(20);
+		// Begin inserting auxillary sections
+		upThis.#sectExtra.wall = createElement("div", ["sect-wall"]); // Wallpaper!
+		canvasElement.appendChild(upThis.#sectExtra.wall);
 		// Begin inserting the info section
 		upThis.#sectInfo.root = createElement("div", ["sect-info"]);
 		upThis.#sectInfo.events = createElement("span", ["field", "pcp-font4"], {t: 1, l: 0, w: 35, h: 33});
