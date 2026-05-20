@@ -1,0 +1,16 @@
+{
+	"mode": "visible",
+	"git": {
+		"config": "shim",
+		"writable": false
+	},
+	"includes": [
+		".github"
+	],
+	"excludes": [
+		"oldsrc"
+	],
+	"writable": [
+		"dist"
+	]
+}
