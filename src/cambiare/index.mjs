@@ -258,7 +258,7 @@ const chordMax = 2,
 chordRootWidth = chordMax * 6,
 chordDetailWidth = chordMax * 17;
 
-const wallpaperStrategies = "cover,fit,tile".split(","),
+const wallpaperStrategies = "cover,fit,tile,stretch,preserve".split(","),
 wallpaperStratClasses = [];
 for (let e of wallpaperStrategies) {
 	wallpaperStratClasses.push(`wall-strat-${e}`);

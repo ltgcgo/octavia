@@ -289,9 +289,15 @@ div.cambiare-canvas > div.sect-wall {
 div.cambiare-canvas > div.sect-wall.wall-strat-fit {
 	background-size: contain;
 }
+div.cambiare-canvas > div.sect-wall.wall-strat-preserve {
+	background-size: auto;
+}
 div.cambiare-canvas > div.sect-wall.wall-strat-tile {
 	background-size: auto;
 	background-repeat: repeat;
+}
+div.cambiare-canvas > div.sect-wall.wall-strat-stretch {
+	background-size: 100% 100%;
 }
 
 div.cambiare-canvas > div.sect-part > div {

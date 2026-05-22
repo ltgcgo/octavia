@@ -211,13 +211,23 @@ createDropDown($e("div#dropmount-colourscheme"), {
 });
 createDropDown($e("div#dropmount-background"), {
 	"activeSlot": 1,
-	"minWidth": "7rem",
+	"minWidth": "6.65rem",
 	"displayText": "backgrounds[$store.bgGroup ?? 'soft'][0]||'N/A'",
 	"eachExpr": "([name, desc], id) in backgrounds",
 	"optionText": "name",
 	"optionDesc": "desc",
 	"optionActive": "($store.bgGroup ?? 'soft')===id",
 	"optionClick": "gBgGroup(id)"
+});
+createDropDown($e("div#dropmount-wallpaper-strategy"), {
+	"activeSlot": 2,
+	"minWidth": "7rem",
+	"displayText": "strats[$store.bgStrat ?? 'cover'][0]||'N/A'",
+	"eachExpr": "([name, desc], id) in strats",
+	"optionText": "name",
+	"optionDesc": "desc",
+	"optionActive": "($store.bgStrat ?? 'cover')===id",
+	"optionClick": "gBgStrat(id)"
 });
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
@@ -383,16 +393,46 @@ self.gPanStyle = (panStyle) => {
 	visualizer.panStyle = panStyle;
 	Alpine.store("panStyle", panStyle);
 };
-self.gSetScheme = (scheme) => {
-	visualizer.setScheme(scheme);
-	Alpine.store("scheme", scheme);
-};
 self.gEcMode = (ecMode) => {
 	visualizer.useElementCount = ecMode;
 	Alpine.store("useElementCount", ecMode);
 };
+let schemeCat = 0, schemeSubCat = 0;
+const setTrueScheme = () => {
+	if (schemeCat === 1) {
+		visualizer.setScheme(1);
+	} else if (schemeCat === 0) {
+		visualizer.setScheme(schemeSubCat ? 2 : 0);
+	} else {
+		console.warn(`Invalid colour scheme category: ${schemeCat}.`);
+	};
+};
+self.gSetScheme = (scheme) => {
+	schemeCat = scheme;
+	setTrueScheme();
+	Alpine.store("scheme", scheme);
+};
 self.gBgGroup = (group) => {
-	console.debug(group);
+	switch (group) {
+		case "soft":
+		case "colour": {
+			schemeSubCat = 0;
+			break;
+		};
+		case "luma": {
+			schemeSubCat = 1;
+			break;
+		};
+		default: {
+			console.debug(group);
+		};
+	};
+	setTrueScheme();
+	Alpine.store("bgGroup", group);
+};
+self.gBgStrat = (strat) => {
+	visualizer.setWallpaperStrat(strat);
+	Alpine.store("bgStrat", strat);
 };
 
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".mdat",".MDAT",".pcg",".PCG"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
@@ -590,6 +630,8 @@ getBridge().addEventListener("message", function (ev) {
 		console.info(`Development build detected.`);
 	};
 })();
+
+gBgStrat('cover');
 
 Alpine.start();
 self.visualizer = visualizer;
