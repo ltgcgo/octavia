@@ -408,7 +408,8 @@ self.gEcMode = (ecMode) => {
 	visualizer.useElementCount = ecMode;
 	Alpine.store("useElementCount", ecMode);
 };
-let schemeCat = 0, schemeSubCat = 0, schemeGroup, bgChosen, bgOnDevice;
+let fileTooltip = $e("div#show-wallpaper-tooltip"),
+schemeCat = 0, schemeSubCat = 0, schemeGroup, bgChosen, bgOnDevice;
 const setWallpaper = async (invokeButton) => {
 	if (schemeGroup === "imageLuma" || schemeGroup === "imageColour") {
 		if (typeof bgChosen[2]?.length === "number") {
@@ -419,8 +420,17 @@ const setWallpaper = async (invokeButton) => {
 			visualizer.setWallpaperUrl(chosen.url);
 			visualizer.setWallpaperOpacity(chosen.opacity);
 			gBgStrat(chosen.strategy);
+			while (fileTooltip.childNodes.length > 0) {
+				fileTooltip.childNodes[0].remove();
+			};
+			let linkedArtist = document.createElement("a");
+			linkedArtist.target = "_blank";
+			linkedArtist.href = chosen.link;
+			linkedArtist.innerText = chosen.artist;
+			mountElement(fileTooltip, [`${chosen.year} © `, linkedArtist, ` - ${chosen.license}`]);
 		} else {
 			// Display the chosen local file
+			fileTooltip.innerText = "Slide over this text to adjust wallpaper opacity.";
 		};
 	} else {
 		visualizer.setWallpaperUrl();

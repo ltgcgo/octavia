@@ -178,7 +178,7 @@ let createSVG = function (tag, details) {
 };
 let mountElement = function (root, children) {
 	children?.forEach((e) => {
-		root.appendChild(e);
+		root.append(e);
 	});
 };
 let classOff = function (target, classes) {
