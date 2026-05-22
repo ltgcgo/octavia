@@ -1168,6 +1168,36 @@ let Cambiare = class extends RootDisplay {
 		upThis.smoothingAtk = Math.pow(0.1, frameTime / 20);
 		upThis.smoothingDcy = Math.pow(0.75, frameTime / 20);
 	};
+	setBackgroundColour(colourHex) {
+		if (typeof colourHex !== "string") {
+			throw(new TypeError(`The colour must be a valid string.`));
+		};
+		if (colourHex[0] === "#") {
+			if ((0b0000001010110000 >> colourHex.length) & 1) {
+				this.#sectExtra.root.style.backgroundColor = colourHex;
+			} else {
+				throw(new SyntaxError(`Specified malformed hexadecimal colour.`));
+			};
+		} else {
+			throw(new TypeError(`Unsupported colour scheme.`));
+		};
+	};
+	setWallpaperOpacity(opacity) {
+		if (typeof opacity !== "number") {
+			throw(new TypeError(`Opacity must be a number.`));
+		};
+		if (opacity >= 0 && opacity <= 1) {
+			this.#sectExtra.wall.style.opacity = opacity;
+		} else {
+			throw(new RangeError(`Opacity must be a fractional number in the range of [0, 1].`));
+		};
+	};
+	setWallpaperUrl(url) {
+		if (typeof url !== "string") {
+			throw(new TypeError(`URL must be a string.`));
+		};
+		this.#sectExtra.wall.style.backgroundImage = `url(${JSON.stringify(url)})`;
+	};
 	attach(attachElement) {
 		let upThis = this;
 		upThis.#visualizer = attachElement;
@@ -1184,6 +1214,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#resizer();
 		upThis.setFrameTime(20);
 		// Begin inserting auxillary sections
+		upThis.#sectExtra.root = canvasElement;
 		upThis.#sectExtra.wall = createElement("div", ["sect-wall"]); // Wallpaper!
 		canvasElement.appendChild(upThis.#sectExtra.wall);
 		// Begin inserting the info section

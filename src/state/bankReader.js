@@ -232,11 +232,12 @@ let VoiceBank = class {
 				break;
 			};
 			case "gus": {
-				if (msb === 0 || msb === 120) {
+				if (msb === 0) {
+					args[0] = 57;
 					args[2] = 128;
-					if (msb === 0) {
-						args[0] = 57;
-					};
+				};
+				if (msb === 120 && prg === 0) {
+					args[2] = 128;
 				};
 			};
 			case "05rw":
