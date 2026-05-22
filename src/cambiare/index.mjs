@@ -1174,13 +1174,17 @@ let Cambiare = class extends RootDisplay {
 		upThis.smoothingAtk = Math.pow(0.1, frameTime / 20);
 		upThis.smoothingDcy = Math.pow(0.75, frameTime / 20);
 	};
-	setBackgroundColour(colourHex) {
-		if (typeof colourHex !== "string") {
+	setBackgroundColour(colourString) {
+		if (colourString == null) {
+			this.#sectExtra.root.style.backgroundColor = "";
+		} else if (typeof colourString !== "string") {
 			throw(new TypeError(`The colour must be a valid string.`));
 		};
-		if (colourHex[0] === "#") {
-			if ((0b0000001010110000 >> colourHex.length) & 1) {
-				this.#sectExtra.root.style.backgroundColor = colourHex;
+		if (colourString.length === 0) {
+			this.#sectExtra.root.style.backgroundColor = "";
+		} else if (colourString[0] === "#") {
+			if ((0b0000001010110000 >> colourString.length) & 1) {
+				this.#sectExtra.root.style.backgroundColor = colourString;
 			} else {
 				throw(new SyntaxError(`Specified malformed hexadecimal colour.`));
 			};

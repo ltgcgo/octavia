@@ -115,7 +115,11 @@
 			<div class="column column-option"><b>Scheme</b></div>
 			<div id="dropmount-colourscheme"></div>
 			<div id="dropmount-background"></div>
-			<div id="dropmount-wallpaper-strategy"></div>
+			<div id="dropmount-wallpaper-strategy" x-show="$store.bgGroup==='imageLuma'||$store.bgGroup==='imageColour'"></div>
+			<div id="button-background-colour-select" class="column column-option iconset column-button outlined" style="padding: 7px;" x-show="$store.bgGroup==='colour'||$store.bgGroup==='imageColour'">
+				<div class="size-32" id="display-background-colour"></div>
+				<input type="color" class="hidden" />
+			</div>
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered">

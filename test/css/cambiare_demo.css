@@ -82,6 +82,9 @@ button {
 	padding: 0.6rem;
 	margin: 0.15rem;
 }
+.column-option.outlined {
+	border-color: var(--page-option-border-select);
+}
 .column-option.dropdown {
 	border-color: var(--page-option-border-select);
 	padding: 0;
@@ -127,6 +130,9 @@ button {
 	height: 100vh;
 }
 
+.hidden {
+	display: none;
+}
 .wip {
 	cursor: not-allowed !important;
 }

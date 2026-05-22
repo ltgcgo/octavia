@@ -415,11 +415,13 @@ self.gSetScheme = (scheme) => {
 self.gBgGroup = (group) => {
 	switch (group) {
 		case "soft":
-		case "colour": {
+		case "colour":
+		case "imageColour": {
 			schemeSubCat = 0;
 			break;
 		};
-		case "luma": {
+		case "luma":
+		case "imageLuma": {
 			schemeSubCat = 1;
 			break;
 		};
