@@ -436,6 +436,16 @@ self.gBgStrat = (strat) => {
 	visualizer.setWallpaperStrat(strat);
 	Alpine.store("bgStrat", strat);
 };
+const colourPickerBg = $e("div#button-background-colour-picker > input"),
+colourDispBg = $e("div#button-background-colour-picker > div");
+colourPickerBg.addEventListener("change", function () {
+	visualizer.setBackgroundColour(this.value);
+	colourDispBg.style.backgroundColor = this.value;
+});
+self.gBgColour = () => {
+	visualizer.setBackgroundColour();
+	colourPickerBg.click();
+};
 
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".mdat",".MDAT",".pcg",".PCG"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');

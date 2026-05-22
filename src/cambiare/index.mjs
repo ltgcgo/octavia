@@ -1177,6 +1177,7 @@ let Cambiare = class extends RootDisplay {
 	setBackgroundColour(colourString) {
 		if (colourString == null) {
 			this.#sectExtra.root.style.backgroundColor = "";
+			return;
 		} else if (typeof colourString !== "string") {
 			throw(new TypeError(`The colour must be a valid string.`));
 		};
@@ -1222,6 +1223,7 @@ let Cambiare = class extends RootDisplay {
 	setWallpaperUrl(url) {
 		if (url == null) {
 			this.#sectExtra.wall.style.backgroundImage = "";
+			return;
 		} else if (typeof url !== "string") {
 			throw(new TypeError(`URL must be a string.`));
 		};
