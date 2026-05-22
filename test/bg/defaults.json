@@ -1,13 +1,17 @@
 [[{
 	"artist": "AnorakNR",
+	"link": "https://hooves.social/@nranorak",
 	"year": 2026,
 	"license": "CC BY-SA 4.0",
 	"opacity": 0.85,
-	"link": "https://hooves.social/@nranorak"
+	"strategy": "cover",
+	"url": "./bg/cambiare.0.dark.webp"
 }, {
 	"artist": "AnorakNR",
+	"link": "https://hooves.social/@nranorak",
 	"year": 2026,
 	"license": "CC BY-SA 4.0",
 	"opacity": 0.55,
-	"link": "https://hooves.social/@nranorak"
+	"strategy": "cover",
+	"url": "./bg/cambiare.0.light.webp"
 }]]

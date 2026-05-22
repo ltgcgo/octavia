@@ -229,6 +229,17 @@ createDropDown($e("div#dropmount-wallpaper-strategy"), {
 	"optionActive": "($store.bgStrat ?? 'cover')===id",
 	"optionClick": "gBgStrat(id)"
 });
+Alpine.store("wallpapers", [['Loading...', 'Please wait until metadata is loaded.']]);
+createDropDown($e("div#dropmount-wallpaper-choice"), {
+	"activeSlot": 3,
+	"minWidth": "5.5rem",
+	"displayText": "$store.wallpapers[$store.bgChoice ?? 0][0]||'N/A'",
+	"eachExpr": "([name, desc], id) in $store.wallpapers",
+	"optionText": "name",
+	"optionDesc": "desc",
+	"optionActive": "($store.bgChoice ?? 0)===id",
+	"optionClick": "gBgSelect(id)"
+});
 
 let deriveFactor = (baseFactor, baseTime, newTime) => {
 	if (baseTime === newTime) {
@@ -345,7 +356,7 @@ self.gDemo = async function ({file, id, artist, title, standard}) {
 	visualizer.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (audio)`);
 	let audioBlob = await(await getBlobFrom(`${file}.opus`)).blob();
 	visualizer.dispatchEvent("title", `Polak is cute!`);
-	await visualizer.loadFile(await midiBlob);
+	await visualizer.loadFile(midiBlob);
 	audioUri = URL.createObjectURL(audioBlob);
 	audioFilePlayer.currentTime = 0;
 	audioFilePlayer.src = audioUri;
@@ -397,7 +408,24 @@ self.gEcMode = (ecMode) => {
 	visualizer.useElementCount = ecMode;
 	Alpine.store("useElementCount", ecMode);
 };
-let schemeCat = 0, schemeSubCat = 0;
+let schemeCat = 0, schemeSubCat = 0, schemeGroup, bgChosen, bgOnDevice;
+const setWallpaper = async (invokeButton) => {
+	if (schemeGroup === "imageLuma" || schemeGroup === "imageColour") {
+		if (typeof bgChosen[2]?.length === "number") {
+			let chosen = bgChosen[2][0];
+			if (schemeCat !== 0 && schemeCat < bgChosen[2].length) {
+				chosen = bgChosen[2][schemeCat];
+			};
+			visualizer.setWallpaperUrl(chosen.url);
+			visualizer.setWallpaperOpacity(chosen.opacity);
+			gBgStrat(chosen.strategy);
+		} else {
+			// Display the chosen local file
+		};
+	} else {
+		visualizer.setWallpaperUrl();
+	};
+};
 const setTrueScheme = () => {
 	if (schemeCat === 1) {
 		visualizer.setScheme(1);
@@ -406,6 +434,7 @@ const setTrueScheme = () => {
 	} else {
 		console.warn(`Invalid colour scheme category: ${schemeCat}.`);
 	};
+	setWallpaper(false);
 };
 self.gSetScheme = (scheme) => {
 	schemeCat = scheme;
@@ -429,6 +458,7 @@ self.gBgGroup = (group) => {
 			console.debug(group);
 		};
 	};
+	schemeGroup = group;
 	setTrueScheme();
 	Alpine.store("bgGroup", group);
 };
@@ -445,6 +475,11 @@ colourPickerBg.addEventListener("change", function () {
 self.gBgColour = () => {
 	visualizer.setBackgroundColour();
 	colourPickerBg.click();
+};
+self.gBgSelect = (id) => {
+	bgChosen = Alpine.store("wallpapers")[id];
+	setWallpaper(true);
+	Alpine.store("bgChoice", id);
 };
 
 const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx",".SYX",".s7e",".S7E",".mdat",".MDAT",".pcg",".PCG"],"startIn":"music","id":"midiOpener","description":"Open a MIDI file"}'),
@@ -641,8 +676,28 @@ getBridge().addEventListener("message", function (ev) {
 	} catch (err) {
 		console.info(`Development build detected.`);
 	};
+	try {
+		let bundledBackgrounds = await (await fetch("./bg/defaults.json")).json();
+		let bgData = [];
+		for (let i = 0; i < bundledBackgrounds.length; i ++) {
+			let e = bundledBackgrounds[i];
+			//console.debug(e);
+			bgData.push([`#${i + 1}`, `Authored by ${e[0].artist}, ${e[1].artist}.`, e]);
+		};
+		bgData.push(['File', `Choose a file from your device.`, {'type': 'local'}]);
+		//console.debug(bgData);
+		Alpine.store("wallpapers", bgData);
+		if (bgData.length > 1) {
+			bgChosen = bgData[0];
+			gBgGroup('imageLuma');
+		};
+	} catch (err) {
+		console.info(`Metadata for bundled backgrounds cannot be found.`);
+		Alpine.store("wallpapers", [['File', `Choose a file from your device.`, {'type': 'local'}]]);
+	};
 })();
 
+gBgGroup('soft');
 gBgStrat('cover');
 
 Alpine.start();
