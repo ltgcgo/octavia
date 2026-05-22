@@ -258,6 +258,12 @@ const chordMax = 2,
 chordRootWidth = chordMax * 6,
 chordDetailWidth = chordMax * 17;
 
+const wallpaperStrategies = "cover,fit,tile".split(","),
+wallpaperStratClasses = [];
+for (let e of wallpaperStrategies) {
+	wallpaperStratClasses.push(`wall-strat-${e}`);
+};
+
 let Cambiare = class extends RootDisplay {
 	#metaGcLine = 16;
 	#metaGcStart = 32;
@@ -1192,11 +1198,30 @@ let Cambiare = class extends RootDisplay {
 			throw(new RangeError(`Opacity must be a fractional number in the range of [0, 1].`));
 		};
 	};
+	setWallpaperStrat(strategy) {
+		if (typeof strategy !== "string") {
+			throw(new TypeError(`Strategy must be a string.`));
+		};
+		const upThis = this, stratId = wallpaperStrategies.indexOf(strategy);
+		if (stratId >= 0) {
+			const wallClassList = upThis.#sectExtra.wall.classList;
+			for (let strategyCurrent of wallpaperStratClasses) {
+				if (wallClassList.contains(strategyCurrent)) {
+					wallClassList.remove(strategyCurrent);
+				};
+			};
+			wallClassList.add(wallpaperStratClasses[stratId]);
+		} else {
+			throw(new RangeError(`Invalid strategy "${strategy}".`));
+		};
+	};
 	setWallpaperUrl(url) {
-		if (typeof url !== "string") {
+		if (url == null) {
+			this.#sectExtra.wall.style.backgroundImage = "";
+		} else if (typeof url !== "string") {
 			throw(new TypeError(`URL must be a string.`));
 		};
-		this.#sectExtra.wall.style.backgroundImage = `url(${JSON.stringify(url)})`;
+		this.#sectExtra.wall.style.backgroundImage = url.length > 6 ? `url(${JSON.stringify(url)})` : "";
 	};
 	attach(attachElement) {
 		let upThis = this;

@@ -276,6 +276,24 @@ div.cambiare-canvas > div.sect-meta span.meta-data > span.meta-slice {
 	animation: slideFadeIn 0.1s;
 }
 
+div.cambiare-canvas > div.sect-wall {
+	background-attachment: scroll;
+	background-repeat: no-repeat;
+	background-origin: border-box;
+	background-clip: border-box;
+	background-color: transparent;
+	/* Use the "cover" strategy by default. */
+	background-position: 50% 50%;
+	background-size: cover;
+}
+div.cambiare-canvas > div.sect-wall.wall-strat-fit {
+	background-size: contain;
+}
+div.cambiare-canvas > div.sect-wall.wall-strat-tile {
+	background-size: auto;
+	background-repeat: repeat;
+}
+
 div.cambiare-canvas > div.sect-part > div {
 	width: 1896px;
 	height: 832px;
