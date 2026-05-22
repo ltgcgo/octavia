@@ -115,7 +115,7 @@
 			<div class="column column-option"><b>Scheme</b></div>
 			<div id="dropmount-colourscheme"></div>
 			<div id="dropmount-background"></div>
-			<div id="button-background-colour-picker" class="column column-option iconset column-button outlined" style="padding: 7px;" x-show="$store.bgGroup==='colour'||$store.bgGroup==='imageColour'" @mouseup='gBgColour(this)'>
+			<div id="button-background-colour-picker" class="column column-option iconset column-button outlined" title="Right click or long press to clear background colour." style="padding: 7px;" x-show="$store.bgGroup==='colour'||$store.bgGroup==='imageColour'" @click='gBgColour(this)'>
 				<div class="size-32"></div>
 				<input type="color" class="hidden" />
 			</div>

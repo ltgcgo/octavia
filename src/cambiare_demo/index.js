@@ -496,12 +496,18 @@ colourPickerBg.addEventListener("input", function () {
 	visualizer.setBackgroundColour(bgColour);
 	colourDispBg.style.backgroundColor = this.value;
 });
-self.gBgColour = function (source) {
+self.gBgColour = function () {
 	bgColour = null;
 	visualizer.setBackgroundColour(bgColour);
 	colourPickerBg.showPicker();
 	colourPickerBg.value = `#${Math.floor(Math.random()*16777216).toString(16).padStart(6, "0")}`;
 };
+$e("div#button-background-colour-picker").addEventListener("contextmenu", (ev) => {
+	ev.preventDefault();
+	ev.stopImmediatePropagation();
+	bgColour = null;
+	visualizer.setBackgroundColour(bgColour);
+});
 self.gBgSelect = (id) => {
 	bgChosen = Alpine.store("wallpapers")[id];
 	setWallpaper(true);
