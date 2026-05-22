@@ -409,7 +409,7 @@ self.gEcMode = (ecMode) => {
 	Alpine.store("useElementCount", ecMode);
 };
 let fileTooltip = $e("div#show-wallpaper-tooltip"),
-schemeCat = 0, schemeSubCat = 0, schemeGroup, bgChosen, bgOnDevice;
+schemeCat = 0, schemeSubCat = 0, schemeGroup, bgChosen, bgColour, bgOnDevice;
 const setWallpaper = async (invokeButton) => {
 	if (schemeGroup === "imageLuma" || schemeGroup === "imageColour") {
 		if (typeof bgChosen[2]?.length === "number") {
@@ -471,6 +471,19 @@ self.gBgGroup = (group) => {
 	schemeGroup = group;
 	setTrueScheme();
 	Alpine.store("bgGroup", group);
+	switch (group) {
+		case "colour":
+		case "imageColour": {
+			visualizer.setBackgroundColour(bgColour);
+			break;
+		};
+		case "soft":
+		case "luma":
+		case "imageLuma": {
+			visualizer.setBackgroundColour();
+			break;
+		};
+	};
 };
 self.gBgStrat = (strat) => {
 	visualizer.setWallpaperStrat(strat);
@@ -478,13 +491,16 @@ self.gBgStrat = (strat) => {
 };
 const colourPickerBg = $e("div#button-background-colour-picker > input"),
 colourDispBg = $e("div#button-background-colour-picker > div");
-colourPickerBg.addEventListener("change", function () {
-	visualizer.setBackgroundColour(this.value);
+colourPickerBg.addEventListener("input", function () {
+	bgColour = this.value;
+	visualizer.setBackgroundColour(bgColour);
 	colourDispBg.style.backgroundColor = this.value;
 });
-self.gBgColour = () => {
-	visualizer.setBackgroundColour();
-	colourPickerBg.click();
+self.gBgColour = function (source) {
+	bgColour = null;
+	visualizer.setBackgroundColour(bgColour);
+	colourPickerBg.showPicker();
+	colourPickerBg.value = `#${Math.floor(Math.random()*16777216).toString(16).padStart(6, "0")}`;
 };
 self.gBgSelect = (id) => {
 	bgChosen = Alpine.store("wallpapers")[id];
