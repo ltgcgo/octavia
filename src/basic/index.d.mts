@@ -4,7 +4,8 @@
 import {
 	OctaviaDevice,
 	TimeMuxer,
-	OctaviaVoiceObject
+	OctaviaVoiceObject,
+	OctaviaVoiceProperties
 } from "../state/index.mjs";
 
 /** A unified style pattern storage and retrieval class. */
@@ -97,6 +98,24 @@ export class FileHandler {
 	handleMime(mime: string, func: Function): void;
 }
 
+/** A bitmap with a defined width and height. */
+export class BitmapMatrix {}
+
+declare interface MxBaseBmCollection {}
+declare interface MxFontBmCollection extends MxBaseBmCollection {}
+
+/** A 5×8 font-oriented bitmap collection. */
+export class MxFont40 implements MxFontBmCollection {}
+
+/** A 11×16 font-oriented bitmap collection. */
+export class MxFont176 implements MxFontBmCollection {}
+
+/** A 16×16 bitmap collection. */
+export class MxBm256 implements MxBaseBmCollection {}
+
+/** An bitmap collection with arbitrary dimensions. */
+export class MxBmDef implements MxBaseBmCollection {}
+
 /** The basis needed to build a basic visualiser with Octavia. */
 export class RootDisplay {
 	/** Denotes that the bitmaps use a universal layout. */
@@ -138,19 +157,21 @@ export class RootDisplay {
 	/** Load a bunch of voice property maps from defined paths or URLs. */
 	loadPropsPaths(paths: string[]): Promise<void>;
 	/** Attempt to refresh a cached voice on a part. */
-	refreshCachedChVoice(ch: number, forcedRefreshObject: Object): Object;
+	refreshCachedChVoice(ch: number, forcedRefreshObject: OctaviaVoiceObject): OctaviaVoiceObject;
 	/** Retrieve the cached voice on a part. */
-	getCachedChVoice(ch: number);
+	getCachedChVoice(ch: number): OctaviaVoiceObject;
+	/** Get the current catched voice of a channel without triggers. */
+	getChCachedVoiceRaw(ch: number): OctaviaVoiceObject;
 	/** Retrieve a mapped full name from a voice ID. */
-	getMapped(id: string);
+	getMapped(id: string): string;
 	/** Retrieve the mapped EFX name from the MSB and LSB combo. */
 	getEfx(data: number[]): string;
 	/** Retrieve the properties for a voice. */
-	getProps(voiceObject: OctaviaVoiceObject): Object;
+	getProps(voiceObject: OctaviaVoiceObject): OctaviaVoiceProperties;
 	/** Get the bitmap for a voice. */
-	getVoxBm(voiceObject: OctaviaVoiceObject, bmType?: number): Object;
+	getVoxBm(voiceObject: OctaviaVoiceObject, bmType?: number): MxBaseBmCollection;
 	/** Get the voice bitmap for a part. */
-	getChBm(ch: number, bmType?: number, voiceObject?: OctaviaVoiceObject): Object;
+	getChBm(ch: number, bmType?: number, voiceObject?: OctaviaVoiceObject): MxBaseBmCollection;
 	/** Get the supposed current frame of the part from frame count. */
 	getChBmState(part: number, frames?: number);
 	/** Start tracking selected device/visualiser states. When `true`, tracking has successfully begun. */
@@ -161,4 +182,29 @@ export class RootDisplay {
 	* @param buffer The bitmap display buffer.
 	*/
 	muWriteBm(buffer: Uint8Array, part: number, voiceObject?: OctaviaVoiceObject): boolean;
+	/** The total note progress in fractional beats without any offset. */
+	noteProgress: number;
+	/** The total note progress in fractional crotchets (quarter notes) with offset. Do NOT use this to count notes cumulatively! */
+	noteOverall: number;
+	/** The total note progress in bars. */
+	noteBar: number;
+	/** The note progress in beats within the current bar. */
+	noteBeat: number;
+	/** The offset used to calculate note progress. */
+	noteOffset: number;
+	/** Get the current time signature. */
+	getTimeSig(): number[];
+	/** Get the current tempo. */
+	getTempo(): number;
+	/** Get the time of the last note activated on the specified part. */
+	getChLastNoteAt(part: number): number;
+	/** Get the time of the current bitmap exhaustion state on the specified part. */
+	getChLastNoteExhausted(part: number): number;
+	/** Iterate through cached voices on all active parts. */
+	eachVoice(iter: (e: OctaviaVoiceObject, i: number, a: OctaviaVoiceObject[]) => {}, all?: boolean);
+	/** Send a MIDI event straight to the device. */
+	sendCmd(raw: Object): void;
+	/** Execute MIDI events till the specified point in time. */
+	render(time: number): Object;
+	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);
 }

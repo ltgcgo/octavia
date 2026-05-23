@@ -48,6 +48,9 @@ declare interface OctaviaVoiceObject {
 	mode: string;
 }
 
+/** The returned voice properties. */
+declare interface OctaviaVoiceProperties {}
+
 export class VoiceBank {
 	/** Retrieve the voice information with the specified MSB, PC and LSB tuple. */
 	get(msb?: number, prg?: number, lsb?: number, mode?: string, hint?: number): OctaviaVoiceObject;

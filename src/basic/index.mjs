@@ -8,6 +8,13 @@ import {dnToPos, allocated, overrides, effectSlots} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "./transform.js";
 import {
+	BitmapMatrix,
+	MxFont40,
+	MxFont176,
+	MxBm256,
+	MxBmDef
+} from "./mxReader.js";
+import {
 	arrayCompare,
 	customInterpreter
 } from "../state/utils.js";
@@ -1223,6 +1230,11 @@ export {
 	RootDisplay,
 	StylePool,
 	FileHandler,
+	BitmapMatrix,
+	MxFont40,
+	MxFont176,
+	MxBm256,
+	MxBmDef,
 	dnToPos,
 	allocated
 };
