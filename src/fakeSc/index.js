@@ -1,3 +1,6 @@
+// 2022-2026 © Lightingale Community
+// Licensed under CC BY-NC-SA 4.0 license.
+
 "use strict";
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";

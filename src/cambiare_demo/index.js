@@ -1,3 +1,6 @@
+// 2022-2026 © Lightingale Community
+// Licensed under CC BY-NC-SA 4.0 license.
+
 "use strict";
 
 import {
@@ -8,7 +11,7 @@ import {SheetData} from "../basic/sheetLoad.js";
 import {
 	getBridge
 } from "../bridge/index.mjs";
-import StylePool from "../basic/styleLoad.js";
+import {StylePool} from "../basic/index.mjs";
 
 import {Alpine} from "../../libs/alpine@alpinejs/alpine.min.js";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";

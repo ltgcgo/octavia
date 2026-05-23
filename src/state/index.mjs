@@ -7589,6 +7589,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 export {
 	TimeMuxer,
 	OctaviaDevice,
+	VoiceBank,
 	allocated,
 	ccToPos as ccBufferOffset,
 	dnToPos,

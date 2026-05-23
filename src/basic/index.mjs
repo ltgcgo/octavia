@@ -15,6 +15,7 @@ import {allowedStandards} from "../state/bankReader.js";
 import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
 import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 import StylePool from "./styleLoad.js";
+import FileHandler from "./fileHandler.js";
 
 import {getDebugState} from "../state/utils.js";
 
@@ -1221,6 +1222,7 @@ let RootDisplay = class extends CustomEventSource {
 export {
 	RootDisplay,
 	StylePool,
+	FileHandler,
 	dnToPos,
 	allocated
 };
