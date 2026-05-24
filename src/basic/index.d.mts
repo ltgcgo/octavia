@@ -99,10 +99,66 @@ export class FileHandler {
 }
 
 /** A bitmap with a defined width and height. */
-export class BitmapMatrix {}
+export class BitmapMatrix {
+	/** Flag to invert the output. */
+	readonly WRITE_INVERTED: number;
+	/** Flag to enable writes to all covered pixels instead of masked writes. */
+	readonly WRITE_NONMASKED: number;
+	/** Width of all frames in pixels. Capped to 4095 pixels. */
+	readonly width: number;
+	/** Height of all frames in pixels. Capped to 4095 pixels. */
+	readonly height: number;
+	/** Number of total frames. */
+	readonly frames: number;
+	/** Length of the underlying buffer. */
+	readonly length: number;
+	/** Assigned ID. */
+	id?: number | string;
+	/** Get the view of the underlying buffer for a frame. */
+	getFrame(frameId?: number): Uint8Array;
+	/** Execute a receiver function on all covered pixels. */
+	render(receiver: (e: number, x: number, y: number, a: Uint8Array) => {}, frameId?: number): void;
+	/** Write a frame to the target buffer.
+	* @param targetBuffer The target display buffer to write to.
+	* @param targetWidth The width of the target display buffer.
+	* @param mode The bit field/flags of the write mode.
+	*/
+	write(targetBuffer: Uint8Array, targetWidth: number, frameId?: number, startX?: number, startY?: number, mode?: number): void;
+	/**
+	* @param width The width of the bitmap.
+	* @param height The height of the bitmap.
+	* @param packed When `true`, the supplied buffer is a packed bitfield.
+	*/
+	constructor(width: number, height: number, packed?: boolean, buffer: Uint8Array);
+}
 
-declare interface MxBaseBmCollection {}
-declare interface MxFontBmCollection extends MxBaseBmCollection {}
+declare interface MxBaseBmCollection {
+	/** The wrapped promise object that resolves when loading is finished. */
+	readonly loaded: MiniSignal;
+	/** Returns a list of available bitmap IDs. */
+	keys(): string[];
+	/** Returns a bitmap without triggers. */
+	data(key: string): BitmapMatrix;
+	constructor(...fileSrc: string);
+}
+declare interface MxFlexibleBmCollection extends MxBaseBmCollection {
+	/** Load the collection from a text file. */
+	load(text: string): Promise<void>;
+	/** Load a files from a defined URL or path. */
+	loadFile(fileSrc: string): Promise<void>;
+	/** Get the bitmap with the associated ID. */
+	getBm(resourceName: string): BitmapMatrix;
+}
+declare interface MxFontBmCollection extends MxBaseBmCollection {
+	/** Load the collection from a text file. */
+	load(text: string, overwrite?: boolean, name?: string): Promise<void>;
+	/** Load a files from a defined URL or path. */
+	loadFile(fileSrc: string, overwrite?: boolean): Promise<void>;
+	/** Get the bitmap from the associated code point. */
+	getCP(codePoint: number): Uint8Array;
+	/** Get a series of bitmaps from the associated code points. */
+	getStr(string: string): Uint8Array[];
+}
 
 /** A 5×8 font-oriented bitmap collection. */
 export class MxFont40 implements MxFontBmCollection {}
@@ -111,17 +167,17 @@ export class MxFont40 implements MxFontBmCollection {}
 export class MxFont176 implements MxFontBmCollection {}
 
 /** A 16×16 bitmap collection. */
-export class MxBm256 implements MxBaseBmCollection {}
+export class MxBm256 implements MxFlexibleBmCollection {}
 
 /** An bitmap collection with arbitrary dimensions. */
-export class MxBmDef implements MxBaseBmCollection {}
+export class MxBmDef implements MxFlexibleBmCollection {}
 
 /** The basis needed to build a basic visualiser with Octavia. */
 export class RootDisplay {
 	/** Denotes that the bitmaps use a universal layout. */
-	BM_UNIVERSAL: number;
+	readonly BM_UNIVERSAL: number;
 	/** Denotes that the bitmaps use a Yamaha MU-compatible layout. */
-	BM_YAMAHA_MU: number;
+	readonly BM_YAMAHA_MU: number;
 	/** The attached `OctaviaDevice` object. */
 	device?: OctaviaDevice;
 	/** The defined pool of styles. */

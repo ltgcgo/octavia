@@ -32,7 +32,9 @@ Uint8Array.prototype.render = function (receiveFunc) {
 };
 
 let BitmapMatrix = class BitmapMatrix {
-	// Dimensions capped at 4095 by 4095.
+	WRITE_INVERTED = 1;
+	WRITE_NONMASKED = 2;
+	// Dimensions capped to 4095 by 4095.
 	#buffer;
 	#cachedFrameSize;
 	// #cachedDivisor = 0;
