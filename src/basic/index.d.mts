@@ -132,7 +132,7 @@ export class BitmapMatrix {
 	constructor(width: number, height: number, packed?: boolean, buffer: Uint8Array);
 }
 
-declare interface MxBaseBmCollection {
+declare class MxBaseBmCollection {
 	/** The wrapped promise object that resolves when loading is finished. */
 	readonly loaded: MiniSignal;
 	/** Returns a list of available bitmap IDs. */
@@ -141,7 +141,7 @@ declare interface MxBaseBmCollection {
 	data(key: string): BitmapMatrix;
 	constructor(...fileSrc: string);
 }
-declare interface MxFlexibleBmCollection extends MxBaseBmCollection {
+declare class MxFlexibleBmCollection extends MxBaseBmCollection {
 	/** Load the collection from a text file. */
 	load(text: string): Promise<void>;
 	/** Load a files from a defined URL or path. */
@@ -149,7 +149,7 @@ declare interface MxFlexibleBmCollection extends MxBaseBmCollection {
 	/** Get the bitmap with the associated ID. */
 	getBm(resourceName: string): BitmapMatrix;
 }
-declare interface MxFontBmCollection extends MxBaseBmCollection {
+declare class MxFontBmCollection extends MxBaseBmCollection {
 	/** Load the collection from a text file. */
 	load(text: string, overwrite?: boolean, name?: string): Promise<void>;
 	/** Load a files from a defined URL or path. */
@@ -161,16 +161,16 @@ declare interface MxFontBmCollection extends MxBaseBmCollection {
 }
 
 /** A 5×8 font-oriented bitmap collection. */
-export class MxFont40 implements MxFontBmCollection {}
+export class MxFont40 extends MxFontBmCollection {}
 
 /** A 11×16 font-oriented bitmap collection. */
-export class MxFont176 implements MxFontBmCollection {}
+export class MxFont176 extends MxFontBmCollection {}
 
 /** A 16×16 bitmap collection. */
-export class MxBm256 implements MxFlexibleBmCollection {}
+export class MxBm256 extends MxFlexibleBmCollection {}
 
 /** An bitmap collection with arbitrary dimensions. */
-export class MxBmDef implements MxFlexibleBmCollection {}
+export class MxBmDef extends MxFlexibleBmCollection {}
 
 /** The basis needed to build a basic visualiser with Octavia. */
 export class RootDisplay {

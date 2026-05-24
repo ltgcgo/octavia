@@ -1,8 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, getYSect} from "../state/index.mjs";
-import {RootDisplay} from "../basic/index.mjs";
-import {MxFont40, MxBm256, MxBmDef} from "../basic/mxReader.js";
+import {RootDisplay, MxFont40, MxBm256, MxBmDef} from "../basic/index.mjs";
 import {ChordDict, getFreePlan} from "../chord/index.mjs";
 
 import {

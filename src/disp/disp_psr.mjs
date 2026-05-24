@@ -1,8 +1,7 @@
 "use strict";
 
 import {OctaviaDevice} from "../state/index.mjs";
-import {RootDisplay} from "../basic/index.mjs";
-import {MxFont40, MxBm256} from "../basic/mxReader.js";
+import {RootDisplay, MxFont40, MxBm256} from "../basic/index.mjs";
 import {ChordDict} from "../chord/index.mjs";
 import psr170PlanRaw from "../data/generated/psr170ChordPlan.json" with {type: "json"};
 

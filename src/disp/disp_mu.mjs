@@ -1,8 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
-import {RootDisplay} from "../basic/index.mjs";
-import {MxFont40, MxBm256} from "../basic/mxReader.js";
+import {RootDisplay, MxFont40, MxBm256} from "../basic/index.mjs";
 
 import {
 	backlight,
