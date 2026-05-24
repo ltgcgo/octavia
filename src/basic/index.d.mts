@@ -8,14 +8,21 @@ import {
 	OctaviaVoiceProperties
 } from "../state/index.mjs";
 
+declare class StyleProperties {
+	/** The short 8-character ID of a style pattern. */
+	short?: string;
+	/** The full name of a style pattern. */
+	full?: string;
+}
+
 /** A unified style pattern storage and retrieval class. */
 export class StylePool {
 	/** Define a short ID and a full name for a style ID under a device. */
-	setStyle(dev: number, id: number, short: string, full: string): boolean;
+	setStyle(dev: number, id: number, short: string, full: string): void;
 	/** Remove the short ID and the full name for the style ID under the device. */
 	removeStyle(dev: number, id: number): boolean;
 	/** Retrieve the style object with the style ID under the device. */
-	getStyle(dev: number, id: number): boolean;
+	getStyle(dev: number, id: number): StyleProperties;
 	/** Asynchronously load a stream to parse style name definition files. */
 	load(stream: ReadableStream<Uint8Array>): Promise<void>;
 }
@@ -239,15 +246,15 @@ export class RootDisplay {
 	*/
 	muWriteBm(buffer: Uint8Array, part: number, voiceObject?: OctaviaVoiceObject): boolean;
 	/** The total note progress in fractional beats without any offset. */
-	noteProgress: number;
-	/** The total note progress in fractional crotchets (quarter notes) with offset. Do NOT use this to count notes cumulatively! */
-	noteOverall: number;
+	readonly noteProgress: number;
+	/** The total note progress in fractional notes determined by the denominator (crotchets/quarter notes by default) with offset. Do NOT use this to count notes cumulatively! */
+	readonly noteOverall: number;
 	/** The total note progress in bars. */
-	noteBar: number;
+	readonly noteBar: number;
 	/** The note progress in beats within the current bar. */
-	noteBeat: number;
+	readonly noteBeat: number;
 	/** The offset used to calculate note progress. */
-	noteOffset: number;
+	readonly noteOffset: number;
 	/** Get the current time signature. */
 	getTimeSig(): number[];
 	/** Get the current tempo. */

@@ -12,7 +12,7 @@ Visit our repo on [Codeberg](https://codeberg.org/ltgc/octavia/) or [GitHub](htt
 > Octavia is only ever published to [Deno Deploy](https://deno.land/x/octavia_deno) and [JSR](https://jsr.io/@ltgc/octavia). If you see Octavia published to other registries, report those fake packages immediately as they may contain malware.
 
 ## Files
-Only files ending in `.mjs` are meant to be used as a library. Files prefixed with `xp_` are tested to work on Windows XP (Chrome 49 and Firefox 52 ESR).
+Only files ending in `.mjs` are meant to be used as a library. Files prefixed with `xp_` are tested to work on Windows XP (Chrome 49 and Firefox 52 ESR). `.d.mts` files are intended for documentation only, and true TypeScript support is only best-effort as we do not use any TypeScript toolchain.
 
 - `state.mjs`: MIDI processing core.
 - `basic.mjs`: The bare minimum to get you started on writing visualizers. Requires `state.mjs`.

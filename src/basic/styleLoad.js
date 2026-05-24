@@ -13,7 +13,7 @@ export default class StylePool {
 		if (!upThis.#models.has(dev)) {
 			upThis.#models.set(dev, new Map());
 		};
-		return upThis.#models.get(dev).set(id, {
+		/*return*/ upThis.#models.get(dev).set(id, {
 			short,
 			full
 		});
