@@ -133,7 +133,7 @@ for (let qyPlan of qyPlanRawData) {
 		console.debug(`Duplicate plan for chord native ID ${qyPlan[0]} found.`);
 	};
 };
-let getFreePlan = function (chordId) {
+const getFreePlan = function (chordId) {
 	if (qyPlanMap.has(chordId)) {
 		return qyPlanMap.get(chordId);
 	};

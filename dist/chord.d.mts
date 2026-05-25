@@ -64,4 +64,15 @@ export class ChordDict {
 	* @param strict Strictly limit to only two chords. Defaults to false.
 	*/
 	static parseYamaha(buffer: Uint8Array, strict?: boolean): Array<number>;
-};
+}
+
+/** How should a chord be shown with just two components. */
+declare class ChordPlanDuo {
+	/** The "main" component. For `m7b5`, this value should be `m7`. */
+	readonly m: string;
+	/** The "sub" component. For `m7b5`, this value should be `b5`. */
+	readonly s: string;
+}
+
+/** Retrieve the two-component chord display plan. */
+export function getFreePlan(chordId: number): ChordPlanDuo;
