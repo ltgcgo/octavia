@@ -343,8 +343,43 @@ export class OctaviaDevice {
 	buildRccMap(): void;
 	/** Trigger an event showing SysEx indicators on visualisers. */
 	invokeSysExIndicator(): void;
-	/** Retrieve the internal array indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
+	/** Deprecated. Retrieve the internal array indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
 	getActive(): Uint8Array;
 	/** Returns a number indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
 	getChActive(part: number): number;
+	/** Writes the part active state and triggers an event conditionally. */
+	setChActive(part: number, active?: number): void;
+	/** Resets all CC values of all parts. Sets the write states to `0`. */
+	resetCcAll(): void;
+	/** Returns the CC value from a part.
+	* (WIP) When the write state is `0`, the returned values will be replaced by default ones, affected by part number (MT-32), part type and CC number.
+	* @param cc Control change number. If a CC is not accepted, `RangeError` will be thrown.
+	* @param raw (WIP) When `true`, returns the set value as-is, no attempts on default value replacements will happen.
+	*/
+	getChCc(part: number, cc: number, raw?: boolean): number;
+	/** Writes the CC value of a part. Sets the write state to `1`.
+	* @param cc Control change number. If a CC is not accepted, `RangeError` will be thrown.
+	*/
+	setChCc(part: number, cc: number, value: number): void;
+	/** Resets the CC value of a part, optionally writes a value. Sets the write state to `0`.
+	* @param cc Control change number. If a CC is not accepted, `RangeError` will be thrown.
+	*/
+	resetChCc(part: number, cc: number, value: number): void;
+	/** Resets all CC values of a part. Sets the write states to `0`. */
+	resetChCcAll(part: number): void;
+	/** Returns the write state of a CC value from a part. `0` for `false`, `1` for `true`.
+	* @param cc Control change number. If a CC is not accepted, `RangeError` will be thrown.
+	*/
+	getChCcWritten(part: number, cc: number): number;
+	/** Returns the source channel of a part. */
+	getChSource(part: number): number;
+	/** Returns the type of a part. Refer to `OctaviaDevice.prototype.CH_*` for details. */
+	getChType(part: number): number;
+	/** Writes the type of a part. Refer to `OctaviaDevice.prototype.CH_*` for details.
+	* @param mode Deprecated. The native numeric mode.
+	* @param disableMsbWrite Deprecated. When `true`, default part bank MSB will not be set.
+	*/
+	setChType(part: number, type: number, mode?: number, disableMsbWrite?: boolean): void;
+	/** Returns the part extension states. */
+	getExt(part: number): Uint8Array;
 }

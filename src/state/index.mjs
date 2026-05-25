@@ -1621,27 +1621,23 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	getChActive(part) {
 		return this.#chActive[part];
 	};
-	getCc(part) {
-		// Return channel CC registers
-		// Potential bug exists here
-		if (typeof part !== "number" || part < 0 || part >= allocated.ch) {
-			throw(new RangeError(`Invalid part number: CH${part + 1}`));
-			return;
+	setChActive(part, active = 0) {
+		if (this.#chActive[part] !== active) {
+			this.dispatchEvent("channeltoggle", {
+				part,
+				active
+			});
 		};
-		let upThis = this;
-		let start = ccOffTable[part];
-		let arr = upThis.#cc.subarray(start, start + allocated.cc);
-		/* arr[ccToPos[0]] = arr[ccToPos[0]] || upThis.#subDb[upThis.getChModeId(channel)][0];
-		arr[ccToPos[32]] = arr[ccToPos[32]] || upThis.#subDb[upThis.getChModeId(channel)][1];
-		if (arr[ccToPos[0]] === overrides.bank0) {
-			arr[ccToPos[0]] = 0;
-		}; */
-		return arr;
+		this.#chActive[part] = active;
+	};
+	resetCcAll() {
+		// Placeholder until CC write state is ready
+		this.#cc.fill(0, allocated.chcc, allocated.chcc << 1);
 	};
 	getChCc(part, cc) {
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
-			throw(new Error("CC number not accepted"));
+			throw(new RangeError(`cc${cc} is not an accepted control change.`));
 		};
 		let result = upThis.#cc[ccOffTable[part] + ccToPos[cc]];
 		/* switch (cc) {
@@ -1659,15 +1655,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		}; */
 		return result;
 	};
-	getChCcWritten(part, cc) {
-		let upThis = this;
-		if (ccAccepted.indexOf(cc) < 0) {
-			throw(new Error("CC number not accepted"));
-		};
-		let result = upThis.#cc[allocated.chcc + ccOffTable[part] + ccToPos[cc]];
-		return result;
-	};
-	setChCc(part = 0, cc, value) {
+	setChCc(part, cc, value) {
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new Error("CC number not accepted"));
@@ -1688,25 +1676,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			console.info(new Error("WTF"));
 		}; */
 	};
-	getCcAll() {
-		// Return all CC registers
-		let upThis = this;
-		let arr = upThis.#cc.slice();
-		/* for (let c = 0; c < allocated.ch; c ++) {
-			let chOff = c * allocated.cc;
-			arr[chOff + ccToPos[0]] = arr[chOff + ccToPos[0]] || upThis.#subDb[upThis.getChModeId(c)][0];
-			arr[chOff + ccToPos[32]] = arr[chOff + ccToPos[32]] || upThis.#subDb[upThis.getChModeId(c)][1];
-			if (arr[ccToPos[0]] === overrides.bank0) {
-				arr[ccToPos[0]] = 0;
-			};
-		}; */
-		return arr;
-	};
-	resetCc(part) {
-		let upThis = this;
-		let start = ccOffTable[part] + allocated.chcc;
-		upThis.#cc.fill(0, start, start + allocated.cc);
-	};
 	resetChCc(part, cc, value) {
 		let upThis = this;
 		if (value?.constructor) {
@@ -1714,24 +1683,24 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		};
 		upThis.#cc[ccOffTable[part] + ccToPos[cc] + allocated.chcc] = 0;
 	};
-	resetCcAll() {
-		// Placeholder until CC write state is ready
-		this.#cc.fill(0, allocated.chcc, allocated.chcc << 1);
+	resetChCcAll(part) {
+		let upThis = this;
+		let start = ccOffTable[part] + allocated.chcc;
+		upThis.#cc.fill(0, start, start + allocated.cc);
 	};
-	isChCcWritten(part, cc) {
+	getChCcWritten(part, cc) {
+		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
-			throw(new Error("CC number not accepted"));
+			throw(new RangeError(`cc${cc} is not an accepted control change.`));
 		};
-		return upThis.#cc[ccOffTable[part] + ccToPos[cc] + allocated.chcc];
+		let result = upThis.#cc[allocated.chcc + ccOffTable[part] + ccToPos[cc]];
+		return result;
 	};
-	getChSource() {
-		return this.#chReceive;
+	getChSource(part) {
+		return this.#chReceive[part];
 	};
-	getChType(part = 0) {
+	getChType(part) {
 		return this.#chType[part];
-	};
-	getChTypes() {
-		return this.#chType;
 	};
 	setChType(part, type, mode = 0, disableMsbSet = false) {
 		type &= 15;
@@ -1742,15 +1711,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.setChCc(part, 0, upThis.#subDb[mode][2]);
 			upThis.pushChPrimitives(part);
 		};
-	};
-	setChActive(part, active = 0) {
-		if (this.#chActive[part] !== active) {
-			this.dispatchEvent("channeltoggle", {
-				part,
-				active
-			});
-		};
-		this.#chActive[part] = active;
 	};
 	getExt(part) {
 		let start = allocated.ext * part;
