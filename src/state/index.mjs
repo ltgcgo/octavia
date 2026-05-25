@@ -1725,12 +1725,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		};
 		return copy;
 	};
-	getProgram() {
-		return this.#prg;
-	};
-	getTexts() {
-		return this.#metaTexts.slice();
-	};
 	getVel(channel) {
 		// Return all pressed keys with velocity in a channel
 		let notes = new Map();
@@ -1767,12 +1761,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		return {
 			volume: this.#masterVol
 		};
-	};
-	getRpn() {
-		return this.#rpn;
-	};
-	getNrpn() {
-		return this.#nrpn;
 	};
 	getSubDb() {
 		return self?.structuredClone(this.#subDb);

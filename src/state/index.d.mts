@@ -51,6 +51,12 @@ declare interface OctaviaVoiceObject {
 /** The returned voice properties. */
 declare interface OctaviaVoiceProperties {}
 
+/** Master settings tied to a device. */
+declare class OctaviaDeviceMasterSettings {
+	/** The master volume. A fractional number between `0` and `100`, with 14-bit maximum-allowed accuracy. */
+	volume: number;
+}
+
 /** A voice bank. */
 export class VoiceBank {
 	/** Retrieve the voice information with the specified MSB, PC and LSB tuple. */
@@ -382,4 +388,30 @@ export class OctaviaDevice {
 	setChType(part: number, type: number, mode?: number, disableMsbWrite?: boolean): void;
 	/** Returns the part extension states. */
 	getExt(part: number): Uint8Array;
+	/** Deprecated. Returns all pressed keys with velocity in a channel. */
+	getVel(part: number): Uint8Array;
+	/** Get the current bitmap display state. */
+	getBitmap(): {
+		/** The bitmap buffer. */
+		bitmap: Uint8Array;
+		/** The timestamp when the buffer should expire. */
+		expire: number;
+	};
+	/** Get the current letter display state. */
+	getLetter(): {
+		/** The letter text. */
+		text: string;
+		/** The timestamp when the text was set. */
+		set: number;
+		/** The timestamp when the text should expire. */
+		expire: number;
+	};
+	/** Get the global device mode. */
+	getMode(): string;
+	// Should also introduce per-device mode here on top of per-port mode.
+	/** Get the global master settings. */
+	getMaster(): OctaviaDeviceMasterSettings;
+	// Should also introduce per-device master settings here.
+	/** Returns the per-mode substitution database. */
+	getSubDb(): Object<string, Uint8Array>;
 }
