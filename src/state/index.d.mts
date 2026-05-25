@@ -329,4 +329,22 @@ export class OctaviaDevice {
 	readonly polyIndexLast: number;
 	/** When `true`, the visualiser should hide voice bank information. Typically seen in Yamaha MU demo songs. */
 	lcdHideBankInfo: boolean;
+	/** Retrieve the actual assigned part from designated part and its track.
+	* @param noConquer When `true`, automatic channel allocation is not triggered.
+	*/
+	chRedir(part: number, track: number, noConquer?: boolean): number;
+	/** Directly retrieve the assigned port from a track. */
+	getTrackPort(track: number): number;
+	/** Enforce a voice event redispatch on all active channels. */
+	forceVoiceRefresh(): void;
+	/** Trigger building a receive channel tree. */
+	buildRchTree(): void;
+	/** Trigger building a CC redirect map. */
+	buildRccMap(): void;
+	/** Trigger an event showing SysEx indicators on visualisers. */
+	invokeSysExIndicator(): void;
+	/** Retrieve the internal array indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
+	getActive(): Uint8Array;
+	/** Returns a number indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
+	getChActive(part: number): number;
 }
