@@ -36,7 +36,8 @@ tree -ifl | while IFS= read -r file; do
 			fileHash="$(sha256sum "${file}" | cut -d' ' -f1)"
 			findResult="$(grep -F "${fileHash}	" ../fileHashes.tsv | cut -d '	' -f2)"
 			if [ "$findResult" != "" ] ; then
-				pathDiff="$(realpath -sm --relative-to="$(realpath -sm "${file}")" "${findResult}")"
+				pathDiffRaw="$(realpath -Lsm --relative-to="${file}" "${findResult}")"
+				pathDiff="${pathDiffRaw/\.\.\//}"
 				echo "Deduplicated: ${file}.gz -> ${pathDiff}.gz (${findResult})"
 				ln -s "${pathDiff}.gz" "${file}.gz"
 			else
@@ -63,7 +64,8 @@ tree -ifl | while IFS= read -r file; do
 			fileHash="$(sha256sum "${file}" | cut -d' ' -f1)"
 			findResult="$(grep -F "${fileHash}	" ../fileHashes.tsv | cut -d '	' -f2)"
 			if [ "$findResult" != "" ] ; then
-				pathDiff="$(realpath -sm --relative-to="$(realpath -sm "${file}")" "${findResult}")"
+				pathDiffRaw="$(realpath -Lsm --relative-to="${file}" "${findResult}")"
+				pathDiff="${pathDiffRaw/\.\.\//}"
 				echo "Deduplicated: ${file}.br -> ${pathDiff}.br (${findResult})"
 				ln -s "${pathDiff}.br" "${file}.br"
 			else
