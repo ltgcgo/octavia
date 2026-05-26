@@ -28,18 +28,19 @@ done
 tar cvf ../pages-build-base.tar *
 cd ..
 cd ghp-gz
+printf "" > ../fileHashes.tsv
 tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
 			fileHash="$(sha256sum "${file}" | cut -d' ' -f1)"
-			findResult="$(grep -F "${fileHash}\t" ../ghp-gz.tsv | cut -d '	' -f2)"
+			findResult="$(grep -F "${fileHash}	" ../fileHashes.tsv | cut -d '	' -f2)"
 			if [ "$findResult" != "" ] ; then
 				echo "Original file: $findResult"
-				echo "Current file: $(readpath -s "${file}")"
-				echo "Path construct: $(realpath -sm --relate-to="${file}" "${findResult}")"
+				echo "Current file: $(realpath -s "${file}")"
+				echo "Path construct: $(realpath -sm --relative-to="${file}" "${findResult}")"
 			else
-				echo "${fileHash}	$(realpath -s "${file}")" >> ../ghp-gz.tsv
+				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
 			fi
 			gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
 		else
@@ -50,7 +51,7 @@ tree -ifl | while IFS= read -r file; do
 		fi
 	fi
 done
-cat ../ghp-gz.tsv
+cat ../fileHashes.tsv
 tar cvf ../pages-build-gz.tar *
 cd ..
 cd ghp-br
