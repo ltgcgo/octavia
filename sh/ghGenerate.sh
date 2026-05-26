@@ -5,9 +5,9 @@ COMPRESS_CRIT="\.(ass|atom|bin|bm|bmp|conf|css|csv|htm|html|ico|js|json|kar|list
 sudo apt install -y tree
 
 echo "$(date +"%s")" > build-time.txt
-cp -Lrv ghp ghp-gz
-cp -Lrv ghp ghp-br
-cp -Lrv ghp ghp-base
+cp -rv ghp ghp-gz
+cp -rv ghp ghp-br
+cp -rv ghp ghp-base
 cd ghp
 tar cvhf ../pages-build.tar *
 cd ..
@@ -20,6 +20,7 @@ tree -ifl | while IFS= read -r file; do
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
 			originalFile="$(readlink -f "${file}")"
+			ls -l "$file"
 			if [ -L "$file" ] ; then
 				ln -s "${originalFile}.gz" "${file}.gz"
 			else
