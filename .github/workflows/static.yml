@@ -63,7 +63,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          artifacts: "pages-build.tar.gz,pages-build-gz.tar,pages-build-br.tar,build-time.txt"
+          artifacts: "pages-build.tar.gz,pages-build-base.tar,pages-build-gz.tar,pages-build-br.tar,build-time.txt"
           allowUpdates: true
           artifactErrorsFailBuild: true
           makeLatest: false

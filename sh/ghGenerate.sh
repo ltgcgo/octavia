@@ -1,7 +1,7 @@
 #!/bin/bash
 COMPRESS_CRIT="\.(ass|atom|bin|bm|bmp|conf|css|csv|htm|html|ico|js|json|kar|list|lrc|lst|map|md|mid|mjs|mod|mts|otf|rss|sbv|srt|ssa|svg|trc|ts|tsv|ttf|ttml|txt|vgm|vtt|wasm|webmanifest|xml|ytt)$"
 
-sudo apt install -y zopfli
+#sudo apt install -y zopfli
 sudo apt install -y tree
 
 echo "$(date +"%s")" > build-time.txt
@@ -11,8 +11,8 @@ cp -Lrv ghp ghp-base
 cd ghp
 tar cvhf ../pages-build.tar *
 cd ..
-zopfli --i1 -v pages-build.tar
-#gzip -9v pages-build.tar
+#zopfli --i1 -v pages-build.tar
+gzip -9v pages-build.tar
 rm -v pages-build.tar
 cd ghp-gz
 tree -ifl | while IFS= read -r file; do
