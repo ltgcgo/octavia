@@ -5,9 +5,10 @@ COMPRESS_CRIT="\.(ass|atom|bin|bm|bmp|conf|css|csv|htm|html|ico|js|json|kar|list
 sudo apt install -y tree
 
 echo "$(date +"%s")" > build-time.txt
-cp -rv ghp ghp-gz
-cp -rv ghp ghp-br
-cp -rv ghp ghp-base
+mkdir -p ghp-gz
+cp -Hrv ghp/* ghp-gz
+cp -Lrv ghp ghp-br
+cp -Lrv ghp ghp-base
 cd ghp
 tar cvhf ../pages-build.tar *
 cd ..
