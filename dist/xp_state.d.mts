@@ -51,6 +51,12 @@ declare interface OctaviaVoiceObject {
 /** The returned voice properties. */
 declare interface OctaviaVoiceProperties {}
 
+/** Master settings tied to a device. */
+declare class OctaviaDeviceMasterSettings {
+	/** The master volume. A fractional number between `0` and `100`, with 14-bit maximum-allowed accuracy. */
+	volume: number;
+}
+
 /** A voice bank. */
 export class VoiceBank {
 	/** Retrieve the voice information with the specified MSB, PC and LSB tuple. */
@@ -329,4 +335,145 @@ export class OctaviaDevice {
 	readonly polyIndexLast: number;
 	/** When `true`, the visualiser should hide voice bank information. Typically seen in Yamaha MU demo songs. */
 	lcdHideBankInfo: boolean;
+	/** Retrieve the actual assigned part from designated part and its track.
+	* @param noConquer When `true`, automatic channel allocation is not triggered.
+	*/
+	chRedir(part: number, track: number, noConquer?: boolean): number;
+	/** Directly retrieve the assigned port from a track. */
+	getTrackPort(track: number): number;
+	/** Enforce a voice event redispatch on all active channels. */
+	forceVoiceRefresh(): void;
+	/** Trigger building a receive channel tree. */
+	buildRchTree(): void;
+	/** Trigger building a CC redirect map. */
+	buildRccMap(): void;
+	/** Trigger an event showing SysEx indicators on visualisers. */
+	invokeSysExIndicator(): void;
+	/** Deprecated. Retrieve the internal array indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
+	getActive(): Uint8Array;
+	/** Returns a number indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
+	getChActive(part: number): number;
+	/** Writes the part active state and triggers an event conditionally. */
+	setChActive(part: number, active?: number): void;
+	/** Resets all CC values of all parts. Sets the write states to `0`. */
+	resetCcAll(): void;
+	/** Returns the CC value from a part.
+	* (WIP) When the write state is `0`, the returned values will be replaced by default ones, affected by part number (MT-32), part type and CC number.
+	* @param cc Control change number. If a CC is not accepted, `RangeError` will be thrown.
+	* @param raw (WIP) When `true`, returns the set value as-is, no attempts on default value replacements will happen.
+	*/
+	getChCc(part: number, cc: number, raw?: boolean): number;
+	/** Writes the CC value of a part. Sets the write state to `1`.
+	* @param cc Control change number. If a CC is not accepted, `RangeError` will be thrown.
+	*/
+	setChCc(part: number, cc: number, value: number): void;
+	/** Resets the CC value of a part, optionally writes a value. Sets the write state to `0`.
+	* @param cc Control change number. If a CC is not accepted, `RangeError` will be thrown.
+	*/
+	resetChCc(part: number, cc: number, value: number): void;
+	/** Resets all CC values of a part. Sets the write states to `0`. */
+	resetChCcAll(part: number): void;
+	/** Returns the write state of a CC value from a part. `0` for `false`, `1` for `true`.
+	* @param cc Control change number. If a CC is not accepted, `RangeError` will be thrown.
+	*/
+	getChCcWritten(part: number, cc: number): number;
+	/** Returns the source channel of a part. */
+	getChSource(part: number): number;
+	/** Returns the type of a part. Refer to `OctaviaDevice.prototype.CH_*` for details. */
+	getChType(part: number): number;
+	/** Writes the type of a part. Refer to `OctaviaDevice.prototype.CH_*` for details.
+	* @param mode Deprecated. The native numeric mode.
+	* @param disableMsbWrite Deprecated. When `true`, default part bank MSB will not be set.
+	*/
+	setChType(part: number, type: number, mode?: number, disableMsbWrite?: boolean): void;
+	/** Returns the part extension states. */
+	getExt(part: number): Uint8Array;
+	/** Deprecated. Returns all pressed keys with velocity in a channel. */
+	getVel(part: number): Uint8Array;
+	/** Get the current bitmap display state. */
+	getBitmap(): {
+		/** The bitmap buffer. */
+		bitmap: Uint8Array;
+		/** The timestamp when the buffer should expire. */
+		expire: number;
+	};
+	/** Get the current letter display state. */
+	getLetter(): {
+		/** The letter text. */
+		text: string;
+		/** The timestamp when the text was set. */
+		set: number;
+		/** The timestamp when the text should expire. */
+		expire: number;
+	};
+	/** Get the global device mode. */
+	getMode(): string;
+	// Should also introduce per-device mode here on top of per-port mode.
+	/** Get the global master settings. */
+	getMaster(): OctaviaDeviceMasterSettings;
+	// Should also introduce per-device master settings here.
+	/** Returns the per-mode substitution database. */
+	getSubDb(): Object<string, Uint8Array>;
+	/** Retrieve the single voice primitive component.
+	* - `0`: program number
+	* - `1`: cc0 (bank MSB)
+	* - `2`: cc32 (bank LSB)
+	*/
+	getChPrimitive(part: number, component: number, useSubDb?: boolean): number;
+	/** Retrieve the voice primitive components of a part. Unlike `OctaviaDevice.prototype.getChPrimitive()`, the layout is different.
+	* - `0`: cc0 (bank MSB)
+	* - `1`: program number
+	* - `2`: cc32 (bank LSB)
+	*/
+	getChPrimitives(part: number, useSubDb?: boolean): Uint8Array;
+	/** Commit changes made in the voice primitives of a part. */
+	pushChPrimitives(part: number): void;
+	/** Retrieve the custom voice name buffer of a part. */
+	getChCvnBuffer(part: number, maxBufferLength?: number): Uint8Array;
+	/** Retrieve a single register value from the custom voice name buffer of a part. */
+	getChCvnRegister(part: number, registerIndex: number): number;
+	/** Write a single register value to the custom voice name buffer of a part. */
+	setChCvnRegister(part: number, registerIndex: number, value: number): void;
+	/** Retrieve the custom voice name as a string from a part.
+	* @param preserveEnd When `true`, the trailing whitespaces will not be removed.
+	*/
+	getChCvnString(part: number, preserveEnd?: boolean): string;
+	/** Retrieve the write state of the custom voice name buffer of a part. */
+	getChCvnIsWritten(part: number): number;
+	/** Clear the custom voice name buffer of a part. */
+	resetChCvn(part: number): void;
+	/** Retrieve the voice object based on the voice primitives, mode and hint. This method wraps both `OctaviaDevice.prototype.userBank` and `OctaviaDevice.prototype.baseBank`, where `userBank` takes precedence over `baseBank`. */
+	getVoice(msb: number, prg: number, lsb: number, mode?: string, hint?: number): OctaviaVoiceObject;
+	/** Retrieve the voice object of a part. This method will also take custom voice names into account. */
+	getChVoice(part: number): OctaviaVoiceObject;
+	/** Retrieve the 14-bit raw pitch shift value of a part. Range in `[-8192, 8191]`. */
+	getChRawPitch(part: number): number;
+	/** Retrieve the calculated pitch shift value of a part, influenced by pitch bends, coarse tuning and fine tuning. */
+	getChPitch(part: number): number;
+	/** Retrieve the polyphony/note state from a polyphony slot. */
+	getPolyState(polyIndex?: number): number;
+	// Effect type and sink methods all need to add per-device support.
+	/** Retrieve the effect type from a slot. Slot `0` to `2` are for reverb, chorus and variation/delay respectively, and slot `3` and onwards are all insertion. */
+	getEffectType(slot?: number): Uint8Array;
+	/** Directly writes both MSB and LSB to an effect slot. */
+	setEffectType(slot?: number, msb: number, lsb: number): void;
+	/** Directly writes one of MSB and LSB to an effect slot.
+	* @param isLsb When `true`, this writes to LSB. MSB otherwise.
+	*/
+	setEffectTypeRaw(slot?: number, isLsb: boolean, value: number): void;
+	/** Commits updates to the effect types.
+	* @param isHidden `true` tells the event receivers that the effect should not be visible.
+	*/
+	pushEffectType(slot?: number, isHidden?: number): void;
+	// (WIP) Allows the "many parts to many effect slots" model in the future.
+	/** Retrieve the effect slot the part is being routed to. This method currently assumes a "one effect slot from many parts" model.
+	*
+	* Yamaha XG uses a different effect slot routing system in a "many effect slots from one part" model, allowing multiple to collide on the same, so this method alone isn't enough to retrieve the whole picture.
+	*/
+	getChEffectSink(part: number): number;
+	/** Writes the effect slot the part is being routed to.
+	*
+	* Slot `0` doesn't mean "reverb" here, unlike in other methods, as Octavia assumes "reverb" to always be available.
+	*/
+	setChEffectSink(part: number, slot?: number): void;
 }
