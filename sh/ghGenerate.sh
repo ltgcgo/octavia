@@ -5,10 +5,10 @@ COMPRESS_CRIT="\.(ass|atom|bin|bm|bmp|conf|css|csv|htm|html|ico|js|json|kar|list
 sudo apt install -y tree
 
 echo "$(date +"%s")" > build-time.txt
-mkdir -p ghp-gz
+mkdir -p ghp-gz ghp-br ghp-base
 cp -Hrv ghp/* ghp-gz
-cp -Lrv ghp ghp-br
-cp -Lrv ghp ghp-base
+cp -Hrv ghp/* ghp-br
+cp -Hrv ghp/* ghp-base
 cd ghp
 tar cvhf ../pages-build.tar *
 cd ..
@@ -42,7 +42,13 @@ tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			brotli -v9 "$file"
+			originalFile="$(readlink -f "${file}")"
+			ls -l "$file"
+			if [ -L "$file" ] ; then
+				ln -s "${originalFile}.br" "${file}.br"
+			else
+				brotli -v9 "$file"
+			fi
 		else
 			echo "File \"${file}\" cannot be compressed."
 		fi
