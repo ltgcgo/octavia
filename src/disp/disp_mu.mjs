@@ -802,7 +802,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("MIC", 36, 162.5);
 		ctx.fillText("LINE", 36, 175.5);
 		// Pitch shift
-		let pitch = upThis.device.getPitchShift(upThis.#ch),
+		let pitch = upThis.device.getChPitch(upThis.#ch),
 		isPositivePitch = pitch >= 0;
 		pitch = Math.round(Math.abs(pitch));
 		ctx.fillStyle = activePixel;

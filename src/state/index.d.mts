@@ -414,4 +414,66 @@ export class OctaviaDevice {
 	// Should also introduce per-device master settings here.
 	/** Returns the per-mode substitution database. */
 	getSubDb(): Object<string, Uint8Array>;
+	/** Retrieve the single voice primitive component.
+	* - `0`: program number
+	* - `1`: cc0 (bank MSB)
+	* - `2`: cc32 (bank LSB)
+	*/
+	getChPrimitive(part: number, component: number, useSubDb?: boolean): number;
+	/** Retrieve the voice primitive components of a part. Unlike `OctaviaDevice.prototype.getChPrimitive()`, the layout is different.
+	* - `0`: cc0 (bank MSB)
+	* - `1`: program number
+	* - `2`: cc32 (bank LSB)
+	*/
+	getChPrimitives(part: number, useSubDb?: boolean): Uint8Array;
+	/** Commit changes made in the voice primitives of a part. */
+	pushChPrimitives(part: number): void;
+	/** Retrieve the custom voice name buffer of a part. */
+	getChCvnBuffer(part: number, maxBufferLength?: number): Uint8Array;
+	/** Retrieve a single register value from the custom voice name buffer of a part. */
+	getChCvnRegister(part: number, registerIndex: number): number;
+	/** Write a single register value to the custom voice name buffer of a part. */
+	setChCvnRegister(part: number, registerIndex: number, value: number): void;
+	/** Retrieve the custom voice name as a string from a part.
+	* @param preserveEnd When `true`, the trailing whitespaces will not be removed.
+	*/
+	getChCvnString(part: number, preserveEnd?: boolean): string;
+	/** Retrieve the write state of the custom voice name buffer of a part. */
+	getChCvnIsWritten(part: number): number;
+	/** Clear the custom voice name buffer of a part. */
+	resetChCvn(part: number): void;
+	/** Retrieve the voice object based on the voice primitives, mode and hint. This method wraps both `OctaviaDevice.prototype.userBank` and `OctaviaDevice.prototype.baseBank`, where `userBank` takes precedence over `baseBank`. */
+	getVoice(msb: number, prg: number, lsb: number, mode?: string, hint?: number): OctaviaVoiceObject;
+	/** Retrieve the voice object of a part. This method will also take custom voice names into account. */
+	getChVoice(part: number): OctaviaVoiceObject;
+	/** Retrieve the 14-bit raw pitch shift value of a part. Range in `[-8192, 8191]`. */
+	getChRawPitch(part: number): number;
+	/** Retrieve the calculated pitch shift value of a part, influenced by pitch bends, coarse tuning and fine tuning. */
+	getChPitch(part: number): number;
+	/** Retrieve the polyphony/note state from a polyphony slot. */
+	getPolyState(polyIndex?: number): number;
+	// Effect type and sink methods all need to add per-device support.
+	/** Retrieve the effect type from a slot. Slot `0` to `2` are for reverb, chorus and variation/delay respectively, and slot `3` and onwards are all insertion. */
+	getEffectType(slot?: number): Uint8Array;
+	/** Directly writes both MSB and LSB to an effect slot. */
+	setEffectType(slot?: number, msb: number, lsb: number): void;
+	/** Directly writes one of MSB and LSB to an effect slot.
+	* @param isLsb When `true`, this writes to LSB. MSB otherwise.
+	*/
+	setEffectTypeRaw(slot?: number, isLsb: boolean, value: number): void;
+	/** Commits updates to the effect types.
+	* @param isHidden `true` tells the event receivers that the effect should not be visible.
+	*/
+	pushEffectType(slot?: number, isHidden?: number): void;
+	// (WIP) Allows the "many parts to many effect slots" model in the future.
+	/** Retrieve the effect slot the part is being routed to. This method currently assumes a "one effect slot from many parts" model.
+	*
+	* Yamaha XG uses a different effect slot routing system in a "many effect slots from one part" model, allowing multiple to collide on the same, so this method alone isn't enough to retrieve the whole picture.
+	*/
+	getChEffectSink(part: number): number;
+	/** Writes the effect slot the part is being routed to.
+	*
+	* Slot `0` doesn't mean "reverb" here, unlike in other methods, as Octavia assumes "reverb" to always be available.
+	*/
+	setChEffectSink(part: number, slot?: number): void;
 }

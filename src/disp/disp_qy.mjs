@@ -235,7 +235,7 @@ let QyDisplay = class extends RootDisplay {
 						upThis.#renderFill(58 + rawPitchX, 18, 4, 5);
 						upThis.#renderFill(59 + rawPitchX, 19, 2, 3, 0);
 					};
-					let tPit = upThis.device.getPitchShift(upThis.#ch);
+					let tPit = upThis.device.getChPitch(upThis.#ch);
 					let tStr = tPit < 0 ? "-" : "+";
 					tStr += `${Math.round(Math.abs(tPit))}`.padStart(2, "0");
 					usedFont.getStr(tStr).forEach((e, i) => {

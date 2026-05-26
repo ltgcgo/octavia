@@ -250,7 +250,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				});
 			});
 			// Show current pitch shift
-			let cPit = upThis.device.getPitchShift(upThis.#ch);
+			let cPit = upThis.device.getChPitch(upThis.#ch);
 			targetFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 1;
 				e0.forEach((e1, i1) => {

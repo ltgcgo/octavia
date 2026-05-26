@@ -1105,8 +1105,7 @@ let RootDisplay = class extends CustomEventSource {
 			noteBeat: upThis.noteBeat,
 			ace: upThis.device.getAce(),
 			rawVelo: upThis.device.getStrength(),
-			rawStrength: upThis.device.getRawStrength(),
-			efxSink: upThis.device.getEffectSink()
+			rawStrength: upThis.device.getRawStrength()
 		};
 		return repObj;
 	};

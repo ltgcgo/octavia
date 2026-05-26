@@ -1231,7 +1231,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 											case 2: {
 												this.dispatchEvent("pitch", {
 													part,
-													pitch: this.getPitchShift(part)
+													pitch: this.getChPitch(part)
 												});
 												break;
 											};
@@ -1241,7 +1241,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 									default: {
 										this.dispatchEvent("pitch", {
 											part,
-											pitch: this.getPitchShift(part)
+											pitch: this.getChPitch(part)
 										});
 									};
 								};
@@ -1387,7 +1387,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			this.#pitch[part] = det.data[1] * 128 + det.data[0] - 8192;
 			this.dispatchEvent("pitch", {
 				part,
-				pitch: this.getPitchShift(part)
+				pitch: this.getChPitch(part)
 			});
 		},
 		15: function (det) {
@@ -1765,9 +1765,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	getSubDb() {
 		return self?.structuredClone(this.#subDb);
 	};
-	getDetect() {
-		return self?.structuredClone(this.#detect);
-	};
 	getVoice(msbO, prgO, lsbO, mode = "?", hint = 0) {
 		let upThis = this;
 		if (!modeMap[mode]?.constructor) {
@@ -1934,7 +1931,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	getChRawPitch(part) {
 		return this.#pitch[part];
 	};
-	getPitchShift(part) {
+	getChPitch(part) {
 		let upThis = this;
 		let rpnOff = part * allocated.rpn;
 		let pitchBendRange = upThis.#rpn[rpnOff];
@@ -1950,12 +1947,12 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		};
 		return upThis.#pitch[part] / 8192 * pitchBendRange + (upThis.#rpn[rpnOff + 3] - 64) + ((upThis.#rpn[rpnOff + 1] << 7) + upThis.#rpn[rpnOff + 2] - 8192) / 8192;
 	};
+	getPolyState(slot = 0) {
+		return this.#polyState[slot];
+	};
 	getEffectType(slot = 0) {
 		let index = 3 * slot + 1;
 		return this.#efxBase.subarray(index, index + 2);
-	};
-	getPolyState(slot = 0) {
-		return this.#polyState[slot];
 	};
 	setEffectTypeRaw(slot = 0, isLsb, value) {
 		let efxbOff = 3 * slot;
@@ -1977,9 +1974,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			};
 		};
 		this.dispatchEvent(`efx${effectSlots[slot]}`, {id, hidden});
-	};
-	getEffectSink() {
-		return this.#efxTo;
 	};
 	getChEffectSink(part) {
 		return this.#efxTo[part];
@@ -3782,7 +3776,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 						upThis.dispatchEvent("pitch", {
 							part,
-							pitch: upThis.getPitchShift(part)
+							pitch: upThis.getChPitch(part)
 						});
 					}, false, false, () => {
 						upThis.setChCc(part, 7, e); // volume
@@ -4590,7 +4584,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 						upThis.dispatchEvent("pitch", {
 							part,
-							pitch: upThis.getPitchShift(part)
+							pitch: upThis.getChPitch(part)
 						});
 					}, () => {
 						// absolute detune
@@ -5030,7 +5024,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 						upThis.dispatchEvent("pitch", {
 							part,
-							pitch: upThis.getPitchShift(part)
+							pitch: upThis.getChPitch(part)
 						});
 					}, false // pitch offset
 					, false // pitch offset LSB
@@ -5065,7 +5059,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.#rpnt[allocated.rpnt * part + 1] = 1;
 						upThis.dispatchEvent("pitch", {
 							part,
-							pitch: upThis.getPitchShift(part)
+							pitch: upThis.getChPitch(part)
 						});
 					}, () => {
 						// fine tune LSB
@@ -5073,7 +5067,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.#rpnt[allocated.rpnt * part + 1] = 1;
 						upThis.dispatchEvent("pitch", {
 							part,
-							pitch: upThis.getPitchShift(part)
+							pitch: upThis.getChPitch(part)
 						});
 					}, () => {
 						// delay (variation in XG)
@@ -5232,7 +5226,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 				upThis.dispatchEvent("pitch", {
 					part,
-					pitch: upThis.getPitchShift(part)
+					pitch: upThis.getChPitch(part)
 				});
 			}, () => {
 				// Fine tune
@@ -5240,7 +5234,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				upThis.#rpnt[allocated.rpnt * part + 1] = 1;
 				upThis.dispatchEvent("pitch", {
 					part,
-					pitch: upThis.getPitchShift(part)
+					pitch: upThis.getChPitch(part)
 				});
 			}, () => {
 				// PB range
@@ -5249,7 +5243,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					upThis.#rpnt[allocated.rpnt * part] = 1;
 					upThis.dispatchEvent("pitch", {
 						part,
-						pitch: upThis.getPitchShift(part)
+						pitch: upThis.getChPitch(part)
 					});
 				};
 			}, () => {
@@ -5402,7 +5396,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 							upThis.dispatchEvent("pitch", {
 								part,
-								pitch: upThis.getPitchShift(part)
+								pitch: upThis.getChPitch(part)
 							});
 							break;
 						};
@@ -5412,7 +5406,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							upThis.#rpnt[allocated.rpnt * part + 1] = 1;
 							upThis.dispatchEvent("pitch", {
 								part,
-								pitch: upThis.getPitchShift(part)
+								pitch: upThis.getChPitch(part)
 							});
 							break;
 						};
@@ -5895,7 +5889,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 						upThis.dispatchEvent("pitch", {
 							part,
-							pitch: upThis.getPitchShift(part)
+							pitch: upThis.getChPitch(part)
 						});
 					}, () => {
 					}, () => {
@@ -6094,7 +6088,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 								upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 								upThis.dispatchEvent("pitch", {
 									part,
-									pitch: upThis.getPitchShift(part)
+									pitch: upThis.getChPitch(part)
 								});
 								break;
 							};
@@ -6360,7 +6354,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 				upThis.dispatchEvent("pitch", {
 					part,
-					pitch: upThis.getPitchShift(part)
+					pitch: upThis.getChPitch(part)
 				});
 			}, () => {
 				upThis.#rpn[rpnOff + 1] = e >> 1; // fine tune
@@ -6368,7 +6362,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				upThis.#rpnt[allocated.rpnt * part + 1] = 1;
 				upThis.dispatchEvent("pitch", {
 					part,
-					pitch: upThis.getPitchShift(part)
+					pitch: upThis.getChPitch(part)
 				});
 			}, () => {
 				upThis.#cc[chOff + ccToPos[91]] = e ? 127 : 0; // reverb
@@ -6454,21 +6448,21 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				upThis.#rpnt[allocated.rpnt * part + 2] = 1;
 				upThis.dispatchEvent("pitch", {
 					part,
-					pitch: upThis.getPitchShift(part)
+					pitch: upThis.getChPitch(part)
 				});
 			}, () => {
 				upThis.#rpn[rpnOff + 1] = e; // fine tune
 				upThis.#rpnt[allocated.rpnt * part + 1] = 1;
 				upThis.dispatchEvent("pitch", {
 					part,
-					pitch: upThis.getPitchShift(part)
+					pitch: upThis.getChPitch(part)
 				});
 			}, () => {
 				upThis.#rpn[rpnOff] = e; // pitch bend range
 				upThis.#rpnt[allocated.rpnt * part] = 1;
 				upThis.dispatchEvent("pitch", {
 					part,
-					pitch: upThis.getPitchShift(part)
+					pitch: upThis.getChPitch(part)
 				});
 			}, () => {
 				// mod depth

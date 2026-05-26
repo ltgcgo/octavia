@@ -555,7 +555,7 @@ let Sc8850Display = class extends RootDisplay {
 				};
 			};
 			// EFX and bank?
-			if (upThis.device.getEffectSink()[upThis.#ch]) {
+			if (upThis.device.getChEffectSink(upThis.#ch)) {
 				let cx = 153, cy = 19;
 				upThis.sysBm.getBm("efxOn")?.render((e, x, y) => {
 					if (e) {

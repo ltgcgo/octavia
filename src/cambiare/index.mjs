@@ -453,7 +453,7 @@ let Cambiare = class extends RootDisplay {
 				let context = upThis.#sectPart[part >> 4][part & 15].cxt;
 				context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 				sum.chKeyPr[part].forEach(({v, s}, note) => {
-					upThis.#drawNote(context, note, v, s, upThis.device.getPitchShift(part), part);
+					upThis.#drawNote(context, note, v, s, upThis.device.getChPitch(part), part);
 				});
 			};
 		});
@@ -784,7 +784,7 @@ let Cambiare = class extends RootDisplay {
 		sum.extraNotes.forEach((ev) => {
 			let {part, note, velo, state} = ev;
 			let context = upThis.#sectPart[part >> 4][part & 15].cxt;
-			upThis.#drawNote(context, note, velo, state, upThis.device.getPitchShift(part), part);
+			upThis.#drawNote(context, note, velo, state, upThis.device.getChPitch(part), part);
 			//console.debug(part, note);
 		});
 		// Write to the new pixel display buffers

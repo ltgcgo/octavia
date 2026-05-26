@@ -425,7 +425,7 @@ let ScDisplay = class extends RootDisplay {
 			paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}${((upThis.#ch & 15) + 1).toString().padStart(2, "0")}`;
 			paramText += upThis.device?.getChCc(upThis.#ch, 7).toString().padStart(3, " ");
 			paramText += upThis.device?.getChCc(upThis.#ch, 91).toString().padStart(3, " ");
-			let cPit = upThis.device.getPitchShift(upThis.#ch);
+			let cPit = upThis.device.getChPitch(upThis.#ch);
 			if (cPit < 0) {
 				paramText += "-";
 			} else if (cPit === 0) {
