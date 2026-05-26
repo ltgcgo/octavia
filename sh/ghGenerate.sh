@@ -6,6 +6,7 @@ sudo apt install -y zopfli tree
 echo "$(date +"%s")" > build-time.txt
 cp -Lrv ghp ghp-gz
 cp -Lrv ghp ghp-br
+cp -Lrv ghp ghp-base
 cd ghp
 tar cvhf ../pages-build.tar *
 cd ..
@@ -42,5 +43,18 @@ tree -ifl | while IFS= read -r file; do
 	fi
 done
 tar cvf ../pages-build-br.tar *
+cd ..
+cd ghp-base
+tree -ifl | while IFS= read -r file; do
+	if [ -f "$file" ]; then
+		# Is a file
+		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
+			rm -v "file"
+		else
+			echo "File \"${file}\" is preserved."
+		fi
+	fi
+done
+tar cvf ../pages-build-base.tar *
 cd ..
 exit
