@@ -1,7 +1,8 @@
 #!/bin/bash
 COMPRESS_CRIT="\.(bin|bm|bmp|conf|css|csv|htm|html|ico|js|json|kar|list|lst|map|md|mid|mjs|mod|otf|svg|tsv|ttf|vgm|wasm|webmanifest|xml)$"
 
-sudo apt install -y zopfli tree
+#sudo apt install -y zopfli
+sudo apt install -y tree
 
 echo "$(date +"%s")" > build-time.txt
 cp -Lrv ghp ghp-gz
@@ -10,7 +11,8 @@ cp -Lrv ghp ghp-base
 cd ghp
 tar cvhf ../pages-build.tar *
 cd ..
-zopfli --i1 -v pages-build.tar
+#zopfli --i1 -v pages-build.tar
+gzip -9v pages-build.tar
 rm -v pages-build.tar
 cd ghp-gz
 tree -ifl | while IFS= read -r file; do
@@ -49,7 +51,7 @@ tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			rm -v "file"
+			rm -v "$file"
 		else
 			echo "File \"${file}\" is preserved."
 		fi
