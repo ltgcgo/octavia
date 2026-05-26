@@ -56,6 +56,8 @@ jobs:
         run: "./shx babel"
       - name: Generate simple sitemap
         run: "./shx sitemap"
+      - name: Link available source maps
+        run: "./shx srcMap"
       - name: "Build deployable static pages artifact"
         run: "bash sh/ghGenerate.sh"
       - name: "Rewrite release"
