@@ -41,8 +41,8 @@ tree -ifl | while IFS= read -r file; do
 				ln -s "${pathDiff}.gz" "${file}.gz"
 			else
 				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
+				gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
 			fi
-			gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
 		else
 			echo "File \"${file}\" cannot be compressed."
 		fi
@@ -51,15 +51,25 @@ tree -ifl | while IFS= read -r file; do
 		fi
 	fi
 done
-cat ../fileHashes.tsv
+#cat ../fileHashes.tsv
 tar cvf ../pages-build-gz.tar *
 cd ..
 cd ghp-br
+printf "" > ../fileHashes.tsv
 tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			brotli -v9 "$file"
+			fileHash="$(sha256sum "${file}" | cut -d' ' -f1)"
+			findResult="$(grep -F "${fileHash}	" ../fileHashes.tsv | cut -d '	' -f2)"
+			if [ "$findResult" != "" ] ; then
+				pathDiff="$(realpath -sm --relative-to="${file}" "${findResult}")"
+				echo "Deduplicated: ${file}.br -> ${pathDiff}.br"
+				ln -s "${pathDiff}.br" "${file}.br"
+			else
+				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
+				brotli -v9 "$file"
+			fi
 		else
 			echo "File \"${file}\" cannot be compressed."
 		fi
@@ -68,6 +78,7 @@ tree -ifl | while IFS= read -r file; do
 		fi
 	fi
 done
+#cat ../fileHashes.tsv
 tar cvf ../pages-build-br.tar *
 cd ..
 exit
