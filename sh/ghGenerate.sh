@@ -36,9 +36,9 @@ tree -ifl | while IFS= read -r file; do
 			fileHash="$(sha256sum "${file}" | cut -d' ' -f1)"
 			findResult="$(grep -F "${fileHash}	" ../fileHashes.tsv | cut -d '	' -f2)"
 			if [ "$findResult" != "" ] ; then
-				echo "Original file: $findResult"
-				echo "Current file: $(realpath -s "${file}")"
-				echo "Path construct: $(realpath -sm --relative-to="${file}" "${findResult}")"
+				pathDiff="$(realpath -sm --relative-to="${file}" "${findResult}")"
+				echo "Deduplicated: ${file}.gz -> ${pathDiff}.gz"
+				ln -s "${pathDiff}.gz" "${file}.gz"
 			else
 				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
 			fi
