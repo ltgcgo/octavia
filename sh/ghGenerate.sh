@@ -19,7 +19,12 @@ tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
+			originalFile="$(readlink -f "${file}")"
+			if [ -f "$originalFile" ] ; then
+				ln -s "${originalFile}.gz"
+			else
+				gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
+			fi
 		else
 			echo "File \"${file}\" cannot be compressed."
 		fi
