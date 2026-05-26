@@ -5,60 +5,15 @@ COMPRESS_CRIT="\.(ass|atom|bin|bm|bmp|conf|css|csv|htm|html|ico|js|json|kar|list
 sudo apt install -y tree
 
 echo "$(date +"%s")" > build-time.txt
-mkdir -p ghp-gz ghp-br ghp-base
-cp -Hrv ghp/* ghp-gz
-cp -Hrv ghp/* ghp-br
-cp -Hrv ghp/* ghp-base
+cp -Lrv ghp ghp-gz
+cp -Lrv ghp ghp-br
+cp -Lrv ghp ghp-base
 cd ghp
 tar cvhf ../pages-build.tar *
 cd ..
 #zopfli --i1 -v pages-build.tar
 gzip -9v pages-build.tar
 rm -v pages-build.tar
-cd ghp-gz
-tree -ifl | while IFS= read -r file; do
-	if [ -f "$file" ]; then
-		# Is a file
-		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			originalFile="$(readlink -f "${file}")"
-			ls -l "$file"
-			if [ -L "$file" ] ; then
-				ln -s "${originalFile}.gz" "${file}.gz"
-			else
-				gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
-			fi
-		else
-			echo "File \"${file}\" cannot be compressed."
-		fi
-		if [ -f "$file" ]; then
-			rm -v "$file"
-		fi
-	fi
-done
-tar cvf ../pages-build-gz.tar *
-cd ..
-cd ghp-br
-tree -ifl | while IFS= read -r file; do
-	if [ -f "$file" ]; then
-		# Is a file
-		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			originalFile="$(readlink -f "${file}")"
-			ls -l "$file"
-			if [ -L "$file" ] ; then
-				ln -s "${originalFile}.br" "${file}.br"
-			else
-				brotli -v9 "$file"
-			fi
-		else
-			echo "File \"${file}\" cannot be compressed."
-		fi
-		if [ -f "$file" ]; then
-			rm -v "$file"
-		fi
-	fi
-done
-tar cvf ../pages-build-br.tar *
-cd ..
 cd ghp-base
 tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
@@ -71,5 +26,47 @@ tree -ifl | while IFS= read -r file; do
 	fi
 done
 tar cvf ../pages-build-base.tar *
+cd ..
+cd ghp-gz
+tree -ifl | while IFS= read -r file; do
+	if [ -f "$file" ]; then
+		# Is a file
+		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
+			fileHash="$(sha256sum "${file}" | cut -d' ' -f1)"
+			findResult="$(grep -F "${fileHash}\t" ../ghp-gz.tsv | cut -d '	' -f2)"
+			if [ "$findResult" != "" ] ; then
+				echo "Original file: $findResult"
+				echo "Current file: $(readpath -s "${file}")"
+				echo "Path construct: $(realpath -sm --relate-to="${file}" "${findResult}")"
+			else
+				echo "${fileHash}	$(realpath -s "${file}")" >> ../ghp-gz.tsv
+			fi
+			gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
+		else
+			echo "File \"${file}\" cannot be compressed."
+		fi
+		if [ -f "$file" ]; then
+			rm -v "$file"
+		fi
+	fi
+done
+cat ../ghp-gz.tsv
+tar cvf ../pages-build-gz.tar *
+cd ..
+cd ghp-br
+tree -ifl | while IFS= read -r file; do
+	if [ -f "$file" ]; then
+		# Is a file
+		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
+			brotli -v9 "$file"
+		else
+			echo "File \"${file}\" cannot be compressed."
+		fi
+		if [ -f "$file" ]; then
+			rm -v "$file"
+		fi
+	fi
+done
+tar cvf ../pages-build-br.tar *
 cd ..
 exit
