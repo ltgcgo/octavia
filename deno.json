@@ -1,20 +1,20 @@
 {
 	"name": "@ltgc/octavia",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"license": "LGPL-3.0-only",
 	"imports": {
 		"@ltgc/rochelle": "jsr:@ltgcgo/rochelle@^0.2.9",
 		"@ltgc/seamstress": "jsr:@ltgcgo/rochelle@^0.1"
 	},
 	"exports": {
-		"./basic": "./dist/basic.mjs",
-		"./bridge": "./dist/bridge.mjs",
-		"./cambiare": "./dist/cambiare.mjs",
+		"./basic": "./dist/basic.d.mts",
+		"./bridge": "./dist/bridge.d.mts",
+		"./cambiare": "./dist/cambiare.d.mts",
 		"./chord": "./dist/chord.d.mts",
-		"./state": "./dist/state.mjs",
-		"./disp": "./dist/disp.mjs",
-		"./xp_basic": "./dist/xp_basic.mjs",
-		"./xp_state": "./dist/xp_state.mjs"
+		"./state": "./dist/state.d.mts",
+		"./disp": "./dist/disp.d.mts",
+		"./xp_basic": "./dist/xp_basic.d.mts",
+		"./xp_state": "./dist/xp_state.d.mts"
 	},
 	"publish": {
 		"include": [
