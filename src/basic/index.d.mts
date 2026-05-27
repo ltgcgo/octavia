@@ -7,9 +7,7 @@ import {
 	OctaviaVoiceObject,
 	OctaviaVoiceProperties
 } from "../state/index.d.mts";
-import {
-	MiniSignal
-} from "../../libs/twinkle@ltgcgo/miniSignal.mjs"
+import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.d.mts"
 
 declare class StyleProperties {
 	/** The short 8-character ID of a style pattern. */
@@ -149,7 +147,7 @@ declare class MxBaseBmCollection {
 	keys(): string[];
 	/** Returns a bitmap without triggers. */
 	data(key: string): BitmapMatrix;
-	constructor(...fileSrc: string);
+	constructor(...fileSrc: string[]);
 }
 declare class MxFlexibleBmCollection extends MxBaseBmCollection {
 	/** Load the collection from a text file. */
@@ -239,7 +237,7 @@ export class RootDisplay {
 	/** Get the voice bitmap for a part. */
 	getChBm(ch: number, bmType?: number, voiceObject?: OctaviaVoiceObject): MxBaseBmCollection;
 	/** Get the supposed current frame of the part from frame count. */
-	getChBmState(part: number, frames?: number);
+	getChBmState(part: number, frames?: number): number;
 	/** Start tracking selected device/visualiser states. When `true`, tracking has successfully begun. */
 	attachState(state: string): boolean;
 	/** Stop tracking selected device/visualiser states. When `true`, tracking has successfully stopped. */
@@ -267,7 +265,7 @@ export class RootDisplay {
 	/** Get the time of the current bitmap exhaustion state on the specified part. */
 	getChLastNoteExhausted(part: number): number;
 	/** Iterate through cached voices on all active parts. */
-	eachVoice(iter: (e: OctaviaVoiceObject, i: number, a: OctaviaVoiceObject[]) => {}, all?: boolean);
+	eachVoice(iter: (e: OctaviaVoiceObject, i: number, a: OctaviaVoiceObject[]) => {}, all?: boolean): void;
 	/** Send a MIDI event straight to the device. */
 	sendCmd(raw: Object): void;
 	/** Execute MIDI events till the specified point in time. */

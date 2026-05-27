@@ -13,9 +13,9 @@ declare interface OctaviaBankClearOptions {
 
 /** The returned voice object. */
 declare interface OctaviaVoiceObject {
-	type?;
-	drum?;
-	voice?;
+	type?: any;
+	drum?: any;
+	voice?: any;
 	/** Voice ID in 8-char Yamaha style. */
 	name: string;
 	/** Polyphony/element/oscillator count. */
@@ -68,8 +68,8 @@ export class VoiceBank {
 	/** Load a voice bank map. */
 	load(text: string, overwrite?: boolean, name?: string, priority?: number): Promise<void>;
 	/** Load voice maps from the specified paths or URLs. */
-	loadFiles(...paths: string): Promise<void>;
-	constructor(...paths: string);
+	loadFiles(...paths: string[]): Promise<void>;
+	constructor(...paths: string[]);
 }
 
 /** Time multiplexer. */
@@ -86,7 +86,7 @@ export class TimeMuxer {
 	readonly currentTime: number;
 	/** Returns the current multiplexed time in milliseconds, but rounded down. */
 	now(): number;
-	constructor(clockSource?);
+	constructor(clockSource?: HTMLMediaElement | OctaviaTimeProvider);
 }
 
 /** When `true`, the code should be in a debugging state. */
@@ -456,11 +456,11 @@ export class OctaviaDevice {
 	/** Retrieve the effect type from a slot. Slot `0` to `2` are for reverb, chorus and variation/delay respectively, and slot `3` and onwards are all insertion. */
 	getEffectType(slot?: number): Uint8Array;
 	/** Directly writes both MSB and LSB to an effect slot. */
-	setEffectType(slot?: number, msb: number, lsb: number): void;
+	setEffectType(slot: number, msb: number, lsb: number): void;
 	/** Directly writes one of MSB and LSB to an effect slot.
 	* @param isLsb When `true`, this writes to LSB. MSB otherwise.
 	*/
-	setEffectTypeRaw(slot?: number, isLsb: boolean, value: number): void;
+	setEffectTypeRaw(slot: number, isLsb: boolean, value: number): void;
 	/** Commits updates to the effect types.
 	* @param isHidden `true` tells the event receivers that the effect should not be visible.
 	*/
