@@ -9,7 +9,7 @@ cp -Lrv ghp ghp-gz
 cp -Lrv ghp ghp-br
 cp -Lrv ghp ghp-base
 cd ghp
-tar cvhf ../pages-build.tar *
+tar -c -v -h -f --hard-dereference ../pages-build.tar *
 cd ..
 #zopfli --i1 -v pages-build.tar
 gzip -9v pages-build.tar
@@ -70,7 +70,7 @@ tree -ifl | while IFS= read -r file; do
 				ln -s "${pathDiff}.br" "${file}.br"
 			else
 				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
-				brotli -v9 "$file"
+				brotli -v9j "$file"
 			fi
 		else
 			echo "File \"${file}\" cannot be compressed."
