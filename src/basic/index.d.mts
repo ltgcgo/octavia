@@ -219,7 +219,7 @@ export class RootDisplay {
 	smoothAttack: number;
 	/** How fast should the strength metres decrease to its true value. */
 	smoothDecay: number;
-	/** The pixel text font that may or may not get loaded. */
+	/** The pixel text font used in the visualiser. */
 	textFont?: MxFontBmCollection;
 	/** Trigger visualiser resets. The sequencer will not be cleared. */
 	reset(): void;
@@ -295,4 +295,4 @@ export class SinglePartDisplay extends RootDisplay {
 	/** Gets the currently selected part. */
 	getCh(): number;
 	constructor(device: OctaviaDevice);
-};
+}

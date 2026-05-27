@@ -268,12 +268,12 @@ Object.defineProperty(timeMuxer, "realtime", {
 		return useMidiBus && !audioFilePlayer.currentTime;
 	}
 });
-let visualizer = new Cambiare($e(".cambiare"), timeMuxer);
-//visualizer.clockSource.attach(audioFilePlayer);
-visualizer.reset();
+let visualiser = new Cambiare($e(".cambiare"), timeMuxer);
+//visualiser.clockSource.attach(audioFilePlayer);
+visualiser.reset();
 (async () => {
-	visualizer.styles = new StylePool();
-	visualizer.styles.load((await fetch("../../midi-db/misc/yStyle.tsv")).body);
+	visualiser.styles = new StylePool();
+	visualiser.styles.load((await fetch("../../midi-db/misc/yStyle.tsv")).body);
 })();
 
 Alpine.store("play", "smf");
@@ -291,14 +291,14 @@ Alpine.store("demo", [{
 
 audioFilePlayer.addEventListener("ended", () => {
 	audioFilePlayer.currentTime = 0;
-	visualizer.reset();
+	visualiser.reset();
 });
 
-visualizer.addEventListener("mode", (ev) => {
+visualiser.addEventListener("mode", (ev) => {
 	Alpine.store("deviceMode", ev.data);
 	Alpine.store("deviceModeCatOverride", ev.data !== "?");
 });
-visualizer.addEventListener("banklevel", (ev) => {
+visualiser.addEventListener("banklevel", (ev) => {
 	switch (ev.data.mode) {
 		case "xg": {
 			Alpine.store("xgLvl", ev.data.data);
@@ -327,21 +327,21 @@ let getBlobFrom = async function (filename) {
 let audioUri;
 
 self.gMode = async function (mode) {
-	visualizer.device.switchMode(mode, true, true);
+	visualiser.device.switchMode(mode, true, true);
 	Alpine.store("deviceMode", mode);
 	Alpine.store("deviceModeCatOverride", mode !== "?");
 };
 self.gRange = async function (mode) {
-	visualizer.setRange(mode);
+	visualiser.setRange(mode);
 	Alpine.store("showRange", mode);
 };
 self.gPort = async function (port) {
-	visualizer.setPort(port);
+	visualiser.setPort(port);
 	Alpine.store("startPort", port);
 };
 self.gDemo = async function ({file, id, artist, title, standard}) {
 	await audioFilePlayer.pause();
-	visualizer.reset();
+	visualiser.reset();
 	if (audioUri) {
 		URL.revokeObjectURL(audioUri);
 	};
@@ -354,61 +354,61 @@ self.gDemo = async function ({file, id, artist, title, standard}) {
 		useMidiBus = false;
 		Alpine.store("useMidiBus", false);
 	};
-	visualizer.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (MIDI)`);
+	visualiser.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (MIDI)`);
 	let midiBlob = await(await getBlobFrom(`${file}.mid`)).blob();
-	visualizer.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (audio)`);
+	visualiser.dispatchEvent("title", `Loading demo: ${artist} - ${title} ... (audio)`);
 	let audioBlob = await(await getBlobFrom(`${file}.opus`)).blob();
-	visualizer.dispatchEvent("title", `Polak is cute!`);
-	await visualizer.loadFile(midiBlob);
+	visualiser.dispatchEvent("title", `Polak is cute!`);
+	await visualiser.loadFile(midiBlob);
 	audioUri = URL.createObjectURL(audioBlob);
 	audioFilePlayer.currentTime = 0;
 	audioFilePlayer.src = audioUri;
-	visualizer.device.initOnReset = false;
-	visualizer.dispatchEvent("title", "");
-	visualizer.device.setDetectionTargets(standard);
+	visualiser.device.initOnReset = false;
+	visualiser.dispatchEvent("title", "");
+	visualiser.device.setDetectionTargets(standard);
 	Alpine.store("activeDemo", id);
 	Alpine.store("play", "demo");
 	Alpine.store("sound", "demo");
 };
 self.gStyle = async function (type) {
-	visualizer.style = type;
+	visualiser.style = type;
 	Alpine.store("noteStyle", type);
 };
 self.gPixelC = async function (profile) {
-	visualizer.setPixelProfile(profile);
+	visualiser.setPixelProfile(profile);
 	Alpine.store("pixelProfile", profile);
 };
 self.gXgLvl = async function (level) {
-	//visualizer.device.setGsTargets(false, level);
+	//visualiser.device.setGsTargets(false, level);
 	//Alpine.store("xgLvl", level);
-	visualizer.sendCmd({
+	visualiser.sendCmd({
 		type: 15,
 		track: 0,
 		data: [67, 16, 73, 0, 0, 18, level]
 	});
 };
 self.gGsLvl = async function (level) {
-	visualizer.device.setGsTargets(false, level);
+	visualiser.device.setGsTargets(false, level);
 	Alpine.store("gsLvl", level);
 };
 self.gScLvl = async function (level) {
-	visualizer.device.setGsTargets(true, level);
+	visualiser.device.setGsTargets(true, level);
 	Alpine.store("scLvl", level);
 };
 self.gLimitDump = async function (limit) {
-	visualizer.device.setDumpLimit(limit);
+	visualiser.device.setDumpLimit(limit);
 	Alpine.store("limitDump", limit);
 };
 self.gFrameTime = (frameTime) => {
-	visualizer.setFrameTime(frameTime);
+	visualiser.setFrameTime(frameTime);
 	Alpine.store("frameTime", frameTime);
 };
 self.gPanStyle = (panStyle) => {
-	visualizer.panStyle = panStyle;
+	visualiser.panStyle = panStyle;
 	Alpine.store("panStyle", panStyle);
 };
 self.gEcMode = (ecMode) => {
-	visualizer.useElementCount = ecMode;
+	visualiser.useElementCount = ecMode;
 	Alpine.store("useElementCount", ecMode);
 };
 let fileTooltip = $e("div#show-wallpaper-tooltip"),
@@ -420,8 +420,8 @@ const setWallpaper = async (invokeButton) => {
 			if (schemeCat !== 0 && schemeCat < bgChosen[2].length) {
 				chosen = bgChosen[2][schemeCat];
 			};
-			visualizer.setWallpaperUrl(chosen.url);
-			visualizer.setWallpaperOpacity(chosen.opacity);
+			visualiser.setWallpaperUrl(chosen.url);
+			visualiser.setWallpaperOpacity(chosen.opacity);
 			gBgStrat(chosen.strategy);
 			while (fileTooltip.childNodes.length > 0) {
 				fileTooltip.childNodes[0].remove();
@@ -436,14 +436,14 @@ const setWallpaper = async (invokeButton) => {
 			fileTooltip.innerText = "Slide over this text to adjust wallpaper opacity.";
 		};
 	} else {
-		visualizer.setWallpaperUrl();
+		visualiser.setWallpaperUrl();
 	};
 };
 const setTrueScheme = () => {
 	if (schemeCat === 1) {
-		visualizer.setScheme(1);
+		visualiser.setScheme(1);
 	} else if (schemeCat === 0) {
-		visualizer.setScheme(schemeSubCat ? 2 : 0);
+		visualiser.setScheme(schemeSubCat ? 2 : 0);
 	} else {
 		console.warn(`Invalid colour scheme category: ${schemeCat}.`);
 	};
@@ -477,31 +477,31 @@ self.gBgGroup = (group) => {
 	switch (group) {
 		case "colour":
 		case "imageColour": {
-			visualizer.setBackgroundColour(bgColour);
+			visualiser.setBackgroundColour(bgColour);
 			break;
 		};
 		case "soft":
 		case "luma":
 		case "imageLuma": {
-			visualizer.setBackgroundColour();
+			visualiser.setBackgroundColour();
 			break;
 		};
 	};
 };
 self.gBgStrat = (strat) => {
-	visualizer.setWallpaperStrat(strat);
+	visualiser.setWallpaperStrat(strat);
 	Alpine.store("bgStrat", strat);
 };
 const colourPickerBg = $e("div#button-background-colour-picker > input"),
 colourDispBg = $e("div#button-background-colour-picker > div");
 colourPickerBg.addEventListener("input", function () {
 	bgColour = this.value;
-	visualizer.setBackgroundColour(bgColour);
+	visualiser.setBackgroundColour(bgColour);
 	colourDispBg.style.backgroundColor = this.value;
 });
 self.gBgColour = function () {
 	bgColour = null;
-	visualizer.setBackgroundColour(bgColour);
+	visualiser.setBackgroundColour(bgColour);
 	colourPickerBg.showPicker();
 	colourPickerBg.value = `#${Math.floor(Math.random()*16777216).toString(16).padStart(6, "0")}`;
 };
@@ -509,7 +509,7 @@ $e("div#button-background-colour-picker").addEventListener("contextmenu", (ev) =
 	ev.preventDefault();
 	ev.stopImmediatePropagation();
 	bgColour = null;
-	visualizer.setBackgroundColour(bgColour);
+	visualiser.setBackgroundColour(bgColour);
 });
 self.gBgSelect = (id) => {
 	bgChosen = Alpine.store("wallpapers")[id];
@@ -529,31 +529,31 @@ self.gOpenSmf = async function () {
 	switch (ext) {
 		case "syx": {
 			// Load SysEx blobs
-			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+			visualiser.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
 			console.debug("Loaded an SYX blob.");
 			break;
 		};
 		case "s7e":
 		case "pcg": {
 			// Load sound banks
-			visualizer.device.loadBank(ext, file);
+			visualiser.device.loadBank(ext, file);
 			console.debug(`Loaded ${ext.toUpperCase()} voice banks.`);
 			break;
 		};
 		case "mdat": {
 			// Load ID to name maps
-			visualizer.loadMap(await file.text(), true);
+			visualiser.loadMap(await file.text(), true);
 			console.debug("Loaded a voice name map.");
 			break;
 		};
 		default: {
 			// Load MIDI files
 			Alpine.store("activeDemo", -1);
-			visualizer.reset();
-			visualizer.dispatchEvent("title", `Loading MIDI...`);
-			await visualizer.loadFile(file);
-			visualizer.dispatchEvent("title", ``);
-			visualizer.device.initOnReset = false;
+			visualiser.reset();
+			visualiser.dispatchEvent("title", `Loading MIDI...`);
+			await visualiser.loadFile(file);
+			visualiser.dispatchEvent("title", ``);
+			visualiser.device.initOnReset = false;
 			console.debug("Loaded a MIDI file.");
 			Alpine.store("play", "smf");
 		};
@@ -571,10 +571,10 @@ self.gOpenSnd = async function () {
 };
 self.gOpenLni = function () {
 	gDemo({});
-	visualizer.init();
+	visualiser.init();
 	useMidiBus = !useMidiBus;
 	Alpine.store("useMidiBus", useMidiBus);
-	visualizer.device.initOnReset = useMidiBus;
+	visualiser.device.initOnReset = useMidiBus;
 };
 
 self.formatTime = function (seconds, withMs = false) {
@@ -599,8 +599,8 @@ let demoPool = new SheetData();
 (async () => {
 	demoPool.load(await (await getBlobFrom(`list.tsv`)).text());
 	Alpine.store("demo", demoPool.data);
-	visualizer.loadEfx(await(await fetch(`../../midi-db/misc/efxId.tsv`)).text());
-	visualizer.loadMapPaths([
+	visualiser.loadEfx(await(await fetch(`../../midi-db/misc/efxId.tsv`)).text());
+	visualiser.loadMapPaths([
 		`../../midi-db/map/gm.24.tsv`,
 		`../../midi-db/map/ns5r.24.tsv`,
 		`../../midi-db/map/xg.24.tsv`,
@@ -624,8 +624,8 @@ let demoPool = new SheetData();
 		`../../midi-db/map/cs2x.10.tsv`,
 		`../../midi-db/map/s90es.10.tsv`
 	]);
-	await visualizer.glyphs.loadFile("../../midi-db/bitmaps/xg/font.tsv");
-	await visualizer.freeChord.loadFile("../../midi-db/bitmaps/xg/freeChord.tsv");
+	await visualiser.glyphs.loadFile("../../midi-db/bitmaps/xg/font.tsv");
+	await visualiser.freeChord.loadFile("../../midi-db/bitmaps/xg/freeChord.tsv");
 
 })();
 
@@ -680,10 +680,10 @@ document.body.addEventListener("keydown", async (ev) => {
 			};
 			case "z": {
 				// Show time signature
-				let roundedBeat = Math.floor(visualizer.noteBeat * 2) / 2;
-				let roundedTime = (visualizer.noteBar * visualizer.getTimeSig()[0] + roundedBeat + visualizer.noteOffset) * 60 / visualizer.getTempo();
-				//visualizer.getTimeSig()
-				console.info(`Requested rounded note progress: ${visualizer.noteBar + 1}/${roundedBeat + 1}, ${Math.round(roundedTime * 1000) / 1000}s (${Math.round(timeMuxer.currentTime * 1000) / 1000}s)`);
+				let roundedBeat = Math.floor(visualiser.noteBeat * 2) / 2;
+				let roundedTime = (visualiser.noteBar * visualiser.getTimeSig()[0] + roundedBeat + visualiser.noteOffset) * 60 / visualiser.getTempo();
+				//visualiser.getTimeSig()
+				console.info(`Requested rounded note progress: ${visualiser.noteBar + 1}/${roundedBeat + 1}, ${Math.round(roundedTime * 1000) / 1000}s (${Math.round(timeMuxer.currentTime * 1000) / 1000}s)`);
 				break;
 			};
 			default: {
@@ -699,7 +699,7 @@ document.body.addEventListener("keydown", async (ev) => {
 
 getBridge().addEventListener("message", function (ev) {
 	if (useMidiBus) {
-		visualizer.sendCmd(ev.data);
+		visualiser.sendCmd(ev.data);
 	};
 	//console.debug(ev.data);
 });
@@ -736,5 +736,5 @@ gBgGroup('soft');
 gBgStrat('cover');
 
 Alpine.start();
-self.visualizer = visualizer;
+self.visualiser = visualiser;
 self.gOpenLni();

@@ -25,8 +25,10 @@ export class Cambiare extends RootDisplay {
 	eventViewMode: number;
 	/** The libre duo-component bitmaps for chords. */
 	freeChord: MxBmDef;
-	/** The bitmaps of the libre 5 by 7 pixel font. */
-	glyphs: MxFont40;
 	/** When `true`, the oscillator count is used in counting voice polyphony. */
 	useElementCount: boolean;
+	/** The maximum intensity for pixels on the dot matrix display segments. */
+	pixelMax: number;
+	/** The minimum intensity for pixels on the dot matrix display segments. */
+	pixelMin: number;
 }

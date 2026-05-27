@@ -300,7 +300,7 @@ let Cambiare = class extends RootDisplay {
 	#bufCnD; // Chord details
 	#hideCh = new Uint8Array(allocated.ch);
 	#clockSource;
-	#visualizer;
+	#visualiser;
 	#container;
 	#canvas;
 	#pixelProfile;
@@ -320,7 +320,7 @@ let Cambiare = class extends RootDisplay {
 	//#noteEvents = [];
 	#pitchEvents = [];
 	#style = "comb";
-	glyphs = new MxFont40();
+	textFont = new MxFont40();
 	panStyle = 11; // Block, Pin, Arc, Dash
 	pixelMin = 12;
 	pixelMax = 255;
@@ -715,7 +715,7 @@ let Cambiare = class extends RootDisplay {
 				};
 				e.metre.globalCompositeOperation = "xor";
 				e.metre.fillRect(0, 0, metreLength, 25);
-				// Extensible visualizer
+				// Extensible visualiser
 				e.extVis.clearRect(0, 0, 47, 25);
 				e.extVis.fillStyle = `#${upThis.#foreground}`;
 				switch (sum.chExt[part][0]) {
@@ -805,7 +805,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#bufLn.fill(0);
 		let letterDisp = upThis.device?.getLetter();
 		if (timeNow <= letterDisp.expire) {
-			upThis.glyphs.getStr(letterDisp.text.padEnd(32, " ")).forEach((e0, i0) => {
+			upThis.textFont.getStr(letterDisp.text.padEnd(32, " ")).forEach((e0, i0) => {
 				// Per character
 				let baseX = (i0 & 15) * 5, baseY = (i0 >> 4) << 3;
 				e0.forEach((e, i) => {
@@ -1230,7 +1230,7 @@ let Cambiare = class extends RootDisplay {
 	};
 	attach(attachElement) {
 		let upThis = this;
-		upThis.#visualizer = attachElement;
+		upThis.#visualiser = attachElement;
 		// Insert a container
 		let containerElement = createElement("div", ["cambiare-container"]);
 		attachElement.appendChild(containerElement);
@@ -1666,7 +1666,7 @@ let Cambiare = class extends RootDisplay {
 						switch (meta?.msg) {
 							case "part.rename": {
 								let chVoiceId = upThis.device?.getVoice(... upThis.getCachedChVoice(data.part).sid, upThis.device?.getChMode(0)).name;
-								text = `CH${data.part + 1} was renamed from "${upThis.getMapped(chVoiceId)}" (${chVoiceId}) to "${visualizer.device?.getChCvnString(0)}".`;
+								text = `CH${data.part + 1} was renamed from "${upThis.getMapped(chVoiceId)}" (${chVoiceId}) to "${upThis.device?.getChCvnString(0)}".`;
 								break;
 							};
 							default: {
@@ -1766,7 +1766,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#canvas = undefined;
 		upThis.#container.remove();
 		upThis.#container = undefined;
-		upThis.#visualizer = undefined;
+		upThis.#visualiser = undefined;
 		clearInterval(upThis.#renderThread);
 		clearInterval(upThis.#metaGcThread);
 	};
