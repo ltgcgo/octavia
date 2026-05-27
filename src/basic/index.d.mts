@@ -7,7 +7,7 @@ import {
 	OctaviaVoiceObject,
 	OctaviaVoiceProperties
 } from "../state/index.d.mts";
-import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.d.mts"
+import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.d.mts";
 
 declare class StyleProperties {
 	/** The short 8-character ID of a style pattern. */
