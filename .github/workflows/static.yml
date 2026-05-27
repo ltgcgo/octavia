@@ -6,15 +6,19 @@ on:
   push:
     branches:
       - "main"
-    #paths:
-      #- "./data/*"
-      #- "./dist/*"
-      #- "./ghp/*"
-      #- "./libs/*"
-      #- "./nix/*"
-      #- "./sh/*"
-      #- "./src/*"
-      #- "./test/*"
+    paths:
+      - ".github/workflows/**"
+      - "./conf/**"
+      - "./ghp/**"
+      - "./img/**"
+      - "./libs/**"
+      - "./nix/**"
+      - "./sh/**"
+      - "./src/**"
+      - "./test/**"
+      - "./index.htm"
+      #- "./data/**"
+      #- "./dist/**"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
