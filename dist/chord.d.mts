@@ -1,11 +1,11 @@
 // 2022-2026 (C) Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
-/**
-* Definitions of different chord representations, for parsing, serializing and more.
+/** Definitions of different chord representations, for parsing, serializing and more.
 *
 * Chords are packed u16 numbers, with the upper byte defining root note and accidental in the XF format, and the lower byte defining the type of chord, like 0x3100 always denote a C major.
-* @module
+* @license LGPL-3.0-only
+* @module cc.ltgc.octavia.chord
 */
 
 /** The master chord dictionary. */

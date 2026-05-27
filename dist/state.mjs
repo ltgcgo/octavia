@@ -182,5 +182,5 @@ ${r}	${n}	${c}	${l.trim().replace("Init Combi","")}`,n++,l="";break}}}),e.userBa
 `,t);break}case 2:{v(2,t[2],t.subarray(3)),console.debug(`Partially parsed KORG PA EFX SysEX:
 `,t);break}case 3:{v(3,t[2],t.subarray(3)),console.debug(`Partially parsed KORG PA EFX SysEX:
 `,t);break}default:console.debug(`Unparsed KORG PA SysEX:
-`,t)}})}};export{pa as OctaviaDevice,wt as TimeMuxer,he as VoiceBank,y as allocated,E as ccBufferOffset,N as dnToPos,ze as effectSlots,S as getDebugState,De as getYSect,ae as overrides};
+`,t)}})}};export{pa as OctaviaDevice,wt as TimeMuxer,he as VoiceBank,y as allocated,N as dnToPos,ze as effectSlots,S as getDebugState,De as getYSect,ae as overrides};
 //# sourceMappingURL=state.mjs.map

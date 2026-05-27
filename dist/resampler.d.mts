@@ -1,10 +1,9 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
-/**
-* One-dimensional audio-oriented interpolation. This is a reference JavaScript implementation that's likely later ported to other languagues in the Ensemble framework.
+/** One-dimensional audio-oriented interpolation. This is a reference JavaScript implementation that's likely later ported to other languagues in the Ensemble framework.
 * @license LGPL-3.0-only
-* @module
+* @module cc.ltgc.octavia.resampler
 */
 
 /** Reusable helper functions. */

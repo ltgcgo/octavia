@@ -56,7 +56,7 @@ declare interface OctaviaVoiceObject {
 }
 
 /** The returned voice properties. */
-declare interface OctaviaVoiceProperties {}
+export interface OctaviaVoiceProperties {}
 
 /** Master settings tied to a device. */
 declare class OctaviaDeviceMasterSettings {

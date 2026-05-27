@@ -4,6 +4,7 @@ on:
     branches:
       - main
     paths:
+      - ".github/workflows/publish.yml"
       - 'deno.json'
       - 'sh/publish.sh'
       - 'src/*/index.d.mts'
