@@ -16,7 +16,7 @@ tree -ifl | while IFS= read -r file; do
 		if [ "$findResult" != "" ] ; then
 			pathDiffRaw="$(realpath -Lsm --relative-to="${file}" "${findResult}")"
 			pathDiff="${pathDiffRaw/\.\.\//}"
-			echo "Deduplicated: ${file} -> ${pathDiff} (${findResult})"
+			echo "Deduplicated: ${file} -> ${pathDiff}"
 			rm "${file}"
 			ln -s "${pathDiff}" "${file}"
 		else
@@ -25,7 +25,7 @@ tree -ifl | while IFS= read -r file; do
 	fi
 done
 tar cf ../pages-build.tar *
-echo "Built uncompressed files: $(wc -c ../pages-build.tar) B"
+echo "Built uncompressed files: $(wc -c ../pages-build.tar | cut -d' ' -f1) B"
 cd ..
 #zopfli --i1 -v pages-build.tar
 gzip -9v pages-build.tar
@@ -50,7 +50,7 @@ tree -ifld | while IFS= read -r folder; do
 	fi
 done
 tar cf ../pages-build-base.tar *
-echo "Built incompressible files: $(wc -c ../pages-build-base.tar) B"
+echo "Built incompressible files: $(wc -c ../pages-build-base.tar | cut -d' ' -f1) B"
 cd ..
 rm -r ghp-base
 cp -Lr ghp ghp-gz
@@ -65,7 +65,7 @@ tree -ifl | while IFS= read -r file; do
 			if [ "$findResult" != "" ] ; then
 				pathDiffRaw="$(realpath -Lsm --relative-to="${file}" "${findResult}")"
 				pathDiff="${pathDiffRaw/\.\.\//}"
-				echo "Deduplicated: ${file}.gz -> ${pathDiff}.gz (${findResult})"
+				echo "Deduplicated: ${file}.gz -> ${pathDiff}.gz"
 				ln -s "${pathDiff}.gz" "${file}.gz"
 				rm "$file"
 			else
@@ -87,7 +87,7 @@ tree -ifld | while IFS= read -r folder; do
 done
 #cat ../fileHashes.tsv
 tar cf ../pages-build-gz.tar *
-echo "Built precompressed Gzip files: $(wc -c ../pages-build-gz.tar) B"
+echo "Built precompressed Gzip files: $(wc -c ../pages-build-gz.tar | cut -d' ' -f1) B"
 cd ..
 rm -r ghp-gz
 cp -Lr ghp ghp-br
@@ -102,7 +102,7 @@ tree -ifl | while IFS= read -r file; do
 			if [ "$findResult" != "" ] ; then
 				pathDiffRaw="$(realpath -Lsm --relative-to="${file}" "${findResult}")"
 				pathDiff="${pathDiffRaw/\.\.\//}"
-				echo "Deduplicated: ${file}.br -> ${pathDiff}.br (${findResult})"
+				echo "Deduplicated: ${file}.br -> ${pathDiff}.br"
 				ln -s "${pathDiff}.br" "${file}.br"
 				rm "$file"
 			else
@@ -124,7 +124,7 @@ tree -ifld | while IFS= read -r folder; do
 done
 #cat ../fileHashes.tsv
 tar cf ../pages-build-br.tar *
-echo "Built precompressed Brotli files: $(wc -c ../pages-build-br.tar) B"
+echo "Built precompressed Brotli files: $(wc -c ../pages-build-br.tar | cut -d' ' -f1) B"
 cd ..
 rm -r ghp-br
 exit
