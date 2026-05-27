@@ -24,7 +24,8 @@ tree -ifl | while IFS= read -r file; do
 		fi
 	fi
 done
-tar cvf ../pages-build.tar *
+tar cf ../pages-build.tar *
+echo "Built uncompressed files: $(wc -c ../pages-build.tar) B"
 cd ..
 #zopfli --i1 -v pages-build.tar
 gzip -9v pages-build.tar
@@ -45,12 +46,13 @@ tree -ifl | while IFS= read -r file; do
 done
 tree -ifld | while IFS= read -r folder; do
 	if [ -d "$folder" ]; then
-		rmdir -pv "$folder" 2>/dev/null
+		rmdir -p "$folder" 2>/dev/null
 	fi
 done
 tar cf ../pages-build-base.tar *
+echo "Built incompressible files: $(wc -c ../pages-build-base.tar) B"
 cd ..
-rm -rv ghp-base
+rm -r ghp-base
 cp -Lr ghp ghp-gz
 cd ghp-gz
 printf "" > ../fileHashes.tsv
@@ -65,22 +67,29 @@ tree -ifl | while IFS= read -r file; do
 				pathDiff="${pathDiffRaw/\.\.\//}"
 				echo "Deduplicated: ${file}.gz -> ${pathDiff}.gz (${findResult})"
 				ln -s "${pathDiff}.gz" "${file}.gz"
+				rm "$file"
 			else
 				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
 				gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
 			fi
-		else
-			echo "File \"${file}\" cannot be compressed."
+		#else
+			#echo "File \"${file}\" cannot be compressed."
 		fi
 		if [ -f "$file" ]; then
 			rm -v "$file"
 		fi
 	fi
 done
+tree -ifld | while IFS= read -r folder; do
+	if [ -d "$folder" ]; then
+		rmdir -p "$folder" 2>/dev/null
+	fi
+done
 #cat ../fileHashes.tsv
 tar cf ../pages-build-gz.tar *
+echo "Built precompressed Gzip files: $(wc -c ../pages-build-gz.tar) B"
 cd ..
-rm -rv ghp-gz
+rm -r ghp-gz
 cp -Lr ghp ghp-br
 cd ghp-br
 printf "" > ../fileHashes.tsv
@@ -95,20 +104,27 @@ tree -ifl | while IFS= read -r file; do
 				pathDiff="${pathDiffRaw/\.\.\//}"
 				echo "Deduplicated: ${file}.br -> ${pathDiff}.br (${findResult})"
 				ln -s "${pathDiff}.br" "${file}.br"
+				rm "$file"
 			else
 				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
 				brotli -v9j "$file"
 			fi
-		else
-			echo "File \"${file}\" cannot be compressed."
+		#else
+			#echo "File \"${file}\" cannot be compressed."
 		fi
 		if [ -f "$file" ]; then
 			rm -v "$file"
 		fi
 	fi
 done
+tree -ifld | while IFS= read -r folder; do
+	if [ -d "$folder" ]; then
+		rmdir -p "$folder" 2>/dev/null
+	fi
+done
 #cat ../fileHashes.tsv
 tar cf ../pages-build-br.tar *
+echo "Built precompressed Brotli files: $(wc -c ../pages-build-br.tar) B"
 cd ..
-rm -rv ghp-br
+rm -r ghp-br
 exit
