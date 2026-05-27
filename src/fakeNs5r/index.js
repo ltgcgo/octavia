@@ -47,7 +47,7 @@ stSwitch.to = function (i) {
 stSwitch.forEach(function (e, i, a) {
 	stSwitchMode[i] = e.title;
 	e.addEventListener("click", function () {
-		visualizer.device.switchMode(e.title, true, true);
+		visualiser.device.switchMode(e.title, true, true);
 		stSwitch.to(i);
 	});
 });
@@ -105,8 +105,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 	stDemo.forEach(function (e, i, a) {
 		e.addEventListener("click", async function () {
 			audioPlayer.pause();
-			visualizer.device.initOnReset = false;
-			visualizer.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
+			visualiser.device.initOnReset = false;
+			visualiser.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
 				audioPlayer.src = "about:blank";
@@ -114,35 +114,35 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 				demoBlobs[e.title].wave = await (await getBlobFrom(`${e.title}.opus`)).blob();
 			};
 			audioPlayer.currentTime = 0;
-			visualizer.reset();
-			visualizer.loadFile(demoBlobs[e.title].midi);
+			visualiser.reset();
+			visualiser.loadFile(demoBlobs[e.title].midi);
 			if (audioBlob) {
 				URL.revokeObjectURL(audioBlob);
 			};
 			audioBlob = demoBlobs[e.title].wave;
 			audioPlayer.src = URL.createObjectURL(audioBlob);
-			visualizer.device.setDetectionTargets(e.standard);
+			visualiser.device.setDetectionTargets(e.standard);
 			if (demoModes[i]?.length > 0) {
-				visualizer.switchMode(demoModes[i]);
+				visualiser.switchMode(demoModes[i]);
 			};
 			stDemo.to(i);
-			visualizer.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
+			visualiser.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
 			currentPerformance = demoPerfs[e.title];
 			currentPerformance?.resetIndex();
 		});
 	});
 });
 
-// Start the visualizers
+// Start the visualisers
 self.sysexBitmap = sysexBitmap;
-let visualizer = new Ns5rDisplay({useBlur: true});
-self.visualizer = visualizer;
-visualizer.addEventListener("reset", function (e) {
+let visualiser = new Ns5rDisplay({useBlur: true});
+self.visualiser = visualiser;
+visualiser.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 });
 
 // Listen to mode switches
-visualizer.addEventListener("mode", function (ev) {
+visualiser.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
 });
 
@@ -154,7 +154,7 @@ propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpe
 $e("#openMidi").addEventListener("click", async function () {
 	useMidiBus = false;
 	midwIndicator.classList.off("active");
-	visualizer.device.initOnReset = false;
+	visualiser.device.initOnReset = false;
 	let file = await fileOpen(propsMid);
 	let fileSplit = file.name.lastIndexOf("."), ext = "";
 	if (fileSplit > -1) {
@@ -163,21 +163,21 @@ $e("#openMidi").addEventListener("click", async function () {
 	switch (ext) {
 		case "syx": {
 			// Load SysEx blobs
-			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+			visualiser.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
 			break;
 		};
 		case "s7e":
 		case "pcg": {
 			// Load sound banks
-			visualizer.device.loadBank(ext, file);
+			visualiser.device.loadBank(ext, file);
 			break;
 		};
 		default: {
 			// Load MIDI files
 			stDemo.to(-1);
-			visualizer.reset();
-			visualizer.loadFile(file);
-			visualizer.device.initOnReset = false;
+			visualiser.reset();
+			visualiser.loadFile(file);
+			visualiser.device.initOnReset = false;
 			currentPerformance?.resetIndex();
 			currentPerformance = undefined;
 		};
@@ -186,7 +186,7 @@ $e("#openMidi").addEventListener("click", async function () {
 $e("#openAudio").addEventListener("click", async function () {
 	useMidiBus = false;
 	midwIndicator.classList.off("active");
-	visualizer.device.initOnReset = false;
+	visualiser.device.initOnReset = false;
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
@@ -198,10 +198,10 @@ midwIndicator.addEventListener("click", function () {
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
-	visualizer.device.initOnReset = true;
+	visualiser.device.initOnReset = true;
 	audioBlob = null;
 	audioPlayer.src = "";
-	visualizer.reset();
+	visualiser.reset();
 	useMidiBus = true;
 	midwIndicator.classList.on("active");
 });
@@ -211,47 +211,47 @@ let dispCanv = $e("#ns5rSc");
 let dispCtx = dispCanv.getContext("2d");
 dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
-	let ch = visualizer.getCh();
+	let ch = visualiser.getCh();
 	if (ev.deltaY > 0) {
-		visualizer.setCh(ch + 1);
+		visualiser.setCh(ch + 1);
 	} else {
-		visualizer.setCh(ch - 1);
+		visualiser.setCh(ch - 1);
 	};
 });
 dispCanv.addEventListener("mousedown", function (ev) {
-	let ch = visualizer.getCh();
+	let ch = visualiser.getCh();
 	if (ev.offsetX < 64) {
-		visualizer.setCh(ch - 1);
+		visualiser.setCh(ch - 1);
 	} else if (ev.offsetX >= 801) {
-		visualizer.setCh(ch + 1);
+		visualiser.setCh(ch + 1);
 	};
 });
 
 // Allow channel switching in browser console
 self.toCh = function (ch) {
-	visualizer.setCh(ch);
+	visualiser.setCh(ch);
 };
 
 // Render frames
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
-	visualizer.reset();
+	visualiser.reset();
 	currentPerformance?.resetIndex();
 	audioPlayer.currentTime = 0;
 };
 (async function () {
-	visualizer.reset();
+	visualiser.reset();
 	let midiBlob = await (await fetch("../../midi-data/collection/octavia/KANDI8.mid")).blob();
 	demoBlobs.KANDI8 = {};
 	demoBlobs.KANDI8.midi = midiBlob;
-	visualizer.loadFile(midiBlob);
+	visualiser.loadFile(midiBlob);
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
 	audioBlob = await (await fetch("../../midi-data/collection/octavia/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
-	visualizer.loadMapPaths([
+	visualiser.loadMapPaths([
 		`../../midi-db/map/gm.10.tsv`,
 		`../../midi-db/map/ns5r.10.tsv`,
 		`../../midi-db/map/xg.10.tsv`,
@@ -269,17 +269,17 @@ let renderThread = setInterval(function () {
 		};
 		if (currentPerformance) {
 			currentPerformance.step(curTime)?.forEach((e) => {
-				visualizer.sendCmd(e.data);
+				visualiser.sendCmd(e.data);
 			});
 		};
-		visualizer.render(curTime, dispCtx, location.hash === "#trueMode");
+		visualiser.render(curTime, dispCtx, location.hash === "#trueMode");
 		lastTime = curTime;
 	};
 }, 20);
 
 getBridge().addEventListener("message", function (ev) {
 	if (useMidiBus) {
-		visualizer.sendCmd(ev.data);
+		visualiser.sendCmd(ev.data);
 	};
 });
 

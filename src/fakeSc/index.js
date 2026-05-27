@@ -60,7 +60,7 @@ stSwitch.to = function (i) {
 stSwitch.forEach(function (e, i, a) {
 	stSwitchMode[i] = e.title;
 	e.addEventListener("click", function () {
-		visualizer.device.switchMode(e.title, true, true);
+		visualiser.device.switchMode(e.title, true, true);
 		stSwitch.to(i);
 	});
 });
@@ -84,19 +84,19 @@ let getBlobFrom = async function (filename) {
 };
 
 let title = "";
-// Start the visualizers
-let visualizer = new ScDisplay({useBlur: true});
-self.visualizer = visualizer;
-visualizer.addEventListener("reset", function (e) {
+// Start the visualisers
+let visualiser = new ScDisplay({useBlur: true});
+self.visualiser = visualiser;
+visualiser.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 	title = "";
 });
 
 // Listen to mode switches
-visualizer.addEventListener("mode", function (ev) {
+visualiser.addEventListener("mode", function (ev) {
 	stSwitch.to(stSwitchMode.indexOf(ev.data));
 });
-visualizer.addEventListener("meta", function (ev) {
+visualiser.addEventListener("meta", function (ev) {
 	if (!title) {
 		ev.data.forEach(function (e) {
 			if (!title && e.meta === 3) {
@@ -111,7 +111,7 @@ visualizer.addEventListener("meta", function (ev) {
 					textCmd.push(charCode);
 				};
 			});
-			visualizer.device.setLetterDisplay(textCmd);
+			visualiser.device.setLetterDisplay(textCmd);
 		};
 	};
 });
@@ -123,7 +123,7 @@ const propsMid = JSON.parse('{"extensions":[".mid",".MID",".kar",".KAR",".syx","
 propsAud = JSON.parse('{"mimeTypes":["audio/*"],"startIn":"music","id":"audioOpener","description":"Open an audio file"}');
 $e("#openMidi").addEventListener("click", async function () {
 	useMidiBus = false;
-	visualizer.device.initOnReset = false;
+	visualiser.device.initOnReset = false;
 	midwIndicator.classList.off("active");
 	let file = await fileOpen(propsMid);
 	let fileSplit = file.name.lastIndexOf("."), ext = "";
@@ -133,21 +133,21 @@ $e("#openMidi").addEventListener("click", async function () {
 	switch (ext) {
 		case "syx": {
 			// Load SysEx blobs
-			visualizer.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
+			visualiser.sendCmd({type: 15, track: 0, data: new Uint8Array(await file.arrayBuffer())});
 			break;
 		};
 		case "s7e":
 		case "pcg": {
 			// Load sound banks
-			visualizer.device.loadBank(ext, file);
+			visualiser.device.loadBank(ext, file);
 			break;
 		};
 		default: {
 			// Load MIDI files
 			stDemo.to(-1);
-			visualizer.reset();
-			visualizer.loadFile(file);
-			visualizer.device.initOnReset = false;
+			visualiser.reset();
+			visualiser.loadFile(file);
+			visualiser.device.initOnReset = false;
 			currentPerformance?.resetIndex();
 			currentPerformance = undefined;
 		};
@@ -155,15 +155,15 @@ $e("#openMidi").addEventListener("click", async function () {
 });
 $e("#openAudio").addEventListener("click", async function () {
 	useMidiBus = false;
-	visualizer.device.initOnReset = false;
+	visualiser.device.initOnReset = false;
 	midwIndicator.classList.off("active");
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
-	visualizer.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 105, 110, 103, 32, 97, 117, 100, 105, 111, 32, 102, 105, 108, 101]});
+	visualiser.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 76, 111, 97, 100, 105, 110, 103, 32, 97, 117, 100, 105, 111, 32, 102, 105, 108, 101]});
 	audioBlob = await fileOpen(propsAud);
 	audioPlayer.src = URL.createObjectURL(audioBlob);
-	visualizer.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 65, 117, 100, 105, 111, 32, 108, 111, 97, 100, 101, 100]});
+	visualiser.sendCmd({type: 15, track: 0, data: [67, 16, 76, 6, 0, 0, 65, 117, 100, 105, 111, 32, 108, 111, 97, 100, 101, 100]});
 });
 midwIndicator.addEventListener("click", function () {
 	stDemo.to(-1);
@@ -172,9 +172,9 @@ midwIndicator.addEventListener("click", function () {
 	};
 	audioBlob = null;
 	audioPlayer.src = "";
-	visualizer.reset();
+	visualiser.reset();
 	useMidiBus = true;
-	visualizer.device.initOnReset = true;
+	visualiser.device.initOnReset = true;
 	midwIndicator.classList.on("active");
 });
 
@@ -183,19 +183,19 @@ let dispCanv = $e("#rlndSc");
 let dispCtx = dispCanv.getContext("2d");
 dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
-	let ch = visualizer.getCh();
+	let ch = visualiser.getCh();
 	if (ev.deltaY > 0) {
-		visualizer.setCh(ch + 1);
+		visualiser.setCh(ch + 1);
 	} else {
-		visualizer.setCh(ch - 1);
+		visualiser.setCh(ch - 1);
 	};
 });
 dispCanv.addEventListener("mousedown", function (ev) {
-	let ch = visualizer.getCh();
+	let ch = visualiser.getCh();
 	if (ev.offsetX < 64) {
-		visualizer.setCh(ch - 1);
+		visualiser.setCh(ch - 1);
 	} else if (ev.offsetX >= 776) {
-		visualizer.setCh(ch + 1);
+		visualiser.setCh(ch + 1);
 	};
 });
 
@@ -233,8 +233,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			if (demoId <= 122 && demoId > 96) {
 				demoId -= 32;
 			};
-			visualizer.device.initOnReset = false;
-			visualizer.device.setLetterDisplay([76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, demoId]);
+			visualiser.device.initOnReset = false;
+			visualiser.device.setLetterDisplay([76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, demoId]);
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
 				audioPlayer.src = "about:blank";
@@ -242,18 +242,18 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 				demoBlobs[e.title].wave = await (await getBlobFrom(`${e.title}.opus`)).blob();
 			};
 			audioPlayer.currentTime = 0;
-			visualizer.reset();
-			visualizer.loadFile(demoBlobs[e.title].midi);
+			visualiser.reset();
+			visualiser.loadFile(demoBlobs[e.title].midi);
 			if (audioBlob) {
 				URL.revokeObjectURL(audioBlob);
 			};
 			audioBlob = demoBlobs[e.title].wave;
 			audioPlayer.src = URL.createObjectURL(audioBlob);
-			visualizer.device.setDetectionTargets(e.standard);
+			visualiser.device.setDetectionTargets(e.standard);
 			if (demoModes[i]?.length > 0) {
-				visualizer.switchMode(demoModes[i]);
+				visualiser.switchMode(demoModes[i]);
 			};
-			visualizer.device.setLetterDisplay([76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, demoId]);
+			visualiser.device.setLetterDisplay([76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, demoId]);
 			stDemo.to(i);
 			currentPerformance = demoPerfs[e.title];
 			currentPerformance?.resetIndex();
@@ -268,23 +268,23 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 // Render frames
 let audioPlayer = $e("#audioPlayer");
 audioPlayer.onended = function () {
-	visualizer.reset();
+	visualiser.reset();
 	currentPerformance?.resetIndex();
 	audioPlayer.currentTime = 0;
 };
 (async function () {
-	visualizer.reset();
+	visualiser.reset();
 	let midiBlob = await (await fetch("../../midi-data/collection/octavia/KANDI8.mid")).blob();
 	demoBlobs.KANDI8 = {};
 	demoBlobs.KANDI8.midi = midiBlob;
-	visualizer.loadFile(midiBlob);
+	visualiser.loadFile(midiBlob);
 	if (audioBlob) {
 		URL.revokeObjectURL(audioBlob);
 	};
 	audioBlob = await (await fetch("../../midi-data/collection/octavia/KANDI8.opus")).blob();
 	demoBlobs.KANDI8.wave = audioBlob;
 	audioPlayer.src = URL.createObjectURL(audioBlob);
-	visualizer.loadMapPaths([
+	visualiser.loadMapPaths([
 		`../../midi-db/map/gsCap.12.tsv`,
 		`../../midi-db/map/gm.12.tsv`,
 		`../../midi-db/map/ns5r.12.tsv`,
@@ -300,7 +300,7 @@ audioPlayer.onended = function () {
 		`../../midi-db/map/cs2x.10.tsv`,
 		`../../midi-db/map/s90es.10.tsv`
 	]);
-	visualizer.loadProps((await fetch("../../midi-db/bank/gs.prop.tsv")).body, false, 0, "gs.prop.tsv");
+	visualiser.loadProps((await fetch("../../midi-db/bank/gs.prop.tsv")).body, false, 0, "gs.prop.tsv");
 })();
 let lastTime = 0;
 let renderThread = setInterval(function () {
@@ -310,17 +310,17 @@ let renderThread = setInterval(function () {
 		};
 		if (currentPerformance) {
 			currentPerformance.step(curTime)?.forEach((e) => {
-				visualizer.sendCmd(e.data);
+				visualiser.sendCmd(e.data);
 			});
 		};
-		visualizer.render(curTime, dispCtx);
+		visualiser.render(curTime, dispCtx);
 		lastTime = curTime;
 	};
 }, 20);
 
 getBridge().addEventListener("message", function (ev) {
 	if (useMidiBus) {
-		visualizer.sendCmd(ev.data);
+		visualiser.sendCmd(ev.data);
 	};
 });
 
