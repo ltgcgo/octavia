@@ -4,15 +4,15 @@ COMPRESS_CRIT="\.(ass|atom|bin|bm|bmp|conf|css|csv|htm|html|ico|js|json|kar|list
 #if [ ! -f "$(which zopfli)" ]; then
 	#sudo apt install -y zopfli
 #fi
-if [ ! -f "$(which tree)" ]; then
-	sudo apt install -y tree
-fi
+#if [ ! -f "$(which tree)" ]; then
+	#sudo apt install -y tree
+#fi
 
 echo "$(date +"%s")" > build-time.txt
 cp -Lr ghp ghp-raw
 cd ghp-raw
 printf "" > ../fileHashes.tsv
-tree -ifl | while IFS= read -r file; do
+find . -type f | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		fileHash="$(sha256sum "${file}" | cut -d' ' -f1)"
@@ -38,7 +38,7 @@ rm -r ghp-raw
 cp -Lr ghp ghp-base
 cd ghp-base
 printf "" > ../fileHashes.tsv
-tree -ifl | while IFS= read -r file; do
+find . -type f | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
@@ -48,7 +48,7 @@ tree -ifl | while IFS= read -r file; do
 		fi
 	fi
 done
-tree -ifld | while IFS= read -r folder; do
+find . -type d | while IFS= read -r folder; do
 	if [ -d "$folder" ]; then
 		rmdir -p "$folder" 2>/dev/null
 	fi
@@ -60,7 +60,7 @@ rm -r ghp-base
 cp -Lr ghp ghp-gz
 cd ghp-gz
 printf "" > ../fileHashes.tsv
-tree -ifl | while IFS= read -r file; do
+find . -type f | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
@@ -84,7 +84,7 @@ tree -ifl | while IFS= read -r file; do
 		fi
 	fi
 done
-tree -ifld | while IFS= read -r folder; do
+find . -type d | while IFS= read -r folder; do
 	if [ -d "$folder" ]; then
 		rmdir -p "$folder" 2>/dev/null
 	fi
@@ -97,7 +97,7 @@ rm -r ghp-gz
 cp -Lr ghp ghp-br
 cd ghp-br
 printf "" > ../fileHashes.tsv
-tree -ifl | while IFS= read -r file; do
+find . -type f | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
@@ -121,7 +121,7 @@ tree -ifl | while IFS= read -r file; do
 		fi
 	fi
 done
-tree -ifld | while IFS= read -r folder; do
+find . -type d | while IFS= read -r folder; do
 	if [ -d "$folder" ]; then
 		rmdir -p "$folder" 2>/dev/null
 	fi
