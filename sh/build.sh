@@ -47,6 +47,8 @@ if [ -d "./src" ]; then
 			#sed -zi "$substRules" "dist/${dir}.js"
 			if [ -f "src/${dir}/index.d.ts" ] ; then
 				cp "src/${dir}/index.d.ts" "dist/${dir}.d.ts"
+				sed -zEi 's#from "\.\./([^/]+)/index\.js"#from "./\1.js"#g' "dist/${dir}.d.ts"
+				sed -zEi 's#from "\.\./([^/]+)/index\.d\.ts"#from "./\1.d.ts"#g' "dist/${dir}.d.ts"
 			fi
 		fi
 		if [ -f "src/${dir}/index.mjs" ] ; then
@@ -55,6 +57,8 @@ if [ -d "./src" ]; then
 			#sed -zi "$substRules" "dist/${dir}.mjs"
 			if [ -f "src/${dir}/index.d.mts" ] ; then
 				cp "src/${dir}/index.d.mts" "dist/${dir}.d.mts"
+				sed -zEi 's#from "\.\./([^/]+)/index\.mjs"#from "./\1.mjs"#g' "dist/${dir}.d.mts"
+				sed -zEi 's#from "\.\./([^/]+)/index\.d\.mts"#from "./\1.d.mts"#g' "dist/${dir}.d.mts"
 			fi
 		fi
 	done

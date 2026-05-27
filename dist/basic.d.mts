@@ -6,7 +6,7 @@ import {
 	TimeMuxer,
 	OctaviaVoiceObject,
 	OctaviaVoiceProperties
-} from "../state/index.mjs";
+} from "./state.mjs";
 
 declare class StyleProperties {
 	/** The short 8-character ID of a style pattern. */
