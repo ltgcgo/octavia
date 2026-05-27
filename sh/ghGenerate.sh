@@ -1,8 +1,12 @@
 #!/bin/bash
 COMPRESS_CRIT="\.(ass|atom|bin|bm|bmp|conf|css|csv|htm|html|ico|js|json|kar|list|lrc|lst|map|md|mid|mjs|mod|mts|otf|rss|sbv|srt|ssa|svg|trc|ts|tsv|ttf|ttml|txt|vgm|vtt|wasm|webmanifest|xml|ytt)$"
 
-#sudo apt install -y zopfli
-sudo apt install -y tree
+#if [ ! -f "$(which zopfli)" ]; then
+	#sudo apt install -y zopfli
+#fi
+if [ ! -f "$(which tree)" ]; then
+	sudo apt install -y tree
+fi
 
 echo "$(date +"%s")" > build-time.txt
 cp -Lr ghp ghp-raw
