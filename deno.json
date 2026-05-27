@@ -21,7 +21,6 @@
 			"dist/README.md",
 			"dist/*.mjs",
 			"dist/*.mts",
-			"libs/**/*.d.mts",
 			"README.md"
 		]
 	},
@@ -31,7 +30,8 @@
 			"ES2017", "ES2018", "ES2019", "ES2020",
 			"ES2021", "ES2022", "ES2023", "ESNext",
 			"DOM", "WebWorker"
-		]
+		],
+		"skipLibCheck": true
 	},
 	"unstable": [
 		"broadcast-channel",
