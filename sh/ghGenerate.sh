@@ -28,7 +28,7 @@ tree -ifl | while IFS= read -r file; do
 		fi
 	fi
 done
-tar cf ../pages-build.tar *
+tar cf ../pages-build.tar .
 echo "Built uncompressed files: $(wc -c ../pages-build.tar | cut -d' ' -f1) B"
 cd ..
 #zopfli --i1 -v pages-build.tar
@@ -53,7 +53,7 @@ tree -ifld | while IFS= read -r folder; do
 		rmdir -p "$folder" 2>/dev/null
 	fi
 done
-tar cf ../pages-build-base.tar *
+tar cf ../pages-build-base.tar .
 echo "Built incompressible files: $(wc -c ../pages-build-base.tar | cut -d' ' -f1) B"
 cd ..
 rm -r ghp-base
@@ -90,7 +90,7 @@ tree -ifld | while IFS= read -r folder; do
 	fi
 done
 #cat ../fileHashes.tsv
-tar cf ../pages-build-gz.tar *
+tar cf ../pages-build-gz.tar .
 echo "Built precompressed Gzip files: $(wc -c ../pages-build-gz.tar | cut -d' ' -f1) B"
 cd ..
 rm -r ghp-gz
@@ -127,7 +127,7 @@ tree -ifld | while IFS= read -r folder; do
 	fi
 done
 #cat ../fileHashes.tsv
-tar cf ../pages-build-br.tar *
+tar cf ../pages-build-br.tar .
 echo "Built precompressed Brotli files: $(wc -c ../pages-build-br.tar | cut -d' ' -f1) B"
 cd ..
 rm -r ghp-br
