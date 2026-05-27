@@ -4,7 +4,7 @@
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
-import Ns5rDisplay from "../disp/disp_n5.mjs";
+import {Ns5rDisplay} from "../disp/index.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 import {
 	getBridge
@@ -135,7 +135,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 
 // Start the visualizers
 self.sysexBitmap = sysexBitmap;
-self.visualizer = new Ns5rDisplay({useBlur: true});
+let visualizer = new Ns5rDisplay({useBlur: true});
+self.visualizer = visualizer;
 visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 });

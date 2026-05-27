@@ -5,7 +5,7 @@
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
-import MuDisplay from "../disp/disp_mu.mjs";
+import {MuDisplay} from "../disp/index.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 import {
 	getBridge
@@ -92,7 +92,8 @@ let getBlobFrom = async function (filename) {
 };
 
 // Start the visualizers
-self.visualizer = new MuDisplay();
+let visualizer = new MuDisplay();
+self.visualizer = visualizer;
 visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 });

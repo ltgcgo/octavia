@@ -85,7 +85,8 @@ let getBlobFrom = async function (filename) {
 
 let title = "";
 // Start the visualizers
-self.visualizer = new ScDisplay({useBlur: true});
+let visualizer = new ScDisplay({useBlur: true});
+self.visualizer = visualizer;
 visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 	title = "";

@@ -42,7 +42,7 @@ if (typeof self?.require !== "undefined") {
 	throw(new Error("Environments supporting CommonJS are not supported."));
 };
 
-let RootDisplay = class extends CustomEventSource {
+const RootDisplay = class extends CustomEventSource {
 	BM_UNIVERSAL = 0;
 	BM_YAMAHA_MU = 1;
 	device;
@@ -1223,8 +1223,19 @@ let RootDisplay = class extends CustomEventSource {
 	};
 };
 
+const SinglePartDisplay = class SinglePartDisplay extends RootDisplay {
+	#ch = 0;
+	setCh(part) {
+		this.#ch = part;
+	};
+	getCh() {
+		return this.#ch;
+	};
+};
+
 export {
 	RootDisplay,
+	SinglePartDisplay,
 	StylePool,
 	FileHandler,
 	BitmapMatrix,

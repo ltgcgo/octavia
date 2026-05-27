@@ -41,7 +41,7 @@ let PsrDisplay = class extends RootDisplay {
 	msFrame = 75;
 	msActive = 150;
 	msExhaust = 250;
-	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	textFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
@@ -70,10 +70,10 @@ let PsrDisplay = class extends RootDisplay {
 			upThis.#bmst = 2;
 			upThis.#bmex = upThis.clockSource.now() + 1600;
 		});*/
-		this.addEventListener("channelactive", (ev) => {
+		upThis.addEventListener("channelactive", (ev) => {
 			this.#ch = ev.data;
 		});
-		this.addEventListener("metacommit", (ev) => {
+		upThis.addEventListener("metacommit", (ev) => {
 			let meta = ev.data;
 			if (meta.type === "SGLyrics" || meta.type === "C.Lyrics" || meta.type === "KarLyric") {
 				this.#kana = meta.data;
@@ -155,7 +155,7 @@ let PsrDisplay = class extends RootDisplay {
 		let timeNow = upThis.clockSource.now();
 		ctx.setTransform(1, 0, skew, 1, 0, 0);
 		// Determine the used font
-		let usedFont = trueMode ? upThis.trueFont : upThis.xgFont;
+		let usedFont = trueMode ? upThis.trueFont : upThis.textFont;
 		let longString = false;
 		let originalLength = str.length;
 		if (str.length > 8) {

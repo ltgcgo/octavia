@@ -23,7 +23,7 @@ let QyDisplay = class extends RootDisplay {
 	msFrame = 75;
 	msActive = 150;
 	msExhaust = 250;
-	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	textFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	qyFont = new MxFont40("./data/bitmaps/xg/qyTrue.tsv", "./data/bitmaps/xg/font.tsv");
 	sqrFont = new MxFont40("./data/bitmaps/xg/qySqr.tsv");
 	qy35Font = new MxFont40("./data/bitmaps/xg/qyCh35.tsv");
@@ -121,7 +121,7 @@ let QyDisplay = class extends RootDisplay {
 		let sum = super.render(time);
 		let upThis = this;
 		let timeNow = upThis.clockSource.now();
-		let usedFont = upThis.trueMode ? this.qyFont : this.xgFont;
+		let usedFont = upThis.trueMode ? this.qyFont : this.textFont;
 		// Channel test
 		let alreadyMin = false;
 		let minCh = 0, maxCh = 0;

@@ -5,7 +5,7 @@
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
-import PsrDisplay from "../disp/disp_psr.mjs";
+import {PsrDisplay} from "../disp/index.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 import {
 	getBridge
@@ -194,7 +194,8 @@ csSwitch.forEach(function (e, i) {
 });
 
 // Start the visualizers
-self.visualizer = new PsrDisplay();
+let visualizer = new PsrDisplay();
+self.visualizer = visualizer;
 visualizer.addEventListener("reset", function (e) {
 	visualizer.songTitle = "";
 	console.info("Processor reset.");

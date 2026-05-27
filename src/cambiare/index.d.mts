@@ -5,3 +5,28 @@
 * @license LGPL-3.0-only
 * @module cc.ltgc.octavia.cambiare
 */
+
+import {
+	RootDisplay,
+	MxBmDef,
+    MxFont40
+} from "../basic/index.d.mts";
+
+/** The Cambiare visualiser. */
+export class Cambiare extends RootDisplay {
+	/** Attach to an HTML container element. Only one element can be attached to one instance. */
+	attach(e: HTMLElement): void;
+	/** Detach from the attached container element. */
+	detach(): void;
+	/** What the numeric counter should show.
+	* - `0`: Amount of MIDI events handled during the frame render. (default)
+	* - `1`: The FPS value calculated from the actual frame time.
+	*/
+	eventViewMode: number;
+	/** The libre duo-component bitmaps for chords. */
+	freeChord: MxBmDef;
+	/** The bitmaps of the libre 5 by 7 pixel font. */
+	glyphs: MxFont40;
+	/** When `true`, the oscillator count is used in counting voice polyphony. */
+	useElementCount: boolean;
+}

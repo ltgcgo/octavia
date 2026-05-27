@@ -1759,7 +1759,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.dispatchEvent(`efxinsert0`, {"id": upThis.device.getEffectType(3)});
 		upThis.#setPortView(true);
 	};
-	detach(attachElement) {
+	detach() {
 		let upThis = this;
 		self.removeEventListener("resize", upThis.#resizer);
 		upThis.#canvas.remove();

@@ -5,7 +5,7 @@
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
-import QyDisplay from "../disp/disp_qy.mjs";
+import {QyDisplay} from "../disp/index.mjs";
 import StylePool from "../basic/styleLoad.js";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 import {
@@ -148,7 +148,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 });
 
 // Start the visualizers
-self.visualizer = new QyDisplay();
+let visualizer = new QyDisplay();
+self.visualizer = visualizer;
 visualizer.addEventListener("reset", function (e) {
 	visualizer.songTitle = "";
 	console.info("Processor reset.");

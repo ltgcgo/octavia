@@ -187,13 +187,13 @@ let MuDisplay = class extends RootDisplay {
 	#unresolvedEx = 0;
 	//#awaitEx = 0;
 	#promptEx = 0;
-	inWB = false;
+	//inWB = false;
 	#waveBuffer = new Uint8Array(8);
 	#panStrokes = new Uint8Array(7);
 	#booted = 0;
 	#bootFrame = 0;
 	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
-	xgFont = new MxFont40("./data/bitmaps/xg/font.tsv");
+	textFont = new MxFont40("./data/bitmaps/xg/font.tsv");
 	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
 	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
 	aniBm = new MxBm256("./data/bitmaps/xg/animation.tsv");
@@ -254,11 +254,11 @@ let MuDisplay = class extends RootDisplay {
 			getDebugState() && console.debug(`Scheduled a SysEx prompt.`);
 		});*/
 		(async () => {
-			await Promise.all([upThis.trueFont.loaded.wait(), upThis.xgFont.loaded.wait(), upThis.sysBm.loaded.wait(), upThis.aniBm.loaded.wait()]);
+			await Promise.all([upThis.trueFont.loaded.wait(), upThis.textFont.loaded.wait(), upThis.sysBm.loaded.wait(), upThis.aniBm.loaded.wait()]);
 			upThis.#booted = 1;
 		})();
 	};
-	setCh(ch) {
+	setCh(part) {
 		this.#ch = ch;
 	};
 	getCh() {
@@ -353,7 +353,7 @@ let MuDisplay = class extends RootDisplay {
 		let letterDisp = upThis.device?.getLetter();
 		if (timeNow <= letterDisp.expire && letterDisp.text.length > 0) {
 			// Show display text
-			upThis.xgFont.getStr(letterDisp.text.padEnd(32, " ")).forEach(function (e0, i0) {
+			upThis.textFont.getStr(letterDisp.text.padEnd(32, " ")).forEach(function (e0, i0) {
 				let regionX = (i0 % 16) * 5 + 5,
 				regionY = Math.floor(i0 / 16) * 8;
 				e0.forEach(function (e1, i1) {
@@ -432,7 +432,7 @@ let MuDisplay = class extends RootDisplay {
 					};
 				};
 				let bnkInfo = `\u0080${bnkSel}\u0081${((voiceObj.sid[1]) + 1).toString().padStart(3, "0")}`;
-				let bitSeq = upThis.xgFont.getStr(bnkInfo + voiceName);
+				let bitSeq = upThis.textFont.getStr(bnkInfo + voiceName);
 				bitSeq.forEach(function (e0, i0) {
 					let regionX = 0, regionY = 0;
 					if (rendMode === 1) {
@@ -509,7 +509,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("BANK", 83.5, 162.5);
 		ctx.fillText("PGM#", 276, 162.5);
 		// Show parts
-		upThis.xgFont.getStr(`${(upThis.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[upThis.#ch >> 4]}${(upThis.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
+		upThis.textFont.getStr(`${(upThis.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[upThis.#ch >> 4]}${(upThis.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
 			e0.forEach(function (e1, i1) {
 				let partX = i1 % 5,

@@ -51,7 +51,7 @@ let ScDisplay = class extends RootDisplay {
 	#bootFrame = 0;
 	#booted = 0;
 	bootBm = new MxBmDef();
-	xgFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
+	textFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
 	constructor(conf) {
 		super(new OctaviaDevice(), 0, 0.4);
 		let upThis = this;
@@ -104,7 +104,7 @@ let ScDisplay = class extends RootDisplay {
 			};
 		});
 		upThis.bootBm.load("RsrcName\tBitmap\nboot\t002a000c71c0e38f003ef87df3e008a211448802080451220082011448803c8338e3ea67a0df7cf3bc28045120c90a0114482262884512089fbe1f7c823dc7038e2086\nmask\t0008001080804040202010100808040402020101\ntext\t005f001f000000880080008000000000000001b00100030000000000000002a71a70020000000000000005514d10040000000000000008a28be008000000000000001145140010000000000000002271e700700000000000000000000000000000000071c8bc8befbc01e88089ce1d145b45111044041131b1121208aa8a222088082262a222241155e44479e00e5405444448228a0888828002a98888889145141111048005531111211c72281c23e880f140227387000000000000000000000000c1c880f00780600000f00001911101101000400c01100000423202202070801802271cb1045407803911000007910594089808800be200600a3e7a1311101100140430c01241140672203c03c71c60002271e8000000000000000000000000f0001020000001e89efbe881100020000f30041140441b02271ce18b2260082280882a079144811944000e28e11e5408a2890222798002202220881145124444130004404441103c71c31c89c000f08f08fa200");
-		upThis.xgFont.loaded.wait().then(() => {
+		upThis.textFont.loaded.wait().then(() => {
 			upThis.#booted = 1;
 		});
 	};
@@ -265,7 +265,7 @@ let ScDisplay = class extends RootDisplay {
 			};
 			let voiceObject = upThis.getChVoice(upThis.#ch);
 			if (timeNow <= upThis.#sysTime) {
-				upThis.xgFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
+				upThis.textFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
 					e0.forEach(function (e1, i1) {
 						let pX = i0 * 6 + i1 % 5,
 						pY = Math.floor(i1 / 5);
@@ -304,7 +304,7 @@ let ScDisplay = class extends RootDisplay {
 					};
 				};
 				//console.debug(`"${infoTxt}"`);
-				upThis.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
+				upThis.textFont.getStr(infoTxt).forEach(function (e0, i0) {
 					e0.forEach(function (e1, i1) {
 						let pX = i0 * 6 + i1 % 5 + xShift,
 						pY = Math.floor(i1 / 5);
@@ -412,7 +412,7 @@ let ScDisplay = class extends RootDisplay {
 					let textWindow = infoTxt.length - Math.floor(timeOff / 300);
 					infoTxt = infoTxt.slice(Math.max(0, textWindow - 16), Math.max(16, textWindow));
 				};
-				upThis.xgFont.getStr(infoTxt).forEach(function (e0, i0) {
+				upThis.textFont.getStr(infoTxt).forEach(function (e0, i0) {
 					e0.forEach(function (e1, i1) {
 						let pX = i0 * 6 + i1 % 5,
 						pY = Math.floor(i1 / 5);
@@ -458,7 +458,7 @@ let ScDisplay = class extends RootDisplay {
 				paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}--`;
 			};
 			// Render fonts
-			upThis.xgFont.getStr(paramText).forEach(function (e0, i0) {
+			upThis.textFont.getStr(paramText).forEach(function (e0, i0) {
 				e0.forEach(function (e1, i1) {
 					let pX = Math.floor(i0 / 3) * 90 + i0 * 5 + i1 % 5,
 					pY = Math.floor(i1 / 5);

@@ -5,7 +5,7 @@
 
 import {} from "../../libs/lightfelt@ltgcgo/main/cssClass.js";
 import {$e, $a} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
-import Sc8850Display from "../disp/disp_sc8850.mjs";
+import {Sc8850Display} from "../disp/index.mjs";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
 import {
 	getBridge
@@ -173,7 +173,8 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 });
 
 // Start the visualizers
-self.visualizer = new Sc8850Display({useBlur: true});
+let visualizer = new Sc8850Display({useBlur: true});
+self.visualizer = visualizer;
 visualizer.addEventListener("reset", function (e) {
 	console.info("Processor reset.");
 });
