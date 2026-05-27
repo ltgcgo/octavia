@@ -7,19 +7,37 @@ sudo apt install -y tree
 echo "$(date +"%s")" > build-time.txt
 cp -Lr ghp ghp-raw
 cd ghp-raw
+printf "" > ../fileHashes.tsv
+tree -ifl | while IFS= read -r file; do
+	if [ -f "$file" ]; then
+		# Is a file
+		fileHash="$(sha256sum "${file}" | cut -d' ' -f1)"
+		findResult="$(grep -F "${fileHash}	" ../fileHashes.tsv | cut -d '	' -f2)"
+		if [ "$findResult" != "" ] ; then
+			pathDiffRaw="$(realpath -Lsm --relative-to="${file}" "${findResult}")"
+			pathDiff="${pathDiffRaw/\.\.\//}"
+			echo "Deduplicated: ${file} -> ${pathDiff} (${findResult})"
+			rm "${file}"
+			ln -s "${pathDiff}" "${file}"
+		else
+			echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
+		fi
+	fi
+done
 tar cvf ../pages-build.tar *
 cd ..
 #zopfli --i1 -v pages-build.tar
 gzip -9v pages-build.tar
 rm -v pages-build.tar
-rm -rv ghp-raw
+rm -r ghp-raw
 cp -Lr ghp ghp-base
 cd ghp-base
+printf "" > ../fileHashes.tsv
 tree -ifl | while IFS= read -r file; do
 	if [ -f "$file" ]; then
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
-			rm -v "$file"
+			rm "$file"
 		else
 			echo "File \"${file}\" is preserved."
 		fi
