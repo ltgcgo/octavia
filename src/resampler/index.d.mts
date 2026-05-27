@@ -45,7 +45,7 @@ export class EnsembleResampler {
 	*/
 	readonly sampleRatio: number;
 	/** Writes the sample ratio. */
-	readonly setSampleRatio(x: number): void;
+	setSampleRatio(x: number): void;
 	/** The step value, usually consistent per-oscillator. Defaults provided by the registry entry. Ignored by algorithms by default.
 	* - `3`: Recommended default for Lanczos-3 (6-tap).
 	* - `8`: Recommended default for Kaiser 8-tap.
@@ -54,7 +54,7 @@ export class EnsembleResampler {
 	*/
 	readonly step: number;
 	/** Writes the step. */
-	readonly setStep(x: number): void;
+	setStep(x: number): void;
 	/** The array storing the pre-computed results. Length was defined by registry entries. In AOT implementations, this could be split to `f32` and `f64` variants. */
 	precomputed?: Float64Array;
 	/** Retrieve an interpolated sample.
@@ -62,7 +62,7 @@ export class EnsembleResampler {
 	* @param samples The samples to be interpolated.
 	* @param oldSamples When provided, interpolated samples will use the last few samples from it instead for better consistency.
 	*/
-	readonly get(timeStep: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
+	get(timeStep: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
 }
 /** The actual registry entry. */
 export class EnsembleResamplerEntry {
