@@ -21,6 +21,7 @@
 			"dist/README.md",
 			"dist/*.mjs",
 			"dist/*.mts",
+			"libs/**/*.d.mts",
 			"README.md"
 		]
 	},
