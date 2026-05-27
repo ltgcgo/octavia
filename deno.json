@@ -18,9 +18,9 @@
 	},
 	"publish": {
 		"include": [
-			"dist/**.md",
-			"dist/**.mjs",
-			"dist/**.mts",
+			"dist/README.md",
+			"dist/*.mjs",
+			"dist/*.mts",
 			"README.md"
 		]
 	},
