@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'deno.json'
+      - 'sh/publish.sh'
       - 'src/*/index.d.mts'
   workflow_dispatch:
 
