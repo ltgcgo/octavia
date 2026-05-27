@@ -1,6 +1,6 @@
 {
 	"name": "@ltgc/octavia",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"imports": {
 		"@ltgc/rochelle": "jsr:@ltgcgo/rochelle@^0.2.9",
 		"@ltgc/seamstress": "jsr:@ltgcgo/rochelle@^0.1"
