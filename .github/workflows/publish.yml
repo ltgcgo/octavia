@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'deno.json'
+      - 'src/*/index.d.mts'
   workflow_dispatch:
 
 jobs:

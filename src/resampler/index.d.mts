@@ -12,21 +12,21 @@ export class EnsembleUtilMethods {
 	/** Return the stepped sample. When `oldSamples` is not provided, values below 0 and above the last index of the `samples` array will be clamped, otherwise values below 0 will use `oldSamples` before getting clamped.
 	* @param i An integer array index.
 	*/
-	static readonly stepSample(i: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
+	static stepSample(i: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
 	/** Calculate the effective low-pass cutoff in cycles of the original signal. Values above 1 are treated the same as 1. */
-	static readonly cutoffFactor(sampleRatio: number): number;
+	static cutoffFactor(sampleRatio: number): number;
 	/** The epsilon threshold. Values below it cause the `sinc` method to return `1` directly. */
 	static readonly sincThreshold: number;
 	/** The `sinc` function. */
-	static readonly sinc(x: number): number;
+	static sinc(x: number): number;
 	/** The modified Bessel function I₀. */
-	static readonly modifiedBessel(x: number): number;
+	static modifiedBessel(x: number): number;
 	/** Build a Kaiser window.
 	* @param x The `x` value. Expected to be in the range of [-1, 1].
 	* @param b The beta value. Higher beta values widens main lobe and attenuates ringing more.
 	* @param preB The pre-computed value of beta against the modified Bessel function.
 	*/
-	static readonly kaiserWindow(x: number, b: number, preB?: number): number;
+	static kaiserWindow(x: number, b: number, preB?: number): number;
 }
 /** The basic structure for other structures. */
 export class EnsembleResampler {
@@ -82,11 +82,11 @@ export class EnsembleResamplerEntry {
 /** The registry of different interpolation algorithms. */
 export class EnsembleResamplerRegistry {
 	/** Retrieve an interpolation algorithm from a specifier. */
-	static readonly get(id: string): EnsembleResampler;
+	static get(id: string): EnsembleResampler;
 	/** Register an interpolation algorithm with a specifier. */
-	static readonly register(id: string, entry: EnsembleResamplerEntry): void;
+	static register(id: string, entry: EnsembleResamplerEntry): void;
 	/** Returns `true` if the specifier has already been registered. */
-	static readonly has(id: string): boolean;
+	static has(id: string): boolean;
 	/** Returns the specifiers of existing entries. */
-	static readonly keys(): Iterable<string>;
+	static keys(): Iterable<string>;
 }
