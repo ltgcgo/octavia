@@ -24,6 +24,11 @@
 			"README.md"
 		]
 	},
+	"compilerOptions": {
+		"lib": [
+			"DOM"
+		]
+	},
 	"unstable": [
 		"broadcast-channel",
 		"ffi",

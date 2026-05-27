@@ -6,7 +6,10 @@ import {
 	TimeMuxer,
 	OctaviaVoiceObject,
 	OctaviaVoiceProperties
-} from "../state/index.mjs";
+} from "../state/index.d.mts";
+import {
+	MiniSignal
+} from "../../libs/twinkle@ltgcgo/miniSignal.mjs"
 
 declare class StyleProperties {
 	/** The short 8-character ID of a style pattern. */
@@ -136,7 +139,7 @@ export class BitmapMatrix {
 	* @param height The height of the bitmap.
 	* @param packed When `true`, the supplied buffer is a packed bitfield.
 	*/
-	constructor(width: number, height: number, packed?: boolean, buffer: Uint8Array);
+	constructor(width: number, height: number, packed: boolean, buffer: Uint8Array);
 }
 
 declare class MxBaseBmCollection {
@@ -212,11 +215,11 @@ export class RootDisplay {
 	/** Load a supported file, like SMF. */
 	loadFile(blob: Blob): Promise<void>;
 	/** Load a name map that maps voice IDs to full blown names in MDAT format. */
-	loadMap(text: string, overwrite?: boolean, priority?: number, name: string): Promise<void>;
+	loadMap(text: string, overwrite?: boolean, priority?: number, name?: string): Promise<void>;
 	/** Load an EFX name map. */
 	loadEfx(text: string, overwrite?: boolean): Promise<void>;
 	/** Load a voice property map. */
-	loadProps(stream: ReadableStream<Uint8Array>, overwrite?: boolean, priority?: number, name: string): Promise<void>;
+	loadProps(stream: ReadableStream<Uint8Array>, overwrite?: boolean, priority?: number, name?: string): Promise<void>;
 	/** Load a bunch of voice property maps from defined paths or URLs. */
 	loadPropsPaths(paths: string[]): Promise<void>;
 	/** Attempt to refresh a cached voice on a part. */

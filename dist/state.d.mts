@@ -412,8 +412,8 @@ export class OctaviaDevice {
 	/** Get the global master settings. */
 	getMaster(): OctaviaDeviceMasterSettings;
 	// Should also introduce per-device master settings here.
-	/** Returns the per-mode substitution database. */
-	getSubDb(): Object<string, Uint8Array>;
+	/** Returns the per-mode substitution database. `<string, Uint8Array>` */
+	getSubDb(): Object;
 	/** Retrieve the single voice primitive component.
 	* - `0`: program number
 	* - `1`: cc0 (bank MSB)

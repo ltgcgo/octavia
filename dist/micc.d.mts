@@ -3,7 +3,7 @@
 
 import {
     SeamstressContext
-} from "../../libs/seamstress@ltgcgo/index.mjs";
+} from "../libs/seamstress@ltgcgo/index.mjs";
 
 /**
 * Musical Instructions Compiler Collection. Handles MIDI-adjacent file parsing and serialization.
