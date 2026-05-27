@@ -28,7 +28,7 @@ tar cvf ../pages-build.tar *
 cd ..
 #zopfli --i1 -v pages-build.tar
 gzip -9v pages-build.tar
-rm -v pages-build.tar
+rm -v pages-build.tar 2>/dev/null
 rm -r ghp-raw
 cp -Lr ghp ghp-base
 cd ghp-base
@@ -41,6 +41,11 @@ tree -ifl | while IFS= read -r file; do
 		else
 			echo "File \"${file}\" is preserved."
 		fi
+	fi
+done
+tree -ifld | while IFS= read -r folder; do
+	if [ -d "$folder" ]; then
+		rmdir -pv "$folder" 2>/dev/null
 	fi
 done
 tar cf ../pages-build-base.tar *
