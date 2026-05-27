@@ -8,8 +8,8 @@
 	},
 	"exports": {
 		"./basic": "./dist/basic.d.mts",
-		"./bridge": "./dist/bridge.d.mts",
-		"./cambiare": "./dist/cambiare.d.mts",
+		"./bridge": "./dist/bridge.mjs",
+		"./cambiare": "./dist/cambiare.mjs",
 		"./chord": "./dist/chord.d.mts",
 		"./state": "./dist/state.d.mts",
 		"./disp": "./dist/disp.d.mts",
@@ -18,7 +18,9 @@
 	},
 	"publish": {
 		"include": [
-			"dist/**",
+			"dist/**.md",
+			"dist/**.mjs",
+			"dist/**.mts",
 			"README.md"
 		]
 	},
