@@ -7533,7 +7533,6 @@ export {
 	OctaviaDevice,
 	VoiceBank,
 	allocated,
-	ccToPos as ccBufferOffset,
 	dnToPos,
 	overrides,
 	getDebugState,

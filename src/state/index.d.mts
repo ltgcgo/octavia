@@ -1,10 +1,17 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+/** The core MIDI processing engine with an absurd coverage.
+* @license LGPL-3.0-only
+* @module cc.ltgc.octavia.state
+*/
+
+/** Any object that can expose the `currentTime` property. */
 declare interface OctaviaTimeProvider {
 	readonly currentTime: number;
 }
 
+/** Defines what's the range of clearing voice definitions. */
 declare interface OctaviaBankClearOptions {
 	msb?: number | number[];
 	prg?: number | number[];

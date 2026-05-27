@@ -11,6 +11,7 @@
 		"./bridge": "./dist/bridge.mjs",
 		"./cambiare": "./dist/cambiare.mjs",
 		"./chord": "./dist/chord.d.mts",
+		"./micc": "./dist/micc.d.mts",
 		"./state": "./dist/state.d.mts",
 		"./disp": "./dist/disp.mjs",
 		"./xp_basic": "./dist/xp_basic.d.mts",

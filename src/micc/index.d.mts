@@ -1,15 +1,14 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+/** Musical Instructions Compiler Collection. Handles MIDI-adjacent file parsing and serialization.
+* @license LGPL-3.0-only
+* @module cc.ltgc.octavia.micc
+*/
+
 import {
     SeamstressContext
-} from "../../libs/seamstress@ltgcgo/index.mjs";
-
-/**
-* Musical Instructions Compiler Collection. Handles MIDI-adjacent file parsing and serialization.
-* @license LGPL-3.0-only
-* @module
-*/
+} from "../../libs/seamstress@ltgcgo/index.d.mts";
 
 /** The helper string decoder allowing re-interpretation. */
 export class BinaryString {

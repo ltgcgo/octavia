@@ -1,6 +1,11 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+/** The basic building blocks needed to build a visualiser.
+* @license LGPL-3.0-only
+* @module cc.ltgc.octavia.basic
+*/
+
 import {
 	OctaviaDevice,
 	TimeMuxer,
