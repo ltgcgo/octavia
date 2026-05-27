@@ -8,12 +8,12 @@
 	},
 	"exports": {
 		"./basic": "./dist/basic.d.mts",
-		"./bridge": "./dist/bridge.mjs",
-		"./cambiare": "./dist/cambiare.mjs",
+		"./bridge": "./dist/bridge.d.mts",
+		"./cambiare": "./dist/cambiare.d.mts",
 		"./chord": "./dist/chord.d.mts",
 		"./micc": "./dist/micc.d.mts",
 		"./state": "./dist/state.d.mts",
-		"./disp": "./dist/disp.mjs",
+		"./disp": "./dist/disp.d.mts",
 		"./xp_basic": "./dist/xp_basic.d.mts",
 		"./xp_state": "./dist/xp_state.d.mts"
 	},
