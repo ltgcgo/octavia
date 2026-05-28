@@ -40,8 +40,8 @@ let QyDisplay = class extends RootDisplay {
 			upThis.#ch = ev.data;
 		});
 	};
-	setCh(ch) {
-		this.#ch = ch;
+	setCh(part) {
+		this.#ch = part;
 	};
 	getCh() {
 		return this.#ch;

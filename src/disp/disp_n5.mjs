@@ -77,8 +77,8 @@ let Ns5rDisplay = class extends RootDisplay {
 			upThis.#booted = 1;
 		})();
 	};
-	setCh(ch) {
-		this.#ch = ch;
+	setCh(part) {
+		this.#ch = part;
 	};
 	getCh() {
 		return this.#ch;

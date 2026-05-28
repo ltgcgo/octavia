@@ -117,8 +117,8 @@ let ScDisplay = class extends RootDisplay {
 		super.reset();
 		this.#lingerExtra.fill(0);
 	};
-	setCh(ch) {
-		this.#ch = ch;
+	setCh(part) {
+		this.#ch = part;
 	};
 	getCh() {
 		return this.#ch;
@@ -450,7 +450,7 @@ let ScDisplay = class extends RootDisplay {
 				paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
 			};
 			paramText += upThis.device?.getChCc(upThis.#ch, 93).toString().padStart(3, " ");
-			let chSource = upThis.device.getChSource()[upThis.#ch];
+			let chSource = upThis.device.getChSource(upThis.#ch);
 			if (chSource < 128) {
 				paramText += "ABCDEFGH"[chSource >> 4];
 				paramText += ((chSource & 15) + 1).toString().padStart(2, "0");

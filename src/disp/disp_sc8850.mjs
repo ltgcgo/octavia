@@ -144,8 +144,8 @@ let Sc8850Display = class extends RootDisplay {
 			upThis.#booted = 2;
 		})();
 	};
-	setCh(ch) {
-		this.#ch = ch;
+	setCh(part) {
+		this.#ch = part;
 	};
 	getCh() {
 		return this.#ch;

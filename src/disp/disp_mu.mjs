@@ -259,7 +259,7 @@ let MuDisplay = class extends RootDisplay {
 		})();
 	};
 	setCh(part) {
-		this.#ch = ch;
+		this.#ch = part;
 	};
 	getCh() {
 		return this.#ch;
