@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice} from "../state/index.mjs";
-import {RootDisplay, MxFont40, MxBm256} from "../basic/index.mjs";
+import {FocusedPartDisplay, MxFont40, MxBm256} from "../basic/index.mjs";
 import {ChordDict} from "../chord/index.mjs";
 import psr170PlanRaw from "../data/generated/psr170ChordPlan.json" with {type: "json"};
 
@@ -22,7 +22,7 @@ let getPsr170PlanType = function (chord) {
 	};
 };
 
-let PsrDisplay = class extends RootDisplay {
+let PsrDisplay = class extends FocusedPartDisplay {
 	// #okdb = new Uint8Array(61);
 	#nkdb = new Uint8Array(61);
 	// #osdb = new Uint8Array(22);
@@ -31,7 +31,6 @@ let PsrDisplay = class extends RootDisplay {
 	#bmdb = new Uint8Array(256);
 	#bmst = 0;
 	#bmex = 0;
-	#ch = 0;
 	#lastRefreshTime = 0;
 	#letterShift = 0;
 	#letterCoolDown = 0;
@@ -76,12 +75,6 @@ let PsrDisplay = class extends RootDisplay {
 				this.#kana = meta.data;
 			}
 		});
-	};
-	setCh(part) {
-		this.#ch = part;
-	};
-	getCh() {
-		return this.#ch;
 	};
 	reset() {
 		super.reset();
@@ -209,11 +202,11 @@ let PsrDisplay = class extends RootDisplay {
 		let part = minCh >> 4;
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
-		if (this.#ch > maxCh) {
-			this.#ch = minCh + this.#ch & 15;
+		if (this.part > maxCh) {
+			this.part = minCh + this.part & 15;
 		};
-		if (this.#ch < minCh) {
-			this.#ch = maxCh - 15 + (this.#ch & 15);
+		if (this.part < minCh) {
+			this.part = maxCh - 15 + (this.part & 15);
 		};
 		// Clear out the current working display buffer.
 		this.#nkdb.forEach((e, i, a) => {a[i] = 0});
@@ -273,7 +266,7 @@ let PsrDisplay = class extends RootDisplay {
 		// Main range
 		for (let i = 36; i < 97; i++) {
 			let pixel = 0,
-			partInfo = sum.chKeyPr[this.#ch];
+			partInfo = sum.chKeyPr[this.part];
 			if (partInfo?.has(i)) {
 				pixel = partInfo.get(i).s < 4 ? 2 : 1;
 			};
@@ -281,19 +274,19 @@ let PsrDisplay = class extends RootDisplay {
 		};
 		// Lower octaves
 		for (let i = 0; i < 36; i++) {
-			if (sum.chKeyPr[this.#ch]?.has(i)) {
+			if (sum.chKeyPr[this.part]?.has(i)) {
 				arrowLeftFlag = true;
 				note = i % 12;
-				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+				let pixel = sum.chKeyPr[this.part]?.get(i).s < 4 ? 2 : 1;
 				this.#nkdb[note] = Math.max(this.#nkdb[note], pixel);
 			};
 		};
 		// Higher octaves
 		for (let i = 97; i < 128; i++) {
-			if (sum.chKeyPr[this.#ch]?.has(i)) {
+			if (sum.chKeyPr[this.part]?.has(i)) {
 				arrowRightFlag = true;
 				note = (i - 1) % 12 + 1;
-				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+				let pixel = sum.chKeyPr[this.part]?.get(i).s < 4 ? 2 : 1;
 				this.#nkdb[note + 48] = Math.max(this.#nkdb[note], pixel);
 			};
 		};
@@ -312,8 +305,8 @@ let PsrDisplay = class extends RootDisplay {
 		topOctaveFlag2 = false;
 		// Main range
 		for (let i = 48; i < 85; i++) {
-			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+			if (sum.chKeyPr[this.part]?.has(i)) {
+				let pixel = sum.chKeyPr[this.part]?.get(i).s < 4 ? 2 : 1;
 				this.#nsdb[(Math.floor(i / 12) - 4) * 7 + noteHeadPos[i % 12]] = pixel;
 				if (isBlackKey[i % 12]) {
 					if (isBlackKey[i % 12] === 1) {
@@ -327,8 +320,8 @@ let PsrDisplay = class extends RootDisplay {
 		}
 		// Lower octaves
 		for (let i = 0; i < 48; i++) {
-			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+			if (sum.chKeyPr[this.part]?.has(i)) {
+				let pixel = sum.chKeyPr[this.part]?.get(i).s < 4 ? 2 : 1;
 				this.#nsdb[noteHeadPos[i % 12]] = Math.max(this.#nsdb[noteHeadPos[i % 12]], pixel);
 				if (Math.floor(i / 12) === 3) {
 					bottomOctaveFlag1 = true;
@@ -348,8 +341,8 @@ let PsrDisplay = class extends RootDisplay {
 		}
 		// Higher octaves
 		for (let i = 85; i < 128; i++) {
-			if (sum.chKeyPr[this.#ch]?.has(i)) {
-				let pixel = sum.chKeyPr[this.#ch]?.get(i).s < 4 ? 2 : 1;
+			if (sum.chKeyPr[this.part]?.has(i)) {
+				let pixel = sum.chKeyPr[this.part]?.get(i).s < 4 ? 2 : 1;
 				this.#nsdb[14 + noteHeadPos[(i - 1) % 12 + 1]] = Math.max(this.#nsdb[14 + noteHeadPos[(i - 1) % 12 + 1]], pixel);
 				if (Math.floor((i - 1) / 12) === 7) {
 					topOctaveFlag1 = true;
@@ -378,8 +371,8 @@ let PsrDisplay = class extends RootDisplay {
 		ctx.fillStyle = topOctaveFlag2 ? activePixel : inactivePixel;
 		ctx.fillText("15va+", 874, 40);
 		// Temporary channel number display
-		// this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
-		this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 25, 260, 0.1, 0.1);
+		// this.#render7seg(`${"ABCDEFGH"[this.part >> 4]}${((this.part & 15) + 1).toString().padStart(2, "0")}`, ctx, 32, 315, 0.24, 0.24);
+		this.#render7seg(`${"ABCDEFGH"[this.part >> 4]}${((this.part & 15) + 1).toString().padStart(2, "0")}`, ctx, 25, 260, 0.1, 0.1);
 		// Measure / tempo view
 		ctx.font = '23px "Arial Web"';
 		ctx.fillStyle = tempoView ? inactivePixel : activePixel;
@@ -394,10 +387,10 @@ let PsrDisplay = class extends RootDisplay {
 		}
 		// Top 7-segment display
 		if (rhythmView) {
-			this.#render7seg(`${"ABCDEFGH"[this.#ch >> 4]}${((this.#ch & 15) + 1).toString().padStart(2, "0")}`, ctx, 112, 15, 0.24, 0.24);
+			this.#render7seg(`${"ABCDEFGH"[this.part >> 4]}${((this.part & 15) + 1).toString().padStart(2, "0")}`, ctx, 112, 15, 0.24, 0.24);
 		}
 		else if (mixerView) {
-			this.#render7seg(`${upThis.device?.getChPrimitive(upThis.#ch, 0, true)}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
+			this.#render7seg(`${upThis.device?.getChPrimitive(upThis.part, 0, true)}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
 		}
 		else {
 			this.#render7seg(`${id + 1}`.padStart(3, "0"), ctx, 112, 15, 0.24, 0.24);
@@ -426,7 +419,7 @@ let PsrDisplay = class extends RootDisplay {
 				upThis.#kana = ""; // clear lyric buffer upon each frame update
 			}
 			else if (mixerView) {
-				this.#renderDotMatrix(upThis.getChVoice(this.#ch).name, ctx, trueMode, 454, 32);
+				this.#renderDotMatrix(upThis.getChVoice(this.part).name, ctx, trueMode, 454, 32);
 			}
 			else {
 				let sngTtl = upThis.songTitle;
@@ -466,7 +459,7 @@ let PsrDisplay = class extends RootDisplay {
 				upThis.#bmdb.set(useBm);
 			};
 		} else {
-			upThis.muWriteBm(this.#bmdb, upThis.#ch);
+			upThis.muWriteBm(this.#bmdb, upThis.part);
 		};
 		upThis.#bmdb.forEach((e, i) => {
 			let x = i & 15, y = i >> 4;

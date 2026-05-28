@@ -304,22 +304,20 @@ let rhythmView = false;
 let tempoView = false;
 dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
-	let ch = visualiser.getCh();
 	if (ev.deltaY > 0) {
-		visualiser.setCh(ch + 1);
+		visualiser.part ++;
 	} else {
-		visualiser.setCh(ch - 1);
+		visualiser.part --;
 	};
 	ev.preventDefault();
 	ev.stopImmediatePropagation();
 });
 dispCanv.addEventListener("mousedown", function (ev) {
-	let ch = visualiser.getCh();
 	if (ev.button === 0) {
 		if (ev.offsetX < 64) {
-			visualiser.setCh(ch - 1);
+			visualiser.part --;
 		} else if (ev.offsetX >= 1046) {
-			visualiser.setCh(ch + 1);
+			visualiser.part ++;
 		} else if (ev.offsetY < 110) {
 			if (mixerView && !rhythmView) {
 				mixerView = false;

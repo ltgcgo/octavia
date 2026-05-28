@@ -211,19 +211,17 @@ let dispCanv = $e("#ns5rSc");
 let dispCtx = dispCanv.getContext("2d");
 dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
-	let ch = visualiser.part;
 	if (ev.deltaY > 0) {
-		visualiser.part = ch + 1;
+		visualiser.part ++;
 	} else {
-		visualiser.part = ch - 1;
+		visualiser.part --;
 	};
 });
 dispCanv.addEventListener("mousedown", function (ev) {
-	let ch = visualiser.part;
 	if (ev.offsetX < 64) {
-		visualiser.part = ch - 1;
+		visualiser.part --;
 	} else if (ev.offsetX >= 801) {
-		visualiser.part = ch + 1;
+		visualiser.part ++;
 	};
 });
 

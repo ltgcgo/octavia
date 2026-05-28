@@ -288,7 +288,7 @@ export class RootDisplay {
 	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);
 }
 
-/** A display that can focus on a single part. Automatically hooks into the active part switch events. */
+/** A display that always will focus on a single part. Automatically hooks into the active part switch events. */
 export class FocusedPartDisplay extends RootDisplay {
 	/** The currently selected part. Downstream classes should handle negative wrap-arounds. */
 	part: number;
