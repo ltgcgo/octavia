@@ -597,8 +597,6 @@ self.formatTime = function (seconds, withMs = false) {
 
 let demoPool = new SheetData();
 (async () => {
-	demoPool.load(await (await getBlobFrom(`list.tsv`)).text());
-	Alpine.store("demo", demoPool.data);
 	visualiser.loadEfx(await(await fetch(`../../midi-db/misc/efxId.tsv`)).text());
 	visualiser.loadMapPaths([
 		`../../midi-db/map/gm.24.tsv`,
@@ -626,7 +624,8 @@ let demoPool = new SheetData();
 	]);
 	await visualiser.glyphs.loadFile("../../midi-db/bitmaps/xg/font.tsv");
 	await visualiser.freeChord.loadFile("../../midi-db/bitmaps/xg/freeChord.tsv");
-
+	demoPool.load(await (await getBlobFrom(`list.tsv`)).text());
+	Alpine.store("demo", demoPool.data);
 })();
 
 document.body.addEventListener("keydown", async (ev) => {
