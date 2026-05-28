@@ -3941,7 +3941,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						"data": e
 					});
 					upThis.forceVoiceRefresh();
-				} else if (ri >= 64 && ri < 69) {
+				}/* else if (ri >= 64 && ri < 69) {
 					// Octavia custom SysEx, starts from 64 (10 before)
 					// Deprecated, do not use! Will be removed in 0.6
 					[() => {
@@ -3969,7 +3969,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.#receiveRS = !!e;
 						console.info(`Octavia System: RS receiving ${["dis", "en"][e]}abled.`);
 					}][ri - 64]();
-				};
+				}*/;
 			});
 		}).add([73, 10, 0], (msg, track) => {
 			// MU1000 remote switch

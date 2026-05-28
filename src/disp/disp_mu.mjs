@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
-import {RootDisplay, MxFont40, MxBm256} from "../basic/index.mjs";
+import {FocusedPartDisplay, MxFont40, MxBm256} from "../basic/index.mjs";
 
 import {
 	backlight,
@@ -172,13 +172,12 @@ CanvasRenderingContext2D.prototype.radial = function (centreX, centreY, angle, s
 	this.stroke();
 };
 
-let MuDisplay = class extends RootDisplay {
+let MuDisplay = class extends FocusedPartDisplay {
 	#mmdb = new Uint8Array(1360);
 	#pmdb = new Uint8Array(200);
 	#bmdb = new Uint8Array(256);
 	#bmst = 0; // 0 for voice bank, 2 for standard, 1 for sysex
 	#bmex = 0; // state expiration
-	#ch = 0;
 	#range = 0;
 	#start = 255; // start port
 	#minCh = 0;
@@ -215,9 +214,6 @@ let MuDisplay = class extends RootDisplay {
 		});*/
 		upThis.attachState("mu");
 		upThis.dState.muBlinkSpeedMode = 250;
-		upThis.addEventListener("channelactive", (ev) => {
-			upThis.#ch = ev.data;
-		});
 		upThis.addEventListener("channelmin", (ev) => {
 			if (ev.data >= 0) {
 				upThis.#minCh = ev.data + 1;
@@ -258,12 +254,6 @@ let MuDisplay = class extends RootDisplay {
 			upThis.#booted = 1;
 		})();
 	};
-	setCh(part) {
-		this.#ch = part;
-	};
-	getCh() {
-		return this.#ch;
-	};
 	reset() {
 		super.reset();
 		this.#minCh = 0;
@@ -286,7 +276,7 @@ let MuDisplay = class extends RootDisplay {
 			activePixel = aPxl;
 			ctx.fillStyle = `${backlight.grYellow}64`;
 		};
-		//console.debug(upThis.#ch, upThis.getChLastNoteAt(upThis.#ch));
+		//console.debug(upThis.part, upThis.getChLastNoteAt(upThis.part));
 		// Fill with green
 		//ctx.fillStyle = "#af2";
 		//ctx.fillStyle = `${backlight.grYellow}64`;
@@ -326,11 +316,11 @@ let MuDisplay = class extends RootDisplay {
 		let port = minCh >> 4;
 		minCh = port << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
-		if (upThis.#ch > maxCh) {
-			upThis.#ch = minCh + upThis.#ch & 15;
+		if (upThis.part > maxCh) {
+			upThis.part = minCh + upThis.part & 15;
 		};
-		if (upThis.#ch < minCh) {
-			upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
+		if (upThis.part < minCh) {
+			upThis.part = maxCh - 15 + (upThis.part & 15);
 		};
 		if (upThis.#minCh && upThis.#minCh > 0) {
 			minCh = upThis.#minCh - 1;
@@ -340,7 +330,7 @@ let MuDisplay = class extends RootDisplay {
 		};
 		if (upThis.#range) {
 			if (upThis.#start === 255) {
-				minCh = (Math.floor((upThis.#ch >> 4) / upThis.#range) * upThis.#range) << 4;
+				minCh = (Math.floor((upThis.part >> 4) / upThis.#range) * upThis.#range) << 4;
 			} else {
 				minCh = upThis.#start << 4;
 			};
@@ -348,8 +338,8 @@ let MuDisplay = class extends RootDisplay {
 		};
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
-		let showLsb = upThis.getChPrimitive(upThis.#ch, 1) === 0;
-		let voiceObj = upThis.getCachedChVoice(upThis.#ch);
+		let showLsb = upThis.getChPrimitive(upThis.part, 1) === 0;
+		let voiceObj = upThis.getCachedChVoice(upThis.part);
 		let letterDisp = upThis.device?.getLetter();
 		if (timeNow <= letterDisp.expire && letterDisp.text.length > 0) {
 			// Show display text
@@ -410,7 +400,7 @@ let MuDisplay = class extends RootDisplay {
 			// Render fonts
 			if (rendMode === 0 || (rendMode === 1 && upThis.device?.lcdHideBankInfo === false)) {
 				let voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " "),
-				primBuf = upThis.getChPrimitives(upThis.#ch);
+				primBuf = upThis.getChPrimitives(upThis.part);
 				let bnkSel = (primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");
 				switch (primBuf[0]) {
 					case 64:
@@ -470,7 +460,7 @@ let MuDisplay = class extends RootDisplay {
 			let initOff = 71.5;
 			for (let c = -2; c < 32; c ++) {
 				ctx.fillStyle = activePixel;
-				if (c + minCh === upThis.#ch) {
+				if (c + minCh === upThis.part) {
 					ctx.fillStyle = inactivePixel;
 				};
 				let filler = "";
@@ -509,7 +499,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("BANK", 83.5, 162.5);
 		ctx.fillText("PGM#", 276, 162.5);
 		// Show parts
-		upThis.textFont.getStr(`${(upThis.#ch + 1).toString().padStart(2, "0")}${"ABCDEFGH"[upThis.#ch >> 4]}${(upThis.#ch % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
+		upThis.textFont.getStr(`${(upThis.part + 1).toString().padStart(2, "0")}${"ABCDEFGH"[upThis.part >> 4]}${(upThis.part % 16 + 1).toString().padStart(2, "0")}`).forEach(function (e0, i0) {
 			let regionX = i0 * 5;
 			e0.forEach(function (e1, i1) {
 				let partX = i1 % 5,
@@ -561,7 +551,7 @@ let MuDisplay = class extends RootDisplay {
 			if (upThis.dState) {
 				upThis.dState.muDisableExBlink = false;
 			};
-			upThis.muWriteBm(upThis.#bmdb, upThis.#ch, voiceObj);
+			upThis.muWriteBm(upThis.#bmdb, upThis.part, voiceObj);
 			// Use stored pic
 			/* useBm = upThis.#bmdb.slice();
 			if (timeNow >= upThis.#bmex) {
@@ -574,23 +564,23 @@ let MuDisplay = class extends RootDisplay {
 					//getDebugState() && console.debug(`SysEx prompt reset.`);
 				};
 				upThis.#bmst = 0;
-				let voiceBm = upThis.getChBm(upThis.#ch, upThis.BM_YAMAHA_MU, voiceObj),
-				frameBm = upThis.getChBmState(upThis.#ch, voiceBm?.frames || 1);
+				let voiceBm = upThis.getChBm(upThis.part, upThis.BM_YAMAHA_MU, voiceObj),
+				frameBm = upThis.getChBmState(upThis.part, voiceBm?.frames || 1);
 				if (voiceBm) {
 					upThis.#bmdb.set(voiceBm.getFrame(frameBm));
 				};
-				//console.debug(upThis.#ch, frameBm);
+				//console.debug(upThis.part, frameBm);
 				let standard = voiceObj.standard.toLowerCase();
-				useBm = upThis.voxBm.getBm(voiceObj.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.#ch, 1), upThis.getChPrimitive(upThis.#ch, 0), 0, sum.mode).name);
-				if (standard !== upThis.device?.getChMode(upThis.#ch) && allowedStandards.xg.has(standard)) {
-					switch ((upThis.getChPrimitive(upThis.#ch, 1)) >> 4) {
+				useBm = upThis.voxBm.getBm(voiceObj.name) || upThis.voxBm.getBm(upThis.getVoice(upThis.getChPrimitive(upThis.part, 1), upThis.getChPrimitive(upThis.part, 0), 0, sum.mode).name);
+				if (standard !== upThis.device?.getChMode(upThis.part) && allowedStandards.xg.has(standard)) {
+					switch ((upThis.getChPrimitive(upThis.part, 1)) >> 4) {
 						case 2: {
 							// Internal
 							useBm = upThis.sysBm.getBm(`ext_${standard}I`);
 							break;
 						};
 						case 3: {
-							if (upThis.getChPrimitive(upThis.#ch, 1) === 48) {
+							if (upThis.getChPrimitive(upThis.part, 1) === 48) {
 								useBm = upThis.sysBm.getBm(`boot_3`);
 							};
 							break;
@@ -606,8 +596,8 @@ let MuDisplay = class extends RootDisplay {
 							break;
 						};
 					};
-				} else if (upThis?.device.getChType(upThis.#ch)) {
-					let chType = upThis?.device.getChType(upThis.#ch);
+				} else if (upThis?.device.getChType(upThis.part)) {
+					let chType = upThis?.device.getChType(upThis.part);
 					switch (voiceObj.ending) {
 						case "!":
 						case "?":
@@ -625,20 +615,20 @@ let MuDisplay = class extends RootDisplay {
 					useBm = upThis.sysBm.getBm(`st_korg`);
 				};
 				//if (!useBm) {
-					switch (upThis.getChPrimitive(upThis.#ch, 1)) {
+					switch (upThis.getChPrimitive(upThis.part, 1)) {
 						case 56:
 						case 121: {
-							useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
+							useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.part], 0, sum.mode).name);
 							break;
 						};
 						case 16: {
-							if (upThis.device.getChMode(upThis.#ch) === "xg") {
+							if (upThis.device.getChMode(upThis.part) === "xg") {
 								useBm = upThis.sysBm.getBm("cat_svox");
 							};
 							break;
 						};
 						case 126: {
-							if (upThis.getChPrimitive(upThis.#ch, 0) >> 4 === 7) {
+							if (upThis.getChPrimitive(upThis.part, 0) >> 4 === 7) {
 								useBm = upThis.sysBm.getBm("cat_smpl");
 							};
 							break;
@@ -659,8 +649,8 @@ let MuDisplay = class extends RootDisplay {
 						default: {
 							if (voiceObj.ending === "?") {
 								useBm = upThis.sysBm.getBm("no_vox");
-							} else if (upThis.getChPrimitive(upThis.#ch, 1) < 48) {
-								switch (upThis.getChPrimitive(upThis.#ch, 1)) {
+							} else if (upThis.getChPrimitive(upThis.part, 1) < 48) {
+								switch (upThis.getChPrimitive(upThis.part, 1)) {
 									case 16:
 									case 32:
 									case 33:
@@ -670,7 +660,7 @@ let MuDisplay = class extends RootDisplay {
 										break;
 									};
 									default: {
-										useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.#ch], 0, sum.mode).name);
+										useBm = upThis.voxBm.getBm(upThis.getVoice(0, sum.chProgr[upThis.part], 0, sum.mode).name);
 									};
 								};
 							};
@@ -678,7 +668,7 @@ let MuDisplay = class extends RootDisplay {
 					};
 				//};
 				if (useBm) {
-					let activeAs = upThis.getChBmState(upThis.#ch, useBm.length >> 8);
+					let activeAs = upThis.getChBmState(upThis.part, useBm.length >> 8);
 					useBm = useBm.subarray(activeAs << 8, (activeAs + 1) << 8);
 					//console.debug(activeAs);
 				} else {
@@ -728,22 +718,22 @@ let MuDisplay = class extends RootDisplay {
 			for (let i = 6; i >= 0; i --) {
 				upThis.#waveBuffer[i + 1] = upThis.#waveBuffer[i];
 			};
-			upThis.#waveBuffer[0] = +(sum.velo[upThis.#ch] > 127);
+			upThis.#waveBuffer[0] = +(sum.velo[upThis.part] > 127);
 		};
 		// Show param
-		normParamPaint(upThis.device.getChCc(upThis.#ch, 7), 404, ctx); // vol
-		normParamPaint(upThis.device.getChCc(upThis.#ch, 11), 452, ctx); // exp
-		normParamPaint(upThis.device.getChCc(upThis.#ch, 74), 500, ctx); // brt
-		efxParamPaint(upThis.device.getChCc(upThis.#ch, 91), 644, ctx, useWB, upThis.#waveBuffer); // rev
-		efxParamPaint(upThis.device.getChCc(upThis.#ch, 93), 692, ctx, useWB, upThis.#waveBuffer); // cho
-		efxParamPaint(upThis.device.getChCc(upThis.#ch, 94), 740, ctx, useWB, upThis.#waveBuffer); // var
+		normParamPaint(upThis.device.getChCc(upThis.part, 7), 404, ctx); // vol
+		normParamPaint(upThis.device.getChCc(upThis.part, 11), 452, ctx); // exp
+		normParamPaint(upThis.device.getChCc(upThis.part, 74), 500, ctx); // brt
+		efxParamPaint(upThis.device.getChCc(upThis.part, 91), 644, ctx, useWB, upThis.#waveBuffer); // rev
+		efxParamPaint(upThis.device.getChCc(upThis.part, 93), 692, ctx, useWB, upThis.#waveBuffer); // cho
+		efxParamPaint(upThis.device.getChCc(upThis.part, 94), 740, ctx, useWB, upThis.#waveBuffer); // var
 		// Show pan
 		ctx.beginPath();
 		ctx.arc(582, 216, 34, 2.356194490192345, 7.068583470577034);
 		ctx.lineWidth = 2;
 		ctx.strokeStyle = "#000f";
 		ctx.stroke();
-		let pan = upThis.device.getChCc(upThis.#ch, 10);
+		let pan = upThis.device.getChCc(upThis.part, 10);
 		upThis.#panStrokes.fill(0);
 		if (pan === 0) {
 			upThis.#panStrokes[0] = 1;
@@ -802,7 +792,7 @@ let MuDisplay = class extends RootDisplay {
 		ctx.fillText("MIC", 36, 162.5);
 		ctx.fillText("LINE", 36, 175.5);
 		// Pitch shift
-		let pitch = upThis.device.getChPitch(upThis.#ch),
+		let pitch = upThis.device.getChPitch(upThis.part),
 		isPositivePitch = pitch >= 0;
 		pitch = Math.round(Math.abs(pitch));
 		ctx.fillStyle = activePixel;
