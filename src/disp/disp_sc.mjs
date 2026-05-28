@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
-import {RootDisplay, MxFont40, MxBmDef} from "../basic/index.mjs";
+import {FocusedPartDisplay, MxFont40, MxBmDef} from "../basic/index.mjs";
 
 import {
 	bgOrange,
@@ -23,7 +23,7 @@ mspHeightX = 29,
 mspHeightY = 10,
 pdsX = cmpWidth * (17 + 2),
 pdsY = cmpWidth * (7 + 3) + 1;
-let ScDisplay = class extends RootDisplay {
+let ScDisplay = class extends FocusedPartDisplay {
 	// Opportunistic updates
 	// 0 ~ 664: Text display
 	// 665 ~ 1399: Param display
@@ -44,7 +44,6 @@ let ScDisplay = class extends RootDisplay {
 	#lingerExtra = new Uint16Array(allocated.ch);
 	#lingerPress = new Uint16Array(allocated.ch);
 	#noteOn = new Uint8Array(allocated.ch);
-	#ch = 0;
 	#lastBg = 0;
 	#countBg = 0;
 	useBlur = false;
@@ -92,9 +91,6 @@ let ScDisplay = class extends RootDisplay {
 			upThis.#sysTime = upThis.clockSource.now() + 800;
 			//this.device.setLetterDisplay(textArr);
 		});
-		upThis.addEventListener("channelactive", (ev) => {
-			upThis.#ch = ev.data;
-		});
 		upThis.addEventListener("note", ({data}) => {
 			if (data.state === 3) {
 				upThis.#noteOn[data.part] = 10;
@@ -116,12 +112,6 @@ let ScDisplay = class extends RootDisplay {
 	reset() {
 		super.reset();
 		this.#lingerExtra.fill(0);
-	};
-	setCh(part) {
-		this.#ch = part;
-	};
-	getCh() {
-		return this.#ch;
 	};
 	render(time, ctx) {
 		let sum = super.render(time);
@@ -250,11 +240,11 @@ let ScDisplay = class extends RootDisplay {
 			let part = minCh >> 4;
 			minCh = part << 4;
 			maxCh = ((maxCh >> 4) << 4) + 15;
-			if (upThis.#ch > maxCh) {
-				upThis.#ch = minCh + (upThis.#ch & 15);
+			if (upThis.part > maxCh) {
+				upThis.part = minCh + (upThis.part & 15);
 			};
-			if (upThis.#ch < minCh) {
-				upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
+			if (upThis.part < minCh) {
+				upThis.part = maxCh - 15 + (upThis.part & 15);
 			};
 			// Text matrix display
 			let letterDisp = upThis.device?.getLetter(),
@@ -263,7 +253,7 @@ let ScDisplay = class extends RootDisplay {
 			while (isTextNull.indexOf("  ") > -1) {
 				isTextNull = isTextNull.replaceAll("  ", " ");
 			};
-			let voiceObject = upThis.getChVoice(upThis.#ch);
+			let voiceObject = upThis.getChVoice(upThis.part);
 			if (timeNow <= upThis.#sysTime) {
 				upThis.textFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
 					e0.forEach(function (e1, i1) {
@@ -314,9 +304,9 @@ let ScDisplay = class extends RootDisplay {
 					});
 				});
 			} else {
-				let deviceMode = upThis.device?.getChMode(upThis.#ch),
-				infoTxt = `${upThis.device?.getChPrimitive(upThis.#ch, 0, true) + 1}`.padStart(3, "0");
-				let primBuf = upThis.device.getChPrimitives(upThis.#ch);
+				let deviceMode = upThis.device?.getChMode(upThis.part),
+				infoTxt = `${upThis.device?.getChPrimitive(upThis.part, 0, true) + 1}`.padStart(3, "0");
+				let primBuf = upThis.device.getChPrimitives(upThis.part);
 				switch (primBuf[0]) {
 					case 0: {
 						switch (primBuf[2]) {
@@ -375,7 +365,7 @@ let ScDisplay = class extends RootDisplay {
 					case 120:
 					case 122:
 					case 128: {
-						infoTxt += upThis.device?.getChType(upThis.#ch) === 0 ? " " : "*";
+						infoTxt += upThis.device?.getChType(upThis.part) === 0 ? " " : "*";
 						break;
 					};
 					case 126:
@@ -387,7 +377,7 @@ let ScDisplay = class extends RootDisplay {
 								break;
 							};
 							default: {
-								infoTxt += upThis.device?.getChType(upThis.#ch) === 0 ? " " : "*";
+								infoTxt += upThis.device?.getChType(upThis.part) === 0 ? " " : "*";
 							};
 						};
 						break;
@@ -422,10 +412,10 @@ let ScDisplay = class extends RootDisplay {
 			};
 			// Assemble text
 			let paramText = "";
-			paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}${((upThis.#ch & 15) + 1).toString().padStart(2, "0")}`;
-			paramText += upThis.device?.getChCc(upThis.#ch, 7).toString().padStart(3, " ");
-			paramText += upThis.device?.getChCc(upThis.#ch, 91).toString().padStart(3, " ");
-			let cPit = upThis.device.getChPitch(upThis.#ch);
+			paramText += `${"ABCDEFGH"[upThis.part >> 4]}${((upThis.part & 15) + 1).toString().padStart(2, "0")}`;
+			paramText += upThis.device?.getChCc(upThis.part, 7).toString().padStart(3, " ");
+			paramText += upThis.device?.getChCc(upThis.part, 91).toString().padStart(3, " ");
+			let cPit = upThis.device.getChPitch(upThis.part);
 			if (cPit < 0) {
 				paramText += "-";
 			} else if (cPit === 0) {
@@ -434,7 +424,7 @@ let ScDisplay = class extends RootDisplay {
 				paramText += "+";
 			};
 			paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, " ");
-			let cPan = upThis.device?.getChCc(upThis.#ch, 10);
+			let cPan = upThis.device?.getChCc(upThis.part, 10);
 			if (cPan === 64) {
 				paramText += "C 0";
 			} else if (cPan === 128) {
@@ -449,13 +439,13 @@ let ScDisplay = class extends RootDisplay {
 				};
 				paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
 			};
-			paramText += upThis.device?.getChCc(upThis.#ch, 93).toString().padStart(3, " ");
-			let chSource = upThis.device.getChSource(upThis.#ch);
+			paramText += upThis.device?.getChCc(upThis.part, 93).toString().padStart(3, " ");
+			let chSource = upThis.device.getChSource(upThis.part);
 			if (chSource < 128) {
 				paramText += "ABCDEFGH"[chSource >> 4];
 				paramText += ((chSource & 15) + 1).toString().padStart(2, "0");
 			} else {
-				paramText += `${"ABCDEFGH"[upThis.#ch >> 4]}--`;
+				paramText += `${"ABCDEFGH"[upThis.part >> 4]}--`;
 			};
 			// Render fonts
 			upThis.textFont.getStr(paramText).forEach(function (e0, i0) {
