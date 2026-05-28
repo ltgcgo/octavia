@@ -43,13 +43,17 @@ find . -type f | while IFS= read -r file; do
 		# Is a file
 		if [ "$(echo "$file" | grep -E "$COMPRESS_CRIT")" != "" ]; then
 			if [[ "$file" == *"/index.htm" ]]; then
-				echo "File \"${file}\" is preserved."
+				#echo "File \"${file}\" is preserved."
+				printf "" > "$file"
 			elif [[ "$file" == *"/index.html" ]]; then
-				echo "File \"${file}\" is preserved."
+				#echo "File \"${file}\" is preserved."
+				printf "" > "$file"
 			elif [[ "$file" == *"/default.htm" ]]; then
-				echo "File \"${file}\" is preserved."
+				#echo "File \"${file}\" is preserved."
+				printf "" > "$file"
 			elif [[ "$file" == *"/default.html" ]]; then
-				echo "File \"${file}\" is preserved."
+				#echo "File \"${file}\" is preserved."
+				printf "" > "$file"
 			else
 				rm "$file"
 			fi
