@@ -70,9 +70,6 @@ let PsrDisplay = class extends RootDisplay {
 			upThis.#bmst = 2;
 			upThis.#bmex = upThis.clockSource.now() + 1600;
 		});*/
-		upThis.addEventListener("channelactive", (ev) => {
-			this.#ch = ev.data;
-		});
 		upThis.addEventListener("metacommit", (ev) => {
 			let meta = ev.data;
 			if (meta.type === "SGLyrics" || meta.type === "C.Lyrics" || meta.type === "KarLyric") {

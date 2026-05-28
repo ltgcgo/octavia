@@ -254,11 +254,10 @@ dispCanv.addEventListener("wheel", function (ev) {
 			};
 		};
 	} else {
-		let ch = visualiser.getCh();
 		if (ev.deltaY > 0) {
-			visualiser.setCh(ch + 1);
+			visualiser.part ++;
 		} else {
-			visualiser.setCh(ch - 1);
+			visualiser.part --;
 		};
 	};
 	ev.preventDefault();
@@ -275,6 +274,7 @@ document.addEventListener("keydown", async (ev) => {
 			if (viewId > viewCount) {
 				viewId = 0;
 			};
+			ev.preventDefault();
 			break;
 		};
 		case "ArrowUp": {
@@ -282,14 +282,15 @@ document.addEventListener("keydown", async (ev) => {
 			if (viewId < 0) {
 				viewId = viewCount;
 			};
+			ev.preventDefault();
 			break;
 		};
 		case "ArrowLeft": {
-			visualiser.setCh(visualiser.getCh() - 1);
+			visualiser.part --;
 			break;
 		};
 		case "ArrowRight": {
-			visualiser.setCh(visualiser.getCh() + 1);
+			visualiser.part ++;
 			break;
 		};
 	};
@@ -300,12 +301,12 @@ document.addEventListener("keydown", async (ev) => {
 }); */
 const viewCount = 3; // actual count minus one
 dispCanv.addEventListener("mousedown", function (ev) {
-	let ch = visualiser.getCh();
+	let ch = visualiser.part;
 	if (ev.button === 0) {
 		if (ev.offsetX < 64) {
-			visualiser.setCh(ch - 1);
+			visualiser.part = (ch - 1);
 		} else if (ev.offsetX >= 717) {
-			visualiser.setCh(ch + 1);
+			visualiser.part = (ch + 1);
 		} else if (ev.offsetY < 72) {
 			viewId --;
 			if (viewId < 0) {
@@ -322,7 +323,7 @@ dispCanv.addEventListener("mousedown", function (ev) {
 
 // Allow channel switching in browser console
 self.toCh = function (ch) {
-	visualiser.setCh(ch);
+	visualiser.part = (ch);
 };
 
 // Render frames

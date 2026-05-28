@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, getYSect} from "../state/index.mjs";
-import {RootDisplay, MxFont40, MxBm256, MxBmDef} from "../basic/index.mjs";
+import {FocusedPartDisplay, MxFont40, MxBm256, MxBmDef} from "../basic/index.mjs";
 import {ChordDict, getFreePlan} from "../chord/index.mjs";
 
 import {
@@ -9,11 +9,10 @@ import {
 	lcdCache
 } from "./colour.js";
 
-let QyDisplay = class extends RootDisplay {
+let QyDisplay = class extends FocusedPartDisplay {
 	#omdb = new Uint8Array(8192); // Full display
 	#nmdb = new Uint8Array(8192); // Full display, but on commit
 	#mode = "?";
-	#ch = 0;
 	#refreshed = true;
 	#backlight = bgWhite;
 	#bmst = 0;
@@ -36,15 +35,6 @@ let QyDisplay = class extends RootDisplay {
 		super(new OctaviaDevice(), 0, 0.96875, true);
 		let upThis = this;
 		upThis.attachState("mu");
-		upThis.addEventListener("channelactive", (ev) => {
-			upThis.#ch = ev.data;
-		});
-	};
-	setCh(part) {
-		this.#ch = part;
-	};
-	getCh() {
-		return this.#ch;
 	};
 	#renderBox(sx, sy, width, height) {
 		let length = width * height;
@@ -137,11 +127,11 @@ let QyDisplay = class extends RootDisplay {
 		let part = minCh >> 4;
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
-		if (this.#ch > maxCh) {
-			this.#ch = minCh + this.#ch & 15;
+		if (this.part > maxCh) {
+			this.part = minCh + this.part & 15;
 		};
-		if (this.#ch < minCh) {
-			this.#ch = maxCh - 15 + (this.#ch & 15);
+		if (this.part < minCh) {
+			this.part = maxCh - 15 + (this.part & 15);
 		};
 		// Clear out the current working display buffer.
 		this.#nmdb.forEach((e, i, a) => {a[i] = 0});
@@ -227,7 +217,7 @@ let QyDisplay = class extends RootDisplay {
 				// Transpose render
 				{
 					if (!upThis.trueMode) {
-						let rPit = upThis.device.getChRawPitch(upThis.#ch),
+						let rPit = upThis.device.getChRawPitch(upThis.part),
 						rawPitchX = (rPit + 8192) >> 11;
 						if (rPit > 0) {
 							rawPitchX ++;
@@ -235,7 +225,7 @@ let QyDisplay = class extends RootDisplay {
 						upThis.#renderFill(58 + rawPitchX, 18, 4, 5);
 						upThis.#renderFill(59 + rawPitchX, 19, 2, 3, 0);
 					};
-					let tPit = upThis.device.getChPitch(upThis.#ch);
+					let tPit = upThis.device.getChPitch(upThis.part);
 					let tStr = tPit < 0 ? "-" : "+";
 					tStr += `${Math.round(Math.abs(tPit))}`.padStart(2, "0");
 					usedFont.getStr(tStr).forEach((e, i) => {
@@ -254,12 +244,12 @@ let QyDisplay = class extends RootDisplay {
 				upThis.#renderFill(71, 48, 1, 16);
 				upThis.qyRsrc.getBm("Mod_Usr")?.write(upThis.#nmdb, 128, 0, 109, 48);
 				// Bank info
-				let primBuf = upThis.device.getChPrimitives(upThis.#ch);
+				let primBuf = upThis.device.getChPrimitives(upThis.part);
 				// Fetch voice bitmap
 				if (viewId & 1) {
 					upThis.dState.muUseVoiceBm = true;
-					upThis.muWriteBm(upThis.#bmdb, upThis.#ch)
-					let voiceName = upThis.getChVoice(this.#ch);
+					upThis.muWriteBm(upThis.#bmdb, upThis.part)
+					let voiceName = upThis.getChVoice(this.part);
 					usedFont.getStr(`${primBuf[0].toString().padStart(3, "0")} ${primBuf[1].toString().padStart(3, "0")} ${primBuf[2].toString().padStart(3, "0")}`).forEach((e, i) => {
 						e.render((e, x, y) => {
 							upThis.#nmdb[6145 + 6 * i + x + (y << 7)] = e;
@@ -292,7 +282,7 @@ let QyDisplay = class extends RootDisplay {
 							upThis.#nmdb[7187 + 6 * i + x + (y << 7)] = e;
 						});
 					});
-					if (!upThis.muWriteBm(upThis.#bmdb, upThis.#ch)) {
+					if (!upThis.muWriteBm(upThis.#bmdb, upThis.part)) {
 						upThis.#bmdb.fill(0);
 						// Chords
 						let deviceChords = upThis.device?.modelEx?.xg.chords,
@@ -364,14 +354,14 @@ let QyDisplay = class extends RootDisplay {
 				};
 				upThis.#renderFill(29, 24, 1, 40);
 				// Bank info
-				let voiceInfo = upThis.getChVoice(upThis.#ch);
-				let primBuf = upThis.device.getChPrimitives(upThis.#ch);
+				let voiceInfo = upThis.getChVoice(upThis.part);
+				let primBuf = upThis.device.getChPrimitives(upThis.part);
 				usedFont.getStr(`${(primBuf[1] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || primBuf[0] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
 					e.render((e, x, y) => {
 							upThis.#nmdb[55 + x + i * 6 + (y << 7)] = e;
 					});
 				});
-				let curCat = upThis.#getCat(upThis.#ch, upThis.device?.getChPrimitive(upThis.#ch, 1, true), upThis.device?.getChPrimitive(upThis.#ch, 0, true)),
+				let curCat = upThis.#getCat(upThis.part, upThis.device?.getChPrimitive(upThis.part, 1, true), upThis.device?.getChPrimitive(upThis.part, 0, true)),
 				curCatBm = upThis.qyRsrc.getBm(`Vox_${curCat}`);
 				if (curCatBm) {
 					curCatBm.write(upThis.#nmdb, 128, 0, 37, 0);
@@ -387,7 +377,7 @@ let QyDisplay = class extends RootDisplay {
 		};
 		{
 			// Channel tabs
-			let curSeg = this.#ch >> 3;
+			let curSeg = this.part >> 3;
 			let preCal = (viewId >> 1) ? 1310 : 4254,
 			preCalY = (viewId >> 1) ? 10 : 33;
 			// Channel info box
@@ -440,7 +430,7 @@ let QyDisplay = class extends RootDisplay {
 						upThis.#renderFill(31 + tchOff, preCalY + 10 - cVelo, 9, cVelo + 1);
 					};
 				};
-				if (this.#ch === rch) {
+				if (this.part === rch) {
 					textTarget = 0;
 					upThis.#renderFill(31 + tchOff, preCalY, 9, 5);
 					if (viewId >> 1) {
@@ -471,7 +461,7 @@ let QyDisplay = class extends RootDisplay {
 					let curCat = upThis.#getCat(rch, upThis.device?.getChPrimitive(rch, 1), upThis.device?.getChPrimitive(rch, 0)),
 					curCatId = `Vox_${[`${curCat}`, "dr", "ds1", "ds2", "ds3", "ds4", "ds5", "ds6", "ds7", "ds8"][chType]}`,
 					curCatBm = upThis.qyRsrc.getBm(curCatId);
-					/*if (upThis.#ch === rch) {
+					/*if (upThis.part === rch) {
 						console.debug(curCatBm?.id);
 					};*/
 					if (curCatBm) {
