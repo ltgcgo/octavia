@@ -294,5 +294,4 @@ export class SinglePartDisplay extends RootDisplay {
 	setCh(part: number): void;
 	/** Gets the currently selected part. */
 	getCh(): number;
-	constructor(device: OctaviaDevice);
 }
