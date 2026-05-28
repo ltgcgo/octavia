@@ -1223,19 +1223,32 @@ const RootDisplay = class extends CustomEventSource {
 	};
 };
 
-const SinglePartDisplay = class SinglePartDisplay extends RootDisplay {
-	#ch = 0;
+const FocusedPartDisplay = class FocusedPartDisplay extends RootDisplay {
+	#part = 0;
 	setCh(part) {
-		this.#ch = part;
+		if (typeof part !== "number") {
+			throw(new TypeError(`Part number must be a number.`));
+		};
+		if (part >= 0 && part < allocated.ch) {
+			this.#part = part;
+		} else {
+			throw(new RangeError(`Part number ${part} exceeded the safe range: [0, ${allocated.ch}).`));
+		};
 	};
 	getCh() {
-		return this.#ch;
+		return this.#part;
+	};
+	constructor(device, atk, dcy, linear) {
+		super(device, atk, dcy, linear);
+		upThis.addEventListener("channelactive", (ev) => {
+			upThis.#part = ev.data;
+		});
 	};
 };
 
 export {
 	RootDisplay,
-	SinglePartDisplay,
+	FocusedPartDisplay,
 	StylePool,
 	FileHandler,
 	BitmapMatrix,

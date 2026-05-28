@@ -7,11 +7,11 @@
 */
 
 import {
-	SinglePartDisplay
+	FocusedPartDisplay
 } from "../basic/index.d.mts";
 
 /** The recreated LCD screen of the Yamaha MU lineup, matching MU2000. Recommended for all non-PSR XG visualisations. */
-export class MuDisplay extends SinglePartDisplay {
+export class MuDisplay extends FocusedPartDisplay {
 	/** If the 2-pixel-wide strength metres are affected by panning. */
 	isMetreAffectedByPan: boolean;
 	/** If contrast support is enabled. Enabling contrast support disables pixel transition blurring. */
@@ -20,7 +20,7 @@ export class MuDisplay extends SinglePartDisplay {
 }
 
 /** The recreated LCD screen of KORG NS5R. Recommended for all KORG AG, X5 and N5 visualisations. */
-export class Ns5rDisplay extends SinglePartDisplay {
+export class Ns5rDisplay extends FocusedPartDisplay {
 	constructor(conf: {
 		/** When `true`, the pixels will transition smoothly. */
 		useBlur?: boolean;
@@ -28,17 +28,17 @@ export class Ns5rDisplay extends SinglePartDisplay {
 }
 
 /** The recreated LCD screen of the lower-end Yamaha PSR lineup, matching PSR-170. Recommended for PSR XG visualisations. */
-export class PsrDisplay extends SinglePartDisplay {
+export class PsrDisplay extends FocusedPartDisplay {
 	constructor();
 }
 
 /** The recreated LCD screen of the Yamaha QY lineup, matching QY100. Recommended for song visualisations targeting QY, or containing chord, style pattern or YMCS section data. */
-export class QyDisplay extends SinglePartDisplay {
+export class QyDisplay extends FocusedPartDisplay {
 	constructor();
 }
 
 /** The recreated LCD screen of the Roland SoundCanvas lineup, matching SC-88 Pro. Recommended for all GS visualisations. */
-export class ScDisplay extends SinglePartDisplay {
+export class ScDisplay extends FocusedPartDisplay {
 	constructor(conf: {
 		/** When `true`, the pixels will transition smoothly. */
 		useBlur?: boolean;
@@ -46,7 +46,7 @@ export class ScDisplay extends SinglePartDisplay {
 }
 
 /** The recreated LCD screen of the Roland SoundCanvas lineup, matching SC-8850. Recommended for all GS visualisations. */
-export class Sc8850Display extends SinglePartDisplay {
+export class Sc8850Display extends FocusedPartDisplay {
 	constructor(conf: {
 		/** When `true`, the pixels will transition smoothly. */
 		useBlur?: boolean;

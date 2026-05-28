@@ -288,10 +288,11 @@ export class RootDisplay {
 	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);
 }
 
-/** A restricted display that can only display a single part in detail. (WIP) Automatically hooks into the active part switch events. */
-export class SinglePartDisplay extends RootDisplay {
+/** A display that can focus on a single part. Automatically hooks into the active part switch events. */
+export class FocusedPartDisplay extends RootDisplay {
 	/** Sets the currently selected part. */
 	setCh(part: number): void;
 	/** Gets the currently selected part. */
 	getCh(): number;
+	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);
 }
