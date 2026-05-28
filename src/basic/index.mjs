@@ -1124,7 +1124,7 @@ const RootDisplay = class extends CustomEventSource {
 		// This is asking for trouble
 		eventPassThru(upThis.device, upThis, "mode");
 		eventPassThru(upThis.device, upThis, "mastervolume");
-		eventPassThru(upThis.device, upThis, "channelactive");
+		eventPassThru(upThis.device, upThis, "partfocus");
 		eventPassThru(upThis.device, upThis, "channelmin");
 		eventPassThru(upThis.device, upThis, "channelmax");
 		eventPassThru(upThis.device, upThis, "portrange");
@@ -1242,7 +1242,7 @@ const FocusedPartDisplay = class FocusedPartDisplay extends RootDisplay {
 	rxPartEvents = true;
 	constructor(device, atk, dcy, linear) {
 		super(device, atk, dcy, linear);
-		this.addEventListener("channelactive", (ev) => {
+		this.addEventListener("partfocus", (ev) => {
 			if (this.rxPartEvents) {
 				this.#part = ev.data;
 			};

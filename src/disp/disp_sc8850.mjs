@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice, allocated} from "../state/index.mjs";
-import {RootDisplay, MxFont40, MxFont176, MxBmDef} from "../basic/index.mjs";
+import {FocusedPartDisplay, MxFont40, MxFont176, MxBmDef} from "../basic/index.mjs";
 
 import {getDebugState} from "../state/utils.js";
 
@@ -51,7 +51,7 @@ let twoLetterMode = {
 	"trin": "tr"
 };
 
-let Sc8850Display = class extends RootDisplay {
+let Sc8850Display = class extends FocusedPartDisplay {
 	#pixelLit = 255;
 	#pixelOff = 0;
 	#lastBg = 0;
@@ -63,7 +63,6 @@ let Sc8850Display = class extends RootDisplay {
 	#linger = new Uint8Array(allocated.ch);
 	#lingerExtra = new Uint8Array(allocated.ch);
 	#lingerPress = new Uint8Array(allocated.ch);
-	#ch = 0;
 	#range = 0;
 	#start = 255; // start port
 	#mode = "?";
@@ -87,9 +86,6 @@ let Sc8850Display = class extends RootDisplay {
 		super(new OctaviaDevice(), 0.25, 0.5);
 		let upThis = this;
 		upThis.useBlur = !!conf?.useBlur;
-		upThis.addEventListener("channelactive", (ev) => {
-			upThis.#ch = ev.data;
-		});
 		upThis.addEventListener("portrange", (ev) => {
 			if (ev && ev.data !== 1 << Math.log2(ev.data)) {
 				console.debug(`MU display rejected port range value ${ev.data}.`);
@@ -143,12 +139,6 @@ let Sc8850Display = class extends RootDisplay {
 			await Promise.all([upThis.sysBm.loaded.wait(), upThis.voxBm.loaded.wait()]);
 			upThis.#booted = 2;
 		})();
-	};
-	setCh(part) {
-		this.#ch = part;
-	};
-	getCh() {
-		return this.#ch;
 	};
 	reset() {
 		super.reset();
@@ -208,15 +198,15 @@ let Sc8850Display = class extends RootDisplay {
 			let part = minCh >> 4;
 			minCh = part << 4;
 			maxCh = ((maxCh >> 4) << 4) + 15;
-			if (upThis.#ch > maxCh) {
-				upThis.#ch = minCh + upThis.#ch & 15;
+			if (upThis.part > maxCh) {
+				upThis.part = minCh + upThis.part & 15;
 			};
-			if (upThis.#ch < minCh) {
-				upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
+			if (upThis.part < minCh) {
+				upThis.part = maxCh - 15 + (upThis.part & 15);
 			};
 			if (upThis.#range) {
 				if (upThis.#start === 255) {
-					minCh = (Math.floor((upThis.#ch >> 4) / upThis.#range) * upThis.#range) << 4;
+					minCh = (Math.floor((upThis.part >> 4) / upThis.#range) * upThis.#range) << 4;
 				} else {
 					minCh = upThis.#start << 4;
 				};
@@ -225,7 +215,7 @@ let Sc8850Display = class extends RootDisplay {
 			let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4);
 			//console.debug(minCh, maxCh, rendMode);
 			// Render current channel
-			upThis.font56.getStr(`${"ABCDEFGH"[upThis.#ch >> 4]}${`${(upThis.#ch & 15) + 1}`.padStart(2, "0")}`).forEach((e0, i0) => {
+			upThis.font56.getStr(`${"ABCDEFGH"[upThis.part >> 4]}${`${(upThis.part & 15) + 1}`.padStart(2, "0")}`).forEach((e0, i0) => {
 				let offsetX = i0 * 6 + 1;
 				e0.forEach((e1, i1) => {
 					let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
@@ -235,7 +225,7 @@ let Sc8850Display = class extends RootDisplay {
 				});
 			});
 			// Render bank info and voice name
-			let voiceObject = upThis.getChVoice(upThis.#ch);
+			let voiceObject = upThis.getChVoice(upThis.part);
 			let scLetterNative = upThis.#letterMode === "gs" || upThis.#letterMode === "sc";
 			let scLetterMode = 0,
 			letterDisp = upThis.device?.getLetter(),
@@ -260,7 +250,7 @@ let Sc8850Display = class extends RootDisplay {
 						};
 					});
 				});
-				upThis.font56.getStr(`${upThis.device?.getChPrimitive(upThis.#ch, 0, true)}`.padStart(3, "0")).forEach((e0, i0) => {
+				upThis.font56.getStr(`${upThis.device?.getChPrimitive(upThis.part, 0, true)}`.padStart(3, "0")).forEach((e0, i0) => {
 					let offsetX = i0 * 6 + 43;
 					e0.forEach((e1, i1) => {
 						let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
@@ -306,13 +296,13 @@ let Sc8850Display = class extends RootDisplay {
 					});
 				};
 			};
-			upThis.getChBm(upThis.#ch, upThis.BM_UNIVERSAL, voiceObject)?.render((e, x, y) => {
+			upThis.getChBm(upThis.part, upThis.BM_UNIVERSAL, voiceObject)?.render((e, x, y) => {
 				upThis.#nmdb[(y + 18) * totalWidth + x + 2] = e ? 255 : 0;
 			});
 			// Render port selection
 			switch (rendMode) {
 				case 0: {
-					let portStart = (upThis.#ch >> 6) << 2, portNow = upThis.#ch >> 4;
+					let portStart = (upThis.part >> 6) << 2, portNow = upThis.part >> 4;
 					let shiftX = +!((portStart >> 6) & 1);
 					for (let i = 0; i < 4; i ++) {
 						let portWork = portStart + i;
@@ -338,7 +328,7 @@ let Sc8850Display = class extends RootDisplay {
 				case 1:
 				case 2:
 				case 3: {
-					let portNow = upThis.#ch >> 4;
+					let portNow = upThis.part >> 4;
 					for (let i = 0; i < 4; i ++) {
 						let portOffX = i * 40 + 2, portOffY = (rendMode === i) ? 59 : 58;
 						let tabText = i === 3 ? "128CH" : `${16 << i}CH-${"ABCDEFGH"[minCh >> 4]}`;
@@ -380,7 +370,7 @@ let Sc8850Display = class extends RootDisplay {
 					break;
 				};
 				default: {
-					let mode = (twoLetterMode[upThis.device.getChMode(upThis.#ch)] || upThis.device.getChMode(upThis.#ch)).toUpperCase();
+					let mode = (twoLetterMode[upThis.device.getChMode(upThis.part)] || upThis.device.getChMode(upThis.part)).toUpperCase();
 					upThis.font56.getStr(mode).forEach((e0, i0) => {
 						let offsetX = i0 * 6;
 						e0.forEach((e1, i1) => {
@@ -555,7 +545,7 @@ let Sc8850Display = class extends RootDisplay {
 				};
 			};
 			// EFX and bank?
-			if (upThis.device.getChEffectSink(upThis.#ch)) {
+			if (upThis.device.getChEffectSink(upThis.part)) {
 				let cx = 153, cy = 19;
 				upThis.sysBm.getBm("efxOn")?.render((e, x, y) => {
 					if (e) {
@@ -563,10 +553,10 @@ let Sc8850Display = class extends RootDisplay {
 					};
 				});
 			};
-			switch (upThis.device.getChMode(upThis.#ch)) {
+			switch (upThis.device.getChMode(upThis.part)) {
 				case "gs":
 				case "sc": {
-					let cc32 = upThis.getChPrimitive(upThis.#ch, 2, true);
+					let cc32 = upThis.getChPrimitive(upThis.part, 2, true);
 					if (cc32 > 0 && cc32 < 5) {
 						let cx = 153;
 						let cy = 48 - cc32 * 5;

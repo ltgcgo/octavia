@@ -4041,7 +4041,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			} else if (cmd < 32) {
 				if (upThis.#receiveRS) {
 					let e = upThis.chRedir(cmd - 16 + (upThis.#selectPort << 4), track, true);
-					upThis.dispatchEvent("channelactive", e);
+					upThis.dispatchEvent("partfocus", e);
 				};
 			} else if (cmd < 36) {
 				let e = upThis.chRedir((cmd - 32) << 4, track, true);
@@ -4062,7 +4062,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				([() => {
 					// Current channel
 					upThis.setChActive(e, 1);
-					upThis.dispatchEvent("channelactive", e);
+					upThis.dispatchEvent("partfocus", e);
 					getDebugState() && console.debug(`${dPref}current part: CH${e + 1}`);
 				}, () => {
 					// Port range

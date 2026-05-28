@@ -249,19 +249,17 @@ let dispCanv = $e("#rlndSc8850");
 let dispCtx = dispCanv.getContext("2d");
 dispCanv.addEventListener("wheel", function (ev) {
 	ev.preventDefault();
-	let ch = visualiser.getCh();
 	if (ev.deltaY > 0) {
-		visualiser.setCh(ch + 1);
+		visualiser.part ++;
 	} else {
-		visualiser.setCh(ch - 1);
+		visualiser.part --;
 	};
 });
 dispCanv.addEventListener("mousedown", function (ev) {
-	let ch = visualiser.getCh();
 	if (ev.offsetX < 64) {
-		visualiser.setCh(ch - 1);
+		visualiser.part --;
 	} else if (ev.offsetX >= 744) {
-		visualiser.setCh(ch + 1);
+		visualiser.part ++;
 	};
 });
 

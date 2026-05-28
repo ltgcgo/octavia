@@ -1612,7 +1612,7 @@ let Cambiare = class extends RootDisplay {
 				`part-active`
 			]);
 		});
-		upThis.addEventListener("channelactive", (ev) => {
+		upThis.addEventListener("partfocus", (ev) => {
 			if (upThis.#underlinedCh < allocated.ch) {
 				let lastCh = upThis.#sectPart[upThis.#underlinedCh >> 4][upThis.#underlinedCh & 15].number;
 				classOff(lastCh, ["part-focus"]);
