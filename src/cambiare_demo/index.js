@@ -622,7 +622,7 @@ let demoPool = new SheetData();
 		`../../midi-db/map/cs2x.10.tsv`,
 		`../../midi-db/map/s90es.10.tsv`
 	]);
-	await visualiser.glyphs.loadFile("../../midi-db/bitmaps/xg/font.tsv");
+	await visualiser.textFont.loadFile("../../midi-db/bitmaps/xg/font.tsv");
 	await visualiser.freeChord.loadFile("../../midi-db/bitmaps/xg/freeChord.tsv");
 	demoPool.load(await (await getBlobFrom(`list.tsv`)).text());
 	Alpine.store("demo", demoPool.data);
