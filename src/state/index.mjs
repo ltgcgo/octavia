@@ -4084,6 +4084,10 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.dispatchEvent("portstart", 255);
 						console.debug(`${dPref2}start port: reset`);
 					};
+				}, () => {
+					// Repurposed RS reception toggle (custom extension)
+					upThis.#receiveRS = !!e;
+					console.info(`Octavia System: RS receiving ${["dis", "en"][e]}abled.`);
 				}][ri] || (() => {
 					console.debug(`${dPref}unknown address: ${ri}`);
 				}))();

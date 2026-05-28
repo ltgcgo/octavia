@@ -587,7 +587,7 @@ getBridge().addEventListener("message", function (ev) {
 	// MU128 demo
 	let perf = new TimedEvents();
 	// Disable native RS
-	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 0, 0, 68, 0]}));
+	perf.push(new PointEvent(0, {type: 15, track: 0, data: [67, 16, 73, 11, 0, 3, 0]}));
 	perf.push(new PointEvent(0, generateSwitch(0, 0, 0)));
 	perf.push(new PointEvent(0.5, {type: 15, data: [67, 16, 73, 0, 0, 18, 1]}));
 	perf.push(new PointEvent(1.6, generateSwitch(0, 0, 3)));
