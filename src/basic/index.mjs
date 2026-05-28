@@ -1239,10 +1239,13 @@ const FocusedPartDisplay = class FocusedPartDisplay extends RootDisplay {
 	get part() {
 		return this.#part;
 	};
+	rxPartEvents = true;
 	constructor(device, atk, dcy, linear) {
 		super(device, atk, dcy, linear);
 		this.addEventListener("channelactive", (ev) => {
-			this.#part = ev.data;
+			if (this.rxPartEvents) {
+				this.#part = ev.data;
+			};
 		});
 	};
 };

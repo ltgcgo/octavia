@@ -292,5 +292,7 @@ export class RootDisplay {
 export class FocusedPartDisplay extends RootDisplay {
 	/** The currently selected part. Downstream classes should handle negative wrap-arounds. */
 	part: number;
+	/** If `false`, the focus won't follow future part events. Defaults to `true`. */
+	rxPartEvents: boolean;
 	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);
 }
