@@ -1,7 +1,7 @@
 "use strict";
 
 import {OctaviaDevice} from "../state/index.mjs";
-import {RootDisplay, MxFont40, MxBmDef} from "../basic/index.mjs";
+import {FocusedPartDisplay, MxFont40, MxBmDef} from "../basic/index.mjs";
 
 import {
 	bgGreen,
@@ -12,14 +12,13 @@ import {
 	lcdCache
 } from "./colour.js";
 
-let Ns5rDisplay = class extends RootDisplay {
+let Ns5rDisplay = class extends FocusedPartDisplay {
 	#omdb = new Uint8Array(5760); // Full display
 	#nmdb = new Uint8Array(5760); // Full display, but on commit
 	#dmdb = new Uint8Array(5760); // Full display, but it's actually drawn
 	#dumpData;
 	#dumpExpire = 0;
 	#mode = "?";
-	#ch = 0;
 	#backlight;
 	#pixelLit = 255;
 	#pixelOff = 0;
@@ -69,19 +68,13 @@ let Ns5rDisplay = class extends RootDisplay {
 		});
 		upThis.useBlur = !!conf?.useBlur;
 		upThis.addEventListener("channelactive", (ev) => {
-			upThis.#ch = ev.data;
+			upThis.part = ev.data;
 		});
 		upThis.bootBm.load("RsrcName\tBitmap\nboot_0\t0052001aff0ff07ff83fff81fc0fffc3fc7fff8ffff07f83fff0ff1fffe3fffc1fe0fffc3fcffffcffff87f83fff0ff3ffff3fdfe1ff0fffc3fcffffcfe3f87fc3fff0ff3fc7f3f8fe1ff0fffc3fcfe0fcfe3f87fe3fff0ff3f83f3f8fe1ff8fffc3fcfe0fcff7f07fe3ffffff3f83f3fffc1fbcffffffcfe0fcfffe07ef3ffffff3f83f3ffe01fbcffffffcfe0fcfffe07e7bffffff3f83f3fffe1f9effffffcfe0fcfe7f87e7bfff0ff3f83f3f9fe1f8ffffc3fcfe0fcfe7f87e3ffff0ff3f83f3f9fe1f8ffffc3fcff1fcfe7fc7e1ffff0ff3ffff3f8ff1f87fffc3fcffffcfe3fc7e1ffff0ff3ffff3f8ff1f83fffc3fc7fff8fe3fe7e0ffff0ff1fffe3f8ff9f83fffc3fc1ffe0fe1fe7e07f\nboot_1\t005f001a07c00f803fe001fff81fffe01fc01f01fff003fff07ffff03f803e07fff007ffe0fffff07f807c1ffff00fff81ffffe0ff01f83f8ff03fff03f00fe1fe03f0fc07e07c0007c00fc7fe07c1f807c0f8001f801f8ffc0f83f00f83f0003f003f1ff81f07f00007ff007e007e3ef87e0ff8000fff80f801fc7df0fc0ffc001fff81f01ff1fbf1f00ffe007fff07ffffe3f3e3e00fff00fc7f0fffff87c7c7c00fff01f07e1ffffe0f8fdf8007ff0000fc3ffff01f0fbe0003fe0000f87c3f807e1ffc0001fe0003f1f81f00fc1ff80000fc0007e3f03f01f03ff0fc01f8f80fc7e03f03e07fe1f803f1f81f0f807e07c07f83f00fc3f07e3f007e1f80ff03f83f83f3f87e00fc3f00fe07fffe07ffe0fc01f87c01fc07fff807ffc1f801f8f803f807ffe007fe03e003f1f003e003ff0007f00fc003f0\nbs_0\t000700073880000000000\nbs_1\t000700073888081020000\nbs_2\t0007000738080810288e0\nbs_3\t00070007388a0c18288e0\nbs_4\t00070007000a0c18288e0\nbs_5\t0007000700020408088e0\nbs_6\t000700070002040808000\nbs_7\t000700070000000000000");
 		(async () => {
 			await Promise.all([upThis.textFont.loaded.wait(), upThis.trueFont.loaded.wait(), upThis.element.loaded.wait()]);
 			upThis.#booted = 1;
 		})();
-	};
-	setCh(part) {
-		this.#ch = part;
-	};
-	getCh() {
-		return this.#ch;
 	};
 	#renderParamBox(startX, value) {
 		let upThis = this;
@@ -199,11 +192,11 @@ let Ns5rDisplay = class extends RootDisplay {
 		let part = minCh >> 4;
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
-		if (upThis.#ch > maxCh) {
-			upThis.#ch = minCh + upThis.#ch & 15;
+		if (upThis.part > maxCh) {
+			upThis.part = minCh + upThis.part & 15;
 		};
-		if (upThis.#ch < minCh) {
-			upThis.#ch = maxCh - 15 + (upThis.#ch & 15);
+		if (upThis.part < minCh) {
+			upThis.part = maxCh - 15 + (upThis.part & 15);
 		};
 		if (timeNow < upThis.#dumpExpire) {
 			upThis.#dumpData?.forEach((e, i) => {
@@ -241,7 +234,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			// Determine the used font
 			let targetFont = trueMode ? upThis.trueFont : upThis.textFont;
 			// Show current channel
-			targetFont.getStr(`${"ABCDEFGH"[upThis.#ch >> 4]}${((upThis.#ch & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+			targetFont.getStr(`${"ABCDEFGH"[upThis.part >> 4]}${((upThis.part & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 1;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
@@ -250,7 +243,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				});
 			});
 			// Show current pitch shift
-			let cPit = upThis.device.getChPitch(upThis.#ch);
+			let cPit = upThis.device.getChPitch(upThis.part);
 			targetFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 1;
 				e0.forEach((e1, i1) => {
@@ -260,7 +253,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				});
 			});
 			// Render bank background
-			let bankFetched = upThis.getChVoice(upThis.#ch), bankInfo = bankFetched.sect;
+			let bankFetched = upThis.getChVoice(upThis.part), bankInfo = bankFetched.sect;
 			for (let bankSect = 0; bankSect < 225; bankSect ++) {
 				let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
 				upThis.#nmdb[pixY * 144 + pixX] = upThis.#pixelLit;
@@ -277,7 +270,7 @@ let Ns5rDisplay = class extends RootDisplay {
 			});
 			// Render program info
 			let bankName = (upThis.getMapped(bankFetched.name)).slice(0, 12).padEnd(10, " ");
-			targetFont.getStr(`:${(upThis.device?.getChPrimitive(upThis.#ch, 0, true)).toString().padStart(3, "0")}`).forEach((e0, i0) => {
+			targetFont.getStr(`:${(upThis.device?.getChPrimitive(upThis.part, 0, true)).toString().padStart(3, "0")}`).forEach((e0, i0) => {
 				let secX = i0 * 6 + 25;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
@@ -294,7 +287,7 @@ let Ns5rDisplay = class extends RootDisplay {
 				});
 			})
 			// Render current channel
-			targetFont.getStr(`${upThis.#ch + 1}`.padStart(2, "0")).forEach((e0, i0) => {
+			targetFont.getStr(`${upThis.part + 1}`.padStart(2, "0")).forEach((e0, i0) => {
 				let secX = i0 * 6;
 				e0.forEach((e1, i1) => {
 					let charX = i1 % 5,
@@ -365,11 +358,11 @@ let Ns5rDisplay = class extends RootDisplay {
 			} else {
 				// Render params only when it's not covered
 				let xShift = trueMode ? 2 : 0;
-				upThis.#renderParamBox(20 + xShift, upThis.device?.getChCc(upThis.#ch, 7));
-				upThis.#renderParamBox(33 + xShift, upThis.device?.getChCc(upThis.#ch, 11));
+				upThis.#renderParamBox(20 + xShift, upThis.device?.getChCc(upThis.part, 7));
+				upThis.#renderParamBox(33 + xShift, upThis.device?.getChCc(upThis.part, 11));
 				if (trueMode) {
-					if (upThis.device?.getChCc(upThis.#ch, 10) < 128) {
-						upThis.element.getBm(`Pan_${Math.floor(upThis.device?.getChCc(upThis.#ch, 10) / 9.85)}`)?.render((e, x, y) => {
+					if (upThis.device?.getChCc(upThis.part, 10) < 128) {
+						upThis.element.getBm(`Pan_${Math.floor(upThis.device?.getChCc(upThis.part, 10) / 9.85)}`)?.render((e, x, y) => {
 							upThis.#nmdb[y * 144 + x + 48] = e ? upThis.#pixelLit : upThis.#pixelOff;
 						});
 					} else {
@@ -378,12 +371,12 @@ let Ns5rDisplay = class extends RootDisplay {
 						});
 					};
 				} else {
-					upThis.#renderCompass(53, 7, upThis.device?.getChCc(upThis.#ch, 10));
+					upThis.#renderCompass(53, 7, upThis.device?.getChCc(upThis.part, 10));
 				};
-				upThis.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), upThis.device?.getChCc(upThis.#ch, 91));
-				upThis.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), upThis.device?.getChCc(upThis.#ch, 93));
+				upThis.#renderParamBox(62 + 2 * (+trueMode) + xShift - (+trueMode), upThis.device?.getChCc(upThis.part, 91));
+				upThis.#renderParamBox(75 + 2 * (+trueMode) + xShift - (+trueMode), upThis.device?.getChCc(upThis.part, 93));
 				if (!trueMode) {
-					upThis.#renderParamBox(88, upThis.device?.getChCc(upThis.#ch, 74));
+					upThis.#renderParamBox(88, upThis.device?.getChCc(upThis.part, 74));
 				};
 			};
 			// Render bitmap displays
