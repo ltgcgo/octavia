@@ -14,13 +14,15 @@ import {
 export class MuDisplay extends FocusedPartDisplay {
 	/** If the 2-pixel-wide strength metres are affected by panning. */
 	isMetreAffectedByPan: boolean;
-	/** If contrast support is enabled. Enabling contrast support disables pixel transition blurring. */
+	/** If contrast support is enabled. Enabling contrast support disables pixel transition blurring. Defaults to `false`. */
 	isLcdContrastEnabled: boolean;
 	constructor();
 }
 
 /** The recreated LCD screen of KORG NS5R. Recommended for all KORG AG, X5 and N5 visualisations. */
 export class Ns5rDisplay extends FocusedPartDisplay {
+	/** If contrast support is enabled. Enabling contrast support disables pixel transition blurring. Defaults to `true`. */
+	isLcdContrastEnabled: boolean;
 	constructor(conf: {
 		/** When `true`, the pixels will transition smoothly. */
 		useBlur?: boolean;
