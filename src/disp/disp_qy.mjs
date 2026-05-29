@@ -6,7 +6,8 @@ import {ChordDict, getFreePlan} from "../chord/index.mjs";
 
 import {
 	bgWhite,
-	lcdCache
+	lcdCache,
+	contrastCache
 } from "./colour.js";
 
 let QyDisplay = class extends FocusedPartDisplay {
@@ -35,6 +36,9 @@ let QyDisplay = class extends FocusedPartDisplay {
 		super(new OctaviaDevice(), 0, 0.96875, true);
 		let upThis = this;
 		upThis.attachState("mu");
+		upThis.device.addEventListener("lcdcontrast", (ev) => {
+			upThis.#refreshed = true;
+		});
 	};
 	#renderBox(sx, sy, width, height) {
 		let length = width * height;
@@ -246,7 +250,7 @@ let QyDisplay = class extends FocusedPartDisplay {
 				// Bank info
 				let primBuf = upThis.device.getChPrimitives(upThis.part);
 				// Fetch voice bitmap
-				if (viewId & 1) {
+				if (viewId & 1 && !upThis.device?.hideVoiceDetails) {
 					upThis.dState.muUseVoiceBm = true;
 					upThis.muWriteBm(upThis.#bmdb, upThis.part)
 					let voiceName = upThis.getChVoice(this.part);
@@ -539,7 +543,8 @@ let QyDisplay = class extends FocusedPartDisplay {
 				ctx.fillRect(6 * pixX + 7, 7 + (pixY << 3), 6, 8);
 			};
 			if (drawPixMode || hasDifference) {
-				ctx.fillStyle = lcdCache.black[e + 3];
+				// ctx.fillStyle = lcdCache.black[e + 3];
+				ctx.fillStyle = contrastCache[upThis?.device.lcdContrast][e];
 				if (drawPixMode) {
 					ctx.fillStyle = ctx.fillStyle.slice(0, 7);
 				};
