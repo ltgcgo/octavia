@@ -101,11 +101,11 @@ tree -ifl | while IFS= read -r file; do
 				rm "$file"
 			else
 				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
-				if [ "$1" != "" ]; then
-					zopfli --i1 "$file" && echo "Compressed \"${file}\" with Zopfli."
-				else
+				#if [ "$1" != "" ]; then
+					#zopfli --i1 "$file" && echo "Compressed \"${file}\" with Zopfli."
+				#else
 					gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
-				fi
+				#fi
 			fi
 		#else
 			#echo "File \"${file}\" cannot be compressed."
