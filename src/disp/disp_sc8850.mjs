@@ -215,7 +215,7 @@ let Sc8850Display = class extends FocusedPartDisplay {
 			let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4);
 			//console.debug(minCh, maxCh, rendMode);
 			// Render current channel
-			upThis.font56.getStr(`${"ABCDEFGH"[upThis.part >> 4]}${`${(upThis.part & 15) + 1}`.padStart(2, "0")}`).forEach((e0, i0) => {
+			upThis.font56.getStr(upThis.device?.hideVoiceDetails ? "DATA" : `${"ABCDEFGH"[upThis.part >> 4]}${`${(upThis.part & 15) + 1}`.padStart(2, "0")}`).forEach((e0, i0) => {
 				let offsetX = i0 * 6 + 1;
 				e0.forEach((e1, i1) => {
 					let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
@@ -240,7 +240,7 @@ let Sc8850Display = class extends FocusedPartDisplay {
 					//console.debug(`SC variable: ${scLetterDuration - timeNow}`);
 				};
 			};
-			if (!scLetterNative || scLetterMode === 0) {
+			if (!upThis.device?.hideVoiceDetails && (!scLetterNative || scLetterMode === 0)) {
 				upThis.font56.getStr(voiceObject.bank).forEach((e0, i0) => {
 					let offsetX = i0 * 6 + 21;
 					e0.forEach((e1, i1) => {
@@ -283,6 +283,13 @@ let Sc8850Display = class extends FocusedPartDisplay {
 						displayText = displayText.substring(cutoffStart, cutoffStart + 16);
 						break;
 					};
+					case 0: {
+						if (upThis.device?.hideVoiceDetails) {
+							displayText = "- SOUND Canvas -";
+							scLetterMode = 1;
+						};
+						break;
+					};
 				};
 				if (scLetterMode !== 0) {
 					upThis.font7a.getStr(displayText).forEach((e0, i0) => {
@@ -296,9 +303,16 @@ let Sc8850Display = class extends FocusedPartDisplay {
 					});
 				};
 			};
-			upThis.getChBm(upThis.part, upThis.BM_UNIVERSAL, voiceObject)?.render((e, x, y) => {
-				upThis.#nmdb[(y + 18) * totalWidth + x + 2] = e ? 255 : 0;
-			});
+			if (upThis.device?.hideVoiceDetails) {
+				//upThis.sysBm.getBm("cat_mex")?.write(upThis.#nmdb, totalWidth, 0, 2, 18);
+				upThis.sysBm.getBm("cat_mex").render((e, x, y) => {
+					upThis.#nmdb[(y + 18) * totalWidth + x + 2] = e ? 255 : 0;
+				});
+			} else {
+				upThis.getChBm(upThis.part, upThis.BM_UNIVERSAL, voiceObject)?.render((e, x, y) => {
+					upThis.#nmdb[(y + 18) * totalWidth + x + 2] = e ? 255 : 0;
+				});
+			};
 			// Render port selection
 			switch (rendMode) {
 				case 0: {
