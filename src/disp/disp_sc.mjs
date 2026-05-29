@@ -254,19 +254,21 @@ let ScDisplay = class extends FocusedPartDisplay {
 				isTextNull = isTextNull.replaceAll("  ", " ");
 			};
 			let voiceObject = upThis.getChVoice(upThis.part);
+			let useDefaultRenderer = true;
 			if (timeNow <= upThis.#sysTime) {
-				upThis.textFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
+				/*upThis.textFont.getStr(upThis.#sysMsg || "No system text!").forEach(function (e0, i0) {
 					e0.forEach(function (e1, i1) {
 						let pX = i0 * 6 + i1 % 5,
 						pY = Math.floor(i1 / 5);
 						upThis.#nmdb[textMultiTable[pY] + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 					});
-				});
+				});*/
+				infoTxt = upThis.#sysMsg || "No system text!";
 			} else if (timeNow <= letterDisp.expire && ((deviceMode !== "gs" && deviceMode !== "sc") || letterDisp.text?.length <= 16)) {
 				infoTxt = isTextNull;
 				let original = letterDisp.text,
-				leftTrim = original.length - original.trimLeft().length,
-				rightTrim = original.length - original.trimRight().length;
+				leftTrim = original.length - original.trimStart().length,
+				rightTrim = original.length - original.trimEnd().length;
 				if (original.length > 16 && original.length > infoTxt.length && infoTxt.length < 16) {
 					if (leftTrim > 0) {
 						while(infoTxt.length < 15) {
@@ -294,6 +296,7 @@ let ScDisplay = class extends FocusedPartDisplay {
 					};
 				};
 				//console.debug(`"${infoTxt}"`);
+				useDefaultRenderer = false;
 				upThis.textFont.getStr(infoTxt).forEach(function (e0, i0) {
 					e0.forEach(function (e1, i1) {
 						let pX = i0 * 6 + i1 % 5 + xShift,
@@ -303,90 +306,96 @@ let ScDisplay = class extends FocusedPartDisplay {
 						};
 					});
 				});
+			} else if (upThis.device?.hideVoiceDetails && timeNow <= letterDisp.expire && letterDisp.text?.length <= 16) {
+				infoTxt = "- SOUND Canvas -";
 			} else {
-				let deviceMode = upThis.device?.getChMode(upThis.part),
-				infoTxt = `${upThis.device?.getChPrimitive(upThis.part, 0, true) + 1}`.padStart(3, "0");
-				let primBuf = upThis.device.getChPrimitives(upThis.part);
-				switch (primBuf[0]) {
-					case 0: {
-						switch (primBuf[2]) {
-							case 0: {
-								switch (deviceMode) {
-									case "gm": {
-										infoTxt += "_";
-										break;
+				let deviceMode = upThis.device?.getChMode(upThis.part);
+				if (upThis.device?.hideVoiceDetails) {
+					infoTxt = "- SOUND Canvas -";
+				} else {
+					infoTxt = `${upThis.device?.getChPrimitive(upThis.part, 0, true) + 1}`.padStart(3, "0");
+					let primBuf = upThis.device.getChPrimitives(upThis.part);
+					switch (primBuf[0]) {
+						case 0: {
+							switch (primBuf[2]) {
+								case 0: {
+									switch (deviceMode) {
+										case "gm": {
+											infoTxt += "_";
+											break;
+										};
+										default: {
+											infoTxt += " ";
+										};
 									};
-									default: {
-										infoTxt += " ";
+									break;
+								};
+								case 125: {
+									infoTxt += " ";
+									break;
+								};
+								case 126:
+								case 127: {
+									switch (deviceMode) {
+										case "gs":
+										case "sc": {
+											infoTxt += "#";
+											break;
+										};
+										default: {
+											infoTxt += " ";
+										};
+									};
+									break;
+								};
+								default: {
+									switch (deviceMode) {
+										case "gs":
+										case "sc": {
+											infoTxt += " ";
+											break;
+										};
+										default: {
+											infoTxt += (voiceObject.eid[2] === voiceObject.iid[2] || voiceObject.ending === " ") ? "+" : "!";
+										};
 									};
 								};
-								break;
 							};
-							case 125: {
-								infoTxt += " ";
-								break;
-							};
-							case 126:
-							case 127: {
-								switch (deviceMode) {
-									case "gs":
-									case "sc": {
-										infoTxt += "#";
-										break;
-									};
-									default: {
-										infoTxt += " ";
-									};
-								};
-								break;
-							};
-							default: {
-								switch (deviceMode) {
-									case "gs":
-									case "sc": {
-										infoTxt += " ";
-										break;
-									};
-									default: {
-										infoTxt += (voiceObject.eid[2] === voiceObject.iid[2] || voiceObject.ending === " ") ? "+" : "!";
-									};
-								};
-							};
+							break;
 						};
-						break;
-					};
-					case 56: {
-						infoTxt += " ";
-						break;
-					};
-					case 61:
-					case 62:
-					case 63:
-					case 120:
-					case 122:
-					case 128: {
-						infoTxt += upThis.device?.getChType(upThis.part) === 0 ? " " : "*";
-						break;
-					};
-					case 126:
-					case 127: {
-						switch (deviceMode) {
-							case "gs":
-							case "sc": {
-								infoTxt += primBuf[0] === 127 ? "#" : "@";
-								break;
-							};
-							default: {
-								infoTxt += upThis.device?.getChType(upThis.part) === 0 ? " " : "*";
-							};
+						case 56: {
+							infoTxt += " ";
+							break;
 						};
-						break;
+						case 61:
+						case 62:
+						case 63:
+						case 120:
+						case 122:
+						case 128: {
+							infoTxt += upThis.device?.getChType(upThis.part) === 0 ? " " : "*";
+							break;
+						};
+						case 126:
+						case 127: {
+							switch (deviceMode) {
+								case "gs":
+								case "sc": {
+									infoTxt += primBuf[0] === 127 ? "#" : "@";
+									break;
+								};
+								default: {
+									infoTxt += upThis.device?.getChType(upThis.part) === 0 ? " " : "*";
+								};
+							};
+							break;
+						};
+						default: {
+							infoTxt += (voiceObject.eid[2] === voiceObject.iid[2] || voiceObject.ending === " ") ? "+" : "!";
+						};
 					};
-					default: {
-						infoTxt += (voiceObject.eid[2] === voiceObject.iid[2] || voiceObject.ending === " ") ? "+" : "!";
-					};
+					infoTxt += upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ");
 				};
-				infoTxt += upThis.getMapped(voiceObject.name).slice(0, 12).padEnd(12, " ");
 				let timeOff = 0;
 				if (deviceMode === "gs" || deviceMode === "sc") {
 					if (letterDisp.text.length > 16 && timeNow < letterDisp.set + 15000) { // 50 * 300ms
@@ -402,6 +411,15 @@ let ScDisplay = class extends FocusedPartDisplay {
 					let textWindow = infoTxt.length - Math.floor(timeOff / 300);
 					infoTxt = infoTxt.slice(Math.max(0, textWindow - 16), Math.max(16, textWindow));
 				};
+				/*upThis.textFont.getStr(infoTxt).forEach(function (e0, i0) {
+					e0.forEach(function (e1, i1) {
+						let pX = i0 * 6 + i1 % 5,
+						pY = Math.floor(i1 / 5);
+						upThis.#nmdb[textMultiTable[pY] + pX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
+				});*/
+			};
+			if (useDefaultRenderer) {
 				upThis.textFont.getStr(infoTxt).forEach(function (e0, i0) {
 					e0.forEach(function (e1, i1) {
 						let pX = i0 * 6 + i1 % 5,
@@ -412,40 +430,44 @@ let ScDisplay = class extends FocusedPartDisplay {
 			};
 			// Assemble text
 			let paramText = "";
-			paramText += `${"ABCDEFGH"[upThis.part >> 4]}${((upThis.part & 15) + 1).toString().padStart(2, "0")}`;
-			paramText += upThis.device?.getChCc(upThis.part, 7).toString().padStart(3, " ");
-			paramText += upThis.device?.getChCc(upThis.part, 91).toString().padStart(3, " ");
-			let cPit = upThis.device.getChPitch(upThis.part);
-			if (cPit < 0) {
-				paramText += "-";
-			} else if (cPit === 0) {
-				paramText += "±";
+			if (upThis.device?.hideVoiceDetails) {
+				paramText = "ALL------------------";
 			} else {
-				paramText += "+";
-			};
-			paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, " ");
-			let cPan = upThis.device?.getChCc(upThis.part, 10);
-			if (cPan === 64) {
-				paramText += "C 0";
-			} else if (cPan === 128) {
-				paramText += "RND";
-			} else if (cPan < 1) {
-				paramText += "L63";
-			} else {
-				if (cPan > 64) {
-					paramText += "R";
+				paramText += `${"ABCDEFGH"[upThis.part >> 4]}${((upThis.part & 15) + 1).toString().padStart(2, "0")}`;
+				paramText += upThis.device?.getChCc(upThis.part, 7).toString().padStart(3, " ");
+				paramText += upThis.device?.getChCc(upThis.part, 91).toString().padStart(3, " ");
+				let cPit = upThis.device.getChPitch(upThis.part);
+				if (cPit < 0) {
+					paramText += "-";
+				} else if (cPit === 0) {
+					paramText += "±";
 				} else {
-					paramText += "L";
+					paramText += "+";
 				};
-				paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
-			};
-			paramText += upThis.device?.getChCc(upThis.part, 93).toString().padStart(3, " ");
-			let chSource = upThis.device.getChSource(upThis.part);
-			if (chSource < 128) {
-				paramText += "ABCDEFGH"[chSource >> 4];
-				paramText += ((chSource & 15) + 1).toString().padStart(2, "0");
-			} else {
-				paramText += `${"ABCDEFGH"[upThis.part >> 4]}--`;
+				paramText += Math.round(cPit < 0 ? Math.abs(cPit) : cPit).toString().padStart(2, " ");
+				let cPan = upThis.device?.getChCc(upThis.part, 10);
+				if (cPan === 64) {
+					paramText += "C 0";
+				} else if (cPan === 128) {
+					paramText += "RND";
+				} else if (cPan < 1) {
+					paramText += "L63";
+				} else {
+					if (cPan > 64) {
+						paramText += "R";
+					} else {
+						paramText += "L";
+					};
+					paramText += Math.abs(cPan - 64).toString().padStart(2, " ");
+				};
+				paramText += upThis.device?.getChCc(upThis.part, 93).toString().padStart(3, " ");
+				let chSource = upThis.device.getChSource(upThis.part);
+				if (chSource < 128) {
+					paramText += "ABCDEFGH"[chSource >> 4];
+					paramText += ((chSource & 15) + 1).toString().padStart(2, "0");
+				} else {
+					paramText += `${"ABCDEFGH"[upThis.part >> 4]}--`;
+				};
 			};
 			// Render fonts
 			upThis.textFont.getStr(paramText).forEach(function (e0, i0) {
