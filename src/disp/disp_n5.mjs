@@ -205,16 +205,21 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 		};
 		part = minCh >> 4;
 		minCh = part << 4;
-		if (maxCh < 1) {
-			maxCh = 31;
+		if (maxCh <= 1) {
+			maxCh = 15;
 		};
 		if (maxChReal <= 0) {
 			maxChReal = 15;
 		};
+		//console.debug(`${minCh}, ${maxCh}`);
+		maxCh = ((maxCh >> 4) << 4) + 15;
+		maxChReal = ((maxChReal >> 4) << 4) + 15;
 		if ((((maxCh - minCh) >> 4) & 1) === 0) {
 			maxCh += 16;
 		};
-		maxCh = ((maxCh >> 4) << 4) + 15;
+		if ((((maxChReal - minChReal) >> 4) & 1) === 0) {
+			maxChReal += 16;
+		};
 		//console.debug(`${minCh}, ${maxCh}`);
 		if (upThis.part > maxChReal) {
 			/*console.debug(`${minCh}, ${upThis.part}, ${minCh + upThis.part & 15}`);*/
@@ -327,7 +332,7 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 			if (maxCh > 63) {
 				showReduction = 43;
 			};
-			const dimmedPixel = (3 * upThis.#pixelLit + upThis.#pixelOff) >>> 2;
+			const dimmedPixel = (5 * upThis.#pixelLit + 3 * upThis.#pixelOff) >>> 3;
 			for (let ri = sum.strength.length - 1; ri >= 0; ri --) {
 				if (ri < minCh || ri > maxCh) {
 					continue;
