@@ -341,7 +341,7 @@ export class OctaviaDevice {
 	/** Specifies the last polyphony tracker index. */
 	readonly polyIndexLast: number;
 	/** When `true`, the visualiser should hide voice bank information. Typically seen in Yamaha MU demo songs. */
-	lcdHideBankInfo: boolean;
+	hideVoiceDetails: boolean;
 	/** Retrieve the actual assigned part from designated part and its track.
 	* @param noConquer When `true`, automatic channel allocation is not triggered.
 	*/

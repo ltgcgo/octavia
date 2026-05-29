@@ -370,7 +370,7 @@ let MuDisplay = class extends FocusedPartDisplay {
 				} else if (chPan > 64) {
 					curStrnL = Math.round(curStrnR * (128 - chPan) >> 6);
 				};
-				if (rendMode === 0 || (rendMode === 1 && upThis.device?.lcdHideBankInfo)) {
+				if (rendMode === 0 || (rendMode === 1 && upThis.device?.hideVoiceDetails)) {
 					curStrnL >>= 4;
 					curStrnR >>= 4;
 				} else {
@@ -398,7 +398,7 @@ let MuDisplay = class extends FocusedPartDisplay {
 				rendPos ++;
 			};
 			// Render fonts
-			if (rendMode === 0 || (rendMode === 1 && upThis.device?.lcdHideBankInfo === false)) {
+			if (rendMode === 0 || (rendMode === 1 && upThis.device?.hideVoiceDetails === false)) {
 				let voiceName = (voiceObj.name).slice(0, 8).padEnd(8, " "),
 				primBuf = upThis.getChPrimitives(upThis.part);
 				let bnkSel = (primBuf[0] || primBuf[2] || 0).toString().padStart(3, "0");
