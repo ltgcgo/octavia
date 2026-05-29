@@ -77,7 +77,7 @@ let Sc8850Display = class extends FocusedPartDisplay {
 	#bootFrame = 0;
 	#letterMode;
 	font55 = new MxFont40("./data/bitmaps/sc/libre55.tsv");
-	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv");
+	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv", "./data/bitmaps/xg/font.tsv");
 	bootBm = new MxBmDef();
 	sysBm = new MxBmDef("./data/bitmaps/sc/system.tsv");
 	font7a = new MxFont176("./data/bitmaps/sc/libre7a.tsv");
