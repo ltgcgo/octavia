@@ -175,20 +175,19 @@ blSwitch.forEach(function (e, i) {
 });
 
 // Automatic channel switching
-let enableChannelSwitch = true;
 let csSwitch = $a("b.channelSwitching");
 csSwitch.to = function (i) {
 	csSwitch.forEach(function (e) {
 		e.classList.off("active");
 	});
-	if (enableChannelSwitch) {
+	if (visualiser.rxPartEvents) {
 		csSwitch[i].classList.on("active");
 	};
 };
 csSwitch.forEach(function (e, i) {
 	e.addEventListener("click", function () {
-		enableChannelSwitch = !enableChannelSwitch;
-		this.innerText = enableChannelSwitch ? "ON" : "OFF";
+		visualiser.rxPartEvents = !visualiser.rxPartEvents;
+		this.innerText = visualiser.rxPartEvents ? "ON" : "OFF";
 		csSwitch.to(i);
 	});
 });
@@ -369,7 +368,7 @@ let renderThread = setInterval(function () {
 		let curTime = audioPlayer.currentTime - (self.audioDelay || 0);
 		if (curTime < lastTime) {
 		};
-		if (enableChannelSwitch && currentPerformance) {
+		if (currentPerformance) {
 			currentPerformance.step(curTime)?.forEach((e) => {
 				visualiser.sendCmd(e.data);
 			});
