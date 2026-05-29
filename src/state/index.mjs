@@ -4031,7 +4031,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						if (cmd >= 4 && cmd < 12) {
 							// MU LCD contrast set
 							// Not sure if this should be supported
-							upThis.lcdContrast = (12 - cmd) << 1;
+							if (upThis.#receiveRS) {
+								upThis.lcdContrast = (12 - cmd) << 1;
+							};
 							console.debug(`${dPref}LCD contrast set to ${cmd - 3}.`);
 						} else {
 							console.debug(`${dPref}unknown switch ${cmd} invoked.`);
