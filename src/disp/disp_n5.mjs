@@ -217,9 +217,9 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 		if ((((maxCh - minCh) >> 4) & 1) === 0) {
 			maxCh += 16;
 		};
-		if ((((maxChReal - minChReal) >> 4) & 1) === 0) {
+		/*if ((((maxChReal - minChReal) >> 4) & 1) === 0) {
 			maxChReal += 16;
-		};
+		};*/
 		//console.debug(`${minCh}, ${maxCh}`);
 		if (upThis.part > maxChReal) {
 			/*console.debug(`${minCh}, ${upThis.part}, ${minCh + upThis.part & 15}`);*/
