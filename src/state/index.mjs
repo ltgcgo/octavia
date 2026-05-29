@@ -3988,9 +3988,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						if (upThis.#receiveRS) {
 							upThis.dispatchEvent("portrange", 1);
 							//upThis.dispatchEvent("portstart", e);
+							upThis.hideVoiceDetails = false;
 						};
 						console.info(`${dPref}Show single port.`);
-						upThis.hideVoiceDetails = false;
 						break;
 					};
 					case 1: {
@@ -4000,9 +4000,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						if (upThis.#receiveRS) {
 							upThis.dispatchEvent("portrange", 2);
 							upThis.dispatchEvent("portstart", e);
+							upThis.hideVoiceDetails = false;
 						};
 						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}.`);
-						upThis.hideVoiceDetails = false;
 						break;
 					};
 					case 2: {
@@ -4011,9 +4011,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						if (upThis.#receiveRS) {
 							upThis.dispatchEvent("portrange", 4);
 							upThis.dispatchEvent("portstart", e);
+							upThis.hideVoiceDetails = false;
 						};
 						console.info(`${dPref}Show CH${e + 1}~CH${e + 64}.`);
-						upThis.hideVoiceDetails = false;
 						break;
 					};
 					case 3: {
@@ -4022,9 +4022,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						if (upThis.#receiveRS) {
 							upThis.dispatchEvent("portrange", 2);
 							upThis.dispatchEvent("portstart", e);
+							upThis.hideVoiceDetails = true;
 						};
 						console.info(`${dPref}Show CH${e + 1}~CH${e + 32}, hide info.`);
-						upThis.hideVoiceDetails = true;
 						break;
 					};
 					default: {
