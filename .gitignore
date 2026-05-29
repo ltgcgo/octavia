@@ -14,3 +14,9 @@ dist/deno.json
 src/identity/identity.bin
 src/identity/identity.txt
 c*.png
+
+# Built bundles
+build-time.txt
+fileHashes.tsv
+pages-build-*.tar
+pages-build.tar.gz
