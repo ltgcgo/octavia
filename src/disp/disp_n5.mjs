@@ -195,12 +195,13 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 				};
 			});
 		};
-		console.debug(`${minCh}, ${maxCh}`);
 		part = minCh >> 4;
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
+		//console.debug(`${minCh}, ${maxCh}`);
 		if (upThis.part > maxCh) {
-			upThis.part = minCh + upThis.part & 15;
+			/*console.debug(`${minCh}, ${upThis.part}, ${minCh + upThis.part & 15}`);*/
+			upThis.part = minCh + (upThis.part & 15);
 		};
 		if (upThis.part < minCh) {
 			upThis.part = maxCh - 15 + (upThis.part & 15);
@@ -310,16 +311,20 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 				showReduction = 43;
 			};
 			const dimmedPixel = (3 * upThis.#pixelLit + upThis.#pixelOff) >>> 2;
-			for (let i = sum.strength.length - 1; i >= 0; i --) {
-				let e = sum.strength[i];
-				if (maxCh < 32 && i > 31) {
+			for (let ri = sum.strength.length - 1; ri >= 0; ri --) {
+				if (ri < minCh || ri > maxCh) {
+					continue;
+				};
+				const e = sum.strength[ri], i = ri - minCh;
+				//console.debug(`${ri >>> 5}, ${i >>> 5}`);
+				/*if (maxCh < 32 && i > 31) {
 					continue;
 				};
 				if (maxCh < 64 && i > 63) {
 					continue;
-				};
+				};*/
 				const firstLine = Math.floor(e / showReduction);
-				if (i === upThis.part) {
+				if (ri === upThis.part) {
 					for (let c = firstLine; c >= 0; c --) {
 						let pixX = (i & 31) * 4 + 12 + ((i >> 5) & 1) + 1, pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
 						upThis.#nmdb[pixY * 144 + pixX] = c === 0 ? dimmedPixel : upThis.#pixelLit;

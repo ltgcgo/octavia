@@ -1260,7 +1260,7 @@ const FocusedPartDisplay = class FocusedPartDisplay extends RootDisplay {
 			throw(new TypeError(`Port range must be a number.`));
 		};
 		if (port >= 0 && port !== allocated.invalidCh && port < allocated.port) {
-			this.#portRange = port;
+			this.#portStart = port;
 		} else {
 			throw(new RangeError(`Port start ${part} exceeded the safe range: [0, ${allocated.port}).`));
 		};
