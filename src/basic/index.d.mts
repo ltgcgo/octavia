@@ -288,10 +288,14 @@ export class RootDisplay {
 	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);
 }
 
-/** A display that always will focus on a single part. Automatically hooks into the active part switch events. */
+/** A display that always will focus on a single part. Automatically hooks into the focused part switch events. */
 export class FocusedPartDisplay extends RootDisplay {
-	/** The currently selected part. Downstream classes should handle negative wrap-arounds. */
+	/** The current focused part. Downstream classes should handle negative wrap-arounds. */
 	part: number;
+	/** The current suggested port range. `1` port equals to `16` parts, `2` ports equal to `32` parts, and so on. Default to `0`, meaning "ignore". */
+	portRange: number;
+	/** The current focused start port. Default to `255` (`allocated.invalidCh`), meaning "ignore". */
+	portStart: number;
 	/** If `false`, the focus won't follow future part events. Defaults to `true`. */
 	rxPartEvents: boolean;
 	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);

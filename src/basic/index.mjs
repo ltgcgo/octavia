@@ -1226,6 +1226,9 @@ const RootDisplay = class extends CustomEventSource {
 const negativeMin = - allocated.ch;
 const FocusedPartDisplay = class FocusedPartDisplay extends RootDisplay {
 	#part = 0;
+	#portRange = 0;
+	#portStart = allocated.invalidCh;
+	rxPartEvents = true;
 	set part(part) {
 		if (typeof part !== "number") {
 			throw(new TypeError(`Part number must be a number.`));
@@ -1239,13 +1242,56 @@ const FocusedPartDisplay = class FocusedPartDisplay extends RootDisplay {
 	get part() {
 		return this.#part;
 	};
-	rxPartEvents = true;
+	set portRange(ports) {
+		if (typeof ports !== "number") {
+			throw(new TypeError(`Port range must be a number.`));
+		};
+		if (ports >= 0 && ports <= allocated.port) {
+			this.#portRange = ports;
+		} else {
+			throw(new RangeError(`Port range ${part} exceeded the safe range: [0, ${allocated.port}].`));
+		};
+	};
+	get portRange() {
+		return this.#portRange;
+	};
+	set portStart(port) {
+		if (typeof port !== "number") {
+			throw(new TypeError(`Port range must be a number.`));
+		};
+		if (port >= 0 && port !== allocated.invalidCh && port < allocated.port) {
+			this.#portRange = port;
+		} else {
+			throw(new RangeError(`Port start ${part} exceeded the safe range: [0, ${allocated.port}).`));
+		};
+	};
+	get portStart() {
+		return this.#portStart;
+	};
+	reset() {
+		super.reset();
+		this.#portRange = 0;
+		this.#portStart = allocated.invalidCh;
+	};
 	constructor(device, atk, dcy, linear) {
 		super(device, atk, dcy, linear);
-		this.addEventListener("partfocus", (ev) => {
-			if (this.rxPartEvents) {
-				this.#part = ev.data;
+		let upThis = this;
+		upThis.addEventListener("partfocus", (ev) => {
+			if (upThis.rxPartEvents) {
+				upThis.#part = ev.data;
 			};
+		});
+		upThis.addEventListener("portrange", (ev) => {
+			if (upThis.rxPartEvents && ev?.data !== 1 << Math.log2(ev.data)) {
+				console.debug(`Focused display rejected port range value ${ev.data}.`);
+			};
+			upThis.#portRange = ev.data;
+		});
+		upThis.addEventListener("portstart", (ev) => {
+			if (upThis.rxPartEvents && ev !== allocated.invalidCh && ev >= allocated.port) {
+				console.debug(`Focused display rejected port start value ${ev.data}.`);
+			};
+			upThis.#portStart = ev.data;
 		});
 	};
 };

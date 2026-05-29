@@ -259,7 +259,7 @@ let MuDisplay = class extends FocusedPartDisplay {
 		this.#minCh = 0;
 		this.#maxCh = 0;
 		this.#range = 0;
-		this.#start = 255;
+		this.#start = allocated.invalidCh;
 		if (this.demoInfo) {
 			delete this.demoInfo;
 		};
