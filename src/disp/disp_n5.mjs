@@ -184,39 +184,44 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 		};
 		// Channel test
 		let alreadyMin = false;
-		let part = 0, minCh = 0, maxCh = 0;
+		let part = 0, minCh = 0, maxCh = 0, minChReal = 0, maxChReal = 0;
+		upThis.device?.getActive().forEach(function (e, i) {
+			if (e) {
+				if (!alreadyMin) {
+					alreadyMin = true;
+					minChReal = i;
+				};
+				maxChReal = i;
+			};
+		});
 		if (upThis.portStart !== 255 && upThis.portRange > 0) {
 			const trueStart = (upThis.portStart >> 1) << 1;
 			const trueRange = Math.max(2, 1 << (32 - Math.clz32(upThis.portRange - 1)));
 			minCh = trueStart << 4;
 			maxCh = ((trueStart + trueRange) << 4) - 1;
 		} else {
-			upThis.device?.getActive().forEach(function (e, i) {
-				if (e) {
-					if (!alreadyMin) {
-						alreadyMin = true;
-						minCh = i;
-					};
-					maxCh = i;
-				};
-			});
+			minCh = minChReal;
+			maxCh = maxChReal;
 		};
 		part = minCh >> 4;
 		minCh = part << 4;
 		if (maxCh < 1) {
 			maxCh = 31;
 		};
+		if (maxChReal <= 0) {
+			maxChReal = 15;
+		};
 		if ((((maxCh - minCh) >> 4) & 1) === 0) {
 			maxCh += 16;
 		};
 		maxCh = ((maxCh >> 4) << 4) + 15;
 		//console.debug(`${minCh}, ${maxCh}`);
-		if (upThis.part > maxCh) {
+		if (upThis.part > maxChReal) {
 			/*console.debug(`${minCh}, ${upThis.part}, ${minCh + upThis.part & 15}`);*/
-			upThis.part = minCh + (upThis.part & 15);
+			upThis.part = minChReal + (upThis.part & 15);
 		};
-		if (upThis.part < minCh) {
-			upThis.part = maxCh - 15 + (upThis.part & 15);
+		if (upThis.part < minChReal) {
+			upThis.part = maxChReal - 15 + (upThis.part & 15);
 		};
 		if (timeNow < upThis.#dumpExpire) {
 			upThis.#dumpData?.forEach((e, i) => {
