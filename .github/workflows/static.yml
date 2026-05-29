@@ -71,8 +71,12 @@ jobs:
         run: "./shx sitemap"
       - name: Link available source maps
         run: "./shx srcMap"
-      - name: "Build deployable static pages artifact"
+      - name: "Build deployable static pages artifact (balanced)"
+        if: ${{ ! endsWith(github.repository, '-stable') }}
         run: "bash sh/ghGenerate.sh"
+      - name: "Build deployable static pages artifact (long-term)"
+        if: ${{ endsWith(github.repository, '-stable') }}
+        run: "bash sh/ghGenerate.sh 1"
       - name: "Rewrite release"
         uses: ncipollo/release-action@v1
         env:
