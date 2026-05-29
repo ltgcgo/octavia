@@ -178,17 +178,25 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 		};
 		// Channel test
 		let alreadyMin = false;
-		let minCh = 0, maxCh = 0;
-		upThis.device?.getActive().forEach(function (e, i) {
-			if (e) {
-				if (!alreadyMin) {
-					alreadyMin = true;
-					minCh = i;
+		let part = 0, minCh = 0, maxCh = 0;
+		if (upThis.portStart !== 255 && upThis.portRange > 0) {
+			const trueStart = (upThis.portStart >> 1) << 1;
+			const trueRange = Math.max(2, 1 << (32 - Math.clz32(upThis.portRange - 1)));
+			minCh = trueStart << 4;
+			maxCh = ((trueStart + trueRange) << 4) - 1;
+		} else {
+			upThis.device?.getActive().forEach(function (e, i) {
+				if (e) {
+					if (!alreadyMin) {
+						alreadyMin = true;
+						minCh = i;
+					};
+					maxCh = i;
 				};
-				maxCh = i;
-			};
-		});
-		let part = minCh >> 4;
+			});
+		};
+		console.debug(`${minCh}, ${maxCh}`);
+		part = minCh >> 4;
 		minCh = part << 4;
 		maxCh = ((maxCh >> 4) << 4) + 15;
 		if (upThis.part > maxCh) {
@@ -301,6 +309,7 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 			if (maxCh > 63) {
 				showReduction = 43;
 			};
+			const dimmedPixel = (3 * upThis.#pixelLit + upThis.#pixelOff) >>> 2;
 			for (let i = sum.strength.length - 1; i >= 0; i --) {
 				let e = sum.strength[i];
 				if (maxCh < 32 && i > 31) {
@@ -309,11 +318,21 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 				if (maxCh < 64 && i > 63) {
 					continue;
 				};
-				for (let c = Math.floor(e / showReduction); c >= 0; c --) {
-					let pixX = (i % 32) * 4 + 12 + ((i >> 5) & 1) + 1, pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
-					upThis.#nmdb[pixY * 144 + pixX] = upThis.#pixelLit;
-					upThis.#nmdb[pixY * 144 + pixX + 1] = upThis.#pixelLit;
-					upThis.#nmdb[pixY * 144 + pixX + 2] = upThis.#pixelLit;
+				const firstLine = Math.floor(e / showReduction);
+				if (i === upThis.part) {
+					for (let c = firstLine; c >= 0; c --) {
+						let pixX = (i & 31) * 4 + 12 + ((i >> 5) & 1) + 1, pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
+						upThis.#nmdb[pixY * 144 + pixX] = c === 0 ? dimmedPixel : upThis.#pixelLit;
+						upThis.#nmdb[pixY * 144 + pixX + 1] = c === 0 ? dimmedPixel : upThis.#pixelLit;
+						upThis.#nmdb[pixY * 144 + pixX + 2] = c === 0 ? dimmedPixel : upThis.#pixelLit;
+					};
+				} else {
+					for (let c = firstLine; c >= 0; c --) {
+						let pixX = (i & 31) * 4 + 12 + ((i >> 5) & 1) + 1, pixY = 39 - (((i >> 5) & 1) << 1) - c - ((i >> 6) << 3);
+						upThis.#nmdb[pixY * 144 + pixX] = upThis.#pixelLit;
+						upThis.#nmdb[pixY * 144 + pixX + 1] = upThis.#pixelLit;
+						upThis.#nmdb[pixY * 144 + pixX + 2] = upThis.#pixelLit;
+					};
 				};
 			};
 			// Render effect types
