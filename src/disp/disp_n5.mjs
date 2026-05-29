@@ -12,10 +12,12 @@ import {
 	lcdCache
 } from "./colour.js";
 
+const dispWidth = 144, dispHeight = 40, dispSize = dispWidth * dispHeight;
+
 let Ns5rDisplay = class extends FocusedPartDisplay {
-	#omdb = new Uint8Array(5760); // Full display
-	#nmdb = new Uint8Array(5760); // Full display, but on commit
-	#dmdb = new Uint8Array(5760); // Full display, but it's actually drawn
+	#omdb = new Uint8Array(dispSize); // Full display
+	#nmdb = new Uint8Array(dispSize); // Full display, but on commit
+	#dmdb = new Uint8Array(dispSize); // Full display, but it's actually drawn
 	#dumpData;
 	#dumpExpire = 0;
 	#mode = "?";
@@ -226,72 +228,74 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 			};
 		} else {
 			// Clear out the current working display buffer.
-			upThis.#nmdb.forEach((e, i, a) => {a[i] = upThis.#pixelOff});
+			upThis.#nmdb.fill(upThis.#pixelOff);
 			// Screen buffer write begin.
 			// Determine the used font
 			let targetFont = trueMode ? upThis.trueFont : upThis.textFont;
-			// Show current channel
-			targetFont.getStr(`${"ABCDEFGH"[upThis.part >> 4]}${((upThis.part & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
-				let secX = i0 * 6 + 1;
-				e0.forEach((e1, i1) => {
-					let charX = i1 % 5,
-					charY = Math.floor(i1 / 5);
-					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+			if (!upThis.device?.hideVoiceDetails) {
+				// Show current channel
+				targetFont.getStr(`${"ABCDEFGH"[upThis.part >> 4]}${((upThis.part & 15) + 1).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+					let secX = i0 * 6 + 1;
+					e0.forEach((e1, i1) => {
+						let charX = i1 % 5,
+						charY = Math.floor(i1 / 5);
+						upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
 				});
-			});
-			// Show current pitch shift
-			let cPit = upThis.device.getChPitch(upThis.part);
-			targetFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
-				let secX = i0 * 6 + 1;
-				e0.forEach((e1, i1) => {
-					let charX = i1 % 5,
-					charY = Math.floor(i1 / 5) + 8;
-					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+				// Show current pitch shift
+				let cPit = upThis.device.getChPitch(upThis.part);
+				targetFont.getStr(`${"+-"[+(cPit < 0)]}${Math.round(Math.abs(cPit)).toString().padStart(2, "0")}`).forEach((e0, i0) => {
+					let secX = i0 * 6 + 1;
+					e0.forEach((e1, i1) => {
+						let charX = i1 % 5,
+						charY = Math.floor(i1 / 5) + 8;
+						upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
 				});
-			});
-			// Render bank background
-			let bankFetched = upThis.getChVoice(upThis.part), bankInfo = bankFetched.sect;
-			for (let bankSect = 0; bankSect < 225; bankSect ++) {
-				let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
-				upThis.#nmdb[pixY * 144 + pixX] = upThis.#pixelLit;
+				// Render bank background
+				let bankFetched = upThis.getChVoice(upThis.part), bankInfo = bankFetched.sect;
+				for (let bankSect = 0; bankSect < 225; bankSect ++) {
+					let pixX = bankSect % 25, pixY = Math.floor(bankSect / 25) + 15;
+					upThis.#nmdb[pixY * 144 + pixX] = upThis.#pixelLit;
+				};
+				targetFont.getStr(bankInfo).forEach((e0, i0) => {
+					let secX = i0 * 6 + 1;
+					e0.forEach((e1, i1) => {
+						let charX = i1 % 5,
+						charY = Math.floor(i1 / 5) + 16;
+						if (e1) {
+							upThis.#nmdb[charY * 144 + secX + charX] = upThis.#pixelOff;
+						};
+					});
+				});
+				// Render program info
+				let bankName = (upThis.getMapped(bankFetched.name)).slice(0, 12).padEnd(10, " ");
+				targetFont.getStr(`:${(upThis.device?.getChPrimitive(upThis.part, 0, true)).toString().padStart(3, "0")}`).forEach((e0, i0) => {
+					let secX = i0 * 6 + 25;
+					e0.forEach((e1, i1) => {
+						let charX = i1 % 5,
+						charY = Math.floor(i1 / 5) + 16;
+						upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
+				});
+				targetFont.getStr(bankName).forEach((e0, i0) => {
+					let secX = i0 * 6 + 53;
+					e0.forEach((e1, i1) => {
+						let charX = i1 % 5,
+						charY = Math.floor(i1 / 5) + 16;
+						upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
+				})
+				// Render current channel
+				targetFont.getStr(`${upThis.part + 1}`.padStart(2, "0")).forEach((e0, i0) => {
+					let secX = i0 * 6;
+					e0.forEach((e1, i1) => {
+						let charX = i1 % 5,
+						charY = Math.floor(i1 / 5) + 32;
+						upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
+				});
 			};
-			targetFont.getStr(bankInfo).forEach((e0, i0) => {
-				let secX = i0 * 6 + 1;
-				e0.forEach((e1, i1) => {
-					let charX = i1 % 5,
-					charY = Math.floor(i1 / 5) + 16;
-					if (e1) {
-						upThis.#nmdb[charY * 144 + secX + charX] = upThis.#pixelOff;
-					};
-				});
-			});
-			// Render program info
-			let bankName = (upThis.getMapped(bankFetched.name)).slice(0, 12).padEnd(10, " ");
-			targetFont.getStr(`:${(upThis.device?.getChPrimitive(upThis.part, 0, true)).toString().padStart(3, "0")}`).forEach((e0, i0) => {
-				let secX = i0 * 6 + 25;
-				e0.forEach((e1, i1) => {
-					let charX = i1 % 5,
-					charY = Math.floor(i1 / 5) + 16;
-					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
-				});
-			});
-			targetFont.getStr(bankName).forEach((e0, i0) => {
-				let secX = i0 * 6 + 53;
-				e0.forEach((e1, i1) => {
-					let charX = i1 % 5,
-					charY = Math.floor(i1 / 5) + 16;
-					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
-				});
-			})
-			// Render current channel
-			targetFont.getStr(`${upThis.part + 1}`.padStart(2, "0")).forEach((e0, i0) => {
-				let secX = i0 * 6;
-				e0.forEach((e1, i1) => {
-					let charX = i1 % 5,
-					charY = Math.floor(i1 / 5) + 32;
-					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
-				});
-			});
 			// Render channel strength
 			let showReduction = 22;
 			if (maxCh > 63) {
@@ -313,18 +317,26 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 				};
 			};
 			// Render effect types
-			let efxShow = upThis.device.aiEfxName.slice(0, 7 + +trueMode) || "Rev/Cho";
-			targetFont.getStr(trueMode ? `Fx A:001${efxShow}` : `FxA:001${efxShow}`).forEach((e0, i0) => {
-				let lineChars = trueMode ? 8 : 7;
-				let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
-				secY = Math.floor(i0 / lineChars) * 8;
-				e0.forEach((e1, i1) => {
-					let charX = i1 % 5,
-					charY = Math.floor(i1 / 5) + secY;
-					upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+			if (!upThis.device?.hideVoiceDetails) {
+				let efxShow = upThis.device.aiEfxName.slice(0, 7 + +trueMode) || "Rev/Cho";
+				targetFont.getStr(trueMode ? `Fx A:001${efxShow}` : `FxA:001${efxShow}`).forEach((e0, i0) => {
+					let lineChars = trueMode ? 8 : 7;
+					let secX = (i0 % lineChars) * 6 + (trueMode ? 95 : 102),
+					secY = Math.floor(i0 / lineChars) * 8;
+					e0.forEach((e1, i1) => {
+						let charX = i1 % 5,
+						charY = Math.floor(i1 / 5) + secY;
+						upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
+					});
 				});
-			});
+			};
 			// Render letter displays
+			if (upThis.device?.hideVoiceDetails) {
+				const overlayBm = upThis.element?.getBm(trueMode ? "NzBgTru" : "NzBgLib");
+				overlayBm?.render((e, x, y) => {
+					upThis.#nmdb[y * 144 + x] = e ? upThis.#pixelLit : upThis.#pixelOff;
+				});
+			};
 			if (timeNow < letterDisp.expire) {
 				let xShift = 19 + (+trueMode) * 3;
 				// White bounding box
@@ -352,7 +364,7 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 						upThis.#nmdb[charY * 144 + secX + charX] = e1 ? upThis.#pixelLit : upThis.#pixelOff;
 					});
 				});
-			} else {
+			} else if (!upThis.device?.hideVoiceDetails) {
 				// Render params only when it's not covered
 				let xShift = trueMode ? 2 : 0;
 				upThis.#renderParamBox(20 + xShift, upThis.device?.getChCc(upThis.part, 7));
