@@ -10,6 +10,8 @@ import {
 	contrastCache
 } from "./colour.js";
 
+const qy10VoxCat = "0,0,0,0,2,2,6,6,7,3,3,3,3,4,4,4,4,4,1,1,1,7,6,a,1,1,7,9,a,a,dr".split(",");
+
 let QyDisplay = class extends FocusedPartDisplay {
 	#omdb = new Uint8Array(8192); // Full display
 	#nmdb = new Uint8Array(8192); // Full display, but on commit
@@ -88,26 +90,51 @@ let QyDisplay = class extends FocusedPartDisplay {
 	#getCat(channel, msb, prg) {
 		let voiceInfo = this.getChVoice(channel);
 		let category;
-		if (["GM", "AG", "XG", "GS", "G2", "PA", "SD"].indexOf(voiceInfo.standard) > -1) {
-			switch(msb) {
-				case 64: {
-					category = "sfx";
-					break;
+		switch (voiceInfo.standard) {
+			case "GM":
+			case "AG":
+			case "XG":
+			case "GS":
+			case "G2":
+			case "PA":
+			case "SD": {
+				switch (msb) {
+					case 64: {
+						category = "sfx";
+						break;
+					};
+					case 120:
+					case 122:
+					case 126:
+					case 127: {
+						category = "dr";
+						break;
+					};
+					default: {
+						category = (prg >> 3).toString(16);
+					};
 				};
-				case 120:
-				case 122:
-				case 126:
-				case 127: {
-					category = "dr";
-					break;
+				break;
+			};
+			case "QY": {
+				let found = false;
+				switch (voiceInfo.eid[2]) {
+					case 113: {
+						if (prg < 31) {
+							found = true;
+							category = qy10VoxCat[prg];
+						};
+						break;
+					};
 				};
-				default: {
-					category = (prg >> 3).toString(16);
+				if (found) {
+					break;
 				};
 			};
-		} else {
-			category = voiceInfo.standard;
-			category = `${category[0]}${category[1].toLowerCase()}`;
+			default: {
+				category = voiceInfo.standard;
+				category = `${category[0]}${category[1].toLowerCase()}`;
+			};
 		};
 		return category;
 	};
@@ -360,7 +387,7 @@ let QyDisplay = class extends FocusedPartDisplay {
 				// Bank info
 				let voiceInfo = upThis.getChVoice(upThis.part);
 				let primBuf = upThis.device.getChPrimitives(upThis.part);
-				usedFont.getStr(`${(primBuf[1] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG"].indexOf(voiceInfo.standard) > -1) || primBuf[0] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
+				usedFont.getStr(`${(primBuf[1] + 1).toString().padStart(3, "0")}${"+ "[+((["GM", "MT", "AG", "QY"].indexOf(voiceInfo.standard) > -1) || primBuf[0] >= 120)]}${voiceInfo.name.slice(0, 8)}`).forEach((e, i) => {
 					e.render((e, x, y) => {
 							upThis.#nmdb[55 + x + i * 6 + (y << 7)] = e;
 					});
