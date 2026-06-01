@@ -2660,6 +2660,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						efxBlank = [45, 0];
 						break;
 					};
+					case modeMap.qy10:
 					case modeMap.gus: {
 						efxDefault = [0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
@@ -4192,6 +4193,15 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					// Unknown section
 				};
 			});
+		}).add([24, 90], (msg, track, id) => {
+			if (msg[0] === 0) {
+				// QY10 reset
+				upThis.switchMode("qy10", 2);
+				upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.qy10);
+				console.info("MIDI reset: QY10");
+			} else {
+				console.debug(`Unknown Yamaha QY10 ID: ${msg[0]}`);
+			};
 		}).add([1, 20], (msg, track, id) => {
 			if (id === 115) {
 				// DOC reset

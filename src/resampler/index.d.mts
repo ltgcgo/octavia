@@ -18,11 +18,11 @@ export class EnsembleUtilMethods {
 	static readonly sincThreshold: number;
 	/** The `sinc` function. */
 	static sinc(x: number): number;
-	/** Writes the triangle window values to the underlying Float64Array. Sum of all samples is `1`. Edges are non-zero.
+	/** Writes the triangle window values to the underlying Float64Array. Sum of all samples is `1`. Unlike the regular Bartlett window, only integers are accepted, and the edges are non-zero.
 	* @param windowSize The size of the window. Must be a positive integer, capped at `32767`.
 	*/
 	static triangleWindowFill(floats: Float32Array | Float64Array, windowSize: number, offset?: number): void;
-	/** Retrieve a single value from the triangle window. Sum of all samples is `1`. Edges are non-zero.
+	/** Retrieve a single value from the triangle window. Sum of all samples is `1`. Unlike the regular Bartlett window, only integers are accepted, and the edges are non-zero.
 	* @param windowSize The size of the window. Must be a positive integer, capped at `32767`.
 	* @param i The target sample position. Must be an integer in the range of `[0, windowSize - 1]`.
 	*/
