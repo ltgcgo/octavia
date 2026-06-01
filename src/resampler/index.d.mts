@@ -18,6 +18,15 @@ export class EnsembleUtilMethods {
 	static readonly sincThreshold: number;
 	/** The `sinc` function. */
 	static sinc(x: number): number;
+	/** Writes the triangle window values to the underlying Float64Array. Sum of all samples is `1`. Edges are non-zero.
+	* @param windowSize The size of the window. Must be a positive integer, capped at `32767`.
+	*/
+	static triangleWindowFill(floats: Float32Array | Float64Array, windowSize: number, offset?: number): void;
+	/** Retrieve a single value from the triangle window. Sum of all samples is `1`. Edges are non-zero.
+	* @param windowSize The size of the window. Must be a positive integer, capped at `32767`.
+	* @param i The target sample position. Must be an integer in the range of `[0, windowSize - 1]`.
+	*/
+	static triangleWindowSample(windowSize: number, i: number): number;
 	/** The modified Bessel function I₀.
 	* @param isSlow When `true`, the method will use a slower but more accurate alternative for higher quality.
 	*/
@@ -33,8 +42,8 @@ export class EnsembleUtilMethods {
 export class EnsembleResampler {
 	/** Specifier of the interpolation algorithm. Valid values from vanilla releases are listed below.
 	* - `nearest`: Neareset neighbour.
-	* - `linear`: Linear. Any sample ratio below 1 causes it to switch to weighted linear instead for aliasing mitigation, with window size capped at `24` (12 on either side) for 54 + 1 semitones.
-	* - `hermite`: Catmull-Rom Hermite cubic. Any sample ratio below 1 causes it to switch to triangle (Barlett window) instead for aliasing mitigation to avoid continuity artifacts, with window size capped at `12` for 42 semitones (actually 43). Default for feedback resampling.
+	* - `linear`: Linear. Any sample ratio below 1 causes it to switch to triangle window (Bartlett-like) weighted linear instead for aliasing mitigation, with window size capped at `24` (12 on either side) for 54 + 1 semitones.
+	* - `hermite`: Catmull-Rom Hermite cubic. Any sample ratio below 1 causes it to enlarge the continuous Catmull-Rom window instead for aliasing mitigation to avoid continuity artifacts, with window size capped at `12` for 42 semitones (actually 43). Default for feedback resampling.
 	* - `lanczos`: Lanczos `sinc` with aliasing mitigation. Default for direct output resampling (e.g. PCM resampling).
 	* - `kaiser`: Anchored integer Kaiser `sinc` with aliasing mitigation.
 	* - `kaiserFrac`: Fractional Kaiser 8-tap `sinc` with aliasing mitigation.

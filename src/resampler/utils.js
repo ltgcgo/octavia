@@ -33,6 +33,58 @@ export default class EnsembleUtilMethods {
 		let xPi = x * Math.PI;
 		return Math.sin(xPi) / xPi;
 	};
+	static triangleWindowFill(floats, windowSize, offset = 0) {
+		if (windowSize > 0 && windowSize < 32768 && Number.isInteger(windowSize)) {
+			if (offset < 0 || !Number.isInteger(offset)) {
+				throw(new RangeError(`Offset is invalid.`));
+			};
+			if (windowSize + offset > floats.length) {
+				throw(new RangeError(`Offset exceeded the buffer range.`));
+			};
+			const wSizeHalf = windowSize >> 1;
+			let divisor;
+			if (windowSize & 1) {
+				divisor = 1 / (((wSizeHalf * (wSizeHalf + 1)) << 1) + 1);
+			} else {
+				divisor = 1 / ((wSizeHalf * wSizeHalf) << 1);
+			};
+			for (let i = 0; i < wSizeHalf; i ++) {
+				floats[offset + i] = ((i << 1) + 1) * divisor;
+			};
+			for (let i = wSizeHalf; i < windowSize; i ++) {
+				floats[offset + i] = (((windowSize - i) << 1) - 1) * divisor;
+			};
+		} else {
+			throw(new RangeError(`Window size is invalid.`));
+		};
+	};
+	static triangleWindowSample(windowSize, i) {
+		if (i >= windowSize || i < 0 || !Number.isInteger(i)) {
+			throw(new RangeError(`Sample index is invalid.`));
+		};
+		if (Number.isInteger(windowSize)) {
+			if (windowSize >= 2 && windowSize < 32768) {
+				const wSizeHalf = windowSize >> 1;
+				let divisor;
+				if (windowSize & 1) {
+					divisor = ((wSizeHalf * (wSizeHalf + 1)) << 1) + 1;
+				} else {
+					divisor = (wSizeHalf * wSizeHalf) << 1;
+				};
+				if (i >= wSizeHalf) {
+					return (((windowSize - i) << 1) - 1) / divisor;
+				} else {
+					return ((i << 1) + 1) / divisor;
+				};
+			} else if (windowSize > 0) {
+				return 1;
+			} else {
+				throw(new RangeError(`Window size is invalid.`));
+			};
+		} else {
+			throw(new RangeError(`Window size is invalid.`));
+		};
+	};
 	static modifiedBessel(x, isSlow = false) {
 		if (isSlow) {
 			if (x === 0) {
