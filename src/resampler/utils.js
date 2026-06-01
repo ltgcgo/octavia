@@ -16,7 +16,10 @@ export default class EnsembleUtilMethods {
 		};
 		return samples[0];
 	};
-	static cutoffFactor(sampleRatio = 1) {
+	static cutoffFactor(sampleRatio) {
+		if (typeof sampleRatio !== "number") {
+			throw(new TypeError("The sample ratio must be a number."));
+		};
 		if (sampleRatio <= 0 || !Number.isFinite(sampleRatio)) {
 			throw(new RangeError("The sample ratio must be a finite float above 0."));
 		};
@@ -30,22 +33,8 @@ export default class EnsembleUtilMethods {
 		let xPi = x * Math.PI;
 		return Math.sin(xPi) / xPi;
 	};
-	static modifiedBessel(x, isFast = true) {
-		if (isFast) {
-			// Milton Abramowitz and Irene Stegun: Handbook of Mathematical Functions - 9.8
-			let xAbs = Math.abs(x);
-			if (xAbs === 3.75) {
-				return 9.118945897;
-			} else if (xAbs === 0) {
-				return 1;
-			} else if (xAbs < 3.75) {
-				let a = xAbs * 0.2666666667;
-				let aSqr = a * a;
-				return 1 + aSqr * (3.5156229 + aSqr * (3.0899424 + aSqr * (1.2067492 + aSqr * (0.2659732 + aSqr * (0.0360768 + aSqr * 0.0045813)))));
-			};
-			let a = 3.75 / xAbs;
-			return (Math.exp(xAbs) / Math.sqrt(xAbs)) * (0.39894228 + a * (0.01328592 + a * (0.00225319 + a * (-0.00157565 + a * (0.00916281 + a * (-0.02057706 + a * (0.02635537 + a * (-0.01647633 + a * (0.00392377)))))))));
-		} else {
+	static modifiedBessel(x, isSlow = false) {
+		if (isSlow) {
 			if (x === 0) {
 				return 1;
 			};
@@ -60,6 +49,20 @@ export default class EnsembleUtilMethods {
 				};
 			};
 			return sum;
+		} else {
+			// Milton Abramowitz and Irene Stegun: Handbook of Mathematical Functions - 9.8
+			let xAbs = Math.abs(x);
+			if (xAbs === 3.75) {
+				return 9.118945897;
+			} else if (xAbs === 0) {
+				return 1;
+			} else if (xAbs < 3.75) {
+				let a = xAbs * 0.2666666667;
+				let aSqr = a * a;
+				return 1 + aSqr * (3.5156229 + aSqr * (3.0899424 + aSqr * (1.2067492 + aSqr * (0.2659732 + aSqr * (0.0360768 + aSqr * 0.0045813)))));
+			};
+			let a = 3.75 / xAbs;
+			return (Math.exp(xAbs) / Math.sqrt(xAbs)) * (0.39894228 + a * (0.01328592 + a * (0.00225319 + a * (-0.00157565 + a * (0.00916281 + a * (-0.02057706 + a * (0.02635537 + a * (-0.01647633 + a * (0.00392377)))))))));
 		};
 	};
 	static kaiserWindow(x, b, preB) {

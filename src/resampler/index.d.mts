@@ -18,8 +18,10 @@ export class EnsembleUtilMethods {
 	static readonly sincThreshold: number;
 	/** The `sinc` function. */
 	static sinc(x: number): number;
-	/** The modified Bessel function I₀. */
-	static modifiedBessel(x: number): number;
+	/** The modified Bessel function I₀.
+	* @param isSlow When `true`, the method will use a slower but more accurate alternative for higher quality.
+	*/
+	static modifiedBessel(x: number, isSlow?: boolean): number;
 	/** Build a Kaiser window.
 	* @param x The `x` value. Expected to be in the range of [-1, 1].
 	* @param b The beta value. Higher beta values widens main lobe and attenuates ringing more.
@@ -27,7 +29,7 @@ export class EnsembleUtilMethods {
 	*/
 	static kaiserWindow(x: number, b: number, preB?: number): number;
 }
-/** The basic structure for other structures. */
+/** The actual resampler instance. */
 export class EnsembleResampler {
 	/** Specifier of the interpolation algorithm. Valid values from vanilla releases are listed below.
 	* - `nearest`: Neareset neighbour.
@@ -46,8 +48,8 @@ export class EnsembleResampler {
 	/** Writes the sample ratio. */
 	setSampleRatio(x: number): void;
 	/** The step value, usually consistent per-oscillator. Defaults provided by the registry entry. Ignored by algorithms by default.
-	* - `3`: Recommended default for Lanczos-3 (6-tap).
-	* - `8`: Recommended default for Kaiser 8-tap.
+	* - `3`: Recommended default for Lanczos-3 (6-tap). `4` is also applicable.
+	* - `8`: Recommended default for Kaiser 8-tap (4 samples on each side). `12` and `16` are also applicable, but with increasing computational cost.
 	*
 	* For performance, setting this value can cause some internal values to be pre-calculated, useful in settings where pitch bends do not happen on every interpolated sample. It's recommended to re-use the same created object per-oscillator.
 	*/
