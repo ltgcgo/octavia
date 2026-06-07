@@ -12,7 +12,7 @@ import qyPlanRawData from "../data/generated/qyChordPlan.json" with {type: "json
 const asciiToneShift = "bbb,bb,b,,#,##,###".split(",");
 const actualToneShift = "♭𝄫,𝄫,♭,♮,♯,𝄪,𝄪♯".split(",");
 const chordTypeMap = new Map(); // From chord IDs to other info
-const mapFromXf = new Uint8Array(35); // From Yamaha XF IDs to native chord type IDs
+const mapFromXf = new Uint8Array(35).fill(255); // From Yamaha XF IDs to native chord type IDs. There's only this many valid Yamaha XF IDs, the standards were frozen decades ago.
 const mapFromSp = new Map(); // From specifiers to native chord type IDs
 for (let chord of chordData) {
 	if (typeof chord.id === "number") {
@@ -70,7 +70,7 @@ let ChordDict = class ChordDict {
 			return mapFromXf[chordXf];
 		} else if (chordXf === 127) {
 			return 255;
-		} {
+		} else {
 			throw(new RangeError(`Unknown XF ID ${chordXf}.`));
 		};
 	};
@@ -80,9 +80,15 @@ let ChordDict = class ChordDict {
 			throw(new Error("Buffer size isn't even."));
 		};
 		if (strict && buffer.length !== 4) {
-			throw(new Error("Buffer size isn't 4."))
+			throw(new RangeError("Buffer size isn't 4."))
 		};
-		for (let i = 0; i < buffer.length; i += 2) {
+		if (buffer.length > 2048) {
+			// 2147483646 is still way out of reasonable length. Who would even add that ridiculous amount of chord?
+			throw(new RangeError("Buffer size is too big."));
+		};
+		const halfBuffer = buffer.length >>> 1;
+		for (let ri = 0; ri < halfBuffer; ri ++) {
+			const i = ri << 1;
 			if (buffer[i | 1] === 0x7f) {
 				if (buffer[i] !== 0x7f) {
 					data.push((buffer[i] << 8) | this.fromChordType("---"));
@@ -136,6 +142,8 @@ for (let qyPlan of qyPlanRawData) {
 const getFreePlan = function (chordId) {
 	if (qyPlanMap.has(chordId)) {
 		return qyPlanMap.get(chordId);
+	} else {
+		return null;
 	};
 };
 

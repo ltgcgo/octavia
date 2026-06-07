@@ -6,7 +6,7 @@
 * @module cc.ltgc.octavia.cambiare
 */
 
-import {
+import type {
 	RootDisplay,
 	MxBmDef,
     MxFont40

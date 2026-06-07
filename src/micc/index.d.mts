@@ -6,7 +6,7 @@
 * @module cc.ltgc.octavia.micc
 */
 
-import {
+import type {
     SeamstressContext
 } from "../../libs/seamstress@ltgcgo/index.d.mts";
 

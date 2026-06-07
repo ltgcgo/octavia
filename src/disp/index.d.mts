@@ -6,7 +6,7 @@
 * @module cc.ltgc.octavia.disp
 */
 
-import {
+import type {
 	FocusedPartDisplay
 } from "../basic/index.d.mts";
 

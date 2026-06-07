@@ -6,13 +6,13 @@
 * @module cc.ltgc.octavia.basic
 */
 
-import {
+import type {
 	OctaviaDevice,
 	TimeMuxer,
 	OctaviaVoiceObject,
 	OctaviaVoiceProperties
 } from "../state/index.d.mts";
-import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.d.mts";
+import type MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.d.mts";
 
 /** Properties related to a style pattern. */
 declare class StyleProperties {
