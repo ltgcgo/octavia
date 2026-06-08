@@ -2015,7 +2015,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.setChEffectSink(part, efxSlot);
 		};
 	};
-	setLetterDisplay(data, source, offset = 0, delay = 3200) {
+	setLetter(data, source, offset = 0, delay = 3200) {
 		let upThis = this,
 		invalidCp;
 		upThis.#letterDisp = " ".repeat(offset);
@@ -2035,8 +2035,18 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			invalidCp.forEach((e, i, a) => {
 				a[i] = e.toString(16).padStart(2, "0");
 			});
-			console.warn(`${source}${source ? " " : ""}invalid code point${invalidCp.length > 1 ? "s" : ""}: 0x${invalidCp.join(", 0x")}`);
+			console.warn(`${source ?? ""}${source ? ": i" : "I"}nvalid code point${invalidCp.length > 1 ? "s" : ""}: 0x${invalidCp.join(", 0x")}`);
 		};
+	};
+	setLetterText(data, source, delay = 3200) {
+		let upThis = this;
+		if (typeof data !== "string") {
+			throw(new TypeError(`${source ?? ""}${source ? ": i" : "I"}nvalid data source, must be a valid string.`))
+		};
+		upThis.#letterDisp = data;
+		upThis.#letterSet = upThis.clockSource.now();
+		upThis.#letterExpire = upThis.clockSource.now() + delay;
+		upThis.dispatchEvent("letter");
 	};
 	setDetectionTargets(mode = "?", port = 0) {
 		let upThis = this,
@@ -3697,7 +3707,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// XG Letter Display
 			let offset = msg[0];
 			if (offset < 64) {
-				upThis.setLetterDisplay(msg.subarray(1), "XG letter display", offset);
+				upThis.setLetter(msg.subarray(1), "XG letter display", offset);
 			} else {
 				// Expire all existing letter display
 				upThis.#letterExpire = upThis.clockSource.now();
@@ -4655,7 +4665,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// TG300 display letter
 			// Same as XG letter display
 			let offset = msg[0];
-			upThis.setLetterDisplay(msg.subarray(1), "TG300 letter display", offset);
+			upThis.setLetter(msg.subarray(1), "TG300 letter display", offset);
 		}).add([43, 7, 1], (msg, track, id) => {
 			// TG300 display bitmap
 			// Same as XG bitmap display
@@ -4886,7 +4896,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				case 0: {
 					// GS display letter
 					let offset = msg[1];
-					upThis.setLetterDisplay(msg.subarray(2), "GS display text", offset);
+					upThis.setLetter(msg.subarray(2), "GS display text", offset);
 					//getDebugState() && console.debug(`GS display text "${upThis.#letterDisp}".`);
 					break;
 				};
@@ -5959,7 +5969,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			let offset = msg[0];
 			if (offset < 32) {
 				// Letter display
-				upThis.setLetterDisplay(msg.subarray(1, 33), "NS5R letter display");
+				upThis.setLetter(msg.subarray(1, 33), "NS5R letter display");
 			} else {
 				// Bitmap display
 				let bitOffset = offset - 32;

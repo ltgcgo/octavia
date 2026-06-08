@@ -413,6 +413,19 @@ export class OctaviaDevice {
 		/** The timestamp when the text should expire. */
 		expire: number;
 	};
+	/** Set the current letter display.
+	* @param data The source buffer of the letter display text.
+	* @param source The call source of this method. Used for debugging.
+	* @param offset How many spaces should preceed the text.
+	* @param delay How long until the current letter display expires.
+	*/
+	setLetter(data: Uint8Array | Uint8ClampedArray, source?: string, offset?: number, delay?: number): void;
+	/** Set the current letter display.
+	* @param data The source buffer of the letter display text.
+	* @param source The call source of this method. Used for debugging.
+	* @param delay How long until the current letter display expires.
+	*/
+	setLetterText(data: string, source?: string, delay?: number): void;
 	/** Get the global device mode. */
 	getMode(): string;
 	// Should also introduce per-device mode here on top of per-port mode.
@@ -472,7 +485,7 @@ export class OctaviaDevice {
 	* @param isHidden `true` tells the event receivers that the effect should not be visible.
 	*/
 	pushEffectType(slot?: number, isHidden?: number): void;
-	// (WIP) Allows the "many parts to many effect slots" model in the future.
+	// (WIP) Allows the "many parts to many effect slots" model in the future on top of multi-device support, so the normal effect routing and XG effect routing can be united under one model.
 	/** Retrieve the effect slot the part is being routed to. This method currently assumes a "one effect slot from many parts" model.
 	*
 	* Yamaha XG uses a different effect slot routing system in a "many effect slots from one part" model, allowing multiple to collide on the same, so this method alone isn't enough to retrieve the whole picture.
@@ -483,4 +496,23 @@ export class OctaviaDevice {
 	* Slot `0` doesn't mean "reverb" here, unlike in other methods, as Octavia assumes "reverb" to always be available.
 	*/
 	setChEffectSink(part: number, slot?: number): void;
+	/** Writes the part the effect slot is routing from.
+	*
+	* Slot `0` is reserved for variation effect under insertion mode.
+	*/
+	setXgChEffectSink(part: number, slot?: number): void;
+	setDetectionTargets(mode?: string, port?: number): void;
+	/** Sets the target GS/SC level.
+	* - `0`: SC-55
+	* - `1`: SC-88 (valid for SC)
+	* - `2`: SC-88 Pro (valid for SC)
+	* - `3`: SC-8850
+	* @param useSc When `true`, the SC target will be set instead of GS. Triggered by SC Mode Set SysEx on SC-88 and SC-88 Pro.
+	* @param gsLevel Which GS level to target.
+	*/
+	setGsTargets(useSc?: boolean, gsLevel?: number): void;
+	/** Returns the current config. */
+	getConfigs(): Object;
+	/** Sets the restrictions on dump SysEx strings. Refer to `OctaviaDevice.prototype.DUMP_*` for details. */
+	setDumpLimit(limit: number): void;
 }
