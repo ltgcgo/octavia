@@ -1012,7 +1012,7 @@ const RootDisplay = class extends CustomEventSource {
 		upThis.device.getStrength().forEach((e, i) => {
 			upThis.#beforeStrength[i] = e;
 		});
-		upThis.device.newStrength();
+		upThis.device.clearStrength();
 		events.forEach(function (e) {
 			let raw = e.data;
 			let reply = upThis.device.runJson(raw);

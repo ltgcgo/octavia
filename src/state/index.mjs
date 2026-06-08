@@ -1011,7 +1011,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			} else {
 				// ACE allocation
 				if (aceCandidates.indexOf(det.data[0]) > -1) {
-					this.allocateAce(part, det.data[0]);
+					this.assignChAce(part, det.data[0]);
 				};
 				// Stored CC messages
 				switch (det.data[0]) {
@@ -2118,7 +2118,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		};
 		this.#conf.dumpLimit = limit;
 	};
-	allocateAce(part = 0, cc) {
+	assignChAce(part = 0, cc) {
 		// Allocate active custom effect
 		// Off, cc1~cc95, CAT, velo, PB
 		let upThis = this;
@@ -2141,7 +2141,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			console.warn(`ACE slots are full in CH${part + 1}.`);
 		};
 	};
-	allocateAceAll(cc) {
+	assignAce(cc) {
 		let upThis = this;
 		if (!cc || (cc < 128 && cc > 95)) {
 			console.warn(`cc${cc} cannot be allocated as an active custom effect.`);
@@ -2397,7 +2397,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.dispatchEvent("reset");
 		return;
 	};
-	setChMode(part, modeId) {
+	setChModeId(part, modeId) {
 		// Per-channel mode
 		let upThis = this;
 		if (typeof part !== "number" || part < 0 || part >= allocated.ch) {
@@ -2436,7 +2436,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			return this.#portMode[port] || this.#mode;
 		};
 	};
-	setPortMode(port, range, modeId) {
+	setPortModeId(port, range, modeId) {
 		// Per-channel mode, but in bulk
 		let upThis = this;
 		if (port < 0 || port >= (allocated.ch >> 4)) {
@@ -2478,7 +2478,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			return;
 		};
 		let upThis = this;
-		if (failWhenActive && upThis.#chActive[targetCh]) {
+		if (failWhenActive && upThis.#chActive[targetCh] !== upThis.CH_INACTIVE) {
 			console.warn(`Failed attempt at copying setup data from CH${sourceCh + 1} to CH${targetCh + 1}.`);
 			return;
 		};
@@ -2726,7 +2726,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		});
 		return str;
 	};
-	newStrength() {
+	clearStrength() {
 		this.#rawStrength.fill(0);
 	};
 	runJson(json) {
@@ -3372,7 +3372,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.#seUnr.add([9], (msg, track, id) => {
 			// General MIDI reset.
 			upThis.switchMode(["gm", "?", "g2"][msg[0] - 1], 2);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, [/*modeMap.gm*/upThis.#detect.gm, modeMap["?"], upThis.#detect.g2][msg[0] - 1]);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, [/*modeMap.gm*/upThis.#detect.gm, modeMap["?"], upThis.#detect.g2][msg[0] - 1]);
 			upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 			console.info(`MIDI reset: ${["GM", "Init", "GM2"][msg[0] - 1]}`);
 			if (msg[0] === 2) {
@@ -3451,7 +3451,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				case 126: {
 					// Yamaha XG reset
 					upThis.switchMode("xg", 2);
-					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.xg);
+					upThis.setPortModeId(upThis.getTrackPort(track), 4, modeMap.xg);
 					upThis.modelEx.vl.module = 0;
 					upThis.#modeKaraoke = upThis.#modeKaraoke || upThis.KARAOKE_NONE;
 					console.info("MIDI reset: XG");
@@ -3795,7 +3795,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						upThis.setChCc(part, 10, e || 128); // pan
 					}, false, false, () => {
 						upThis.setChCc(part, 128, e); // dry level
-						upThis.allocateAce(part, 128);
+						upThis.assignChAce(part, 128);
 					}, () => {
 						upThis.setChCc(part, 93, e); // chorus
 					}, () => {
@@ -3879,7 +3879,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 								if (ri < 23) {
 									console.debug(`${dPref}${pType} control source: ${getVlCtrlSrc(e)}`);
 									if (e && e < 96) {
-										upThis.allocateAce(part, 130 + pId);
+										upThis.assignChAce(part, 130 + pId);
 									};
 									upThis.#ccCapturer[allocated.redir * part + pId + 2] = e;
 									upThis.buildRccMap();
@@ -4122,7 +4122,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					if (msg[1] < 2) {
 						upThis.modelEx.vl.module = msg[1] + 1;
 					};
-					upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
+					upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.xg);
 					break;
 				};
 				default: {
@@ -4192,7 +4192,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					let targetCc = ri + 131;
 					upThis.setChCc(part, targetCc, e);
 					if (!opt?.noAce && e > 0 && e !== 64) {
-						upThis.allocateAce(part, targetCc);
+						upThis.assignChAce(part, targetCc);
 					};
 					upThis.dispatchEvent("cc", {
 						part,
@@ -4207,7 +4207,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			if (msg[0] === 0) {
 				// QY10 reset
 				upThis.switchMode("qy10", 2);
-				upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.qy10);
+				upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.qy10);
 				console.info("MIDI reset: QY10");
 			} else {
 				console.debug(`Unknown Yamaha QY10 ID: ${msg[0]}`);
@@ -4216,7 +4216,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			if (id === 115) {
 				// DOC reset
 				upThis.switchMode("doc", 2);
-				upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.doc);
+				upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.doc);
 				console.info("MIDI reset: DOC");
 			} else {
 				console.debug(`Unknown Yamaha SysEx: 67, ${id}, ${msg.join(', ')}`);
@@ -4629,7 +4629,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					}, () => {
 						// Dry level
 						upThis.#cc[chOff + ccToPos[128]] = e;
-						upThis.allocateAce(part, 128);
+						upThis.assignChAce(part, 128);
 					}, () => {
 						upThis.#cc[chOff + ccToPos[93]] = e;
 					}, () => {
@@ -4690,7 +4690,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		this.#seGs.add([66, 18, 0, 0, 127], (msg, track, id) => {
 			// GS mode set
 			upThis.switchMode("sc", 2);
-			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.sc);
+			upThis.setPortModeId(upThis.getTrackPort(track), 2, modeMap.sc);
 			// MUST REVISIT AND UPDATE!!!
 			/*upThis.setChCc(9, 0, 120);
 			upThis.setChCc(25, 0, 120);
@@ -4705,7 +4705,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				case 127: {
 					// Roland GS reset
 					upThis.switchMode("gs", 2);
-					upThis.setPortMode(upThis.getTrackPort(track), 4, modeMap.gs);
+					upThis.setPortModeId(upThis.getTrackPort(track), 4, modeMap.gs);
 					/*upThis.setChCc(9, 0, 120);
 					upThis.setChCc(25, 0, 120);
 					upThis.setChCc(41, 0, 120);
@@ -4866,14 +4866,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				}, false, () => {
 					console.debug(`${dPref}1 source: ${e}`);
 					if (e && e < 96) {
-						upThis.allocateAceAll(e);
+						upThis.assignAce(e);
 					};
 				}, () => {
 					console.debug(`${dPref}1 depth: ${e - 64}`);
 				}, () => {
 					console.debug(`${dPref}2 source: ${e}`);
 					if (e && e < 96) {
-						upThis.allocateAceAll(e);
+						upThis.assignAce(e);
 					};
 				}, () => {
 					console.debug(`${dPref}2 depth: ${e - 64}`);
@@ -5203,7 +5203,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// X5D multi parameters (part setup)
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, 1);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let checksum = msg[msg.length - 1],
 			msgData = msg.subarray(0, msg.length - 1),
 			expected = gsChecksum(msgData);
@@ -5280,7 +5280,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.invokeSysExIndicator();
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, 1);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let name = "", msb = upThis.#detect.x5, prg = 0, lsb = 0;
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -5326,7 +5326,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.invokeSysExIndicator();
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, 1);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			let name = "", msb = 90, prg = 0, lsb = 0;// CmbB then CmbA
 			let voiceMap = "MSB\tPRG\tLSB\tNME";
 			korgFilter(msg, function (e, i) {
@@ -5360,14 +5360,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// X5D mode switch
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, 0);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			console.debug(`X5D mode switch requested: ${["combi", "combi edit", "prog", "prog edit", "multi", "global"][msg[0]]} mode.`);
 		}).add([54, 85], (msg, track) => {
 			// X5D effect dump
 			upThis.invokeSysExIndicator();
 			let x5Target = upThis.#detect.x5 === 81 ? "05rw" : "x5d";
 			upThis.switchMode(x5Target, 1);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap[x5Target]);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap[x5Target]);
 			korgFilter(msg, (e, i) => {
 				if (i > 0 && i < 3) {
 					upThis.setEffectType(i - 1, 44, e);
@@ -5388,7 +5388,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					console.info(`Track ${track} is trying to perform a mismached mode dump on port ${String.fromCharCode(65 + port)}.`);
 				};
 			};
-			upThis.setPortMode(port, 1, modeMap[x5Target]);
+			upThis.setPortModeId(port, 1, modeMap[x5Target]);
 			korgFilter(msg, function (e, i, a, ri) {
 				if (i < 192) {
 					let part = upThis.chRedir(Math.floor(i / 12), track, true),
@@ -5481,7 +5481,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		this.#seGs.add([22, 18, 127], (msg, track, id) => {
 			// MT-32 reset all params
 			upThis.switchMode("mt32", 2);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.mt32);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.mt32);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			upThis.userBank.clearRange({msb: 49, lsb: 127, prg: [0, 127]});
 			upThis.modelEx.mt32.writeTimbre = true;
@@ -5807,14 +5807,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		this.#seAi.add([66, 0], (msg, track) => {
 			// Mode switch
 			upThis.switchMode("ns5r", 1);
-			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.ns5r);
+			upThis.setPortModeId(upThis.getTrackPort(track), 2, modeMap.ns5r);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 			console.debug(`NS5R mode switch requested: ${["global", "multi", "prog edit", "comb edit", "drum edit", "effect edit"][msg[0]]} mode.`);
 		}).add([66, 1], (msg, track) => {
 			// Map switch
 			let n5Target = ["ns5r", "05rw"][msg[0]];
 			upThis.switchMode(n5Target, 1);
-			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap[n5Target]);
+			upThis.setPortModeId(upThis.getTrackPort(track), 2, modeMap[n5Target]);
 			upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 		}).add([66, 18, 0, 0], (msg, track) => {
 			// Master setup
@@ -5824,7 +5824,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				case 126: // XG reset for NS5R
 				case 127: { // GS reset for NS5R
 					upThis.switchMode("ns5r", 2);
-					upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.ns5r);
+					upThis.setPortModeId(upThis.getTrackPort(track), 2, modeMap.ns5r);
 					upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 					break;
 				};
@@ -6057,7 +6057,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					console.info(`Track ${track} is trying to perform a mismached mode dump on port ${String.fromCharCode(65 + port)}.`);
 				};
 			};
-			upThis.setPortMode(port, 2, modeMap.ns5r);
+			upThis.setPortModeId(port, 2, modeMap.ns5r);
 			// I'm lazy I just ported the old code here don't judge meee
 			korgFilter(msgData, function (e, i) {
 				switch (true) {
@@ -6316,7 +6316,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			([() => {
 				// GMega bank set
 				upThis.switchMode("k11", 2);
-				upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.k11);
+				upThis.setPortModeId(upThis.getTrackPort(track), 2, modeMap.k11);
 				upThis.#modeKaraoke = upThis.KARAOKE_NONE;
 				upThis.#subDb[modeMap.k11][1] = e ? 4 : 0;
 				console.info("MIDI reset: GMega/K11");
@@ -6523,7 +6523,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						case 127: {
 							// SG reset
 							upThis.switchMode("sg", 2);
-							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.sg);
+							upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.sg);
 							break;
 						};
 					};
@@ -6720,7 +6720,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					console.info(`Track ${track} is trying to perform a mismached mode dump on port ${String.fromCharCode(65 + port)}.`);
 				};
 			};
-			//upThis.setPortMode(port, 2, modeMap.s90es);
+			//upThis.setPortModeId(port, 2, modeMap.s90es);
 			let part = upThis.chRedir(msg[0], track, true),
 			chOff = ccOffTable[part],
 			offset = msg[1];
@@ -6777,7 +6777,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					upThis.setChCc(part, 128, e);
 					if (e !== 127) {
 						upThis.setChActive(part, 1);
-						upThis.allocateAce(part, 128);
+						upThis.assignChAce(part, 128);
 					};
 				}, () => {
 					// note shift, RPN
@@ -6799,7 +6799,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		// Yamaha CS6x
 		upThis.#seXg.add([100, 14], (msg, track, id) => {
 			upThis.switchMode("cs6x");
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs6x);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.cs6x);
 			// CS6x bulk start
 			let bulkTarget = ["normal voice", "plugin voice PLG", "drums", , "performance", , "phrase clip"][msg[0] >> 4] ?? "invalid";
 			if (msg[0] & 15 == 15) {
@@ -6841,7 +6841,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			upThis.pushChPrimitives(part);
 		}).add([100, 76, 0], (msg, track, id) => {
 			upThis.switchMode("cs6x");
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs6x);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.cs6x);
 			// CS6x voice plugin common
 			let part = 0;
 			let offset = msg[0];
@@ -6997,12 +6997,12 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							// Carrier level 1~6
 							let targetCc = ri + 142;
 							upThis.setChCc(part, targetCc, e);
-							e !== 64 && upThis.allocateAce(part, targetCc);
+							e !== 64 && upThis.assignChAce(part, targetCc);
 						} else if (ri < 12) {
 							// Modulator level 1~6
 							let targetCc = ri + 144;
 							upThis.setChCc(part, targetCc, e);
-							e !== 64 && upThis.allocateAce(part, targetCc);
+							e !== 64 && upThis.assignChAce(part, targetCc);
 						} else {
 							([() => {
 								// feedback level
@@ -7030,7 +7030,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		this.#seGs.add([0, 72, 18, 0, 0, 0, 0], (msg, track, id) => {
 			// SD-90 Native System On
 			upThis.switchMode("sd", 2);
-			upThis.setPortMode(upThis.getTrackPort(track), 2, modeMap.sd);
+			upThis.setPortModeId(upThis.getTrackPort(track), 2, modeMap.sd);
 			console.info(`MIDI reset: SD`);
 		})/*.add([0, 72, 18, 1, 0, 0], (msg, track, id) => {
 			// Master setup
@@ -7204,7 +7204,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							}, 0, 0, 0, 0, 0, 0, 0, () => {
 								// Dry level
 								upThis.#cc[chOff + ccToPos[128]] = e;
-								upThis.allocateAce(128);
+								upThis.assignChAce(128);
 							}, () => {
 								// cc93
 								upThis.#cc[chOff + ccToPos[93]] = e;
@@ -7261,7 +7261,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		})*/;
 		upThis.#seAi.add([0, 1, 73, 78], (msg, track, id) => {
 			upThis.switchMode("krs", 1);
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.krs);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.krs);
 			console.debug("Might be KORG KROSS 2 mode reset... Not sure.");
 		}).add([0, 1, 73, 117, 2, 37], (msg, track, id) => {
 			// KORG KROSS 2 BMT1 bundled multi-track dump
@@ -7277,7 +7277,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					console.info(`Track ${track} is trying to perform a mismached mode dump on port ${String.fromCharCode(65 + port)}.`);
 				};
 			};
-			upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.krs);
+			upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.krs);
 			let dPref = `KROSS 2 BMT1 `
 			let trackName = "";
 			korgFilter(msg, (e, i) => {
@@ -7402,7 +7402,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		});
 		let an1xAssign = function (e, track, slot) {
 			let part = upThis.chRedir(e, track, true);
-			upThis.setChMode(part, modeMap.an1x);
+			upThis.setChModeId(part, modeMap.an1x);
 			upThis.pushChPrimitives(part);
 			console.debug(`Yamaha AN1x slot ${slot + 1} receives from CH${part + 1}(${e + 1}).`);
 			upThis.modelEx.yPlg[3][slot] = part;
@@ -7442,13 +7442,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					switch (e) {
 						case 1: {
 							upThis.switchMode("xg", 2);
-							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.xg);
+							upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.xg);
 							console.debug(`Yamaha CS1x set to XG mode.`);
 							break;
 						};
 						case 3: {
 							upThis.switchMode("cs1x", 2);
-							upThis.setPortMode(upThis.getTrackPort(track), 1, modeMap.cs1x);
+							upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.cs1x);
 							console.debug(`Yamaha CS1x set to performance mode.`);
 							break;
 						};

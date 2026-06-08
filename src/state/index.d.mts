@@ -515,4 +515,48 @@ export class OctaviaDevice {
 	getConfigs(): Object;
 	/** Sets the restrictions on dump SysEx strings. Refer to `OctaviaDevice.prototype.DUMP_*` for details. */
 	setDumpLimit(limit: number): void;
+	/** Allocate a control change number to an Active Custom Effect slot on all parts. */
+	assignAce(cc: number);
+	/** Allocate a control change number to an Active Custom Effect slot on a part. */
+	assignChAce(part: number, cc: number);
+	/** Initialise all drum parameters. */
+	initDrums(): void;
+	/** (WIP) Initialise drum parameters on a slot. */
+	initDrumSlot(slot: number): void;
+	/** Reset and initialise the device.
+	* - `0`: Full reset (default).
+	* - `1`: Hard reset. Skips some states.
+	*/
+	init(type?: number);
+	/** Retrieve the string mode identifier of a part. */
+	getChMode(part: number, noFallback?: boolean): string;
+	/** Retrieve the numerical mode identifier of a part. */
+	getChModeId(part: number, noFallback?: boolean): number;
+	/** Sets the mode of a part with a numerical identifier. */
+	setChModeId(part: number, modeId?: boolean): string;
+	/** Retrieve the string mode identifier of a port. */
+	getPortMode(part: number, noFallback?: boolean): string;
+	/** Retrieve the numerical mode identifier of a port. */
+	getPortModeId(part: number, noFallback?: boolean): number;
+	/** Set the mode of a port with a numerical identifier. */
+	setPortModeId(part: number, modeId?: boolean): string;
+	/** Copy the setup of a part from another part. Needs rethinking and reworking. */
+	copyChSetup(sourcePart: number, targetPart: number, failWhenActive?: boolean): void;
+	/** Get the first write part for a drum slot. */
+	getDrumFirstWrite(part: number): number;
+	/** Set the first write part for a drum slot. Part setup copying will happen on subsequent parts of the same slot.
+	* @param disable When `true`, the first write status of the part will be reset.
+	*/
+	setDrumFirstWrite(part: number, disable?: boolean): void;
+	/** Get the first write part for a part's drum slot. */
+	getChDrumFirstWrite(part: number): number;
+	/** Switch the global mode.
+	* - `0`: Change only when without a defined mode. No reset.
+	* - `1`: Change. Reset when without a defined mode.
+	* - `2`: Change with reset regardless.
+	* - `3`: Do not reset.
+	* @param forced The force switch level described above. Resets happen when `OctaviaDevice.prototype.initOnReset` is `true`.
+	* @param setTarget When `true`, `OctaviaDevice.prototype.setDetectionTargets()` will be called.
+	*/
+	switchMode(mode: string, forced?: number, setTarget?: boolean): void;
 }
