@@ -1,6 +1,6 @@
 {
 	"name": "@ltgc/octavia",
-	"version": "0.0.10",
+	"version": "0.0.11-pre.1+b.1",
 	"license": "LGPL-3.0-only",
 	"imports": {
 		"@ltgc/rochelle": "jsr:@ltgcgo/rochelle@^0.2.9",
