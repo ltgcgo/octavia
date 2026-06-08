@@ -516,9 +516,9 @@ export class OctaviaDevice {
 	/** Sets the restrictions on dump SysEx strings. Refer to `OctaviaDevice.prototype.DUMP_*` for details. */
 	setDumpLimit(limit: number): void;
 	/** Allocate a control change number to an Active Custom Effect slot on all parts. */
-	assignAce(cc: number);
+	assignAce(cc: number): void;
 	/** Allocate a control change number to an Active Custom Effect slot on a part. */
-	assignChAce(part: number, cc: number);
+	assignChAce(part: number, cc: number): void;
 	/** Initialise all drum parameters. */
 	initDrums(): void;
 	/** (WIP) Initialise drum parameters on a slot. */
@@ -527,7 +527,7 @@ export class OctaviaDevice {
 	* - `0`: Full reset (default).
 	* - `1`: Hard reset. Skips some states.
 	*/
-	init(type?: number);
+	init(type?: number): void;
 	/** Retrieve the string mode identifier of a part. */
 	getChMode(part: number, noFallback?: boolean): string;
 	/** Retrieve the numerical mode identifier of a part. */
