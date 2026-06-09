@@ -1,0 +1,27 @@
+{
+	"start_url": "/octavia/test/",
+	"id": "/rdnn/cc.ltgc.octavia.demoLauncher?ver=0",
+	"scope": "/octavia/",
+	"name": "List of Octavia Demos",
+	"short_name": "Octavia",
+	"description": "Select your Octavia demo, and launch to experience MIDI like they are ment to be experienced.",
+	"background_color": "black",
+	"theme_color": "white",
+	"orientation": "any",
+	"display": "minimal-ui",
+	"display_override": ["tabbed"],
+	"launch_handler": ["navigate-new"],
+	"shortcuts": [{
+		"name": "Cambiare",
+		"description": "Open the flagship visualiser.",
+		"url": "/octavia/test/cambiare.htm"
+	}, {
+		"name": "Dirigere",
+		"description": "Open the player and router.",
+		"url": "/octavia/test/dirigere.htm"
+	}, {
+		"name": "Panorama",
+		"description": "Open the sequenced music editor.",
+		"url": "/octavia/test/panorama.htm"
+	}]
+}

@@ -60,6 +60,7 @@ export class FileHandler {
 	* - `mid`, `midi`, `kar`: `audio/midi`
 	* - `rmi`: `audio/vnd.microsoft.rmi`
 	* - `mia`: `audio/vnd.ltgc.mia`
+	* - `syx`: `application/vnd.mma.sysex+octet-stream`
 	* - `xm`: `audio/vnd.fasttracker.xm`
 	* - `s3m`: `audio/vnd.screamtracker.s3m`
 	* - `it`: `audio/vnd.impulsetracker.it`

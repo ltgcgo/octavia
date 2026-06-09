@@ -6,14 +6,15 @@
 * @module cc.ltgc.octavia.basic
 */
 
-import {
+import type {
 	OctaviaDevice,
 	TimeMuxer,
 	OctaviaVoiceObject,
 	OctaviaVoiceProperties
 } from "./state.d.mts";
-import MiniSignal from "../libs/twinkle@ltgcgo/miniSignal.d.mts";
+import type MiniSignal from "../libs/twinkle@ltgcgo/miniSignal.d.mts";
 
+/** Properties related to a style pattern. */
 declare class StyleProperties {
 	/** The short 8-character ID of a style pattern. */
 	short?: string;
@@ -59,6 +60,7 @@ export class FileHandler {
 	* - `mid`, `midi`, `kar`: `audio/midi`
 	* - `rmi`: `audio/vnd.microsoft.rmi`
 	* - `mia`: `audio/vnd.ltgc.mia`
+	* - `syx`: `application/vnd.mma.sysex+octet-stream`
 	* - `xm`: `audio/vnd.fasttracker.xm`
 	* - `s3m`: `audio/vnd.screamtracker.s3m`
 	* - `it`: `audio/vnd.impulsetracker.it`
@@ -145,6 +147,7 @@ export class BitmapMatrix {
 	constructor(width: number, height: number, packed: boolean, buffer: Uint8Array);
 }
 
+/** A basic bitmap collection. */
 declare class MxBaseBmCollection {
 	/** The wrapped promise object that resolves when loading is finished. */
 	readonly loaded: MiniSignal;
@@ -154,6 +157,7 @@ declare class MxBaseBmCollection {
 	data(key: string): BitmapMatrix;
 	constructor(...fileSrc: string[]);
 }
+/** A general-purpose bitmap collection. */
 declare class MxFlexibleBmCollection extends MxBaseBmCollection {
 	/** Load the collection from a text file. */
 	load(text: string): Promise<void>;
@@ -162,6 +166,7 @@ declare class MxFlexibleBmCollection extends MxBaseBmCollection {
 	/** Get the bitmap with the associated ID. */
 	getBm(resourceName: string): BitmapMatrix;
 }
+/** A font-oriented bitmap collection. */
 declare class MxFontBmCollection extends MxBaseBmCollection {
 	/** Load the collection from a text file. */
 	load(text: string, overwrite?: boolean, name?: string): Promise<void>;
@@ -185,7 +190,11 @@ export class MxBm256 extends MxFlexibleBmCollection {}
 /** An bitmap collection with arbitrary dimensions. */
 export class MxBmDef extends MxFlexibleBmCollection {}
 
-/** The basis needed to build a basic visualiser with Octavia. */
+/** The basis needed to build a basic visualiser with Octavia.
+* ```js
+* const ExampleVisualiser = class ExampleVisualiser extends RootDisplay {};
+* ```
+*/
 export class RootDisplay {
 	/** Denotes that the bitmaps use a universal layout. */
 	readonly BM_UNIVERSAL: number;
@@ -211,6 +220,8 @@ export class RootDisplay {
 	smoothAttack: number;
 	/** How fast should the strength metres decrease to its true value. */
 	smoothDecay: number;
+	/** The pixel text font used in the visualiser. */
+	textFont?: MxFontBmCollection;
 	/** Trigger visualiser resets. The sequencer will not be cleared. */
 	reset(): void;
 	/** Trigger visualiser initialization. Will also trigger a reset. The sequencer will be cleared. */
@@ -275,5 +286,18 @@ export class RootDisplay {
 	sendCmd(raw: Object): void;
 	/** Execute MIDI events till the specified point in time. */
 	render(time: number): Object;
+	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);
+}
+
+/** A display that always will focus on a single part. Automatically hooks into the focused part switch events. */
+export class FocusedPartDisplay extends RootDisplay {
+	/** The current focused part. Downstream classes should handle negative wrap-arounds. */
+	part: number;
+	/** The current suggested port range. `1` port equals to `16` parts, `2` ports equal to `32` parts, and so on. Default to `0`, meaning "ignore". */
+	portRange: number;
+	/** The current focused start port. Default to `255` (`allocated.invalidCh`), meaning "ignore". */
+	portStart: number;
+	/** If `false`, the focus won't follow future part events. Defaults to `true`. */
+	rxPartEvents: boolean;
 	constructor(device: OctaviaDevice, atk?: number, dcy?: number, linear?: boolean);
 }

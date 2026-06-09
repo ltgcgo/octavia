@@ -1,0 +1,82 @@
+{
+	"start_url": "/octavia/test/cambiare.htm",
+	"id": "/rdnn/cc.ltgc.octavia.cambiare?ver=0",
+	"scope": "/octavia/test/",
+	"name": "Octavia Cambiare",
+	"short_name": "Cambiare",
+	"description": "The flagship visualiser of the Octavia project.",
+	"background_color": "black",
+	"theme_color": "white",
+	"orientation": "landscape",
+	"display": "standalone",
+	"display_override": ["tabbed"],
+	"launch_handler": ["focus-existing"],
+	"file_handlers": [{
+		"action": "/octavia/test/cambiare.htm",
+		"accept": {
+			"audio/midi": [".mid", ".MID", ".midi", ".MIDI", ".kar", ".KAR"],
+			"application/vnd.mma.sysex+octet-stream": [".syx", ".SYX"],
+			"audio/vnd.ltgc.mia": [".mia", ".MIA"],
+			"audio/vnd.microsoft.rmi": [".rmi", ".RMI"],
+			"audio/vnd.yamaha.xgworks": [".xws", ".XWS"],
+			"audio/vnd.impulsetracker.it": [".it", ".IT"],
+			"audio/opus": [".opus", ".OPUS"],
+			"audio/musepack": [".mpc", ".MPC"],
+			"audio/ogg": [".ogg", ".OGG", ".oga", ".OGA"],
+			"audio/mp4": [".m4a", ".M4A"],
+			"audio/aac": [".aac", ".AAC"],
+			"audio/wav": [".wav", ".WAV"],
+			"audio/flac": [".flac", ".FLAC"],
+			"audio/matroska": [".mka", ".MKA"],
+			"audio/webm": [".weba", ".WEBA"],
+			"image/jxl": [".jxl", ".JXL"],
+			"image/webp": [".webp", ".WEBP"],
+			"image/jpeg": [".jpg", ".JPG", ".jpeg", ".JPEG"],
+			"image/png": [".png", ".PNG", ".apng", ".APNG"],
+			"image/svg+xml": [".svg", ".SVG"]
+		}
+	}],
+	"share_target": {
+		"method": "POST",
+		"action": "/octavia/maple-share/cc.ltgc.octavia.cambiare",
+		"enctype": "multipart/form-data",
+		"params": {
+			"title": "name",
+			"text": "desc",
+			"url": "from",
+			"files": [{
+				"accept": [
+					"audio/midi", ".mid", ".MID", ".midi", ".MIDI", ".kar", ".KAR",
+					".syx", ".SYX",
+					".rmi", ".RMI",
+					".mia", ".MIA",
+					".xws", ".XWS",
+					".it", ".IT"
+				],
+				"name": "seq"
+			}, {
+				"accept": [
+					"audio/opus", ".opus", ".OPUS",
+					"audio/musepack", ".mpc", ".MPC",
+					"audio/ogg", ".ogg", ".OGG", ".oga", ".OGA",
+					"audio/mp4", ".m4a", ".M4A",
+					"audio/aac", ".aac", ".AAC",
+					"audio/wav", ".wav", ".WAV",
+					"audio/flac", ".flac", ".FLAC",
+					"audio/matroska", ".mka", ".MKA",
+					"audio/webm", ".weba", ".WEBA"
+				],
+				"name": "wave"
+			}, {
+				"accept": [
+					"image/jxl", ".jxl", ".JXL",
+					"image/webp", ".webp", ".WEBP",
+					"image/jpeg", ".jpg", ".JPG", ".jpeg", ".JPEG",
+					"image/png", ".png", ".PNG", ".apng", ".APNG",
+					"image/svg+xml", ".svg", ".SVG"
+				],
+				"name": "bg"
+			}]
+		}
+	}
+}

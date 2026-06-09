@@ -6,5 +6,8 @@
 * @module cc.ltgc.octavia.bridge
 */
 
+/** Retrieves messages from the master line in. */
 export function getBridge(): BroadcastChannel;
+
+/** Retrieves messages from the master line out. */
 export function getBridgeOut(): BroadcastChannel;

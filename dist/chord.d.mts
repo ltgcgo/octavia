@@ -75,4 +75,4 @@ declare class ChordPlanDuo {
 }
 
 /** Retrieve the two-component chord display plan. */
-export function getFreePlan(chordId: number): ChordPlanDuo;
+export function getFreePlan(chordId: number): ChordPlanDuo | null;
