@@ -149,6 +149,9 @@ const modeColourPool = {
 for (let mode in modeNames) {
 	modeGlobalClasses.push(`cambiare-mode-${mode}`);
 };*/
+const getPresetAccentColour = (arr, scheme) => {
+	return arr[scheme & 1];
+};
 
 piMulti.forEach((e, i, a) => {
 	a[i] = Math.PI * i / 12;
@@ -1067,7 +1070,7 @@ let Cambiare = class extends RootDisplay {
 	setMode(mode) {
 		let upThis = this;
 		upThis.#mode = mode;
-		upThis.#accent = (modeColourPool[mode] || ["fcdaff", "6c007f"])[upThis.#scheme];
+		upThis.#accent = getPresetAccentColour(modeColourPool[mode] || ["fcdaff", "6c007f"], upThis.#scheme);
 		//classOff(upThis.#canvas, modeGlobalClasses);
 		for (let className of upThis.#canvas.classList) {
 			if (className.substring(0, 14) === "cambiare-mode-") {
@@ -1099,7 +1102,7 @@ let Cambiare = class extends RootDisplay {
 		if (upThis.#scheme) {
 			classOn(upThis.#canvas, [[null, `cambiare-scheme-light`, `cambiare-scheme-luma`][upThis.#scheme]]);
 		};
-		upThis.#accent = (modeColourPool[upThis.#mode] || ["fcdaff", "6c007f"])[upThis.#scheme];
+		upThis.#accent = getPresetAccentColour(modeColourPool[upThis.#mode] || ["fcdaff", "6c007f"], upThis.#scheme);
 		upThis.#bufBo.fill(0);
 		upThis.#bufLo.fill(0);
 		upThis.#bufCo.fill(0);
@@ -1110,7 +1113,7 @@ let Cambiare = class extends RootDisplay {
 			if (upThis.#chAccent[part]) {
 				let targetColour = modeColourPool[upThis.#chMode[part]];
 				if (targetColour) {
-					upThis.#chAccent[part] = targetColour[upThis.#scheme];
+					upThis.#chAccent[part] = getPresetAccentColour(targetColour, upThis.#scheme);
 				};
 			};
 		};
@@ -1844,7 +1847,7 @@ let Cambiare = class extends RootDisplay {
 			upThis.setChMode(part, mode);
 			let resultColour = modeColourPool[mode];
 			if (resultColour) {
-				upThis.#chAccent[part] = resultColour[upThis.#scheme];
+				upThis.#chAccent[part] = getPresetAccentColour(resultColour, upThis.#scheme);
 			};
 			//console.debug(part, mode);
 		});
