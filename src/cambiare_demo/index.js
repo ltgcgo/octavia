@@ -433,7 +433,7 @@ const setWallpaper = async (invokeButton) => {
 			mountElement(fileTooltip, [`${chosen.year} © `, linkedArtist, ` - ${chosen.license}`]);
 		} else {
 			// Display the chosen local file
-			fileTooltip.innerText = "Slide over this text to adjust wallpaper opacity.";
+			fileTooltip.innerText = "Open a local file to proceed.";
 		};
 	} else {
 		visualiser.setWallpaperUrl();

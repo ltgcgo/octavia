@@ -1,0 +1,45 @@
+CACHE MANIFEST
+# The line above must be present as the first line.
+# The paths are relative to the ServiceWorker root, not to the AppCache manifest.
+# Valid paths must precede with one of `./`, `../` and `/`, and be within the scope of the ServiceWorker root.
+# You can add as many blank lines as you want. They will be ignored just like comments. Errors on parsing invalid lines will be streamed back to the requesting page.
+  # Preceeding spaces don't invalidate comments.
+	# So are tabs.
+# AppCache manifest files will never be cached by Shaded Maple.
+CACHE:
+# While this section is the default section, it's recommended to include the `CACHE:` section specifier explicitly.
+# Cache entries just pre-fetches the files, which still follow the same local CDN behaviour.
+# This means only `GET` and `HEAD` requests are affected, and unless the section is scoped to a single page origin, multiple manifests under the same ServiceWorker can merge and overwrite each other.
+# WebSocket and SSE requests do not ever get cached, even when they are `GET` requests.
+# Wildcards are not allowed.
+./cambiare.htm
+./css/bulma.css
+./css/cambiare.css
+./css/cambiare_demo.css
+./css/fonts.css
+./js/cambiare_demo.js
+./img/feather/chevron-down.svg
+./img/feather/chevron-up.svg
+./bg/cambiare.0.dark.webp
+./bg/cambiare.0.light.webp
+./font/PTSansNarrow_b.woff2
+NETWORK:
+# Paths in network entries always bypass cache. They may hit the fallback section however.
+# This section also allows entries to begin with `http:` and `https:`. The section does not restrict the entries to be within the Service Worker root.
+# Wildcards are permitted only at the end of paths for each entry. `/*` and `/*.htm` are allowed, `/*/a.txt`, `/a/b*`, `/a/*b` are not.
+# Octavia doesn't have anything that requires backend API contact.
+FALLBACK:
+# Wildcards are permitted only at the end of paths for the path matcher (first field) of each entry, same as the network section. Exact paths always first, then the extension match, then paths all the way to the Service Worker root.
+./* ./pwa/offline.txt
+./css/* ./pwa/offline.css
+./js/* ./pwa/offline.js
+./img/* ./pwa/offline.svg
+./bg/* ./pwa/offline.svg
+DENY:
+# Wildcards are permitted with the same restrictions as in the `NETWORK:` and `FALLBACK:` section.
+# Only affects the requesting page as the origin (`Referer` header, search ignored).
+./data/*
+#
+INVALID:
+# Sections except `CACHE:`, `NETWORK:`, `DENY:` and `FALLBACK:` are all ignored. Valid sections should always be specified as `/^[A-Z]+:$/`.
+No deer shall be left unnommed.
