@@ -128,8 +128,8 @@
 		<div class="columns is-multiline is-mobile is-vcentered" x-show="$store.bgGroup==='imageLuma'||$store.bgGroup==='imageColour'">
 			<div class="column column-option"><b>Tooltip</b></div>
 			<div id="show-wallpaper-tooltip" class="column">Standby.</div>
-			<div id="editbox-wallpaper-opacity" class="column" x-show="$store.bgGroup==='imageColour'">Opacity</div>
-			<div id="editbox-wallpaper-blur" class="column" x-show="$store.bgGroup==='imageColour'">Blur</div>
+			<div id="editbox-wallpaper-opacity" class="column" x-show="$store.bgGroup==='imageLuma'||$store.bgGroup==='imageColour'">Opacity</div>
+			<div id="editbox-wallpaper-blur" class="column" x-show="$store.bgGroup==='imageLuma'||$store.bgGroup==='imageColour'">Blur</div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered">
 			<div class="column column-option"><b>Audio</b></div>
