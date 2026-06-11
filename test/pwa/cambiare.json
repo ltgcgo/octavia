@@ -38,7 +38,7 @@
 	}],
 	"share_target": {
 		"method": "POST",
-		"action": "/octavia/maple-share/cc.ltgc.octavia.cambiare",
+		"action": "/octavia/test/maple-share/cc.ltgc.octavia.cambiare",
 		"enctype": "multipart/form-data",
 		"params": {
 			"title": "name",
