@@ -456,7 +456,7 @@ let QyDisplay = class extends FocusedPartDisplay {
 				});
 				if (upThis.device?.getChActive(rch)) {
 					upThis.#renderFill(31 + tchOff, preCalY + 11, 9, 1);
-					let cVelo = sum.strength[rch] >> 6; // devided by 51
+					let cVelo = sum.strength[rch] >> 13; // divided by 51
 					if (sum.strength[rch] > 0) {
 						upThis.#renderFill(31 + tchOff, preCalY + 10 - cVelo, 9, cVelo + 1);
 					};
