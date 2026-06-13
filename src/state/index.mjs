@@ -2718,15 +2718,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		});
 		return this.#rawStrength;
 	};
-	getStrength() {
-		// 0 to 255
-		// Should later become 0 to 32768
-		let str = [], upThis = this;
-		this.getRawStrength().forEach(function (e, i) {
-			str[i] = Math.floor(e * upThis.getChCc(i, 7) * upThis.getChCc(i, 11) * upThis.#master.volume / 803288);
-		});
-		return str;
-	};
 	getStrengths(fullScale = false) {
 		const upThis = this;
 		const rawStrengths = upThis.getRawStrength();
