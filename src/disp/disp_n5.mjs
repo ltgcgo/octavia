@@ -337,7 +337,7 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 				if (ri < minCh || ri > maxCh) {
 					continue;
 				};
-				const e = sum.strength[ri], i = ri - minCh;
+				const e = sum.strength[ri] >> 7, i = ri - minCh;
 				//console.debug(`${ri >>> 5}, ${i >>> 5}`);
 				/*if (maxCh < 32 && i > 31) {
 					continue;
