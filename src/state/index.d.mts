@@ -563,11 +563,7 @@ export class OctaviaDevice {
 	* @param setTarget When `true`, `OctaviaDevice.prototype.setDetectionTargets()` will be called.
 	*/
 	switchMode(mode: string, forced?: number, setTarget?: boolean): void;
-	/** Retrieve the raw strength of all parts, values range between 0 and 255. High resolution velocity not supported. */
-	getRawStrength(): Uint8Array;
-	/** Retrieve the strength of all parts, values range between 0 and 127, affected by cc7 and cc11. */
-	getStrength(): Uint8Array;
-	/** Retrieve the raw strength of all parts, values range between 0 and 16383. */
+	/** (WIP) Retrieve the raw strength of all parts, values range between 0 and 16383. */
 	getRawStrengths(): Uint8Array;
 	/** Retrieve the strength of all parts, values are all within [0, 32767], affected by cc7 and cc11.
 	* @param fullScale When `true`, the range will become [0, 32768] instead.

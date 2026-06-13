@@ -53,8 +53,8 @@ const RootDisplay = class extends CustomEventSource {
 	#titleName = "";
 	#metaRun = [];
 	#noteEvents = [];
-	#mimicStrength = new Uint8ClampedArray(allocated.ch);
-	#beforeStrength = new Uint8ClampedArray(allocated.ch);
+	#mimicStrength = new Uint16Array(allocated.ch);
+	#beforeStrength = new Uint16Array(allocated.ch);
 	#chLastNoteAt = new Uint32Array(allocated.ch);
 	#chLastNoteExhausted = new Uint32Array(allocated.ch);
 	// Used to provide tempo, tSig and bar information
@@ -1009,7 +1009,7 @@ const RootDisplay = class extends CustomEventSource {
 		let upThis = this;
 		let metaReplies = [];
 		// Reset strength for a new frame
-		upThis.device.getStrength().forEach((e, i) => {
+		upThis.device.getStrengths().forEach((e, i) => {
 			upThis.#beforeStrength[i] = e;
 		});
 		upThis.device.clearStrength();
@@ -1053,26 +1053,27 @@ const RootDisplay = class extends CustomEventSource {
 		let chKeyPr = []; // Pressed keys and their pressure
 		let chExt = [];
 		// Mimic strength variation
-		let writeStrength = upThis.device.getStrength();
+		const writeStrength = upThis.device.getStrengths();
 		writeStrength.forEach(function (e, i, a) {
 			a[i] = Math.max(upThis.#beforeStrength[i], e);
 			let diff = a[i] - upThis.#mimicStrength[i];
 			if (upThis.smoothLinear) {
 				if (diff >= 0) {
-					let linearAttackGate = Math.min(255, 256 * (1 - upThis.smoothAttack));
+					let linearAttackGate = Math.min(32767, 32768 * (1 - upThis.smoothAttack));
 					upThis.#mimicStrength[i] += Math.min(linearAttackGate, diff);
 				} else {
-					let linearDecayGate = Math.max(-255, 256 * (upThis.smoothDecay - 1));
+					let linearDecayGate = Math.max(-32767, 32768 * (upThis.smoothDecay - 1));
 					upThis.#mimicStrength[i] += Math.max(linearDecayGate, diff);
 				};
 			} else {
+				// ÷ 64 ← × 0.015625
 				if (diff >= 0) {
 					// cc73 = 0, atkPower = 4
 					// cc73 = 127, atkPower = 0.25
-					let atkPower = 4 * (0.25 ** (upThis.device.getChCc(i, 73) / 64));
+					let atkPower = 4 * (0.25 ** (upThis.device.getChCc(i, 73) * 0.015625));
 					upThis.#mimicStrength[i] += Math.ceil(diff - (diff * (upThis.smoothAttack ** atkPower)));
 				} else {
-					let rlsPower = 4 * (0.25 ** (upThis.device.getChCc(i, 72) / 64));
+					let rlsPower = 4 * (0.25 ** (upThis.device.getChCc(i, 72) * 0.015625));
 					upThis.#mimicStrength[i] += Math.floor(diff - (diff * (upThis.smoothDecay ** rlsPower)));
 				};
 			};
@@ -1104,7 +1105,7 @@ const RootDisplay = class extends CustomEventSource {
 			noteBar: upThis.noteBar,
 			noteBeat: upThis.noteBeat,
 			ace: upThis.device.getAce(),
-			rawVelo: upThis.device.getStrength(),
+			rawVelo: upThis.device.getStrengths(),
 			rawStrength: upThis.device.getRawStrength()
 		};
 		return repObj;

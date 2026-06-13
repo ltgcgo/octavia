@@ -366,16 +366,16 @@ let MuDisplay = class extends FocusedPartDisplay {
 				if (chPan === 64 || chPan >> 7 === 1 || !upThis.isMetreAffectedByPan) {
 					// Nothing will happen
 				} else if (chPan < 64) {
-					curStrnR = Math.round(curStrnR * chPan >> 6);
+					curStrnR = Math.round(curStrnR * chPan >> 14);
 				} else if (chPan > 64) {
-					curStrnL = Math.round(curStrnR * (128 - chPan) >> 6);
+					curStrnL = Math.round(curStrnR * (128 - chPan) >> 14);
 				};
 				if (rendMode === 0 || (rendMode === 1 && upThis.device?.hideVoiceDetails)) {
-					curStrnL >>= 4;
-					curStrnR >>= 4;
+					curStrnL >>= 12;
+					curStrnR >>= 12;
 				} else {
-					curStrnL >>= 5;
-					curStrnR >>= 5;
+					curStrnL >>= 13;
+					curStrnR >>= 13;
 				};
 				if (rendMode === 0 || rendMode === 1) {
 					// 16 channel

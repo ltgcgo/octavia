@@ -658,7 +658,7 @@ let Cambiare = class extends RootDisplay {
 				e.metre.strokeStyle = `#${upThis.#foreground}`;
 				e.metre.lineWidth = 1;
 				e.metre.globalCompositeOperation = "source-over";
-				let metreLength = sum.strength[part] * 121 / 255;
+				let metreLength = sum.strength[part] * 121 / 32767;
 				switch (e.metre.decoration) {
 					case 1: {
 						// Outline.
