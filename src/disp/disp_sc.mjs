@@ -487,7 +487,10 @@ let ScDisplay = class extends FocusedPartDisplay {
 				if (upThis.#lingerPress[i] > 0 && rawStrength[i] > 0) {
 					upThis.#rawStrength[i] = rawStrength[i];
 				};
-				let e = sum.strength[i];
+				let e = sum.strength[i] >> 7;
+				if (i === 0) {
+					console.debug(e);
+				};
 				//i === 9 && console.debug(upThis.#velo[i], e);
 				//let isMelodic = upThis.device?.getChType(i) === 0 && tmpMelodicBypassCat[upThis.getChPrimitive(i, 0, true) >> 3] === 0;
 				// This is for when the scaling factors are not available
