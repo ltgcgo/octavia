@@ -268,7 +268,15 @@ Object.defineProperty(timeMuxer, "realtime", {
 		return useMidiBus && !audioFilePlayer.currentTime;
 	}
 });
-let visualiser = new Cambiare($e(".cambiare"), timeMuxer);
+const mountingPoint = $e(".cambiare");
+const visualiser = new Cambiare(mountingPoint, timeMuxer);
+mountingPoint.addEventListener("dblclick", function () {
+	if (document.fullscreenElement ?? document.mozFullscreenElement ?? document.webkitFullscreenElement ?? document.fullscreen ?? document.mozFullscreen ?? document.webkitIsFullscreen) {
+		(document.exitFullscreen ?? document.mozExitFullscreen ?? document.webkitExitFullscreen).apply(document);
+	} else {
+		(mountingPoint.requestFullscreen ?? mountingPoint.mozRequestFullscreen ?? mountingPoint.webkitRequestFullscreen).apply(mountingPoint);
+	};
+});
 //visualiser.clockSource.attach(audioFilePlayer);
 visualiser.reset();
 (async () => {
@@ -644,11 +652,10 @@ document.body.addEventListener("keydown", async (ev) => {
 		switch (key) {
 			case "Enter": {
 				// Full screen
-				if (document.fullscreen || document.mozFullscreen || document.webkitFullscreen) {
-					(document.exitFullscreen || document.mozExitFullscreen || document.webkitExitFullscreen).apply(document);
+				if (document.fullscreenElement ?? document.mozFullscreenElement ?? document.webkitFullscreenElement ?? document.fullscreen ?? document.mozFullscreen ?? document.webkitIsFullscreen) {
+					(document.exitFullscreen ?? document.mozExitFullscreen ?? document.webkitExitFullscreen).apply(document);
 				} else {
-					let cc = $e(".cambiare");
-					(cc.requestFullscreen || cc.mozRequestFullscreen || cc.webkitRequestFullscreen).apply(cc);
+					(mountingPoint.requestFullscreen ?? mountingPoint.mozRequestFullscreen ?? mountingPoint.webkitRequestFullscreen).apply(mountingPoint);
 				};
 				break;
 			};
