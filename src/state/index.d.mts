@@ -1,6 +1,10 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+import type {
+	NakedMIDIEvent
+} from "../micc/index.d.mts";
+
 /** The core MIDI processing engine with an absurd coverage.
 * @license LGPL-3.0-only
 * @module cc.ltgc.octavia.state
@@ -559,4 +563,34 @@ export class OctaviaDevice {
 	* @param setTarget When `true`, `OctaviaDevice.prototype.setDetectionTargets()` will be called.
 	*/
 	switchMode(mode: string, forced?: number, setTarget?: boolean): void;
+	/** Retrieve the raw strength of all parts, values range between 0 and 255. High resolution velocity not yet supported. */
+	getRawStrength(): Uint8Array;
+	/** Retrieve the strength of all parts, values range between 0 and 255, affected by cc7 and cc11. */
+	getStrength(): Uint8Array;
+	/** Wipe the raw strength buffer clean for the next round. */
+	clearStrength(): void;
+	/** The older MIDI event object executor. */
+	runJson(json: Object): void;
+	/** (WIP) Execute a decoded MIDI event. */
+	runEvent(event: NakedMIDIEvent): void;
+	/** (WIP) Directly execute an undecoded MIDI event on a port. */
+	runRaw(eventBuffer: Uint8Array | Uint8ClampedArray, port?: number): void;
+	/** Load custom user voices from files in supported formats.
+	*
+	* Supported formats:
+	* - `s7e`: Yamaha S90 ES
+	* - `pcg`: KORG programs (KROSS 2)
+	* @param format The format specifier.
+	* @param blob The `Blob` instance of the file.
+	*/
+	loadBank(format: string, blob: Blob): void;
+	/** (WIP) Load custom user voices from files in supported formats.
+	*
+	* Supported formats:
+	* - `s7e`: Yamaha S90 ES
+	* - `pcg`: KORG programs (KROSS 2)
+	* @param format The format specifier.
+	* @param blob The `ReadableStream` instance of the file.
+	*/
+	streamBank(format: string, blob: ReadableStream<Uint8Array | Uint8ClampedArray>): Promise<void>;
 }
