@@ -119,7 +119,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 		e.addEventListener("click", async function () {
 			audioPlayer.pause();
 			visualiser.device.initOnReset = false;
-			visualiser.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
+			visualiser.device.setLetter(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
 				audioPlayer.src = "about:blank";
@@ -140,7 +140,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			};
 			stDemo.to(i);
 			demoId = i;
-			visualiser.device.setLetterDisplay(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
+			visualiser.device.setLetter(codepointArray(`\x8a${demoPool.data[i].artist.slice(0, 15).padEnd(15, " ")}\x8b${demoPool.data[i].title.slice(0, 15)}`));
 			currentPerformance = demoPerfs[e.title];
 			currentPerformance?.resetIndex();
 		});

@@ -428,7 +428,7 @@ let Sc8850Display = class extends FocusedPartDisplay {
 			// Strength calculation
 			let renderRange = 1 << rendMode,
 			strengthHeight = (35 - renderRange + 1) / renderRange,
-			strengthDivider = 256 / strengthHeight;
+			strengthDivider = 32768 / strengthHeight;
 			sum.velo.forEach(function (e, i) {
 				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;

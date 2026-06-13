@@ -111,7 +111,7 @@ visualiser.addEventListener("meta", function (ev) {
 					textCmd.push(charCode);
 				};
 			});
-			visualiser.device.setLetterDisplay(textCmd);
+			visualiser.device.setLetter(textCmd);
 		};
 	};
 });
@@ -232,7 +232,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 				demoId -= 32;
 			};
 			visualiser.device.initOnReset = false;
-			visualiser.device.setLetterDisplay([76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, demoId]);
+			visualiser.device.setLetter([76, 111, 97, 100, 105, 110, 103, 32, 100, 101, 109, 111, 32, demoId]);
 			if (!demoBlobs[e.title]?.midi) {
 				demoBlobs[e.title] = {};
 				audioPlayer.src = "about:blank";
@@ -251,7 +251,7 @@ getBlobFrom(`list.tsv`).then(async (response) => {
 			if (demoModes[i]?.length > 0) {
 				visualiser.switchMode(demoModes[i]);
 			};
-			visualiser.device.setLetterDisplay([76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, demoId]);
+			visualiser.device.setLetter([76, 111, 97, 100, 101, 100, 32, 100, 101, 109, 111, 32, demoId]);
 			stDemo.to(i);
 			currentPerformance = demoPerfs[e.title];
 			currentPerformance?.resetIndex();
