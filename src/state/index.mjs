@@ -473,6 +473,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	#polyState = new Uint8Array(allocated.pl); // State of each active voice.
 	#pitch = new Int16Array(allocated.ch); // Pitch for channels, from -8192 to 8191
 	#rawStrength = new Uint8Array(allocated.ch);
+	#calcStrength = new Uint16Array(allocated.ch);
 	#dataCommit = new Uint8Array(allocated.ch); // 0 for RPN, 1 for NRPN
 	#ext = new Uint8Array(allocated.ch * allocated.ext); // Extension configs
 	#rpn = new Uint8Array(allocated.ch * allocated.rpn); // RPN registers (0 pitch MSB, 1 fine tune MSB, 2 fine tune LSB, 3 coarse tune MSB, 4 mod sensitivity MSB, 5 mod sensitivity LSB)
@@ -2725,6 +2726,18 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			str[i] = Math.floor(e * upThis.getChCc(i, 7) * upThis.getChCc(i, 11) * upThis.#masterVol / 803288);
 		});
 		return str;
+	};
+	getStrengths(fullScale = false) {
+		const upThis = this;
+		const rawStrengths = upThis.getRawStrength();
+		const divisor = fullScale ? 0.0000012401160125 : 0.000001240078168323;
+		for (let part = 0; part < allocated.ch; part ++) {
+			// Version without MIDI 1.0 high resolution velocity.
+			const strength = rawStrengths[part] * 129; // Back fill.
+			//upThis.#calcStrength[part] = Math.floor(strength * upThis.getChCc(part, 7) * upThis.getChCc(part, 11) / 806376.169581);
+			upThis.#calcStrength[part] = Math.floor(strength * upThis.getChCc(part, 7) * upThis.getChCc(part, 11) * divisor);
+		};
+		return upThis.#calcStrength;
 	};
 	clearStrength() {
 		this.#rawStrength.fill(0);

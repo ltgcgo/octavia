@@ -436,8 +436,8 @@ export class OctaviaDevice {
 	/** Get the global master settings. */
 	getMaster(): OctaviaDeviceMasterSettings;
 	// Should also introduce per-device master settings here.
-	/** Returns the per-mode substitution database. `<string, Uint8Array>` */
-	getSubDb(): Object;
+	/** Returns the per-mode substitution database. */
+	getSubDb(): Record<string, Uint8Array>;
 	/** Retrieve the single voice primitive component.
 	* - `0`: program number
 	* - `1`: cc0 (bank MSB)
@@ -563,10 +563,16 @@ export class OctaviaDevice {
 	* @param setTarget When `true`, `OctaviaDevice.prototype.setDetectionTargets()` will be called.
 	*/
 	switchMode(mode: string, forced?: number, setTarget?: boolean): void;
-	/** Retrieve the raw strength of all parts, values range between 0 and 255. High resolution velocity not yet supported. */
+	/** Retrieve the raw strength of all parts, values range between 0 and 255. High resolution velocity not supported. */
 	getRawStrength(): Uint8Array;
-	/** Retrieve the strength of all parts, values range between 0 and 255, affected by cc7 and cc11. */
+	/** Retrieve the strength of all parts, values range between 0 and 127, affected by cc7 and cc11. */
 	getStrength(): Uint8Array;
+	/** Retrieve the raw strength of all parts, values range between 0 and 16383. */
+	getRawStrengths(): Uint8Array;
+	/** Retrieve the strength of all parts, values are all within [0, 32767], affected by cc7 and cc11.
+	* @param fullScale When `true`, the range will become [0, 32768] instead.
+	*/
+	getStrengths(fullScale?: boolean): Uint8Array;
 	/** Wipe the raw strength buffer clean for the next round. */
 	clearStrength(): void;
 	/** The older MIDI event object executor. */
