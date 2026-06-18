@@ -10,7 +10,7 @@ import type {
 * @module cc.ltgc.octavia.state
 */
 
-/** Any object that can expose the `currentTime` property. */
+/** Any object applicable as a time source. */
 declare interface OctaviaTimeProvider {
 	readonly currentTime: number;
 }

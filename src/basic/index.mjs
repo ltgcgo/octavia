@@ -22,7 +22,7 @@ import {allowedStandards} from "../state/bankReader.js";
 import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
 import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 import StylePool from "./styleLoad.js";
-import FileHandler from "./fileHandler.js";
+import BlobHandler from "./fileHandler.js";
 
 import {getDebugState} from "../state/utils.js";
 
@@ -1301,7 +1301,7 @@ export {
 	RootDisplay,
 	FocusedPartDisplay,
 	StylePool,
-	FileHandler,
+	BlobHandler,
 	BitmapMatrix,
 	MxFont40,
 	MxFont176,

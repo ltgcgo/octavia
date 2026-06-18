@@ -3,7 +3,7 @@
 
 "use strict";
 
-export default class FileHandler {
+export default class BlobHandler {
 	#registered = new Map();
 	attachDrop(el) {};
 	detachDrop(el) {};

@@ -10,7 +10,8 @@ import type {
 	OctaviaDevice,
 	TimeMuxer,
 	OctaviaVoiceObject,
-	OctaviaVoiceProperties
+	OctaviaVoiceProperties,
+	OctaviaTimeProvider
 } from "../state/index.d.mts";
 import type MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.d.mts";
 
@@ -35,7 +36,7 @@ export class StylePool {
 }
 
 /** A unified file handling utility class. */
-export class FileHandler {
+export class BlobHandler {
 	/** Attach an element to the drop zone handler. */
 	attachDrop(el: HTMLElement): void;
 	/** Detach an element from the drop zone handler. */
@@ -111,6 +112,54 @@ export class FileHandler {
 	* 4. If all fail, a console warning is printed regarding unhandled files.
 	*/
 	handleMime(mime: string, func: Function): void;
+}
+
+/** A more complex object allowing dynamic updates. */
+declare interface OctaviaSessionProvider extends OctaviaTimeProvider {
+	/** The progress of the session. The property can be read-only, causing seeking to become no-op. */
+	currentTime: number;
+	/** Quickly seek to a target point with low precision. If this method is not present, normal seeking will be used instead. */
+	fastSeek?(time: number): void;
+	/** The duration of the session. If this property is not present, infinite duration is assumed. */
+	duration?: number;
+	/** If the session has ended. If this property is not present, the `ended` state simply doesn't exist. */
+	readonly ended?: boolean;
+	/** If the session is paused. If this property is not present, `currentTime` is used instead. */
+	readonly paused?: boolean;
+	/** Pause the session. If this method is not present, this will become no-op. */
+	pause?(): void;
+	/** Resume the session. If this method is not present, this will become no-op. */
+	play?(): Promise<void>;
+	/** The speed of the playback. Defaults to `1`. */
+	playbackRate?: number;
+	/** When this method exists along with `removeEventListener`, change synchronisation will become largely reactive, instead of relying on periodic polling. Support for the following events must exist instead, or it risk becoming no-op.
+	* - `durationchange`
+	* - `emptied`
+	* - `ended`
+	* - `pause`
+	* - `play`
+	* - `playing`
+	* - `ratechange`
+	* - `seeked`
+	*
+	* `timeupdate` is not used.
+	*/
+	addEventListener?(type: string, listener: Function, opt?: boolean | EventListenerOptions): void;
+	/** When this method exists along with `removeEventListener`, change synchronisation will become largely reactive, instead of relying on periodic polling. */
+	removeEventListener?(type: string, listener: Function, opt?: boolean | EventListenerOptions): void;
+}
+
+/** A utility class for binding media sessions with a media element or a time provider, as well as dynamically handling metadata display. */
+export class MediaSessionBinder {
+	/** Binds the media session with a source, so changes from the source directly influence the media session representation state. Will clear all existing sources if nothing is provided. */
+	setSource(source?: HTMLMediaElement | OctaviaSessionProvider): void;
+	/** The metadata to be shown when the bound source is active. The shown metadata will be cleared when the source is no longer active. */
+	metadata?: MediaMetadata;
+	/** The metadata to be shown when the bound source is neither inactive nor playing. */
+	altMetadata?: MediaMetadata;
+	/** When set to a positive integer, this will enable switching between the two metadata objects at the defined rate in milliseconds if the source is neither inactive nor playing. */
+	altBlink: number;
+	constructor(session?: MediaSession);
 }
 
 /** A bitmap with a defined width and height. */
