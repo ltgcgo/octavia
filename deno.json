@@ -31,10 +31,9 @@
 		"lib": [
 			"ES5", "ES6",
 			"ES2017", "ES2018", "ES2019", "ES2020",
-			"ES2021", "ES2022", "ES2023", "ESNext",
+			"ES2021", "ES2022", "ES2023", "ES2024", "ESNext",
 			"DOM", "WebWorker"
-		],
-		"skipLibCheck": true
+		]
 	},
 	"unstable": [
 		"broadcast-channel",
@@ -48,14 +47,55 @@
 		"indentWidth": 4,
 		"semiColons": true,
 		"exclude": [
-			"*"
+			"*",
+			"**/*"
 		]
 	},
 	"lint": {
 		"exclude": [
 			"*"
-		]
+		],
+		"rules": {
+			"tags": [],
+			"include": [
+				"constructor-super",
+				"getter-return",
+				"no-await-in-sync-fn",
+				"no-cond-assign",
+				"no-constant-condition",
+				"no-dupe-args",
+				"no-dupe-class-members",
+				"no-dupe-else-if",
+				"no-dupe-keys",
+				"no-duplicate-case",
+				"no-eval",
+				"no-extra-boolean-cast",
+				"no-extra-non-null-assertion",
+				"no-invalid-regexp",
+				"no-irregular-whitespace",
+				"no-misused-new",
+				"no-new-symbol",
+				"no-node-globals",
+				"no-non-null-asserted-optional-chain",
+				"no-obj-calls",
+				"no-process-global",
+				"no-redeclare",
+				"no-regex-spaces",
+				"no-self-assign",
+				"no-setter-return",
+				"no-shadow-restricted-names",
+				"no-sloppy-imports",
+				"no-this-before-super",
+				"no-throw-literal",
+				"no-unused-labels",
+				"no-unused-vars",
+				"no-with",
+				"require-yield",
+				"use-isnan",
+				"valid-typeof"
+			]
+		}
 	},
 	"nodeModulesDir": false,
-	"npmRegistry": "http://127.0.0.1:80/"
+	"npmRegistry": "http://0.0.0.0:80/"
 }

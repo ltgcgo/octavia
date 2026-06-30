@@ -7,6 +7,12 @@
 import chordData from "../data/generated/chords.json" with {type: "json"};
 import qyPlanRawData from "../data/generated/qyChordPlan.json" with {type: "json"};
 
+if (typeof self?.require !== "undefined") {
+	throw(new Error("Environments supporting CommonJS are not supported."));
+} else {
+	delete self.process;
+};
+
 // Chord dictionary
 
 const asciiToneShift = "bbb,bb,b,,#,##,###".split(",");

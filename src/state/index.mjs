@@ -335,6 +335,8 @@ Extensions:
 
 if (typeof self?.require !== "undefined") {
 	throw(new Error("Environments supporting CommonJS are not supported."));
+} else {
+	delete self.process;
 };
 
 let TimeMuxer = class TimeMuxer {
