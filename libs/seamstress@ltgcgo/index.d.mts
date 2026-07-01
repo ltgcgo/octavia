@@ -67,6 +67,48 @@ export interface SeamstressContext {
 	* Defines the upper format of the stream. Common values include `WAVE` for the Microsoft `.wav` files, and `AIFF` for the Apple `.aif` files.
 	*/
 	binaryFormat?: string;
+	/**
+	* This field may not be present. Used by `Seamstress.meta`.
+	*
+	* Defines the additional offset of the current stream.
+	*/
+	seamstressOffset?: number;
+	/**
+	* This field may not be present. Used by `Seamstress.meta`.
+	*
+	* Defines the expected size of the current stream. Must be a non-negative integer.
+	*/
+	seamstressExpectedSize?: number;
+	/**
+	* This field may not be present. Used by `Seamstress.meta`.
+	*
+	* Defines the current depth. Starts at `0`.
+	*/
+	seamstressDepth?: number;
+	/**
+	* This field may not be present. Used by `Seamstress.meta`.
+	*
+	* Defines the parent stream ID of the current stream. For debug purposes only.
+	*/
+	seamstressParentId?: string;
+	/**
+	* This field may not be present. Used by `Seamstress.meta`.
+	*
+	* Defines the parent type of the stream.
+	*/
+	seamstressParentPath?: string[];
+	/**
+	* This field may not be present. Used by `Seamstress.meta`.
+	*
+	* Defines the use of the parent types of the stream before the immediate parent.
+	*/
+	seamstressParentUses?: string;
+	/**
+	* This field may not be present.
+	*
+	* Defines the use of the parent type of the stream.
+	*/
+	seamstressParentUse?: string;
 }
 
 /**
@@ -79,18 +121,28 @@ export interface SeamstressChunk {
 	chunkId: number;
 	/** Type of the current chunk as either integers or Latin-9 strings. */
 	type: number|string;
+	/** If the current chunk is a child of a parent chunk (e.g. `LIST`), this property will contain the full path of the current chunk. */
+	typePath?: string[];
+	/** If the current chunk is a child of a parent chunk (e.g. `LIST`), this property will contain the use (e.g. list chunk types) of all parent chunks. */
+	typeUses?: string[];
 	/** The offset of the current (sub)chunk. Chunks from `readChunk()` and the first chunk from `readStream()` have this value always set to 0. */
 	offset: number;
-	/** The offset of the current data (sub)chunk compared to the rest of the binary stream. */
+	/** (WIP) The offset of the current data (sub)chunk compared to the rest of the scoped binary stream session. */
+	offsetStream: number;
+	/** The offset of the current data (sub)chunk compared to the rest of the full binary stream instance. */
 	offsetData: number;
 	/** The full size of the current chunk. */
 	size: number;
-	/** When `true`, the current (streamed) chunk is the last subchunk of the full chunk. Fully buffered chunks always has this value set to `true`. */
+	/** When `true`, the current (streamed) chunk is the last subchunk of the full chunk. Fully buffered chunks always has this value set to `true`. List chunks themselves are never fully buffered. */
 	isFinal: boolean;
-	/** When `true`, the current (streamed) chunk is a fully buffered chunk. */
+	/** When `true`, the current (streamed) chunk is a fully buffered chunk. List chunks themselves are never fully buffered. */
 	isBuffered: boolean;
-	/** The (streamed) payload of the chunk. */
-	data: Uint8Array;
+	/** When `true`, the current (streamed) chunk is a list chunk. This property is dependent on the `typePath` property. */
+	isCollection: boolean;
+	/** The depth of the current (streamed) chunk. Starts at `0`. */
+	depth: number;
+	/** The (streamed) payload of the chunk as `Uint8Array`. For RIFF `LIST` chunks, this denotes the type of the `LIST` chunk as a string. */
+	data: Uint8Array|string;
 	/** The context properties passed from header. */
 	context?: SeamstressContext;
 	/**
@@ -160,20 +212,24 @@ export class Seamstress {
 	TYPE_4CC: number;
 	/** Set to true to emit verbose debug messages. */
 	debugMode: boolean;
-	/** (Non-finalized, WIP) Returns if the list chunk type already exists. Only valid with FourCC types. */
-	hasList(type: string): boolean;
-	/** (Non-finalized, WIP) Registers a type of list chunk, and returns true when successful (isn't already registered). Only valid with FourCC types. Useful for FourCC-typed list chunks containing subchunks. "LIST" will always be registered for IFF/RIFF files.
+	/** (WIP) Returns if the list chunk type already exists. Only valid with FourCC types. */
+	isCollection(type: string): boolean;
+	/** (WIP) Registers a type of list chunk, and returns true when successful (isn't already registered). Only valid with FourCC types. Useful for FourCC-typed list chunks containing subchunks. "LIST" will always be registered for IFF/RIFF files.
 	* @param type FourCC in a Latin-9 string.
 	*/
-	addList(type: string): boolean;
-	/** (Non-finalized, WIP) Removes a type of list chunk, and returns true when successful (is registered). Only valid with FourCC types.
+	addCollection(type: string): void;
+	/** (WIP) Removes a type of list chunk, and returns true when successful (is registered). Only valid with FourCC types.
 	* @param type FourCC in a Latin-9 string.
 	*/
-	delList(type: string): boolean;
+	delCollection(type: string): boolean;
+	/** (WIP) When `true`, list chunks are handled automatically whenever possible. */
+	useCollection: boolean;
 	/** Defines the size of the header. 0 for MIDI files, 12 for RIFF files. Defaults to 0. */
 	headerSize: number;
 	/** The type flags of the Seamstress instance. */
 	type: number;
+	/** Additional context applicable to all subsequent chunks that affects reader behaviour. */
+	meta?: SeamstressContext;
 	/** Handles the header chunk, specified manually. Called by all stream readers. Returns an object detailing on how to handle the header chunk. Only invoked upon reading.
 	* @param buffer The header getting passed into the handler.
 	* @returns The parsed object that will modify the reader behaviour and provide as the initial context for the streams.
@@ -201,10 +257,18 @@ export class Seamstress {
 	* @param flushAll When true, unfinished chunks will also be flushed instead of discarded.
 	*/
 	readChunks(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, flushAll?: boolean): ReadableStream<SeamstressChunk>;
-	/** (WIP) Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error. */
+	/** (WIP) Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error.
+	*
+	* This function does *not* natively handle list chunks by itself.
+	*/
 	writeStrict(headerSerializer?: Function): SeamstressStrictWriter;
-	/** (WIP) Writes chunks in an easier way. Providing a serialized header with a 0-sized header or not providing a serialized header when header's expected will both result in an error. */
+	/** (WIP) Writes chunks in an easier way. Providing a serialized header with a 0-sized header or not providing a serialized header when header's expected will both result in an error.
+	*
+	* This function does *not* natively handle list chunks by itself.
+	*/
 	writeChunks(serializedHeader?: Uint8Array): TransformStream<SeamstressChunk, Uint8Array>;
-	/** Parses the incoming stream, and emits a map of header types, each with an array of offsets and sizes. This function is virtually useless if the original content of the stream is not kept. */
+	/** Parses the incoming stream, and emits a map of header types, each with an array of offsets and sizes.
+	*
+	* This function is virtually useless if the original content of the stream is not kept. This function does *not* handle list chunks. */
 	getMapFromStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): Promise<Map<number|string, Array<Array<number>>>>;
 }

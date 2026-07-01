@@ -61,6 +61,8 @@ export class BlobHandler {
 	* - `mid`, `midi`, `kar`: `audio/midi`
 	* - `rmi`: `audio/vnd.microsoft.rmi`
 	* - `mia`: `audio/vnd.ltgc.mia`
+	* - `m2a`: `audio/vnd.yamaha.mu2000sampleset+vnd.microsoft.rmi`
+	* - `m2k`: `audio/vnd.yamaha.mu2000samplekit`
 	* - `syx`: `application/vnd.mma.sysex+octet-stream`
 	* - `xm`: `audio/vnd.fasttracker.xm`
 	* - `s3m`: `audio/vnd.screamtracker.s3m`
