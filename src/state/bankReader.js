@@ -40,6 +40,7 @@ let VoiceBank = class {
 	get(msb = 0, prg = 0, lsb = 0, mode, hint = 0) {
 		let sid = [msb, prg, lsb];
 		let bankName;
+		//let fallbackBankName;
 		let bankPoly = 1, bankType = 0, bankDrum, bankLevel, bankVoice;
 		let args = Array.from(arguments);
 		switch (mode) {
@@ -66,6 +67,7 @@ let VoiceBank = class {
 						if (lsb === 126) {
 							args[2] = 0; // MU sampler restore
 						};
+						args[2] |= 128; // MU sampler
 						break;
 					};
 					case 32: {
@@ -654,12 +656,18 @@ let VoiceBank = class {
 				};
 			} else if (msb === 16) {
 				// Hijack XG MU2000 sampler
-				bankName = `Voice${((args[2] << 7) + args[1] + 1).toString().padStart(3, "0")}`;
-				ending = " ";
+				let bankObject = this.#bankInfo[args[1]][(args[0] << 8) | args[2]];
+				bankName = bankObject?.name ?? `Voice${(((args[2] & 127) << 7) + args[1] + 1).toString().padStart(3, "0")}`;
+				bankPoly = bankObject?.poly || bankPoly;
+				bankType = bankObject?.type || bankType;
+				bankDrum = bankObject?.drum;
+				bankLevel = bankObject?.level;
+				bankVoice = bankObject?.voice;
+				ending = bankObject ? " " : "#";
 			} else if (msb === 35) {
 				if ((lsb >> 1) === 2) {
-					bankName = `DXCH_${(((args[2] & 1) << 7) + prg + 1).toString().padStart(3, "0")}`;
-					ending = " ";
+					fallbackBankName = `DXCH_${(((args[2] & 1) << 7) + prg + 1).toString().padStart(3, "0")}`;
+					ending = "#";
 				};
 			};
 		};
@@ -774,6 +782,14 @@ let VoiceBank = class {
 		// End ID
 		let eid = [args[0], args[1], args[2]];
 		switch (ending) {
+			case "#": {
+				// Fallback
+				/*if (fallbackBankName) {
+					bankName = fallbackBankName;
+					console.debug(bankName, ending);
+				};*/
+				break;
+			};
 			case "^": {
 				// No LSB match
 				switch (mode) {
@@ -951,7 +967,7 @@ let VoiceBank = class {
 			default: {
 				if (args[0] < 48) {
 					if (args[0] === 16 && mode === "xg") {
-						standard = "XG";
+						standard = "MU";
 					} else {
 						standard = "GS";
 					};
@@ -965,7 +981,9 @@ let VoiceBank = class {
 				if (allowedStandards.xg.has(standard) || allowedStandards.g2.has(standard)) {
 					if (ending !== " ") {
 						//console.debug(`${ending},${standard}`);
-						if (msb >> 4 === 6) {
+						if (ending === "#") {
+							// No-op.
+						} else if (msb >> 4 === 6) {
 							// Is this ever going to be reached?
 							replace = true;
 						} else if (msb !== 0) {
@@ -1035,7 +1053,7 @@ let VoiceBank = class {
 					break;
 				};
 				case "xg": {
-					if (ending !== "^") {
+					if (ending !== "^" && ending !== "#") {
 						switch (msb) {
 							case 120:
 							case 127:
