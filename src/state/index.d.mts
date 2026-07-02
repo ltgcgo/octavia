@@ -43,6 +43,7 @@ declare interface OctaviaVoiceObject {
 	hint: number;
 	/** The single-character "ending" value used to indicate the voice retrieval state.
 	* - ` `: Exact match.
+	* - `#`: Fallback.
 	* - `^`: No exact LSB match.
 	* - `*`: No exact PC match.
 	* - `!`: No exact MSB match.

@@ -1503,7 +1503,8 @@ let Cambiare = class extends RootDisplay {
 			target.metre.decoration = voice.refreshFailure ? 2 : 0;
 			let useItalic = false;
 			switch (voice.ending) {
-				case " ": {
+				case " ":
+				case "#": {
 					break;
 				};
 				case "~": {

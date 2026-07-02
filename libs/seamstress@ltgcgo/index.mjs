@@ -623,7 +623,7 @@ let Seamstress = class Seamstress {
 						subchunkData.offsetData = (upThis.meta?.seamstressOffset ?? 0) + subchunkData.offsetStream;
 						subchunkData.context = seamContext;
 						upThis.#applyNestedContext(subchunkData, seamContext);
-						if (false && childStreamHost) {
+						if (childStreamHost) {
 							upThis.debugMode && console.debug(`${dPrefixWait} Waiting for child stream. Scheduled buffering of an entire chunk.`);
 							await childStreamHost.ready;
 						};
@@ -644,7 +644,7 @@ let Seamstress = class Seamstress {
 						subchunkData.offsetData = (upThis.meta?.seamstressOffset ?? 0) + subchunkData.offsetStream;
 						subchunkData.context = seamContext;
 						upThis.#applyNestedContext(subchunkData, seamContext);
-						if (false && childStreamHost) {
+						if (childStreamHost) {
 							upThis.debugMode && console.debug(`${dPrefixWait} Waiting for child stream. Scheduled commit of an entire chunk.`);
 							await childStreamHost.ready;
 						};
@@ -673,7 +673,7 @@ let Seamstress = class Seamstress {
 						subchunkData.offsetData = (upThis.meta?.seamstressOffset ?? 0) + subchunkData.offsetStream;
 						subchunkData.context = seamContext;
 						upThis.#applyNestedContext(subchunkData, seamContext);
-						if (false && childStreamHost) {
+						if (childStreamHost) {
 							upThis.debugMode && console.debug(`${dPrefixWait} Waiting for child stream. Scheduled commit of a chunk.`);
 							await childStreamHost.ready;
 						};
