@@ -71,6 +71,8 @@ declare class OctaviaDeviceMasterSettings {
 
 /** A voice bank. */
 export class VoiceBank {
+	/** When `true`, the voice retrieval algorithm will not attempt fallbacks. */
+	strictMode: boolean;
 	/** Retrieve the voice information with the specified MSB, PC and LSB tuple. */
 	get(msb?: number, prg?: number, lsb?: number, mode?: string, hint?: number): OctaviaVoiceObject;
 	/** Clear the assigned voices in the specified range. */
