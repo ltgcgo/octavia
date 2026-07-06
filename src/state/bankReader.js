@@ -1179,6 +1179,10 @@ let VoiceBank = class {
 					voice,
 					priority
 				};
+				if (Number.isNaN(msb)) {
+					allCount ++;
+					return;
+				};
 				/*if (loadCount > 889 && loadCount < 910) {
 					console.debug(e);
 					console.debug(voiceObject);
