@@ -24,6 +24,7 @@ import {
 	getYSect
 } from "./xgValues.js";
 import {
+	gsLevelDesc,
 	gsRevType,
 	gsChoType,
 	gsDelType,
@@ -910,20 +911,21 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		11: function (det) {
 			let part = det.channel;
 			let upThis = this;
+			let ccNum = det.data[0];
 			// Redirect CC event
 			let redirMap = upThis.#ccRedirMap[part],
-			redirTarget = redirMap[det.data[0]];
+			redirTarget = redirMap[ccNum];
 			if (redirTarget) {
 				//console.debug(`Redirected cc${det.data[0]} on CH${part + 1} to cc${redirTarget}.`);
-				det.data[0] = redirTarget;
+				ccNum = redirTarget;
 			};
 			// CC event, directly assign values to the register.
-			if ([0, 32].indexOf(det.data[0]) > -1) {
+			if ([0, 32].indexOf(ccNum) > -1) {
 				(() => {
-					switch (this.#mode) {
+					switch (upThis.#mode) {
 						case modeMap.s90es:
 						case modeMap.motif: {
-							if (det.data[0] === 0) {
+							if (ccNum === 0) {
 								([0, 63].indexOf(det.data[1]) > -1) && upThis.setChActive(part, 1);
 								break;
 							};
@@ -940,7 +942,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			let extOff = part * allocated.ext,
 			partMode = upThis.getChModeId(part);
 			// Non-store CC messages
-			switch (det.data[0]) {
+			switch (ccNum) {
 				case 96: {
 					// RPN Data increment
 					return;
@@ -958,8 +960,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				};
 				case 121: {
 					// Reset controllers
-					this.#uAction.ano(part);
-					this.#pitch[part] = 0;
+					upThis.#uAction.ano(part);
+					upThis.#pitch[part] = 0;
 					// Reset to zero
 					upThis.resetChCc(part, 1, 0); // Modulation
 					upThis.resetChCc(part, 5, 0); // Portamento Time
@@ -979,53 +981,67 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				};
 				case 123: {
 					// All notes off
-					this.#uAction.ano(part);
+					upThis.#uAction.ano(part);
 					return;
 					break;
 				};
 				case 124: {
 					// Omni off
-					this.#uAction.ano(part);
+					upThis.#uAction.ano(part);
 					return;
 					break;
 				};
 				case 125: {
 					// Omni on
-					this.#uAction.ano(part);
+					upThis.#uAction.ano(part);
 					return;
 					break;
 				};
 				case 126: {
 					// Mono mode
-					this.#mono[part] = 1;
-					this.#uAction.ano(part);
+					upThis.#mono[part] = 1;
+					upThis.#uAction.ano(part);
 					return;
 					break;
 				};
 				case 127: {
 					// Poly mode
-					this.#mono[part] = 0;
-					this.#uAction.ano(part);
+					upThis.#mono[part] = 0;
+					upThis.#uAction.ano(part);
 					return;
 					break;
 				};
 			};
 			// Check if control change is accepted
-			if (ccToPos[det.data[0]] === undefined) {
-				console.warn(`cc${det.data[0]} is not accepted.`);
+			if (ccToPos[ccNum] === undefined) {
+				console.warn(`cc${ccNum}${det.data[0] !== ccNum ? ` (cc${det.data[0]})` : ""} is not accepted.`);
 			} else {
+				// CC compatibility check
+				switch (upThis.getChMode(part)) {
+					case "gs":
+					case "sc": {
+						// Roland GS / Roland SC-88 (Pro)
+						let gsLevel = upThis.#detect[upThis.getChMode(part)];
+						if (gsLevel < 4) {
+							// Not SC-8850 (not GM2-compatible)
+							if (ccNum >= 71 && ccNum <= 78) {
+								console.warn(`cc${ccNum} on CH${part + 1} isn't supported on ${gsLevelDesc[gsLevel]}.`);
+							};
+						};
+					};
+				};
 				// ACE allocation
-				if (aceCandidates.indexOf(det.data[0]) > -1) {
-					this.assignChAce(part, det.data[0]);
+				if (aceCandidates.indexOf(ccNum) > -1) {
+					upThis.assignChAce(part, ccNum);
 				};
 				// Stored CC messages
-				switch (det.data[0]) {
+				switch (ccNum) {
 					case 0: {
 						// Detect mode via bank MSB
 						if (getDebugState()) {
 							console.debug(`${modeIdx[upThis.#mode]}, CH${part + 1}: ${det.data[1]}`);
 						};
-						if (this.#mode === 0) {
+						if (upThis.#mode === 0) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
 								if (upThis.#chType[part] > 0) {
@@ -1051,7 +1067,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						} else if (upThis.#mode === modeMap.gs || upThis.#mode === modeMap.sc) {
 							if (det.data[1] < 56) {
 								// Do not change drum channel to a melodic
-								if (this.#chType[part] > 0) {
+								if (upThis.#chType[part] > 0) {
 									det.data[1] = this.getChPrimitive(part, 1, false) /*this.getChCc(part, 0)*/;
 									det.data[1] = modeDetailsData.gs[2];
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -1060,7 +1076,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						} else if (this.#mode === modeMap.gm) {
 							if (det.data[1] < 48) {
 								// Do not change drum channel to a melodic
-								if (this.#chType[part] > 0) {
+								if (upThis.#chType[part] > 0) {
 									det.data[1] = modeDetailsData.gs[2];
 									this.switchMode("gs", 1);
 									console.debug(`Forced channel ${part + 1} to stay drums.`);
@@ -1073,26 +1089,26 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 								this.switchMode("05rw", true);
 							};
 						}*/;
-						switch (this.#mode) {
+						switch (upThis.#mode) {
 							case modeMap.xg: {
 								if ([79, 95, 120, 126, 127].indexOf(det.data[1]) > -1) {
-									if (this.#chType[part] === 0) {
+									if (upThis.#chType[part] === 0) {
 										this.setChType(part, this.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
-									if (this.#chType[part] > 0) {
+									if (upThis.#chType[part] > 0) {
 										this.setChType(part, this.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
 								if ([33, 81, 97].indexOf(det.data[1]) > -1) {
-									this.#ext[extOff] = this.EXT_VL;
+									upThis.#ext[extOff] = this.EXT_VL;
 								} else if ([35, 67, 83, 99].indexOf(det.data[1]) > -1) {
-									this.#ext[extOff] = this.EXT_DX;
+									upThis.#ext[extOff] = this.EXT_DX;
 									//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 								} else {
-									this.#ext[extOff] = this.EXT_NONE;
+									upThis.#ext[extOff] = this.EXT_NONE;
 								};
 								break;
 							};
@@ -1100,8 +1116,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							case modeMap.x5d:
 							case modeMap.ns5r: {
 								if ([61, 62, 126, 127].indexOf(det.data[1]) > -1) {
-									if (this.#chType[part] === this.CH_MELODIC) {
-										this.setChType(part, this.CH_DRUM2);
+									if (upThis.#chType[part] === upThis.CH_MELODIC) {
+										upThis.setChType(part, upThis.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} /*else if ([80, 81, 82, 83].indexOf(det.data[1]) > -1) {
@@ -1117,8 +1133,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 										console.debug(`CH${part + 1} set to ${voiceIdx[(voiceObject.type || 0) & 1]} by MSB.`);
 									};
 								}*/ else {
-									if (this.#chType[part] !== this.CH_MELODIC) {
-										this.setChType(part, this.CH_MELODIC);
+									if (upThis.#chType[part] !== this.CH_MELODIC) {
+										upThis.setChType(part, upThis.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
@@ -1126,13 +1142,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							};
 							case modeMap.sd: {
 								if ([104, 105, 106, 107, 120].indexOf(det.data[1]) > -1) {
-									if (this.#chType[part] === 0) {
-										this.setChType(part, this.CH_DRUM2);
+									if (upThis.#chType[part] === 0) {
+										upThis.setChType(part, upThis.CH_DRUM2);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
-									if (this.#chType[part] > 0) {
-										this.setChType(part, this.CH_MELODIC);
+									if (upThis.#chType[part] > 0) {
+										upThis.setChType(part, upThis.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
@@ -1140,13 +1156,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							};
 							case modeMap.g2: {
 								if (det.data[1] === 120) {
-									if (this.#chType[part] === 0) {
-										this.setChType(part, this.CH_DRUMS);
+									if (upThis.#chType[part] === 0) {
+										upThis.setChType(part, upThis.CH_DRUMS);
 										console.debug(`CH${part + 1} set to drums by MSB.`);
 									};
 								} else {
-									if (this.#chType[part] > 0) {
-										this.setChType(part, this.CH_MELODIC);
+									if (upThis.#chType[part] > 0) {
+										upThis.setChType(part, upThis.CH_MELODIC);
 										console.debug(`CH${part + 1} set to melodic by MSB.`);
 									};
 								};
@@ -1160,27 +1176,27 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					};
 					case 2: {
 						// Breath for VL and more!
-						let breathMode = this.getExt(part)[1];
-						if (breathMode === this.VLBC_BRTHEXPR) {
-							this.setChCc(part, 129, det.data[1]);
+						let breathMode = upThis.getExt(part)[1];
+						if (breathMode === upThis.VLBC_BRTHEXPR) {
+							upThis.setChCc(part, 129, det.data[1]);
 						};
 						break;
 					};
 					case 6: {
 						// Show RPN and NRPN
-						if (this.#dataCommit[part]) {
+						if (upThis.#dataCommit[part]) {
 							// Commit supported NRPN values
-							if ([modeMap.xg, modeMap.gs, modeMap.sc, modeMap.ns5r].indexOf(this.#mode) < 0) {
-								console.warn(`NRPN commits are not available under "${modeIdx[this.#mode]}" mode, even when they are supported in Octavia.`);
+							if ([modeMap.xg, modeMap.gs, modeMap.sc, modeMap.ns5r].indexOf(upThis.#mode) < 0) {
+								console.warn(`NRPN commits are not available under "${modeIdx[upThis.#mode]}" mode, even when they are supported in Octavia.`);
 							};
-							let msb = this.getChCc(part, 99),
-							lsb = this.getChCc(part, 98);
+							let msb = upThis.getChCc(part, 99),
+							lsb = upThis.getChCc(part, 98);
 							if (msb === 1) {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
-									this.setChCc(part, 71 + toCc, det.data[1]);
+									upThis.setChCc(part, 71 + toCc, det.data[1]);
 									getDebugState() && console.debug(`Redirected NRPN 1 ${lsb} to cc${71 + toCc}.`);
-									this.dispatchEvent("cc", {
+									upThis.dispatchEvent("cc", {
 										part,
 										cc: 71 + toCc,
 										data: det.data[1]
@@ -1188,7 +1204,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 								} else {
 									let nrpnIdx = useNormNrpn.indexOf(lsb);
 									if (nrpnIdx > -1) {
-										this.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
+										upThis.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
 									} else {
 										console.warn(`NRPN 0x01${lsb.toString(16).padStart(2, "0")} is not supported.`);
 									};
@@ -1204,24 +1220,24 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 										console.warn(`${dPref}is not supported.`);
 									};
 								} else {
-									let targetSlot = this.#chType[part] - 2;
+									let targetSlot = upThis.#chType[part] - 2;
 									if (targetSlot < 0) {
-										console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[this.#chType[part]]}.`);
+										console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[upThis.#chType[part]]}.`);
 									} else {
-										this.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
+										upThis.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
 									};
 								};
-								getDebugState() && console.debug(`CH${part + 1} (${xgPartMode[this.#chType[part]]}) drum NRPN ${msb} commit`);
+								getDebugState() && console.debug(`CH${part + 1} (${xgPartMode[upThis.#chType[part]]}) drum NRPN ${msb} commit`);
 							};
 						} else {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.getChCc(part, 100)],
-							rpnIndex2 = rpnOptions[this.getChCc(part, 100)];
-							if (this.getChCc(part, 101) === 0 && rpnIndex !== undefined) {
-								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${this.getChCc(part, 100)} commit: ${det.data[1]}`);
+							let rpnIndex = useRpnMap[upThis.getChCc(part, 100)],
+							rpnIndex2 = rpnOptions[upThis.getChCc(part, 100)];
+							if (upThis.getChCc(part, 101) === 0 && rpnIndex !== undefined) {
+								getDebugState() && console.debug(`CH${part + 1} RPN 0 ${upThis.getChCc(part, 100)} commit: ${det.data[1]}`);
 								det.data[1] = Math.min(Math.max(det.data[1], rpnCap[rpnIndex][0]), rpnCap[rpnIndex][1]);
-								this.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
-								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
+								upThis.#rpn[part * allocated.rpn + rpnIndex] = det.data[1];
+								upThis.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
 								switch (partMode) {
 									case modeMap.xg:
 									case modeMap.gs:
@@ -1231,12 +1247,12 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 									case modeMap.motif:
 									case modeMap.cs1x:
 									case modeMap.cs6x: {
-										switch (this.getChCc(part, 100)) {
+										switch (upThis.getChCc(part, 100)) {
 											case 1:
 											case 2: {
-												this.dispatchEvent("pitch", {
+												upThis.dispatchEvent("pitch", {
 													part,
-													pitch: this.getChPitch(part)
+													pitch: upThis.getChPitch(part)
 												});
 												break;
 											};
@@ -1244,9 +1260,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 										break;
 									};
 									default: {
-										this.dispatchEvent("pitch", {
+										upThis.dispatchEvent("pitch", {
 											part,
-											pitch: this.getChPitch(part)
+											pitch: upThis.getChPitch(part)
 										});
 									};
 								};
@@ -1256,16 +1272,16 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					};
 					case 32: {
 						if (getDebugState()) {
-							console.debug(`${modeIdx[this.#mode]}, CH${part + 1} LSB: ${det.data[1]}`);
+							console.debug(`${modeIdx[upThis.#mode]}, CH${part + 1} LSB: ${det.data[1]}`);
 						};
-						switch (this.#mode) {
+						switch (upThis.#mode) {
 							case modeMap.s90es:
 							case modeMap.motif: {
-								this.setChType(part, ([32, 40].indexOf(det.data[1]) > -1) ? this.CH_DRUMS : this.CH_MELODIC, this.#mode, true);
+								upThis.setChType(part, ([32, 40].indexOf(det.data[1]) > -1) ? upThis.CH_DRUMS : upThis.CH_MELODIC, upThis.#mode, true);
 								break;
 							};
 						};
-						if (this.getExt(part)[0] === this.EXT_DX) {
+						if (upThis.getExt(part)[0] === upThis.EXT_DX) {
 							//this.#cc.subarray(chOff + ccToPos[142], chOff + ccToPos[157] + 1).fill(64);
 						};
 						/*this.dispatchEvent("voice", {
@@ -1275,14 +1291,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					};
 					case 38: {
 						// Show RPN and NRPN
-						if (!this.#dataCommit[part]) {
+						if (!upThis.#dataCommit[part]) {
 							// Commit supported RPN values
-							let rpnIndex = useRpnMap[this.getChCc(part, 100)],
-							rpnIndex2 = rpnOptions[this.getChCc(part, 100)];
-							if (this.getChCc(part, 101) === 0 && rpnIndex !== undefined) {
+							let rpnIndex = useRpnMap[upThis.getChCc(part, 100)],
+							rpnIndex2 = rpnOptions[upThis.getChCc(part, 100)];
+							if (upThis.getChCc(part, 101) === 0 && rpnIndex !== undefined) {
 								// This section is potentially unsafe
-								this.#rpn[part * allocated.rpn + rpnIndex + 1] = det.data[1];
-								this.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
+								upThis.#rpn[part * allocated.rpn + rpnIndex + 1] = det.data[1];
+								upThis.#rpnt[part * allocated.rpnt + rpnIndex2] = 1;
 							};
 						};
 						break;
@@ -1290,7 +1306,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					case 64: {
 						// cc64: hold
 						if (det.data[1] < 64) {
-							this.#uAction.hoOf(part);
+							upThis.#uAction.hoOf(part);
 						};
 						break;
 					};
@@ -1298,29 +1314,29 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						// cc66: sostenuto
 						if (det.data[1] >> 6) {
 							// Sostenuto on
-							this.#uAction.soOn(part);
+							upThis.#uAction.soOn(part);
 						} else {
 							// Sostenuto off
-							this.#uAction.soOf(part);
+							upThis.#uAction.soOf(part);
 						};
 						//console.debug(`Sostenuto: ${det.data[1]}`);
 						break;
 					};
 					case 98:
 					case 99: {
-						this.#dataCommit[part] = 1;
+						upThis.#dataCommit[part] = 1;
 						break;
 					};
 					case 100:
 					case 101: {
-						this.#dataCommit[part] = 0;
+						upThis.#dataCommit[part] = 0;
 						break;
 					};
 				};
-				this.setChCc(part, det.data[0], det.data[1]);
+				this.setChCc(part, ccNum, det.data[1]);
 				this.dispatchEvent("cc", {
 					part,
-					cc: det.data[0],
+					cc: ccNum,
 					data: det.data[1]
 				});
 			};

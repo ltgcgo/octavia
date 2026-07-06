@@ -1,5 +1,12 @@
 "use strict";
 
+let gsLevelDesc = [
+	"Invalid GS",
+	"SC-55",
+	"SC-88",
+	"SC-88 Pro",
+	"SC-8850"
+];
 let gsRevType = [
 	"room 1",
 	"room 2",
@@ -142,6 +149,7 @@ getGsEfxDesc = function (arr, param, value) {
 let mt32DefProg = [68, 48, 95, 78, 41, 3, 110, 122, 0];
 
 export {
+	gsLevelDesc,
 	gsRevType,
 	gsChoType,
 	gsDelType,
