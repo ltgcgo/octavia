@@ -1,7 +1,6 @@
 ID	Name
 ClvchrdK	ClvichordK
 ElctrAtm	Electr.Atm
-BrthTnSx	BrthyTnrSx
 GrandP #	GrndPiano#
 GrndPnoK	GrndPianoK
 MelloGrP	MelloGrPno
@@ -18,6 +17,7 @@ BritPnoK	BritPianoK
 StBrtPno	StBritePno
 DetBrPno	Det.BrtPno
 MIDI Gr4	MIDIGrand4
+OldPiano	Old Piano
 EGndPnoK	ElGrndPnoK
 Det.CP80	DetuneCP80
 LayerCP1	LayeredCP1
@@ -31,6 +31,7 @@ HardEPno	Hard ElPno
 VX E.Pno	VX ElPiano
 60sElPno	60s' ElPno
 Diploid1	Diploid 1
+DetFlops	Det. Flops
 Diploid2	Diploid 2
 Diploid3	Diploid 3
 Easy EP	Easy ElPno
@@ -48,6 +49,12 @@ DX Kt EP	DX Koto EP
 VX EPno2	VX EPiano2
 DX Malet	DX Mallet
 Shirakwa	Shirakawa
+DetFliks	Det.Flicks
+Turnpike	TurnpikeEP
+Turnpik2	Turnpike 2
+SoftDXEP	Soft DX EP
+ResoDXEP	ResonantDX
+ShiverDX	Shiver DX
 ShivrDX+	ShiverDX +
 TinkrDX+	Tinker DX+
 DXModern	DX Modern
@@ -67,6 +74,7 @@ ClvinetK	Clavinet K
 ClaviWah	ClvchrdWah
 PulseClv	PulseClavi
 PiercClv	PierceClav
+SweepClv	SweepClav.
 SupClavi	SuperClavi
 HardyPlk	HardyPluck
 BrtClav*	Brt.Clavi*
@@ -108,6 +116,7 @@ RockOrg#	RockOrgan#
 RotaryOr	RotaryOrgn
 SlwRotar	SlowRotary
 FstRotar	FastRotary
+GlaRotar	GlaRotarOr
 RockOrg*	RockOrgan*
 ChurOrg3	ChurchOrg3
 ChurOrg2	ChurchOrg2
@@ -121,7 +130,9 @@ TngoAcd2	TangoAcod2
 NylonGt#	Nylon Gt.#
 NylonGt2	Nylon Gt.2
 NylonGt3	Nylon Gt.3
+WaysideG	WaysideGtr
 VelGtHrm	VelGtHrmnx
+Espa.Gtr	SpanishGtr
 DecayEsG	DecayEspGt
 ClassGt*	ClassicGt*
 SteelGt#	Steel Gt.#
@@ -134,9 +145,15 @@ OldSampl	Old Sample
 JazzGtr#	Jazz Gtr.#
 MelloGtr	Mellow Gt.
 Jazz Amp	JazzGtrAmp
+OrganGtr	Organ Gtr.
 OctPlate	Oct. Plate
-MidSJazz	MidSupJzGt
+MidSpJaz	MidSuprJaz
+BriSpJaz	BrdgSuprJz
+DetSpJaz	DetSuprJaz
+RezSpJaz	ResoSuprJz
+PulseJaz	PulseJazGt
 NekRough	Neck.Rough
+MidRough	Mid.Rough.
 JazzGtr*	Jazz Gtr.*
 PdlSteel	PedalSteel
 ClnGtr**	CleanGtr**
@@ -145,23 +162,27 @@ CleanGt2	Clean Gt.2
 MidT.Gtr	MidToneGt.
 MidTGtSt	MidTnGtrSt
 NasalGtr	Nasal Gtr.
+StNaslGt	St.NasalGt
 HammrMid	Mid Hammer
 HammrBrg	BridgeHamr
 HammrDbl	Dbl Hammer
 HammrSt.	St. Hammer
+FMChoGtr	FMChor.Gtr
+PeskyGtr	Pesky Gtr.
 60sClnGt	60sClnGtr.
 MutedGt#	Muted Gt.#
 Funk Gtr	Funk Gtr 1
 MuteStlG	MuteSteelG
 FunkGtr2	Funk Gtr 2
 WrenchGt	Wrench Gtr
-Heavy Wr	HeavyWrnch
+HvyWrGtr	HvyWrnchGt
 GrvyMtGt	GroovyMtGt
 Mu.DstGt	MuteDistGt
 Ovrdriv#	Overdrive#
 OvdrGtDt	OvdrGtrDet
 Gt.Pinch	Gtr. Pinch
 BrtMnhtn	BriteMnhtn
+PwrMnhtn	PowerMnhtn
 Ovrdriv*	Overdrive*
 Dist.Gt#	Dist. Gt.#
 DstRthmG	DistRthmGt
@@ -175,6 +196,7 @@ FeedbkG2	FeedbackG2
 TwinDist	TwinDistGt
 RckRthm2	RockRthm 2
 RockRthm	RockRhythm
+BiteEGtr	Bite EGtr.
 Bite +	Bite Plus
 AcouHarm	Acou.Harmo
 GtFeedbk	GtFeedback
@@ -184,7 +206,10 @@ JazzRthm	JazzRhythm
 PkAcouBa	PickAcouBa
 VXUprght	VX Upright
 BostonBa	BostonBass
+BrBstnBa	BrtBostnBa
+CoolthBa	CoolthBass
 WalkSyBa	Walk'SynBa
+Dim&Cool	Dim & Cool
 FingrBa#	FingerBas#
 FingrDrk	FingerBsDk
 FlangrBa	Flanger Ba
@@ -193,6 +218,7 @@ FngrSlap	FingerSlap
 FngrBas2	FingerBas2
 Jazzy Ba	Jazzy Bass
 Mod Bass	Modul.Bass
+ChaseBas	Chase Bass
 RezChase	Reso.Chase
 BlueBass	Blues Bass
 FW EBass	FltWdEBass
@@ -200,6 +226,7 @@ MelFgrBa	MelFingrBa
 Alp.Bass	AlpineBass
 PickBas2	PickedBas2
 M.PkBass	MutePkBass
+PkBa&MGt	PikBa&MGtr
 HardPick	Hard Pick
 RzHardPk	ResoHardPk
 PickBas*	PickedBas*
@@ -235,13 +262,18 @@ HardReso	HardReson.
 PlutoBas	Pluto Bass
 StimuliB	Stimuli Bs
 TkinPuls	TalkinPuls
+NodeBass	Node Bass
 SweepSqr	Sweep Sqr.
 Reso Sqr	Reso.SqrBa
+SwePWMBa	SweepPWMBa
+St.SwPWM	St.SwPWMBa
 MnplisBa	MnplisBass
 Miami Ba	Miami Bass
 HammerBa	HammerBass
 AnalogBa	AnalogBass
+SynBass*	SynthBass*
 RezoBass	Rezzo Bass
+RaveBass	Rave Bass
 MelloSBa	MelloSynBs
 Seq.Bass	SequenceBs
 ClkSynBa	ClickSynBs
@@ -324,6 +356,7 @@ Warm Str	WarmString
 70s Str	70s'String
 Strings3	Strings 3
 ChmbrStr	ChamberStr
+SlowStr*	SlwString*
 StrQuart	StrQuartet
 Marcato*	MarctoStr*
 ArcoStr*	Arco Str.*
@@ -338,6 +371,7 @@ Syn.Str5	SynthStr.5
 SynStr1*	SynthStr1*
 TradeWnd	Trade Wind
 WormHole	Worm Hole
+Hope Str	HopeString
 TaurusS.	TaurusStr.
 Leo Str.	Leo String
 SolPlexs	SolrPlexus
@@ -345,12 +379,16 @@ St.Choir	Ste. Choir
 ChoirAh2	Choir Ah 2
 MelChoir	MelloChoir
 ChoirStr	Choir Str.
+ScrollAh	Scroll Aah
+Scroll +	ScrollAah+
 StereoAh	Stereo Aah
 VoiceDoo	Voice Doo
 VoiceHmm	Voice Hmm
 StereoOh	Stereo Ooh
 SynVoix2	Syn.Voice2
 AnalgVox	AnalgVoice
+DtAspirt	DtAspirate
+OrchHt**	Orch.Hit**
 OrchHit2	Orch. Hit2
 ImpactHt	Impact Hit
 Brs Stab	Brass Stab
@@ -401,6 +439,7 @@ SlowTuba	Slow Tuba
 Eufonium	Euphonium
 MutedTp#	MutedTrp #
 MuteTrp2	MutedTrp 2
+BakStair	Backstairs
 FrHrSolo	FrHornSolo
 FrHorn 2	Fr. Horn 2
 HornOrch	Horn Orch.
@@ -418,8 +457,10 @@ BrasFall	Brass Fall
 BrsSect2	BrassSect2
 Hi Brass	High Brass
 MelloBrs	MelloBrass
+FakeHrns	Fake Horns
 SuperBrs	SuperBrass
 CutBrass	SpBrassCut
+BlownBrs	BlownBrass
 Tenor&Tp	Tenor&Trp
 Alps Brs	Alps Brass
 SymphBrs	SymphBrass
@@ -456,6 +497,7 @@ FakeAlt+	Fake Alto+
 DFakeAlt	DrkFakeAlt
 AltoSax*	Alto Sax *
 SwtAltSx	SwtAltoSax
+BrthTenr	BrthyTenor
 SoftTenr	SoftTenrSx
 TenrSax2	TenorSax 2
 SuperTnr	SuperTenor
@@ -488,6 +530,7 @@ SineLead	Sine Lead
 Pulse Ld	Pulse Lead
 SyncLead	Sync Lead
 AccentLd	AccentLead
+Brick Ld	Brick Lead
 AlumLead	Alum Lead
 FMSlwSwp	FMSlwSweep
 Curse Ld	Curse Lead
@@ -507,11 +550,14 @@ PulseSaw	Pulse Saw
 Dr. Lead	DoctorLead
 VeloLead	Velo. Lead
 Dunce Ld	Dunce Lead
+Str8.Saw	Str8. Saw
 Str8Puls	StraitPuls
+PWMania	PWM Mania
 ModulSaw	ModularSaw
 SimplSaw	Simple Saw
 SeqAnalg	Seq.Analog
 SawLead*	Saw. Lead*
+BlastrLd	Blaster Ld
 Analogon	AnalogonLd
 FireWire	Fire Wire
 Early Ld	Early Lead
@@ -533,19 +579,31 @@ BrthLayr	BreathLayr
 Big&Low	Big & Low
 Fat&Prky	Fat&Perky
 SftWhirl	Soft Whirl
+Mogul Ld	Mogul Lead
+Sync B&L	Sync Ba&Ld
+LibraPad	Libra Pad
 ThickPad	Thick Pad
 RotarStr	Rotary Str
 LightPad	Light Pad
+Area51Pd	Area 51Pad
+DarkMoon	DarkMoonPd
 PolyPd80	PolyPad 80
 ClickPad	Click Pad
 AnalgPad	Analog Pad
 SquarePd	Square Pad
+PixiePad	Pixie Pad
+PiscesPd	Pisces Pad
+SpiralPd	Spiral Pad
 Light Pd	Light Pad
 CosmicPd	Cosmic Pad
 GlassPad	Glass Pad
 SqrTwang	Sqr. Twang
 Sqr.Pad8	Sqr. Pad 8
 ChorusPd	Chorus Pad
+EqinoxPd	EquinoxPad
+InsmnPad	InsomniaPd
+SolrisPd	SolarisPd*
+IonosPad	IonosphrPd
 Shwimmer	ShwimmerPd
 Converge	ConvergePd
 PolarPad	Polar Pad
@@ -588,6 +646,7 @@ BellPad*	Bell Pad *
 GobSynth	GoblnSynth
 ToHeaven	To Heaven
 MilkyWay	Milky Way
+Glisten	Glistening
 GblnTalk	GoblinTalk
 BelChoir	Bell Choir
 Echoes 2	EchoDrops2
@@ -705,8 +764,6 @@ LaughVox	Laugh Vox
 ScreamVx	Scream Vox
 Heart	Heartbeat
 Footstep	Footsteps
-Applauz2	Applause 2
-Applauz2	Applause 2
 MchinGun	MachineGun
 LaserGun	Laser Gun
 Xplosion	Explosion
@@ -1139,3 +1196,13 @@ BPF Step	BPF Steps
 Dist.5th	Dist.Fifth
 HardNoiz	Hard Noise
 Celuloid	Celluloid
+HighStr.	HighString
+Low Str.	LowStrings
+SynthBas	Synth Bass
+Moogy Ld	Moogy Lead
+SynBrsPd	SynBrassPd
+SynStrPd	SynthStrPd
+SynCmpLd	Syn.CompLd
+BrthyFlt	BrthyFlute
+SynLead1	SynthLead1
+SynLead2	SynthLead2

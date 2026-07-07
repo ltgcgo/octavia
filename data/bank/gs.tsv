@@ -481,7 +481,7 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 002	048	049	Strings1	0	2	gs2:Strings1
 003	048	049	Strings1	1	3	gs3:Strings1
 004	048	049	Strings1	3	4	gs4:Strings1
-002	048	001	Slow Str		2	gs2:Slow Str
+002	048	001	Strings2		2	gs2:Strings2
 003	048	001	BriteStr		3	gs3:BriteStr
 003	048	002	ChmbrStr		3	gs3:ChmbrStr
 003	048	003	CellSect		3	gs3:CellSect
@@ -507,10 +507,10 @@ LSB	PRG	MSB	NME	ELC	LVL	VXP
 003	048	033	OctStr.2		3	gs3:OctStr.2
 004	048	034	ContraSc		4	gs4:ContraSc
 004	048	040	60s Strs		4	gs4:60s Strs
-000	049	049	Strings2	0	1	gs1:Strings2
-002	049	049	Strings2	0	2	gs2:Strings2
-003	049	049	Strings2	0	3	gs3:Strings2
-004	049	049	Strings2	1	4	gs4:Strings2
+000	049	049	Slow Str	0	1	gs1:Slow Str
+002	049	049	Slow Str	0	2	gs2:Slow Str
+003	049	049	Slow Str	0	3	gs3:Slow Str
+004	049	049	Slow Str	1	4	gs4:Slow Str
 002	049	001	SlowStr2		2	gs2:SlowStr2
 004	049	002	SlowStr3		4	gs4:SlowStr3
 002	049	008	LegatoSt		2	gs2:LegatoSt

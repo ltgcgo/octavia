@@ -187,7 +187,6 @@ SoloSpic	Solo Spiccato
 StrsSpic	String Spiccato
 Harp&Str	Harp & Strings
 SynYanQn	Synth Yang Qin
-Slow Str	Slow Strings
 BriteStr	Bright Strings
 ChmbrStr	Chamber Strings
 CellSect	Cello Section
@@ -200,6 +199,7 @@ StStrngs	Stereo Strings
 OrchStr3	Orchestra Strings 3
 OctavStr	Octave Strings 1
 OctStr.2	Octave Stings. 2
+Slow Str	Slow Strings
 SlowStr2	Slow Strings 2
 LegatoSt	Legato Strings
 StSlwStr	Stereo Slow Strings

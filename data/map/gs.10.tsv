@@ -302,7 +302,6 @@ Syn.Harp	Synth Harp
 YangChin	Yang Qin
 YangQin2	Yang Qin 2
 SynYanQn	SynYangQin
-Slow Str	Strings 2
 BriteStr	Bright Str
 ChmbrStr	ChamberStr
 CellSect	Cello Sect
@@ -317,6 +316,7 @@ OrchStr3	Orchestra3
 Velo.Str	VeloStrngs
 OctavStr	Oct Str. 1
 OctStr.2	Oct Str. 2
+Slow Str	Strings 2
 SlowStr2	SlowStrng2
 LegatoSt	Legato Str
 Warm Str	Warm Str.

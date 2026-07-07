@@ -507,10 +507,10 @@ gs3:OctavStr
 gs3:OctStr.2		
 gs4:ContraSc		
 gs4:60s Strs		
-gs1:Strings2	1	0.4375
-gs2:Strings2		
-gs3:Strings2	1	0.625
-gs4:Strings2		
+gs1:Slow Str	1	0.4375
+gs2:Slow Str		
+gs3:Slow Str	1	0.625
+gs4:Slow Str		
 gs2:SlowStr2		
 gs4:SlowStr3		
 gs2:LegatoSt		

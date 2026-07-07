@@ -1,7 +1,6 @@
 ID	Name
 ClvchrdK	Clavichord KSP
 ElctrAtm	Electric Atmos
-BrthTnSx	Breathy Tenor Sax
 GrandP #	Grand Piano #
 GrndPnoK	Grand Piano KSP
 MelloGrP	Mellow Grand Piano
@@ -25,6 +24,8 @@ HardEPno	Hard Electric Piano
 VX E.Pno	VX Electric Piano
 60sElPno	60s' Electric Piano
 Diploid1	Diploid E. Piano 1
+Soho EP	Soho E. Piano
+DetFlops	Detuned Flops EP
 Diploid2	Diploid E. Piano 2
 Diploid3	Diploid E. Piano 3
 4 Way EP	4 Way E. Piano
@@ -38,6 +39,10 @@ EPiano2#	Electric Piano 2 #
 EPiano2K	Electric Piano 2 KSP
 VX EPno2	VX Electric Piano 2
 Shirakwa	Shirakawa E. Piano
+DetFliks	Detuned Flicks EP
+Turnpik2	Turnpike EP 2
+ResoDXEP	Resonant DX EP
+ShiverDX	Shivering DX EP
 ShivrDX+	Shivering DX EP Plus
 TinkrDX+	Tinker DX Plus
 HyprTine	Hyper Tines EP
@@ -53,6 +58,7 @@ ClvinetK	Clavinet KSP
 ClaviWah	Wah Clavinet
 PulseClv	Pulse Clavinet
 PiercClv	Pierce Clavinet
+SweepClv	Sweep Clavinet
 SupClavi	Super Clavinet
 BrtClav*	Bright Clavinet *
 VibrafnK	Vibraphone KSP
@@ -75,6 +81,7 @@ PercOrg2	Percussive Organ 2
 WarmJazz	Warm Jazz Organ
 SlwRotar	Slow Rotary Organ
 FstRotar	Fast Rotary Organ
+GlaRotar	Glacial Rotary Organ
 ChurOrg3	Church Organ 3
 ChurOrg2	Church Organ 2
 TrmOrgFl	Tremolo Organ Flute
@@ -83,7 +90,9 @@ TngoAcd2	Tango Accordion 2
 NylonGt#	Nylon Guitar #
 NylonGt2	Nylon Guitar 2
 NylonGt3	Nylon Guitar 3
+WaysideG	Wayside Guitar
 VelGtHrm	Velo Guitar Harmonics
+Espa.Gtr	Spanish Guitar
 DecayEsG	Decay Spanish Guitar
 ClassGt*	Classic Guitar *
 SteelGt#	Steel Guitar #
@@ -96,30 +105,39 @@ OldSampl	Old Sample Guitar
 JazzGtr#	Jazz Guitar #
 MelloGtr	Mellow Guitar
 Jazz Amp	Amped Jazz Guitar
-MidSJazz	Mid. Super Jazz Guitar
-NekRough	Roughcaster Neck
+MidSpJaz	Middle Super Jazz Gtr.
+BriSpJaz	Bridge Super Jazz Gtr.
+DetSpJaz	Detuned Super Jazz Gtr.
+RezSpJaz	Resonant Super Jazz Gtr.
+PulseJaz	Pulse Jazz Guitar
+NekRough	Neck Roughcaster
+MidRough	Middle Roughcaster
 JazzGtr*	Jazz Guitar *
 ClnGtr**	Clean Guitar **
 ChorusGt	Chorus Guitar
 CleanGt2	Clean Guitar 2
 MidT.Gtr	Mid-tone Guitar
 MidTGtSt	Mid-tone Guitar Stereo
+StNaslGt	Stereo Nasal Guitar
 HammrMid	Middle Hammer Guitar
 HammrBrg	Bridge Hammer Guitar
 HammrDbl	Double Hammer Guitar
 HammrSt.	Stereo Hammer Guitar
+FMChoGtr	FM Chorus Guitar
 60sClnGt	60s' Clean Guitar
 MutedGt#	Muted Guitar #
 Funk Gtr	Funk Guitar 1
 MuteStlG	Muted Steel Guitar
 FunkGtr2	Funk Guitar 2
 WrenchGt	Wrench Guitar
+HvyWrGtr	Heavy Wrench Guitar
 GrvyMtGt	Groovy Muted Guitar
 Mu.DstGt	Muted Distortion Guitar
 MutedGt*	Muted Guitar *
 Ovrdriv#	Overdriven Guitar #
 OvdrGtDt	Detuned Overdrive Guitar
 BrtMnhtn	Bright Manhattan Guitar
+PwrMnhtn	Power Manhattan Guitar
 Ovrdriv*	Overdriven Guitar *
 Dist.Gt#	Distortion Guitar #
 DstRthmG	Distorted Rhythm Guitar
@@ -132,13 +150,16 @@ FeedbkGt	Feedback Guitar
 FeedbkG2	Feedback Guitar 2
 TwinDist	Twin Distortion Guitar
 RckRthm2	Rock Rhythm 2
+BiteEGtr	Bite E. Guitar
 AcouHarm	Acoustic Harmonics
 GtFeedbk	Guitar Feedback
 GtrHrmo2	Guitar Harmonics 2
 Acou.Ba#	Acoustic Bass #
 PkAcouBa	Picked Acoustic Bass
 VXUprght	VX Upright Bass
+BrBstnBa	Bright Boston Bass
 WalkSyBa	Walking Synth Bass
+Dim&Cool	Dim & Cool Bass
 FingrBa#	Fingered Bass #
 FingrDrk	Dark Fingered Bass
 Ba&DstEG	Bass & Distortion Guitar
@@ -150,6 +171,7 @@ FW EBass	Flatwound E. Bass
 MelFgrBa	Mellow Fingered Bass
 PickBas2	Picked Bass 2
 M.PkBass	Muted Picked Bass
+PkBa&MGt	Picked Bass & Muted Gtr.
 HardPick	Hard Picked Bass
 RzHardPk	Resonant Hard Pick Bass
 PickBas*	Picked Bass *
@@ -173,6 +195,8 @@ HardReso	Hard Resonant Bass
 TkinPuls	Talking Pulse Bass
 SweepSqr	Sweep Square Bass
 Reso Sqr	Resonant Square Bass
+SwePWMBa	Sweep PWM Bass
+St.SwPWM	Stereo Sweep PWM Bass
 MnplisBa	Minneapolis Bass
 MelloSBa	Mellow Synth Bass
 Seq.Bass	Sequenced Bass
@@ -224,6 +248,7 @@ OrchStr*	Live! Orchestra Strings
 StSlwStr	Stereo Slow Strings
 LegatoSt	Legato Strings
 ChmbrStr	Chamber Strings
+SlowStr*	Slow Strings *
 StrQuart	Strings Quartet
 Marcato*	Marcato Strings *
 ArcoStr*	Live! Arco Strings
@@ -240,7 +265,10 @@ TaurusS.	Taurus Strings
 SolPlexs	Solar Plexus Strings
 MelChoir	Mellow Choir
 ChoirStr	Choir Strings
+Scroll +	Scroll Aah Plus
 SynVoix2	Synth Voice 2
+DtAspirt	Detuned Aspirate
+OrchHt**	Orchestra Hit **
 OrchHit2	Orchestra Hit 2
 BrsStb80	Brass Stab 80
 BassHit+	Bass Hit Plus
@@ -276,6 +304,7 @@ HrdBsTrb	Hard Bass Trombone
 TromSect	Trombone Section
 MutedTp#	Muted Trumpet #
 MuteTrp2	Muted Trumpet 2
+BakStair	Backstairs Trumpet
 FrHrSolo	French Horn Solo
 FrHorn 2	French Horn 2
 HornOrch	Horn Orchestra
@@ -312,10 +341,11 @@ Sax Sect	Saxophone Section
 HyprAlto	Hyper Alto Sax
 PwrAltSx	Power Alto Sax
 FakeAlto	Fake Alto Sax
-FakeAlt+	Fake Alto Plus
+FakeAlt+	Fake Alto Sax Plus
 DFakeAlt	Dark Fake Alto Sax
 AltoSax*	Alto Saxophone *
 SwtAltSx	Sweet! Alto Sax
+BrthTenr	Breathy Tenor Sax
 SoftTenr	Soft Tenor Sax
 TenrSax2	Tenor Saxophone 2
 SuperTnr	Super Tenor Sax
@@ -352,7 +382,9 @@ DoublSaw	Double Sawtooth Lead
 Dim Saw	Dim Sawtooth Lead
 PulseSaw	Pulse Sawtooth Lead
 VeloLead	Velocity Lead
+Str8.Saw	Straight Sawtooth
 Str8Puls	Straight Pulse Lead
+PWMania	PWM Mania Lead
 ModulSaw	Modular Sawtooth Lead
 SimplSaw	Simple Sawtooth
 SeqAnalg	Sequenced Analog Lead
@@ -364,8 +396,11 @@ DistLead	Distortion Lead
 DaSyncLd	The Sync Lead
 BrthLayr	Breathy Layer
 5thLdSft	Fifth Lead Soft
+Sync B&L	Sync Bass & Lead
 RotarStr	Rotary Strings
+DarkMoon	Dark Moon Pad
 PolyPd80	Poly Synth Pad 80
+IonosPad	Ionosphere Pad
 Wv2001Pd	Wave 2001 Pad
 ClaviPad	Clavichord Pad
 HrmoRain	Harmonic Rain
@@ -727,3 +762,7 @@ ANHardBr	AN Hard Brass
 DirtySaw	Dirty Sawtooth Lead
 BPF Step	Band Passed Steps
 Dist.5th	Distorted Fifth
+SynBrsPd	Synth Brass Pad
+SynStrPd	Synth Strings Pad
+SynCmpLd	Synth Comped Lead
+BrthyFlt	Breathy Flute
