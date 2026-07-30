@@ -120,6 +120,7 @@ let VoiceBank = class {
 					};
 					case 48:
 					case 64:
+					case 120:
 					case 126:
 					case 127: {
 						if (lsb === 126) {
