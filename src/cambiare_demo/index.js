@@ -176,10 +176,10 @@ createDropDown($e("div#dropmount-levelX5"), {
 createDropDown($e("div#dropmount-notestyle"), {
 	"activeSlot": 0,
 	"minWidth": "6.5rem",
-	"displayText": "styles[$store.noteStyle||'comb']||'N/A'",
-	"eachExpr": "(name, id) in styles",
+	"displayText": "styles[$store.noteStyle||'comb'][0]||'N/A'",
+	"eachExpr": "([name, tooltip], id) in styles",
 	"optionText": "name",
-	"optionDesc": "`Internal ID: (${id})`",
+	"optionDesc": "`${id}: ${tooltip}`",
 	"optionActive": "($store.noteStyle||'comb')===id",
 	"optionClick": "gStyle(id)"
 });

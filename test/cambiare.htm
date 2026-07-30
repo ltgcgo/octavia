@@ -38,7 +38,7 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{cats:['Pre-GM','GM 1','GM 2'],value:{cat:1},frames:{'7':[144,'PC screen'],'9':[120,'PC screen'],'10':[100,'PC screen'],'12':[90,'Phone screen'],'14':[75,'Phone screen'],'17':[60,'NTSC'],'20':[50,'PAL (native)'],'21':[48,'Film'],'34':[30,'NTSC'],'40':[25,'PAL'],'42':[24,'Film'],'100':[10,'Economic'],'500':[2,'Economic']},ecModes:[[false,'Ignore'],[true,'Counted']],active:[0,0,0,0]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{cats:['Pre-GM','GM 1','GM 2'],value:{cat:1},frames:{'7':[144,'PC screen'],'9':[120,'PC screen'],'10':[100,'PC screen'],'12':[90,'Phone screen'],'14':[75,'Phone screen'],'17':[60,'NTSC'],'20':[50,'PAL & SÉCAM (native)'],'21':[48,'Film'],'34':[30,'NTSC'],'40':[25,'PAL & SÉCAM'],'42':[24,'Film'],'100':[10,'Economic'],'500':[2,'Economic']},ecModes:[[false,'Ignore'],[true,'Counted']],active:[0,0,0,0]}">
 			<div class="column column-option"><b>Global mode</b></div>
 			<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
 				<div class="dropdown-trigger" style="min-width: 6.5rem" @click="active[1]=false;active[0]=!active[0]">
@@ -102,7 +102,7 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],styles:{'block':'Block','comb':'Comb','piano':'Piano','line':'Line'},pans:{'0':'Block','9':'Wide','10':'Fan','11':'Knob','1':'Pin','2':'Arc','3':'Dash','5':'Needle','6':'Sector','7':'Hand'},accents:[['Follow','Follow the pre-defined accent colours.'],['Enforce','Enforce global accent colour.'],['Split','Define different accent colours for each port.'],['Modify','Modify the accent colours per-mode.']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],styles:{'block':['Block','MUNT'],'comb':['Comb','Cambiare'],'piano':['Piano','vanBasco\'s'],'line':['Line','MegaMID']},pans:{'0':'Block','9':'Wide','10':'Fan','11':'Knob','1':'Pin','2':'Arc','3':'Dash','5':'Needle','6':'Sector','7':'Hand'},accents:[['Follow','Follow the pre-defined accent colours.'],['Enforce','Enforce global accent colour.'],['Split','Define different accent colours for each port.'],['Modify','Modify the accent colours per-mode.']]}">
 			<div class="column column-option"><b>Note style</b></div>
 			<div id="dropmount-notestyle"></div>
 			<div class="column column-option"><b>Pan style</b></div>
