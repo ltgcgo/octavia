@@ -1195,12 +1195,20 @@ const RootDisplay = class extends CustomEventSource {
 			upThis.#noteNomin = data[0];
 			upThis.#noteDenom = 1 << data[1];
 			//let metroClick = 24 * (32 / data[3]) / data[2];
-			let targetBar = Math.round(curBar + curBeat / oldNomin);
+			//let targetBar = Math.round(curBar + curBeat / oldNomin);
+			let currentNotes = (curBar * oldNomin + curBeat),
+			targetBar = currentNotes;
+			if (currentNotes % oldNomin < 0.5) {
+				targetBar = Math.floor(currentNotes / oldNomin);
+			} else {
+				targetBar = Math.ceil(currentNotes / oldNomin);
+			};
+			console.debug(`${oldNomin}/${oldDenom} → ${upThis.#noteNomin}/${upThis.#noteDenom}, ${targetBar}, ${curBar}/${curBeat}, ${currentNotes / oldNomin}`);
 			if (oldNomin !== upThis.#noteNomin) {
 				upThis.noteBarOffset -= targetBar * (upThis.#noteNomin - oldNomin) * (4 / upThis.#noteDenom);
 			};
 			if (oldDenom !== upThis.#noteDenom) {
-				console.debug(`${curBar}/${curBeat}`);
+				//console.debug(`${curBar}/${curBeat} ${targetBar}`);
 				if (oldDenom < upThis.#noteDenom) {
 					upThis.noteBarOffset += targetBar * (upThis.#noteDenom - oldDenom) * (oldDenom / upThis.#noteDenom);
 				} else {
