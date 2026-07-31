@@ -430,16 +430,17 @@ let Sc8850Display = class extends FocusedPartDisplay {
 			strengthHeight = (35 - renderRange + 1) / renderRange,
 			strengthDivider = 32768 / strengthHeight;
 			sum.velo.forEach(function (e, i) {
+				let reducedE = e >> 7;
 				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
 					upThis.#lingerExtra[i] = 127;
-					if (e !== upThis.#linger[i]) {
-						upThis.#linger[i] = e;
+					if (reducedE !== upThis.#linger[i]) {
+						upThis.#linger[i] = reducedE;
 					};
 				};
-				if (e > upThis.#linger[i]) {
+				if (reducedE > upThis.#linger[i]) {
 					if (scConf.peakHold !== 3 && upThis.#lingerPress[i]) {
-						upThis.#linger[i] = e;
+						upThis.#linger[i] = reducedE;
 						upThis.#lingerExtra[i] = 127;
 					};
 				} else {
@@ -474,6 +475,9 @@ let Sc8850Display = class extends FocusedPartDisplay {
 						};
 						upThis.#linger[i] = val;
 					};
+				};
+				if (i === 0) {
+					console.debug(`${upThis.#linger[i]} ${upThis.#lingerPress[i]} ${upThis.#lingerExtra[i]}`);
 				};
 			});
 			//console.debug(renderRange, strengthHeight, strengthDivider);
@@ -516,7 +520,7 @@ let Sc8850Display = class extends FocusedPartDisplay {
 							};
 						};
 						if (scConf.peakHold) {
-							let linger = Math.floor(upThis.#linger[ch] / strengthDivider) + 1;
+							let linger = Math.floor((upThis.#linger[ch] << 7) / strengthDivider) + 1;
 							if (scConf.invBar) {
 								if (linger) {
 									fillBitsInBuffer(upThis.#nmdb, totalWidth, 49 + 6 * i1, 12 + i0 * strengthHeight + linger + i0, 5, 1);
