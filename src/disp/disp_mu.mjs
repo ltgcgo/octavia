@@ -395,6 +395,9 @@ let MuDisplay = class extends FocusedPartDisplay {
 						let pR = 0;
 						if (scInvBar) {
 							pR = 5 + rendPos * 3 + pI * 85 - (rendPos >> 1);
+							if (rendMode === 1 && !upThis.device?.hideVoiceDetails) {
+								pR += 680;
+							};
 						} else {
 							pR = 5 + rendPos * 3 + (15 - pI) * 85 - (rendPos >> 1);
 						};
