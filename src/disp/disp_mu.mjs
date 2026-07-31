@@ -336,6 +336,7 @@ let MuDisplay = class extends FocusedPartDisplay {
 			};
 			maxCh = minCh + upThis.#range * 16 - 1;
 		};
+		let scInvBar = upThis.device?.modelEx.sc.invBar;
 		let rendMode = Math.ceil(Math.log2(maxCh - minCh + 1) - 4),
 		rendPos = 0;
 		let showLsb = upThis.getChPrimitive(upThis.part, 1) === 0;
@@ -353,11 +354,22 @@ let MuDisplay = class extends FocusedPartDisplay {
 				});
 			});
 		} else {
+			//upThis.#mmdb.fill(upThis.device?.modelEx.sc.invDisp ? 1 : 0);
+			upThis.#mmdb.fill(0);
+			//let fillPixel = upThis.device?.modelEx.sc.invDisp ? 0 : 1;
+			let fillPixel = 1;
 			// Show strength metre
-			upThis.#mmdb[1275] = 1;
-			upThis.#mmdb[1276] = 1;
-			upThis.#mmdb[1278] = 1;
-			upThis.#mmdb[1279] = 1;
+			if (scInvBar) {
+				upThis.#mmdb[0] = fillPixel;
+				upThis.#mmdb[1] = fillPixel;
+				upThis.#mmdb[3] = fillPixel;
+				upThis.#mmdb[4] = fillPixel;
+			} else {
+				upThis.#mmdb[1275] = fillPixel;
+				upThis.#mmdb[1276] = fillPixel;
+				upThis.#mmdb[1278] = fillPixel;
+				upThis.#mmdb[1279] = fillPixel;
+			};
 			for (let ch = minCh; ch <= maxCh; ch ++) {
 				let curStrn = sum.strength[ch],
 				curStrnL = curStrn,
@@ -380,19 +392,32 @@ let MuDisplay = class extends FocusedPartDisplay {
 				if (rendMode === 0 || rendMode === 1) {
 					// 16 channel
 					for (let pI = 0; pI <= curStrn; pI ++) {
-						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - (rendPos >> 1);
-						pI <= curStrnL && (upThis.#mmdb[pR] = 1);
-						pI <= curStrnR && (upThis.#mmdb[pR + 1] = 1);
+						let pR = 0;
+						if (scInvBar) {
+							pR = 5 + rendPos * 3 + pI * 85 - (rendPos >> 1);
+						} else {
+							pR = 5 + rendPos * 3 + (15 - pI) * 85 - (rendPos >> 1);
+						};
+						pI <= curStrnL && (upThis.#mmdb[pR] = fillPixel);
+						pI <= curStrnR && (upThis.#mmdb[pR + 1] = fillPixel);
 					};
 				} else {
 					// 64 channel
 					for (let pI = 0; pI <= curStrn; pI ++) {
-						let pR = 5 + rendPos * 3 + (15 - pI) * 85 - (rendPos >> 1);
-						if (rendPos > 31) {
-							pR -= 760;
+						let pR = 0;
+						if (scInvBar) {
+							pR = 5 + rendPos * 3 + pI * 85 - (rendPos >> 1);
+							if (rendPos > 31) {
+								pR += 600;
+							};
+						} else {
+							pR = 5 + rendPos * 3 + (15 - pI) * 85 - (rendPos >> 1);
+							if (rendPos > 31) {
+								pR -= 760;
+							};
 						};
-						pI <= curStrnL && (upThis.#mmdb[pR] = 1);
-						pI <= curStrnR && (upThis.#mmdb[pR + 1] = 1);
+						pI <= curStrnL && (upThis.#mmdb[pR] = fillPixel);
+						pI <= curStrnR && (upThis.#mmdb[pR + 1] = fillPixel);
 					};
 				};
 				rendPos ++;
@@ -437,7 +462,11 @@ let MuDisplay = class extends FocusedPartDisplay {
 						if (rendMode === 1 && i0 > 7) {
 							partX = partX + 5;
 						};
-						upThis.#mmdb[(regionY + partY) * 85 + regionX + partX] = e1;
+						let paint = e1 ? true : false;
+						/*if (upThis.device?.modelEx.sc.invDisp) {
+							paint = !paint;
+						};*/
+						upThis.#mmdb[(regionY + partY) * 85 + regionX + partX] = paint ? 1 : 0;
 					});
 				});
 			};

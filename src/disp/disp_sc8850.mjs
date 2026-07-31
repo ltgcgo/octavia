@@ -476,9 +476,9 @@ let Sc8850Display = class extends FocusedPartDisplay {
 						upThis.#linger[i] = val;
 					};
 				};
-				if (i === 0) {
+				/*if (i === 0) {
 					console.debug(`${upThis.#linger[i]} ${upThis.#lingerPress[i]} ${upThis.#lingerExtra[i]}`);
-				};
+				};*/
 			});
 			//console.debug(renderRange, strengthHeight, strengthDivider);
 			// Render meters
