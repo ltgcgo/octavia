@@ -50,7 +50,7 @@ let ScDisplay = class extends FocusedPartDisplay {
 	#bootFrame = 0;
 	#booted = 0;
 	bootBm = new MxBmDef();
-	textFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
+	textFont = new MxFont40("../../midi-db/bitmaps/korg/font.tsv", "../../midi-db/bitmaps/xg/font.tsv");
 	constructor(conf) {
 		super(new OctaviaDevice(), 0, 0.4);
 		let upThis = this;

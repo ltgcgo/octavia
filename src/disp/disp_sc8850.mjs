@@ -76,12 +76,12 @@ let Sc8850Display = class extends FocusedPartDisplay {
 	#booted = 0;
 	#bootFrame = 0;
 	#letterMode;
-	font55 = new MxFont40("./data/bitmaps/sc/libre55.tsv");
-	font56 = new MxFont40("./data/bitmaps/sc/libre56.tsv", "./data/bitmaps/xg/font.tsv");
+	font55 = new MxFont40("../../midi-db/bitmaps/sc/libre55.tsv");
+	font56 = new MxFont40("../../midi-db/bitmaps/sc/libre56.tsv", "../../midi-db/bitmaps/xg/font.tsv");
 	bootBm = new MxBmDef();
-	sysBm = new MxBmDef("./data/bitmaps/sc/system.tsv");
-	font7a = new MxFont176("./data/bitmaps/sc/libre7a.tsv");
-	voxBm = new MxBmDef("./data/bitmaps/sc/voices.tsv");
+	sysBm = new MxBmDef("../../midi-db/bitmaps/sc/system.tsv");
+	font7a = new MxFont176("../../midi-db/bitmaps/sc/libre7a.tsv");
+	voxBm = new MxBmDef("../../midi-db/bitmaps/sc/voices.tsv");
 	constructor(conf) {
 		super(new OctaviaDevice(), 0.25, 0.5);
 		let upThis = this;

@@ -34,9 +34,9 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 	#refreshFrame = 0;
 	isLcdContrastEnabled = true;
 	bootBm = new MxBmDef();
-	textFont = new MxFont40("./data/bitmaps/xg/font.tsv");
-	trueFont = new MxFont40("./data/bitmaps/korg/font.tsv", "./data/bitmaps/xg/font.tsv");
-	element = new MxBmDef("./data/bitmaps/korg/element.tsv");
+	textFont = new MxFont40("../../midi-db/bitmaps/xg/font.tsv");
+	trueFont = new MxFont40("../../midi-db/bitmaps/korg/font.tsv", "../../midi-db/bitmaps/xg/font.tsv");
+	element = new MxBmDef("../../midi-db/bitmaps/korg/element.tsv");
 	constructor(conf = {}) {
 		super(new OctaviaDevice(), 0.1, 0.9);
 		let upThis = this;

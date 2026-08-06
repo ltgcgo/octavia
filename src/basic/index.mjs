@@ -604,6 +604,14 @@ const RootDisplay = class extends CustomEventSource {
 							break;
 						};
 					};
+				} else if (["gs", "sc", "mt"].indexOf(standard) > -1) {
+					switch (voiceObject.sid[0]) {
+						case 126:
+						case 127: {
+							data = upThis.sysBm.getBm("cat_mt32");
+							break;
+						};
+					};
 				};
 				if (!data) {
 					if (chType) {

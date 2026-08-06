@@ -25,15 +25,15 @@ let QyDisplay = class extends FocusedPartDisplay {
 	msFrame = 75;
 	msActive = 150;
 	msExhaust = 250;
-	textFont = new MxFont40("./data/bitmaps/xg/font.tsv");
-	qyFont = new MxFont40("./data/bitmaps/xg/qyTrue.tsv", "./data/bitmaps/xg/font.tsv");
-	sqrFont = new MxFont40("./data/bitmaps/xg/qySqr.tsv");
-	qy35Font = new MxFont40("./data/bitmaps/xg/qyCh35.tsv");
-	qy55Font = new MxFont40("./data/bitmaps/xg/qyCh55.tsv");
-	qyRsrc = new MxBmDef("./data/bitmaps/xg/qyRsrc.tsv");
-	qyChord = new MxBmDef("./data/bitmaps/xg/freeChord.tsv");
-	sysBm = new MxBm256("./data/bitmaps/xg/system.tsv");
-	voxBm = new MxBm256("./data/bitmaps/xg/voices.tsv");
+	textFont = new MxFont40("../../midi-db/bitmaps/xg/font.tsv");
+	qyFont = new MxFont40("../../midi-db/bitmaps/xg/qyTrue.tsv", "../../midi-db/bitmaps/xg/font.tsv");
+	sqrFont = new MxFont40("../../midi-db/bitmaps/xg/qySqr.tsv");
+	qy35Font = new MxFont40("../../midi-db/bitmaps/xg/qyCh35.tsv");
+	qy55Font = new MxFont40("../../midi-db/bitmaps/xg/qyCh55.tsv");
+	qyRsrc = new MxBmDef("../../midi-db/bitmaps/xg/qyRsrc.tsv");
+	qyChord = new MxBmDef("../../midi-db/bitmaps/xg/freeChord.tsv");
+	sysBm = new MxBm256("../../midi-db/bitmaps/xg/system.tsv");
+	voxBm = new MxBm256("../../midi-db/bitmaps/xg/voices.tsv");
 	constructor() {
 		super(new OctaviaDevice(), 0, 0.96875, true);
 		let upThis = this;
