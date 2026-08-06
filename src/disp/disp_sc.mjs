@@ -488,9 +488,6 @@ let ScDisplay = class extends FocusedPartDisplay {
 					upThis.#rawStrength[i] = rawStrength[i];
 				};
 				let e = sum.strength[i] >> 7;
-				if (i === 0) {
-					console.debug(e);
-				};
 				//i === 9 && console.debug(upThis.#velo[i], e);
 				//let isMelodic = upThis.device?.getChType(i) === 0 && tmpMelodicBypassCat[upThis.getChPrimitive(i, 0, true) >> 3] === 0;
 				// This is for when the scaling factors are not available
@@ -528,10 +525,11 @@ let ScDisplay = class extends FocusedPartDisplay {
 				let realVelo = upThis.#velo[i];
 				if (scConf.peakHold === 3 && upThis.#lingerPress[i]) {
 					upThis.#lingerPress[i] --;
-					upThis.#lingerExtra[i] = 40;
-					if (realVelo !== upThis.#linger[i]) {
+					if (realVelo > (upThis.#linger[i] >> 8) || upThis.#lingerExtra[i] <= 56) {
+						upThis.#lingerExtra[i] = 88;
 						upThis.#linger[i] = realVelo << 8;
 					};
+					//i === upThis.part && console.debug(upThis.#linger[i] >> 12, realVelo >> 4, upThis.#lingerExtra[i]);
 				};
 				if ((realVelo >> 4) << 4 > upThis.#linger[i] >> 8) {
 					if (scConf.peakHold !== 3 && upThis.#lingerPress[i]) {
@@ -539,14 +537,13 @@ let ScDisplay = class extends FocusedPartDisplay {
 						upThis.#lingerExtra[i] = 40;
 					};
 				} else {
-					let shouldKeep = upThis.#lingerExtra[i] >> 4;
-					if (shouldKeep) {
-						if (upThis.#lingerExtra[i] > 1) {
-							upThis.#lingerExtra[i] -= 1;
-						} else {
-							upThis.#lingerExtra[i] = 0;
-						};
+					let shouldKeep = upThis.#lingerExtra[i] < 64;
+					if (upThis.#lingerExtra[i] > 1) {
+						upThis.#lingerExtra[i] -= 1;
 					} else {
+						upThis.#lingerExtra[i] = 0;
+					};
+					if (shouldKeep) {
 						let val;
 						switch (scConf.peakHold) {
 							case 3: {
