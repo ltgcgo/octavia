@@ -231,9 +231,14 @@ let modeMap = {};
 modeIdx.forEach((e, i) => {
 	modeMap[e] = i;
 });
-let ccToPos = [];
+let ccToPos = new Uint16Array(512);
+ccToPos.fill(65535);
 ccAccepted.forEach((e, i) => {
-	ccToPos[e] = i;
+	if (e >= 0 && e < ccToPos.length) {
+		ccToPos[e] = i;
+	} else {
+		console.debug(`OOB cc${e} is located at index ${i}.`);
+	};
 });
 let dnToPos = {
 	length: useDrumNrpn.length
@@ -1015,8 +1020,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				};
 			};
 			// Check if control change is accepted
-			if (ccToPos[ccNum] === undefined) {
-				console.warn(`cc${ccNum}${det.data[0] !== ccNum ? ` (cc${det.data[0]})` : ""} is not accepted.`);
+			if (ccToPos[ccNum] === 65535) {
+				console.warn(`cc${ccNum}${det.data[0] !== ccNum ? ` (cc${det.data[0]})` : ""} is not accepted by Octavia. Please check if cc${det.data[0]} is conformant to any standard.`);
 			} else {
 				// CC compatibility check
 				switch (upThis.getChMode(part)) {
@@ -1215,7 +1220,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 										};
 										default: {
 											if (msb === 88) {
-												console.warn(`NRPN 0x${combined.toString(16).padStart(4, "0")} is specific to Roland HyperCanvas. Please reset into respective mode by committing NRPN 0x587f first.`);
+												console.warn(`NRPN 0x${combined.toString(16).padStart(4, "0")} is specific to Roland HyperCanvas. Please reset to the respective mode by committing NRPN 0x587f first.`);
 											} else {
 												warnNRPN = true;
 											};
@@ -1307,6 +1312,12 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 											let dPref = `NRPN 0x${msb.toString(16).padStart(2, "0")}${lsb.toString(16).padStart(2, "0")} `;
 											if (msb === 127) {
 												console.warn(`${dPref}is not necessary. Consider removing it.`);
+											} else if (msb === 88) {
+												if (lsb === 127) {
+													console.warn(`HyperCanvas reset must be done under GM2 mode. Please reset to the respective mode first.`);
+												} else {
+													console.warn(`NRPN 0x${combined.toString(16).padStart(4, "0")} is specific to Roland HyperCanvas. Please reset to the respective mode by committing NRPN 0x587f first.`);
+												};
 											} else {
 												console.warn(`${dPref}has no global support implemented. Please check if the selected parameter actually exists.`);
 											};
