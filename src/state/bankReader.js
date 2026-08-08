@@ -168,7 +168,8 @@ let VoiceBank = class {
 				};
 				break;
 			};
-			case "sd": {
+			case "sd":
+			case "rhc": {
 				switch (msb) {
 					case 121: {
 						args[0] = 96;
@@ -214,8 +215,7 @@ let VoiceBank = class {
 				};
 				break;
 			};
-			case "g2":
-			case "rhc": {
+			case "g2": {
 				// Should only be present under SD mode
 				// However before non-resetting mode switches are available
 				// This is the only way

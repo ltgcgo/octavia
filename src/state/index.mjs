@@ -1215,7 +1215,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 										};
 										default: {
 											if (msb === 88) {
-												console.warn(`NRPN 0x${combined.toString(16).padStart(4, "0")} is specific of Roland HyperCanvas. Please reset into respective mode by committing NRPN 0x587f first.`);
+												console.warn(`NRPN 0x${combined.toString(16).padStart(4, "0")} is specific to Roland HyperCanvas. Please reset into respective mode by committing NRPN 0x587f first.`);
 											} else {
 												warnNRPN = true;
 											};
@@ -1228,17 +1228,20 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 										case 0x5841: {
 											upThis.setEffectType(0, 52, (det.data[1] & 15));
 											upThis.pushEffectType(0);
+											console.info(`HyperCanvas reverb type: 0x34${upThis.getEffectType(0)[1].toString(16).padStart(2, "0")}`);
 											return;
 											break;
 										};
 										case 0x5851: {
 											upThis.setEffectType(1, 52, 16 | (det.data[1] & 15));
 											upThis.pushEffectType(1);
+											console.info(`HyperCanvas chorus type: 0x34${upThis.getEffectType(1)[1].toString(16).padStart(2, "0")}`);
 											return;
 											break;
 										};
 										case 0x5870: {
 											upThis.#master.volume = (det.data[1] * 128) / 163.83;
+											upThis.dispatchEvent("mastervolume", upThis.#master.volume);
 											return;
 											break;
 										};
