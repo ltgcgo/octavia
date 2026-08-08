@@ -909,6 +909,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			};
 		},
 		11: function (det) {
+			// CC handling requires a full rewrite.
 			let part = det.channel;
 			let upThis = this;
 			let ccNum = det.data[0];
@@ -1184,13 +1185,38 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					};
 					case 6: {
 						// Show RPN and NRPN
+						let msb = upThis.getChCc(part, 99),
+						lsb = upThis.getChCc(part, 98),
+						combined = (msb << 8) | lsb;
 						if (upThis.#dataCommit[part]) {
+							let warnNRPN = false;
 							// Commit supported NRPN values
-							if ([modeMap.xg, modeMap.gs, modeMap.sc, modeMap.ns5r].indexOf(upThis.#mode) < 0) {
-								console.warn(`NRPN commits are not available under "${modeIdx[upThis.#mode]}" mode, even when they are supported in Octavia.`);
+							switch (upThis.getChModeId(part)) {
+								case modeMap.xg:
+								case modeMap.gs:
+								case modeMap.sc:
+								case modeMap.sd:
+								case modeMap.ns5r: {
+									break;
+								};
+								case modeMap.g2: {
+									switch (combined) {
+										case 0x4100: {
+											break;
+										};
+										default: {
+											warnNRPN = true;
+										};
+									};
+									break;
+								};
+								default: {
+									warnNRPN = true;
+								};
 							};
-							let msb = upThis.getChCc(part, 99),
-							lsb = upThis.getChCc(part, 98);
+							if (warnNRPN) {
+								console.warn(`NRPN (0x${combined.toString(16).padStart(4, "0")}) commits are not available under "${modeIdx[upThis.getChModeId(part)]}" mode, even when they are supported in Octavia. Please consider using non-NRPN CC or SysEx instead if available.`);
+							};
 							if (msb === 1) {
 								let toCc = nrpnCcMap.indexOf(lsb);
 								if (toCc > -1) {
@@ -1211,20 +1237,41 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 									getDebugState() && console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
 								};
 							} else {
-								let nrpnIdx = useDrumNrpn.indexOf(msb);
-								if (nrpnIdx < 0) {
-									let dPref = `NRPN 0x${msb.toString(16).padStart(2, "0")}${lsb.toString(16).padStart(2, "0")} `;
-									if (msb === 127) {
-										console.warn(`${dPref}is not necessary. Consider removing it.`);
-									} else {
-										console.warn(`${dPref}is not supported.`);
+								switch (upThis.getChModeId(part)) {
+									case modeMap.g2: {
+										if (combined === 0x4100) {
+											let dPref = `CH${part + 1} Roland SD GM2 NRPN voice set:`;
+											if (det.data[1] >= 0 && det.data[1] < 4) {
+												upThis.setChCc(part, 0, 96 | det.data[1]);
+												upThis.pushChPrimitives(part);
+												console.debug(`${dPref} ${["classic", "contemporary", "solo", "enhanced"][det.data[1]]}`);
+												if (det.data[1] >= 3) {
+													console.info(`SD-20 may not recognise selecting voice sets beyond contemporary (2), and support for GM2 NRPN voice set select beyond SD-20 isn't promised.`);
+												};
+											} else {
+												console.warn(`${dPref} invalid (${det.data[1]})`);
+											};
+											break;
+										};
 									};
-								} else {
-									let targetSlot = upThis.#chType[part] - 2;
-									if (targetSlot < 0) {
-										console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[upThis.#chType[part]]}.`);
-									} else {
-										upThis.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
+									default: {
+										let nrpnIdx = useDrumNrpn.indexOf(msb);
+										console.debug(nrpnIdx);
+										if (nrpnIdx < 0) {
+											let dPref = `NRPN 0x${msb.toString(16).padStart(2, "0")}${lsb.toString(16).padStart(2, "0")} `;
+											if (msb === 127) {
+												console.warn(`${dPref}is not necessary. Consider removing it.`);
+											} else {
+												console.warn(`${dPref}is not supported.`);
+											};
+										} else {
+											let targetSlot = upThis.#chType[part] - 2;
+											if (targetSlot < 0) {
+												console.warn(`CH${part + 1} cannot accept drum NRPN as type ${xgPartMode[upThis.#chType[part]]}.`);
+											} else {
+												upThis.#drum[(targetSlot * allocated.dpn + dnToPos[msb]) * allocated.dnc + lsb] = det.data[1];
+											};
+										};
 									};
 								};
 								getDebugState() && console.debug(`CH${part + 1} (${xgPartMode[upThis.#chType[part]]}) drum NRPN ${msb} commit`);
