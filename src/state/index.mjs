@@ -276,21 +276,21 @@ let showTrue = function (data, prefix = "", suffix = "", length = 2) {
 	return data ? `${prefix}${data.toString().padStart(length, "0")}${suffix}` : "";
 };
 
-let allocatedPorts = 8;
+const allocatedPorts = 16, allocatedDrums = 8;
 const allocated = {
 	port: allocatedPorts,
 	ch: allocatedPorts << 4, // channels
 	chShift: Math.ceil(Math.log2(allocatedPorts)) + 4,
 	cc: ccAccepted.length, // control changes
 	nn: 128, // notes per channel
-	pl: 512, // polyphony
+	pl: 768, // polyphony
 	tr: 256, // tracks
 	cmt: 14, // C/M timbre storage size
 	rpn: 6,
 	rpnt: 4, // the real size of RPN registers
 	nrpn: useNormNrpn.length,
 	ace: 8, // active custom effect
-	drm: 8, // Drum setup slots
+	drm: allocatedDrums, // Drum setup slots
 	dpn: useDrumNrpn.length, // Drum setup params
 	dnc: 128, // drum note 0 to 127
 	ext: 3, // extensions
@@ -1736,6 +1736,15 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	invokeSysExIndicator() {
 		this.dispatchEvent("mupromptex", this.#lastSysExSize);
 	};
+	checkChValidity(part) {
+		if (typeof part !== "number") {
+			throw(new TypeError(`CH${part} is not valid.`));
+			return;
+		} else if (part < 0 || part >= allocated.ch) {
+			throw(new RangeError(`CH${part + 1} is not valid.`));
+			return;
+		};
+	};
 	getActive() {
 		let result = this.#chActive;
 		//if (this.#mode === modeMap.mt32) {
@@ -1744,6 +1753,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		return result;
 	};
 	getChActive(part) {
+		this.checkChValidity(part);
 		return this.#chActive[part];
 	};
 	setChActive(part, active = 0) {
@@ -1760,6 +1770,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		this.#cc.fill(0, allocated.chcc, allocated.chcc << 1);
 	};
 	getChCc(part, cc) {
+		this.checkChValidity(part);
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new RangeError(`cc${cc} is not an accepted control change.`));
@@ -1814,6 +1825,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.#cc.fill(0, start, start + allocated.cc);
 	};
 	getChCcWritten(part, cc) {
+		this.checkChValidity(part);
 		let upThis = this;
 		if (ccAccepted.indexOf(cc) < 0) {
 			throw(new RangeError(`cc${cc} is not an accepted control change.`));
@@ -1822,9 +1834,11 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		return result;
 	};
 	getChSource(part) {
+		this.checkChValidity(part);
 		return this.#chReceive[part];
 	};
 	getChType(part) {
+		this.checkChValidity(part);
 		return this.#chType[part];
 	};
 	setChType(part, type, mode = 0, disableMsbSet = false) {
@@ -1950,10 +1964,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			throw(new RangeError(`Invalid voice primitive component "${component}"`));
 			return;
 		};
-		if (typeof part !== "number" || part < 0 || part >= allocated.ch) {
-			throw(new RangeError(`Invalid part number: CH${part + 1}`));
-			return;
-		};
+		this.checkChValidity(part);
 		let upThis = this;
 		let result = upThis.#prg[(component << allocated.chShift) | part];
 		switch (component) {
@@ -1979,6 +1990,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		this method lays out the primitives in the order listed below:
 		cc0/Bank MSB, program number, cc32/Bank LSB
 		*/
+		this.checkChValidity(part);
 		let upThis = this;
 		let primBuf = new Uint8Array(3);
 		primBuf[1] = upThis.#prg[part];
@@ -1993,6 +2005,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.dispatchEvent("voice", {part});
 	};
 	getChCvnBuffer(part, maxBufferLength = allocated.cvn) {
+		this.checkChValidity(part);
 		// A buffer that can be written directly
 		if (maxBufferLength > allocated.cvn || maxBufferLength < 1) {
 			throw(new RangeError("Invalid custom voice name buffer length"));
@@ -2001,6 +2014,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		return this.#cvnBuffer.subarray(pointer, pointer + maxBufferLength);
 	};
 	getChCvnRegister(part, regIdx) {
+		this.checkChValidity(part);
 		if (regIdx >= allocated.cvn || regIdx < 0) {
 			throw(new RangeError("Invalid custom voice name register"));
 		};
@@ -2018,6 +2032,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		this.#cvnBufferIsWritten[part] = 0;
 	};
 	getChCvnString(part, preserveEnd) {
+		this.checkChValidity(part);
 		let result = decoderL9.decode(this.getChCvnBuffer(part));
 		if (!preserveEnd) {
 			result = result.trimEnd();
@@ -2025,9 +2040,11 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		return result;
 	};
 	getChCvnIsWritten(part) {
+		this.checkChValidity(part);
 		return this.#cvnBufferIsWritten[part];
 	};
 	getChVoice(part) {
+		this.checkChValidity(part);
 		let upThis = this;
 		let voice = upThis.getVoice(...upThis.getChPrimitives(part), upThis.getChMode(part), upThis.modelEx[upThis.getChMode(part)]?.map ?? 0);
 		if (upThis.#bnCustom[part]) {
@@ -2052,9 +2069,11 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		return voice;
 	};
 	getChRawPitch(part) {
+		this.checkChValidity(part);
 		return this.#pitch[part];
 	};
 	getChPitch(part) {
+		this.checkChValidity(part);
 		let upThis = this;
 		let rpnOff = part * allocated.rpn;
 		let pitchBendRange = upThis.#rpn[rpnOff];
@@ -2099,6 +2118,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		this.dispatchEvent(`efx${effectSlots[slot]}`, {id, hidden});
 	};
 	getChEffectSink(part) {
+		this.checkChValidity(part);
 		return this.#efxTo[part];
 	};
 	setChEffectSink(part, efxSlot = 0) {
@@ -2313,6 +2333,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		return this.#ace;
 	};
 	getChAce(part = 0, aceSlot = 0) {
+		this.checkChValidity(part);
 		// Get channel ACE value
 		if (aceSlot < 0 || aceSlot >= allocated.ace) {
 			throw(new RangeError(`No such ACE slot`));
@@ -2543,6 +2564,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		return modeIdx[this.getChModeId(part, noFallback)];
 	};
 	getChModeId(part, noFallback) {
+		this.checkChValidity(part);
 		if (noFallback) {
 			return this.#chMode[part] || this.#portMode[part >> 4];
 		} else {
@@ -2637,6 +2659,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		};
 	};
 	getChDrumFirstWrite(part) {
+		this.checkChValidity(part);
 		let upThis = this;
 		let chType = upThis.#chType[part];
 		if (chType < 2) {

@@ -40,7 +40,7 @@ With Octavia, no longer will you worry about standard compliance. Just focus on 
 * Available in web-compliant JS (standard ESM; browser and Deno).
 * Developed with Firefox and an open Web in mind, not just bootlicking Chromium and V8.
 * No modification required to run in hardened forks of browsers, like Tor Browser, Cromite and LibreWolf.
-* Supports 8 ports, 128 channels, 512-voice polyphony maximum. More than you'll ever need.
+* Supports 16 ports, 256 channels, 768-voice polyphony maximum. More than you'll ever need.
 
 ## Supported targets
 Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](https://kb.ltgc.cc/octavia/support/target.html) for more information.

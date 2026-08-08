@@ -363,6 +363,8 @@ export class OctaviaDevice {
 	buildRccMap(): void;
 	/** Trigger an event showing SysEx indicators on visualisers. */
 	invokeSysExIndicator(): void;
+	/** Throws errors out if part number validity check does not pass. */
+	checkChValidity(part: number): void;
 	/** Deprecated. Retrieve the internal array indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
 	getActive(): Uint8Array;
 	/** Returns a number indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
