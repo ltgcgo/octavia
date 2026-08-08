@@ -1225,11 +1225,23 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 								};
 								case modeMap.rhc: {
 									switch (combined) {
-										/*case 0x5870: {
-											upThis.#master.volume = (det.data[1] * 129) / 163.83;
+										case 0x5841: {
+											upThis.setEffectType(0, 52, (det.data[1] & 15));
+											upThis.pushEffectType(0);
 											return;
 											break;
-										};*/
+										};
+										case 0x5851: {
+											upThis.setEffectType(1, 52, 16 | (det.data[1] & 15));
+											upThis.pushEffectType(1);
+											return;
+											break;
+										};
+										case 0x5870: {
+											upThis.#master.volume = (det.data[1] * 128) / 163.83;
+											return;
+											break;
+										};
 										case 0x587f: {
 											return;
 											break;
@@ -1293,7 +1305,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 											if (msb === 127) {
 												console.warn(`${dPref}is not necessary. Consider removing it.`);
 											} else {
-												console.warn(`${dPref}has global no support implemented. Please check if the selected parameter actually exists.`);
+												console.warn(`${dPref}has no global support implemented. Please check if the selected parameter actually exists.`);
 											};
 										} else {
 											let targetSlot = upThis.#chType[part] - 2;
