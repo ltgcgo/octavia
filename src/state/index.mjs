@@ -58,7 +58,7 @@ const modeIdx = [
 	"gm", "gs", "sc", "xg", "g2", "gus",
 	"mt32", "doc", "qy10", "qy20",
 	"ns5r", "x5d", "05rw",
-	"k11", "sg", "sd", "pa",
+	"k11", "sg", "sd", "pa", "rhc",
 	"krs", "s90es", "motif", "cs6x", "trin",
 	"an1x", "cs1x"
 ],
@@ -90,6 +90,7 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"sc": [0, 0, 128, 0, 0],
 	"xg": [0, 0, 127, 0, 0],
 	"g2": [0, 0, 120, 0, 0],
+	"rhc": [0, 0, 120, 0, 0],
 	"mt32": [0, 127, 128, 0, 127],
 	"doc": [57, 112, 127, 57, 112],
 	"qy10": [57, 113, 127, 57, 113],
@@ -1155,7 +1156,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 								};
 								break;
 							};
-							case modeMap.g2: {
+							case modeMap.g2:
+							case modeMap.rhc: {
 								if (det.data[1] === 120) {
 									if (upThis.#chType[part] === 0) {
 										upThis.setChType(part, upThis.CH_DRUMS);
@@ -1204,6 +1206,34 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 										case 0x4100: {
 											break;
 										};
+										case 0x587f: {
+											upThis.switchMode("rhc", 2);
+											upThis.setPortModeId(part >> 4, 1, modeMap.rhc);
+											console.info(`MIDI reset: Roland HyperCanvas (NRPN)`);
+											return;
+											break;
+										};
+										default: {
+											if (msb === 88) {
+												console.warn(`NRPN 0x${combined.toString(16).padStart(4, "0")} is specific of Roland HyperCanvas. Please reset into respective mode by committing NRPN 0x587f first.`);
+											} else {
+												warnNRPN = true;
+											};
+										};
+									};
+									break;
+								};
+								case modeMap.rhc: {
+									switch (combined) {
+										/*case 0x5870: {
+											upThis.#master.volume = (det.data[1] * 129) / 163.83;
+											return;
+											break;
+										};*/
+										case 0x587f: {
+											return;
+											break;
+										};
 										default: {
 											warnNRPN = true;
 										};
@@ -1215,7 +1245,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 								};
 							};
 							if (warnNRPN) {
-								console.warn(`NRPN (0x${combined.toString(16).padStart(4, "0")}) commits are not available under "${modeIdx[upThis.getChModeId(part)]}" mode, even when they are supported in Octavia. Please consider using non-NRPN CC or SysEx instead if available.`);
+								console.warn(`NRPN (0x${combined.toString(16).padStart(4, "0")}) commits are not available under "${modeIdx[upThis.getChModeId(part)]}" mode, even when they may be supported in Octavia. Please consider using non-NRPN CC or SysEx instead if available.`);
 							};
 							if (msb === 1) {
 								let toCc = nrpnCcMap.indexOf(lsb);
@@ -1232,13 +1262,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 									if (nrpnIdx > -1) {
 										upThis.#nrpn[part * 10 + nrpnIdx] = det.data[1] - 64;
 									} else {
-										console.warn(`NRPN 0x01${lsb.toString(16).padStart(2, "0")} is not supported.`);
+										console.warn(`NRPN 0x01${lsb.toString(16).padStart(2, "0")} has no global support implemented. Please check if the selected parameter actually exists.`);
 									};
 									getDebugState() && console.debug(`CH${part + 1} voice NRPN ${lsb} commit`);
 								};
 							} else {
 								switch (upThis.getChModeId(part)) {
-									case modeMap.g2: {
+									case modeMap.g2:
+									case modeMap.rhc: {
 										if (combined === 0x4100) {
 											let dPref = `CH${part + 1} Roland SD GM2 NRPN voice set:`;
 											if (det.data[1] >= 0 && det.data[1] < 4) {
@@ -1256,13 +1287,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 									};
 									default: {
 										let nrpnIdx = useDrumNrpn.indexOf(msb);
-										console.debug(nrpnIdx);
+										//console.debug(nrpnIdx);
 										if (nrpnIdx < 0) {
 											let dPref = `NRPN 0x${msb.toString(16).padStart(2, "0")}${lsb.toString(16).padStart(2, "0")} `;
 											if (msb === 127) {
 												console.warn(`${dPref}is not necessary. Consider removing it.`);
 											} else {
-												console.warn(`${dPref}is not supported.`);
+												console.warn(`${dPref}has global no support implemented. Please check if the selected parameter actually exists.`);
 											};
 										} else {
 											let targetSlot = upThis.#chType[part] - 2;
@@ -2678,7 +2709,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				let efxDefault, efxBlank;
 				switch (idx) {
 					case modeMap["?"]:
-					case modeMap.g2: {
+					case modeMap.g2:
+					case modeMap.rhc: {
 						efxDefault = [52, 4, 52, 18, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};

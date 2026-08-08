@@ -71,11 +71,13 @@ div.cambiare-canvas div.part-channel.part-mode-cs1x {
 }
 div.cambiare-canvas.cambiare-mode-gm,
 div.cambiare-canvas.cambiare-mode-g2,
+div.cambiare-canvas.cambiare-mode-rhc,
 div.cambiare-canvas.cambiare-mode-pa,
 div.cambiare-canvas.cambiare-mode-krs,
 div.cambiare-canvas.cambiare-mode-gus,
 div.cambiare-canvas div.part-channel.part-mode-gm,
 div.cambiare-canvas div.part-channel.part-mode-g2,
+div.cambiare-canvas div.part-channel.part-mode-rhc,
 div.cambiare-canvas div.part-channel.part-mode-pa,
 div.cambiare-canvas div.part-channel.part-mode-krs,
 div.cambiare-canvas div.part-channel.part-mode-gus {
@@ -127,11 +129,13 @@ div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-cs1x {
 }
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gm,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-g2,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-rhc,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-pa,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-krs,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gus,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-gm,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-g2,
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-rhc,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-pa,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-krs,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-gus {

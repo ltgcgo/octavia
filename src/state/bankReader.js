@@ -214,7 +214,8 @@ let VoiceBank = class {
 				};
 				break;
 			};
-			case "g2": {
+			case "g2":
+			case "rhc": {
 				// Should only be present under SD mode
 				// However before non-resetting mode switches are available
 				// This is the only way
@@ -1041,7 +1042,8 @@ let VoiceBank = class {
 					ending = "?";
 					break;
 				};
-				case "g2": {
+				case "g2":
+				case "rhc": {
 					bankName = "GM2 Ext?";
 					ending = "?";
 					break;
