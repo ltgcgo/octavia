@@ -31,16 +31,16 @@ The current MIDI landscape is a dumpster fire, at least in the FOSS world. Only 
 With Octavia, no longer will you worry about standard compliance. Just focus on building what's important, be it visualizers, state browsers, event routers or even realtime event translators, Octavia's got your back. Feel free to test Octavia's capabilities with all available demos.
 
 ## Why Octavia over others?
-* Free, libre and open-source, under GNU LGPL v3.0.
-* Developed with Firefox and an open Web in mind.
-* Compliant to existing standards.
-* Behaves like a real MIDI module, doing most of the heavy-lifting for you.
-* Supports 8 ports, 128 channels, 512-voice polyphony maximum. More than you'll ever need.
+* Free, libre and open-source, licensed under GNU LGPL v3.0.
+* Keep your focus on building what matters, as Octavia behaves like a real MIDI module, taking over the heavy-lifting for you.
 * Built-in support for multiple plug-in cards and tons of other devices.
-* Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
-* Available in JS (browser and Deno).
-* No modification required to run in hardened forks of browsers, like Tor Browser, Cromite and LibreWolf.
 * Wide support of bank mapping and bitmaps via [`midi-db`](https://github.com/ltgcgo/midi-db).
+* Stringent compliance of existing established standards.
+* Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
+* Available in web-compliant JS (standard ESM; browser and Deno).
+* Developed with Firefox and an open Web in mind, not just bootlicking Chromium and V8.
+* No modification required to run in hardened forks of browsers, like Tor Browser, Cromite and LibreWolf.
+* Supports 8 ports, 128 channels, 512-voice polyphony maximum. More than you'll ever need.
 
 ## Supported targets
 Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](https://kb.ltgc.cc/octavia/support/target.html) for more information.
