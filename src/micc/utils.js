@@ -1,6 +1,6 @@
 "use strict";
 
-let smfEventRegulator = function (offset, subchunk) {
+const smfEventRegulator = function (offset, subchunk) {
 	switch (subchunk.type) {
 		case "MTrk":
 		case "XFIH":

@@ -97,15 +97,15 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	*/
 	delta: number;
 	/**
-	* MIDI event type. Type `8` to `15` (or `240`), and `241` to `255` are all available.
+	* MIDI event type. Type `8` to `15` (or `240`), and `241` to `255` are all available. `0` means "unset".
 	*/
 	type: number;
 	/**
-	* The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will not appear for `0xf0`-`0xff` events.
+	* The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will not appear for `0xf0`-`0xff` events. `256` means "unset".
 	*/
-	ch?: number;
+	ch: number;
 	/**
-	* The meta event type. Only applicable for `0xff` (meta) events.
+	* The meta event type. Only applicable to `0xff` (meta) events.
 	*/
 	meta?: number;
 	/**
@@ -154,7 +154,7 @@ export class WrappedMIDIEvent {
 	*/
 	chunk: number;
 }
-/** A pointer to the actual clip tracks. The group specifier is `ltgc.pointer`. */
+/** A pointer to the actual clip tracks. The group specifier is `micc.pointer`. */
 export class MICCPointer extends MICCBaseElement {
 	/** Type of the current pointer. Largely follows XGworks. */
 	type: number;
