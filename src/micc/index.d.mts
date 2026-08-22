@@ -97,13 +97,13 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	*/
 	delta: number;
 	/**
-	* MIDI event type. Type `8` to `15`, and `241` to `255` are all available.
+	* MIDI event type. Type `8` to `15` (or `240`), and `241` to `255` are all available.
 	*/
 	type: number;
 	/**
-	* The desinated channel of the MIDI event. Valid values range from `0` to `127` for events without port defined, or `0` to `15` for events with port defined. Will not appear for `0xf0`-`0xff` events.
+	* The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will not appear for `0xf0`-`0xff` events.
 	*/
-	part?: number;
+	ch?: number;
 	/**
 	* The meta event type. Only applicable for `0xff` (meta) events.
 	*/
@@ -125,21 +125,19 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	*/
 	parsed?: any;
 	/**
-	* Populated if the parsed value has additional data. If the parsed value is a string, this property can denote the text encoding used.
-	*/
-	label?: any;
-	/**
 	* The parsed time in MIDI ticks set by the finalizer. Use a time offset map to grab the actual seconds.
 	*/
 	time?: number;
 	/**
-	* If set to true, the current event has port defined.
+	* The port for the event, usually set by the finalizer. `255` means "unset".
 	*/
-	hasPort: boolean;
+	port: number;
+	/** The track number for the event, usually set by the finalizer. `65535` means "unset". */
+	track: number;
 	/**
-	* The port for the event, usually set by the finalizer.
+	* Populated if the parsed value has additional data. If the parsed value is a string, this property can denote the text encoding used.
 	*/
-	port?: number;
+	label?: any;
 }
 /** An intermediate object consumed by Octavia's parser and serializer. */
 export class WrappedMIDIEvent {

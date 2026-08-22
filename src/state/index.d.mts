@@ -349,6 +349,8 @@ export class OctaviaDevice {
 	readonly polyIndexLast: number;
 	/** When `true`, the visualiser should hide voice bank information. Typically seen in Yamaha MU demo songs. */
 	hideVoiceDetails: boolean;
+	/** Specify the maximum retained amount of meta events. Defaults to `96`. */
+	maxKeepMetaCount: number;
 	/** Retrieve the actual assigned part from designated part and its track.
 	* @param noConquer When `true`, automatic channel allocation is not triggered.
 	*/
@@ -576,11 +578,13 @@ export class OctaviaDevice {
 	getStrengths(fullScale?: boolean): Uint8Array;
 	/** Wipe the raw strength buffer clean for the next round. */
 	clearStrength(): void;
-	/** The older MIDI event object executor. */
+	/** The legacy MIDI event object executor. @deprecated */
 	runJson(json: Object): void;
-	/** (WIP) Execute a decoded MIDI event. */
+	/** Execute a decoded MIDI event. */
 	runEvent(event: NakedMIDIEvent): void;
-	/** (WIP) Directly execute an undecoded MIDI event on a port. */
+	/** (WIP) Directly execute an undecoded MIDI event on a port.
+	* @param port The port number. `255` means "unset".
+	*/
 	runRaw(eventBuffer: Uint8Array | Uint8ClampedArray, port?: number): void;
 	/** Load custom user voices from files in supported formats.
 	*

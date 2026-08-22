@@ -51,6 +51,9 @@ import {
 	contrastCache
 } from "../disp/colour.js"
 import {ChordDict} from "../chord/index.mjs";
+import {
+	NakedMIDIEvent
+} from "../micc/index.mjs";
 //import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
 
 const modeIdx = [
@@ -120,7 +123,7 @@ const eventTypes = {
 	10: "Note aftertouch",
 	11: "cc",
 	12: "pc",
-	13: "Channel aftertouch",
+	13: "Part aftertouch",
 	14: "Pitch"
 };
 
@@ -591,6 +594,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	polyIndexLatest = 0;
 	polyIndexLast = 0;
 	hideVoiceDetails = false;
+	maxKeepMetaCount = 96;
 	chRedir(part, track, noConquer) {
 		let upThis = this;
 		if (upThis.#trkAsReq[track]) {
@@ -1566,6 +1570,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			};
 		}
 	};
+	// Channel message runners
+	#chEventRun = new Map();
 	// SysEx manufacturer table
 	#seMan = {
 		64: (id, msg, track) => {
@@ -2942,7 +2948,70 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			this.#metaTexts.splice(100, this.#metaTexts.length - 99);
 		};
 	};
-	runRaw(midiArr) {
+	/** @param {NakedMIDIEvent} ingressEvent  */
+	runEvent(ingressEvent) {
+		if (ingressEvent === undefined || ingressEvent === null) {
+			console.warn(new Error(`Invalid parsed event data provided.`));
+			return;
+		};
+		const upThis = this;
+		if (ingressEvent.type > 14) {
+			// System messages
+			let mappedType = ingressEvent.type;
+			if (mappedType === 240) {
+				mappedType = 15;
+			};
+			if (mappedType === 15) {
+				switch (ingressEvent.data.constructor) {
+					case Uint8Array:
+					case Uint8ClampedArray: {
+						break;
+					};
+					default: {
+						ingressEvent.data = Uint8Array.from(ingressEvent.data);
+					};
+				};
+			};
+			const eventRunner = upThis.#chEventRun.get(ingressEvent.type);
+			if (typeof eventRunner === "function") {
+				eventRunner.call(upThis, ingressEvent);
+			} else {
+				console.warn(`Received an unknown type ${ingressEvent.type} message.`);
+			};
+		} else if (ingressEvent.type >= 8) {
+			const msgTypeSpec = eventTypes[ingressEvent.type]?.length > 0 ? `${eventTypes[ingressEvent.type]}${(0b11000 >> (ingressEvent.type - 8)) ? ingressEvent.data[0] : ""}` : `unknown type ${ingressEvent.type}`;
+			if (typeof ingressEvent.ch === "number") {
+				// Channel messages
+				const mappedCh = (ingressEvent?.port < 16) ? (ingressEvent.port << 4) | ingressEvent.ch : upThis.chRedir(ingressEvent.ch, (ingressEvent.track < 16384) ? ingressEvent.track : 0, false);
+				const eventRunner = upThis.#chEventRun.get(ingressEvent.type);
+				if (typeof eventRunner === "function") {
+					let noReceipient = true;
+					for (const mappedPart of upThis.#receiveTree[mappedCh] ?? []) {
+						noReceipient = false;
+						eventRunner.call(upThis, ingressEvent, mappedPart);
+					};
+					if (noReceipient) {
+						let msgPortCh = `CH${ingressEvent.ch + 1}`;
+						if (ingressEvent.port < 255) {
+							msgPortCh += ` on port ${ingressEvent.port}`;
+						};
+						msgPortCh += ` (CH${mappedCh})`;
+						console.warn(`A ${msgTypeSpec} message sent to ${msgPortCh} had no receipient.`);
+					};
+				} else {
+					console.warn(`Event type ${ingressEvent.type} does not have a valid runner.`);
+				};
+			} else {
+				console.warn(`Received a ${msgTypeSpec} message without a specified channel.`);
+			};
+		} else {
+			console.warn(`Received an unknown type ${ingressEvent.type} message.`);
+		};
+		if (upThis.#metaTexts.length > upThis.maxKeepMetaCount) {
+			upThis.#metaTexts.splice(upThis.maxKeepMetaCount >> 1, upThis.#metaTexts.length + 1 - (upThis.maxKeepMetaCount >> 1));
+		};
+	};
+	runRaw(midiArr, port = 255) {
 		// Translate raw byte stream into JSON MIDI event
 	};
 	async loadBank(format, blob) {
