@@ -117,7 +117,7 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	*/
 	isStale: boolean;
 	/**
-	* The offset of the current event in the original event stream, if the current event is created by a parser. Useful for debugging.
+	* The offset of the current event in the original event stream, if the current event was created from a file-like binary event stream (e.g. SMF). Useful for debugging.
 	*/
 	offset?: number;
 	/**
