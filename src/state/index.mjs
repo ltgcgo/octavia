@@ -2948,7 +2948,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			this.#metaTexts.splice(100, this.#metaTexts.length - 99);
 		};
 	};
-	/** @param {NakedMIDIEvent} ingressEvent  */
+	/** @param {NakedMIDIEvent} ingressEvent */
 	runEvent(ingressEvent) {
 		if (ingressEvent === undefined || ingressEvent === null) {
 			console.warn(new Error(`Invalid parsed event data provided.`));
