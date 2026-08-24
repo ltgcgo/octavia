@@ -2959,9 +2959,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		switch (ingressEvent.group) {
 			case "mma.midiEvent": {
 				let mappedType = ingressEvent.type;
-				if (mappedType === 15) {
-					mappedType = 240;
-				};
 				if (mappedType >= 240) {
 					// System messages
 					switch (ingressEvent.data.constructor) {

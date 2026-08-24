@@ -21,13 +21,11 @@ export class BinaryString {
 	/** The text encoding label used in the decoded result. */
 	label?: string;
 	/** Decode the buffer, both return it and overwrite the `text` property. Will error out if there's no attached buffer.
-	* @param buffer When this argument is supplied, the `buffer` property will be overridden with it.
-	*/
+	* @param buffer When this argument is supplied, the `buffer` property will be overridden with it. */
 	decode(buffer?: Uint8Array | Uint8ClampedArray): string;
 	/** Encode the result into a buffer, both return it and overwrite the `buffer` property. Defaults to UTF-8 encoding with no labels. Will error out if there's no attached text.
 	* @param text When this argument is supplied, the `text` property will be overridden with it.
-	* @param label When this argument is supplied, the `label` property will be overridden with it.
-	*/
+	* @param label When this argument is supplied, the `label` property will be overridden with it. */
 	encode(text?: string, label?: string): Uint8Array;
 }
 
@@ -85,75 +83,64 @@ declare class MICCConstants {
 }
 /** Base type that can populate `MICCTrack`. */
 export class MICCBaseElement {
-	/**
-	* The assigned group specifier. For standard MIDI events, this is always set to `mma.midiEvent`.
-	*/
+	/**  The assigned group specifier. For standard MIDI events, this is always set to `mma.midiEvent`. */
 	group: string;
 }
 /** Representation of a MIDI event. The group specifier is `mma.midiEvent`. */
 export class NakedMIDIEvent extends MICCBaseElement {
-	/**
-	* Delta time. The time difference of the current event and the previous event.
-	*/
+	/**  Delta time. The time difference of the current event and the previous event. */
 	delta: number;
-	/**
-	* MIDI event type. Type `8` to `15` (or `240`), and `241` to `255` are all available. `0` means "unset".
-	*/
+	/**  MIDI event type. Type `8` to `14`, and `240` to `255` are all available. `0` means "unset". */
 	type: number;
-	/**
-	* The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will not appear for `0xf0`-`0xff` events. `256` means "unset".
-	*/
+	/**  The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will not appear for `0xf0`-`0xff` events. `256` means "unset". */
 	ch: number;
-	/**
-	* The meta event type. Only applicable to `0xff` (meta) events.
-	*/
+	/**  The meta event type. Only applicable to `0xff` (meta) events. */
 	meta?: number;
-	/**
-	* The raw data of the MIDI event.
-	*/
+	/**  The raw data of the MIDI event. */
 	data: Uint8Array;
-	/**
-	* True means that the running status of the current event was inherited from the previous event. `0xf0`-`0xff` events always have this byte set to false. Valid omissions will be reflected in serializers.
-	*/
+	/**  True means that the running status of the current event was inherited from the previous event. `0xf0`-`0xff` events always have this byte set to false. Valid omissions will be reflected in serializers. */
 	isStale: boolean;
-	/**
-	* The offset of the current event in the original event stream, if the current event was created from a file-like binary event stream (e.g. SMF). Useful for debugging.
-	*/
+	/**  The offset of the current event in the original event stream, if the current event was created from a file-like binary event stream (e.g. SMF). Useful for debugging. */
 	offset?: number;
-	/**
-	* The parsed value of the event set by the finalizer, can be decoded strings. Only applicable to `0xff` (meta) events.
-	*/
+	/**  The parsed value of the event set by the finalizer, can be decoded strings. Only applicable to `0xff` (meta) events. */
 	parsed?: any;
-	/**
-	* The parsed time in MIDI ticks set by the finalizer. Use a time offset map to grab the actual seconds.
-	*/
+	/**  The parsed time in MIDI ticks set by the finalizer. Use a time offset map to grab the actual seconds. */
 	time?: number;
-	/**
-	* The port for the event, usually set by the finalizer. `255` means "unset".
-	*/
+	/**  The port for the event, usually set by the finalizer. `255` means "unset". */
 	port: number;
 	/** The track number for the event, usually set by the finalizer. `65535` means "unset". */
 	track: number;
-	/**
-	* Populated if the parsed value has additional data. If the parsed value is a string, this property can denote the text encoding used.
-	*/
+	/**  Populated if the parsed value has additional data. If the parsed value is a string, this property can denote the text encoding used. */
 	label?: any;
 }
 /** An intermediate object consumed by Octavia's parser and serializer. */
 export class WrappedMIDIEvent {
-	/**
-	* The actual MIDI event.
-	*/
+	/**  The actual MIDI event. */
 	event: NakedMIDIEvent;
-	/**
-	* Chunk type. Same as `SeamstressChunk.type`.
-	*/
+	/**  Chunk type. Same as `SeamstressChunk.type`. */
 	type: number | string;
-	/**
-	* Chunk ID. Same as `SeamstressChunk.chunkId`.
-	*/
+	/**  Chunk ID. Same as `SeamstressChunk.chunkId`. */
 	chunk: number;
 }
+declare class MICCSMFParserContext {
+	/** Status byte of the last event. Same as `NakedMIDIEvent.type`. */
+	lastStatus: number;
+};
+declare class MICCSMFParseOptions {
+	/** Provides optional binary stream context for parsing. */
+	streamContext?: SeamstressContext;
+	/** Setting this to true will include delta time parsing. If `streamContext` is provided, this defaults to `true`, otherwise `false.` */
+	hasDelta?: boolean;
+	/** An optional object to attach parsing status to. */
+	parserContext?: MICCSMFParserContext;
+};
+/** Internal methods for SMF parsing. */
+export class MICCInternalsSMF {
+	/** Parse raw MIDI events from buffers.
+	* @param buffer The input buffer.
+	* @param context The context object or a boolean. If boolean is provided, setting it to true will include delta time parsing. If a context object is provided, delta time parsing will always be present. */
+	static parseSingleEvent(buffer: Uint8Array, context?: MICCSMFParseOptions): NakedMIDIEvent;
+};
 /** A pointer to the actual clip tracks. The group specifier is `micc.pointer`. */
 export class MICCPointer extends MICCBaseElement {
 	/** Type of the current pointer. Largely follows XGworks. */
@@ -195,17 +182,13 @@ export class MICCInstrument extends MICCBaseVoice {}
 export class MICCFileMetadata {
 	/** The full format specifier of the current file. */
 	format: string;
-	/**
-	* MIDI time division. `480` is the most common.
+	/**  MIDI time division. `480` is the most common.
 	* For tracker music with 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 24, 30, 32, 40, 48, 60, 80, 96, 120, 160 or 240 rows per beat, `480` will be used. `600` will be used with 25, 50, 75, 100, 150, 200, 300 or 600 rows. `720` will be used with 9, 18, 36, 40, 45, 72, 144, 180, 360, 720 rows. `960` will be used with 64, 192, 320, 480 or 960 rows. Any other value that doesn't have an existing mapping will cause the value `4096` be used, with the actual tick time be rounded to the nearest value.
-	* Patterns (measures) with overridden row numbers of beats, overiiden row numbers of measures, derived denominators not a power of 2, or derived non-integer nominators will have the value rounded up to the nearest equivalent valid MIDI time signature in the raw time signature MIDI event, then have custom meta events that shifts the offset map.
-	*/
+	* Patterns (measures) with overridden row numbers of beats, overiiden row numbers of measures, derived denominators not a power of 2, or derived non-integer nominators will have the value rounded up to the nearest equivalent valid MIDI time signature in the raw time signature MIDI event, then have custom meta events that shifts the offset map. */
 	division: number;
-	/**
-	* Definition vary by file type.
+	/**  Definition vary by file type.
 	*
-	* For SMF files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`.
-	*/
+	* For SMF files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`. */
 	type: number;
 	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead. */
 	track?: number;
@@ -226,11 +209,9 @@ export class MICCMacroMIDI {}
 export class MICCTrackerMetadata {
 	/** If the file is a tracker. */
 	isTracker: boolean;
-	/**
-	* If true, G effect will be linked with E and F. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	/**  If true, G effect will be linked with E and F. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
 	*
-	* This field should be superceded with a field more capable of defining effect flows.
-	*/
+	* This field should be superceded with a field more capable of defining effect flows. */
 	linkEffects: boolean;
 	/** The "created" field. */
 	created?: number;
@@ -287,65 +268,39 @@ export class MICCTrackerMetadata {
 * A file parsed or to be serialized by MICC.
 */
 export class MICCFile {
-	/**
-	* Resolves when baseline usability is met, e.g. the raw data has been fully parsed. Will reject when the parser fails with parser error.
-	*/
+	/**  Resolves when baseline usability is met, e.g. the raw data has been fully parsed. Will reject when the parser fails with parser error. */
 	ready: Promise<void>;
-	/**
-	* Used by parsers to mark the file as ready.
-	*/
+	/**  Used by parsers to mark the file as ready. */
 	markReady(): Promise<void>;
-	/**
-	* Resolves when full usability is met, e.g. the finalizer has been run. Will reject when the parser fails with parser error.
-	*/
+	/**  Resolves when full usability is met, e.g. the finalizer has been run. Will reject when the parser fails with parser error. */
 	finalized: Promise<void>;
-	/**
-	* When set to true, the finalizer will not be called, and the related promise will resolve instantly when the raw data has been fully parsed.
-	*/
+	/**  When set to true, the finalizer will not be called, and the related promise will resolve instantly when the raw data has been fully parsed. */
 	noFinalization: boolean;
-	/**
-	* Used by parsers to mark the file as finalized.
-	*/
+	/**  Used by parsers to mark the file as finalized. */
 	markFinalized(): Promise<void>;
-	/**
-	* Runs the finalization process. Re-runs are useful for programs that mutate events, e.g. editors.
-	*/
+	/**  Runs the finalization process. Re-runs are useful for programs that mutate events, e.g. editors. */
 	finalize(): Promise<void>;
-	/**
-	* Used by parsers to reject the file.
-	* @param err The error object to be passed to both promise objects.
-	*/
+	/**  Used by parsers to reject the file.
+	* @param err The error object to be passed to both promise objects. */
 	reject(err: any): void;
-	/**
-	* (WIP) Serialize the current `MICCFile` object into a file.
-	* @param format The format to be serialized into. Supports `smf`, `xws` (WIP).
-	*/
+	/**  (WIP) Serialize the current `MICCFile` object into a file.
+	* @param format The format to be serialized into. Supports `smf`, `xws` (WIP). */
 	serialize(format: string): ReadableStream<Uint8Array>;
-	/**
-	* (WIP) Flatten the current `MICCFile` object into a defined structure, usually before serialization. This action is destructive and irreversible.
-	* @param format The formatted structure to be serialized into. Supports `smf`, `seq` (WIP), `trk`.
-	*/
+	/**  (WIP) Flatten the current `MICCFile` object into a defined structure, usually before serialization. This action is destructive and irreversible.
+	* @param format The formatted structure to be serialized into. Supports `smf`, `seq` (WIP), `trk`. */
 	flatten(format: string): Promise<void>;
-	/**
-	* (WIP) Disassemble the file into MIA instructions. Will error out if the file type isn't one of `SMF_SINGLE`, `SMF_MULTIPLE` and `SMF_SEQUENTIAL`.
-	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available.
-	*/
+	/**  (WIP) Disassemble the file into MIA instructions. Will error out if the file type isn't one of `SMF_SINGLE`, `SMF_MULTIPLE` and `SMF_SEQUENTIAL`.
+	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
 	/** The metadata of the current file. */
 	meta: MICCFileMetadata;
 	/** If the current file is a tracker, the additional metadata of the current file. */
 	tracker: MICCTrackerMetadata;
-	/**
-	* The resource pool of the current file, usually used by pointer events. SMF files don't create this.
-	*/
+	/**  The resource pool of the current file, usually used by pointer events. SMF files don't create this. */
 	pool?: Map<string, MICCBaseElement[]>;
-	/**
-	* Tracks contained by the current file.
-	*/
+	/**  Tracks contained by the current file. */
 	tracks: MICCTrack[];
-	/**
-	* The offset map for the track mapping time to ticks and time signature changes.
-	*/
+	/**  The offset map for the track mapping time to ticks and time signature changes. */
 	offset: Object;
 	/** Get tempo from microseconds-per-minute for MIDI. */
 	tempoFromMPM(mpm: number): number;
@@ -354,161 +309,89 @@ export class MICCFile {
 	/** Get tempo from declared tempo, tracker tick speed and rows-per-beat. */
 	tempoFromTracker(rows: number, tickSpeed: number, definedTempo: number): number;
 }
-/**
-* Parse raw MIDI events from buffers.
-* @param buffer The input buffer.
-* @param context The context object or a boolean. If boolean is provided, setting it to true will include delta time parsing. If a context object is provided, delta time parsing will always be present.
-*/
-export function smfEventParser(buffer: Uint8Array, context?: boolean|SeamstressContext): NakedMIDIEvent;
-/**
-* The MIDI serializer.
-*/
+/** The MIDI serializer. */
 export class MICC extends MICCConstants {
-	/**
-	* A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used.
-	*/
+	/**  A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
 	decoders: Iterable<TextDecoder>;
 	// Pure MIDI.
-	/**
-	* Parse the incoming Standard MIDI File byte stream.
-	*/
+	/**  Parse the incoming Standard MIDI File byte stream. */
 	parseSmf(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
-	/**
-	* Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of SMF files) stream.
-	*/
+	/**  Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of SMF files) stream. */
 	parseMia(data: ReadableStream<Uint8Array>, label?: string): MICCFile;
-	/**
-	* (WIP) Parse the incoming RMI byte stream. Contained SMF files will be flattened.
-	*/
+	/**  (WIP) Parse the incoming RMI byte stream. Contained SMF files will be flattened. */
 	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
 	// MIDI-containing project files.
-	/**
-	* (WIP) Parse the incoming XWS byte stream.
-	*/
+	/**  (WIP) Parse the incoming XWS byte stream. */
 	parseXws(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
 	// Tracker files.
-	/**
-	* (WIP) Parse the incoming Impulse Tracker byte stream.
-	*/
+	/**  (WIP) Parse the incoming Impulse Tracker byte stream. */
 	parseIt(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
 	// Assembly and disassembly.
-	/**
-	* Directly assemble MIA into SMF without going through a file object.
-	*/
+	/**  Directly assemble MIA into SMF without going through a file object. */
 	assemble(data: ReadableStream<string>, context?: object): ReadableStream<Uint8Array>;
-	/**
-	* Directly disassemble SMF into MIA without going through a file object.
-	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available.
-	*/
+	/**  Directly disassemble SMF into MIA without going through a file object.
+	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
 }
 
 // Compatibility layers
-/**
-* A MIDI event in Colxi's scheme.
-*/
-export class ColxiMIDIEvent {
-	/**
-	* MIDI delta time.
-	*/
+/** A MIDI event in Colxi's scheme. */
+declare class ColxiMIDIEvent {
+	/**  MIDI delta time. */
 	deltaTime: number;
-	/**
-	* MIDI event type.
-	*/
+	/**  MIDI event type. Note that event type `240` (SysEx) will be converted to type `15` instead. */
 	type: number;
-	/**
-	* If the event is a meta event, the meta event type.
-	*/
+	/**  If the event is a meta event, the meta event type. */
 	metaType?: number;
-	/**
-	* Actual data of the event.
-	*/
+	/**  Actual data of the event. */
 	data: number | Uint8Array | string;
 }
-/**
-* A MIDI track containing events in Colxi's scheme.
-*/
-export class ColxiMIDITrack {
-	/**
-	* List of events populated by the track.
-	*/
+/** A MIDI track containing events in Colxi's scheme. */
+declare class ColxiMIDITrack {
+	/**  List of events populated by the track. */
 	event: ColxiMIDIEvent[];
-	/**
-	* The type of the track. Not present in the original implementation.
-	*/
+	/**  The type of the track. Not present in the original implementation. */
 	type: string;
 }
-/**
-* The representation of a parsed MIDI file in Colxi's scheme.
-*/
-export class ColxiMIDIFile {
-	/**
-	* MIDI file type (0, 1, 2).
-	*/
+/** The representation of a parsed MIDI file in Colxi's scheme. */
+declare class ColxiMIDIFile {
+	/**  MIDI file type (0, 1, 2). */
 	formatType: number;
-	/**
-	* The time division used by files. 480 is the most common value.
-	*/
+	/**  The time division used by files. 480 is the most common value. */
 	timeDivision: number;
-	/**
-	* Number of expected tracks specified by the MIDI file. Not guaranteed to the the exact number of tracks supplied by the MIDI file.
-	*/
+	/**  Number of expected tracks specified by the MIDI file. Not guaranteed to the the exact number of tracks supplied by the MIDI file. */
 	tracks: number;
-	/**
-	* Actual tracks with events.
-	*/
+	/**  Actual tracks with events. */
 	track: ColxiMIDITrack[];
 }
-/**
-* View into each MIDI event, supplied to `ColxiMIDIParser.customInterpreter`. Will only be supplied for 0xf0 events.
-*/
-export class ColxiMIDIView {
-	/**
-	* The data of the event. Unlike the original implementatino, this only grants view of the current event.
-	*/
+/** View into each MIDI event, supplied to `ColxiMIDIParser.customInterpreter`. Will only be supplied for 0xf0 events. */
+declare class ColxiMIDIView {
+	/**  The data of the event. Unlike the original implementatino, this only grants view of the current event. */
 	data: DataView;
-	/**
-	* The pointer of the current event. When invoked, for 0xf0 events, the pointer will sit on the SysEx length byte.
-	*/
+	/**  The pointer of the current event. When invoked, for 0xf0 events, the pointer will sit on the SysEx length byte. */
 	pointer: number;
-	/**
-	* Move the apparent pointer. Unlike the original implementation, this method does not affect MIDI file parsing in any way, and is bound-checked.
+	/**  Move the apparent pointer. Unlike the original implementation, this method does not affect MIDI file parsing in any way, and is bound-checked.
 	* @param offset The relative offset to move the pointer against. -1 moves the pointer to the previous byte, 0 has no effect, and 1 moves the pointer to the next byte.
-	* @returns The mutated pointer.
-	*/
+	* @returns The mutated pointer. */
 	movePointer(offset: number): number;
-	/**
-	* Read multi-byte integers.
-	*/
+	/**  Read multi-byte integers. */
 	readInt(readSize: number): number;
-	/**
-	* Read VLV-8 on the current pointer.
-	*/
+	/**  Read VLV-8 on the current pointer. */
 	readIntVLV(): number;
-	/**
-	* Read a string. If the `decoders` property of the parser object can be accessed, it will attempt to decode string supplied by the decoders in the `decoders` property, advancing to the next one whenever the current decoder fails. The catch-all decoder is X-ASCII.
-	*/
+	/**  Read a string. If the `decoders` property of the parser object can be accessed, it will attempt to decode string supplied by the decoders in the `decoders` property, advancing to the next one whenever the current decoder fails. The catch-all decoder is X-ASCII. */
 	readStr(readSize: number): string;
 }
-/**
-* Mostly a drop-in replacement for `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission), migrating to Octavia's compatibility layer may help handle those files.
-*/
+/** Mostly a drop-in replacement for `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission), migrating to Octavia's compatibility layer may help handle those files. */
 export class ColxiMIDIParser {
-	/**
-	* Parses the input into a structured representation. Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used.
+	/**  Parses the input into a structured representation. Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used.
 	* @param input MIDI file data to be parsed. Can be a `File` object, one of the two uint8 arrays, and a Base64 string.
-	* @param callback The method to invoke when parsing is finished.
-	*/
+	* @param callback The method to invoke when parsing is finished. */
 	static parse(input: File | Uint8Array | Uint8ClampedArray | string, callback: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
-	/**
-	* Defines custom interpreter behaviour, should only invoked by the parser. The returned value will populate the data property. Returning `false` will assume default behaviour.
+	/**  Defines custom interpreter behaviour, should only invoked by the parser. The returned value will populate the data property. Returning `false` will assume default behaviour.
 	* @param type The event type.
 	* @param view A view into the MIDI data currently being parsed.
-	* @param metaLength Length of the meta event. Will only be present for 0xff events.
-	*/
+	* @param metaLength Length of the meta event. Will only be present for 0xff events. */
 	static customInterpreter?: (type: number, view: ColxiMIDIView, metaLength?: number) => any;
-	/**
-	* A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings.
-	*/
+	/**  A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings. */
 	static decoders?: Iterable<TextDecoder>;
 }

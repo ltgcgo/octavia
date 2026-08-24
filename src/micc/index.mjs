@@ -7,7 +7,7 @@ import {
 } from "./eventObjects.mjs";
 import {
 	ColxiMIDIParser
-} from "./parser.mjs";
+} from "./parser/colxi.mjs";
 
 export {
 	MICCBaseElement,

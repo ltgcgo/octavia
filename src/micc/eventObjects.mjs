@@ -59,9 +59,21 @@ const ColxiMIDIEvent = class ColxiMIDIEvent extends MICCBaseElement {
 		};
 	};
 };
+const ColxiMIDITrack = class ColxiMIDITrack {
+	event;
+	type;
+};
+const ColxiMIDIFile = class ColxiMIDIFile {
+	formatType = 0;
+	timeDivision = 480;
+	tracks;
+	track = [];
+};
 
 export {
 	MICCBaseElement,
 	NakedMIDIEvent,
-	ColxiMIDIEvent
+	ColxiMIDIEvent,
+	ColxiMIDITrack,
+	ColxiMIDIFile
 };
