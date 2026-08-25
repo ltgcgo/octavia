@@ -1497,9 +1497,21 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			if (getDebugState()) {
 				console.debug(`T:${det.track} C:${part} P:${det.data}`);
 			};
-			if (upThis.getChModeId(part) === modeMap.xg) {
-				if (upThis.#chType[part]) {
-					upThis.setDrumFirstWrite(part);
+			const partType = upThis.getChType(part, 0),
+			partPrimNumber = upThis.getChPrimitiveNumbers(part),
+			partDrumFirstWrite = upThis.getChDrumFirstWrite(part);
+			switch (upThis.getChModeId(part)) {
+				case modeMap.xg:
+				case modeMap.gs:
+				case modeMap.sc: {
+					if (partType !== upThis.CH_MELODIC) {
+						//console.debug(partType, partDrumFirstWrite, partPrimNumber.toString(16));
+						upThis.setDrumFirstWrite(part);
+						if (typeof partDrumFirstWrite === "number" && upThis.getChPrimitiveNumbers(partDrumFirstWrite) !== partPrimNumber) {
+							console.info(`CH${part + 1} has overrode the drums on CH${partDrumFirstWrite + 1}.`);
+						};
+					};
+					break;
 				};
 			};
 		},
@@ -1573,6 +1585,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		}
 	};
 	// Channel message runners
+	/** @type {Map<number, (NakedMIDIEvent, number) => {}>} */
 	#chEventRun = new Map();
 	// SysEx manufacturer table
 	#seMan = {
@@ -2036,6 +2049,10 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		primBuf[0] = upThis.getChPrimitive(part, 1, useSubDb);
 		primBuf[2] = upThis.getChPrimitive(part, 2, useSubDb);
 		return primBuf;
+	};
+	getChPrimitiveNumbers(part, useSubDb) {
+		const buf = this.getChPrimitives(part, useSubDb);
+		return (buf[1] << 16) | (buf[0] << 8) | buf[2];
 	};
 	pushChPrimitives(part) {
 		let upThis = this;
@@ -2712,17 +2729,19 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	};
 	getChDrumFirstWrite(part) {
 		this.checkChValidity(part);
-		let upThis = this;
-		let chType = upThis.#chType[part];
+		const upThis = this;
+		const chType = upThis.#chType[part];
 		if (chType < 2) {
 			return;
 		};
-		let ds = chType - 2;
-		return upThis.#drumFirstWrite.subarray(ds << 1, (ds + 1) << 1);
+		const ds = chType - 2;
+		const dsData = upThis.#drumFirstWrite.subarray(ds << 1, (ds + 1) << 1);
+		return dsData[0] > 0 ? dsData[1] : null;
 	};
 	getDrumFirstWrite(ds) {
 		if (ds >= 0 && ds < allocated.drm) {
-			return this.#drumFirstWrite.subarray(ds << 1, (ds + 1) << 1);
+			const dsData = this.#drumFirstWrite.subarray(ds << 1, (ds + 1) << 1);
+			return dsData[0] > 0 ? dsData[1] : null;
 		};
 	};
 	switchMode(mode, forced = 0, setTarget = false) {

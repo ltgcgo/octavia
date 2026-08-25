@@ -566,13 +566,13 @@ export class OctaviaDevice {
 	/** Copy the setup of a part from another part. Needs rethinking and reworking. */
 	copyChSetup(sourcePart: number, targetPart: number, failWhenActive?: boolean): void;
 	/** Get the first write part for a drum slot. */
-	getDrumFirstWrite(part: number): number;
+	getDrumFirstWrite(drumSet: number): number?;
 	/** Set the first write part for a drum slot. Part setup copying will happen on subsequent parts of the same slot.
 	* @param disable When `true`, the first write status of the part will be reset.
 	*/
 	setDrumFirstWrite(part: number, disable?: boolean): void;
 	/** Get the first write part for a part's drum slot. */
-	getChDrumFirstWrite(part: number): number;
+	getChDrumFirstWrite(part: number): number?;
 	/** Switch the global mode.
 	* - `0`: Change only when without a defined mode. No reset.
 	* - `1`: Change. Reset when without a defined mode.
