@@ -45,7 +45,8 @@ import {
 	x5dSendLevel,
 	ascii64Dec,
 	getDebugState,
-	bufferToDHex
+	bufferToDHex,
+	bufferToBracketed
 } from "./utils.js";
 import {
 	contrastCache
@@ -1584,7 +1585,27 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// D-50: [20, CmdId]
 			// C/M: [22, CmdId]
 			// GS: [66, CmdId, HH, MM, LL, ...DD, Checksum]
-			if (msg[0] < 16) {
+			// GSSys: [69, CmdId, HH, MM, LL, ...DD, Checksum]
+			// SC EPROM: [69, 0, CmdId, HH, MM, LL, ...DD, Checksum]
+			// SD-20/80/90: [0, 72, CmdId, HH, HM, LM, LL, ...DD, Checksum]
+			const sentCs = msg[msg.length - 1];
+			let calcCs = 256;
+			let rolandCmdByteIdx = msg.indexOf(18) + 1; // DT1
+			if (rolandCmdByteIdx <= 0) {
+				rolandCmdByteIdx = msg.indexOf(17) + 1; // RQ1
+			};
+			if (rolandCmdByteIdx > 0) {
+				calcCs = gsChecksum(msg.subarray(rolandCmdByteIdx, msg.length - 1));
+			};
+			if (calcCs >= 256 || calcCs === sentCs) {
+				if (rolandCmdByteIdx <= 0) {
+					console.debug(`Received a Roland message without checksum.\n${bufferToBracketed(msg)}`);
+				};
+				this.#seGs.run(msg.subarray(0, msg.length - 1), track, id);
+			} else {
+				console.warn(`Bad Roland checksum ${sentCs} - should be ${calcCs}.\n${bufferToBracketed(msg, rolandCmdByteIdx, 1)}`);
+			};
+			/*if (msg[0] < 16) {
 				if (msg[1] === 72) {
 					let sentCs = msg[msg.length - 1];
 					let calcCs = gsChecksum(msg.subarray(3, msg.length - 1));
@@ -1605,7 +1626,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				} else {
 					console.warn(`Bad GS checksum ${sentCs} - should be ${calcCs}.`);
 				};
-			};
+			};*/
 		},
 		66: (id, msg, track) => {
 			// Korg

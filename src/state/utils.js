@@ -218,7 +218,7 @@ let unpackBitField = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true) 
 	return targetBuffer;
 };
 
-let bufferToDHex = function (msg, maxLength = 8) {
+const bufferToDHex = function (msg, maxLength = 12) {
 	let hexaText = "";
 	for (let i = 0; i < maxLength && i < msg.length; i ++) {
 		if (i > 0) {
@@ -228,6 +228,30 @@ let bufferToDHex = function (msg, maxLength = 8) {
 	};
 	if (msg.length > maxLength) {
 		hexaText += " ...";
+	};
+	return hexaText;
+};
+const bufferToBracketed = function (msg, prefixSize = 0, suffixSize = 0) {
+	const suffixStart = msg.length - suffixSize, suffixEnd = msg.length - 1;
+	let hexaText = "";
+	for (let i = 0; i < msg.length; i ++) {
+		if (prefixSize > 0) {
+			if (i === 0) {
+				hexaText += "(";
+			} else if (i === prefixSize) {
+				hexaText += ")";
+			};
+		};
+		if (i > 0) {
+			hexaText += " ";
+		};
+		if (i === suffixStart && suffixStart !== msg.length) {
+			hexaText += "(";
+		};
+		hexaText += msg[i].toString(16).padStart(2, "0").toUpperCase();
+		if (i === suffixEnd && suffixStart !== msg.length) {
+			hexaText += ")";
+		};
 	};
 	return hexaText;
 };
@@ -439,6 +463,7 @@ export {
 	packBitField,
 	unpackBitField,
 	bufferToDHex,
+	bufferToBracketed,
 	bufferFrom,
 	bufferTo
 };

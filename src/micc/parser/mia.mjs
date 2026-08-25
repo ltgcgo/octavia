@@ -2,5 +2,6 @@
 
 /** MIDI Instruction Assembly */
 export default class MICCInternalsMIA {
-	static
+	static dasmSingleEvent(buffer, options = {}) {};
+	static asmSingleEvent(text, options = {}) {};
 };
