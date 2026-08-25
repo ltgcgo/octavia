@@ -85,18 +85,6 @@ let korgUnpack = function (korgArr) {
 	});
 	return unpacked;
 };
-let korgPack = function (rawArr) {
-	let newLength = Math.ceil((rawArr.length << 3) / 7);
-	let packed = new Uint8Array(newLength);
-	rawArr.forEach((e, i) => {
-		let ptrOverlay = Math.floor(i / 7) << 3;
-		let ptrData = Math.floor((i << 3) / 7) + 1;
-		let ptrShift = i % 7;
-		packed[ptrOverlay] |= (e >> 7) << ptrShift;
-		packed[ptrData] |= e & 127;
-	});
-	return packed;
-};
 
 let halfByteFilter = function (halfByteArr, iterator) {
 	let realData = 0;

@@ -38,8 +38,6 @@ import {
 	toDecibel,
 	gsChecksum,
 	korgFilter,
-	korgUnpack,
-	korgPack,
 	halfByteFilter,
 	halfByteUnpack,
 	x5dSendLevel,
@@ -55,6 +53,11 @@ import {ChordDict} from "../chord/index.mjs";
 import {
 	NakedMIDIEvent
 } from "../micc/index.mjs";
+import {
+	BinaryBufferCodecs,
+	BinaryStreamCodecs,
+	IterableUtils
+} from "./utils/codec.mjs";
 import OctaviaFakeEPROM from "./eprom.mjs";
 //import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
 
@@ -5315,7 +5318,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			const region = msg[0], offset = (msg[1] << 14) | (msg[2] << 7) | msg[3];
 			//console.debug(bufferToBracketed(msg, 4));
 			if (upThis.eprom) {
-				upThis.eprom.data.set(korgUnpack(msg.subarray(4)), offset);
+				upThis.eprom.data.set(BinaryBufferCodecs.decodeKorg(msg.subarray(4)), offset);
 			};
 			getDebugState() && console.debug(`Roland EPROM region ${region} writes to 0x${offset.toString(16)}.`);
 		});
