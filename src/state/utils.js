@@ -1,5 +1,9 @@
 "use strict";
 
+import {
+	BinaryStreamCodecs
+} from "./utils/codec.mjs";
+
 const u8Enc = new TextEncoder();
 
 let arrayCompare = (arr1, arr2) => {
@@ -60,30 +64,13 @@ let gsChecksum = function (sequence) {
 
 // Why KORG adds a byte every seven bytes is a mistery to me.
 // That's because it's an 8-on-7 scheme!
+/** @deprecated */
 let korgFilter = function (korgArr, iterator) {
-	let realData = 0, dataMask = 0;
-	for (let pointer = 0; pointer < korgArr.length; pointer ++) {
-		let shifts = (pointer & 7) - 1,
-		unmasked = (((dataMask >> shifts) & 1) << 7),
-		e = korgArr[pointer];
-		e += unmasked;
-		if ((pointer & 7) !== 0) {
-			iterator(e, realData, korgArr);
-			//console.debug(`Unmasked: ${dataMask} >> ${shifts} = ${e}`);
-			realData ++;
-		} else {
-			dataMask = korgArr[pointer];
-			//console.debug(`Overlay mask: ${dataMask}`);
-		};
+	let realDataIndex = 0;
+	for (const e of BinaryStreamCodecs.decodeKorg(korgArr)) {
+		iterator?.call(korgArr, e, realDataIndex, korgArr);
+		realDataIndex ++;
 	};
-};
-let korgUnpack = function (korgArr) {
-	let newLength = (korgArr.length * 7) >> 3;
-	let unpacked = new Uint8Array(newLength);
-	korgFilter(korgArr, (e, i) => {
-		unpacked[i] = e;
-	});
-	return unpacked;
 };
 
 let halfByteFilter = function (halfByteArr, iterator) {
@@ -441,8 +428,6 @@ export {
 	toDecibel,
 	gsChecksum,
 	korgFilter,
-	korgUnpack,
-	korgPack,
 	halfByteFilter,
 	halfByteUnpack,
 	x5dSendLevel,
