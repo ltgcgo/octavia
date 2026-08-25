@@ -55,6 +55,7 @@ import {ChordDict} from "../chord/index.mjs";
 import {
 	NakedMIDIEvent
 } from "../micc/index.mjs";
+import OctaviaFakeEPROM from "./eprom.mjs";
 //import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
 
 const modeIdx = [
@@ -588,7 +589,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	#trkAsReq = new Uint8Array(allocated.tr); // Track Assignment request
 	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es", "cs2x", "pa", "ymh", "gm-extra"); // Load all possible voice banks
 	userBank = new VoiceBank("gm2"); // User-defined bank for MT-32, X5DR and NS5R
-	//bankProps = new SheetD;
+	eprom = new OctaviaFakeEPROM(4194304);
 	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
 	polyIndexShrink = true;
@@ -5282,6 +5283,22 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			offset = byteOffset * 6 - ((byteOffset * 2428 >> 16) << 1); // Used for emitting events than for internal processing.
 			upThis.dispatchEvent("screen", {type: "sc8850", offset, data: screenBuffer});
 			getDebugState() && console.debug(`SC-8850 screen dump: bundle ${bundleId + 1}, range ${desiredLengthHead}~${desiredLengthTail}`);
+		}).add([69, 0, 18], (msg, track, id) => {
+			// SoundCanvas EPROM R/W
+			if (msg.length < 4) {
+				console.info(`Insufficient EPROM address.`);
+				return;
+			};
+			if (id !== 0) {
+				console.info(`Unknown EPROM device ID ${id}.`);
+				return;
+			};
+			const region = msg[0], offset = (msg[1] << 14) | (msg[2] << 7) | msg[3];
+			//console.debug(bufferToBracketed(msg, 4));
+			if (upThis.eprom) {
+				upThis.eprom.data.set(korgUnpack(msg.subarray(4)), offset);
+			};
+			getDebugState() && console.debug(`Roland EPROM region ${region} writes to 0x${offset.toString(16)}.`);
 		});
 		// GS Part setup
 		// I wanted this to also be written in a circular structure
@@ -7838,6 +7855,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 export {
 	TimeMuxer,
 	OctaviaDevice,
+	OctaviaFakeEPROM,
 	VoiceBank,
 	allocated,
 	dnToPos,

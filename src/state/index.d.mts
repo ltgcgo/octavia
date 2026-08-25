@@ -158,6 +158,16 @@ export declare const overrides: {
 	readonly bank0: number;
 }
 
+/** A fake EPROM for data storage and retrieval only. */
+export class OctaviaFakeEPROM {
+	/** The offset of where the read/write pointer should begin. Defaults to and should be reset to `0`. */
+	offset: number;
+	/** Data buffer target of the fake EPROM. */
+	data: Uint8Array;
+	/** @param size Size of the fake EPROM in bytes. */
+	constructor(size: number);
+}
+
 /** The state processing engine of Octavia as a virtual device. */
 export class OctaviaDevice {
 	/** The note is idle. */
@@ -337,6 +347,8 @@ export class OctaviaDevice {
 	readonly baseBank: VoiceBank;
 	/** The user voice bank intended for editable voices/instruments in RAM. */
 	readonly userBank: VoiceBank;
+	/** The attached fake EPROM object. */
+	eprom?: OctaviaFakeEPROM;
 	/** When `true`, Octavia will be re-initialized on every mode switch. */
 	initOnReset: boolean;
 	/** Specifies the customized EFX name from KORG AI² synths. */
