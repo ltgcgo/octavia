@@ -114,7 +114,7 @@
 			<div id="dropmount-uifont"></div>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],schemes:['Dark','Light'],backgrounds:{'soft':['Soft','General-purpose soft colour-fill background.'],'luma':['Luma','Colour-fill background for luma keying.'],'colour':['Colour','Custom colour-fill background.'],'imageLuma':['Image','Custom image background. Opacity mixed with luma colours.'],'imageColour':['Image +','Custom image background. Opacity mixed with custom colours.']},strats:{'cover':['Cover','Scale the image until it can fill the entire canvas.'],'fit':['Fit','Scale the image until it can fully fit inside the canvas.'],'stretch':['Stretch','Stretch and squash the image to fully fill the canvas.'],'tile':['Tile','Tile the image on all cardinal directions.'],'preserve':['Preserve','Use the original image as-is without any scaling.']}}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],schemes:['Dark','Light'],backgrounds:{'soft':['Soft','General-purpose soft colour-fill background.'],'luma':['Luma','Colour-fill background for luma keying.'],'colour':['Colour','Custom colour-fill background.'],'imageLuma':['Image','Custom image background. Opacity mixed with luma colours.'],'imageColour':['Image +','Custom image background. Opacity mixed with custom colours.']},strats:{'cover':['Cover','Scale the image until it can fill the entire canvas.'],'fit':['Fit','Scale the image until it can fully fit inside the canvas.'],'stretch':['Stretch','Stretch and squash the image to fully fill the canvas.'],'tile':['Tile','Tile the image on all cardinal directions.'],'preserve':['Preserve','Use the original image as-is without any scaling.']},metaFonts:['Follow UI','Datatype','Iosevka Charon Mono']}">
 			<div class="column column-option"><b>Scheme</b></div>
 			<div id="dropmount-colourscheme"></div>
 			<div id="dropmount-background"></div>
@@ -124,6 +124,8 @@
 			</div>
 			<div id="dropmount-wallpaper-strategy" x-show="$store.bgGroup==='imageLuma'||$store.bgGroup==='imageColour'"></div>
 			<div id="dropmount-wallpaper-choice" x-show="$store.bgGroup==='imageLuma'||$store.bgGroup==='imageColour'"></div>
+			<div class="column column-option"><b>Meta Font</b></div>
+			<div id="dropmount-metafont"></div>
 			<br/>
 			<div class="column"></div>
 			<!--<div class="column"></div>-->

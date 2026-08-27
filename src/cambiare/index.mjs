@@ -321,7 +321,8 @@ let Cambiare = class extends RootDisplay {
 	#sectPix = {};
 	#sectExtra = {};
 	#fontSlots = {
-		"ui": "PT Sans Narrow"
+		"ui": "PT Sans Narrow",
+		"meta": "PT Sans Narrow"
 	};
 	eventViewMode = 0; // 0 for event count, 1 for FPS
 	useElementCount = true;
@@ -1164,6 +1165,15 @@ let Cambiare = class extends RootDisplay {
 			case "ui": {
 				upThis.#canvas.style.setProperty(`--${slot}-font`, fontFamily || "PT Sans Narrow");
 				upThis.#fontSlots[slot] = fontFamily || "PT Sans Narrow";
+				break;
+			};
+			case "meta" : {
+				let mappedFamily = fontFamily;
+				if (mappedFamily === "Follow UI") {
+					mappedFamily = "A Random Invalid Font Name To Make It Fall Back";
+				};
+				upThis.#sectMeta.root.style.setProperty(`--${slot}-font`, mappedFamily || "PT Sans Narrow");
+				upThis.#fontSlots[slot] = mappedFamily || "PT Sans Narrow";
 				break;
 			};
 			default: {

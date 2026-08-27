@@ -13,6 +13,7 @@ div.cambiare > div.cambiare-container {
 
 div.cambiare-canvas {
 	--ui-font: "PT Sans Narrow";
+	--meta-font: "PT Sans Narrow";
 	--background-color: #222;
 	--foreground-color: #fff;
 	--accent-color: #fcdaff;
@@ -281,6 +282,7 @@ div.cambiare-canvas > div.sect-meta span.meta-type {
 div.cambiare-canvas > div.sect-meta span.meta-data {
 	left: 94px;
 	white-space: pre;
+	font-family: var(--meta-font), var(--ui-font);
 }
 div.cambiare-canvas > div.sect-meta span.meta-data > span.meta-slice {
 	animation: slideFadeIn 0.1s;

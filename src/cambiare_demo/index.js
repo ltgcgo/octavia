@@ -214,9 +214,19 @@ createDropDown($e("div#dropmount-uifont"), {
 	"displayStyle": "`font-family:'${$store.uiFont}','PT Sans Narrow','sans-serif';`",
 	"eachExpr": "(name) in fonts",
 	"optionText": "name",
-	"optionStyle": "`font-family:'${name}','mono','monospace','sans-serif'`",
+	"optionStyle": "`font-family:'${name}','sans-serif'`",
 	"optionActive": "($store.uiFont??'PT Sans Narrow')===name",
-	"optionClick": "gSetFont(name)"
+	"optionClick": "gSetUiFont(name)"
+});
+createDropDown($e("div#dropmount-metafont"), {
+	"activeSlot": 4,
+	"displayText": "($store.metaFont?.indexOf('Follow')===0?null:$store.metaFont)||$store.uiFont||'PT Sans Narrow'",
+	"displayStyle": "`font-family:'${$store.metaFont}','${$store.uiFont}','PT Sans Narrow','sans-serif';`",
+	"eachExpr": "(name) in metaFonts",
+	"optionText": "name",
+	"optionStyle": "`font-family:'${name}','${$store.uiFont}','PT Sans Narrow','mono','monospace','sans-serif'`",
+	"optionActive": "($store.metaFont??'Follow UI')===name",
+	"optionClick": "gSetMetaFont(name)"
 });
 createDropDown($e("div#dropmount-colourscheme"), {
 	"activeSlot": 0,
@@ -478,9 +488,13 @@ self.gSetScheme = (scheme) => {
 	setTrueScheme();
 	Alpine.store("scheme", scheme);
 };
-self.gSetFont = (fontName) => {
+self.gSetUiFont = (fontName) => {
 	visualiser.setSlotFont("ui", fontName);
 	Alpine.store("uiFont", fontName);
+};
+self.gSetMetaFont = (fontName) => {
+	visualiser.setSlotFont("meta", fontName);
+	Alpine.store("metaFont", fontName);
 };
 self.gBgGroup = (group) => {
 	switch (group) {

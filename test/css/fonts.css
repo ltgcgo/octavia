@@ -39,6 +39,37 @@
 	src: local("Barlow Condensed SemiBold Italic"), url("../font/BarlowCondensed_bi.woff2") format("woff2");
 }
 @font-face {
+	font-family: "Datatype";
+	font-display: swap;
+	src: local("Datatype"), url("../font/Datatype.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Iosevka Charon Mono";
+	font-display: swap;
+	font-weight: 400;
+	src: local("Iosevka Charon Mono"), url("../font/IosevkaCharonMono.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Iosevka Charon Mono";
+	font-display: swap;
+	font-style: italic;
+	font-weight: 400;
+	src: local("Iosevka Charon Mono Italic"), url("../font/IosevkaCharonMono_i.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Iosevka Charon Mono";
+	font-display: swap;
+	font-weight: 700;
+	src: local("Iosevka Charon Mono Bold"), url("../font/IosevkaCharonMono_b.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Iosevka Charon Mono";
+	font-display: swap;
+	font-style: italic;
+	font-weight: 700;
+	src: local("Iosevka Charon Mono Bold Italic"), url("../font/IosevkaCharonMono_bi.woff2") format("woff2");
+}
+@font-face {
 	font-family: "Jost";
 	font-display: swap;
 	src: local("Jost"), url("../font/Jost.woff2") format("woff2");
