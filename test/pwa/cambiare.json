@@ -10,7 +10,14 @@
 	"orientation": "landscape",
 	"display": "standalone",
 	"display_override": ["tabbed"],
-	"launch_handler": ["focus-existing"],
+	"launch_handler": {
+		"client_mode": ["focus-existing"]
+	},
+	"icons": [{
+		"src": "../img/octavia.svg",
+		"type": "image/svg+xml",
+		"sizes": "16x16 24x24 32x32 48x48 64x64 96x96 128x128 192x192 256x256"
+	}],
 	"file_handlers": [{
 		"action": "/octavia/test/cambiare.htm",
 		"accept": {
