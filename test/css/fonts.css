@@ -1,6 +1,6 @@
 @font-face {
 	font-family: "Noto Sans Mono Web";
-	src: url("../font/NotoSansMono-VF.woff2") format("woff2");
+	src: url("../font/NotoSansMono.woff2") format("woff2");
 }
 @font-face {
 	font-family: "Arial Web";
@@ -13,6 +13,42 @@
 	src: url("../font/arialbd.woff2") format("woff2");
 }
 @font-face {
+	font-family: "Barlow Condensed";
+	font-display: swap;
+	font-weight: 400;
+	src: local("Barlow Condensed"), url("../font/BarlowCondensed.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Barlow Condensed";
+	font-display: swap;
+	font-style: italic;
+	font-weight: 400;
+	src: local("Barlow Condensed Italic"), url("../font/BarlowCondensed_i.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Barlow Condensed";
+	font-display: swap;
+	font-weight: 700;
+	src: local("Barlow Condensed SemiBold"), url("../font/BarlowCondensed_b.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Barlow Condensed";
+	font-display: swap;
+	font-style: italic;
+	font-weight: 700;
+	src: local("Barlow Condensed SemiBold Italic"), url("../font/BarlowCondensed_bi.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Jost";
+	font-display: swap;
+	src: local("Jost"), url("../font/Jost.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Nunito Sans";
+	font-display: swap;
+	src: local("Numito Sans"), url("../font/NunitoSans.woff2") format("woff2");
+}
+@font-face {
 	font-family: "PT Sans Narrow";
 	font-display: swap;
 	font-weight: 400;
@@ -22,25 +58,26 @@
 	font-family: "PT Sans Narrow";
 	font-display: swap;
 	font-weight: 700;
-	src: url("../font/PTSansNarrow_b.woff2") format("woff2");
+	src: local("PT Sans Narrow Bold"), url("../font/PTSansNarrow_b.woff2") format("woff2");
 }
 @font-face {
 	font-family: "Public Sans";
 	font-display: swap;
-	src: url("../font/PublicSans.woff2") format("woff2");
+	src: local("Public Sans"), url("../font/PublicSans.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Sofia Sans Condensed";
+	font-display: swap;
+	src: local("Sofia Sans Condensed"), url("../font/SofiaSansCondensed.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Sofia Sans Condensed";
+	font-display: swap;
+	font-style: italic;
+	src: local("Sofia Sans Condensed"), url("../font/SofiaSansCondensed_i.woff2") format("woff2");
 }
 @font-face {
 	font-family: "Work Sans";
 	font-display: swap;
-	src: url("../font/WorkSans.woff2") format("woff2");
-}
-@font-face {
-	font-family: "Nunito Sans";
-	font-display: swap;
-	src: local("Numito Sans"), url("../font/NunitoSans.woff2") format("woff2");
-}
-@font-face {
-	font-family: "Jost";
-	font-display: swap;
-	src: local("Jost"), url("../font/Jost.woff2") format("woff2");
+	src: local("Work Sans"), url("../font/WorkSans.woff2") format("woff2");
 }

@@ -2,8 +2,6 @@
 /* Licensed under GNU LGPL v3.0 license. */
 
 div.cambiare {
-	font-family: "PT Sans Narrow";
-	font-size: 26px;
 	display: grid;
 	align-items: center;
 	justify-content: center;
@@ -14,11 +12,16 @@ div.cambiare > div.cambiare-container {
 }
 
 div.cambiare-canvas {
+	--ui-font: "PT Sans Narrow";
 	--background-color: #222;
 	--foreground-color: #fff;
 	--accent-color: #fcdaff;
 	--white-keys: var(--foreground-color);
 	--black-keys: var(--accent-color);
+}
+div.cambiare-canvas {
+	font-family: var(--ui-font);
+	font-size: 26px;
 }
 div.cambiare-canvas .pcp-font4 {
 	transform: var(--pcp-font4);

@@ -103,13 +103,15 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],styles:{'block':['Block','MUNT'],'comb':['Comb','Cambiare'],'piano':['Piano','vanBasco\'s'],'line':['Line','MegaMID']},pans:{'0':'Block','9':'Wide','10':'Fan','11':'Knob','1':'Pin','2':'Arc','3':'Dash','5':'Needle','6':'Sector','7':'Hand'},accents:[['Follow','Follow the pre-defined accent colours.'],['Enforce','Enforce global accent colour.'],['Split','Define different accent colours for each port.'],['Modify','Modify the accent colours per-mode.']]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],styles:{'block':['Block','MUNT'],'comb':['Comb','Cambiare'],'piano':['Piano','vanBasco\'s'],'line':['Line','MegaMID']},pans:{'0':'Block','9':'Wide','10':'Fan','11':'Knob','1':'Pin','2':'Arc','3':'Dash','5':'Needle','6':'Sector','7':'Hand'},accents:[['Follow','Follow the pre-defined accent colours.'],['Enforce','Enforce global accent colour.'],['Split','Define different accent colours for each port.'],['Modify','Modify the accent colours per-mode.']],fonts:['PT Sans Narrow','Barlow Condensed','Sofia Sans Condensed']}">
 			<div class="column column-option"><b>Note style</b></div>
 			<div id="dropmount-notestyle"></div>
 			<div class="column column-option"><b>Pan style</b></div>
 			<div id="dropmount-panstyle"></div>
 			<div class="column column-option"><b>Accent</b></div>
 			<div id="dropmount-accenttype" class="wip"></div>
+			<div class="column column-option"><b>Font</b></div>
+			<div id="dropmount-uifont"></div>
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],schemes:['Dark','Light'],backgrounds:{'soft':['Soft','General-purpose soft colour-fill background.'],'luma':['Luma','Colour-fill background for luma keying.'],'colour':['Colour','Custom colour-fill background.'],'imageLuma':['Image','Custom image background. Opacity mixed with luma colours.'],'imageColour':['Image +','Custom image background. Opacity mixed with custom colours.']},strats:{'cover':['Cover','Scale the image until it can fill the entire canvas.'],'fit':['Fit','Scale the image until it can fully fit inside the canvas.'],'stretch':['Stretch','Stretch and squash the image to fully fill the canvas.'],'tile':['Tile','Tile the image on all cardinal directions.'],'preserve':['Preserve','Use the original image as-is without any scaling.']}}">

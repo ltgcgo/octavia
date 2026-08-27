@@ -74,6 +74,9 @@ let createDropDown = function (mountedElement, opt = {}) {
 	if (typeof opt.displayText === "string") {
 		dropdownDisplay.setAttribute("x-text", opt.displayText);
 	};
+	if (typeof opt.displayStyle === "string") {
+		dropdownDisplay.setAttribute(":style", opt.displayStyle);
+	};
 	dropdownIconCollapsed.setAttribute("x-show", `!active[${opt.activeSlot}]`);
 	dropdownIconExpanded.setAttribute("x-show", `active[${opt.activeSlot}]`);
 	if (typeof opt.optionText === "string") {
@@ -84,6 +87,9 @@ let createDropDown = function (mountedElement, opt = {}) {
 	};
 	if (typeof opt.optionActive === "string") {
 		dropdownOption.setAttribute(":active", `${opt.optionActive}?'true':'false'`);
+	};
+	if (typeof opt.optionStyle === "string") {
+		dropdownOption.setAttribute(":style", opt.optionStyle);
 	};
 	if (typeof opt.optionClick === "string") {
 		//dropdownOption.setAttribute("@click", `${opt.optionClick};active[${opt.activeSlot}]=false`);
@@ -201,6 +207,16 @@ createDropDown($e("div#dropmount-accenttype"), {
 	"optionDesc": "desc",
 	"optionActive": "($store.accentType ?? 0)===id",
 	"optionClick": "gAccentType(id)"
+});
+createDropDown($e("div#dropmount-uifont"), {
+	"activeSlot": 3,
+	"displayText": "$store.uiFont||'PT Sans Narrow'",
+	"displayStyle": "`font-family:'${$store.uiFont}','PT Sans Narrow','sans-serif';`",
+	"eachExpr": "(name) in fonts",
+	"optionText": "name",
+	"optionStyle": "`font-family:'${name}','mono','monospace','sans-serif'`",
+	"optionActive": "($store.uiFont??'PT Sans Narrow')===name",
+	"optionClick": "gSetFont(name)"
 });
 createDropDown($e("div#dropmount-colourscheme"), {
 	"activeSlot": 0,
@@ -461,6 +477,10 @@ self.gSetScheme = (scheme) => {
 	schemeCat = scheme;
 	setTrueScheme();
 	Alpine.store("scheme", scheme);
+};
+self.gSetFont = (fontName) => {
+	visualiser.setSlotFont("ui", fontName);
+	Alpine.store("uiFont", fontName);
 };
 self.gBgGroup = (group) => {
 	switch (group) {

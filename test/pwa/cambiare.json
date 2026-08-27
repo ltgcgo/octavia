@@ -1,7 +1,7 @@
 {
-	"start_url": "/octavia/test/cambiare.htm",
+	"start_url": "../test/cambiare.htm",
 	"id": "/rdnn/cc.ltgc.octavia.cambiare?ver=0",
-	"scope": "/octavia/test/",
+	"scope": "../test/",
 	"name": "Octavia Cambiare",
 	"short_name": "Cambiare",
 	"description": "The flagship visualiser of the Octavia project.",
@@ -19,7 +19,7 @@
 		"sizes": "16x16 24x24 32x32 48x48 64x64 96x96 128x128 192x192 256x256"
 	}],
 	"file_handlers": [{
-		"action": "/octavia/test/cambiare.htm",
+		"action": "../test/cambiare.htm",
 		"accept": {
 			"audio/midi": [".mid", ".MID", ".midi", ".MIDI", ".kar", ".KAR"],
 			"application/vnd.mma.sysex+octet-stream": [".syx", ".SYX"],
@@ -45,7 +45,7 @@
 	}],
 	"share_target": {
 		"method": "POST",
-		"action": "/octavia/test/maple-share/cc.ltgc.octavia.cambiare",
+		"action": "../test/maple-share/cc.ltgc.octavia.cambiare",
 		"enctype": "multipart/form-data",
 		"params": {
 			"title": "name",
