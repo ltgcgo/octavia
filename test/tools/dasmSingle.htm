@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="200" charset="utf-8" />
+	<title>Single Event Disassembly</title>
+	<meta content="true" name="HandheldFriendly" />
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<meta name="application-name" content="Single Event Disassembly" />
+	<meta name="author" content="Lightingale Community, Lumière Élevé" />
+	<meta name="description" content="Enter the raw bytes of a MIDI 1.0 event, then attempt parsing and disassembly." />
+	<link rel="stylesheet" href="../css/bulma.css" />
+	<link rel="stylesheet" href="../css/fonts.css" />
+	<link rel="stylesheet" href="../css/toolsGlobal.css" />
+	<link rel="stylesheet" href="../css/cambiare_demo.css" />
+	<script defer src="../js/singleDasm.js"></script>
+</head>
+<body>
+	<div class="container is-max-widescreen">
+		<section class="hero">
+			<div class="hero-body">
+				<p class="title">Single Event Disassembly</p>
+				<p class="subtitle">Enter the raw bytes of a MIDI 1.0 event, then attempt parsing and disassembly.</p>
+			</div>
+		</section>
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<!--This section should have interactivity implemented via AlpineJS instead.-->
+			<div class="column column-option"><b>Schema</b></div>
+			<div class="column column-option column-button" active="true" id="btn-schema-raw" title="Raw MIDI 1.0 event binary string.">Raw</div>
+			<div class="column column-option column-button" id="btn-schema-smf" title="MIDI event binary string wrapped in SMF.">SMF</div>
+			<div class="column column-option"><b>Delta</b></div>
+			<div class="column column-option column-button" active="true" id="btn-delta-no">Unused</div>
+			<div class="column column-option column-button" id="btn-delta-yes">Included</div>
+			<div class="column column-option"><b>Readable</b></div>
+			<div class="column column-option column-button" id="btn-readable-no" title="Use the standard MIA instruction set without any readable remapping.">Disabled</div>
+			<div class="column column-option column-button" active="true" id="btn-readable-yes" title="Use the readable alternative MIA instruction set with readable remapping selectively provided by Octavia Mane (midi-db).">Enabled</div>
+			<div class="column column-option"><b>Finalise</b></div>
+			<div class="column column-option column-button" id="btn-finalise-no" title="Do not go through the finalisation pass.">Disabled</div>
+			<div class="column column-option column-button" active="true" id="btn-finalise-yes" title="Add a single-event finalisation pass after parsing.">Enabled</div>
+			<div class="column"></div>
+		</div>
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<div class="column">
+				<div class="control">
+					<input type="text" class="input text-functional" value="F07E7F0901F7"></input>
+				</div>
+			</div>
+			<div class="column column-option">
+				<button id="btn-console-print" class="button is-link" title="Emit the parsed NakedMIDIEvent object in the console.">Print!</button>
+			</div>
+		</div>
+		<div id="renderer-mia" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">meta text "Waiting for input."l9</div>
+		<div id="renderer-naked" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">{
+	"group": "mma.midiEvent",
+	"delta": 0,
+	"type": 255,
+	"ch": 256,
+	"meta": 1,
+	"data": [object Uint8Array] (18 B),
+	"isStale": false,
+	"offset": 0,
+	"parsed": "Waiting for input.",
+	"time": 0,
+	"port": 255,
+	"track": 65535,
+	"label": "l9"
+}</div>
+		<footer class="footer px-5 py-4">
+			<div class="content has-text-centered">
+				<p>Copyright 2024-2026 © Lumière Élevé, Lightingale Community</p>
+				<p>The Octavia toolchain is licensed under GNU LGPL v3.0 License. Source code available on <a href="https://codeberg.org/ltgc/octavia" target="_blank">Codeberg</a> and <a href="https://github.com/ltgcgo/octavia" target="_blank">GitHub</a>.</p>
+				<p>Learn more: <a target="_blank" href="https://github.com/ltgcgo/octavia/issues/79">MICC</a>, <a target="_blank" href="https://github.com/ltgcgo/octavia/issues/76">MIA</a></p>
+			</div>
+		</footer>
+	</div>
+</body>
