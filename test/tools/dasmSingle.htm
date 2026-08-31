@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="200" charset="utf-8" />
-	<title>Single Event Disassembly</title>
+	<title>Single Event (Dis)assembly</title>
 	<meta content="true" name="HandheldFriendly" />
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<meta name="application-name" content="Single Event Disassembly" />
@@ -18,8 +18,8 @@
 	<div class="container is-max-widescreen">
 		<section class="hero">
 			<div class="hero-body">
-				<p class="title">Single Event Disassembly</p>
-				<p class="subtitle">Enter the raw bytes of a MIDI 1.0 event, then attempt parsing and disassembly.</p>
+				<p class="title">Single Event (Dis)assembly</p>
+				<p class="subtitle">Enter the raw bytes of a MIDI 1.0 event, then attempt parsing and disassembly. For developers only.</p>
 			</div>
 		</section>
 		<div class="columns is-multiline is-mobile is-vcentered">
@@ -41,14 +41,23 @@
 		<div class="columns is-multiline is-mobile is-vcentered">
 			<div class="column">
 				<div class="control">
-					<input type="text" class="input text-functional" value="F07E7F0901F7"></input>
+					<input type="text" id="text-raw" class="input text-functional" value="F07E7F0901F7"></input>
 				</div>
 			</div>
 			<div class="column column-option">
-				<button id="btn-console-print" class="button is-link" title="Emit the parsed NakedMIDIEvent object in the console.">Print!</button>
+				<button id="btn-console-parse" class="button is-link" title="Emit disassembled MIA and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
 			</div>
 		</div>
-		<div id="renderer-mia" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">meta text "Waiting for input."l9</div>
+		<div class="columns is-multiline is-mobile is-vcentered">
+			<div class="column">
+				<div class="control">
+					<input type="text" id="text-mia" class="input text-functional" value='meta text "Waiting for input."l9'></input>
+				</div>
+			</div>
+			<div class="column column-option">
+				<button id="btn-console-print" class="button is-success" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
+			</div>
+		</div>
 		<div id="renderer-naked" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">{
 	"group": "mma.midiEvent",
 	"delta": 0,
