@@ -19,7 +19,7 @@
 		<section class="hero">
 			<div class="hero-body">
 				<p class="title">Single Event (Dis)assembly</p>
-				<p class="subtitle">Enter the raw bytes of a MIDI 1.0 event, then attempt parsing and disassembly. For developers only.</p>
+				<p class="subtitle">Enter the raw bytes of a MIDI 1.0 event, then attempt parsing and disassembly.</p>
 			</div>
 		</section>
 		<div class="columns is-multiline is-mobile is-vcentered">
@@ -32,7 +32,7 @@
 			<div class="column column-option column-button" id="btn-delta-yes">Included</div>
 			<div class="column column-option"><b>Readable</b></div>
 			<div class="column column-option column-button" id="btn-readable-no" title="Use the standard MIA instruction set without any readable remapping.">Disabled</div>
-			<div class="column column-option column-button" active="true" id="btn-readable-yes" title="Use the readable alternative MIA instruction set with readable remapping selectively provided by Octavia Mane (midi-db).">Enabled</div>
+			<div class="column column-option column-button" active="true" id="btn-readable-yes" title="Use the readable alternative MIA instruction set, with readable remapping selectively provided by Octavia Mane (midi-db).">Enabled</div>
 			<div class="column column-option"><b>Finalise</b></div>
 			<div class="column column-option column-button" id="btn-finalise-no" title="Do not go through the finalisation pass.">Disabled</div>
 			<div class="column column-option column-button" active="true" id="btn-finalise-yes" title="Add a single-event finalisation pass after parsing.">Enabled</div>
@@ -45,7 +45,7 @@
 				</div>
 			</div>
 			<div class="column column-option">
-				<button id="btn-console-parse" class="button is-link" title="Emit disassembled MIA and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
+				<button id="btn-raw-parse" class="button is-link" title="Emit disassembled MIA and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
 			</div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered">
@@ -55,7 +55,7 @@
 				</div>
 			</div>
 			<div class="column column-option">
-				<button id="btn-console-print" class="button is-success" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
+				<button id="btn-mia-parse" class="button is-success" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
 			</div>
 		</div>
 		<div id="renderer-naked" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">{
@@ -74,10 +74,14 @@
 	"label": "l9"
 }</div>
 		<footer class="footer px-5 py-4">
+			<div class="content px-5">
+				<p>This utility is mainly for developers. If you are familiar with MIA and Mane, this can also be used as a very versatile parameter editor like XG Editor, GS Advanced Editor and Korg X5/N5 editor, basically (Neo)Vim, SCORE or LilyPond for MIDI.</p>
+			</div>
+			<hr/>
 			<div class="content has-text-centered">
 				<p>Copyright 2024-2026 © Lumière Élevé, Lightingale Community</p>
 				<p>The Octavia toolchain is licensed under GNU LGPL v3.0 License. Source code available on <a href="https://codeberg.org/ltgc/octavia" target="_blank">Codeberg</a> and <a href="https://github.com/ltgcgo/octavia" target="_blank">GitHub</a>.</p>
-				<p>Learn more: <a target="_blank" href="https://github.com/ltgcgo/octavia/issues/79">MICC</a>, <a target="_blank" href="https://github.com/ltgcgo/octavia/issues/76">MIA</a></p>
+				<p>Learn more: <a target="_blank" href="https://github.com/ltgcgo/octavia/issues/79">MICC</a>, <a target="_blank" href="https://github.com/ltgcgo/octavia/issues/76">MIA</a>, <a target="_blank" href="https://github.com/ltgcgo/midi-db#mane-mappings">Mane</a></p>
 			</div>
 		</footer>
 	</div>
