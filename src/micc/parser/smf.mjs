@@ -166,6 +166,15 @@ export default class MICCInternalsSMF {
 			options.parserContext.lastStatus = statusByte;
 		};
 		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
+		if (eventType >= 8 && eventType < 255) {
+			// Meta events... They can be whatever they want.
+			const scanRegion = Math.min(nakedEvent.data.length, 16);
+			for (let i = 0; i < scanRegion; i ++) {
+				if (nakedEvent.data[i] >= 0x80) {
+					throw(new RangeError(`Channel events cannot contain bytes greater than or equal to 0x80.`));
+				};
+			};
+		};
 		return nakedEvent;
 	};
 	static parseSingleContextEvent(chunkInfo) {
