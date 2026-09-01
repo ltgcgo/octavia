@@ -170,7 +170,10 @@ export default class MICCInternalsSMF {
 			// Meta events... They can be whatever they want.
 			const scanRegion = Math.min(nakedEvent.data.length, 16);
 			for (let i = 0; i < scanRegion; i ++) {
-				if (nakedEvent.data[i] >= 0x80) {
+				const e = nakedEvent.data[i];
+				if (e === 0xf7 && (eventType === 0xf0 || eventType === 0xf7)) {
+					continue;
+				} else if (e >= 0x80) {
 					throw(new RangeError(`Channel events cannot contain bytes greater than or equal to 0x80.`));
 				};
 			};
