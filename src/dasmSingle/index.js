@@ -59,7 +59,7 @@ self.gParseRaw = async () => {
 	const normalisedInput = sanitisedInput.padEnd(inputLength + (inputLength & 1), "0");
 	try {
 		const inputBuffer = bufferFrom("hex", normalisedInput);
-		console.debug(inputBuffer);
+		//console.debug(inputBuffer);
 		parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer, {
 			"hasDelta": Alpine.store("hasDelta"),
 			"isSmfWrapped": Alpine.store("schemaIsWrapped")
@@ -101,6 +101,7 @@ self.gParseRaw = async () => {
 		}, "\t"));
 		console.debug(parsedEvent);
 	} catch (err) {
+		parsedEvent = null;
 		console.warn(err);
 		displayClear();
 		const errorMsg = document.createElement("span");
@@ -111,15 +112,19 @@ self.gParseRaw = async () => {
 };
 self.gSerialiseRaw = async () => {
 	if (parsedEvent) {
-		MICCInternalsSMF.emitSingleEvent(parsedEvent, {
+		const serialisedBuffer = MICCInternalsSMF.emitSingleEvent(parsedEvent, {
 			"hasDelta": Alpine.store("hasDelta"),
 			"isSmfWrapped": Alpine.store("schemaIsWrapped")
 		});
+		if (serialisedBuffer.toHex) {
+			inputRaw.value = serialisedBuffer.toHex().toUpperCase();
+		};
+		console.info(`Serialised: ${bufferToDHex(serialisedBuffer)}\n`, serialisedBuffer);
 	} else {
 		displayClear();
 		const errorMsg = document.createElement("span");
 		errorMsg.classList.add("has-text-warning");
-		errorMsg.append(`No parsed event exists. Please parse an event first.`);
+		errorMsg.append(`No valid parsed event exists. Please parse an event first.`);
 		displayNakedEvent.append(errorMsg);
 	};
 };

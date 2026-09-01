@@ -349,7 +349,7 @@ export default class MICCInternalsSMF {
 				throw(new Error(`Reached undefined payload check state.`));
 			};
 		};
-		console.debug(finalSize);
+		//console.debug(finalSize);
 		// Assemble the final bytes. Validity checks for system messages are not the responsibility of this method.
 		const buffer = new Uint8Array(finalSize);
 		if (deltaPtr >= 0) {
@@ -398,7 +398,7 @@ export default class MICCInternalsSMF {
 		if (!event.isStale) {
 			options.parserContext.lastStatus = event.type <= 15 ? (event.type << 4) | (event.ch & 15) : event.type;
 		};
-		console.debug(buffer);
+		this.debugMode && console.debug(buffer);
 		return buffer;
 	};
 	/** @param {number} offset
