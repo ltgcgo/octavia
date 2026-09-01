@@ -244,7 +244,11 @@ export default class MICCInternalsSMF {
 			};
 			finalSize += 1;
 		} else if (event.type >= 8 && event.type < 15) {
-			if (!event.isStale) {
+			if (event.isStale) {
+				if (!options.isSmfWrapped) {
+					throw(new Error(`Running status is not allowed in raw MIDI 1.0 messages.`));
+				};
+			} else {
 				finalSize += 1;
 			};
 		};
@@ -276,6 +280,7 @@ export default class MICCInternalsSMF {
 				if (!options.isSmfWrapped) {
 					throw(new Error(`0xFF events can only occur in SMF.`));
 				};
+				finalSize += 1; // Meta type.
 				break;
 			};
 			default: {

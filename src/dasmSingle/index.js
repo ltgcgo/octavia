@@ -112,7 +112,13 @@ self.gParseRaw = async () => {
 self.gSerialiseRaw = async () => {
 	if (parsedEvent) {
 		MICCInternalsSMF.emitSingleEvent(parsedEvent);
-	} else {};
+	} else {
+		displayClear();
+		const errorMsg = document.createElement("span");
+		errorMsg.classList.add("has-text-warning");
+		errorMsg.append(`No parsed event exists. Please parse an event first.`);
+		displayNakedEvent.append(errorMsg);
+	};
 };
 self.gParseMia = async () => {
 	// WIP!

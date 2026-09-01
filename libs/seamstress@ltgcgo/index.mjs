@@ -16,6 +16,12 @@ if (self.WebAssembly) {(async () => {
 	console.debug(wasmExports);
 })()};*/
 
+const bigIntMaxBoundary = (1n << 1024n) - 1n;
+const bigIntCastCeil = (1n << 1023n);
+
+const linkedF64View = new Float64Array(1);
+const linkedU64View = new BigUint64Array(linkedF64View.buffer);
+
 let IntegerHandler = class IntegerHandler {
 	static MASK_VLV = 128;
 	static MASK_RVLV = 192;
@@ -26,7 +32,7 @@ let IntegerHandler = class IntegerHandler {
 	static #unsafeType = false;
 	static useNative = true;
 	static #hiddenDataView = Symbol("Key for the hidden DataView.");
-	static #ensureU8Unsafe() {};
+	static #ensureUnsafe() {};
 	static #ensureU8Safe(buffer) {
 		/*if (buffer.constructor !== Uint8Array && buffer.constructor !== Uint8ClampedArray) {
 			throw(new TypeError("Input must be a Uint8Array."));
@@ -42,16 +48,35 @@ let IntegerHandler = class IntegerHandler {
 			};
 		};
 	};
+	static #ensureNumberSafe(value) {
+		if (typeof value !== "number") {
+			throw(new TypeError("Input must be a number."));
+		};
+		if (!Number.isSafeInteger(value)) {
+			throw(new RangeError("Input must be a safe integer."));
+		};
+	};
+	static #ensureBigIntSafe(value) {
+		if (typeof value !== "bigint") {
+			throw(new TypeError("Input must be a BigInt."));
+		};
+	};
 	static #ensureU8 = this.#ensureU8Safe;
+	static #ensureNumber = this.#ensureNumberSafe;
+	static #ensureBigInt = this.#ensureBigIntSafe;
 	static get unsafeType() {
 		return this.#unsafeType;
 	};
 	static set unsafeType(value) {
 		this.#unsafeType = value;
 		if (value) {
-			this.#ensureU8 = this.#ensureU8Unsafe;
+			this.#ensureU8 = this.#ensureUnsafe;
+			this.#ensureNumber = this.#ensureUnsafe;
+			this.#ensureBigInt = this.#ensureUnsafe;
 		} else {
 			this.#ensureU8 = this.#ensureU8Safe;
+			this.#ensureNumber = this.#ensureNumberSafe;
+			this.#ensureBigInt = this.#ensureBigIntSafe;
 		};
 	};
 	static #obtainDataView(typedArray) {
@@ -59,6 +84,54 @@ let IntegerHandler = class IntegerHandler {
 			typedArray[this.#hiddenDataView] = new DataView(typedArray.buffer);
 		};
 		return typedArray[this.#hiddenDataView];
+	};
+	static bitsBigUint(value) {
+		// f64 thinks 2^1024-1 is too large, so I can't exploit F-I mantissa-exponent casting. Ouch.
+		if (value < 0n) {
+			throw(new RangeError(`Must be a non-negative integer.`));
+		} else if (value > bigIntMaxBoundary) {
+			throw(new RangeError(`Value too large. Must be within 1024 bits.`));
+		} else if (value === 0n) {
+			return 0;
+		} else if (value > bigIntCastCeil) {
+			return 1024;
+		} else if (value >= 9007199254740992n) {
+			//throw(new Error("WIP"));
+			// Expand phase
+			//let minBoundary = 0, maxBoundary = 0;
+			//let maxPowerSplit = 1n;
+			/*let maxPowerSplit = 32n;
+			for (let power = 6; power <= 10; power ++) {
+				//if (power > 0) {
+					//maxPowerSplit <<= 1n;
+					//minBoundary = 1 << (power - 1);
+				//};
+				maxPowerSplit <<= 1n;
+				if ((value >> maxPowerSplit) === 0n) {
+					maxBoundary = 1 << power;
+					minBoundary = 1 << (power - 1);
+					break;
+				};
+			};*/
+			// Collapse phase
+			let minBoundary = 0, maxBoundary = 1024;
+			while (maxBoundary - minBoundary > 1) {
+				const step = (maxBoundary - minBoundary) >> 1;
+				const splitPoint = step + minBoundary;
+				if (value >> BigInt(splitPoint) > 0n) {
+					minBoundary = splitPoint;
+				} else {
+					maxBoundary = splitPoint;
+				};
+				//break;
+			};
+			return maxBoundary;
+		} else {
+			// This method is not quite accurate for very large numbers, so a range guard is required.
+			linkedF64View[0] = Number(value);
+			const rawExponent = (linkedU64View[0] >> 52n) & 2047n;
+			return Number(BigInt.asUintN(16, rawExponent)) - 1022;
+		};
 	};
 	static readVLV(buffer, offset = 0) {
 		// VLV-8 are all big-endian.
@@ -112,6 +185,52 @@ let IntegerHandler = class IntegerHandler {
 			};
 		};
 		return 0; // Failure.
+	};
+	static lengthVLV(value) {
+		this.#ensureNumber(value);
+		if (value < 0 || value > 268435455) {
+			throw(new RangeError(`Input range invalid. Must be a non-negative integer below 2^28.`));
+		};
+		return value === 0 ? 1 : Math.floor((38 - Math.clz32(value)) / 7);
+	};
+	static lengthVLVBigInt(value) {
+		this.#ensureBigInt(value);
+		if (value < 0n || value > 0xffffffffffffffffffffffffffffn) {
+			throw(new RangeError(`Input range invalid. Must be a non-negative integer below 2^112.`));
+		};
+		return value === 0n ? 1 : Math.floor((this.bitsBigUint(value) + 6) / 7);
+	};
+	static writeVLV(buffer, value, offset = 0) {
+		this.#ensureU8(buffer);
+		this.#ensureNumber(value);
+		const vlvSize = this.lengthVLV(value);
+		let view = value, setBit = 0;
+		for (let ptr = vlvSize - 1; ptr >= 0; ptr --) {
+			buffer[offset + ptr] = setBit | (view & 127);
+			setBit = 128;
+			view >>= 7;
+		};
+	};
+	static writeVLVBigInt(buffer, value, offset = 0) {
+		this.#ensureU8(buffer);
+		this.#ensureBigInt(value);
+		const vlvSize = this.lengthVLVBigInt(value);
+		let view = value, setBit = 0;
+		for (let ptr = vlvSize - 1; ptr >= 0; ptr --) {
+			buffer[offset + ptr] = setBit | Number(view & 127n);
+			setBit = 128;
+			view >>= 7n;
+		};
+	};
+	static emitVLV(value) {
+		const buffer = new Uint8Array(this.lengthVLV(value));
+		this.writeVLV(buffer, value);
+		return buffer;
+	};
+	static emitVLVBigInt(value) {
+		const buffer = new Uint8Array(this.lengthVLVBigInt(value));
+		this.writeVLVBigInt(buffer, value);
+		return buffer;
 	};
 	static readRVLV(buffer, offset = 0) {
 		this.#ensureU8(buffer);
@@ -226,6 +345,20 @@ let IntegerHandler = class IntegerHandler {
 			storedState = currentState;
 		};
 		return 0; // Failure.
+	};
+	static lengthRVLV(value) {
+		this.#ensureNumber(value);
+		if (value < 0 || value > 16777215) {
+			throw(new RangeError(`Input range invalid. Must be a non-negative integer below 2^24.`));
+		};
+		return value === 0 ? 1 : Math.floor((37 - Math.clz32(value)) / 6);
+	};
+	static lengthRVLVBigInt(value) {
+		this.#ensureBigInt(value);
+		if (value < 0n || value > 0xffffffffffffffffffffffffn) {
+			throw(new RangeError(`Input range invalid. Must be a non-negative integer below 2^96.`));
+		};
+		return value === 0n ? 1 : Math.floor((this.bitsBigUint(value) + 5) / 6);
 	};
 	static readBool(buffer, offset = 0) {
 		/*if (this.useNative && wasmExports) {

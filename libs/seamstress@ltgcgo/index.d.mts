@@ -15,18 +15,36 @@ export class IntegerHandler {
 	static useNative: boolean;
 	/** When set to true, methods will no longer conduct type checks. Usually has negligible performance impact unless on poorly-optimized runtimes. */
 	static unsafeType: boolean;
+	/** Counts the total bits required to store an unsigned BigInt. `0` is `0`, parallel to `Math.clz32`. */
+	static bitsBigUint(value: bigint): number;
+	/** Counts the size of a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
+	static sizeVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Counts the size of an integer to be emitted as a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
+	static lengthVLV(value: number): number;
+	/** Counts the size of an integer to be emitted as a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
+	static lengthVLVBigInt(value: bigint): number;
 	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
 	static readVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Reads a standard MIDI VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. */
 	static readVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): bigint;
-	/** Counts the size of a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
-	static sizeVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Writes a standard MIDI VLV-8 value to a `Uint8Array` or a `Uint8ClampedArray` from a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
+	static writeVLV(buffer: Uint8Array|Uint8ClampedArray, value: number, offset?: number): void;
+	/** Writes a standard MIDI VLV-8 value to a `Uint8Array` or a `Uint8ClampedArray` from a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
+	static writeVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, value: bigint, offset?: number): void;
+	/** Writes a standard MIDI VLV-8 value to a `Uint8Array` or a `Uint8ClampedArray` from a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
+	static emitVLV(value: number): Uint8Array;
+	/** Writes a standard MIDI VLV-8 value to a `Uint8Array` or a `Uint8ClampedArray` from a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
+	static emitVLVBigInt(value: bigint): Uint8Array;
+	/** Counts the size of a reversible VLV-8 value in bytes. Will return 0 when failed. */
+	static sizeRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
+	/** Counts the size of an integer to be emitted as a reversible VLV-8 value in bytes. Will return 0 when failed. */
+	static lengthRVLV(value: number): number;
+	/** Counts the size of an integer to be emitted as a reversible VLV-8 value in bytes. Will return 0 when failed. */
+	static lengthRVLVBigInt(value: bigint): number;
 	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. Invalid RVLV values will also error out. */
 	static readRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Reads a reversible VLV-8 value from a `Uint8Array` or a `Uint8ClampedArray` into a BigInt. Will be clamped to 16 bytes, after which it will error out. Invalid RVLV values will also error out. */
 	static readRVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, offset?:number): bigint;
-	/** Counts the size of a reversible VLV-8 value in bytes. Will return 0 when failed. */
-	static sizeRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Reads a boolean. Will error out if out of bounds. One byte has 8 individual bits. `85` will be expanded to `[1, 0, 1, 0, 1, 0, 1, 0]`, while `170` will be expanded to `[0, 1, 0, 1, 0, 1, 0, 1]`. */
 	static readBool(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Reads an int8 value. Will error out if out of bounds. */
