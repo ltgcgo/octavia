@@ -51,7 +51,10 @@ self.gParseRaw = async () => {
 	try {
 		const inputBuffer = bufferFrom("hex", normalisedInput);
 		console.debug(inputBuffer);
-		const parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer);
+		const parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer, {
+			"hasDelta": Alpine.store("hasDelta"),
+			"isSmfWrapped": Alpine.store("schemaIsWrapped")
+		});
 		displayClear();
 		displayNakedEvent.append(JSON.stringify(parsedEvent, (k, v) => {
 			switch (typeof v) {
