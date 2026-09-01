@@ -3028,24 +3028,33 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					const msgTypeSpec = eventTypes[mappedType]?.length > 0 ? `${eventTypes[mappedType]}${(0b11000 >> (mappedType - 8)) ? ingressEvent.data[0] : ""}` : `unknown type ${mappedType}`;
 					if (typeof ingressEvent.ch === "number") {
 						// Channel messages
-						const mappedCh = (ingressEvent?.port < 16) ? (ingressEvent.port << 4) | (ingressEvent.ch & 15) : upThis.chRedir(ingressEvent.ch, (ingressEvent.track < 16384) ? ingressEvent.track : 0, false);
-						const eventRunner = upThis.#chEventRun.get(mappedType);
-						if (typeof eventRunner === "function") {
-							let norecipient = true;
-							for (const mappedPart of upThis.#receiveTree[mappedCh] ?? []) {
-								norecipient = false;
-								eventRunner.call(upThis, ingressEvent, mappedPart);
-							};
-							if (norecipient) {
-								let msgPortCh = `CH${ingressEvent.ch + 1}`;
-								if (ingressEvent.port < 255) {
-									msgPortCh += ` on port ${ingressEvent.port + 1}`;
+						let mappedCh = 65535;
+						if ((ingressEvent?.port < 16) {
+							mappedCh = (ingressEvent.port << 4) | (ingressEvent.ch & 15);
+						} else if (ingressEvent.ch < allocated.ch) {
+							mappedCh = upThis.chRedir(ingressEvent.ch, (ingressEvent.track < 16384) ? ingressEvent.track : 0, false);
+						};
+						if (mappedCh < allocated.ch) {
+							const eventRunner = upThis.#chEventRun.get(mappedType);
+							if (typeof eventRunner === "function") {
+								let norecipient = true;
+								for (const mappedPart of upThis.#receiveTree[mappedCh] ?? []) {
+									norecipient = false;
+									eventRunner.call(upThis, ingressEvent, mappedPart);
 								};
-								msgPortCh += ` (CH${mappedCh})`;
-								console.warn(`A ${msgTypeSpec} message sent to ${msgPortCh} had no recipient.`);
+								if (norecipient) {
+									let msgPortCh = `CH${ingressEvent.ch + 1}`;
+									if (ingressEvent.port < 255) {
+										msgPortCh += ` on port ${ingressEvent.port + 1}`;
+									};
+									msgPortCh += ` (CH${mappedCh})`;
+									console.warn(`A ${msgTypeSpec} message sent to ${msgPortCh} had no recipient.`);
+								};
+							} else {
+								warningMessage = `Event type ${ingressEvent.type} does not have a valid runner.`;
 							};
 						} else {
-							warningMessage = `Event type ${ingressEvent.type} does not have a valid runner.`;
+							warningMessage = `Event type ${ingressEvent.type} does not have a valid channel.`;
 						};
 					} else {
 						warningMessage = `Received a ${msgTypeSpec} message without a specified channel.`;

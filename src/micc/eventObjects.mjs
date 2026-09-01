@@ -15,8 +15,8 @@ const MICCBaseElement = class MICCBaseElement {
 const NakedMIDIEvent = class NakedMIDIEvent extends MICCBaseElement {
 	delta = 0;
 	type = 0;
-	ch = 256;
-	meta;
+	ch = 65535;
+	meta = 256;
 	data;
 	isStale = false;
 	offset;
