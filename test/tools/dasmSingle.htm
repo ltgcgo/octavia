@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="../css/fonts.css" />
 	<link rel="stylesheet" href="../css/toolsGlobal.css" />
 	<link rel="stylesheet" href="../css/cambiare_demo.css" />
-	<script defer src="../js/singleDasm.js"></script>
+	<script defer src="../js/dasmSingle.js"></script>
 </head>
 <body>
 	<div class="container is-max-widescreen">
@@ -22,20 +22,24 @@
 				<p class="subtitle">Enter the raw bytes of a MIDI 1.0 event, then attempt parsing and disassembly.</p>
 			</div>
 		</section>
-		<div class="columns is-multiline is-mobile is-vcentered">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{'schema':[['Raw','Raw MIDI 1.0 event binary string.'],['SMF','MIDI event binary string wrapped in SMF events.']],'delta':['Unused','Included'],'readable':[['No','Use the standard baseline MIA instruction set without any readable remapping.'],['Yes','Use the readable alternative MIA instruction set, with remapping selectively provided by Octavia Mane (midi-db).']],'finalise':[['No','Do not go through the finalisation pass.'],['Yes','Add a single-event finalisation pass after parsing.']]}">
 			<!--This section should have interactivity implemented via AlpineJS instead.-->
 			<div class="column column-option"><b>Schema</b></div>
-			<div class="column column-option column-button" active="true" id="btn-schema-raw" title="Raw MIDI 1.0 event binary string.">Raw</div>
-			<div class="column column-option column-button" id="btn-schema-smf" title="MIDI event binary string wrapped in SMF.">SMF</div>
+			<template x-for="(option, value) in schema">
+				<div class="column column-option column-button" @click="gSchemaIsWrapped(value>0)" x-text="option[0]" :title="option[1]" :active="($store.schemaIsWrapped??false)===(value>0)?'true':'false'"></div>
+			</template>
 			<div class="column column-option"><b>Delta</b></div>
-			<div class="column column-option column-button" active="true" id="btn-delta-no">Unused</div>
-			<div class="column column-option column-button" id="btn-delta-yes">Included</div>
+			<template x-for="(option, value) in delta">
+				<div class="column column-option column-button" @click="gHasDelta(value>0)" x-text="option" :active="($store.hasDelta??false)===(value>0)?'true':'false'"></div>
+			</template>
 			<div class="column column-option"><b>Readable</b></div>
-			<div class="column column-option column-button" id="btn-readable-no" title="Use the standard MIA instruction set without any readable remapping.">Disabled</div>
-			<div class="column column-option column-button" active="true" id="btn-readable-yes" title="Use the readable alternative MIA instruction set, with readable remapping selectively provided by Octavia Mane (midi-db).">Enabled</div>
+			<template x-for="(option, value) in readable">
+				<div class="column column-option column-button" @click="gUseReadable(value>0)" x-text="option[0]" :title="option[1]" :active="($store.useReadable??false)===(value>0)?'true':'false'"></div>
+			</template>
 			<div class="column column-option"><b>Finalise</b></div>
-			<div class="column column-option column-button" id="btn-finalise-no" title="Do not go through the finalisation pass.">Disabled</div>
-			<div class="column column-option column-button" active="true" id="btn-finalise-yes" title="Add a single-event finalisation pass after parsing.">Enabled</div>
+			<template x-for="(option, value) in finalise">
+				<div class="column column-option column-button" @click="gUseReadable(value>0)" x-text="option[0]" :title="option[1]" :active="($store.useReadable??false)===(value>0)?'true':'false'"></div>
+			</template>
 			<div class="column"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered">
@@ -55,7 +59,7 @@
 				</div>
 			</div>
 			<div class="column column-option">
-				<button id="btn-mia-parse" class="button is-success" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
+				<button id="btn-mia-parse" class="button is-info" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
 			</div>
 		</div>
 		<div id="renderer-naked" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">{
