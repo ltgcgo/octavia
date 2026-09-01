@@ -11,6 +11,9 @@ import {
 	bufferFrom,
 	bufferTo
 } from "../state/utils/bufferIo.mjs";
+import {
+	bufferToDHex
+} from "../state/utils.js";
 import MICCInternalsSMF from "../micc/parser/smf.mjs";
 
 self.Alpine = Alpine;
@@ -32,9 +35,9 @@ const displayClear = async () => {
 self.gParseRaw = async () => {
 	const inputLength = inputRaw.value.length;
 	const normalisedInput = inputRaw.value.padEnd(inputLength + (inputLength & 1), "0");
-	const inputBuffer = bufferFrom("hex", normalisedInput);
-	console.debug(inputBuffer);
 	try {
+		const inputBuffer = bufferFrom("hex", normalisedInput);
+		console.debug(inputBuffer);
 		const parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer);
 		displayClear();
 		displayNakedEvent.append(JSON.stringify(parsedEvent, (k, v) => {
@@ -61,7 +64,7 @@ self.gParseRaw = async () => {
 					switch (v?.constructor) {
 						case Uint8Array:
 						case Uint8ClampedArray: {
-							return `[object Uint8Array] (${v.length} B)`;
+							return `(${v.length} B) ${bufferToDHex(v, 8)}`;
 							break;
 						};
 						default: {
