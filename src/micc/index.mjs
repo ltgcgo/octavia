@@ -5,6 +5,8 @@ import {
 	MICCBaseElement,
 	NakedMIDIEvent
 } from "./eventObjects.mjs";
+import MICCInternalsSMF from "./parser/smf.mjs";
+import MICCInternalsMIA from "./parser/mia.mjs";
 import {
 	ColxiMIDIParser
 } from "./parser/colxi.mjs";
@@ -12,5 +14,7 @@ import {
 export {
 	MICCBaseElement,
 	NakedMIDIEvent,
+	MICCInternalsSMF,
+	MICCInternalsMIA,
 	ColxiMIDIParser
 };

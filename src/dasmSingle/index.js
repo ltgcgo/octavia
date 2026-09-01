@@ -14,7 +14,12 @@ import {
 import {
 	bufferToDHex
 } from "../state/utils.js";
-import MICCInternalsSMF from "../micc/parser/smf.mjs";
+import {
+	NakedMIDIEvent
+} from "../micc/index.mjs";
+import {
+	MICCInternalsSMF
+} from "../micc/index.mjs";
 
 self.Alpine = Alpine;
 
@@ -45,6 +50,8 @@ self.gUseReadable = async (value) => {
 	Alpine.store("useReadable", value);
 };
 
+/** @type {NakedMIDIEvent} */
+let parsedEvent;
 self.gParseRaw = async () => {
 	const sanitisedInput = inputRaw.value.replaceAll(" ", "");
 	inputRaw.value = sanitisedInput;
@@ -53,7 +60,7 @@ self.gParseRaw = async () => {
 	try {
 		const inputBuffer = bufferFrom("hex", normalisedInput);
 		console.debug(inputBuffer);
-		const parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer, {
+		parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer, {
 			"hasDelta": Alpine.store("hasDelta"),
 			"isSmfWrapped": Alpine.store("schemaIsWrapped")
 		});
@@ -102,10 +109,16 @@ self.gParseRaw = async () => {
 		displayNakedEvent.append(errorMsg);
 	};
 };
+self.gSerialiseRaw = async () => {
+	if (parsedEvent) {
+		MICCInternalsSMF.emitSingleEvent(parsedEvent);
+	} else {};
+};
 self.gParseMia = async () => {
 	// WIP!
 	console.debug(inputMia.value);
 };
+self.gSerialiseMia = async () => {};
 
 inputRaw.addEventListener("keydown", async (ev) => {
 	switch (ev.key) {

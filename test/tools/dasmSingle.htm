@@ -49,7 +49,10 @@
 				</div>
 			</div>
 			<div class="column column-option">
-				<button @click="gParseRaw()" class="button is-link" title="Emit disassembled MIA and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
+				<button @click="gParseRaw()" class="button is-link" title="Emit disassembled MIA and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse</button>
+			</div>
+			<div class="column column-option">
+				<button @click="gSerialiseRaw()" class="button is-success" title="Emit raw binary string from the previously parsed result.">Serialise</button>
 			</div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{}">
@@ -59,7 +62,10 @@
 				</div>
 			</div>
 			<div class="column column-option">
-				<button @click="gParseMia()" class="button is-info" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
+				<button @click="gParseMia()" class="button is-info" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse</button>
+			</div>
+			<div class="column column-option">
+				<button @click="gSerialiseMia()" class="button is-warning" title="Emit MIA instruction from the previously parsed result.">Serialise</button>
 			</div>
 		</div>
 		<div id="renderer-naked" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">Parse an event to begin.</div>

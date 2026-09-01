@@ -5,8 +5,10 @@ import {
 	SeamstressChunk
 } from "../../../libs/seamstress@ltgcgo/index.mjs";
 import {
-	MICCSMFMIAHandleOptions,
 	NakedMIDIEvent
+} from "../eventObjects.mjs";
+import {
+	MICCSMFMIAHandleOptions
 } from "../index.mjs";
 
 /** Standard MIDI Files (MIDI 1.0) or raw MIDI 1.0 messages. */
@@ -72,6 +74,10 @@ export default class MICCInternalsSMF {
 						throw(new Error(`The last SysEx event was not terminated.`));
 					};
 				};
+			} else {
+				if (eventType === 0xf7) {
+					throw(new Error(`Illegal SysEx continuation. The previous SysEx event had already terminated.`));
+				};
 			};
 		} else if (statusByte & 0x80) {
 			eventType = statusByte >> 4;
@@ -108,7 +114,7 @@ export default class MICCInternalsSMF {
 					};
 					dataStartPointer += dataSizeLength;
 					dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
-					options.parserContext.lastSysExHung = buffer.subarray(dataStartPointer, dataEndPointer).indexOf(0xf7) < 0;
+					//options.parserContext.lastSysExHung = dataSizeLength > 0 ? buffer[dataEndPointer - 1] !== 0xf7 : false;
 				} else {
 					// A lack of 0xF7 here is corruption.
 					const endPointer = buffer.indexOf(0xf7, dataEndPointer);
@@ -130,7 +136,7 @@ export default class MICCInternalsSMF {
 				};
 				dataStartPointer += dataSizeLength;
 				dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
-				options.parserContext.lastSysExHung = buffer.subarray(dataStartPointer, dataEndPointer).indexOf(0xf7) < 0;
+				//options.parserContext.lastSysExHung = dataSizeLength > 0 ? buffer[dataEndPointer - 1] !== 0xf7 : false;
 				break;
 			};
 			case 255: {
@@ -161,29 +167,66 @@ export default class MICCInternalsSMF {
 		if (buffer.length < dataEndPointer) {
 			throw(new Error(`Received an incomplete event.`));
 		};
+		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
+		let isSysExActive = false;
+		if (eventType >= 8 && eventType < 255) {
+			// Meta events are left as-is.
+			// SysEx events allow for concatenation thanks to the existing backlog of SMFs.
+			const scanRegion = options.loosenForSpeed ? Math.min(nakedEvent.data.length, 24) : nakedEvent.data.length;
+			if (eventType === 0xf0) {
+				isSysExActive = true;
+			} else if (eventType === 0xf7) {
+				isSysExActive = options.parserContext.lastSysExHung;
+			};
+			for (let i = 0; i < scanRegion; i ++) {
+				const e = nakedEvent.data[i];
+				switch (eventType) {
+					case 0xf0:
+					case 0xf7: {
+						if (e === 0xf7) {
+							if (isSysExActive) {
+								isSysExActive = false;
+							} else {
+								throw(new Error(`Illegal termination after terminated SysEx event.`));
+							};
+							//continue;
+						} else if (e === 0xf0) {
+							if (isSysExActive) {
+								// Also rejects the live message embedding trick.
+								throw(new RangeError(`New SysEx events cannot appear without the previous SysEx event terminating.`));
+							} else {
+								isSysExActive = true;
+								//continue;
+							};
+						} else if (e >= 0x80) {
+							throw(new RangeError(`SysEx payloads cannot contain bytes greater than or equal to 0x80.`));
+						} else if (isSysExActive === false) {
+							throw(new Error(`SysEx payloads cannot contain bytes after termination and before new initialisation.`));
+						};
+						break;
+					};
+					default: {
+						if (e >= 0x80) {
+							throw(new RangeError(`Channel events cannot contain bytes greater than or equal to 0x80.`));
+						};
+					};
+				};
+			};
+		};
+		if (eventType === 0xf0 || eventType === 0xf7) {
+			// Separated safety check due to `loosenForSpeed`.
+			options.parserContext.lastSysExHung = options.loosenForSpeed ? (nakedEvent.data.length > 0 ? nakedEvent.data[nakedEvent.data.length - 1] !== 0xf7 : false) : isSysExActive;
+		};
 		if (!isStale) {
 			// Crash the subsequent event that attempts running status reuse, if the event type is 0xf0-0xff.
 			options.parserContext.lastStatus = statusByte;
 		};
-		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
-		if (eventType >= 8 && eventType < 255) {
-			// Meta events... They can be whatever they want.
-			const scanRegion = Math.min(nakedEvent.data.length, 16);
-			for (let i = 0; i < scanRegion; i ++) {
-				const e = nakedEvent.data[i];
-				if (e === 0xf7 && (eventType === 0xf0 || eventType === 0xf7)) {
-					continue;
-				} else if (e >= 0x80) {
-					throw(new RangeError(`Channel events cannot contain bytes greater than or equal to 0x80.`));
-				};
-			};
-		};
 		return nakedEvent;
 	};
-	static parseSingleContextEvent(chunkInfo) {
+	/*static parseSingleContextEvent(chunkInfo) {
 		const parsedEvent = this.parseSingleEvent(chunkInfo.data);
 		return parsedEvent;
-	};
+	};*/
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk  */
 	static streamRegulator(offset, subchunk) {
