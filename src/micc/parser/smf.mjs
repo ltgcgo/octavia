@@ -32,7 +32,7 @@ export default class MICCInternalsSMF {
 		};
 		// Delta time
 		let deltaSize = 0;
-		if (options.hasDelta || (options.streamContext != null && options.hasDelta !== false)) {
+		if (options.hasDelta) {
 			if (buffer.length < 1) {
 				throw(new Error(`Delta time expects at least a single byte.`));
 			};

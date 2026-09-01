@@ -138,7 +138,7 @@ declare class MICCSMFMIAParserContext {
 declare class MICCSMFMIAHandleOptions {
 	/** Provides optional binary stream context for parsing. */
 	streamContext?: SeamstressContext;
-	/** Setting this to true will include delta time parsing. If `streamContext` is provided, this defaults to `true`, otherwise `false.` */
+	/** Setting this to true will include delta time parsing. Defaults to `false.` */
 	hasDelta?: boolean;
 	/** An optional object to attach parsing status to. */
 	parserContext?: MICCSMFMIAParserContext;
