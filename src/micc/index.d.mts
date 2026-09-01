@@ -129,9 +129,11 @@ export class WrappedMIDIEvent {
 }
 declare class MICCSMFMIAParserContext {
 	/** Status byte of the last event. Same as `NakedMIDIEvent.type`. */
-	lastStatus: number;
-	/** If the last event was a `dt` event. the delta time specified by it. Should always be reset to `0` for each non-`dt` event. */
-	lastDelta: number;
+	lastStatus?: number;
+	/** If the last event was a `dt` event. the delta time specified by it. Should always be reset to `0` for each non-`dt` event. Used only by the MIA parser. */
+	lastDelta?: number;
+	/** If the last SysEx event was not ended by `0xF7`. Used by parsers to reject invalid SysEx send states. */
+	lastSysExHung?: boolean;
 };
 declare class MICCSMFMIAHandleOptions {
 	/** Provides optional binary stream context for parsing. */
@@ -140,6 +142,8 @@ declare class MICCSMFMIAHandleOptions {
 	hasDelta?: boolean;
 	/** An optional object to attach parsing status to. */
 	parserContext?: MICCSMFMIAParserContext;
+	/** If the event has been wrapped in SMF. This can affect how parsers and serialisers function. */
+	isSmfWrapped?: boolean;
 };
 /** Internal methods for MIA assembly and disassembly. */
 export class MICCInternalsMIA {
@@ -156,11 +160,14 @@ export class MICCInternalsMIA {
 };
 /** Internal methods for SMF parsing and serialising. */
 export class MICCInternalsSMF {
-	/** Parse single raw MIDI events from buffers.
-	* @param buffer The input buffer. */
+	/** Parse single raw MIDI events from buffers. Requires full single events.
+	* @param buffer The input buffer.
+	* @param options Parser options. Only reuse the same options object for a single SMF track. */
 	static parseSingleEvent(buffer: Uint8Array | Uint8ClampedArray | SeamstressChunk, options?: MICCSMFMIAHandleOptions): NakedMIDIEvent;
 	/** Serialise single parsed MIDI events into buffers. */
 	static emitSingleEvent(event: NakedMIDIEvent): Uint8Array;
+	/** Regulates the incoming SMF stream. Set as `Seamstress.regulateStream()`. */
+	static streamRegulator(offset: number, subchunk: SeamstressChunk): number;
 };
 /** A pointer to the actual clip tracks. The group specifier is `micc.pointer`. */
 export class MICCPointer extends MICCBaseElement {

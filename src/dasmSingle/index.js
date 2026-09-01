@@ -11,6 +11,7 @@ import {
 	bufferFrom,
 	bufferTo
 } from "../state/utils/bufferIo.mjs";
+import MICCInternalsSMF from "../micc/parser/smf.mjs";
 
 self.Alpine = Alpine;
 
@@ -22,15 +23,77 @@ const inputMia = $e("input#text-mia");
 /** @type {HTMLDivElement} */
 const displayNakedEvent = $e("div#renderer-naked");
 
+const displayClear = async () => {
+	while (displayNakedEvent.childNodes.length > 0) {
+		displayNakedEvent.childNodes[0].remove();
+	};
+};
+
 self.gParseRaw = async () => {
 	const inputLength = inputRaw.value.length;
 	const normalisedInput = inputRaw.value.padEnd(inputLength + (inputLength & 1), "0");
 	const inputBuffer = bufferFrom("hex", normalisedInput);
+	console.debug(inputBuffer);
+	try {
+		const parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer);
+		displayClear();
+		displayNakedEvent.append(JSON.stringify(parsedEvent, (k, v) => {
+			switch (typeof v) {
+				case "boolean":
+				case "number":
+				case "string": {
+					return v;
+					break;
+				};
+				case "bigint": {
+					return `${v?.toString()}n`;
+					break;
+				};
+				case "function": {
+					return `${v?.name || "<anonymous>"}() {}`;
+					break;
+				};
+				case "symbol": {
+					return v.toString();
+					break;
+				};
+				default: {
+					switch (v?.constructor) {
+						case Uint8Array:
+						case Uint8ClampedArray: {
+							return `[object Uint8Array] (${v.length} B)`;
+							break;
+						};
+						default: {
+							return v;
+						};
+					};
+				};
+			};
+		}, "\t"));
+		console.debug(parsedEvent);
+	} catch (err) {
+		console.warn(err);
+		displayClear();
+		const errorMsg = document.createElement("span");
+		errorMsg.classList.add("has-text-warning");
+		errorMsg.append(`Uncaught ${err.name}: ${err.message}\nAt:\n\t${err.stack.split("\n").join("\n\t")}`);
+		displayNakedEvent.append(errorMsg);
+	};
 };
 self.gParseMia = async () => {
 	// WIP!
 	console.debug(inputMia.value);
 };
+
+inputRaw.addEventListener("keydown", async (ev) => {
+	switch (ev.key) {
+		case "Enter": {
+			await gParseRaw();
+			break;
+		};
+	};
+});
 
 (async () => {
 	Alpine.start();

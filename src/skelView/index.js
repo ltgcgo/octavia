@@ -8,9 +8,8 @@ import {
 	$e, $a
 } from "../../libs/lightfelt@ltgcgo/main/quickPath";
 import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
-import {
-	smfEventRegulator
-} from "../micc/utils.js";
+import MICCInternalsSMF from "../micc/parser/smf.mjs";
+const smfEventRegulator = MICCInternalsSMF.bufferRegulator;
 
 self.IntegerHandler = IntegerHandler;
 /*self.a = new Uint8Array([127, 0, 0, 0]);

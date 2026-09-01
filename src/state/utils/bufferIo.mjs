@@ -40,10 +40,10 @@ for (let [key, value] of bufferMaps[0]) {
 };
 //console.debug(bufferMaps);
 
-/**  @param alphabet {string}
-* @param string {string}
-* @param lastChunkHandling {string}
-* @param maxLength {number}
+/**  @param {string} alphabet
+* @param {string} string
+* @param {string} lastChunkHandling
+* @param {number} maxLength
 * @returns {Uint8Array} */
 const bufferFrom = function bufferFrom (alphabet = "base64", string, lastChunkHandling = "loose", maxLength = 536870911) {
 	if (typeof string !== "string") {
@@ -198,9 +198,9 @@ const bufferFrom = function bufferFrom (alphabet = "base64", string, lastChunkHa
 	return buffer;
 };
 
-/**  @param alphabet {string}
-* @param buffer {Uint8Array}
-* @param omitPadding {boolean}
+/** @param {string} alphabet
+* @param {Uint8Array} buffer
+* @param {boolean} omitPadding
 * @returns {string} */
 const bufferTo = function bufferTo (alphabet = "base64", buffer, omitPadding = false) {};
 self.bufferTo = bufferTo;

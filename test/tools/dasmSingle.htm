@@ -32,12 +32,12 @@
 			<template x-for="(option, value) in delta">
 				<div class="column column-option column-button" @click="gHasDelta(value>0)" x-text="option" :active="($store.hasDelta??false)===(value>0)?'true':'false'"></div>
 			</template>
-			<div class="column column-option"><b>Readable</b></div>
-			<template x-for="(option, value) in readable">
-				<div class="column column-option column-button" @click="gUseReadable(value>0)" x-text="option[0]" :title="option[1]" :active="($store.useReadable??false)===(value>0)?'true':'false'"></div>
-			</template>
 			<div class="column column-option"><b>Finalise</b></div>
 			<template x-for="(option, value) in finalise">
+				<div class="column column-option column-button" @click="gUseReadable(value>0)" x-text="option[0]" :title="option[1]" :active="($store.useReadable??false)===(value>0)?'true':'false'"></div>
+			</template>
+			<div class="column column-option"><b>Readable</b></div>
+			<template x-for="(option, value) in readable">
 				<div class="column column-option column-button" @click="gUseReadable(value>0)" x-text="option[0]" :title="option[1]" :active="($store.useReadable??false)===(value>0)?'true':'false'"></div>
 			</template>
 			<div class="column"></div>
@@ -62,21 +62,7 @@
 				<button @click="gParseMia()" class="button is-info" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
 			</div>
 		</div>
-		<div id="renderer-naked" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">{
-	"group": "mma.midiEvent",
-	"delta": 0,
-	"type": 255,
-	"ch": 256,
-	"meta": 1,
-	"data": [object Uint8Array] (18 B),
-	"isStale": false,
-	"offset": 0,
-	"parsed": "Waiting for input.",
-	"time": 0,
-	"port": 255,
-	"track": 65535,
-	"label": "l9"
-}</div>
+		<div id="renderer-naked" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">Parse an event to begin.</div>
 		<footer class="footer px-5 py-4">
 			<div class="content px-5">
 				<p>This utility is mainly for developers. If you are familiar with MIA and Mane, this can also be used as a very versatile parameter editor like XG Editor, GS Advanced Editor and Korg X5/N5 editor, basically (Neo)Vim, SCORE or LilyPond for MIDI.</p>
