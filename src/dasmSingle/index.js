@@ -46,8 +46,10 @@ self.gUseReadable = async (value) => {
 };
 
 self.gParseRaw = async () => {
-	const inputLength = inputRaw.value.length;
-	const normalisedInput = inputRaw.value.padEnd(inputLength + (inputLength & 1), "0");
+	const sanitisedInput = inputRaw.value.replaceAll(" ", "");
+	inputRaw.value = sanitisedInput;
+	const inputLength = sanitisedInput.length;
+	const normalisedInput = sanitisedInput.padEnd(inputLength + (inputLength & 1), "0");
 	try {
 		const inputBuffer = bufferFrom("hex", normalisedInput);
 		console.debug(inputBuffer);
@@ -80,7 +82,7 @@ self.gParseRaw = async () => {
 					switch (v?.constructor) {
 						case Uint8Array:
 						case Uint8ClampedArray: {
-							return `(${v.length} B) ${bufferToDHex(v, 8)}`;
+							return `(${v.length} B) ${bufferToDHex(v, 12)}`;
 							break;
 						};
 						default: {
