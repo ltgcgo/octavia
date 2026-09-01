@@ -3029,7 +3029,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					if (typeof ingressEvent.ch === "number") {
 						// Channel messages
 						let mappedCh = 65535;
-						if ((ingressEvent?.port < 16) {
+						if (ingressEvent?.port < 16) {
 							mappedCh = (ingressEvent.port << 4) | (ingressEvent.ch & 15);
 						} else if (ingressEvent.ch < allocated.ch) {
 							mappedCh = upThis.chRedir(ingressEvent.ch, (ingressEvent.track < 16384) ? ingressEvent.track : 0, false);
