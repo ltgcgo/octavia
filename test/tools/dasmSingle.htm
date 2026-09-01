@@ -34,7 +34,7 @@
 			</template>
 			<div class="column column-option"><b>Finalise</b></div>
 			<template x-for="(option, value) in finalise">
-				<div class="column column-option column-button" @click="gUseReadable(value>0)" x-text="option[0]" :title="option[1]" :active="($store.useReadable??false)===(value>0)?'true':'false'"></div>
+				<div class="column column-option column-button" @click="gFinalise(value>0)" x-text="option[0]" :title="option[1]" :active="($store.finalise??false)===(value>0)?'true':'false'"></div>
 			</template>
 			<div class="column column-option"><b>Readable</b></div>
 			<template x-for="(option, value) in readable">

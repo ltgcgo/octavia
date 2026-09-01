@@ -32,6 +32,19 @@ const displayClear = async () => {
 	};
 };
 
+self.gSchemaIsWrapped = async (value) => {
+	Alpine.store("schemaIsWrapped", value);
+};
+self.gHasDelta = async (value) => {
+	Alpine.store("hasDelta", value);
+};
+self.gFinalise = async (value) => {
+	Alpine.store("finalise", value);
+};
+self.gUseReadable = async (value) => {
+	Alpine.store("useReadable", value);
+};
+
 self.gParseRaw = async () => {
 	const inputLength = inputRaw.value.length;
 	const normalisedInput = inputRaw.value.padEnd(inputLength + (inputLength & 1), "0");
@@ -99,5 +112,9 @@ inputRaw.addEventListener("keydown", async (ev) => {
 });
 
 (async () => {
+	Alpine.store("schemaIsWrapped", false);
+	Alpine.store("hasDelta", false);
+	Alpine.store("finalise", false);
+	Alpine.store("useReadable", false);
 	Alpine.start();
 })();
