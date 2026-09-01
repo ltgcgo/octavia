@@ -227,6 +227,64 @@ export default class MICCInternalsSMF {
 		const parsedEvent = this.parseSingleEvent(chunkInfo.data);
 		return parsedEvent;
 	};*/
+	/** @param {NakedMIDIEvent} event
+	* @param {MICCSMFMIAHandleOptions} options */
+	static emitSingleEvent(event, options = {}) {
+		if (event.constructor !== NakedMIDIEvent && event.group !== "mma.midiEvent") {
+			throw(new TypeError(`Provided event is not of type NakedMIDIEvent.`));
+		};
+		let finalSize = 0;
+		// Delta time size
+		if (options.hasDelta) {
+		};
+		// Status byte size
+		if (event.type >= 240 && event.type <= 255) {
+			if (event.isStale) {
+				throw(new Error(`System messages forbid running status.`));
+			};
+			finalSize += 1;
+		} else if (event.type >= 8 && event.type < 15) {
+			if (!event.isStale) {
+				finalSize += 1;
+			};
+		};
+		// Payload size
+		switch (event.type) {
+			case 8:
+			case 9:
+			case 10:
+			case 11:
+			case 14: {
+				finalSize += 2;
+				break;
+			};
+			case 12:
+			case 13: {
+				finalSize += 1;
+				break;
+			}
+			case 0xf7: {
+				if (!options.isSmfWrapped) {
+					throw(new Error(`0xF7 events can only occur in SMF.`));
+				};
+				// Fallthrough.
+			};
+			case 0xf0: {
+				break;
+			};
+			case 0xff: {
+				if (!options.isSmfWrapped) {
+					throw(new Error(`0xFF events can only occur in SMF.`));
+				};
+				break;
+			};
+			default: {
+				throw(new TypeError(`Unknown event type ${event.type}.`));
+			};
+		};
+		console.debug(finalSize);
+		// Assemble the final bytes. Validity checks are not the responsibility of this method.
+	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk  */
 	static streamRegulator(offset, subchunk) {
