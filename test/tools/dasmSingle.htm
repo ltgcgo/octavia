@@ -42,24 +42,24 @@
 			</template>
 			<div class="column"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{}">
 			<div class="column">
 				<div class="control">
 					<input type="text" id="text-raw" class="input text-functional" value="F07E7F0901F7"></input>
 				</div>
 			</div>
 			<div class="column column-option">
-				<button id="btn-raw-parse" class="button is-link" title="Emit disassembled MIA and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
+				<button @click="gParseRaw()" class="button is-link" title="Emit disassembled MIA and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
 			</div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{}">
 			<div class="column">
 				<div class="control">
 					<input type="text" id="text-mia" class="input text-functional" value='meta text "Waiting for input."l9'></input>
 				</div>
 			</div>
 			<div class="column column-option">
-				<button id="btn-mia-parse" class="button is-info" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
+				<button @click="gParseMia()" class="button is-info" title="Emit the assembled raw bytes and the diagnostic object. Also activated by the Enter key when focused on the text field.">Parse!</button>
 			</div>
 		</div>
 		<div id="renderer-naked" class="text-functional text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">{
