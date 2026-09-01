@@ -111,7 +111,10 @@ self.gParseRaw = async () => {
 };
 self.gSerialiseRaw = async () => {
 	if (parsedEvent) {
-		MICCInternalsSMF.emitSingleEvent(parsedEvent);
+		MICCInternalsSMF.emitSingleEvent(parsedEvent, {
+			"hasDelta": Alpine.store("hasDelta"),
+			"isSmfWrapped": Alpine.store("schemaIsWrapped")
+		});
 	} else {
 		displayClear();
 		const errorMsg = document.createElement("span");

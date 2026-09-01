@@ -100,7 +100,7 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	/** The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will be invalid for `0xf0`-`0xff` events. `65535` means "unset". */
 	ch: number;
 	/** The meta event type. Only applicable to `0xff` (meta) events. Defaults to `256` (invalid). */
-	meta?: number;
+	meta: number;
 	/** The raw data of the MIDI event. */
 	data: Uint8Array;
 	/** True means that the running status of the current event was inherited from the previous event. `0xf0`-`0xff` events always have this byte set to false. Valid omissions will be reflected in serialisers. */

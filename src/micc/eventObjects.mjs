@@ -17,10 +17,14 @@ const NakedMIDIEvent = class NakedMIDIEvent extends MICCBaseElement {
 	type = 0;
 	ch = 65535;
 	meta = 256;
+	/** @type {Uint8Array} */
 	data;
 	isStale = false;
+	/** @type {number?} */
 	offset;
+	/** @type {number|string?} */
 	parsed;
+	/** @type {number?} */
 	time;
 	port = 255;
 	track = 65535;

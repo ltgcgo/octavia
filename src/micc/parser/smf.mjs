@@ -233,12 +233,17 @@ export default class MICCInternalsSMF {
 		if (event.constructor !== NakedMIDIEvent && event.group !== "mma.midiEvent") {
 			throw(new TypeError(`Provided event is not of type NakedMIDIEvent.`));
 		};
+		options.parserContext = options.parserContext ?? {};
 		let finalSize = 0;
+		let deltaPtr = -1, statusPtr = -1, dataPtr = -1, dataStartPtr = -1;
 		// Delta time size
 		if (options.hasDelta) {
+			deltaPtr = 0;
+			finalSize += IntegerHandler.lengthVLV(event.delta);
 		};
+		statusPtr = finalSize;
 		// Status byte size
-		if (event.type >= 240 && event.type <= 255) {
+		if (event.type >= 0xf0 && event.type <= 0xff) {
 			if (event.isStale) {
 				throw(new Error(`System messages forbid running status.`));
 			};
@@ -247,11 +252,19 @@ export default class MICCInternalsSMF {
 			if (event.isStale) {
 				if (!options.isSmfWrapped) {
 					throw(new Error(`Running status is not allowed in raw MIDI 1.0 messages.`));
+				} else if (options.parserContext.lastStatus >= 0xf0) {
+					throw(new Error(`Invalid running status: no system message inheritance.`));
+				} else if (options.parserContext.lastStatus !== ((event.type << 4) | (event.ch & 15))) {
+					throw(new Error(`Invalid running status: status mismatch.`));
 				};
-			} else {
+			} else if (Number.isSafeInteger(event.ch)) {
 				finalSize += 1;
+			} else {
+				throw(new TypeError(`Channel must be an integer.`));
 			};
 		};
+		dataPtr = finalSize;
+		let checkPayload = 0, checkPayloadSize = 0;
 		// Payload size
 		switch (event.type) {
 			case 8:
@@ -260,11 +273,15 @@ export default class MICCInternalsSMF {
 			case 11:
 			case 14: {
 				finalSize += 2;
+				checkPayloadSize = 2;
+				checkPayload = 1;
 				break;
 			};
 			case 12:
 			case 13: {
 				finalSize += 1;
+				checkPayloadSize = 1;
+				checkPayload = 1;
 				break;
 			}
 			case 0xf7: {
@@ -274,21 +291,115 @@ export default class MICCInternalsSMF {
 				// Fallthrough.
 			};
 			case 0xf0: {
+				if (options.isSmfWrapped) {
+					finalSize += IntegerHandler.lengthVLV(event.data.length);
+					dataStartPtr = finalSize;
+				} else if (event.data[event.data.length - 1] !== 0xf7) {
+					throw(new Error(`Incomplete new SysEx.`));
+				};
+				finalSize += event.data.length;
 				break;
 			};
 			case 0xff: {
 				if (!options.isSmfWrapped) {
 					throw(new Error(`0xFF events can only occur in SMF.`));
 				};
-				finalSize += 1; // Meta type.
+				if (Number.isSafeInteger(event.meta) && event.meta >= 0 && event.meta <= 0xff) {
+					//finalSize += 1; // Meta type.
+					finalSize += 1 + IntegerHandler.lengthVLV(event.data.length);
+					dataStartPtr = finalSize;
+					finalSize += event.data.length;
+				} else {
+					throw(new Error(`Invalid meta type.`));
+				};
 				break;
 			};
 			default: {
 				throw(new TypeError(`Unknown event type ${event.type}.`));
 			};
 		};
+		switch (checkPayload) {
+			case 0: {
+				break;
+			};
+			case 1: {
+				// Channel events.
+				if (event.data.length !== checkPayloadSize) {
+					throw(new Error(`Event data size does not match its event type.`));
+				};
+				if (event.ch >= 0) {
+					if (event.ch <= 15) {
+						// No-op
+					} else if (event.port === 255 && event.ch <= 255) {
+						console.warn(`Event on CH${event.ch + 1} have not yet been flattened, causing potential loss in SMF/MIDI 1.0 binary assembly. Flatten events first before utilising extended ranges.`);
+					} else {
+						throw(new RangeError(`Channel out of range.`));
+					};
+				} else {
+					throw(new RangeError(`Channel must be a non-negative integer.`));
+				};
+				for (let i = 0; i < event.data.length; i ++) {
+					if (event.data[i] >= 0x80) {
+						throw(new RangeError(`Channel events cannot contain bytes greater than or equal to 0x80.`));
+					};
+				};
+				break;
+			};
+			default: {
+				throw(new Error(`Reached undefined payload check state.`));
+			};
+		};
 		console.debug(finalSize);
-		// Assemble the final bytes. Validity checks are not the responsibility of this method.
+		// Assemble the final bytes. Validity checks for system messages are not the responsibility of this method.
+		const buffer = new Uint8Array(finalSize);
+		if (deltaPtr >= 0) {
+			IntegerHandler.writeVLV(buffer, event.delta, deltaPtr);
+		};
+		if (statusPtr < 0) {
+			throw(new Error(`Status byte slot unrecognised.`));
+		};
+		if (!event.isStale) {
+			buffer[statusPtr] = event.type >= 0xf0 ? event.type : (event.type << 4) | (event.ch & 15);
+		};
+		if (dataPtr < 0) {
+			throw(new Error(`Data byte slot unrecognised.`));
+		};
+		if (dataStartPtr < 0) {
+			dataStartPtr = dataPtr;
+		};
+		switch (event.type) {
+			case 8:
+			case 9:
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			case 14: {
+				break;
+			};
+			case 0xf7:
+			case 0xf0: {
+				if (options.isSmfWrapped) {
+					IntegerHandler.writeVLV(buffer, event.data.length, dataPtr);
+				};
+				break;
+			};
+			case 0xff: {
+				buffer[dataPtr] = event.meta;
+				IntegerHandler.writeVLV(buffer, event.data.length, dataPtr + 1);
+				break;
+			};
+			default: {
+				throw(new TypeError(`Unknown event type ${event.type}.`));
+			};
+		};
+		buffer.set(event.data, dataStartPtr);
+		// Assembly finished.
+		if (!event.isStale) {
+			options.parserContext.lastStatus = event.type <= 15 ? (event.type << 4) | (event.ch & 15) : event.type;
+		};
+		console.debug(buffer);
+		return buffer;
 	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk  */

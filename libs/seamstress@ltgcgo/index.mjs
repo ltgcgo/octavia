@@ -138,7 +138,7 @@ let IntegerHandler = class IntegerHandler {
 		let upThis = this;
 		upThis.#ensureU8(buffer);
 		let breakCrit = Math.min(buffer.length, 4),
-		breakTest = breakCrit - 1,
+		breakTest = breakCrit - 1 + offset,
 		result = 0;
 		for (let i = 0; i < breakCrit; i ++) {
 			let e = buffer[i + offset];
@@ -148,7 +148,9 @@ let IntegerHandler = class IntegerHandler {
 			result |= e & 127;
 			if ((e & this.MASK_VLV) === 0) {
 				break;
-			} else if (breakTest >= breakCrit) {
+			} else if (e === 128) {
+				throw(new Error(`Non-canonical VLV-8 byte 0x80 encountered.`));
+			} else if (i >= breakTest) {
 				throw(new Error(`VLV-8 did not terminate at the end of the read buffer.`));
 			};
 		};
@@ -159,7 +161,7 @@ let IntegerHandler = class IntegerHandler {
 		let upThis = this;
 		upThis.#ensureU8(buffer);
 		let breakCrit = Math.min(buffer.length, 16),
-		breakTest = breakCrit - 1,
+		breakTest = breakCrit - 1 + offset,
 		result = 0n;
 		for (let i = 0; i < breakCrit; i ++) {
 			let e = buffer[i + offset];
@@ -169,7 +171,9 @@ let IntegerHandler = class IntegerHandler {
 			result |= BigInt(e & 127);
 			if ((e & this.MASK_VLV) === 0) {
 				break;
-			} else if (breakTest >= breakCrit) {
+			} else if (e === 128) {
+				throw(new Error(`Non-canonical VLV-8 byte 0x80 encountered.`));
+			} else if (i >= breakTest) {
 				throw(new Error(`VLV-8 did not terminate at the end of the read buffer.`));
 			};
 		};
