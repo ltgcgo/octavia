@@ -148,6 +148,8 @@ export declare const allocated: {
 	readonly vxPrim: number;
 	/** Value of the invalid part. */
 	readonly invalidCh: number;
+	/** Sentinel value for randomised panning. */
+	readonly randomPan: number;
 	/** What does this do? I forgot ;P */
 	readonly redir: number;
 }

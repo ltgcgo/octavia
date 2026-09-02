@@ -306,7 +306,8 @@ const allocated = {
 	cvn: 12, // custom voice names
 	redir: 32,
 	vxPrim: 3,
-	invalidCh: 255
+	invalidCh: 255,
+	randomPan: 129
 };
 allocated.chcc = allocated.cc * allocated.ch;
 const overrides = {
@@ -4107,7 +4108,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					}, false, false, () => {
 						upThis.setChCc(part, 7, e); // volume
 					}, false, false, () => {
-						upThis.setChCc(part, 10, e || 128); // pan
+						upThis.setChCc(part, 10, e || allocated.randomPan); // pan
 					}, false, false, () => {
 						upThis.setChCc(part, 128, e); // dry level
 						upThis.assignChAce(part, 128);
@@ -4857,7 +4858,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						return e - 64;
 					},
 					() => {
-						return e || 128;
+						return e || allocated.randomPan;
 					},
 					() => {
 						return e;
@@ -4934,7 +4935,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					}, false
 					, false
 					, () => {
-						upThis.setChCc(part, 10, e || 128);
+						upThis.setChCc(part, 10, e || allocated.randomPan);
 					}, false
 					, false
 					, () => {
@@ -5392,8 +5393,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					, false // velocity sense offset
 					, () => {
 						// pan
-						//upThis.#cc[chOff + ccToPos[10]] = e || 128;
-						upThis.setChCc(part, 10, e || 128);
+						//upThis.#cc[chOff + ccToPos[10]] = e || allocated.randomPan;
+						upThis.setChCc(part, 10, e || allocated.randomPan);
 					}, false // note upperbound
 					, false // note lowerbound
 					, () => {
@@ -6261,7 +6262,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					}, () => {
 					}, () => {
 					}, () => {
-						upThis.#cc[chOff + ccToPos[10]] = e || 128;
+						upThis.#cc[chOff + ccToPos[10]] = e || allocated.randomPan;
 					}, () => {
 					}, () => {
 					}, () => {
@@ -6465,7 +6466,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							};
 							case 14: {
 								// Pan
-								upThis.#cc[chOff + ccToPos[10]] = e || 128;
+								upThis.#cc[chOff + ccToPos[10]] = e || allocated.randomPan;
 								break;
 							};
 							case 19: {
@@ -7693,7 +7694,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							// fine
 						}, false, false, false, false, false, () => {
 							//console.debug(`${dPref}CH${part + 1} pan: ${e}`);
-							upThis.setChCc(part, 10, e || 128);
+							upThis.setChCc(part, 10, e || allocated.randomPan);
 						}][pi] || (() => {}))();
 					} else if (pi < 36) {
 						([() => {
