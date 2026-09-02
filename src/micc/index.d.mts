@@ -16,14 +16,14 @@ export class BinaryString {
 	/** The attached list of decoders. When all of them fail, Latin 9 will be the fallback. Defaults to UTF-8 only. */
 	decoders?: Iterable<TextDecoder>;
 	/** The attached buffer to decode. */
-	buffer?: Uint8Array | Uint8ClampedArray;
+	buffer?: Uint8Array|Uint8ClampedArray;
 	/** The decoded result. */
 	text?: string;
 	/** The text encoding label used in the decoded result. */
 	label?: string;
 	/** Decode the buffer, both return it and overwrite the `text` property. Will error out if there's no attached buffer.
 	* @param buffer When this argument is supplied, the `buffer` property will be overridden with it. */
-	decode(buffer?: Uint8Array | Uint8ClampedArray): string;
+	decode(buffer?: Uint8Array|Uint8ClampedArray): string;
 	/** Encode the result into a buffer, both return it and overwrite the `buffer` property. Defaults to UTF-8 encoding with no labels. Will error out if there's no attached text.
 	* @param text When this argument is supplied, the `text` property will be overridden with it.
 	* @param label When this argument is supplied, the `label` property will be overridden with it. */
@@ -108,7 +108,7 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	/** The offset of the current event in the original root event stream, if the current event was created from a file-like binary event stream (e.g. SMF). Useful for debugging, unused by assemblers and serializers. This isn't the chunk offset value. */
 	offset?: number;
 	/** The parsed value of the event set by the finaliser, can be decoded strings. Only applicable to some `0xff` (meta) events, unused by assemblers and serializers. */
-	parsed?: number | string;
+	parsed?: number|string;
 	/** The parsed time in MIDI ticks, usually set by the event funnel. Use a time offset map to grab the actual seconds. Unused by assemblers and serializers. */
 	time?: number;
 	/** The port for the event, usually set by the finaliser. Defaults to `null`. Unless used by multi-port event transports, this is unused by assemblers and serializers. */
@@ -123,7 +123,7 @@ export class WrappedMIDIEvent {
 	/** The actual MIDI event. */
 	event: NakedMIDIEvent;
 	/** Chunk type. Same as `SeamstressChunk.type`. */
-	type: number | string;
+	type: number|string;
 	/** Chunk ID. Same as `SeamstressChunk.chunkId`. */
 	chunk: number;
 }
@@ -134,7 +134,7 @@ declare interface MICCSMFMIAParserContext {
 	lastDelta?: number;
 	/** If the last SysEx event was not ended by `0xF7`. Used by parsers to reject invalid SysEx send states. */
 	lastSysExHung?: boolean;
-};
+}
 declare interface MICCSMFMIAHandleOptions {
 	/** Provides optional binary stream context for parsing. */
 	streamContext?: SeamstressContext;
@@ -146,31 +146,31 @@ declare interface MICCSMFMIAHandleOptions {
 	isSmfWrapped?: boolean;
 	/** Should the parser ignore some safety checks for potentially large messages. */
 	loosenForSpeed?: boolean;
-};
+}
 /** Internal methods for MIA assembly and disassembly. */
 export class MICCInternalsMIA {
 	/** Convert single MIA lines into split tokens. Rejects with leading colons (`:`). */
 	static lexLine(text: string): string[];
 	/** Disassemble single raw MIDI events into MIA lines directly. */
-	static dasmSingleEvent(buffer: Uint8Array | Uint8ClampedArray | SeamstressChunk, options?: MICCSMFMIAHandleOptions): string;
+	static dasmSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): string;
 	/** Stringify parsed MIDI events into MIA lines. */
 	static emitSingleEvent(event: NakedMIDIEvent, options?: MICCSMFMIAHandleOptions): string;
 	/** Assemble single MIA lines into raw MIDI events directly. */
 	static asmSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): Uint8Array;
 	/** Parse single MIA lines into parsed MIDI events. */
 	static parseSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): NakedMIDIEvent;
-};
+}
 /** Internal methods for MIDI 1.0/SMF parsing and serialising. */
 export class MICCInternalsSMF {
 	/** Parse single raw MIDI events from buffers. Requires full single events.
 	* @param buffer The input buffer.
 	* @param options Parser options. Only reuse the same options object for a single SMF track. */
-	static parseSingleEvent(buffer: Uint8Array | Uint8ClampedArray | SeamstressChunk, options?: MICCSMFMIAHandleOptions): NakedMIDIEvent;
+	static parseSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): NakedMIDIEvent;
 	/** Serialise single parsed MIDI events into buffers. */
 	static emitSingleEvent(event: NakedMIDIEvent, options?: MICCSMFMIAHandleOptions): Uint8Array;
 	/** Regulates the incoming SMF stream. Set as `Seamstress.regulateStream()`. */
 	static streamRegulator(offset: number, subchunk: SeamstressChunk): number;
-};
+}
 /** A pointer to the actual clip tracks. The group specifier is `micc.pointer`. */
 export class MICCPointer extends MICCBaseElement {
 	/** Type of the current pointer. Largely follows XGworks. */
@@ -376,7 +376,7 @@ declare class ColxiMIDIEvent {
 	/** If the event is a meta event, the meta event type. */
 	metaType?: number;
 	/** Actual data of the event. */
-	data: number | Uint8Array | string;
+	data: number|Uint8Array|string;
 }
 /** A MIDI track containing events in Colxi's scheme. */
 declare class ColxiMIDITrack {
@@ -418,7 +418,7 @@ export class ColxiMIDIParser {
 	/** Parses the input into a structured representation. Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used.
 	* @param input MIDI file data to be parsed. Can be a `File` object, one of the two uint8 arrays, and a Base64 string.
 	* @param callback The method to invoke when parsing is finished. */
-	static parse(input: File | Uint8Array | Uint8ClampedArray | string, callback: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
+	static parse(input: File|Uint8Array|Uint8ClampedArray|string, callback: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
 	/** Defines custom interpreter behaviour, should only invoked by the parser. The returned value will populate the data property. Returning `false` will assume default behaviour.
 	* @param type The event type.
 	* @param view A view into the MIDI data currently being parsed.

@@ -11,7 +11,7 @@ export class EnsembleUtilMethods {
 	/** Return the stepped sample. When `oldSamples` is not provided, values below 0 and above the last index of the `samples` array will be clamped, otherwise values below 0 will use `oldSamples` before getting clamped.
 	* @param i An integer array index.
 	*/
-	static stepSample(i: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
+	static stepSample(i: number, samples: Float32Array|Float64Array|number[], oldSamples?: Float32Array|Float64Array|number[]): number;
 	/** Calculate the effective low-pass cutoff in cycles of the original signal. Values above 1 are treated the same as 1. */
 	static cutoffFactor(sampleRatio: number): number;
 	/** The epsilon threshold. Values below it cause the `sinc` method to return `1` directly. */
@@ -21,7 +21,7 @@ export class EnsembleUtilMethods {
 	/** Writes the triangle window values to the underlying Float64Array. Sum of all samples is `1`. Unlike the regular Bartlett window, only integers are accepted, and the edges are non-zero.
 	* @param windowSize The size of the window. Must be a positive integer, capped at `32767`.
 	*/
-	static triangleWindowFill(floats: Float32Array | Float64Array, windowSize: number, offset?: number): void;
+	static triangleWindowFill(floats: Float32Array|Float64Array, windowSize: number, offset?: number): void;
 	/** Retrieve a single value from the triangle window. Sum of all samples is `1`. Unlike the regular Bartlett window, only integers are accepted, and the edges are non-zero.
 	* @param windowSize The size of the window. Must be a positive integer, capped at `32767`.
 	* @param i The target sample position. Must be an integer in the range of `[0, windowSize - 1]`.
@@ -72,12 +72,12 @@ export class EnsembleResampler {
 	* @param samples The samples to be interpolated.
 	* @param oldSamples When provided, interpolated samples will use the last few samples from it instead for better consistency.
 	*/
-	get(timeStep: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
+	get(timeStep: number, samples: Float32Array|Float64Array|number[], oldSamples?: Float32Array|Float64Array|number[]): number;
 }
 /** The actual registry entry. */
 export class EnsembleResamplerEntry {
 	/** Same as `EnsembleResampler.get`. Must use a normal function instead of a lambda/arrow function to obtain the correct `this` value. */
-	get(timeStep: number, samples: Float32Array | Float64Array | number[], oldSamples?: Float32Array | Float64Array | number[]): number;
+	get(timeStep: number, samples: Float32Array|Float64Array|number[], oldSamples?: Float32Array|Float64Array|number[]): number;
 	/** The default sample ratio of the resampler. Defaults to `1`. */
 	sampleRatio?: number;
 	/** The function executed on writes to `sampleRatio`, enabling pre-calculation. Must use a normal function instead of a lambda/arrow function to obtain the correct `this` value. Do NOT write to either `sampleRatio` or `step` in this method. */
