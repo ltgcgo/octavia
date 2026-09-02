@@ -13,7 +13,7 @@ import {
 
 /** Standard MIDI Files (MIDI 1.0) or raw MIDI 1.0 messages. */
 export default class MICCInternalsSMF {
-	/** @param {Uint8Array | Uint8ClampedArray | SeamstressChunk} buffer
+	/** @param {Uint8Array | Uint8ClampedArray | SeamstressChunk} inBuffer
 	* @param {MICCSMFMIAHandleOptions} options
 	* @returns {NakedMIDIEvent} */
 	static parseSingleEvent(inBuffer, options = {}) {
@@ -49,7 +49,7 @@ export default class MICCInternalsSMF {
 		if (buffer.length < (1 + deltaSize)) {
 			throw(new Error(`Status byte expects at least a single byte.`))
 		};
-		let statusByte = 0, eventType = 0, eventCh = 65535, isStale = false;
+		let statusByte = 0, eventType = 0, eventCh = null, isStale = false;
 		if (buffer[deltaSize] >> 7) {
 			statusByte = buffer[deltaSize];
 		} else if (!options.isSmfWrapped) {
@@ -86,8 +86,13 @@ export default class MICCInternalsSMF {
 			throw(new RangeError(`Invalid status byte ${statusByte}.`));
 		};
 		const nakedEvent = new NakedMIDIEvent(eventType, deltaTime);
+		if (inBuffer.offsetStream >= 0) {
+			nakedEvent.offset = inBuffer.offsetStream;
+		};
 		// Event data
-		nakedEvent.ch = eventCh;
+		if (eventCh >= 0) {
+			nakedEvent.ch = eventCh;
+		};
 		nakedEvent.isStale = isStale;
 		let dataEndPointer = deltaSize + (isStale ? 0 : 1);
 		let dataStartPointer = dataEndPointer;

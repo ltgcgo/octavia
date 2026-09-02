@@ -3028,11 +3028,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					const msgTypeSpec = eventTypes[mappedType]?.length > 0 ? `${eventTypes[mappedType]}${(0b11000 >> (mappedType - 8)) ? ingressEvent.data[0] : ""}` : `unknown type ${mappedType}`;
 					if (typeof ingressEvent.ch === "number") {
 						// Channel messages
-						let mappedCh = 65535;
+						let mappedCh = null;
 						if (ingressEvent?.port < 16) {
 							mappedCh = (ingressEvent.port << 4) | (ingressEvent.ch & 15);
 						} else if (ingressEvent.ch < allocated.ch) {
-							mappedCh = upThis.chRedir(ingressEvent.ch, (ingressEvent.track < 16384) ? ingressEvent.track : 0, false);
+							mappedCh = upThis.chRedir(ingressEvent.ch, (ingressEvent.track < 4096) ? ingressEvent.track : 0, false);
+						} else {
+							throw(new Error(`Invalid event channel ${ingressEvent.ch}.`));
 						};
 						if (mappedCh < allocated.ch) {
 							const eventRunner = upThis.#chEventRun.get(mappedType);
@@ -3044,7 +3046,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 								};
 								if (norecipient) {
 									let msgPortCh = `CH${ingressEvent.ch + 1}`;
-									if (ingressEvent.port < 255) {
+									if (ingressEvent.port < 16) {
 										msgPortCh += ` on port ${ingressEvent.port + 1}`;
 									};
 									msgPortCh += ` (CH${mappedCh})`;

@@ -7,9 +7,12 @@ import {
 import {
 	$e, $a
 } from "../../libs/lightfelt@ltgcgo/main/quickPath";
-import {fileOpen} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
-import MICCInternalsSMF from "../micc/parser/smf.mjs";
-const smfEventRegulator = MICCInternalsSMF.bufferRegulator;
+import {
+	fileOpen
+} from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
+import {
+	MICCInternalsSMF
+} from "../micc/index.mjs";
 
 self.IntegerHandler = IntegerHandler;
 /*self.a = new Uint8Array([127, 0, 0, 0]);
@@ -69,12 +72,18 @@ let showResult = async (stream, props = {}) => {
 				let rawParser = new Seamstress();
 				rawParser.headerSize = 0;
 				rawParser.type = Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32;
-				rawParser.regulateStream = smfEventRegulator;
+				rawParser.regulateStream = MICCInternalsSMF.streamRegulator;
 				rawParser.debugMode = !!self.debugMode;
 				let splitStream = stream.tee();
 				(async () => {
 					for await (let chunk of rawParser.readRegulated(splitStream[1])) {
 						rawParser.debugMode && console.debug(summarizeSeamstressChunk(chunk));
+						if (chunk.type === "MTrk") {
+							console.debug(MICCInternalsSMF.parseSingleEvent(chunk, {
+								"isSmfWrapped": true,
+								"hasDelta": true
+							}));
+						};
 					};
 					console.info("Finished chunk skimming.");
 				})().catch((err) => {

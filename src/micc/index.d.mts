@@ -93,14 +93,14 @@ export class MICCBaseElement {
 }
 /** Representation of a MIDI event. The group specifier is `mma.midiEvent`. */
 export class NakedMIDIEvent extends MICCBaseElement {
-	/** Delta time. The time difference of the current event and the previous event. */
+	/** Delta time. The time difference of the current event and the previous event. Defaults to `0`. */
 	delta: number;
 	/** MIDI event type. Type `8` to `14`, and `240` to `255` are all available. `0` means "unset". */
 	type: number;
-	/** The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will be invalid for `0xf0`-`0xff` events. `65535` means "unset". */
-	ch: number;
-	/** The meta event type. Only applicable to `0xff` (meta) events. Defaults to `256` (invalid). */
-	meta: number;
+	/** The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will be invalid for `0xf0`-`0xff` events. Defaults to `null`. */
+	ch?: number;
+	/** The meta event type. Only applicable to `0xff` (meta) events. Defaults to `null`. */
+	meta?: number;
 	/** The raw data of the MIDI event. */
 	data: Uint8Array;
 	/** True means that the running status of the current event was inherited from the previous event. `0xf0`-`0xff` events always have this byte set to false. Valid omissions will be reflected in serialisers. */
@@ -109,12 +109,12 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	offset?: number;
 	/** The parsed value of the event set by the finaliser, can be decoded strings. Only applicable to some `0xff` (meta) events, unused by assemblers and serializers. */
 	parsed?: number | string;
-	/** The parsed time in MIDI ticks set by the finaliser. Use a time offset map to grab the actual seconds, unused by assemblers and serializers. */
+	/** The parsed time in MIDI ticks, usually set by the event funnel. Use a time offset map to grab the actual seconds. Unused by assemblers and serializers. */
 	time?: number;
-	/** The port for the event, usually set by the finaliser. `255` means "unset". Unless used by multi-port event transports, this is unused by assemblers and serializers. */
-	port: number;
-	/** The track number for the event, usually set by the finaliser. `65535` means "unset". Unused by assemblers and serializers. */
-	track: number;
+	/** The port for the event, usually set by the finaliser. Defaults to `null`. Unless used by multi-port event transports, this is unused by assemblers and serializers. */
+	port?: number;
+	/** The track number for the event, usually set by the event funnel. Defaults to `null`. Unused by assemblers and serializers. */
+	track?: number;
 	/** Populated if the parsed value has additional data. If the parsed value is a string, this property can denote the text encoding used. Unused by assemblers and serializers. */
 	label?: any;
 }
