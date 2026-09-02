@@ -448,8 +448,10 @@ let ScDisplay = class extends FocusedPartDisplay {
 				let cPan = upThis.device?.getChCc(upThis.part, 10);
 				if (cPan === 64) {
 					paramText += "C 0";
-				} else if (cPan === 128) {
+				} else if (cPan === 129) {
 					paramText += "RND";
+				} else if (cPan > 127) {
+					paramText += "R63";
 				} else if (cPan < 1) {
 					paramText += "L63";
 				} else {

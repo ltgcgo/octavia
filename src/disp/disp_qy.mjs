@@ -79,8 +79,8 @@ let QyDisplay = class extends FocusedPartDisplay {
 		};
 	};
 	#renderNeedle(cx, cy, value = 64) {
-		if (value < 128) {
-			this.qyRsrc.getBm(`Pan_${((value + 4) * 7282 >> 16).toString(16)}`)?.render((e, x, y) => {
+		if (value < 129) {
+			this.qyRsrc.getBm(`Pan_${((value + (value > 64 ? 3 : 4)) * 7282 >> 16).toString(16)}`)?.render((e, x, y) => {
 				if (e) {
 					this.#nmdb[cx + x + (y + cy) * 128 - 259] = 1;
 				};
