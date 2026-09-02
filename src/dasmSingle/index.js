@@ -117,7 +117,16 @@ self.gSerialiseRaw = async () => {
 			"isSmfWrapped": Alpine.store("schemaIsWrapped")
 		});
 		if (serialisedBuffer.toHex) {
-			inputRaw.value = serialisedBuffer.toHex().toUpperCase();
+			const hexResult = serialisedBuffer.toHex().toUpperCase();
+			if (inputRaw.value.toUpperCase() === hexResult) {
+				inputRaw.value = hexResult;
+			} else {
+				displayClear();
+				const errorMsg = document.createElement("span");
+				errorMsg.classList.add("has-text-warning");
+				errorMsg.append(`Failed lossless round-trip test. Assembly result:\n${hexResult}`);
+				displayNakedEvent.append(errorMsg);
+			};
 		};
 		console.info(`Serialised: ${bufferToDHex(serialisedBuffer)}\n`, serialisedBuffer);
 	} else {
