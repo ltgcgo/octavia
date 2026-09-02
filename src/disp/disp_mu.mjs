@@ -772,9 +772,11 @@ let MuDisplay = class extends FocusedPartDisplay {
 		} else if (pan === 64) {
 			upThis.#panStrokes[3] = 1;
 		} else if (pan === 128) {
+			upThis.#panStrokes[6] = 1;
+		} else if (pan > 128) {
 			// Real MU doesn't show anything for random panning
 		} else if (pan < 64) {
-			upThis.#panStrokes[Math.floor(pan / 21)] = 1;
+			upThis.#panStrokes[Math.floor((pan - 1) / 21)] = 1;
 		} else {
 			upThis.#panStrokes[4 + Math.floor((pan - 65) / 21)] = 1;
 		};
