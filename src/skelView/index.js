@@ -88,6 +88,7 @@ let showResult = async (stream, props = {}) => {
 					console.info("Finished chunk skimming.");
 				})().catch((err) => {
 					resultDisplay.append(`\n\nChunk skimmer: Uncaught ${err.name}: ${err.message}\n${err.stack}`);
+					console.warn(err);
 				});
 				readStream = rawParser.readChunks(splitStream[0]);
 				break;

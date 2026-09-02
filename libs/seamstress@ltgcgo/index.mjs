@@ -29,8 +29,9 @@ let IntegerHandler = class IntegerHandler {
 	static RVLV_MIDDLE = 128;
 	static RVLV_END = 64;
 	static RVLV_SINGLE = 0;
-	static #unsafeType = false;
 	static useNative = true;
+	static useStrict = true;
+	static #unsafeType = false;
 	static #hiddenDataView = Symbol("Key for the hidden DataView.");
 	static #ensureUnsafe() {};
 	static #ensureU8Safe(buffer) {
@@ -137,19 +138,30 @@ let IntegerHandler = class IntegerHandler {
 		// VLV-8 are all big-endian.
 		let upThis = this;
 		upThis.#ensureU8(buffer);
-		let breakCrit = Math.min(buffer.length, 4),
-		breakTest = breakCrit - 1 + offset,
+		let breakCrit = Math.min(buffer.length - offset, 4),
+		breakTest = breakCrit - 1,
 		result = 0;
+		let nonCanonicalHead = true;
 		for (let i = 0; i < breakCrit; i ++) {
 			let e = buffer[i + offset];
 			if (i > 0) {
 				result <<= 7;
 			};
 			result |= e & 127;
+			if (e === 128) {
+				if (nonCanonicalHead) {
+					const errorMsg = `Encountered a non-canonical VLV-8 byte 0x80.`;
+					if (this.useStrict) {
+						throw(new Error(errorMsg));
+					} else {
+						console.warn(errorMsg);
+					};
+				};
+			} else {
+				nonCanonicalHead = false;
+			};
 			if ((e & this.MASK_VLV) === 0) {
 				break;
-			} else if (e === 128) {
-				throw(new Error(`Non-canonical VLV-8 byte 0x80 encountered.`));
 			} else if (i >= breakTest) {
 				throw(new Error(`VLV-8 did not terminate at the end of the read buffer.`));
 			};
@@ -160,19 +172,30 @@ let IntegerHandler = class IntegerHandler {
 		// VLV-8 are all big-endian.
 		let upThis = this;
 		upThis.#ensureU8(buffer);
-		let breakCrit = Math.min(buffer.length, 16),
-		breakTest = breakCrit - 1 + offset,
+		let breakCrit = Math.min(buffer.length - offset, 16),
+		breakTest = breakCrit - 1,
 		result = 0n;
+		let nonCanonicalHead = true;
 		for (let i = 0; i < breakCrit; i ++) {
 			let e = buffer[i + offset];
 			if (i > 0) {
 				result <<= 7n;
 			};
 			result |= BigInt(e & 127);
+			if (e === 128) {
+				if (nonCanonicalHead) {
+					const errorMsg = `Encountered a non-canonical VLV-8 byte 0x80.`;
+					if (this.useStrict) {
+						throw(new Error(errorMsg));
+					} else {
+						console.warn(errorMsg);
+					};
+				};
+			} else {
+				nonCanonicalHead = false;
+			};
 			if ((e & this.MASK_VLV) === 0) {
 				break;
-			} else if (e === 128) {
-				throw(new Error(`Non-canonical VLV-8 byte 0x80 encountered.`));
 			} else if (i >= breakTest) {
 				throw(new Error(`VLV-8 did not terminate at the end of the read buffer.`));
 			};

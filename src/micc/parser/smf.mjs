@@ -86,8 +86,8 @@ export default class MICCInternalsSMF {
 			throw(new RangeError(`Invalid status byte ${statusByte}.`));
 		};
 		const nakedEvent = new NakedMIDIEvent(eventType, deltaTime);
-		if (inBuffer.offsetStream >= 0) {
-			nakedEvent.offset = inBuffer.offsetStream;
+		if (inBuffer.offsetData >= 0) {
+			nakedEvent.offset = inBuffer.offsetData;
 		};
 		// Event data
 		if (eventCh >= 0) {
@@ -403,7 +403,7 @@ export default class MICCInternalsSMF {
 		if (!event.isStale) {
 			options.parserContext.lastStatus = event.type <= 15 ? (event.type << 4) | (event.ch & 15) : event.type;
 		};
-		this.debugMode && console.debug(buffer);
+		//this.debugMode && console.debug(buffer);
 		return buffer;
 	};
 	/** @param {number} offset
@@ -436,7 +436,7 @@ export default class MICCInternalsSMF {
 					// Status byte.
 					statusByte = subchunk.data[statusPos];
 					eventContext.status = statusByte;
-					this.debugMode && console.debug(`Status (fresh): ${statusByte.toString(16)}`);
+					//this.debugMode && console.debug(`Status (fresh): ${statusByte.toString(16)}`);
 				} else {
 					// Re-use running status.
 					if ((subchunk.offset + offset) === 0) {
@@ -446,7 +446,7 @@ export default class MICCInternalsSMF {
 					} else {
 						statusByte = eventContext.status;
 						isStale = true;
-						this.debugMode && console.debug(`Status (stale): ${statusByte.toString(16)}`);
+						//this.debugMode && console.debug(`Status (stale): ${statusByte.toString(16)}`);
 					};
 				};
 				let fullSize = deltaSize;
@@ -513,7 +513,7 @@ export default class MICCInternalsSMF {
 				if (remainingSize < fullSize) {
 					return 0;
 				};
-				this.debugMode && console.debug(`0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")} (${offset}): ${deltaSize} %o`, subchunk.data.subarray(offset, offset + fullSize));
+				//this.debugMode && console.debug(`0x${(subchunk.offsetData + offset).toString(16).padStart(6, "0")} (${offset}): ${deltaSize} %o`, subchunk.data.subarray(offset, offset + fullSize));
 				return fullSize;
 				break;
 			};

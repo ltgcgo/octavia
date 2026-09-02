@@ -13,6 +13,8 @@
 export class IntegerHandler {
 	/** When set to true, methods will use runtime-native APIs and WebAssembly over the pure-JS implementation. */
 	static useNative: boolean;
+	/** When set to true, methods will error out instead of emitting warnings at places. */
+	static useStrict: boolean;
 	/** When set to true, methods will no longer conduct type checks. Usually has negligible performance impact unless on poorly-optimized runtimes. */
 	static unsafeType: boolean;
 	/** Counts the total bits required to store an unsigned BigInt. `0` is `0`, parallel to `Math.clz32`. */
