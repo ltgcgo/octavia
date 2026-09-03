@@ -1559,15 +1559,19 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		},
 		248: function (det) {
 			// MIDI clock
+			console.debug("Tick!");
 		},
 		250: function (det) {
 			// MIDI start
+			console.debug("Start!");
 		},
 		251: function (det) {
 			// MIDI continue
+			console.debug("Continue!");
 		},
 		252: function (det) {
 			// MIDI stop
+			console.debug("Stop!");
 		},
 		254: function (det) {
 			// Active sense

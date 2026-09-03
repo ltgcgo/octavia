@@ -8,6 +8,7 @@ import {
 	fromJson,
 	getBridge
 } from "../bridge/index.old.mjs";
+import { MICCInternalsSMF } from "../micc/index.mjs";
 
 let globalAudioCtx;
 let getGAC = function () {
@@ -49,8 +50,26 @@ let refreshPortIn = function () {
 	});
 };
 
-let inputConv = function (ev) {
-	midiLine.postMessage(toJson(ev.data, inPortMap[ev.target.id]));
+const inputConv = function (ev) {
+	const oldEvent = toJson(ev.data, inPortMap[ev.target.id]);
+	midiLine.postMessage(oldEvent);
+	try {
+		const newEvent = MICCInternalsSMF.parseSingleEvent(ev.data);
+		switch (newEvent.type) {
+			case 8:
+			case 9:
+			case 10:
+			case 13:
+			case 14: {
+				break;
+			};
+			default: {
+				console.debug(newEvent);
+			};
+		};
+	} catch (err) {
+		console.error(err);
+	};
 };
 let inputSel = function () {
 	activeIn = midiAccess.inputs.get(this.getAttribute("mw-port-id"));

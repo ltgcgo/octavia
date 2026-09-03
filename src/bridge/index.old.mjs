@@ -22,11 +22,20 @@ let toJson = function (data, track = 0) {
 	} if (type == 12) {
 		replyObj.data = data[1];
 	} else {
-		if (part == 0) {
-			// SysEx
-			return replyObj;
-		} else {
-			console.warn(`Unknown special event channel ${part}.`)
+		switch (part) {
+			case 0: {
+				return replyObj;
+			};
+			case 8:
+			case 10:
+			case 11:
+			case 12: {
+				replyObj.type = data[0];
+				return replyObj;
+			};
+			default: {
+				console.warn(`Unknown special event channel ${part}.`);
+			};
 		};
 	};
 };

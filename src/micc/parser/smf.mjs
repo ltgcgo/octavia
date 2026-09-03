@@ -164,7 +164,18 @@ export default class MICCInternalsSMF {
 				dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
 				break;
 			};
+			case 248:
+			case 250:
+			case 251:
+			case 252:
+			case 254: {
+				if (options.isSmfWrapped) {
+					throw(new Error(`Realtime event ${eventType.toString(16).toUpperCase()} can only exist raw.`));
+				};
+				break;
+			};
 			default: {
+				console.error(inBuffer);
 				throw(new TypeError(`Unknown MIDI event type ${eventType}.`));
 			};
 		};
