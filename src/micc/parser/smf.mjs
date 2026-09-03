@@ -431,7 +431,7 @@ export default class MICCInternalsSMF {
 		};
 		let state = 0, runningStatus = options?.parserContext?.lastStatus ?? 0;
 		let messageStart = -1, messageKnock = [], remainingSize = 0;
-		let submitBuffer = false;
+		let submitBuffer = false, noValidDataYet = true;
 		//let isStale = false;
 		for (let i = 0; i < buffer.length; i ++) {
 			const e = buffer[i];
@@ -442,6 +442,10 @@ export default class MICCInternalsSMF {
 				};
 				yield this.parseSingleEvent(buffer.subarray(i, i + 1), options);
 			} else {
+				if (noValidDataYet && messageStart >= 0 && messageStart < i && e >= 128) {
+					const invalidMessage = buffer.subarray(messageStart, i);
+					console.warn(`(${i}) Invalid message segment:\n`, invalidMessage);
+				};
 				switch (state) {
 					case 0: {
 						// Waiting for any status byte.
@@ -469,6 +473,7 @@ export default class MICCInternalsSMF {
 								case 0xf0: {
 									messageStart = i;
 									state = 1;
+									noValidDataYet = false;
 									if (messageKnock.length > 0) {
 										messageKnock.splice(0, messageKnock.length);
 									};
@@ -493,7 +498,7 @@ export default class MICCInternalsSMF {
 									break;
 								};
 							};
-						} else {
+						} else if (runningStatus !== 0) {
 							if (runningStatus >= 128 && runningStatus < 240) {
 								//isStale = true;
 								messageSize = 2;
@@ -517,13 +522,11 @@ export default class MICCInternalsSMF {
 							remainingSize = messageSize;
 							state = 2;
 						} else if (messageSize === 0) {
-							yield this.parseSingleEvent(buffer.subarray(i, i + 1), options);
-							messageStart = i + 1;
-						} else if (messageStart >= 0 && e >= 128) {
-							const invalidMessage = buffer.subarray(messageStart, i);
-							console.warn(`(${i}) Invalid message segment:\n`, invalidMessage);
-							messageStart = -1;
-						};;
+							if (e !== 0xf0) {
+								yield this.parseSingleEvent(buffer.subarray(i, i + 1), options);
+								messageStart = i + 1;
+							};
+						};
 						break;
 					};
 					case 1: {
@@ -561,7 +564,15 @@ export default class MICCInternalsSMF {
 						break;
 					};
 					case 2: {
-						if (--remainingSize < 1) {
+						if (e >= 128) {
+							//throw(new RangeError(`Event payloads cannot contain bytes greater than or equal to 0x80.`));
+							console.debug(`Event payloads cannot contain bytes greater than or equal to 0x80 (${e}). Dropped previous payload and re-synchronised.`);
+							noValidDataYet = true;
+							messageStart = i;
+							i --;
+							state = 0;
+							submitBuffer = false;
+						} else if (--remainingSize < 1) {
 							submitBuffer = true;
 						};
 						break;
@@ -572,7 +583,10 @@ export default class MICCInternalsSMF {
 				};
 				if (submitBuffer) {
 					submitBuffer = false;
-					yield this.parseSingleEvent(bufferCarveOut(buffer.subarray(messageStart, i + 1), messageKnock), options);
+					if (buffer[messageStart] !== 0xf4) {
+						noValidDataYet = false;
+						yield this.parseSingleEvent(bufferCarveOut(buffer.subarray(messageStart, i + 1), messageKnock), options);
+					};
 					messageKnock.splice(0, messageKnock.length);
 					state = 0;
 					messageStart = i + 1;
