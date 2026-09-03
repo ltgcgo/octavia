@@ -527,12 +527,17 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		willPlay: false,
 		lastTick: 0,
 		lastDiff: 0,
-		smoothing: 0.96,
+		stackCount: 3,
+		stackTick: 0,
+		smoothing: 0.9375,
 		tickDiff: function (time) {
-			const diff = time - this.lastTick;
-			this.lastTick = time;
-			this.lastDiff = diff + (this.lastDiff - diff) * this.smoothing;
-			return this.lastDiff;
+			if (++this.stackTick >= this.stackCount) {
+				this.stackTick = 0;
+				const diff = time - this.lastTick;
+				this.lastTick = time;
+				this.lastDiff = diff + (this.lastDiff - diff) * this.smoothing;
+			};
+			return this.lastDiff / this.stackCount;
 		}
 	};
 	modelEx = {
