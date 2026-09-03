@@ -2,6 +2,8 @@
 // Licensed under GNU LGPL v3.0 license.
 
 import type {
+	MIDIBaseEvent,
+	MIDIUMPEvent,
 	MIDINakedEvent
 } from "../micc/index.d.mts";
 
@@ -595,7 +597,7 @@ export class OctaviaDevice {
 	/** The legacy MIDI event object executor. @deprecated */
 	runJson(json: Object): void;
 	/** Execute a decoded MIDI event. */
-	runEvent(event: MIDINakedEvent): void;
+	runEvent(event: MIDINakedEvent | MIDIUMPEvent): void;
 	/** (WIP) Directly execute an undecoded MIDI event on a port.
 	* @param port The port number. `255` means "unset".
 	*/

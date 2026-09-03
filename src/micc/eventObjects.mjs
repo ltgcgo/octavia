@@ -12,14 +12,13 @@ const MICCBaseElement = class MICCBaseElement {
 
 // Octavia natives
 
-const MIDINakedEvent = class MIDINakedEvent extends MICCBaseElement {
+const MIDIBaseEvent = class MIDIBaseEvent extends MICCBaseElement {
 	delta = 0;
 	type = 0;
+	/** @type {number?} */
 	ch = null;
-	meta = null;
 	/** @type {Uint8Array} */
 	data;
-	isStale = false;
 	/** @type {number?} */
 	offset = null;
 	/** @type {number|string?} */
@@ -27,10 +26,29 @@ const MIDINakedEvent = class MIDINakedEvent extends MICCBaseElement {
 	/** @type {number?} */
 	time = null;
 	port = null;
-	track = null;
 	label;
+	constructor(group) {
+		super(group);
+	};
+};
+const MIDINakedEvent = class MIDINakedEvent extends MIDIBaseEvent {
+	/** @type {number?} */
+	meta = null;
+	isStale = false;
+	track = null;
 	constructor(type, delta) {
 		super("mma.midiEvent");
+		if (typeof type === "number") {
+			this.type = type;
+		};
+		if (typeof delta === "number") {
+			this.delta = delta;
+		};
+	};
+};
+const MIDIUMPEvent = class MIDINakedEvent extends MIDIBaseEvent {
+	constructor(type, delta) {
+		super("mma.midiUmp");
 		if (typeof type === "number") {
 			this.type = type;
 		};
@@ -77,6 +95,7 @@ const ColxiMIDIFile = class ColxiMIDIFile {
 export {
 	MICCBaseElement,
 	MIDINakedEvent,
+	MIDIUMPEvent,
 	ColxiMIDIEvent,
 	ColxiMIDITrack,
 	ColxiMIDIFile
