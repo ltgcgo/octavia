@@ -177,7 +177,7 @@ export class MICCInternalsSMF {
 	/** Parse raw MIDI events from buffers, which doesn't guarantee the buffer itself to be clean.
 	* @param buffer The input buffer.
 	* @param options Parser options. Only reuse the same options object for a single port in a single MIDI 1.0 session. */
-	static *parseRawEvents(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): Generator<MIDINakedEvent, void, any>;
+	static parseRawEvents(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): Generator<MIDINakedEvent, void, any>;
 	/** Regulates the incoming SMF stream. Set as `Seamstress.regulateStream()`. */
 	static streamRegulator(offset: number, subchunk: SeamstressChunk): number;
 }
