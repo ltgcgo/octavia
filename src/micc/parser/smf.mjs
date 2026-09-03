@@ -583,10 +583,8 @@ export default class MICCInternalsSMF {
 				};
 				if (submitBuffer) {
 					submitBuffer = false;
-					if (buffer[messageStart] !== 0xf4) {
-						noValidDataYet = false;
-						yield this.parseSingleEvent(bufferCarveOut(buffer.subarray(messageStart, i + 1), messageKnock), options);
-					};
+					noValidDataYet = false;
+					yield this.parseSingleEvent(bufferCarveOut(buffer.subarray(messageStart, i + 1), messageKnock), options);
 					messageKnock.splice(0, messageKnock.length);
 					state = 0;
 					messageStart = i + 1;

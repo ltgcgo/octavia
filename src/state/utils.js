@@ -234,7 +234,19 @@ const bufferToBracketed = function (msg, prefixSize = 0, suffixSize = 0) {
 	return hexaText;
 };
 
-
+/** @template {Object} T
+* @param {Iterable<T>} ingress
+* @returns {Generator<T, void, any>} */
+const pruneObjects = function* (ingress) {
+	for (const victim of ingress) {
+		for (const key of Object.keys(victim)) {
+			if (victim[key] == null) {
+				delete victim[key];
+			};
+		};
+		yield victim;
+	};
+};
 
 export {
 	arrayCompare,
@@ -252,5 +264,6 @@ export {
 	bufferToDHex,
 	bufferToBracketed,
 	bufferFrom,
-	bufferTo
+	bufferTo,
+	pruneObjects
 };

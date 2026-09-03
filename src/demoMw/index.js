@@ -9,6 +9,7 @@ import {
 	getBridge
 } from "../bridge/index.old.mjs";
 import { MICCInternalsSMF } from "../micc/index.mjs";
+import { pruneObjects } from "../state/utils.js";
 
 let globalAudioCtx;
 let getGAC = function () {
@@ -54,7 +55,7 @@ const inputConv = function (ev) {
 	const oldEvent = toJson(ev.data, inPortMap[ev.target.id]);
 	midiLine.postMessage(oldEvent);
 	try {
-		for (const newEvent of MICCInternalsSMF.parseRawEvents(ev.data)) {
+		for (const newEvent of pruneObjects(MICCInternalsSMF.parseRawEvents(ev.data))) {
 			switch (newEvent.type) {
 				case 8:
 				case 9:
