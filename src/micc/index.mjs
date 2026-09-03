@@ -3,7 +3,7 @@
 
 import {
 	MICCBaseElement,
-	NakedMIDIEvent
+	MIDINakedEvent
 } from "./eventObjects.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
 import MICCInternalsMIA from "./parser/mia.mjs";
@@ -13,7 +13,7 @@ import {
 
 export {
 	MICCBaseElement,
-	NakedMIDIEvent,
+	MIDINakedEvent,
 	MICCInternalsSMF,
 	MICCInternalsMIA,
 	ColxiMIDIParser

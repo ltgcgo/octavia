@@ -12,7 +12,7 @@ const MICCBaseElement = class MICCBaseElement {
 
 // Octavia natives
 
-const NakedMIDIEvent = class NakedMIDIEvent extends MICCBaseElement {
+const MIDINakedEvent = class MIDINakedEvent extends MICCBaseElement {
 	delta = 0;
 	type = 0;
 	ch = null;
@@ -76,7 +76,7 @@ const ColxiMIDIFile = class ColxiMIDIFile {
 
 export {
 	MICCBaseElement,
-	NakedMIDIEvent,
+	MIDINakedEvent,
 	ColxiMIDIEvent,
 	ColxiMIDITrack,
 	ColxiMIDIFile

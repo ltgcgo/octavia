@@ -15,7 +15,7 @@ import {
 	bufferToDHex
 } from "../state/utils.js";
 import {
-	NakedMIDIEvent
+	MIDINakedEvent
 } from "../micc/index.mjs";
 import {
 	MICCInternalsSMF
@@ -50,7 +50,7 @@ self.gUseReadable = async (value) => {
 	Alpine.store("useReadable", value);
 };
 
-/** @type {NakedMIDIEvent} */
+/** @type {MIDINakedEvent} */
 let parsedEvent;
 self.gParseRaw = async () => {
 	const sanitisedInput = inputRaw.value.replaceAll(" ", "");

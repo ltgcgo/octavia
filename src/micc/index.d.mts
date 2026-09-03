@@ -92,7 +92,7 @@ export class MICCBaseElement {
 	group: string;
 }
 /** Representation of a MIDI event. The group specifier is `mma.midiEvent`. */
-export class NakedMIDIEvent extends MICCBaseElement {
+export class MIDINakedEvent extends MICCBaseElement {
 	/** Delta time. The time difference of the current event and the previous event. Defaults to `0`. */
 	delta: number;
 	/** MIDI event type. Type `8` to `14`, and `240` to `255` are all available. `0` means "unset". */
@@ -121,14 +121,14 @@ export class NakedMIDIEvent extends MICCBaseElement {
 /** An intermediate object consumed by Octavia's parser and serialiser. */
 export class WrappedMIDIEvent {
 	/** The actual MIDI event. */
-	event: NakedMIDIEvent;
+	event: MIDINakedEvent;
 	/** Chunk type. Same as `SeamstressChunk.type`. */
 	type: number|string;
 	/** Chunk ID. Same as `SeamstressChunk.chunkId`. */
 	chunk: number;
 }
 declare interface MICCSMFMIAParserContext {
-	/** Status byte of the last event. Same as `NakedMIDIEvent.type`. */
+	/** Status byte of the last event. Same as `MIDINakedEvent.type`. */
 	lastStatus?: number;
 	/** If the last event was a `dt` event. the delta time specified by it. Should always be reset to `0` for each non-`dt` event. Used only by the MIA parser. */
 	lastDelta?: number;
@@ -154,20 +154,20 @@ export class MICCInternalsMIA {
 	/** Disassemble single raw MIDI events into MIA lines directly. */
 	static dasmSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): string;
 	/** Stringify parsed MIDI events into MIA lines. */
-	static emitSingleEvent(event: NakedMIDIEvent, options?: MICCSMFMIAHandleOptions): string;
+	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): string;
 	/** Assemble single MIA lines into raw MIDI events directly. */
 	static asmSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): Uint8Array;
 	/** Parse single MIA lines into parsed MIDI events. */
-	static parseSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): NakedMIDIEvent;
+	static parseSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
 }
 /** Internal methods for MIDI 1.0/SMF parsing and serialising. */
 export class MICCInternalsSMF {
 	/** Parse single raw MIDI events from buffers. Requires full single events.
 	* @param buffer The input buffer.
 	* @param options Parser options. Only reuse the same options object for a single SMF track. */
-	static parseSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): NakedMIDIEvent;
+	static parseSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
 	/** Serialise single parsed MIDI events into buffers. */
-	static emitSingleEvent(event: NakedMIDIEvent, options?: MICCSMFMIAHandleOptions): Uint8Array;
+	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): Uint8Array;
 	/** Regulates the incoming SMF stream. Set as `Seamstress.regulateStream()`. */
 	static streamRegulator(offset: number, subchunk: SeamstressChunk): number;
 }

@@ -5,7 +5,7 @@ import {
 	SeamstressChunk
 } from "../../../libs/seamstress@ltgcgo/index.mjs";
 import {
-	NakedMIDIEvent
+	MIDINakedEvent
 } from "../eventObjects.mjs";
 import {
 	MICCSMFMIAHandleOptions
@@ -15,7 +15,7 @@ import {
 export default class MICCInternalsSMF {
 	/** @param {Uint8Array | Uint8ClampedArray | SeamstressChunk} inBuffer
 	* @param {MICCSMFMIAHandleOptions} options
-	* @returns {NakedMIDIEvent} */
+	* @returns {MIDINakedEvent} */
 	static parseSingleEvent(inBuffer, options = {}) {
 		let buffer;
 		switch (inBuffer?.constructor) {
@@ -85,7 +85,7 @@ export default class MICCInternalsSMF {
 		} else {
 			throw(new RangeError(`Invalid status byte ${statusByte}.`));
 		};
-		const nakedEvent = new NakedMIDIEvent(eventType, deltaTime);
+		const nakedEvent = new MIDINakedEvent(eventType, deltaTime);
 		if (inBuffer.offsetData >= 0) {
 			nakedEvent.offset = inBuffer.offsetData;
 		};
@@ -232,11 +232,11 @@ export default class MICCInternalsSMF {
 		const parsedEvent = this.parseSingleEvent(chunkInfo.data);
 		return parsedEvent;
 	};*/
-	/** @param {NakedMIDIEvent} event
+	/** @param {MIDINakedEvent} event
 	* @param {MICCSMFMIAHandleOptions} options */
 	static emitSingleEvent(event, options = {}) {
-		if (event.constructor !== NakedMIDIEvent && event.group !== "mma.midiEvent") {
-			throw(new TypeError(`Provided event is not of type NakedMIDIEvent.`));
+		if (event.constructor !== MIDINakedEvent && event.group !== "mma.midiEvent") {
+			throw(new TypeError(`Provided event is not of type MIDINakedEvent.`));
 		};
 		options.parserContext = options.parserContext ?? {};
 		let finalSize = 0;

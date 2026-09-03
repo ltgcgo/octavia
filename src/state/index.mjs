@@ -51,7 +51,7 @@ import {
 } from "../disp/colour.js"
 import {ChordDict} from "../chord/index.mjs";
 import {
-	NakedMIDIEvent
+	MIDINakedEvent
 } from "../micc/index.mjs";
 import {
 	BinaryBufferCodecs,
@@ -1588,7 +1588,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		}
 	};
 	// Channel message runners
-	/** @type {Map<number, (NakedMIDIEvent, number) => {}>} */
+	/** @type {Map<number, (MIDINakedEvent, number) => {}>} */
 	#chEventRun = new Map();
 	// SysEx manufacturer table
 	#seMan = {
@@ -2992,7 +2992,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			this.#metaTexts.splice(100, this.#metaTexts.length - 99);
 		};
 	};
-	/** @param {NakedMIDIEvent} ingressEvent */
+	/** @param {MIDINakedEvent} ingressEvent */
 	runEvent(ingressEvent) {
 		if (ingressEvent === undefined || ingressEvent === null) {
 			console.warn(new Error(`Invalid parsed event data provided.`));

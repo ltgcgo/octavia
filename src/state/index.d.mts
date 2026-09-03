@@ -2,10 +2,10 @@
 // Licensed under GNU LGPL v3.0 license.
 
 import type {
-	NakedMIDIEvent
+	MIDINakedEvent
 } from "../micc/index.d.mts";
 
-/** The core MIDI processing engine with an absurd coverage.
+/** The core MIDI processing engine with absurd coverage.
 * @license LGPL-3.0-only
 * @module cc.ltgc.octavia.state
 */
@@ -595,7 +595,7 @@ export class OctaviaDevice {
 	/** The legacy MIDI event object executor. @deprecated */
 	runJson(json: Object): void;
 	/** Execute a decoded MIDI event. */
-	runEvent(event: NakedMIDIEvent): void;
+	runEvent(event: MIDINakedEvent): void;
 	/** (WIP) Directly execute an undecoded MIDI event on a port.
 	* @param port The port number. `255` means "unset".
 	*/
