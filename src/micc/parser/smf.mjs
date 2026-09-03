@@ -417,6 +417,155 @@ export default class MICCInternalsSMF {
 		//this.debugMode && console.debug(buffer);
 		return buffer;
 	};
+	/** @param {Uint8Array|Uint8ClampedArray} buffer
+	* @param {MICCSMFMIAHandleOptions} options
+	* @returns {Generator<MIDINakedEvent, void, any>} */
+	static *parseRaw(buffer, options = {}) {
+		// `parseSingleEvent` is quite strict against malformed events. If this fails to guard against malformed data, that method will.
+		let state = 0;
+		let messageStart = -1, messageKnock = [];
+		for (let i = 0; i < buffer.length; i ++) {
+			const e = buffer[i];
+			switch (state) {
+				case 0: {
+					// Waiting for any status byte.
+					if (messageStart >= 0 && e >= 128) {
+						const invalidMessage = buffer.subarray(messageStart, i);
+						console.warn(`(${i}) Invalid message segment:\n`, invalidMessage);
+						messageStart = -1;
+					};
+					if (e >= 240) {
+						let messageSize = -1;
+						// System
+						switch (e) {
+							case 0xf6:
+							case 0xf8:
+							case 0xfa:
+							case 0xfb:
+							case 0xfc:
+							case 0xfe:
+							case 0xff: {// 0-byte payload
+								messageSize = 0;
+								break;
+							};
+							case 0xf1:
+							case 0xf3: {// 1-byte payload
+								messageSize = 1;
+								break;
+							};
+							case 0xf2: {// 2-byte payload
+								messageSize = 2;
+								break;
+							};
+							case 0xf0: {
+								messageStart = i;
+								state = 1;
+								break;
+							};
+							case 0xf7: {
+								console.warn(`(${i}) Orphaned SysEx End received.`);
+								break;
+							};
+							default: {
+								console.debug(`(${i}) Undefined status ${e}.`);
+							};
+						};
+						if (messageSize >= 0) {
+							yield this.parseSingleEvent(buffer.subarray(i, i + messageSize + 1), options);
+							i += messageSize;
+							messageStart = i + 1;
+						};
+					} else if (e >= 128) {
+						let messageSize = 2;
+						// Channel
+						switch (e >> 4) {
+							case 12:
+							case 13: {
+								messageSize = 1;
+								break;
+							};
+						};
+						yield this.parseSingleEvent(buffer.subarray(i, i + messageSize + 1), options);
+						i += messageSize;
+						messageStart = i + 1;
+					};
+					break;
+				};
+				case 1: {
+					// SysEx data payload filtering
+					if (messageStart < 0) {
+						throw(new Error(`(${i}) SysEx filter has no start pointer.`));
+					};
+					let carvedSize = -1;
+					switch (e) {
+						case 0xf7: {
+							// SysEx End
+							if (messageKnock.length < 1) {
+								yield this.parseSingleEvent(buffer.subarray(messageStart, i + 1), options);
+							} else {
+								const filteredBuffer = new Uint8Array(i - messageStart + 1 - messageKnock.length);
+								for (let i2 = 0; i2 < messageKnock.length; i2 ++) {
+									const e0 = i2 === 0 ? messageStart : messageKnock[i2 - 1] + 1;
+									const e1 = messageKnock[i2];
+									if (e1 - e0 > 1) {
+										filteredBuffer.set(buffer.subarray(e0, e1), e0 - i2 - messageStart);
+									};
+								};
+								const lastKnockout = messageKnock[messageKnock.length - 1];
+								filteredBuffer.set(buffer.subarray(lastKnockout + 1, i + 1), lastKnockout - messageKnock.length + 1);
+								yield this.parseSingleEvent(filteredBuffer, options);
+								messageKnock.splice(0, messageKnock.length);
+							};
+							state = 0;
+							messageStart = i + 1;
+							break;
+						};
+						case 0xf8:
+						case 0xfa:
+						case 0xfb:
+						case 0xfc:
+						case 0xfe:
+						case 0xff: {// 0-byte payload
+							carvedSize = 0;
+							break;
+						};
+						case 0xf0:
+						case 0xf1:
+						case 0xf2:
+						case 0xf3:
+						case 0xf4:
+						case 0xf5:
+						case 0xf6: {
+							// Invalid state
+							throw(new Error(`Invalid system common inside SysEx.`));
+							break;
+						};
+						case 0xf9:
+						case 0xfd: {
+							carvedSize = 0;
+							console.debug(`(${i}) Undefined realtime status ${e} within SysEx.`);
+							break;
+						};
+					};
+					if (carvedSize >= 0) {
+						for (let iCarve = 0; iCarve <= carvedSize; iCarve ++) {
+							messageKnock.push(i + iCarve);
+						};
+						yield this.parseSingleEvent(buffer.subarray(i, i + carvedSize + 1), options);
+						i += carvedSize;
+						carvedSize = -1;
+					};
+					break;
+				};
+				default: {
+					console.debug(`Undefined state ${state}. ${e}`);
+				};
+			};
+		};
+		if (state === 1) {
+			throw(new Error(`Incomplete new SysEx.`));
+		};
+	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk  */
 	static streamRegulator(offset, subchunk) {
