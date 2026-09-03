@@ -56,7 +56,7 @@ div.cambiare-canvas.cambiare-mode-s90es,
 div.cambiare-canvas.cambiare-mode-motif,
 div.cambiare-canvas.cambiare-mode-cs6x,
 div.cambiare-canvas.cambiare-mode-an1x,
-div.cambiare-canvas.cambiare-mode-cs1x,
+div.cambiare-canvas.cambiare-mode-cs2x,
 div.cambiare-canvas div.part-channel.part-mode-xg,
 div.cambiare-canvas div.part-channel.part-mode-doc,
 div.cambiare-canvas div.part-channel.part-mode-qy10,
@@ -70,7 +70,7 @@ div.cambiare-canvas div.part-channel.part-mode-s90es,
 div.cambiare-canvas div.part-channel.part-mode-motif,
 div.cambiare-canvas div.part-channel.part-mode-cs6x,
 div.cambiare-canvas div.part-channel.part-mode-an1x,
-div.cambiare-canvas div.part-channel.part-mode-cs1x {
+div.cambiare-canvas div.part-channel.part-mode-cs2x {
 	--accent-color: #9efaa0;
 }
 div.cambiare-canvas.cambiare-mode-gm,
@@ -114,7 +114,7 @@ div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-s90es,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-motif,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-cs6x,
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-an1x,
-div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-cs1x,
+div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-cs2x,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-xg,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-doc,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-qy10,
@@ -128,7 +128,7 @@ div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-s90es,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-motif,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-cs6x,
 div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-an1x,
-div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-cs1x {
+div.cambiare-canvas.cambiare-scheme-light div.part-channel.part-mode-cs2x {
 	--accent-color: #007f00;
 }
 div.cambiare-canvas.cambiare-scheme-light.cambiare-mode-gm,

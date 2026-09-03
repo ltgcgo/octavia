@@ -61,7 +61,7 @@ Please read [CREDITS.md](CREDITS.md).
 Please read the [documentation](https://kb.ltgc.cc/octavia/).
 
 ## Examples
-Please check out the `/examples/` directory.
+If it exists, please check out the `/examples/` directory.
 
 ## Contribute
 You can help with Octavia's development, by doing any of the following, or more...

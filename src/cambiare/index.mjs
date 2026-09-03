@@ -37,7 +37,7 @@ const modeNames = {
 	"krs": "Korg KROSS 2",
 	"s90es": "Yamaha S90 ES",
 	"cs6x": "Yamaha CS6x",
-	"cs1x": "Yamaha CS1x",
+	"cs2x": "Yamaha CS2x",
 	"motif": "Yamaha Motif ES",
 	"pa": "Korg PA"
 };
@@ -134,7 +134,7 @@ const modeColourPool = {
 	"motif": ["9efaa0", "007f00"],
 	"cs6x": ["9efaa0", "007f00"],
 	"an1x": ["9efaa0", "007f00"],
-	"cs1x": ["9efaa0", "007f00"],
+	"cs2x": ["9efaa0", "007f00"],
 	"gm": ["a1f3ff", "006dc4"],
 	"g2": ["a1f3ff", "006dc4"],
 	"rhc": ["a1f3ff", "006dc4"],

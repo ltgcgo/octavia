@@ -254,7 +254,7 @@ let VoiceBank = class {
 			case "s90es":
 			case "motif":
 			case "an1x":
-			case "cs1x":
+			case "cs2x":
 			case "cs6x": {
 				if (msb === 0) {
 					break;
@@ -283,7 +283,7 @@ let VoiceBank = class {
 								};
 								break;
 							};
-							case "cs1x": {
+							case "cs2x": {
 								switch (lsb >> 1) {
 									case 0:
 									case 1:

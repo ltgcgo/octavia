@@ -68,7 +68,7 @@ const modeIdx = [
 	"ns5r", "x5d", "05rw",
 	"k11", "sg", "sd", "pa", "rhc",
 	"krs", "s90es", "motif", "cs6x", "trin",
-	"an1x", "cs1x"
+	"an1x", "cs2x"
 ],
 modeAdapt = {
 	"gm2": "g2",
@@ -117,7 +117,6 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"cs6x": [0, 0, 127, 0, 0],
 	"trin": [0, 0, 61, 0, 0],
 	"an1x": [36, 3, 127, 0, 0],
-	"cs1x": [0, 0, 127, 63, 0],
 	"cs2x": [0, 0, 127, 63, 0]
 };
 const drumChannels = [9, 25, 41, 57, 73, 89, 105, 121];
@@ -545,7 +544,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			"invDisp": false,
 			"peakHold": 1
 		},
-		"cs1x": {
+		"cs2x": {
 			"perfCh": 0
 		},
 		"kross": {
@@ -1367,7 +1366,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 									case modeMap.mt32:
 									case modeMap.s90es:
 									case modeMap.motif:
-									case modeMap.cs1x:
+									case modeMap.cs2x:
 									case modeMap.cs6x: {
 										switch (upThis.getChCc(part, 100)) {
 											case 1:
@@ -2554,8 +2553,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.modelEx.sc.invBar = false;
 		upThis.modelEx.sc.invDisp = false;
 		upThis.modelEx.sc.peakHold = 1;
-		// Reset CS1x-exclusive params
-		upThis.modelEx.cs1x.perfCh = 0;
+		// Reset CS2x-exclusive params
+		upThis.modelEx.cs2x.perfCh = 0;
 		// Reset MT-32 params
 		upThis.modelEx.mt32.writeTimbre = true;
 		for (let ch = 0; ch < allocated.ch; ch ++) {
@@ -2839,7 +2838,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						break;
 					};
 					case modeMap.xg:
-					case modeMap.cs1x: {
+					case modeMap.cs2x: {
 						efxDefault = [1, 0, 65, 0, 5, 0, 64, 0, 64, 0, 64, 0, 64, 0, 0, 255];
 						efxBlank = [64, 0];
 						break;
@@ -7764,7 +7763,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				let ri = i + offset;
 				([() => {
 					// performance receive channel
-					upThis.modelEx.cs1x.perfCh = e;
+					upThis.modelEx.cs2x.perfCh = e;
 					upThis.pushChPrimitives(e);
 					console.debug(`Yamaha CS1x performance on CH${e + 1}.`);
 				}, false, false, false, () => {
@@ -7779,8 +7778,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							break;
 						};
 						case 3: {
-							upThis.switchMode("cs1x", 2);
-							upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.cs1x);
+							upThis.switchMode("cs2x", 2);
+							upThis.setPortModeId(upThis.getTrackPort(track), 1, modeMap.cs2x);
 							console.debug(`Yamaha CS1x set to performance mode.`);
 							break;
 						};
@@ -7796,7 +7795,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// Yamaha CS1x current performance common
 			let offset = msg[0];
 			let cvnWritten = false;
-			let perfCh = upThis.modelEx.cs1x.perfCh;
+			let perfCh = upThis.modelEx.cs2x.perfCh;
 			msg.subarray(1).forEach((e, i) => {
 				let ri = i + offset;
 				if (ri < 8) {
@@ -7804,7 +7803,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					upThis.#bnCustom[perfCh] = 1;
 					upThis.setChCvnRegister(perfCh, ri, e);
 				} else if (ri < 48) {
-					// CS1x common
+					// cs2x common
 					([false, () => {
 						// not master volume
 						//upThis.#master.volume = e / 127;
