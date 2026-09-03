@@ -525,7 +525,15 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	clockTicker = {
 		paused: true,
 		willPlay: false,
-		lastTick: 0
+		lastTick: 0,
+		lastDiff: 0,
+		smoothing: 0.96,
+		tickDiff: function (time) {
+			const diff = time - this.lastTick;
+			this.lastTick = time;
+			this.lastDiff = diff + (this.lastDiff - diff) * this.smoothing;
+			return this.lastDiff;
+		}
 	};
 	modelEx = {
 		"xg": {
@@ -1564,16 +1572,19 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		},
 		248: function (det) {
 			// MIDI clock
-			const timeNow = this.clockSource.currentTime;
+			const timeNow = this.clockSource.now();
 			if (this.clockTicker.paused) {
 				if (this.clockTicker.willPlay) {
 					this.clockTicker.paused = false;
 				};
 			} else {
-				console.debug(timeNow - this.clockTicker.lastTick);
+				const timeDiff = this.clockTicker.tickDiff(timeNow);
+				//console.debug(timeNow - this.clockTicker.lastTick);
+				//this.#noteLength = timeDiff;
+				this.dispatchEvent("tempo", 2500 / timeDiff);
 			};
-			this.clockTicker.lastTick = timeNow;
-			console.debug("Tick!");
+			//this.clockTicker.lastTick = timeNow;
+			//console.debug("Tick!");
 		},
 		250: function (det) {
 			// MIDI start
@@ -1589,6 +1600,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// MIDI stop
 			this.clockTicker.willPlay = false;
 			this.clockTicker.paused = true;
+			//this.#noteLength = 500;
 			console.debug("Stop!");
 		},
 		254: function (det) {

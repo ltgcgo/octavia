@@ -1172,6 +1172,7 @@ const RootDisplay = class extends CustomEventSource {
 		eventPassThru(upThis.device, upThis, "channeltoggle");
 		eventPassThru(upThis.device, upThis, "screen");
 		eventPassThru(upThis.device, upThis, "metacommit");
+		eventPassThru(upThis.device, upThis, "tempo");
 		eventPassThru(upThis.device, upThis, "voice");
 		eventPassThru(upThis.device, upThis, "pitch");
 		eventPassThru(upThis.device, upThis, "note");
