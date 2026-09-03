@@ -105,6 +105,16 @@ export class TimeMuxer {
 	constructor(clockSource?: HTMLMediaElement|OctaviaTimeProvider);
 }
 
+/** State of the clock. */
+export interface OctaviaClockSink {
+	/** If the current clock is paused. Defaults to `true`. */
+	paused: boolean;
+	/** If the resume status is pending for a MIDI clock tick to fulfill. */
+	willPlay: boolean;
+	/** Timestamp of the last received MIDI clock tick. Defaults to `0`. */
+	lastTick: number;
+};
+
 /** When `true`, the code should be in a debugging state. */
 export function getDebugState(): boolean;
 
@@ -252,6 +262,8 @@ export class OctaviaDevice {
 	lcdContrast: number;
 	/** The linked clock source. */
 	clockSource: TimeMuxer;
+	/** The link clock tick state. */
+	clockTicker: OctaviaClockSink;
 	/** Model-exclusive states. */
 	modelEx: {
 		/** States specific to Yamaha XG. */

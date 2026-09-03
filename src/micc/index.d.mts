@@ -174,10 +174,10 @@ export class MICCInternalsSMF {
 	static parseSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
 	/** Serialise single parsed MIDI events into clean buffers. */
 	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): Uint8Array;
-	/** Parse raw MIDI events from buffers, which doesn't guarantee the buffer itself to be clean.
+	/** Parse raw MIDI events from buffers, which doesn't guarantee the buffer itself to be clean. For raw event ingestion only, like from real-time MIDI port IO.
 	* @param buffer The input buffer.
 	* @param options Parser options. Only reuse the same options object for a single port in a single MIDI 1.0 session. */
-	static parseRawEvents(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): Generator<MIDINakedEvent, void, any>;
+	static parseRawEvents(buffer: Uint8Array|Uint8ClampedArray, options?: MICCSMFMIAHandleOptions): Generator<MIDINakedEvent, void, any>;
 	/** Regulates the incoming SMF stream. Set as `Seamstress.regulateStream()`. */
 	static streamRegulator(offset: number, subchunk: SeamstressChunk): number;
 }
@@ -379,6 +379,8 @@ export class MICC extends MICCConstants {
 // Compatibility layers
 /** A MIDI event in Colxi's scheme. */
 declare class ColxiMIDIEvent {
+	/** MIDI channel. */
+	channel?: number;
 	/** MIDI delta time. */
 	deltaTime: number;
 	/** MIDI event type. Note that event type `240` (SysEx) will be converted to type `15` instead. */
@@ -386,7 +388,7 @@ declare class ColxiMIDIEvent {
 	/** If the event is a meta event, the meta event type. */
 	metaType?: number;
 	/** Actual data of the event. */
-	data: number|Uint8Array|string;
+	data?: number|Uint8Array|string;
 }
 /** A MIDI track containing events in Colxi's scheme. */
 declare class ColxiMIDITrack {

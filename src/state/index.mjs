@@ -522,6 +522,11 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	#cmTimbre = new Uint8Array(allocated.cmt * 64); // C/M device timbre storage (64)
 	#subDb = {};
 	clockSource = new TimeMuxer(); // Same as in Cambiare
+	clockTicker = {
+		paused: true,
+		willPlay: false,
+		lastTick: 0
+	};
 	modelEx = {
 		"xg": {
 			"map": 0, // MU Basic, MU100 Native, PSR/LE, QY100
@@ -1559,18 +1564,31 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		},
 		248: function (det) {
 			// MIDI clock
+			const timeNow = this.clockSource.currentTime;
+			if (this.clockTicker.paused) {
+				if (this.clockTicker.willPlay) {
+					this.clockTicker.paused = false;
+				};
+			} else {
+				console.debug(timeNow - this.clockTicker.lastTick);
+			};
+			this.clockTicker.lastTick = timeNow;
 			console.debug("Tick!");
 		},
 		250: function (det) {
 			// MIDI start
+			this.clockTicker.willPlay = true;
 			console.debug("Start!");
 		},
 		251: function (det) {
 			// MIDI continue
+			this.clockTicker.willPlay = true;
 			console.debug("Continue!");
 		},
 		252: function (det) {
 			// MIDI stop
+			this.clockTicker.willPlay = false;
+			this.clockTicker.paused = true;
 			console.debug("Stop!");
 		},
 		254: function (det) {
