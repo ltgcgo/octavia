@@ -168,12 +168,16 @@ export class MICCInternalsMIA {
 }
 /** Internal methods for MIDI 1.0/SMF parsing and serialising. */
 export class MICCInternalsSMF {
-	/** Parse single raw MIDI events from buffers. Requires full single events.
+	/** Parse single raw MIDI events from buffers. Requires clean full single events.
 	* @param buffer The input buffer.
 	* @param options Parser options. Only reuse the same options object for a single SMF track. */
 	static parseSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
-	/** Serialise single parsed MIDI events into buffers. */
+	/** Serialise single parsed MIDI events into clean buffers. */
 	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): Uint8Array;
+	/** Parse raw MIDI events from buffers, which doesn't guarantee the buffer itself to be clean.
+	* @param buffer The input buffer.
+	* @param options Parser options. Only reuse the same options object for a single port in a single MIDI 1.0 session. */
+	static *parseRawEvents(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): Generator<MIDINakedEvent, void, any>;
 	/** Regulates the incoming SMF stream. Set as `Seamstress.regulateStream()`. */
 	static streamRegulator(offset: number, subchunk: SeamstressChunk): number;
 }

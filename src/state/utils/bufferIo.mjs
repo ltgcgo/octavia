@@ -205,7 +205,29 @@ const bufferFrom = function bufferFrom (alphabet = "base64", string, lastChunkHa
 const bufferTo = function bufferTo (alphabet = "base64", buffer, omitPadding = false) {};
 self.bufferTo = bufferTo;
 
+/** @param {Uint8Array|Uint8ClampedArray} buffer
+* @param {number[]} carvedList
+* @returns {Uint8Array|Uint8ClampedArray} */
+const bufferCarveOut = function (buffer, carvedList = []) {
+	if (carvedList?.length > 0) {
+		const filteredBuffer = new Uint8Array(buffer.length - carvedList.length);
+		for (let i = 0; i < carvedList.length; i ++) {
+			const e0 = i === 0 ? 0 : carvedList[i - 1] + 1;
+			const e1 = carvedList[i];
+			if (e1 - e0 > 1) {
+				filteredBuffer.set(buffer.subarray(e0, e1), e0 - i);
+			};
+		};
+		const lastKnockout = carvedList[carvedList.length - 1];
+		filteredBuffer.set(buffer.subarray(lastKnockout + 1), lastKnockout - carvedList.length + 1);
+		return filteredBuffer;
+	} else {
+		return buffer;
+	}
+};
+
 export {
 	bufferFrom,
-	bufferTo
+	bufferTo,
+	bufferCarveOut
 };

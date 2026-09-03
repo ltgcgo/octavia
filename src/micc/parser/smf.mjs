@@ -5,6 +5,9 @@ import {
 	SeamstressChunk
 } from "../../../libs/seamstress@ltgcgo/index.mjs";
 import {
+	bufferCarveOut
+} from "../../state/utils/bufferIo.mjs";
+import {
 	MIDINakedEvent
 } from "../eventObjects.mjs";
 import {
@@ -52,9 +55,9 @@ export default class MICCInternalsSMF {
 		let statusByte = 0, eventType = 0, eventCh = null, isStale = false;
 		if (buffer[deltaSize] >> 7) {
 			statusByte = buffer[deltaSize];
-		} else if (!options.isSmfWrapped) {
+		} /*else if (!options.isSmfWrapped) {
 			throw(new Error(`Running status is not allowed in raw MIDI 1.0 messages.`));
-		} else {
+		}*/ else {
 			isStale = true;
 			statusByte = options.parserContext.lastStatus;
 			if (!(statusByte >= 0x80 && statusByte < 0xf0)) {
@@ -233,7 +236,7 @@ export default class MICCInternalsSMF {
 			// Separated safety check due to `loosenForSpeed`.
 			options.parserContext.lastSysExHung = options.loosenForSpeed ? (nakedEvent.data.length > 0 ? nakedEvent.data[nakedEvent.data.length - 1] !== 0xf7 : false) : isSysExActive;
 		};
-		if (!isStale) {
+		if (!isStale && eventType < 0xf8) {
 			// Crash the subsequent event that attempts running status reuse, if the event type is 0xf0-0xff.
 			options.parserContext.lastStatus = statusByte;
 		};
@@ -266,9 +269,9 @@ export default class MICCInternalsSMF {
 			finalSize += 1;
 		} else if (event.type >= 8 && event.type < 15) {
 			if (event.isStale) {
-				if (!options.isSmfWrapped) {
+				/*if (!options.isSmfWrapped) {
 					throw(new Error(`Running status is not allowed in raw MIDI 1.0 messages.`));
-				} else if (options.parserContext.lastStatus >= 0xf0) {
+				} else */if (options.parserContext.lastStatus >= 0xf0) {
 					throw(new Error(`Invalid running status: no system message inheritance.`));
 				} else if (options.parserContext.lastStatus !== ((event.type << 4) | (event.ch & 15))) {
 					throw(new Error(`Invalid running status: status mismatch.`));
@@ -411,7 +414,8 @@ export default class MICCInternalsSMF {
 		};
 		buffer.set(event.data, dataStartPtr);
 		// Assembly finished.
-		if (!event.isStale) {
+		if (!event.isStale && event.type < 0xf8) {
+			// SysRT doesn't change running status.
 			options.parserContext.lastStatus = event.type <= 15 ? (event.type << 4) | (event.ch & 15) : event.type;
 		};
 		//this.debugMode && console.debug(buffer);
@@ -420,150 +424,173 @@ export default class MICCInternalsSMF {
 	/** @param {Uint8Array|Uint8ClampedArray} buffer
 	* @param {MICCSMFMIAHandleOptions} options
 	* @returns {Generator<MIDINakedEvent, void, any>} */
-	static *parseRaw(buffer, options = {}) {
-		// `parseSingleEvent` is quite strict against malformed events. If this fails to guard against malformed data, that method will.
-		let state = 0;
-		let messageStart = -1, messageKnock = [];
+	static *parseRawEvents(buffer, options = {}) {
+		// `parseSingleEvent` is quite strict against malformed events with running status support. If this fails to guard against malformed data, that method will.
+		if (options.hasDelta || options.isSmfWrapped) {
+			throw(new Error(`Only raw MIDI 1.0 messages are allowed.`));
+		};
+		let state = 0, runningStatus = options?.parserContext?.lastStatus ?? 0;
+		let messageStart = -1, messageKnock = [], remainingSize = 0;
+		let submitBuffer = false;
+		//let isStale = false;
 		for (let i = 0; i < buffer.length; i ++) {
 			const e = buffer[i];
-			switch (state) {
-				case 0: {
-					// Waiting for any status byte.
-					if (messageStart >= 0 && e >= 128) {
-						const invalidMessage = buffer.subarray(messageStart, i);
-						console.warn(`(${i}) Invalid message segment:\n`, invalidMessage);
-						messageStart = -1;
-					};
-					if (e >= 240) {
-						let messageSize = -1;
-						// System
-						switch (e) {
-							case 0xf6:
-							case 0xf8:
-							case 0xfa:
-							case 0xfb:
-							case 0xfc:
-							case 0xfe:
-							case 0xff: {// 0-byte payload
-								messageSize = 0;
-								break;
-							};
-							case 0xf1:
-							case 0xf3: {// 1-byte payload
-								messageSize = 1;
-								break;
-							};
-							case 0xf2: {// 2-byte payload
-								messageSize = 2;
-								break;
-							};
-							case 0xf0: {
-								messageStart = i;
-								state = 1;
-								break;
-							};
-							case 0xf7: {
-								console.warn(`(${i}) Orphaned SysEx End received.`);
-								break;
-							};
-							default: {
-								console.debug(`(${i}) Undefined status ${e}.`);
-							};
-						};
-						if (messageSize >= 0) {
-							yield this.parseSingleEvent(buffer.subarray(i, i + messageSize + 1), options);
-							i += messageSize;
-							messageStart = i + 1;
-						};
-					} else if (e >= 128) {
-						let messageSize = 2;
-						// Channel
-						switch (e >> 4) {
-							case 12:
-							case 13: {
-								messageSize = 1;
-								break;
-							};
-						};
-						yield this.parseSingleEvent(buffer.subarray(i, i + messageSize + 1), options);
-						i += messageSize;
-						messageStart = i + 1;
-					};
-					break;
+			if (e >> 3 === 31) {
+				// System realtime
+				if (state > 0) {
+					messageKnock.push(i);
 				};
-				case 1: {
-					// SysEx data payload filtering
-					if (messageStart < 0) {
-						throw(new Error(`(${i}) SysEx filter has no start pointer.`));
-					};
-					let carvedSize = -1;
-					switch (e) {
-						case 0xf7: {
-							// SysEx End
-							if (messageKnock.length < 1) {
-								yield this.parseSingleEvent(buffer.subarray(messageStart, i + 1), options);
-							} else {
-								const filteredBuffer = new Uint8Array(i - messageStart + 1 - messageKnock.length);
-								for (let i2 = 0; i2 < messageKnock.length; i2 ++) {
-									const e0 = i2 === 0 ? messageStart : messageKnock[i2 - 1] + 1;
-									const e1 = messageKnock[i2];
-									if (e1 - e0 > 1) {
-										filteredBuffer.set(buffer.subarray(e0, e1), e0 - i2 - messageStart);
+				yield this.parseSingleEvent(buffer.subarray(i, i + 1), options);
+			} else {
+				switch (state) {
+					case 0: {
+						// Waiting for any status byte.
+						let messageSize = -1;
+						//isStale = false;
+						if (e >= 240) {
+							// System
+							if (e < 248) {
+								runningStatus = 0;
+							};
+							switch (e) {
+								case 0xf6: {// 0-byte payload
+									messageSize = 0;
+									break;
+								};
+								case 0xf1:
+								case 0xf3: {// 1-byte payload
+									messageSize = 1;
+									break;
+								};
+								case 0xf2: {// 2-byte payload
+									messageSize = 2;
+									break;
+								};
+								case 0xf0: {
+									messageStart = i;
+									state = 1;
+									if (messageKnock.length > 0) {
+										messageKnock.splice(0, messageKnock.length);
+									};
+									break;
+								};
+								case 0xf7: {
+									console.warn(`(${i}) Orphaned SysEx End received.`);
+									break;
+								};
+								default: {
+									console.debug(`(${i}) Undefined status ${e}.`);
+								};
+							};
+						} else if (e >= 128) {
+							runningStatus = e;
+							messageSize = 2;
+							// Channel
+							switch (e >> 4) {
+								case 12:
+								case 13: {
+									messageSize = 1;
+									break;
+								};
+							};
+						} else {
+							if (runningStatus >= 128 && runningStatus < 240) {
+								//isStale = true;
+								messageSize = 2;
+								// Channel
+								switch (runningStatus >> 4) {
+									case 12:
+									case 13: {
+										messageSize = 1;
+										break;
 									};
 								};
-								const lastKnockout = messageKnock[messageKnock.length - 1];
-								filteredBuffer.set(buffer.subarray(lastKnockout + 1, i + 1), lastKnockout - messageKnock.length + 1);
-								yield this.parseSingleEvent(filteredBuffer, options);
-								messageKnock.splice(0, messageKnock.length);
-							};
-							state = 0;
+							} else {
+								throw(new Error(`Invalid running status.`));
+							}
+						};
+						if (messageSize >= 0 && messageKnock.length > 0) {
+							messageKnock.splice(0, messageKnock.length);
+						};
+						if (messageSize > 0) {
+							messageStart = i;
+							remainingSize = messageSize;
+							state = 2;
+						} else if (messageSize === 0) {
+							yield this.parseSingleEvent(buffer.subarray(i, i + 1), options);
 							messageStart = i + 1;
-							break;
-						};
-						case 0xf8:
-						case 0xfa:
-						case 0xfb:
-						case 0xfc:
-						case 0xfe:
-						case 0xff: {// 0-byte payload
-							carvedSize = 0;
-							break;
-						};
-						case 0xf0:
-						case 0xf1:
-						case 0xf2:
-						case 0xf3:
-						case 0xf4:
-						case 0xf5:
-						case 0xf6: {
-							// Invalid state
-							throw(new Error(`Invalid system common inside SysEx.`));
-							break;
-						};
-						case 0xf9:
-						case 0xfd: {
-							carvedSize = 0;
-							console.debug(`(${i}) Undefined realtime status ${e} within SysEx.`);
-							break;
-						};
+						} else if (messageStart >= 0 && e >= 128) {
+							const invalidMessage = buffer.subarray(messageStart, i);
+							console.warn(`(${i}) Invalid message segment:\n`, invalidMessage);
+							messageStart = -1;
+						};;
+						break;
 					};
-					if (carvedSize >= 0) {
-						for (let iCarve = 0; iCarve <= carvedSize; iCarve ++) {
-							messageKnock.push(i + iCarve);
+					case 1: {
+						// SysEx data payload filtering
+						if (messageStart < 0) {
+							throw(new Error(`(${i}) SysEx filter has no start pointer.`));
 						};
-						yield this.parseSingleEvent(buffer.subarray(i, i + carvedSize + 1), options);
-						i += carvedSize;
-						carvedSize = -1;
+						//let carvedSize = -1;
+						switch (e) {
+							case 0xf7: {
+								// SysEx End
+								submitBuffer = true;
+								break;
+							};
+							case 0xf0:
+							case 0xf1:
+							case 0xf2:
+							case 0xf3:
+							case 0xf4:
+							case 0xf5:
+							case 0xf6: {
+								// Invalid state
+								throw(new Error(`Invalid system common inside SysEx.`));
+								break;
+							};
+						};
+						/*if (carvedSize >= 0) {
+							for (let iCarve = 0; iCarve <= carvedSize; iCarve ++) {
+								messageKnock.push(i + iCarve);
+							};
+							yield this.parseSingleEvent(buffer.subarray(i, i + carvedSize + 1), options);
+							i += carvedSize;
+							carvedSize = -1;
+						};*/
+						break;
 					};
-					break;
+					case 2: {
+						if (--remainingSize < 1) {
+							submitBuffer = true;
+						};
+						break;
+					};
+					default: {
+						console.debug(`Undefined state ${state}. ${e}`);
+					};
 				};
-				default: {
-					console.debug(`Undefined state ${state}. ${e}`);
+				if (submitBuffer) {
+					submitBuffer = false;
+					yield this.parseSingleEvent(bufferCarveOut(buffer.subarray(messageStart, i + 1), messageKnock), options);
+					messageKnock.splice(0, messageKnock.length);
+					state = 0;
+					messageStart = i + 1;
 				};
 			};
 		};
-		if (state === 1) {
-			throw(new Error(`Incomplete new SysEx.`));
+		switch (state) {
+			case 0: {
+				break;
+			};
+			case 1: {
+				throw(new Error(`Incomplete new SysEx.`));
+				break;
+			};
+			case 2: {
+				yield this.parseSingleEvent(bufferCarveOut(buffer.subarray(messageStart), messageKnock), options);
+				break;
+			};
 		};
 	};
 	/** @param {number} offset
