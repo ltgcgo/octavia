@@ -97,7 +97,7 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	delta: number;
 	/** MIDI event type. Type `8` to `14`, and `240` to `255` are all available. `0` means "unset". */
 	type: number;
-	/** The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will be invalid for `0xf0`-`0xff` events. Defaults to `null`. */
+	/** The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will be null by default for `0xf0`-`0xff` events, while some `0xff` events will have `ch` and `port` attached. Defaults to `null`. */
 	ch?: number;
 	/** The meta event type. Only applicable to `0xff` (meta) events. Defaults to `null`. */
 	meta?: number;
@@ -209,7 +209,7 @@ export class MICCOscillatorGroup extends MICCBaseVoice {}
 /** A defined instrument. */
 export class MICCInstrument extends MICCBaseVoice {}
 /** The contained metadata of the current file. */
-export class MICCFileMetadata {
+export class MICCSequenceMetadata {
 	/** The full format specifier of the current file. */
 	format: string;
 	/** MIDI time division. `480` is the most common.
@@ -297,7 +297,7 @@ export class MICCTrackerMetadata {
 /**
 * A file parsed or to be serialised by MICC.
 */
-export class MICCFile {
+export class MICCSequence {
 	/** Resolves when baseline usability is met, e.g. the raw data has been fully parsed. Will reject when the parser fails with parser error. */
 	ready: Promise<void>;
 	/** Used by parsers to mark the file as ready. */
@@ -315,17 +315,17 @@ export class MICCFile {
 	/** Used by parsers to reject the file.
 	* @param err The error object to be passed to both promise objects. */
 	reject(err: any): void;
-	/** (WIP) Serialise the current `MICCFile` object into a file.
+	/** (WIP) Serialise the current `MICCSequence` object into a file.
 	* @param format The format to be serialised into. Supports `smf`, `xws` (WIP). */
 	serialise(format: string): ReadableStream<Uint8Array>;
-	/** (WIP) Flatten the current `MICCFile` object into a defined structure, usually before serialization. This action is destructive and irreversible.
+	/** (WIP) Flatten the current `MICCSequence` object into a defined structure, usually before serialization. This action is destructive and irreversible.
 	* @param format The formatted structure to be serialised into. Supports `smf`, `seq` (WIP), `trk`. */
 	flatten(format: string): Promise<void>;
 	/** (WIP) Disassemble the file into MIA instructions. Will error out if the file type isn't one of `SMF_SINGLE`, `SMF_MULTIPLE` and `SMF_SEQUENTIAL`.
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
 	/** The metadata of the current file. */
-	meta: MICCFileMetadata;
+	meta: MICCSequenceMetadata;
 	/** If the current file is a tracker, the additional metadata of the current file. */
 	tracker: MICCTrackerMetadata;
 	/** The resource pool of the current file, usually used by pointer events. SMF files don't create this. */
@@ -347,17 +347,17 @@ export class MICC extends MICCConstants {
 	decoders: Iterable<TextDecoder>;
 	// Pure MIDI.
 	/** Parse the incoming Standard MIDI File byte stream. */
-	parseSmf(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	parseSmf(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
 	/** Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of SMF files) stream. */
-	parseMia(data: ReadableStream<Uint8Array>, label?: string): MICCFile;
+	parseMia(data: ReadableStream<Uint8Array>, label?: string): MICCSequence;
 	/** (WIP) Parse the incoming RMI byte stream. Contained SMF files will be flattened. */
-	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
 	// MIDI-containing project files.
 	/** (WIP) Parse the incoming XWS byte stream. */
-	parseXws(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	parseXws(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
 	// Tracker files.
 	/** (WIP) Parse the incoming Impulse Tracker byte stream. */
-	parseIt(data: ReadableStream<Uint8Array>, context?: object): MICCFile;
+	parseIt(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
 	// Assembly and disassembly.
 	/** Directly assemble MIA into SMF without going through a file object. */
 	assemble(data: ReadableStream<string>, context?: object): ReadableStream<Uint8Array>;
