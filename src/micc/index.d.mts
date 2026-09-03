@@ -97,7 +97,7 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	delta: number;
 	/** MIDI event type. Type `8` to `14`, and `240` to `255` are all available. `0` means "unset". */
 	type: number;
-	/** The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will be null by default for `0xf0`-`0xff` events, while some `0xff` events will have `ch` and `port` attached. Defaults to `null`. */
+	/** The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will be null by default for `0xf0`-`0xff` events, while some `0xff` events will have `ch` and `port` attached by the event funnel or the finaliser. Defaults to `null`. */
 	ch?: number;
 	/** The meta event type. Only applicable to `0xff` (meta) events. Defaults to `null`. */
 	meta?: number;
@@ -111,7 +111,7 @@ export class NakedMIDIEvent extends MICCBaseElement {
 	parsed?: number|string;
 	/** The parsed time in MIDI ticks, usually set by the event funnel. Use a time offset map to grab the actual seconds. Unused by assemblers and serializers. */
 	time?: number;
-	/** The port for the event, usually set by the finaliser. Defaults to `null`. Unless used by multi-port event transports, this is unused by assemblers and serializers. */
+	/** The port for the event, usually set by the event funnel or the finaliser. Defaults to `null`. Unless used by multi-port event transports, this is unused by assemblers and serializers. */
 	port?: number;
 	/** The track number for the event, usually set by the event funnel. Defaults to `null`. Unused by assemblers and serializers. */
 	track?: number;
