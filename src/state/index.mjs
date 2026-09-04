@@ -1586,7 +1586,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				const timeDiff = this.clockTicker.tickDiff(timeNow);
 				//console.debug(timeNow - this.clockTicker.lastTick);
 				//this.#noteLength = timeDiff;
-				this.dispatchEvent("tempo", 2500 / timeDiff);
+				this.dispatchEvent("tempo", Math.round(10000 / timeDiff) * 0.25);
 			};
 			//this.clockTicker.lastTick = timeNow;
 			//console.debug("Tick!");

@@ -105,7 +105,7 @@ export class TimeMuxer {
 	constructor(clockSource?: HTMLMediaElement|OctaviaTimeProvider);
 }
 
-/** State of the clock. */
+/** State of the clock. Will be replaced soon. */
 export interface OctaviaClockSink {
 	/** If the current clock is paused. Defaults to `true`. */
 	paused: boolean;
@@ -113,7 +113,7 @@ export interface OctaviaClockSink {
 	willPlay: boolean;
 	/** Timestamp of the last received MIDI clock tick. Defaults to `0`. */
 	lastTick: number;
-};
+}
 
 /** When `true`, the code should be in a debugging state. */
 export function getDebugState(): boolean;
@@ -572,13 +572,13 @@ export class OctaviaDevice {
 	/** Retrieve the numerical mode identifier of a part. */
 	getChModeId(part: number, noFallback?: boolean): number;
 	/** Sets the mode of a part with a numerical identifier. */
-	setChModeId(part: number, modeId?: boolean): string;
+	setChModeId(part: number, modeId?: number): void;
 	/** Retrieve the string mode identifier of a port. */
-	getPortMode(part: number, noFallback?: boolean): string;
+	getPortMode(port: number, noFallback?: boolean): string;
 	/** Retrieve the numerical mode identifier of a port. */
-	getPortModeId(part: number, noFallback?: boolean): number;
+	getPortModeId(port: number, noFallback?: boolean): number;
 	/** Set the mode of a port with a numerical identifier. */
-	setPortModeId(part: number, modeId?: boolean): string;
+	setPortModeId(port: number, modeId?: number): void;
 	/** Copy the setup of a part from another part. Needs rethinking and reworking. */
 	copyChSetup(sourcePart: number, targetPart: number, failWhenActive?: boolean): void;
 	/** Get the first write part for a drum slot. */
@@ -599,11 +599,11 @@ export class OctaviaDevice {
 	*/
 	switchMode(mode: string, forced?: number, setTarget?: boolean): void;
 	/** (WIP) Retrieve the raw strength of all parts, values range between 0 and 16383. */
-	getRawStrengths(): Uint8Array;
+	getRawStrengths(): Uint16Array;
 	/** Retrieve the strength of all parts, values are all within [0, 32767], affected by cc7 and cc11.
 	* @param fullScale When `true`, the range will become [0, 32768] instead.
 	*/
-	getStrengths(fullScale?: boolean): Uint8Array;
+	getStrengths(fullScale?: boolean): Uint16Array;
 	/** Wipe the raw strength buffer clean for the next round. */
 	clearStrength(): void;
 	/** The legacy MIDI event object executor. @deprecated */
