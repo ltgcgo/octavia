@@ -177,6 +177,21 @@ export default class MICCInternalsSMF {
 				};
 				break;
 			};
+			case 241:
+			case 243: {
+				if (options.isSmfWrapped) {
+					throw(new Error(`Common event ${eventType.toString(16).toUpperCase()} can only exist raw.`));
+				};
+				dataEndPointer += 1;
+				break;
+			};
+			case 242: {
+				if (options.isSmfWrapped) {
+					throw(new Error(`Song position pointers can only exist raw.`));
+				};
+				dataEndPointer += 2;
+				break;
+			};
 			default: {
 				console.error(inBuffer);
 				throw(new TypeError(`Unknown MIDI event type ${eventType}.`));

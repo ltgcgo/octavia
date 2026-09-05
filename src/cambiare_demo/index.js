@@ -139,6 +139,16 @@ createDropDown($e("div#dropmount-ecmode"), {
 	"optionActive": "($store.useElementCount??true)===id",
 	"optionClick": "gEcMode(id)"
 });
+createDropDown($e("div#dropmount-tempo-source"), {
+	"activeSlot": 4,
+	"minWidth": "7.5rem",
+	"displayText": "tempoSrc[($store.tempoSource??0)]||'N/A'",
+	"eachExpr": "(name, id) in tempoSrc",
+	"optionText": "name",
+	"optionDesc": "`Internal ID: (${id})`",
+	"optionActive": "($store.tempoSource??0)===id",
+	"optionClick": "gTempoSrc(id)"
+});
 createDropDown($e("div#dropmount-levelXg"), {
 	"activeSlot": 0,
 	"minWidth": "9.5rem",

@@ -12,7 +12,7 @@ import {
 	MICCInternalsSMF,
 	MIDINakedEvent
 } from "../micc/index.mjs";
-import { pruneObjects } from "../state/utils.js";
+import { bufferToDHex, pruneObjects } from "../state/utils.js";
 
 let globalAudioCtx;
 let getGAC = function () {
@@ -72,7 +72,13 @@ const midiNaked2ColxiAlt = function (midiEvent) {
 };
 
 const inputConv = function (ev) {
-	const oldEvent = toJson(ev.data, inPortMap[ev.target.id]);
+	//const oldEvent = toJson(ev.data, inPortMap[ev.target.id]);
+	switch (ev.data[0] >> 4) {
+		case 12:
+		case 15: {
+			console.debug(bufferToDHex(ev.data, 24));
+		};
+	};
 	/*midiLine.postMessage(oldEvent);*/
 	try {
 		for (const newEvent of pruneObjects(MICCInternalsSMF.parseRawEvents(ev.data))) {

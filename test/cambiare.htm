@@ -37,9 +37,9 @@
 			<template x-for="dump in dumps">
 				<div class="column column-option column-button" @click="gLimitDump(dump[0])" x-text="dump[1]" :title="dump[2]" :active="($store.limitDump||2)==dump[0]?'true':'false'"></div>
 			</template>
-			<div class="column"></div>
+			<div class="column column-tail"></div>
 		</div>
-		<div class="columns is-multiline is-mobile is-vcentered" x-data="{cats:['Pre-GM','GM 1','GM 2'],value:{cat:1},frames:{'7':[144,'PC screen'],'9':[120,'PC screen'],'10':[100,'PC screen'],'12':[90,'Phone screen'],'14':[75,'Phone screen'],'17':[60,'NTSC'],'20':[50,'PAL & SÉCAM (native)'],'21':[48,'Film'],'34':[30,'NTSC'],'40':[25,'PAL & SÉCAM'],'42':[24,'Film'],'100':[10,'Economic'],'500':[2,'Economic']},ecModes:[[false,'Ignore'],[true,'Counted']],active:[0,0,0,0]}">
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{cats:['Pre-GM','GM 1','GM 2'],value:{cat:1},frames:{'7':[144,'PC screen'],'9':[120,'PC screen'],'10':[100,'PC screen'],'12':[90,'Phone screen'],'14':[75,'Phone screen'],'17':[60,'NTSC'],'20':[50,'PAL & SÉCAM (native)'],'21':[48,'Film'],'34':[30,'NTSC'],'40':[25,'PAL & SÉCAM'],'42':[24,'Film'],'100':[10,'Economic'],'500':[2,'Economic']},ecModes:[[false,'Ignore'],[true,'Counted']],tempoSrc:['As-is','MIDI Clock'],active:[0,0,0,0,0]}">
 			<div class="column column-option"><b>Global mode</b></div>
 			<div :class="`column column-option column-button column-nowrap dropdown${active[0]?' is-active':''}`" :active="active[0]">
 				<div class="dropdown-trigger" style="min-width: 6.5rem" @click="active[1]=false;active[0]=!active[0]">
@@ -75,11 +75,13 @@
 					</div>
 				</div>
 			</div>
-			<div class="column column-option"><b>Framerate</b></div>
+			<div class="column column-option"><b>FPS</b></div>
 			<div id="dropmount-framerate"></div>
 			<div class="column column-option"><b>Oscillators</b></div>
 			<div id="dropmount-ecmode"></div>
-			<div class="column"></div>
+			<div class="column column-option"><b>Tempo Source</b></div>
+			<div id="dropmount-tempo-source" class="wip"></div>
+			<div class="column column-tail"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{xgLvls:[[0,'MU Basic'],[1,'MU100 Native'],[2,'PSR/LE'],[3,'QY100']],gsLvls:[[1,'SC-55'],[2,'SC-88'],[3,'SC-88 Pro'],[4,'SC-8850']],scLvls:[[2,'SC-88'],[3,'SC-88 Pro']],x5Lvls:[[81,'05R/W'],[82,'X5D']],active:[0,0,0,0]}">
 			<div class="column column-option"><b>XG level</b></div>
@@ -90,7 +92,7 @@
 			<div id="dropmount-levelSc"></div>
 			<div class="column column-option"><b>X5 target</b></div>
 			<div id="dropmount-levelX5" class="wip"></div>
-			<div class="column"></div>
+			<div class="column column-tail"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],ranges:[['port1','16ch'],['compact','Compact'],['port2','32ch'],['port4','64ch']],ports:[0,1,2,3,4,5,6,7],letters:'ABCDEFGH',max:8,size:{port1:1,compact:1,port2:2,port4:4}}">
 			<div class="column column-option"><b>Display mode</b></div>
@@ -101,7 +103,7 @@
 			<template x-for="port in ports">
 				<div class="column column-option column-button" @click="gPort(port)" x-text="letters[port]" :active="($store.startPort||0)==port?'true':'false'"></div>
 			</template>
-			<div class="column"></div>
+			<div class="column column-tail"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],styles:{'block':['Block','MUNT'],'comb':['Comb','Cambiare'],'piano':['Piano','vanBasco\'s'],'line':['Line','MegaMID']},pans:{'0':'Block','9':'Wide','10':'Fan','11':'Knob','1':'Pin','2':'Arc','3':'Dash','5':'Needle','6':'Sector','7':'Hand'},accents:[['Follow','Follow the pre-defined accent colours.'],['Enforce','Enforce global accent colour.'],['Split','Define different accent colours for each port.'],['Modify','Modify the accent colours per-mode.']],fonts:['PT Sans Narrow','Barlow Condensed','Sofia Sans Condensed']}">
 			<div class="column column-option"><b>Note style</b></div>
@@ -112,7 +114,7 @@
 			<div id="dropmount-accenttype" class="wip"></div>
 			<div class="column column-option"><b>Font</b></div>
 			<div id="dropmount-uifont"></div>
-			<div class="column"></div>
+			<div class="column column-tail"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{active:[],schemes:['Dark','Light'],backgrounds:{'soft':['Soft','General-purpose soft colour-fill background.'],'luma':['Luma','Colour-fill background for luma keying.'],'colour':['Colour','Custom colour-fill background.'],'imageLuma':['Image','Custom image background. Opacity mixed with luma colours.'],'imageColour':['Image +','Custom image background. Opacity mixed with custom colours.']},strats:{'cover':['Cover','Scale the image until it can fill the entire canvas.'],'fit':['Fit','Scale the image until it can fully fit inside the canvas.'],'stretch':['Stretch','Stretch and squash the image to fully fill the canvas.'],'tile':['Tile','Tile the image on all cardinal directions.'],'preserve':['Preserve','Use the original image as-is without any scaling.']},metaFonts:['Follow UI','Datatype','Iosevka Charon Mono']}">
 			<div class="column column-option"><b>Scheme</b></div>
@@ -127,8 +129,7 @@
 			<div class="column column-option"><b>Meta Font</b></div>
 			<div id="dropmount-metafont"></div>
 			<br/>
-			<div class="column"></div>
-			<!--<div class="column"></div>-->
+			<div class="column column-tail"></div>
 		</div>
 		<div class="columns is-multiline is-mobile is-vcentered" x-show="$store.bgGroup==='imageLuma'||$store.bgGroup==='imageColour'">
 			<div class="column column-option"><b>Tooltip</b></div>
@@ -145,7 +146,7 @@
 			<template x-for="demo in $store.demo">
 				<div class="column column-option column-button" @click="gDemo(demo)" x-text="demo.text" :title="`${demo.artist} - ${demo.title} (${demo.standard}; ${demo.audio})`" :active="($store.activeDemo||-1)==demo.id?'true':'false'"></div>
 			</template>
-			<div class="column"></div>
+			<div class="column column-tail"></div>
 		</div>
 	</div>
 	<div class="cambiare" lang="ja"></div>

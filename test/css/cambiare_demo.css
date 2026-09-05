@@ -122,6 +122,9 @@ button {
 .column-nowrap {
 	white-space: nowrap;
 }
+.column-tail {
+	flex: 0;
+}
 
 .cambiare {
 	margin: 0 auto;

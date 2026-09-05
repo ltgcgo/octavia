@@ -228,7 +228,7 @@ export class MICCSequenceMetadata {
 	division: number;
 	/** Definition vary by file type.
 	*
-	* For SMF files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`. */
+	* For Standard MIDI Files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`. */
 	type: number;
 	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead. */
 	track?: number;
@@ -236,7 +236,7 @@ export class MICCSequenceMetadata {
 	clip?: number;
 	/** For files utilising styles, amount of expected styles. Currently unused. */
 	style?: number;
-	/** For formats directly specifying names. Pure SMF files and XWS files don't have this field, but formats like tracker music modules and KORG SNG have it. */
+	/** For formats directly specifying names. Pure Standard MIDI Files and XWS files don't have this field, but formats like tracker music modules and KORG SNG have it. */
 	title?: string;
 }
 /** (WIP) A single edit record. */
@@ -320,7 +320,7 @@ export class MICCSequence {
 	markFinalised(): Promise<void>;
 	/** Runs the finalization process. Re-runs are useful for programs that mutate events, e.g. editors. */
 	finalise(asType: number): Promise<void>;
-	/** Runs the propagation process to convert parsed properties into data used by assemblers and serialisers. */
+	/** Runs the propagation process to convert parsed properties, which may have been modified, back into raw data used by assemblers and serialisers. */
 	propagate(asType: number): Promise<void>;
 	/** Used by parsers to reject the file.
 	* @param err The error object to be passed to both promise objects. */
@@ -338,7 +338,7 @@ export class MICCSequence {
 	meta: MICCSequenceMetadata;
 	/** If the current file is a tracker, the additional metadata of the current file. */
 	tracker: MICCTrackerMetadata;
-	/** The resource pool of the current file, usually used by pointer events. SMF files don't create this. */
+	/** The resource pool of the current file, usually used by pointer events. Standard MIDI Files don't create this. */
 	pool?: Map<string, MICCBaseElement[]>;
 	/** Tracks contained by the current file. */
 	tracks: MICCTrack[];
@@ -358,9 +358,9 @@ export class MICC extends MICCConstants {
 	// Pure MIDI.
 	/** Parse the incoming Standard MIDI File byte stream. */
 	parseSmf(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
-	/** Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of SMF files) stream. */
+	/** Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of Standard MIDI Files) stream. */
 	parseMia(data: ReadableStream<Uint8Array>, label?: string): MICCSequence;
-	/** (WIP) Parse the incoming RMI byte stream. Contained SMF files will be flattened. */
+	/** (WIP) Parse the incoming RMI byte stream. Contained Standard MIDI Files will be flattened. */
 	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
 	// MIDI-containing project files.
 	/** (WIP) Parse the incoming XWS byte stream. */
