@@ -8,7 +8,7 @@ import {RootDisplay, MxFont40, MxBmDef} from "../basic/index.mjs";
 import {ChordDict, getFreePlan} from "../chord/index.mjs";
 
 const targetRatio = 16 / 9;
-const pixelBlurSpeed = 64;
+const pixelBlurSpeed = 96;
 const piMulti = new Float64Array(49); // 0~360, 90 deg -> 15 deg
 const chTypes = "Vx,Dr,D1,D2,D3,D4,D5,D6,D7,D8".split(",");
 const blackKeys = [1, 3, 6, 8, 10],

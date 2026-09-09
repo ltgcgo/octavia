@@ -130,6 +130,14 @@ let VoiceBank = class {
 						};
 						break;
 					};
+					case 104: // PSR XG Compatible
+					case 108: { // PSR Virtual Resonance Modeling
+						if (lsb === 152) {
+							args[2] = 0;
+						};
+						args[2] += 128;
+						break;
+					};
 					case 121: {
 						switch (lsb) {
 							case 126: {
@@ -943,7 +951,17 @@ let VoiceBank = class {
 			case 105:
 			case 106:
 			case 107: {
-				standard = "SD"; // Roland StudioCanvas
+				if (args[2] < 128) {
+					standard = "SD"; // Roland StudioCanvas
+				} else if (args[0] === 104) {
+					standard = "XG"; // Yamaha PSR XG compatible
+				};
+				break;
+			};
+			case 108: {
+				if (args[2] >= 128) {
+					standard = "XG"; // Yamaha PSR XG compatible
+				};
 				break;
 			};
 			case 120: {
