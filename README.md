@@ -34,7 +34,7 @@ With Octavia, no longer will you worry about standard compliance. Just focus on 
 * Free, libre and open-source, licensed under GNU LGPL v3.0.
 * Keep your focus on building what matters, as Octavia behaves like a real MIDI module, taking over the heavy-lifting for you.
 * Built-in support for multiple plug-in cards and tons of other devices.
-* Wide support of bank mapping and bitmaps via [`midi-db`](https://github.com/ltgcgo/midi-db).
+* Wide support of bank mapping and bitmaps via [Octavia Scroll](https://github.com/ltgcgo/midi-db).
 * Stringent compliance of existing established standards.
 * Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
 * Available in web-compliant JS (standard ESM; browser and Deno).

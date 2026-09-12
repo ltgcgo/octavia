@@ -2,48 +2,54 @@
 Octavia will never become a reality without help from the following people.
 
 ### Contributors
-#### Code base
-* **GFHK-SDGM** for the fake PSR screen.
+#### Codebase
+- **GFHK-SDGM**: recreated PSR-170 screen.
+- **Lumière Élevé**: lead developer.
 
-#### Implementation
-* **JayB**
-* **ValleyBell**
-* **MJG0117**
-* **AWE_asikwus**
+#### Behaviour
+- **JayB**
+- **ValleyBell**
+- **MJG0117**
+- **MasteredRealm**
+- **Thorndust**
+- **AWE_asikwus**
 
 ### Software Testers
-* **AWE_asikwus**
-* **dj.tuBIG/MaliceX**
-* **Eastern_Digital**
-* **GFHK-SDGM**
-* **JayB**
-* **MIDIMan**
-* **MJG0117**
-* **now_its_dark**
-* **ValleyBell**
-* **VideoJames**
+- **AWE_asikwus**
+- **dj.tuBIG/MaliceX**
+- **Eastern_Digital**
+- **GFHK-SDGM**
+- **JayB**
+- **JK150**
+- **MIDIMan**
+- **MJG0117**
+- **now_its_dark**
+- **PurpBatBoi**
+- **ValleyBell**
+- **VideoJames**
 
 ### Hardware Testers
-* **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
+- **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
 
 ### Reference providers
-* **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
-* **DearHoney** (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro, YAMAHA MU100, YAMAHA MU1000)
-* **DistWave** (YAMAHA MU80)
-* **NiceChord** (YAMAHA MU80, Roland SC-55 mk. II)
-* **now_its_dark** (MU2000)
-* **Lupinzar** _DarkWolf, garoux.net_ (YAMAHA MU80, Roland SC-55 mk. II)
-* **ValleyBell** (SC-88 VL)
+- **JayB** (YAMAHA QY70, YAMAHA QY100, KORG NS5R, KORG X5DR)
+- **DearHoney** (KORG 01/W, KORG 05R/W, KORG AG-10, KORG NS5R, KORG X5D, Roland SC-155, Roland SC-55 mk. II, Roland SC-88 Pro, YAMAHA MU100, YAMAHA MU1000)
+- **DistWave** (YAMAHA MU80)
+- **NiceChord** (YAMAHA MU80, Roland SC-55 mk. II)
+- **now_its_dark** (MU2000)
+- **Lupinzar** _DarkWolf, garoux.net_ (YAMAHA MU80, Roland SC-55 mk. II)
+- **ValleyBell** (SC-88 VL)
 
 ### Miscellaneous
-* **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
-* **NiceChord** for inspiring this project. Same as above.
-* **GFHK-SDGM** for helping collecting the bitmaps.
-* **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's default GUI and Cambiare).
-* **MIDIMan** for checking the bitmaps against a YAMAHA MU2000 module.
-* **ValleyBell** for providing the base map of PLG150-AN and PLG150-DX.
-* **youngmonkey** for the [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
-* **アルゴ算法堂** for providing the AKAI SG01k voice map.
+- **Eastern_Digital** for suggesting a better cross-platform MIDI support. Without them, Octavia would've never been born.
+- **NiceChord** for inspiring this project. Same as above.
+- **GFHK-SDGM** for helping collect the bitmaps.
+- **Ham Seung-woo** for providing videos with MegaMID (inspiration of Octavia's TUI and Octavia Cambiare).
+- **MasteredRealm** and **Thorndust**  for checking the bitmaps against a Roland SC-8850 module.
+- **MIDIMan** for checking the bitmaps against a YAMAHA MU2000 module.
+- **ValleyBell** for providing the base map of PLG150-AN and PLG150-DX.
+- **youngmonkey** for the [MT-32 SysEx map](https://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html).
+- **アルゴ算法堂** for providing the AKAI SG01k voice map.
 
 ## Demo Credits
 Octavia will now dynamically load additional demos if available. [See the credits here](https://github.com/ltgcgo/midi-demo-data/blob/main/collection/octavia/list.tsv)!
@@ -64,6 +70,7 @@ Octavia will now dynamically load additional demos if available. [See the credit
 - Lightfelt (GNU LGPL v3.0)
 - [`midi-parser`](https://github.com/ltgcgo/midi-parser-js) (GNU GPL v3.0) (will be swapped out with a custom solution)
 - [Rochelle](https://github.com/ltgcgo/rochelle) (GNU LGPL v3.0)
+- [Seamstress](https://github.com/ltgcgo/seamstress) (GNU LGPL v3.0)
 - [Snowy](https://github.com/ltgcgo/snowy) (GNU LGPL v3.0)
 - [Twinkle Sprinkle](https://github.com/ltgcgo/twinkle) (GNU LGPL v3.0)
 - [`water.css`](https://watercss.kognise.dev) (MIT License)
@@ -76,4 +83,5 @@ Octavia will now dynamically load additional demos if available. [See the credit
 - [Work Sans](https://github.com/weiweihuanghuang/Work-Sans) (SIL OFL v1.1)
 
 ### Images
-Check [image/README.md](image/README.md) for further information.
+Check [image/README.md](image/README.md) for up-to-date information.
+- AnorakNR

@@ -132,10 +132,12 @@ let VoiceBank = class {
 					};
 					case 104: // PSR XG Compatible
 					case 108: { // PSR Virtual Resonance Modeling
-						if (lsb === 152) {
-							args[2] = 0;
+						if (hint === 2) {
+							if (lsb === 152) {
+								args[2] = 0;
+							};
+							args[2] += 128;
 						};
-						args[2] += 128;
 						break;
 					};
 					case 121: {
