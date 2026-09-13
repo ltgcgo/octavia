@@ -128,122 +128,236 @@ test("Continuous event errors", () => {
 });
 test("Single event validation", () => {
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "834A7F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "834A7F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_OFF);
+		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
+		assertEquals(dummyState.parserContext.lastStatus, 0x83);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "934A7F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "934A7F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_ON);
+		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
+		assertEquals(dummyState.parserContext.lastStatus, 0x93);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "A34A7F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "A34A7F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_AT);
+		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
+		assertEquals(dummyState.parserContext.lastStatus, 0xA3);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "B34A7F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "B34A7F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_CONTROL);
+		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
+		assertEquals(dummyState.parserContext.lastStatus, 0xB3);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "C37F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "C37F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_PROGRAM);
+		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 1);
+		assertEquals(dummyState.parserContext.lastStatus, 0xC3);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "D37F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "D37F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_CH_AT);
+		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 1);
+		assertEquals(dummyState.parserContext.lastStatus, 0xD3);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "E34A7F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "E34A7F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_CH_PITCH);
+		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
+		assertEquals(dummyState.parserContext.lastStatus, 0xE3);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F07E7F0901F7"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F07E7F0901F7"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_NEW);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 5);
+		assertEquals(dummyState.parserContext.lastStatus, 0xf0);
 	};
 	{
 		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F0057E7F0901F7"), parseTypeWrapped);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_NEW);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 5);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F17F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F17F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_TIME_CODE);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 1);
+		assertEquals(dummyState.parserContext.lastStatus, 0xf1);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F27F7F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F27F7F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_SONG_POSITION);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 2);
+		assertEquals(dummyState.parserContext.lastStatus, 0xf2);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F37F"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F37F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_SONG_SELECT);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 1);
+		assertEquals(dummyState.parserContext.lastStatus, 0xf3);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F6"));
+		const dummyState = {
+			"parserContext": {}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F6"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_TUNE_REQUEST);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
+		assertEquals(dummyState.parserContext.lastStatus, 0xf6);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F7057E7F0901F7"), {
+		const dummyState = {
 			"isSmfWrapped": true,
 			"parserContext": {
 				"lastSysExHung": true
 			}
-		});
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F7057E7F0901F7"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_RESUME);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 5);
+		assertEquals(dummyState.parserContext.lastStatus, 0xf7);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F8"));
+		const dummyState = {
+			"parserContext": {
+				"lastStatus": 0x9f
+			}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F8"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_CLOCK);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
+		assertEquals(dummyState.parserContext.lastStatus, 0x9f);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FA"));
+		const dummyState = {
+			"parserContext": {
+				"lastStatus": 0x9f
+			}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FA"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_START);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
+		assertEquals(dummyState.parserContext.lastStatus, 0x9f);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FB"));
+		const dummyState = {
+			"parserContext": {
+				"lastStatus": 0x9f
+			}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FB"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_RESUME);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
+		assertEquals(dummyState.parserContext.lastStatus, 0x9f);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FC"));
+		const dummyState = {
+			"parserContext": {
+				"lastStatus": 0x9f
+			}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FC"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_STOP);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
+		assertEquals(dummyState.parserContext.lastStatus, 0x9f);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FE"));
+		const dummyState = {
+			"parserContext": {
+				"lastStatus": 0x9f
+			}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FE"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_ACTIVE_SENSE);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
+		assertEquals(dummyState.parserContext.lastStatus, 0x9f);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF"));
+		const dummyState = {
+			"parserContext": {
+				"lastStatus": 0x9f
+			}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_RESET);
+		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
+		assertEquals(dummyState.parserContext.lastStatus, 0x9f);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF01023032"), parseTypeWrapped);
+		const dummyState = {
+			"isSmfWrapped": true,
+			"parserContext": {
+				"lastStatus": 0x9f
+			}
+		};
+		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF01023032"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_META);
+		assertEquals(e.isStale, false);
 		assertEquals(e.meta, 1);
 		assertEquals(e.data.length, 2);
+		assertEquals(dummyState.parserContext.lastStatus, 0x9f);
 	};
 });
 test("Continuous event validation", () => {
@@ -254,6 +368,7 @@ test("Continuous event validation", () => {
 			}
 		});
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_OFF);
+		assertEquals(e.isStale, true);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
 	};
@@ -264,6 +379,7 @@ test("Continuous event validation", () => {
 			}
 		});
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_ON);
+		assertEquals(e.isStale, true);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
 	};
@@ -274,6 +390,7 @@ test("Continuous event validation", () => {
 			}
 		});
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_AT);
+		assertEquals(e.isStale, true);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
 	};
@@ -284,6 +401,7 @@ test("Continuous event validation", () => {
 			}
 		});
 		assertEquals(e.type, MICCConstants.MIDI_CONTROL);
+		assertEquals(e.isStale, true);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
 	};
@@ -294,6 +412,7 @@ test("Continuous event validation", () => {
 			}
 		});
 		assertEquals(e.type, MICCConstants.MIDI_PROGRAM);
+		assertEquals(e.isStale, true);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 1);
 	};
@@ -304,6 +423,7 @@ test("Continuous event validation", () => {
 			}
 		});
 		assertEquals(e.type, MICCConstants.MIDI_CH_AT);
+		assertEquals(e.isStale, true);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 1);
 	};
@@ -314,6 +434,7 @@ test("Continuous event validation", () => {
 			}
 		});
 		assertEquals(e.type, MICCConstants.MIDI_CH_PITCH);
+		assertEquals(e.isStale, true);
 		assertEquals(e.ch, 3);
 		assertEquals(e.data.length, 2);
 	};
