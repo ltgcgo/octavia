@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 echo -e "\033[1;37mLightingale Hyacinth\033[0m"
 mkdir -p dist
 #mkdir -p proxy
@@ -10,6 +9,7 @@ rm -r dist/*.map 2> /dev/null
 rm -r dist/*.mjs 2> /dev/null
 rm -r dist/*.ts 2> /dev/null
 rm -r dist/*.mts 2> /dev/null
+set -eo pipefail
 # Using esbuild to build all JS files
 #esbuild --bundle src/index.js --outfile=dist/index.js --minify --sourcemap
 #esbuild --bundle src/index.js --target=es6 --outfile=dist/index.es6.js --minify --sourcemap
