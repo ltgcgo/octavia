@@ -31,11 +31,11 @@ export default class MICCConstants {
 	static FILE_SMF_SEQUENTIAL = 0x0002;
 	static FILE_SMF_CLIP = 0x0004;
 	static FILE_SMF_KORG_SONG = 0x0008; // Not final.
-	// Sequencer projects.
+	// Sequencer projects. Very rough patterns, don't apply to every single one.
 	static FILE_SEQ_CAKEWALK = 0x1cae;
-	static FILE_SEQ_SOL = 0x1f32;
-	static FILE_SEQ_XGWORKS = 0x1bcc;
-	// Tracker formats.
+	static FILE_SEQ_SOL = 0x1501;
+	static FILE_SEQ_XGWORKS = 0x1bcc; // I give up on this one.
+	// Tracker formats. Bonus treat (not really) if you can spot how the tracker IDs are assigned!
 	// https://milkytracker.org/docs/manual/MilkyTracker.html#formats
 	static FILE_TRK_PRO = 0x2000; // 1987 (Ultimate Soundtracker), 1990 (ProTracker)
 	static FILE_TRK_SOUNDFX = 0x2010; // 1988 (SoundFX)
