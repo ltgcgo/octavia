@@ -10,6 +10,7 @@ import {
 import {
 	MIDINakedEvent
 } from "../classes/event.mjs";
+import MICCConstants from "../classes/constants.mjs";
 import {
 	MICCSMFMIAHandleOptions
 } from "../index.mjs";
@@ -68,7 +69,7 @@ export default class MICCInternalsSMF {
 			eventType = statusByte;
 			if (options.parserContext.lastSysExHung) {
 				switch (eventType) {
-					case 0xff: // Meta events aren't sent over the wire.
+					case 0xff: // Meta events aren't sent over the wire. Not remapped here yet.
 					case 0xf0:
 					case 0xf7: {
 						break;
@@ -148,8 +149,10 @@ export default class MICCInternalsSMF {
 				break;
 			};
 			case 255: {
-				if (!options.isSmfWrapped) {
-					throw(new Error(`0xFF event can only exist in SMF.`));
+				if (options.isSmfWrapped) {
+					eventType = 239; // Remapped.
+				} else {
+					break;
 				};
 				if (buffer.length <= dataEndPointer) {
 					throw(new Error(`Incomplete meta event: meta type does not exist.`))
@@ -203,8 +206,8 @@ export default class MICCInternalsSMF {
 		};
 		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
 		let isSysExActive = false;
-		if (eventType >= 8 && eventType < 255) {
-			// Meta events are left as-is.
+		if (eventType >= 8 && eventType <= 255 && eventType !== 0xef) {
+			// Meta events are left as-is apart from getting remapped.
 			// SysEx events allow for concatenation thanks to the existing backlog of SMFs.
 			const scanRegion = options.loosenForSpeed ? Math.min(nakedEvent.data.length, 24) : nakedEvent.data.length;
 			if (eventType === 0xf0) {
@@ -251,7 +254,7 @@ export default class MICCInternalsSMF {
 			// Separated safety check due to `loosenForSpeed`.
 			options.parserContext.lastSysExHung = options.loosenForSpeed ? (nakedEvent.data.length > 0 ? nakedEvent.data[nakedEvent.data.length - 1] !== 0xf7 : false) : isSysExActive;
 		};
-		if (!isStale && eventType < 0xf8) {
+		if (!isStale && eventType < 0xf8 && eventType !== 0xef) {
 			// Crash the subsequent event that attempts running status reuse, if the event type is 0xf0-0xff.
 			options.parserContext.lastStatus = statusByte;
 		};
@@ -277,7 +280,8 @@ export default class MICCInternalsSMF {
 		};
 		statusPtr = finalSize;
 		// Status byte size
-		if (event.type >= 0xf0 && event.type <= 0xff) {
+		// 0xEF is the remapped meta type in SMF due to 0xFF collision.
+		if (event.type >= 0xef && event.type <= 0xff) {
 			if (event.isStale) {
 				throw(new Error(`System messages forbid running status.`));
 			};
@@ -334,9 +338,9 @@ export default class MICCInternalsSMF {
 				finalSize += event.data.length;
 				break;
 			};
-			case 0xff: {
+			case 0xef: {
 				if (!options.isSmfWrapped) {
-					throw(new Error(`0xFF events can only occur in SMF.`));
+					throw(new Error(`Meta (0xFF) events can only occur in SMF.`));
 				};
 				if (Number.isSafeInteger(event.meta) && event.meta >= 0 && event.meta <= 0xff) {
 					//finalSize += 1; // Meta type.
@@ -393,7 +397,15 @@ export default class MICCInternalsSMF {
 			throw(new Error(`Status byte slot unrecognised.`));
 		};
 		if (!event.isStale) {
-			buffer[statusPtr] = event.type >= 0xf0 ? event.type : (event.type << 4) | (event.ch & 15);
+			switch (event.type) {
+				case 0xef: {
+					buffer[statusPtr] = 0xff;
+					break;
+				};
+				default: {
+					buffer[statusPtr] = event.type >= 0xf0 ? event.type : (event.type << 4) | (event.ch & 15);
+				};
+			};
 		};
 		if (dataPtr < 0) {
 			throw(new Error(`Data byte slot unrecognised.`));
@@ -418,7 +430,7 @@ export default class MICCInternalsSMF {
 				};
 				break;
 			};
-			case 0xff: {
+			case 0xef: {
 				buffer[dataPtr] = event.meta;
 				IntegerHandler.writeVLV(buffer, event.data.length, dataPtr + 1);
 				break;
@@ -429,7 +441,7 @@ export default class MICCInternalsSMF {
 		};
 		buffer.set(event.data, dataStartPtr);
 		// Assembly finished.
-		if (!event.isStale && event.type < 0xf8) {
+		if (!event.isStale && event.type < 0xf8 && event.type !== 0xef) {
 			// SysRT doesn't change running status.
 			options.parserContext.lastStatus = event.type <= 15 ? (event.type << 4) | (event.ch & 15) : event.type;
 		};

@@ -21,8 +21,8 @@ export default class MICCConstants {
 	static MIDI_RESUME = 0xfb;
 	static MIDI_STOP = 0xfc;
 	static MIDI_ACTIVE_SENSE = 0xfe;
-	static MIDI_RESET = 0xef;
-	static MIDI_META = 0xff;
+	static MIDI_RESET = 0xff;
+	static MIDI_META = 0xef;
 	// Sequence file types.
 	static FILE_UNSET = 0xffff;
 	// Exported MIDI sequence.

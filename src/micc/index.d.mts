@@ -74,9 +74,9 @@ declare class MICCConstants {
 	static readonly MIDI_STOP: uint8;
 	/** MIDI real-time active sensing events. Should not appear in files. */
 	static readonly MIDI_ACTIVE_SENSE: uint8;
-	/** MIDI real-time reset events, remapped from `0xff`. Should not appear in files. */
+	/** MIDI real-time reset events. Should not appear in files. */
 	static readonly MIDI_RESET: uint8;
-	/** Meta events. Should not appear on live wire. */
+	/** Meta events, remapped from `0xff`. Should not appear on live wire. */
 	static readonly MIDI_META: uint8;
 	/** Track pointer block: normal. Compatible with XGworks. */
 	static readonly PTRB_NORMAL: uint16;
