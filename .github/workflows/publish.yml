@@ -1,4 +1,4 @@
-name: Publish to registries
+name: Validate JSDoc and publish to registries
 on:
   push:
     branches:

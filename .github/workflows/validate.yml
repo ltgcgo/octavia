@@ -1,0 +1,64 @@
+name: Build and validate components
+
+on:
+  # Runs on pushes targeting the working branches
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/test.yml"
+      - "conf/**"
+      - "libs/**"
+      - "nix/**"
+      - "sh/build.sh"
+      - "sh/esbuild"
+      - "sh/live.sh"
+      - "sh/validate.sh"
+      - "src/**"
+      - "!src/*/index.d.mts"
+  # Runs on pull requests targeting the working branches
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - review_requested
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/test.yml"
+      - "conf/**"
+      - "libs/**"
+      - "nix/**"
+      - "sh/build.sh"
+      - "sh/esbuild"
+      - "sh/live.sh"
+      - "sh/validate.sh"
+      - "src/**"
+      - "!src/*/index.d.mts"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: "validate"
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: latest
+      - name: Build Octavia files
+        run: "./shx build"
+      - name: Validate MICC SMF parser and serialiser
+        run: "./shx validate miccSmf.js"
