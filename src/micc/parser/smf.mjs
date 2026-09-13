@@ -101,20 +101,20 @@ export default class MICCInternalsSMF {
 		let dataEndPointer = deltaSize + (isStale ? 0 : 1);
 		let dataStartPointer = dataEndPointer;
 		switch (eventType) {
-			case 8:
-			case 9:
-			case 10:
-			case 11:
-			case 14: {
+			case MICCConstants.MIDI_NOTE_OFF:
+			case MICCConstants.MIDI_NOTE_ON:
+			case MICCConstants.MIDI_NOTE_AT:
+			case MICCConstants.MIDI_CONTROL:
+			case MICCConstants.MIDI_CH_PITCH: {
 				dataEndPointer += 2;
 				break;
 			};
-			case 12:
-			case 13: {
+			case MICCConstants.MIDI_PROGRAM:
+			case MICCConstants.MIDI_CH_AT: {
 				dataEndPointer += 1;
 				break;
 			};
-			case 240: {
+			case MICCConstants.MIDI_SYSEX_NEW: {
 				if (options.isSmfWrapped) {
 					// SMF allows 0xF7 to appear in a subsequent 0xF7 event.
 					const dataSizeLength = IntegerHandler.sizeVLV(buffer, dataEndPointer);
@@ -135,7 +135,7 @@ export default class MICCInternalsSMF {
 				};
 				break;
 			};
-			case 247: {
+			case MICCConstants.MIDI_SYSEX_RESUME: {
 				if (!options.isSmfWrapped) {
 					throw(new Error(`0xF7 event can only exist in SMF.`));
 				};
@@ -150,7 +150,7 @@ export default class MICCInternalsSMF {
 			};
 			case 255: {
 				if (options.isSmfWrapped) {
-					eventType = 239; // Remapped.
+					eventType = MICCConstants.MIDI_META; // Remapped.
 				} else {
 					break;
 				};
@@ -170,25 +170,25 @@ export default class MICCInternalsSMF {
 				dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
 				break;
 			};
-			case 248:
-			case 250:
-			case 251:
-			case 252:
-			case 254: {
+			case MICCConstants.MIDI_CLOCK:
+			case MICCConstants.MIDI_START:
+			case MICCConstants.MIDI_RESUME:
+			case MICCConstants.MIDI_STOP:
+			case MICCConstants.MIDI_ACTIVE_SENSE: {
 				if (options.isSmfWrapped) {
 					throw(new Error(`Realtime event ${eventType.toString(16).toUpperCase()} can only exist raw.`));
 				};
 				break;
 			};
-			case 241:
-			case 243: {
+			case MICCConstants.MIDI_TIME_CODE:
+			case MICCConstants.MIDI_SONG_SELECT: {
 				if (options.isSmfWrapped) {
 					throw(new Error(`Common event ${eventType.toString(16).toUpperCase()} can only exist raw.`));
 				};
 				dataEndPointer += 1;
 				break;
 			};
-			case 242: {
+			case MICCConstants.MIDI_SONG_POSITION: {
 				if (options.isSmfWrapped) {
 					throw(new Error(`Song position pointers can only exist raw.`));
 				};
@@ -206,51 +206,66 @@ export default class MICCInternalsSMF {
 		};
 		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
 		let isSysExActive = false;
-		if (eventType >= 8 && eventType <= 255 && eventType !== 0xef) {
-			// Meta events are left as-is apart from getting remapped.
-			// SysEx events allow for concatenation thanks to the existing backlog of SMFs.
-			const scanRegion = options.loosenForSpeed ? Math.min(nakedEvent.data.length, 24) : nakedEvent.data.length;
-			if (eventType === 0xf0) {
-				isSysExActive = true;
-			} else if (eventType === 0xf7) {
-				isSysExActive = options.parserContext.lastSysExHung;
-			};
-			for (let i = 0; i < scanRegion; i ++) {
-				const e = nakedEvent.data[i];
-				switch (eventType) {
-					case 0xf0:
-					case 0xf7: {
-						if (e === 0xf7) {
-							if (isSysExActive) {
-								isSysExActive = false;
-							} else {
-								throw(new Error(`Illegal termination after terminated SysEx event.`));
-							};
-							//continue;
-						} else if (e === 0xf0) {
-							if (isSysExActive) {
-								// Also rejects the live message embedding trick.
-								throw(new RangeError(`New SysEx events cannot appear without the previous SysEx event terminating.`));
-							} else {
-								isSysExActive = true;
+		// SysEx state validation for types with payload.
+		switch (eventType) {
+			case MICCConstants.MIDI_NOTE_OFF:
+			case MICCConstants.MIDI_NOTE_ON:
+			case MICCConstants.MIDI_NOTE_AT:
+			case MICCConstants.MIDI_CONTROL:
+			case MICCConstants.MIDI_PROGRAM:
+			case MICCConstants.MIDI_CH_AT:
+			case MICCConstants.MIDI_CH_PITCH:
+			case MICCConstants.MIDI_SYSEX_NEW:
+			case MICCConstants.MIDI_TIME_CODE:
+			case MICCConstants.MIDI_SONG_POSITION:
+			case MICCConstants.MIDI_SONG_SELECT:
+			case MICCConstants.MIDI_SYSEX_RESUME: {
+				// Meta events are left as-is (not validated in any way) apart from getting remapped earlier.
+				// SysEx events allow for concatenation thanks to the existing backlog of SMFs.
+				const scanRegion = options.loosenForSpeed ? Math.min(nakedEvent.data.length, 24) : nakedEvent.data.length;
+				if (eventType === MICCConstants.MIDI_SYSEX_NEW) {
+					isSysExActive = true;
+				} else if (eventType === MICCConstants.MIDI_SYSEX_RESUME) {
+					isSysExActive = options.parserContext.lastSysExHung;
+				};
+				for (let i = 0; i < scanRegion; i ++) {
+					const e = nakedEvent.data[i];
+					switch (eventType) {
+						case MICCConstants.MIDI_SYSEX_NEW:
+						case MICCConstants.MIDI_SYSEX_RESUME: {
+							if (e === 0xf7) {
+								if (isSysExActive) {
+									isSysExActive = false;
+								} else {
+									throw(new Error(`Illegal termination after terminated SysEx event.`));
+								};
 								//continue;
+							} else if (e === 0xf0) {
+								if (isSysExActive) {
+									// Also rejects the live message embedding trick.
+									throw(new RangeError(`New SysEx events cannot appear without the previous SysEx event terminating.`));
+								} else {
+									isSysExActive = true;
+									//continue;
+								};
+							} else if (e >= 0x80) {
+								throw(new RangeError(`SysEx payloads cannot contain bytes greater than or equal to 0x80.`));
+							} else if (isSysExActive === false) {
+								throw(new Error(`SysEx payloads cannot contain bytes after termination and before new initialisation.`));
 							};
-						} else if (e >= 0x80) {
-							throw(new RangeError(`SysEx payloads cannot contain bytes greater than or equal to 0x80.`));
-						} else if (isSysExActive === false) {
-							throw(new Error(`SysEx payloads cannot contain bytes after termination and before new initialisation.`));
+							break;
 						};
-						break;
-					};
-					default: {
-						if (e >= 0x80) {
-							throw(new RangeError(`Channel events cannot contain bytes greater than or equal to 0x80.`));
+						default: {
+							if (e >= 0x80) {
+								throw(new RangeError(`Non-meta events cannot contain bytes greater than or equal to 0x80.`));
+							};
 						};
 					};
 				};
+				break;
 			};
 		};
-		if (eventType === 0xf0 || eventType === 0xf7) {
+		if (eventType === MICCConstants.MIDI_SYSEX_NEW || eventType === MICCConstants.MIDI_SYSEX_RESUME) {
 			// Separated safety check due to `loosenForSpeed`.
 			options.parserContext.lastSysExHung = options.loosenForSpeed ? (nakedEvent.data.length > 0 ? nakedEvent.data[nakedEvent.data.length - 1] !== 0xf7 : false) : isSysExActive;
 		};
