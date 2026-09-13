@@ -5,6 +5,7 @@ import {
 	MICCBaseElement,
 	MIDINakedEvent
 } from "./classes/event.mjs";
+import MICCConstants from "./classes/constants.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
 import MICCInternalsMIA from "./parser/mia.mjs";
 
@@ -22,6 +23,7 @@ if (typeof globalThis?.require !== "undefined") {
 export {
 	MICCBaseElement,
 	MIDINakedEvent,
+	MICCConstants,
 	MICCInternalsSMF,
 	MICCInternalsMIA
 };

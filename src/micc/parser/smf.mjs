@@ -11,14 +11,11 @@ import {
 	MIDINakedEvent
 } from "../classes/event.mjs";
 import MICCConstants from "../classes/constants.mjs";
-import {
-	MICCSMFMIAHandleOptions
-} from "../index.mjs";
 
 /** Standard MIDI Files (MIDI 1.0) or raw MIDI 1.0 messages. */
 export default class MICCInternalsSMF {
 	/** @param {Uint8Array | Uint8ClampedArray | SeamstressChunk} inBuffer
-	* @param {MICCSMFMIAHandleOptions} options
+	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
 	* @returns {MIDINakedEvent} */
 	static parseSingleEvent(inBuffer, options = {}) {
 		let buffer;
@@ -79,7 +76,7 @@ export default class MICCInternalsSMF {
 					};
 				};
 			} else {
-				if (eventType === 0xf7) {
+				if (eventType === 0xf7 && options.isSmfWrapped) {
 					throw(new Error(`Illegal SysEx continuation. The previous SysEx event had already terminated.`));
 				};
 			};
@@ -130,7 +127,7 @@ export default class MICCInternalsSMF {
 					if (endPointer >= dataEndPointer) {
 						dataEndPointer = endPointer + 1;
 					} else {
-						throw(new Error(`Incomplete new SysEx.`));
+						throw(new Error(`Incomplete new SysEx: termination byte not found.`));
 					};
 				};
 				break;
@@ -200,9 +197,10 @@ export default class MICCInternalsSMF {
 				throw(new TypeError(`Unknown MIDI event type ${eventType}.`));
 			};
 		};
+		nakedEvent.type = eventType;
 		// Final pass
 		if (buffer.length < dataEndPointer) {
-			throw(new Error(`Received an incomplete event.`));
+			throw(new Error(`Incomplete event: expected ${dataEndPointer}, received ${buffer.length}.`));
 		};
 		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
 		let isSysExActive = false;
@@ -280,7 +278,7 @@ export default class MICCInternalsSMF {
 		return parsedEvent;
 	};*/
 	/** @param {MIDINakedEvent} event
-	* @param {MICCSMFMIAHandleOptions} options */
+	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options */
 	static emitSingleEvent(event, options = {}) {
 		if (event.constructor !== MIDINakedEvent && event.group !== "mma.midiEvent") {
 			throw(new TypeError(`Provided event is not of type MIDINakedEvent.`));
@@ -320,40 +318,40 @@ export default class MICCInternalsSMF {
 		let checkPayload = 0, checkPayloadSize = 0;
 		// Payload size
 		switch (event.type) {
-			case 8:
-			case 9:
-			case 10:
-			case 11:
-			case 14: {
+			case MICCConstants.MIDI_NOTE_OFF:
+			case MICCConstants.MIDI_NOTE_ON:
+			case MICCConstants.MIDI_NOTE_AT:
+			case MICCConstants.MIDI_CONTROL:
+			case MICCConstants.MIDI_CH_PITCH: {
 				finalSize += 2;
 				checkPayloadSize = 2;
 				checkPayload = 1;
 				break;
 			};
-			case 12:
-			case 13: {
+			case MICCConstants.MIDI_PROGRAM:
+			case MICCConstants.MIDI_CH_AT: {
 				finalSize += 1;
 				checkPayloadSize = 1;
 				checkPayload = 1;
 				break;
 			}
-			case 0xf7: {
+			case MICCConstants.MIDI_SYSEX_RESUME: {
 				if (!options.isSmfWrapped) {
 					throw(new Error(`0xF7 events can only occur in SMF.`));
 				};
 				// Fallthrough.
 			};
-			case 0xf0: {
+			case MICCConstants.MIDI_SYSEX_NEW: {
 				if (options.isSmfWrapped) {
 					finalSize += IntegerHandler.lengthVLV(event.data.length);
 					dataStartPtr = finalSize;
 				} else if (event.data[event.data.length - 1] !== 0xf7) {
-					throw(new Error(`Incomplete new SysEx.`));
+					throw(new Error(`Incomplete new SysEx: termination byte not found.`));
 				};
 				finalSize += event.data.length;
 				break;
 			};
-			case 0xef: {
+			case MICCConstants.MIDI_META: {
 				if (!options.isSmfWrapped) {
 					throw(new Error(`Meta (0xFF) events can only occur in SMF.`));
 				};
@@ -413,7 +411,7 @@ export default class MICCInternalsSMF {
 		};
 		if (!event.isStale) {
 			switch (event.type) {
-				case 0xef: {
+				case MICCConstants.MIDI_META: {
 					buffer[statusPtr] = 0xff;
 					break;
 				};
@@ -429,23 +427,23 @@ export default class MICCInternalsSMF {
 			dataStartPtr = dataPtr;
 		};
 		switch (event.type) {
-			case 8:
-			case 9:
-			case 10:
-			case 11:
-			case 12:
-			case 13:
-			case 14: {
+			case MICCConstants.MIDI_NOTE_OFF:
+			case MICCConstants.MIDI_NOTE_ON:
+			case MICCConstants.MIDI_NOTE_AT:
+			case MICCConstants.MIDI_CONTROL:
+			case MICCConstants.MIDI_PROGRAM:
+			case MICCConstants.MIDI_CH_AT:
+			case MICCConstants.MIDI_CH_PITCH: {
 				break;
 			};
-			case 0xf7:
-			case 0xf0: {
+			case MICCConstants.MIDI_SYSEX_RESUME:
+			case MICCConstants.MIDI_SYSEX_NEW: {
 				if (options.isSmfWrapped) {
 					IntegerHandler.writeVLV(buffer, event.data.length, dataPtr);
 				};
 				break;
 			};
-			case 0xef: {
+			case MICCConstants.MIDI_META: {
 				buffer[dataPtr] = event.meta;
 				IntegerHandler.writeVLV(buffer, event.data.length, dataPtr + 1);
 				break;
@@ -456,7 +454,7 @@ export default class MICCInternalsSMF {
 		};
 		buffer.set(event.data, dataStartPtr);
 		// Assembly finished.
-		if (!event.isStale && event.type < 0xf8 && event.type !== 0xef) {
+		if (!event.isStale && event.type < 0xf8 && event.type !== MICCConstants.MIDI_META) {
 			// SysRT doesn't change running status.
 			options.parserContext.lastStatus = event.type <= 15 ? (event.type << 4) | (event.ch & 15) : event.type;
 		};
@@ -464,7 +462,7 @@ export default class MICCInternalsSMF {
 		return buffer;
 	};
 	/** @param {Uint8Array|Uint8ClampedArray} buffer
-	* @param {MICCSMFMIAHandleOptions} options
+	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
 	* @returns {Generator<MIDINakedEvent, void, any>} */
 	static *parseRawEvents(buffer, options = {}) {
 		// `parseSingleEvent` is quite strict against malformed events with running status support. If this fails to guard against malformed data, that method will.
@@ -638,7 +636,7 @@ export default class MICCInternalsSMF {
 				break;
 			};
 			case 1: {
-				throw(new Error(`Incomplete new SysEx.`));
+				throw(new Error(`Incomplete new SysEx: termination byte not found.`));
 				break;
 			};
 			case 2: {
