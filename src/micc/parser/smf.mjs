@@ -53,9 +53,7 @@ export default class MICCInternalsSMF {
 		let statusByte = 0, eventType = 0, eventCh = null, isStale = false;
 		if (buffer[deltaSize] >> 7) {
 			statusByte = buffer[deltaSize];
-		} /*else if (!options.isSmfWrapped) {
-			throw(new Error(`Running status is not allowed in raw MIDI 1.0 messages.`));
-		}*/ else {
+		} else {
 			isStale = true;
 			statusByte = options.parserContext.lastStatus;
 			if (!(statusByte >= 0x80 && statusByte < 0xf0)) {
@@ -167,6 +165,7 @@ export default class MICCInternalsSMF {
 				dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
 				break;
 			};
+			case MICCConstants.MIDI_TUNE_REQUEST:
 			case MICCConstants.MIDI_CLOCK:
 			case MICCConstants.MIDI_START:
 			case MICCConstants.MIDI_RESUME:
@@ -200,7 +199,7 @@ export default class MICCInternalsSMF {
 		nakedEvent.type = eventType;
 		// Final pass
 		if (buffer.length < dataEndPointer) {
-			throw(new Error(`Incomplete event: expected ${dataEndPointer}, received ${buffer.length}.`));
+			throw(new Error(`Incomplete event: expected ${dataEndPointer} B, received ${buffer.length} B.`));
 		};
 		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
 		let isSysExActive = false;
