@@ -83,6 +83,8 @@ export class ColxiMIDIParser {
 	/** Parses the input into a structured representation.
 	*
 	* Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.
+	* 
+	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, a hexadecimal string, or readable byte streams.
 	* @param callback The method to invoke when parsing is finished. */
 	static parse(input: string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>, callback?: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
@@ -214,9 +216,13 @@ export class MidiJsonTools {
 	/** Parses the input into a structured representation. Entrypoint used by `midi-json-tools/midi-to-json`. Does not offer a Mojibake handler like the `ColxiMIDIParser` shim.
 	*
 	* Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.
+	* 
+	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, a hexadecimal string, or readable byte streams. */
 	static midiToJson(input: string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>): Promise<MJTMIDIFile>;
 	/** Parses the input into a structured representation. Entrypoint used by `chrisguttandin/midi-json-parser`. Does not offer a Mojibake handler like the `ColxiMIDIParser` shim.
+	* 
+	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, a hexadecimal string, or readable byte streams. */
 	static parseArrayBuffer(input: string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>): Promise<MJTMIDIFile>;
 }
