@@ -64,13 +64,12 @@ export default class MICCInternalsSMF {
 			eventType = statusByte;
 			if (options.parserContext.lastSysExHung) {
 				switch (eventType) {
-					case 0xff: // Meta events aren't sent over the wire. Not remapped here yet.
 					case 0xf8:
 					case 0xfa:
 					case 0xfb:
 					case 0xfc:
-					case 0xfe:
-					case 0xff: // Real-time events do not interfere with SysEx
+					case 0xfe: // Real-time events do not interfere with SysEx
+					case 0xff: // Meta events aren't sent over the wire. Not remapped here yet.
 					case 0xf0:
 					case 0xf7: {
 						break;
