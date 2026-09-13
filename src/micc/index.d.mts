@@ -39,59 +39,89 @@ export class BinaryString {
 /** Utility constants for MICC. */
 declare class MICCConstants {
 	/** Note off events. */
-	static MIDI_NOTE_OFF: uint8;
+	readonly static MIDI_NOTE_OFF: uint8;
 	/** Note on events. */
-	static MIDI_NOTE_ON: uint8;
+	readonly static MIDI_NOTE_ON: uint8;
 	/** Note/polyphonic aftertouch events. */
-	static MIDI_NOTE_AT: uint8;
+	readonly static MIDI_NOTE_AT: uint8;
 	/** Control change events. */
-	static MIDI_CONTROL: uint8;
+	readonly static MIDI_CONTROL: uint8;
 	/** Program change events. */
-	static MIDI_PROGRAM: uint8;
+	readonly static MIDI_PROGRAM: uint8;
 	/** Channel aftertouch events. */
-	static MIDI_CHANNEL_AT: uint8;
+	readonly static MIDI_CH_AT: uint8;
 	/** Channel pitch bend events. */
-	static MIDI_CHANNEL_PITCH: uint8;
+	readonly static MIDI_CH_PITCH: uint8;
 	/** New SysEx events. */
-	static MIDI_SYSEX_NEW: uint8;
-	/** Resumed SysEx events. */
-	static MIDI_SYSEX_RESUME: uint8;
-	/** MIDI clock events. Should not appear in files. */
-	static MIDI_CLOCK: uint8;
-	/** MIDI play control start events. Should not appear in files. */
-	static MIDI_START: uint8;
-	/** MIDI play control continue events. Should not appear in files. */
-	static MIDI_RESUME: uint8;
-	/** MIDI play control stop events. Should not appear in files. */
-	static MIDI_STOP: uint8;
-	/** MIDI active sensing events. Should not appear in files. */
-	static MIDI_ACTIVE_SENSE: uint8;
-	/** Metadata events. */
-	static MIDI_METADATA: uint8;
+	readonly static MIDI_SYSEX_NEW: uint8;
+	/** MIDI time code events. Should not appear in files. */
+	readonly static MIDI_TIME_CODE: uint8;
+	/** Song position pointer events. Should not appear in files. */
+	readonly static MIDI_SONG_POSITION: uint8;
+	/** Song select events. Should not appear in files. */
+	readonly static MIDI_SONG_SELECT: uint8;
+	/** Tune request events. Should not appear in files. */
+	readonly static MIDI_TUNE_REQUEST: uint8;
+	/** Resumed SysEx events. Should not appear on live wire. */
+	readonly static MIDI_SYSEX_RESUME: uint8;
+	/** MIDI real-time clock events. Should not appear in files. */
+	readonly static MIDI_CLOCK: uint8;
+	/** MIDI real-time play control start events. Should not appear in files. */
+	readonly static MIDI_START: uint8;
+	/** MIDI real-time play control continue events. Should not appear in files. */
+	readonly static MIDI_RESUME: uint8;
+	/** MIDI real-time play control stop events. Should not appear in files. */
+	readonly static MIDI_STOP: uint8;
+	/** MIDI real-time active sensing events. Should not appear in files. */
+	readonly static MIDI_ACTIVE_SENSE: uint8;
+	/** MIDI real-time reset events, remapped from `0xff`. Should not appear in files. */
+	readonly static MIDI_RESET: uint8;
+	/** Meta events. Should not appear on live wire. */
+	readonly static MIDI_META: uint8;
 	/** Track pointer block: normal. Compatible with XGworks. */
-	static PTRB_NORMAL: uint16;
+	readonly static PTRB_NORMAL: uint16;
 	/** Track pointer block: linked (pointer). Compatible with XGworks. */
-	static PTRB_LINKED: uint16;
+	readonly static PTRB_LINKED: uint16;
 	/** Finalisation type: MIDI. */
-	static AS_MIDI: number;
+	readonly static AS_MIDI: number;
 	/** Finalisation type: Tracker. */
-	static AS_TRACKER: number;
+	readonly static AS_TRACKER: number;
+	/** File type: Unset. */
+	readonly static FILE_UNSET: uint16;
 	/** File type: SMF type 0 - single track. */
-	static FILE_SMF_SINGLE: uint16;
+	readonly static FILE_SMF_SINGLE: uint16;
 	/** File type: SMF type 1 - multiple tracks. */
-	static FILE_SMF_MULTIPLE: uint16;
+	readonly static FILE_SMF_MULTIPLE: uint16;
 	/** File type: SMF type 2 - sequential tracks. */
-	static FILE_SMF_SEQUENTIAL: uint16;
+	readonly static FILE_SMF_SEQUENTIAL: uint16;
+	/** File type: Standard MIDI Clip/SMF2. */
+	readonly static FILE_SMF_CLIP: uint16;
+	/** File type: Korg Synth Internal Song. */
+	readonly static FILE_SMF_KORG_SONG: uint16;
+	/** File type: Cakewalk project. */
+	readonly static FILE_SEQ_CAKEWALK: uint16;
+	/** File type: Sequence Object Linking project. */
+	readonly static FILE_SEQ_SOL: uint16;
 	/** File type: XGworks project. */
-	static FILE_SEQ_CAKEWALK: uint16;
-	/** File type: XGworks project. */
-	static FILE_SEQ_XGWORKS: uint16;
-	/** File type: FastTracker II (XM). Support postponed until needed. */
-	static FILE_TRK_FAST2: uint16;
-	/** File type: Scream Tracker 3 (S3M). Support postponed until needed. */
-	static FILE_TRK_SCREAM3: uint16;
+	readonly static FILE_SEQ_XGWORKS: uint16;
+	/** File type: Ultimate Soundtracker/ProTracker (MOD). Support not implemented until needed. */
+	readonly static FILE_TRK_PRO: uint16;
+	/** File type: SoundFX (SFX). Support not implemented until needed. */
+	readonly static FILE_TRK_SOUNDFX: uint16;
+	/** File type: Music Editor/OctaMED (MED). Support not implemented until needed. */
+	readonly static FILE_TRK_OCTAMED: uint16;
+	/** File type: Scream Tracker 2 (S3M). Support not implemented until needed. */
+	readonly static FILE_TRK_SCREAM2: uint16;
+	/** File type: UltraTracker (ULT). Support not implemented until needed. */
+	readonly static FILE_TRK_ULTRA: uint16;
+	/** File type: FastTracker II (XM). Support not implemented until needed. */
+	readonly static FILE_TRK_FAST2: uint16;
+	/** File type: Scream Tracker 3 (S3M). Support not implemented until needed. */
+	readonly static FILE_TRK_SCREAM3: uint16;
 	/** File type: Impulse Tracker (IT). */
-	static FILE_TRK_IMPULSE: uint16;
+	readonly static FILE_TRK_IMPULSE: uint16;
+	/** File type: OpenMPT (MPTM). */
+	readonly static FILE_TRK_OPENMPT: uint16;
 }
 /** Base type for some MICC classes.
 *

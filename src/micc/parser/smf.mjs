@@ -9,7 +9,7 @@ import {
 } from "../../state/utils/bufferIo.mjs";
 import {
 	MIDINakedEvent
-} from "../eventObjects.mjs";
+} from "../classes/event.mjs";
 import {
 	MICCSMFMIAHandleOptions
 } from "../index.mjs";
@@ -620,6 +620,8 @@ export default class MICCInternalsSMF {
 			};
 		};
 	};
+	/**  */
+	static parseHeaderChunk
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk  */
 	static streamRegulator(offset, subchunk) {

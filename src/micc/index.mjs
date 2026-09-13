@@ -4,7 +4,7 @@
 import {
 	MICCBaseElement,
 	MIDINakedEvent
-} from "./eventObjects.mjs";
+} from "./classes/event.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
 import MICCInternalsMIA from "./parser/mia.mjs";
 
