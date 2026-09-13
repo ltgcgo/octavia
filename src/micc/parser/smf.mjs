@@ -65,12 +65,18 @@ export default class MICCInternalsSMF {
 			if (options.parserContext.lastSysExHung) {
 				switch (eventType) {
 					case 0xff: // Meta events aren't sent over the wire. Not remapped here yet.
+					case 0xf8:
+					case 0xfa:
+					case 0xfb:
+					case 0xfc:
+					case 0xfe:
+					case 0xff: // Real-time events do not interfere with SysEx
 					case 0xf0:
 					case 0xf7: {
 						break;
 					};
 					default: {
-						throw(new Error(`The last SysEx event was not terminated.`));
+						throw(new Error(`The previous SysEx event was not terminated.`));
 					};
 				};
 			} else {
@@ -79,6 +85,9 @@ export default class MICCInternalsSMF {
 				};
 			};
 		} else if (statusByte & 0x80) {
+			if (options.parserContext.lastSysExHung) {
+				throw(new Error(`The previous SysEx event was not terminated.`));
+			};
 			eventType = statusByte >> 4;
 			eventCh = statusByte & 15;
 		} else {
