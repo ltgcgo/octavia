@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 echo -e "\033[1;37mLightingale Hyacinth\033[0m"
 mkdir -p dist
 #mkdir -p proxy
