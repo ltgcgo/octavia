@@ -263,6 +263,18 @@ dispCanv.addEventListener("mousedown", function (ev) {
 	};
 });
 
+$e("#bool-double-buffer").addEventListener("click", async function (ev) {
+	if (this.classList.contains("active")) {
+		this.classList.off("active");
+		this.innerText = "Disabled";
+		visualiser.disableScreenFlush = true;
+	} else {
+		this.classList.on("active");
+		this.innerText = "Enabled";
+		visualiser.disableScreenFlush = false;
+	};
+});
+
 // Allow channel switching in browser console
 self.toCh = function (ch) {
 	visualiser.setCh(ch);
