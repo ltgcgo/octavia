@@ -1,6 +1,7 @@
 *.map
 *.swp
 .~lock.*
+cache/**
 deno.lock
 dist/*.js
 dist/*.gz

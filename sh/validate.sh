@@ -6,7 +6,9 @@ if [ "$1" == "" ]; then
 	done
 	exit
 fi
+set -eo pipefail
 if [ -f "./validate/$1" ]; then
+	mkdir -p cache 2>/dev/null
 	if [ "$(command -v deno 2>/dev/null)" != "" ]; then
 		deno test --allow-all "./validate/$1"
 	elif [ "$(command -v node 2>/dev/null)" != "" ]; then
