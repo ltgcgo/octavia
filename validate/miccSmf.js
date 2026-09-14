@@ -805,39 +805,33 @@ test("Event roundtrip validation", () => {
 			[
 				bufferFrom("hex", "8F3C78"),
 				bufferFrom("hex", "3E00")
-			],
-			[
+			], [
 				bufferFrom("hex", "9E3C7F"),
 				bufferFrom("hex", "3C00"),
 				bufferFrom("hex", "3E70"),
 				bufferFrom("hex", "3E00")
-			],
-			[
+			], [
 				bufferFrom("hex", "AD3C7E"),
 				bufferFrom("hex", "3C01"),
 				bufferFrom("hex", "3C71"),
 				bufferFrom("hex", "3C03")
-			],
-			[
+			], [
 				bufferFrom("hex", "BC4A7D"),
 				bufferFrom("hex", "4740"),
 				bufferFrom("hex", "6500"),
 				bufferFrom("hex", "6402"),
 				bufferFrom("hex", "060C")
-			],
-			[
+			], [
 				bufferFrom("hex", "CB10"),
 				bufferFrom("hex", "12"),
 				bufferFrom("hex", "18"),
 				bufferFrom("hex", "19")
-			],
-			[
+			], [
 				bufferFrom("hex", "DA7C"),
 				bufferFrom("hex", "10"),
 				bufferFrom("hex", "7B"),
 				bufferFrom("hex", "20")
-			],
-			[
+			], [
 				bufferFrom("hex", "E97F7F"),
 				bufferFrom("hex", "0040"),
 				bufferFrom("hex", "0000"),
@@ -853,43 +847,65 @@ test("Event roundtrip validation", () => {
 			[
 				bufferFrom("hex", "0A8F3C78"),
 				bufferFrom("hex", "83563E00")
-			],
-			[
+			], [
 				bufferFrom("hex", "0A9E3C7F"),
 				bufferFrom("hex", "83563C00"),
 				bufferFrom("hex", "0A3E70"),
 				bufferFrom("hex", "83563E00")
-			],
-			[
+			], [
 				bufferFrom("hex", "0AAD3C7E"),
 				bufferFrom("hex", "83563C01"),
 				bufferFrom("hex", "0A3C71"),
 				bufferFrom("hex", "83563C03")
-			],
-			[
+			], [
 				bufferFrom("hex", "0ABC4A7D"),
 				bufferFrom("hex", "0A4740"),
 				bufferFrom("hex", "0A6500"),
 				bufferFrom("hex", "0A6402"),
 				bufferFrom("hex", "0A060C")
-			],
-			[
+			], [
 				bufferFrom("hex", "00CB10"),
 				bufferFrom("hex", "8F0012"),
 				bufferFrom("hex", "8F0018"),
 				bufferFrom("hex", "8F0019")
-			],
-			[
+			], [
 				bufferFrom("hex", "8360DA7C"),
 				bufferFrom("hex", "836010"),
 				bufferFrom("hex", "83607B"),
 				bufferFrom("hex", "836020")
-			],
-			[
+			], [
 				bufferFrom("hex", "00E97F7F"),
 				bufferFrom("hex", "83600040"),
 				bufferFrom("hex", "83600000"),
 				bufferFrom("hex", "83600040")
+			]
+		]
+	}, {
+		"setup": {
+			"isSmfWrapped": true,
+			"hasDelta": true
+		},
+		"data": [
+			[
+				bufferFrom("hex", "00FF030953776565746E657373"),
+				bufferFrom("hex", "00FF020D3139393720A92059616D616861"),
+				bufferFrom("hex", "00FF012350726F64756365642062792059616D616861204D75736963536F6674204575726F7065"),
+				bufferFrom("hex", "00FF580404021808"),
+				bufferFrom("hex", "00FF510307A120"),
+				bufferFrom("hex", "8F00FF510306A25E")
+			], [
+				bufferFrom("hex", "00F0027E7F"),
+				bufferFrom("hex", "02F7030902F7"),
+				bufferFrom("hex", "3AF0057E7F0901F7"),
+				bufferFrom("hex", "3CF0057E7F0903F7"),
+				bufferFrom("hex", "3CF00843104C00007E00F7"),
+				bufferFrom("hex", "14F00943104C0201000100F7"),
+				bufferFrom("hex", "14F00943104C0201204300F7"),
+				bufferFrom("hex", "14F00943104C0201400500F7"),
+				bufferFrom("hex", "14F00843104C02015A01F7"),
+				bufferFrom("hex", "14F00843104C08090702F7"),
+				bufferFrom("hex", "14F00843104C08080703F7"),
+				bufferFrom("hex", "14F00843104C080A0701F7")
 			]
 		]
 	}];
@@ -905,6 +921,7 @@ test("Event roundtrip validation", () => {
 				hasDelta
 			};
 			for (const message of bundle) {
+				//console.debug(bufferToDHex(message, 30));
 				assertEquals(message, MICCInternalsSMF.emitSingleEvent(MICCInternalsSMF.parseSingleEvent(message, dummyStateIn), dummyStateOut));
 			};
 		};
