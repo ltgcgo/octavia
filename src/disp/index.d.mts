@@ -49,6 +49,8 @@ export class ScDisplay extends FocusedPartDisplay {
 
 /** The recreated LCD screen of the Roland SoundCanvas lineup, matching SC-8850. Recommended for all GS visualisations. */
 export class Sc8850Display extends FocusedPartDisplay {
+	/** When `true`, the screen dump will be shown as-is without double buffering. */
+	disableScreenFlush: boolean;
 	constructor(conf: {
 		/** When `true`, the pixels will transition smoothly. */
 		useBlur?: boolean;

@@ -60,6 +60,7 @@ let Sc8850Display = class extends FocusedPartDisplay {
 	#dmdb = new Uint8Array(totalPixelCount);
 	#omdb = new Uint8Array(totalPixelCount);
 	#bmdb = new Uint8Array(totalPixelCount);
+	#dumpBuffer = new Uint8Array(totalPixelCount);
 	#linger = new Uint8Array(allocated.ch);
 	#lingerExtra = new Uint8Array(allocated.ch);
 	#lingerPress = new Uint8Array(allocated.ch);
@@ -82,6 +83,7 @@ let Sc8850Display = class extends FocusedPartDisplay {
 	sysBm = new MxBmDef("../../midi-db/bitmaps/sc/system.tsv");
 	font7a = new MxFont176("../../midi-db/bitmaps/sc/libre7a.tsv");
 	voxBm = new MxBmDef("../../midi-db/bitmaps/sc/voices.tsv");
+	disableScreenFlush = false;
 	constructor(conf) {
 		super(new OctaviaDevice(), 0.25, 0.5);
 		let upThis = this;
@@ -110,13 +112,26 @@ let Sc8850Display = class extends FocusedPartDisplay {
 			upThis.#bmdb.fill(0);
 		});
 		upThis.device.addEventListener("screen", (ev) => {
-			let data = ev.data;
-			if (data.type === "sc8850") {
+			const data = ev.data;
+			if (data.type !== "sc8850") {
+				return;
+			};
+			if (upThis.disableScreenFlush) {
 				for (let i = 0; i < data.data.length; i ++) {
 					upThis.#bmdb[data.offset + i] = data.data[i] ? 255 : 0;
 				};
+			} else {
+				upThis.#dumpBuffer.set(data.data, data.offset);
+				if (data.offset >= 9600) {
+					for (let i = 0; i < upThis.#dumpBuffer.length; i ++) {
+						upThis.#bmdb[i] = upThis.#dumpBuffer[i] ? 255 : 0;
+					};
+					upThis.#dumpBuffer.fill(0);
+				}
 			};
-			upThis.#dumpExpire = upThis.clockSource.now() + 5000;
+			if (upThis.disableScreenFlush || data.offset >= 9600) {
+				upThis.#dumpExpire = upThis.clockSource.now() + 5000;
+			};
 		});
 		upThis.device.addEventListener("letter", (ev) => {
 			upThis.#letterMode = upThis.#mode;
