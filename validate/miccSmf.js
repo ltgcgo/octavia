@@ -736,6 +736,8 @@ test("Complex continuous event validation", () => {
 		assertEquals(dummyState.parserContext.lastSysExHung, true);
 		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F7030901F7"), dummyState);
 		assertEquals(dummyState.parserContext.lastSysExHung, false);
+		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F0117E7F0902F7F07E7F0901F7F07E7F0903F7"), dummyState);
+		assertEquals(dummyState.parserContext.lastSysExHung, false);
 		assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F7030901F7"), dummyState)}, undefined, undefined, "Allowed SysEx continuation without hanging SysEx transmission.");
 	};
 	{
