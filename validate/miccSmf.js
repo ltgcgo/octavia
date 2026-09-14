@@ -8,6 +8,9 @@ import {
 	MICCInternalsSMF
 } from "../src/micc/index.mjs";
 import {
+	bufferToDHex
+} from "../src/state/utils.js";
+import {
 	bufferFrom
 } from "../src/state/utils/bufferIo.mjs";
 import {
@@ -792,6 +795,118 @@ test("Complex continuous event validation", () => {
 // Serialiser
 
 // Round-trip
-test("Single event roundtrip validation", () => {
-	
+test("Event roundtrip validation", () => {
+	const eventBundles = [{
+		"setup": {
+			"isSmfWrapped": false,
+			"hasDelta": false
+		},
+		"data": [
+			[
+				bufferFrom("hex", "8F3C78"),
+				bufferFrom("hex", "3E00")
+			],
+			[
+				bufferFrom("hex", "9E3C7F"),
+				bufferFrom("hex", "3C00"),
+				bufferFrom("hex", "3E70"),
+				bufferFrom("hex", "3E00")
+			],
+			[
+				bufferFrom("hex", "AD3C7E"),
+				bufferFrom("hex", "3C01"),
+				bufferFrom("hex", "3C71"),
+				bufferFrom("hex", "3C03")
+			],
+			[
+				bufferFrom("hex", "BC4A7D"),
+				bufferFrom("hex", "4740"),
+				bufferFrom("hex", "6500"),
+				bufferFrom("hex", "6402"),
+				bufferFrom("hex", "060C")
+			],
+			[
+				bufferFrom("hex", "CB10"),
+				bufferFrom("hex", "12"),
+				bufferFrom("hex", "18"),
+				bufferFrom("hex", "19")
+			],
+			[
+				bufferFrom("hex", "DA7C"),
+				bufferFrom("hex", "10"),
+				bufferFrom("hex", "7B"),
+				bufferFrom("hex", "20")
+			],
+			[
+				bufferFrom("hex", "E97F7F"),
+				bufferFrom("hex", "0040"),
+				bufferFrom("hex", "0000"),
+				bufferFrom("hex", "0040")
+			]
+		]
+	}, {
+		"setup": {
+			"isSmfWrapped": false,
+			"hasDelta": true
+		},
+		"data": [
+			[
+				bufferFrom("hex", "0A8F3C78"),
+				bufferFrom("hex", "83563E00")
+			],
+			[
+				bufferFrom("hex", "0A9E3C7F"),
+				bufferFrom("hex", "83563C00"),
+				bufferFrom("hex", "0A3E70"),
+				bufferFrom("hex", "83563E00")
+			],
+			[
+				bufferFrom("hex", "0AAD3C7E"),
+				bufferFrom("hex", "83563C01"),
+				bufferFrom("hex", "0A3C71"),
+				bufferFrom("hex", "83563C03")
+			],
+			[
+				bufferFrom("hex", "0ABC4A7D"),
+				bufferFrom("hex", "0A4740"),
+				bufferFrom("hex", "0A6500"),
+				bufferFrom("hex", "0A6402"),
+				bufferFrom("hex", "0A060C")
+			],
+			[
+				bufferFrom("hex", "00CB10"),
+				bufferFrom("hex", "8F0012"),
+				bufferFrom("hex", "8F0018"),
+				bufferFrom("hex", "8F0019")
+			],
+			[
+				bufferFrom("hex", "8360DA7C"),
+				bufferFrom("hex", "836010"),
+				bufferFrom("hex", "83607B"),
+				bufferFrom("hex", "836020")
+			],
+			[
+				bufferFrom("hex", "00E97F7F"),
+				bufferFrom("hex", "83600040"),
+				bufferFrom("hex", "83600000"),
+				bufferFrom("hex", "83600040")
+			]
+		]
+	}];
+	for (const {setup, data} of eventBundles) {
+		const {isSmfWrapped, hasDelta} = setup;
+		for (const bundle of data) {
+			console.info(bufferToDHex(bundle[0]));
+			const dummyStateIn = {
+				isSmfWrapped,
+				hasDelta
+			}, dummyStateOut = {
+				isSmfWrapped,
+				hasDelta
+			};
+			for (const message of bundle) {
+				assertEquals(message, MICCInternalsSMF.emitSingleEvent(MICCInternalsSMF.parseSingleEvent(message, dummyStateIn), dummyStateOut));
+			};
+		};
+	};
 });
