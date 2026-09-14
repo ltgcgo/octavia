@@ -70,7 +70,7 @@ export default class MICCInternalsSMF {
 					case 0xfc:
 					case 0xfe: // Real-time events do not interfere with SysEx
 					case 0xff: // Meta events aren't sent over the wire. Not remapped here yet.
-					case 0xf0:
+					//case 0xf0:
 					case 0xf7: {
 						break;
 					};
@@ -85,7 +85,7 @@ export default class MICCInternalsSMF {
 			};
 		} else if (statusByte & 0x80) {
 			if (options.parserContext.lastSysExHung) {
-				throw(new Error(`The previous SysEx event was not terminated.`));
+				throw(new Error(`The ongoing SysEx event was not terminated.`));
 			};
 			eventType = statusByte >> 4;
 			eventCh = statusByte & 15;

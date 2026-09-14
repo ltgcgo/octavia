@@ -152,6 +152,12 @@ test("Continuous event errors", () => {
 			"lastSysExHung": true
 		}
 	})}, undefined, undefined, "Allowed unterminated SysEx.");
+	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F0057E7F0901F7"), {
+		"isSmfWrapped": true,
+		"parserContext": {
+			"lastSysExHung": true
+		}
+	})}, undefined, undefined, "Allowed nested SysEx.");
 });
 test("Single event validation", () => {
 	{
@@ -703,12 +709,30 @@ test("Complex continuous event validation", () => {
 	// Real-time bytes fed from Web MIDI API are hoisted out by `parseRawEvents`. They are not the concern of this test file.
 	// Read the long-finished existing documentation first for any confusion.
 	{
+		const parserState = {};
 		const dummyState = {
 			"isSmfWrapped": true,
-			"parserContext": {}
+			"parserContext": parserState
+		};
+		const dummyStateLive = {
+			"parserContext": parserState
 		};
 		assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F7030901F7"), dummyState)}, undefined, undefined, "Allowed SysEx continuation without hanging SysEx transmission.");
 		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F0027E7F"), dummyState);
+		assertEquals(dummyState.parserContext.lastSysExHung, true);
+		assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F0057E7F0901F7"), dummyState)}, undefined, undefined, "Allowed nested SysEx.");
+		assertEquals(dummyState.parserContext.lastSysExHung, true);
+		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F8"), dummyStateLive);
+		assertEquals(dummyState.parserContext.lastSysExHung, true);
+		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FA"), dummyStateLive);
+		assertEquals(dummyState.parserContext.lastSysExHung, true);
+		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FB"), dummyStateLive);
+		assertEquals(dummyState.parserContext.lastSysExHung, true);
+		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FC"), dummyStateLive);
+		assertEquals(dummyState.parserContext.lastSysExHung, true);
+		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FE"), dummyStateLive);
+		assertEquals(dummyState.parserContext.lastSysExHung, true);
+		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF"), dummyStateLive);
 		assertEquals(dummyState.parserContext.lastSysExHung, true);
 		MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F7030901F7"), dummyState);
 		assertEquals(dummyState.parserContext.lastSysExHung, false);
