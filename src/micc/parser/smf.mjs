@@ -747,7 +747,7 @@ export default class MICCInternalsSMF {
 								persistedState.statusByte = e;
 								persistedState.slicedSize ++;
 							} else {
-								console.debug(`Status byte overwrite skipped. Kept at ${persistedState.statusByte.toString(16)}.`);
+								//console.debug(`Status byte overwrite skipped. Kept at ${persistedState.statusByte.toString(16)}.`);
 							};
 							if (isStale) {
 								if (persistedState.statusByte < 0x80 || persistedState.statusByte >= 0xf0) {
@@ -886,7 +886,7 @@ export default class MICCInternalsSMF {
 							};*/
 							const maxCumulativeDataReadSize = persistedState.readDataSize + viewSizeCurrent;
 							if (maxCumulativeDataReadSize < persistedState.expectedDataSize) {
-								console.debug(`Subchunk split boundary reached: expected ${persistedState.expectedDataSize} in data section, buffered ${viewSizeCurrent} B. The following subchunk should have appropriate size subtracted.`);
+								console.debug(`Subchunk split boundary reached: expected ${persistedState.expectedDataSize} in data section, buffered ${viewSizeCurrent} B.`); // The following subchunk should have appropriate size subtracted.
 								persistedState.readDataSize += viewSizeCurrent;
 								return 0;
 							} else {
@@ -894,11 +894,11 @@ export default class MICCInternalsSMF {
 									persistedState.previousSlice === subchunk.sliceId) {
 									persistedState.slicedSize += persistedState.expectedDataSize;
 									persistedState.parseState = 0;
-									console.debug(`Full event: expected ${persistedState.expectedDataSize} B in data section, emitted ${persistedState.slicedSize} B in full.`);
+									//console.debug(`Full event: expected ${persistedState.expectedDataSize} B in data section, emitted ${persistedState.slicedSize} B in full.`);
 									return persistedState.slicedSize;
 								} else {
 									persistedState.parseState = 0;
-									console.debug(`Full event: expected ${persistedState.expectedDataSize} B in data section, emitted ${persistedState.expectedDataSize - persistedState.readDataSize} B in buffer.`);
+									//console.debug(`Full event: expected ${persistedState.expectedDataSize} B in data section, emitted ${persistedState.expectedDataSize - persistedState.readDataSize} B in buffer.`);
 									return persistedState.expectedDataSize - persistedState.readDataSize;
 								};
 							};
