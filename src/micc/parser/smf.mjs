@@ -679,7 +679,7 @@ export default class MICCInternalsSMF {
 				for (let i = offset; i < subchunk.data.length; i ++) {
 					const viewSizeCurrent = subchunk.data.length - i;
 					const e = subchunk.data[i];
-					//console.debug(persistedState.parseState);
+					//console.debug(`${persistedState.parseState} ${e.toString(16).padStart(2, "0")}`);
 					switch (persistedState.parseState) {
 						case 0: {// Unknown delta time skimming.
 							// Initialises variables for the new event.
@@ -743,11 +743,11 @@ export default class MICCInternalsSMF {
 								persistedState.statusByte = e;
 								persistedState.slicedSize ++;
 							} else {
-								//console.debug(`Status byte overwrite skipped. Kept at ${persistedState.statusByte}.`);
+								console.debug(`Status byte overwrite skipped. Kept at ${persistedState.statusByte.toString(16)}.`);
 							};
 							if (isStale) {
 								if (persistedState.statusByte < 0x80 || persistedState.statusByte >= 0xf0) {
-									throw(new TypeError(`Invalid running status ${persistedState.statusByte}.`));
+									throw(new TypeError(`Invalid running status ${persistedState.statusByte.toString(16)}.`));
 								};
 								i --;
 							};
@@ -785,7 +785,7 @@ export default class MICCInternalsSMF {
 									break;
 								};
 								default: {
-									throw(new TypeError(`Invalid event status ${persistedState.statusByte}.`));
+									throw(new TypeError(`Invalid event status ${persistedState.statusByte.toString(16)}.`));
 								};
 							};
 							//console.debug(`0x${persistedState.statusByte.toString(16)} ${persistedState.expectedDataSize}`);
@@ -875,17 +875,18 @@ export default class MICCInternalsSMF {
 							};*/
 							const maxCumulativeDataReadSize = persistedState.readDataSize + viewSizeCurrent;
 							if (maxCumulativeDataReadSize < persistedState.expectedDataSize) {
-								console.debug(`Subchunk split boundary reached. Buffered ${viewSizeCurrent} B.`);
+								console.debug(`Subchunk split boundary reached: expected ${persistedState.expectedDataSize}, buffered ${viewSizeCurrent} B.`);
 								persistedState.readDataSize += viewSizeCurrent;
 								return 0;
 							} else {
 								if (persistedState.readDataSize === 0) {
 									persistedState.slicedSize += persistedState.expectedDataSize;
 									persistedState.parseState = 0;
-									//console.debug("A", persistedState.expectedDataSize);
+									console.debug(`Full event: expected ${persistedState.expectedDataSize} B, emitted ${persistedState.slicedSize} B in full.`);
 									return persistedState.slicedSize;
 								} else {
 									persistedState.parseState = 0;
+									console.debug(`Full event: expected ${persistedState.expectedDataSize} B, emitted ${persistedState.expectedDataSize - persistedState.readDataSize} B in buffer.`);
 									//console.debug("B");
 									return persistedState.expectedDataSize - persistedState.readDataSize;
 								};
