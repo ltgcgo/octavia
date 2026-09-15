@@ -39,12 +39,12 @@ cp -v "../download/vendor/roland/sd-20/Demo04.mid.br" .
 cp -v "../download/vendor/roland/sd-90/07Gt_Org.mid.br" .
 cp -v "../download/vendor/yamaha/motif_es/TheLanes.mid.br" .
 cp -v "../download/vendor/yamaha/motif_es/TranceAct.mid.br" .
-#cp -v "../download/vendor/yamaha/plg_dx/12SOULDX.mid.br" .
+cp -v "../download/vendor/yamaha/plg_dx/12SOULDX.mid.br" .
 cp -v "../download/vendor/yamaha/plg_dx/12VOICE.mid.br" .
 cp -v "../download/vendor/yamaha/plg_sg/fmtnight.mid.br" .
 cp -v "../download/vendor/yamaha/plg_sg/sg_yuki.mid.br" .
 cp -v "../download/vendor/yamaha/plg_vl/DinoJung.mid.br" .
-cp -v "../download/vendor/yamaha/plg_pvl/BlkHole.mid.br" .
+#cp -v "../download/vendor/yamaha/plg_pvl/BlkHole.mid.br" .
 cp -v "../download/vendor/yamaha/qy/QY70D_1.mid.br" .
 cp -v "../download/vendor/yamaha/qy/QY100D_2.mid.br" .
 #cp -v "../download/vendor/yamaha/xgstudio/04Techno.mid.br" .

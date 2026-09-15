@@ -674,9 +674,11 @@ export default class MICCInternalsSMF {
 					};
 					//console.debug(`Started on a new track.`);
 					persistedState.parseState = persistedState.parseState ?? 0; // Initialises to delta time skimming on new tracks.
+					persistedState.previousSlice = subchunk.sliceId;
 					persistedState.statusByte = 0;
 				};
 				for (let i = offset; i < subchunk.data.length; i ++) {
+					//console.debug(subchunk.sliceId);
 					const viewSizeCurrent = subchunk.data.length - i;
 					const e = subchunk.data[i];
 					//console.debug(`${persistedState.parseState} ${e.toString(16).padStart(2, "0")}`);
@@ -704,11 +706,13 @@ export default class MICCInternalsSMF {
 								};
 								persistedState.slicedSize += cumulativeDeltaSize;
 								i += deltaSize - 1;
+								persistedState.previousSlice = subchunk.sliceId;
 								persistedState.parseState = 2;
 								continue;
 							} else if (viewSizeCurrent < 4) {
 								// Incomplete VLV, reached the end of the current subchunk, potentially valid.
 								persistedState.readDeltaSize += viewSizeCurrent;
+								persistedState.previousSlice = subchunk.sliceId;
 								persistedState.parseState = 1;
 								return 0;
 								//continue;
@@ -758,12 +762,14 @@ export default class MICCInternalsSMF {
 								case 0xb:
 								case 0xe: {
 									persistedState.expectedDataSize = 2;
+									persistedState.previousSlice = subchunk.sliceId;
 									persistedState.parseState = 7;
 									break;
 								};
 								case 0xc:
 								case 0xd: {
 									persistedState.expectedDataSize = 1;
+									persistedState.previousSlice = subchunk.sliceId;
 									persistedState.parseState = 7;
 									break;
 								};
@@ -771,10 +777,12 @@ export default class MICCInternalsSMF {
 									switch (persistedState.statusByte) {
 										case 0xf0:
 										case 0xf7: {
+											persistedState.previousSlice = subchunk.sliceId;
 											persistedState.parseState = 5;
 											break;
 										};
 										case 0xff: {
+											persistedState.previousSlice = subchunk.sliceId;
 											persistedState.parseState = 4;
 											break;
 										};
@@ -797,6 +805,7 @@ export default class MICCInternalsSMF {
 							//console.info(e);
 							persistedState.metaType = e;
 							persistedState.slicedSize ++;
+							persistedState.previousSlice = subchunk.sliceId;
 							persistedState.parseState = 5;
 							continue;
 							break;
@@ -825,12 +834,14 @@ export default class MICCInternalsSMF {
 									console.debug(`Size field expects 0 B with VLV sized at ${sizeSize} B.`);
 								};*/
 								i += sizeSize - 1;
+								persistedState.previousSlice = subchunk.sliceId;
 								persistedState.parseState = 7;
 								continue;
 							} else if (viewSizeCurrent < 4) {
 								// Incomplete VLV, reached the end of the current subchunk, potentially valid.
 								persistedState.readDataSizeBuffer.set(data.subarray(i), persistedState.readDataSizeSize);
 								persistedState.readDataSizeSize += viewSizeCurrent;
+								persistedState.previousSlice = subchunk.sliceId;
 								persistedState.parseState = 6;
 								console.debug(`VLV size field read ${viewSizeCurrent} B out of ${persistedState.readDataSizeSize} B before buffering.`);
 								return 0;
@@ -875,19 +886,19 @@ export default class MICCInternalsSMF {
 							};*/
 							const maxCumulativeDataReadSize = persistedState.readDataSize + viewSizeCurrent;
 							if (maxCumulativeDataReadSize < persistedState.expectedDataSize) {
-								console.debug(`Subchunk split boundary reached: expected ${persistedState.expectedDataSize}, buffered ${viewSizeCurrent} B.`);
+								console.debug(`Subchunk split boundary reached: expected ${persistedState.expectedDataSize} in data section, buffered ${viewSizeCurrent} B. The following subchunk should have appropriate size subtracted.`);
 								persistedState.readDataSize += viewSizeCurrent;
 								return 0;
 							} else {
-								if (persistedState.readDataSize === 0) {
+								if (persistedState.readDataSize === 0 && 
+									persistedState.previousSlice === subchunk.sliceId) {
 									persistedState.slicedSize += persistedState.expectedDataSize;
 									persistedState.parseState = 0;
-									console.debug(`Full event: expected ${persistedState.expectedDataSize} B, emitted ${persistedState.slicedSize} B in full.`);
+									console.debug(`Full event: expected ${persistedState.expectedDataSize} B in data section, emitted ${persistedState.slicedSize} B in full.`);
 									return persistedState.slicedSize;
 								} else {
 									persistedState.parseState = 0;
-									console.debug(`Full event: expected ${persistedState.expectedDataSize} B, emitted ${persistedState.expectedDataSize - persistedState.readDataSize} B in buffer.`);
-									//console.debug("B");
+									console.debug(`Full event: expected ${persistedState.expectedDataSize} B in data section, emitted ${persistedState.expectedDataSize - persistedState.readDataSize} B in buffer.`);
 									return persistedState.expectedDataSize - persistedState.readDataSize;
 								};
 							};
@@ -898,6 +909,7 @@ export default class MICCInternalsSMF {
 						};
 					};
 				};
+				//throw(new Error(`Invalid silent fall-through reached at the end of the subchunk, with state ${persistedState.parseState}.`));
 				//console.info(`Regulator buffer depleted at state ${persistedState.parseState} before reaching a verdict.`);
 				return 0; // Buffer the remaining subchunk portion if all current bytes in view have been skimmed without a verdict.
 				break;

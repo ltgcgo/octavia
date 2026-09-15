@@ -520,6 +520,7 @@ let IntegerHandler = class IntegerHandler {
 let SeamstressChunk = class SeamstressChunk {
 	id = 0;
 	chunkId = 0;
+	sliceId = 0;
 	type = undefined;
 	offset = 0;
 	offsetStream = 0;
@@ -736,7 +737,7 @@ const Seamstress = class Seamstress {
 		sizeBuffer = new Uint8Array(4),
 		readState = 0,
 		isHeaderRead = upThis.headerSize === 0;
-		let seamChunkId = 0, seamChunkMap = new Map(),
+		let seamChunkId = 0, seamChunkMap = new Map(), seamSliceMap = new Map(),
 		seamContext = (upThis.headerSize > 0 && upThis.headerHandler !== undefined) ? undefined : {};
 		let headerBuffer;
 		if (upThis.headerSize > 0) {
@@ -792,6 +793,7 @@ const Seamstress = class Seamstress {
 				if (skipLength > chunk.length) {
 					if (isHeaderRead) {
 						let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
+						subchunkData.sliceId = upThis.#increaseInMap(seamSliceMap, seamChunkId);
 						if (!(dropData && childStreamHost?.readable != null && childStreamHost?.closed)) {
 							subchunkData.data = chunk;
 						};
@@ -815,6 +817,7 @@ const Seamstress = class Seamstress {
 					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should commit the entire chunk and flush the buffer.`);
 					if (isHeaderRead) {
 						let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
+						subchunkData.sliceId = upThis.#increaseInMap(seamSliceMap, seamChunkId);
 						if (!(dropData && childStreamHost?.readable != null && childStreamHost?.closed)) {
 							subchunkData.data = chunk;
 						};
@@ -846,6 +849,7 @@ const Seamstress = class Seamstress {
 					upThis.debugMode && console.debug(`${dPrefix} (${chunkStart}): Should flush the buffer.`);
 					if (isHeaderRead) {
 						let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, chunkSize - skipLength, chunkSize);
+						subchunkData.sliceId = upThis.#increaseInMap(seamSliceMap, seamChunkId);
 						if (!(dropData && childStreamHost?.readable != null && childStreamHost?.closed)) {
 							subchunkData.data = chunk.subarray(0, skipLength);
 						};
@@ -1116,6 +1120,7 @@ const Seamstress = class Seamstress {
 					if (skipLength > 0 || shouldEnqueue) {
 						if (skipLength + ptr < chunk.length) {
 							let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, 0, chunkSize);
+							subchunkData.sliceId = upThis.#increaseInMap(seamSliceMap, seamChunkId);
 							if (!(dropData && childStreamHost?.readable != null && childStreamHost?.closed)) {
 								subchunkData.data = chunk.subarray(ptr, ptr + skipLength);
 								switch (upThis.#type & upThis.MASK_PADDED) {
@@ -1138,6 +1143,7 @@ const Seamstress = class Seamstress {
 							seamChunkId ++;
 						} else {
 							let subchunkData = new SeamstressChunk(seamChunkId, seamChunkMap.get(chunkType), chunkType, 0, chunkSize);
+							subchunkData.sliceId = upThis.#increaseInMap(seamSliceMap, seamChunkId);
 							if (!(dropData && childStreamHost?.readable != null && childStreamHost?.closed)) {
 								subchunkData.data = chunk.subarray(ptr);
 								switch (upThis.#type & upThis.MASK_PADDED) {
@@ -1203,6 +1209,7 @@ const Seamstress = class Seamstress {
 		let unbuffered = upThis.#readStreamInternal(stream);
 		let buffer = []; // Maybe a linked list will fit better here? Dynamic arrays could be expensive.
 		let id, chunkId, type, size, context;
+		const seamSliceMap = new Map();
 		let isOffsetWritten = false, offset = 0, offsetData = 0, offsetStream = 0;
 		(async () => {
 			for await (let unbufferedChunk of unbuffered) {
@@ -1225,6 +1232,7 @@ const Seamstress = class Seamstress {
 						throw(new RangeError(`Instructed read length ${readLength} exceeds the boundary of the current subchunk, only ${remainingSize} B remains.`));
 					} else if (readLength > 0) {
 						let subChunk = new SeamstressChunk(id, chunkId, type, unbufferedChunk.offset + inChunkPtr, size);
+						subChunk.sliceId = upThis.#increaseInMap(seamSliceMap, chunkId);
 						subChunk.offsetData = unbufferedChunk.offsetData + inChunkPtr;
 						subChunk.context = context;
 						if (buffer.length > 0) {
@@ -1242,6 +1250,7 @@ const Seamstress = class Seamstress {
 					} else if (readLength === 0) {
 						if (unbufferedChunk.isFinal) {
 							let subChunk = new SeamstressChunk(id, chunkId, type, unbufferedChunk.offset + inChunkPtr, size);
+							subChunk.sliceId = upThis.#increaseInMap(seamSliceMap, chunkId);
 							subChunk.offsetData = unbufferedChunk.offsetData + inChunkPtr;
 							subChunk.context = context;
 							buffer.push(unbufferedChunk.data.subarray(inChunkPtr));

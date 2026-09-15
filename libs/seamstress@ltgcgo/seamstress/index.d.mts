@@ -126,16 +126,20 @@ export interface SeamstressContext {
 */
 export class SeamstressChunk {
 	/** Index of the (streamed) chunk in u32, starts from 0 and increases by 1 only when a new chunk is progressed. This is to easily differentiate chunks. */
-	id: number;
+	id: uint32;
 	/** Cumulative index of the current chunk in u32, starts from 0 and increases by 1 when a new chunk of the same type is progressed. */
-	chunkId: number;
+	chunkId: uint32;
+	/** Cumulative index of the current subchunk in u32, starts from 0 for every new chunk and increases by 1 when a new subchunk in the same chunk.
+	* 
+	* This field is always `0` for fully buffered chunks. */
+	sliceId: uint32;
 	/** Type of the current chunk as either integers or Latin-9 strings. */
 	type: number|string;
 	/** If the current chunk is a child of a parent chunk (e.g. `LIST`), this property will contain the full path of the current chunk. */
 	typePath?: string[];
 	/** If the current chunk is a child of a parent chunk (e.g. `LIST`), this property will contain the use (e.g. list chunk types) of all parent chunks. */
 	typeUses?: string[];
-	/** The offset of the current (sub)chunk. Chunks from `readChunk()` and the first chunk from `readStream()` have this value always set to `0`. */
+	/** The offset of the current (sub)chunk. Chunks from `readChunk()` and the first chunk from `readStream()` have this field always set to `0`. */
 	offset: number;
 	/** (WIP) The offset of the current data (sub)chunk compared to the rest of the scoped binary stream session. */
 	offsetStream: number;
@@ -160,7 +164,7 @@ export class SeamstressChunk {
 	* @param type Same as `SeamstressChunk.type`.
 	* @param offset Same as `SeamstressChunk.offset`.
 	* @param size Same as `SeamstressChunk.size`. */
-	constructor(id: number, chunkId: number, type: number|string, offset: number, size: number);
+	constructor(id: uint32, chunkId: uint32, type: number|string, offset: number, size: number);
 }
 
 /**
