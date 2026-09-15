@@ -29,7 +29,7 @@ export class IntegerHandler {
 	static unsafeType: boolean;
 	/** Counts the total bits required to store an unsigned BigInt. `0` is `0`, parallel to `Math.clz32`. */
 	static bitsBigUint(value: bigint): number;
-	/** Counts the size of a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
+	/** Counts the size of a standard MIDI VLV-8 value in bytes, up to `16`. Will return `0` when failed (expected size goes over `16`). */
 	static sizeVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Counts the size of an integer to be emitted as a standard MIDI VLV-8 value in bytes. Will return 0 when failed. */
 	static lengthVLV(value: number): number;
@@ -47,7 +47,7 @@ export class IntegerHandler {
 	static emitVLV(value: number): Uint8Array;
 	/** Writes a standard MIDI VLV-8 value to a `Uint8Array` or a `Uint8ClampedArray` from a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
 	static emitVLVBigInt(value: bigint): Uint8Array;
-	/** Counts the size of a reversible VLV-8 value in bytes. Will return 0 when failed. */
+	/** Counts the size of a reversible VLV-8 value in bytes, up to `16`. Will return 0 when failed (expected size goes over `16`). */
 	static sizeRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
 	/** Counts the size of an integer to be emitted as a reversible VLV-8 value in bytes. Will return 0 when failed. */
 	static lengthRVLV(value: number): number;
@@ -256,9 +256,11 @@ export class Seamstress {
 	* @param buffer The header getting passed into the handler.
 	* @returns The parsed object that will modify the reader behaviour and provide as the initial context for the streams. */
 	headerHandler?(buffer: Uint8Array): SeamstressContext|undefined;
-	/** Regulates the incoming stream into desired subchunks, specified manually. Called by `Seamstress.regulateStream()`. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the chunk for the stream reader.
+	/** Regulates the incoming stream into desired subchunks, specified manually. Called by `Seamstress.regulateStream()`. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the current chunk for the stream reader.
 	*
 	* A non-zero value will cause the specified length from the current subchunk to be emitted, which the process repeats until the current subchunk depletes or the method returns a zero. A zero cause the current remaining section to be buffered and prepended to the next subchunk, until the entire chunk ends causing a forced flush, essentially making an all-zero regulated stream a fully-buffered stream. Any other numeric values will cause an error.
+	*
+	* When the previous subchunk caused a buffering request by returning `0`, the subsequent subchunk view handed to the regulator method will be supplied as-is without merging. Use `SeamstressChunk.context` to have state persist across subchunk.
 	* @param startOffset The intended read start offset of the provided buffer.
 	* @param chunkInfo The unmodified info of the current (sub)chunk. */
 	regulateStream?(startOffset: number, chunkInfo: SeamstressChunk): number;

@@ -661,6 +661,211 @@ export default class MICCInternalsSMF {
 			case "MTrk":
 			case "XFIH":
 			case "XFKM": {
+				subchunk.context = subchunk.context ?? {};
+				subchunk.context.regulator = subchunk.context.regulator ?? {};
+				//const viewSizeFull = subchunk.data.length - offset;
+				const data = subchunk.data;
+				/** @type {Record<string, number|boolean>} */
+				const persistedState = subchunk.context.regulator;
+				if (subchunk.offset === 0) {
+					if (persistedState?.status > 0) {
+						console.warn(`Previous MIDI track had status hang at ${persistedState.parseState}.`);
+					};
+					persistedState.parseState = persistedState.parseState ?? 0; // Initialises to delta time skimming on new tracks.
+				};
+				for (let i = offset; i < subchunk.data.length; i ++) {
+					const viewSizeCurrent = subchunk.data.length - i;
+					const e = subchunk.data[i];
+					switch (persistedState.parseState) {
+						case 0: {// Unknown delta time skimming.
+							// Initialises variables for the new event.
+							persistedState.expectedDataSize = 0;
+							persistedState.readDataSize = 0;
+							persistedState.readDataSizeBuffer = (persistedState.readDataSizeBuffer ?? new Uint8Array(4)).fill(0);
+							persistedState.readDataSizeSize = 0;
+							persistedState.readDeltaSize = 0;
+							persistedState.slicedSize = 0;
+							persistedState.statusByte = 0;
+							// Fallthrough.
+						};
+						case 1: { // Waiting for delta time termination.
+							const deltaSize = IntegerHandler.sizeVLV(data, i);
+							if (deltaSize > 4) {
+								throw(new RangeError(`Invalid unbuffered delta time: size too large, ${deltaSize} B > 4 B.`));
+								continue;
+							} else if (deltaSize > 0) {
+								const cumulativeDeltaSize = deltaSize + persistedState.readDeltaSize;
+								if (cumulativeDeltaSize > 4) {
+									throw(new RangeError(`Invalid buffered delta time: size too large, ${cumulativeDeltaSize} B > 4 B.`));
+								};
+								persistedState.slicedSize += cumulativeDeltaSize;
+								i += deltaSize - 1;
+								persistedState.parseState = 2;
+								continue;
+							} else if (viewSizeCurrent < 4) {
+								// Incomplete VLV, reached the end of the current subchunk, potentially valid.
+								persistedState.readDeltaSize += viewSizeCurrent;
+								persistedState.parseState = 1;
+								return 0;
+								//continue;
+							} else {
+								throw(new RangeError(`Invalid unbuffered delta time: unknown error.`));
+								continue;
+							};
+							break;
+						};
+						case 2: { // Status byte.
+							let isStale = true;
+							if (e >= 0x80) {
+								switch (e) {
+									case 0xf1:
+									case 0xf2:
+									case 0xf3:
+									case 0xf4:
+									case 0xf5:
+									case 0xf6:
+									case 0xf8:
+									case 0xf9:
+									case 0xfa:
+									case 0xfb:
+									case 0xfc:
+									case 0xfd:
+									case 0xfe: {
+										throw(new TypeError(`Invalid event new status ${e}.`));
+										break;
+									};
+								};
+								isStale = false;
+								persistedState.statusByte = e;
+								persistedState.slicedSize ++;
+							};
+							if (isStale) {
+								if (e >= 0xf0) {
+									throw(new TypeError(`Invalid running status ${e}.`));
+								};
+								i --;
+							};
+							switch (persistedState.statusByte >> 4) {
+								case 0x8:
+								case 0x9:
+								case 0xa:
+								case 0xb:
+								case 0xe: {
+									persistedState.expectedDataSize = 2;
+									persistedState.parseState = 7;
+									break;
+								};
+								case 0xc:
+								case 0xd: {
+									persistedState.expectedDataSize = 1;
+									persistedState.parseState = 7;
+									break;
+								};
+								case 0xf: {
+									switch (persistedState.statusByte) {
+										case 0xf0:
+										case 0xf7: {
+											persistedState.parseState = 5;
+											break;
+										};
+										case 0xff: {
+											persistedState.parseState = 4;
+											break;
+										};
+										default: {
+											throw(new TypeError(`Invalid system event status ${e}.`));
+										};
+									};
+									break;
+								};
+								default: {
+									throw(new TypeError(`Invalid event status ${e}.`));
+								};
+							};
+							continue;
+							break;
+						};
+						case 4: { // Meta event type.
+							// Should only be reached by event `0xFF`.
+							persistedState.slicedSize ++;
+							persistedState.parseState = 5;
+							continue;
+							break;
+						};
+						case 5: 
+						case 6: { // Generic VLV size read.
+							// Should only be reached by event `0xF0`, `0xF7` and `0xFF`.
+							const sizeSize = IntegerHandler.sizeVLV(data, i);
+							if (sizeSize > 4) {
+								throw(new RangeError(`Invalid unbuffered data size field: size too large, ${sizeSize} B > 4 B.`));
+							} else if (sizeSize > 0) {
+								const cumulativeDataSize = sizeSize + persistedState.readDataSizeSize;
+								if (cumulativeDataSize > 4) {
+									throw(new RangeError(`Invalid buffered data size field: size too large, ${cumulativeDataSize} B > 4 B.`));
+								};
+								persistedState.slicedSize += cumulativeDataSize;
+								if (persistedState.parseState === 6) {
+									persistedState.readDataSizeBuffer.set(data.subarray(i, i + persistedState.readDataSizeSize), persistedState.readDataSizeSize);
+									persistedState.expectedDataSize = IntegerHandler.readVLV(persistedState.readDataSizeBuffer);
+								} else {
+									persistedState.expectedDataSize = IntegerHandler.readVLV(data, i);
+								};
+								i += sizeSize - 1;
+								persistedState.parseState = 7;
+								continue;
+							} else if (viewSizeCurrent < 4) {
+								// Incomplete VLV, reached the end of the current subchunk, potentially valid.
+								persistedState.readDataSizeBuffer.set(data.subarray(i), persistedState.readDataSizeSize);
+								persistedState.readDataSizeSize += viewSizeCurrent;
+								persistedState.parseState = 6;
+								return 0;
+								//continue;
+							} else {
+								throw(new RangeError(`Invalid unbuffered data size field: unknown error.`));
+								continue;
+							};
+							break;
+						};
+						case 7: { // Data section.
+							//console.debug(`Expects ${persistedState.expectedDataSize} B of data, currently accumulated ${persistedState.readDataSize} B for data, ${persistedState.slicedSize} B in total.`);
+							const maxCumulativeDataReadSize = persistedState.readDataSize + viewSizeCurrent;
+							if (maxCumulativeDataReadSize < persistedState.expectedDataSize) {
+								persistedState.readDataSize += viewSizeCurrent;
+								return 0;
+							} else {
+								persistedState.slicedSize += persistedState.expectedDataSize;
+								persistedState.parseState = 0;
+								return persistedState.slicedSize;
+							};
+							break;
+						};
+						default: {
+							throw(new Error(`Unhandled state ${persistedState.parseState} for event status ${persistedState.statusByte || "unknown"}.`));
+						};
+					};
+				};
+				console.debug(`Regulator buffer depleted before reaching a verdict.`);
+				return 0; // Buffer the remaining subchunk portion if all current bytes in view have been skimmed without a verdict.
+				break;
+			};
+			case "MThd": {
+				// Buffer everything.
+				return 0;
+				break;
+			};
+			default: {
+				console.warn(`Unhandled chunk #${subchunk.id} typed "${subchunk.type}".`);
+				return 0;
+			};
+		};
+	};
+	/** @param {number} offset
+	* @param {SeamstressChunk} subchunk  */
+	static regulateStream(offset, subchunk) {
+		switch (subchunk.type) {
+			case "MTrk":
+			case "XFIH":
+			case "XFKM": {
 				const eventContext = subchunk.context;
 				const remainingSize = subchunk.data.length - offset;
 				// This current implementation is incredibly flawed for not handling chunk boundary crossing by itself. A new implementation is thus required.
