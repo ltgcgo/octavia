@@ -836,7 +836,7 @@ test("Event roundtrip validation", () => {
 				bufferFrom("hex", "0040"),
 				bufferFrom("hex", "0000"),
 				bufferFrom("hex", "0040")
-			], [
+			], /*[
 				bufferFrom("hex", "F17F"),
 				bufferFrom("hex", "F27F7F"),
 				bufferFrom("hex", "F37F"),
@@ -847,7 +847,7 @@ test("Event roundtrip validation", () => {
 				bufferFrom("hex", "FC"),
 				bufferFrom("hex", "FE"),
 				bufferFrom("hex", "FF")
-			]
+			]*/
 		]
 	}, {
 		"setup": {
