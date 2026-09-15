@@ -104,15 +104,16 @@ let showResult = async (stream, props = {}) => {
 				const splitStream = stream.tee();
 				let lastChunkPos = 0;
 				(async () => {
+					const persistentState = {
+						"isSmfWrapped": true,
+						"hasDelta": true
+					};
 					for await (let chunk of rawParser.readRegulated(splitStream[1])) {
 						lastChunkPos = chunk.offsetData;
 						console.debug(chunk);
 						rawParser.debugMode && console.debug(summarizeSeamstressChunk(chunk));
 						if (chunk.type === "MTrk") {
-							console.debug(MICCInternalsSMF.parseSingleEvent(chunk, {
-								"isSmfWrapped": true,
-								"hasDelta": true
-							}));
+							console.debug(MICCInternalsSMF.parseSingleEvent(chunk, persistentState));
 						};
 					};
 					console.info("Finished chunk skimming.");

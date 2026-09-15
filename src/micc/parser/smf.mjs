@@ -57,7 +57,7 @@ export default class MICCInternalsSMF {
 			isStale = true;
 			statusByte = options.parserContext.lastStatus;
 			if (!(statusByte >= 0x80 && statusByte < 0xf0)) {
-				throw(new Error(`Invalid running status.`));
+				throw(new Error(`Invalid running status 0x${statusByte.toString(16).padStart(2, "0")}.`));
 			};
 		};
 		if (statusByte >= 0xf0) {
@@ -558,7 +558,7 @@ export default class MICCInternalsSMF {
 									};
 								};
 							} else {
-								throw(new Error(`Invalid running status.`));
+								throw(new Error(`Invalid running status 0x${runningStatus.toString(16).padStart(2, "0")}.`));
 							}
 						};
 						if (messageSize >= 0 && messageKnock.length > 0) {
@@ -743,7 +743,7 @@ export default class MICCInternalsSMF {
 								persistedState.statusByte = e;
 								persistedState.slicedSize ++;
 							} else {
-								console.debug(`Status byte overwrite skipped. Kept at ${persistedState.statusByte}.`);
+								//console.debug(`Status byte overwrite skipped. Kept at ${persistedState.statusByte}.`);
 							};
 							if (isStale) {
 								if (persistedState.statusByte < 0x80 || persistedState.statusByte >= 0xf0) {
