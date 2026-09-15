@@ -667,11 +667,12 @@ export default class MICCInternalsSMF {
 				const data = subchunk.data;
 				/** @type {Record<string, number|boolean|Uint8Array>} */
 				const persistedState = subchunk.context.regulator;
-				if (subchunk.offset === 0) {
+				if (subchunk.offset === 0 && offset === 0) {
 					if (persistedState?.parseState > 0) {
 						console.debug(`Previous MIDI track had status hang at ${persistedState.parseState}.`);
 						persistedState.parseState = 0; // Forces the new track to start anew.
 					};
+					console.debug(`Started on a new track.`);
 					persistedState.parseState = persistedState.parseState ?? 0; // Initialises to delta time skimming on new tracks.
 					persistedState.statusByte = 0;
 				};
@@ -741,9 +742,11 @@ export default class MICCInternalsSMF {
 								isStale = false;
 								persistedState.statusByte = e;
 								persistedState.slicedSize ++;
+							} else {
+								console.debug(`Status byte overwrite skipped. Kept at ${persistedState.statusByte}.`);
 							};
 							if (isStale) {
-								if (persistedState.statusByte >= 0xf0) {
+								if (persistedState.statusByte < 0x80 || persistedState.statusByte >= 0xf0) {
 									throw(new TypeError(`Invalid running status ${persistedState.statusByte}.`));
 								};
 								i --;
@@ -782,7 +785,7 @@ export default class MICCInternalsSMF {
 									break;
 								};
 								default: {
-									throw(new TypeError(`Invalid event status ${e}.`));
+									throw(new TypeError(`Invalid event status ${persistedState.statusByte}.`));
 								};
 							};
 							//console.debug(`0x${persistedState.statusByte.toString(16)} ${persistedState.expectedDataSize}`);
