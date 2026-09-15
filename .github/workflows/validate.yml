@@ -35,6 +35,7 @@ on:
       - "sh/esbuild"
       - "sh/live.sh"
       - "sh/validate.sh"
+      - "sh/validatorSetup.sh"
       - "src/**"
       - "!src/*/index.d.mts"
       - "validate/**"
@@ -65,3 +66,5 @@ jobs:
         run: "./shx validatorSetup"
       - name: Validate MICC SMF parser and serialiser
         run: "./shx validate micc/smf.js"
+      - name: Validate MICC lossless canonical roundtrip routes
+        run: "./shx validate micc/lcr.js"

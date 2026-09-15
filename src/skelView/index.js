@@ -101,28 +101,28 @@ let showResult = async (stream, props = {}) => {
 				rawParser.headerSize = 0;
 				rawParser.regulateStream = MICCInternalsSMF.streamRegulator;
 				rawParser.debugMode = !!self.debugMode;
-				//const splitStream = stream.tee();
-				//let lastChunkPos = 0;
-				/*(async () => {
+				const splitStream = stream.tee();
+				let lastChunkPos = 0;
+				(async () => {
 					const persistentState = {
 						"isSmfWrapped": true,
 						"hasDelta": true
 					};
 					for await (let chunk of rawParser.readRegulated(splitStream[1])) {
 						lastChunkPos = chunk.offsetData;
-						//console.debug(chunk);
+						console.debug(chunk);
 						rawParser.debugMode && console.debug(summarizeSeamstressChunk(chunk));
 						if (chunk.type === "MTrk") {
-							//console.debug(MICCInternalsSMF.parseSingleEvent(chunk, persistentState));
+							console.debug(MICCInternalsSMF.parseSingleEvent(chunk, persistentState));
 						};
 					};
 					console.info("Finished chunk skimming.");
 				})().catch((err) => {
 					resultDisplay.append(`\n\nChunk skimmer at 0x${lastChunkPos.toString(16).padStart(6, "0")}: Uncaught ${err.name}: ${err.message}\n${err.stack}`);
 					console.warn(err);
-				});*/
-				//readStream = rawParser.readChunks(splitStream[0]);
-				readStream = rawParser.readChunks(stream);
+				});
+				readStream = rawParser.readChunks(splitStream[0]);
+				//readStream = rawParser.readChunks(stream);
 				break;
 			};
 			case "iff": {
