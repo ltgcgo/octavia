@@ -207,7 +207,7 @@ export default class MICCInternalsSMF {
 		nakedEvent.type = eventType;
 		// Final pass
 		if (buffer.length < dataEndPointer) {
-			throw(new Error(`Incomplete event: expected ${dataEndPointer} B, received ${buffer.length} B.`));
+			throw(new Error(`Incomplete 0x${eventType.toString(16)} event: expected ${dataEndPointer} B, received ${buffer.length} B.`));
 		};
 		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
 		let isSysExActive = false;
@@ -665,18 +665,19 @@ export default class MICCInternalsSMF {
 				subchunk.context.regulator = subchunk.context.regulator ?? {};
 				//const viewSizeFull = subchunk.data.length - offset;
 				const data = subchunk.data;
-				/** @type {Record<string, number|boolean>} */
+				/** @type {Record<string, number|boolean|Uint8Array>} */
 				const persistedState = subchunk.context.regulator;
 				if (subchunk.offset === 0) {
-					if (persistedState?.status > 0) {
+					if (persistedState?.parseState > 0) {
 						console.warn(`Previous MIDI track had status hang at ${persistedState.parseState}.`);
 					};
 					persistedState.parseState = persistedState.parseState ?? 0; // Initialises to delta time skimming on new tracks.
+					persistedState.statusByte = 0;
 				};
 				for (let i = offset; i < subchunk.data.length; i ++) {
 					const viewSizeCurrent = subchunk.data.length - i;
 					const e = subchunk.data[i];
-					//console.debug(persistedState.parseState);
+					console.debug(persistedState.parseState);
 					switch (persistedState.parseState) {
 						case 0: {// Unknown delta time skimming.
 							// Initialises variables for the new event.
@@ -686,7 +687,6 @@ export default class MICCInternalsSMF {
 							persistedState.readDataSizeSize = 0;
 							persistedState.readDeltaSize = 0;
 							persistedState.slicedSize = 0;
-							persistedState.statusByte = 0;
 							// Fallthrough.
 						};
 						case 1: { // Waiting for delta time termination.
@@ -741,8 +741,8 @@ export default class MICCInternalsSMF {
 								persistedState.slicedSize ++;
 							};
 							if (isStale) {
-								if (e >= 0xf0) {
-									throw(new TypeError(`Invalid running status ${e}.`));
+								if (persistedState.statusByte >= 0xf0) {
+									throw(new TypeError(`Invalid running status ${persistedState.statusByte}.`));
 								};
 								i --;
 							};
@@ -788,6 +788,7 @@ export default class MICCInternalsSMF {
 						};
 						case 4: { // Meta event type.
 							// Should only be reached by event `0xFF`.
+							//console.info(e);
 							persistedState.slicedSize ++;
 							persistedState.parseState = 5;
 							continue;
@@ -811,9 +812,11 @@ export default class MICCInternalsSMF {
 								} else {
 									persistedState.expectedDataSize = IntegerHandler.readVLV(data, i);
 								};
-								/*if (persistedState.expectedDataSize > 0) {
-									console.debug(`VLV size field expects ${persistedState.expectedDataSize} B.`);
-								};*/
+								/* if (persistedState.expectedDataSize > 0) {
+									console.debug(`Size field expects ${persistedState.expectedDataSize} B.`);
+								} else {
+									console.debug(`Size field expects 0 B with VLV sized at ${sizeSize} B.`);
+								}; */
 								i += sizeSize - 1;
 								persistedState.parseState = 7;
 								continue;
@@ -842,9 +845,11 @@ export default class MICCInternalsSMF {
 								if (persistedState.readDataSize === 0) {
 									persistedState.slicedSize += persistedState.expectedDataSize;
 									persistedState.parseState = 0;
+									//console.debug("A", persistedState.expectedDataSize);
 									return persistedState.slicedSize;
 								} else {
 									persistedState.parseState = 0;
+									//console.debug("B");
 									return persistedState.expectedDataSize - persistedState.readDataSize;
 								};
 							};

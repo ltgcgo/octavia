@@ -104,7 +104,7 @@ let showResult = async (stream, props = {}) => {
 				const splitStream = stream.tee();
 				(async () => {
 					for await (let chunk of rawParser.readRegulated(splitStream[1])) {
-						//console.debug(chunk);
+						console.debug(chunk);
 						rawParser.debugMode && console.debug(summarizeSeamstressChunk(chunk));
 						if (chunk.type === "MTrk") {
 							console.debug(MICCInternalsSMF.parseSingleEvent(chunk, {
