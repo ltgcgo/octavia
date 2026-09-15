@@ -60,6 +60,7 @@ test("Validate stream parsing of single events", async () => {
 		};
 	};
 	if (errorHistory.length > 0) {
+		console.debug(`\n\x1b[1;31mFinal error compilation\x1b[0m:`);
 		for (const failRecord of errorHistory) {
 			console.debug(`File "${failRecord.fileName}" failed at 0x${failRecord.offset.toString(16).padStart(6, "0")} with\n  ${failRecord.error.name}: ${failRecord.error.message}`);
 		};
