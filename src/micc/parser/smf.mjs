@@ -669,7 +669,8 @@ export default class MICCInternalsSMF {
 				const persistedState = subchunk.context.regulator;
 				if (subchunk.offset === 0) {
 					if (persistedState?.parseState > 0) {
-						console.warn(`Previous MIDI track had status hang at ${persistedState.parseState}.`);
+						console.debug(`Previous MIDI track had status hang at ${persistedState.parseState}.`);
+						persistedState.parseState = 0; // Forces the new track to start anew.
 					};
 					persistedState.parseState = persistedState.parseState ?? 0; // Initialises to delta time skimming on new tracks.
 					persistedState.statusByte = 0;
@@ -677,11 +678,12 @@ export default class MICCInternalsSMF {
 				for (let i = offset; i < subchunk.data.length; i ++) {
 					const viewSizeCurrent = subchunk.data.length - i;
 					const e = subchunk.data[i];
-					console.debug(persistedState.parseState);
+					//console.debug(persistedState.parseState);
 					switch (persistedState.parseState) {
 						case 0: {// Unknown delta time skimming.
 							// Initialises variables for the new event.
 							persistedState.expectedDataSize = 0;
+							persistedState.metaType = 255;
 							persistedState.readDataSize = 0;
 							persistedState.readDataSizeBuffer = (persistedState.readDataSizeBuffer ?? new Uint8Array(4)).fill(0);
 							persistedState.readDataSizeSize = 0;
@@ -783,12 +785,14 @@ export default class MICCInternalsSMF {
 									throw(new TypeError(`Invalid event status ${e}.`));
 								};
 							};
+							//console.debug(`0x${persistedState.statusByte.toString(16)} ${persistedState.expectedDataSize}`);
 							continue;
 							break;
 						};
 						case 4: { // Meta event type.
 							// Should only be reached by event `0xFF`.
 							//console.info(e);
+							persistedState.metaType = e;
 							persistedState.slicedSize ++;
 							persistedState.parseState = 5;
 							continue;
@@ -812,11 +816,11 @@ export default class MICCInternalsSMF {
 								} else {
 									persistedState.expectedDataSize = IntegerHandler.readVLV(data, i);
 								};
-								/* if (persistedState.expectedDataSize > 0) {
+								/*if (persistedState.expectedDataSize > 0) {
 									console.debug(`Size field expects ${persistedState.expectedDataSize} B.`);
 								} else {
 									console.debug(`Size field expects 0 B with VLV sized at ${sizeSize} B.`);
-								}; */
+								};*/
 								i += sizeSize - 1;
 								persistedState.parseState = 7;
 								continue;
@@ -836,6 +840,36 @@ export default class MICCInternalsSMF {
 						};
 						case 7: { // Data section.
 							//console.debug(`Expects ${persistedState.expectedDataSize} B of data, currently accumulated ${persistedState.readDataSize} B for data, ${persistedState.slicedSize} B in total.`);
+							/*let coherenceTestLength = 0;
+							switch (persistedState.statusByte >> 4) {
+								case 0x8:
+								case 0x9:
+								case 0xa:
+								case 0xb:
+								case 0xe: {
+									coherenceTestLength = 2;
+									break;
+								};
+								case 0xc:
+								case 0xd: {
+									coherenceTestLength = 1;
+									break;
+								};
+								case 0xf: {
+									if (persistedState.statusByte === 0xff && persistedState.metaType >= 0x80) {
+										console.info(`Is the meta type supposed to be 0x${persistedState.metaType.toString(16)}?`);
+									};
+									break;
+								};
+								default: {
+									throw(new TypeError(`A bug caused invalid status byte 0x${persistedState.statusByte.toString(16)} to be present that should not be possible. Please check the codebase.`));
+								};
+							};
+							if (coherenceTestLength > 0) {
+								if (persistedState.expectedDataSize !== coherenceTestLength) {
+									console.warn(`A bug caused expected data size mismatch for event type 0x${persistedState.statusByte.toString(16)} that should not be possible. Please check the codebase.`);
+								};
+							};*/
 							const maxCumulativeDataReadSize = persistedState.readDataSize + viewSizeCurrent;
 							if (maxCumulativeDataReadSize < persistedState.expectedDataSize) {
 								console.debug(`Subchunk split boundary reached. Buffered ${viewSizeCurrent} B.`);
@@ -877,7 +911,7 @@ export default class MICCInternalsSMF {
 	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk  */
-	static regulateStream(offset, subchunk) {
+	/*static regulateStream(offset, subchunk) {
 		switch (subchunk.type) {
 			case "MTrk":
 			case "XFIH":
@@ -1020,5 +1054,5 @@ export default class MICCInternalsSMF {
 				return 0;
 			};
 		};
-	};
+	};*/
 };
