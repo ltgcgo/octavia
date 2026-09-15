@@ -34,6 +34,7 @@ test("Validate stream parsing of single events", async () => {
 	skeletalSmfParser.regulateStream = MICCInternalsSMF.streamRegulator;
 	/** @type {FailRecord[]} */
 	const errorHistory = [];
+	let testedFile = 0;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
 			console.info(`Validating skeletal event parsing of "${dirEntry.name}"...`);
@@ -42,6 +43,7 @@ test("Validate stream parsing of single events", async () => {
 				"isSmfWrapped": true,
 				"hasDelta": true
 			};
+			testedFile ++;
 			for await (let chunk of skeletalSmfParser.readRegulated(fileObject.readable)) {
 				switch (chunk.type) {
 					case "MTrk":
@@ -60,10 +62,10 @@ test("Validate stream parsing of single events", async () => {
 		};
 	};
 	if (errorHistory.length > 0) {
-		console.debug(`\n\x1b[1;31mFinal error compilation\x1b[0m:`);
+		console.debug(`\n\x1b[1;31mFinal casualty report\x1b[0m:`);
 		for (const failRecord of errorHistory) {
 			console.debug(`File "${failRecord.fileName}" failed at 0x${failRecord.offset.toString(16).padStart(6, "0")} with\n  ${failRecord.error.name}: ${failRecord.error.message}`);
 		};
-		throw(`Failed ${errorHistory.length} test(s).`);
+		throw(`Failed ${errorHistory.length} test(s) out of ${testedFile}.`);
 	};
 });
