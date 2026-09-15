@@ -2,17 +2,17 @@
 
 import {
 	SeamstressChunk
-} from "../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../libs/seamstress@ltgcgo/seamstress/index.mjs";
 import {
 	MICCConstants,
 	MICCInternalsSMF
-} from "../src/micc/index.mjs";
+} from "../../src/micc/index.mjs";
 import {
 	bufferToDHex
-} from "../src/state/utils.js";
+} from "../../src/state/utils.js";
 import {
 	bufferFrom
-} from "../src/state/utils/bufferIo.mjs";
+} from "../../src/state/utils/bufferIo.mjs";
 import {
 	test
 } from "https://jsr.io/@cross/test/0.0.14/mod.ts";
@@ -21,7 +21,7 @@ import {
 	assertThrows
 } from "https://jsr.io/@std/assert/1.0.19/mod.ts";
 
-/** @type {import("../src/micc/index.mjs").MICCSMFMIAHandleOptions} */
+/** @type {import("../../src/micc/index.mjs").MICCSMFMIAHandleOptions} */
 const parseTypeDelta = {
 	"hasDelta": true
 };

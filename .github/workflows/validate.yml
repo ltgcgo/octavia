@@ -61,5 +61,7 @@ jobs:
           deno-version: latest
       - name: Build Octavia files
         run: "./shx build"
+      - name: Configure the validator environment
+        run: "./shx validatorSetup"
       - name: Validate MICC SMF parser and serialiser
-        run: "./shx validate miccSmf.js"
+        run: "./shx validate micc/smf.js"
