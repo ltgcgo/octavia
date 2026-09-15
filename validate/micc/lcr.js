@@ -10,12 +10,30 @@ import {
 	test
 } from "https://jsr.io/@cross/test/0.0.14/mod.ts";
 
+const FailRecord = class FailRecord {
+	/** @type {Error} */
+	error;
+	/** @type {string} */
+	fileName;
+	/** @type {number} */
+	offset;
+	/** @param {string} fileName 
+	* @param {number} offset 
+	* @param {Error} error  */
+	constructor(fileName, offset, error) {
+		this.fileName = fileName;
+		this.offset = offset;
+		this.error = error;
+	};
+};
+
 // Screw it, Deno APIs can be easily shimmed anyway.
 test("Validate stream parsing of single events", async () => {
 	const skeletalSmfParser = new Seamstress(Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32);
 	skeletalSmfParser.headerSize = 0;
 	skeletalSmfParser.regulateStream = MICCInternalsSMF.streamRegulator;
-	let errorCount = 0;
+	/** @type {FailRecord[]} */
+	const errorHistory = [];
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
 			console.info(`Validating skeletal event parsing of "${dirEntry.name}"...`);
@@ -32,7 +50,7 @@ test("Validate stream parsing of single events", async () => {
 						try {
 							MICCInternalsSMF.parseSingleEvent(chunk, fileState);
 						} catch (err) {
-							errorCount ++;
+							errorHistory.push(new FailRecord(dirEntry.name, chunk.offsetData, err));
 							console.error(err);
 						};
 						break;
@@ -41,7 +59,10 @@ test("Validate stream parsing of single events", async () => {
 			};
 		};
 	};
-	if (errorCount > 0) {
-		throw(`Failed ${errorCount} test(s).`);
+	if (errorHistory.length > 0) {
+		for (const failRecord of errorHistory) {
+			console.debug(`File "${failRecord.fileName}" failed at 0x${failRecord.offset.toString(16).padStart(6, "0")} with\n  ${failRecord.error.name}: ${failRecord.error.message}`);
+		};
+		throw(`Failed ${errorHistory.length} test(s).`);
 	};
 });
