@@ -805,7 +805,7 @@ export default class MICCInternalsSMF {
 								};
 								persistedState.slicedSize += cumulativeDataSize;
 								if (persistedState.parseState === 6) {
-									persistedState.readDataSizeBuffer.set(data.subarray(i, i + persistedState.readDataSizeSize), persistedState.readDataSizeSize);
+									persistedState.readDataSizeBuffer.set(data.subarray(i, i + sizeSize), persistedState.readDataSizeSize);
 									persistedState.expectedDataSize = IntegerHandler.readVLV(persistedState.readDataSizeBuffer);
 								} else {
 									persistedState.expectedDataSize = IntegerHandler.readVLV(data, i);
