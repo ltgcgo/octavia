@@ -669,10 +669,10 @@ export default class MICCInternalsSMF {
 				const persistedState = subchunk.context.regulator;
 				if (subchunk.offset === 0 && offset === 0) {
 					if (persistedState?.parseState > 0) {
-						console.debug(`Previous MIDI track had status hang at ${persistedState.parseState}.`);
+						//console.debug(`Previous MIDI track had status hang at ${persistedState.parseState}.`);
 						persistedState.parseState = 0; // Forces the new track to start anew.
 					};
-					console.debug(`Started on a new track.`);
+					//console.debug(`Started on a new track.`);
 					persistedState.parseState = persistedState.parseState ?? 0; // Initialises to delta time skimming on new tracks.
 					persistedState.statusByte = 0;
 				};

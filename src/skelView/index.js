@@ -110,10 +110,10 @@ let showResult = async (stream, props = {}) => {
 					};
 					for await (let chunk of rawParser.readRegulated(splitStream[1])) {
 						lastChunkPos = chunk.offsetData;
-						console.debug(chunk);
+						//console.debug(chunk);
 						rawParser.debugMode && console.debug(summarizeSeamstressChunk(chunk));
 						if (chunk.type === "MTrk") {
-							console.debug(MICCInternalsSMF.parseSingleEvent(chunk, persistentState));
+							//console.debug(MICCInternalsSMF.parseSingleEvent(chunk, persistentState));
 						};
 					};
 					console.info("Finished chunk skimming.");
