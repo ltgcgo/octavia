@@ -14,6 +14,7 @@ on:
       - "sh/esbuild"
       - "sh/live.sh"
       - "sh/validate.sh"
+      - "sh/validatorSetup.sh"
       - "src/**"
       - "!src/*/index.d.mts"
       - "validate/**"
