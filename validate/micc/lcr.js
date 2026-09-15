@@ -15,6 +15,7 @@ test("Validate stream parsing of single events", async () => {
 	const skeletalSmfParser = new Seamstress(Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32);
 	skeletalSmfParser.headerSize = 0;
 	skeletalSmfParser.regulateStream = MICCInternalsSMF.streamRegulator;
+	let errorCount = 0;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
 			console.info(`Validating skeletal event parsing of "${dirEntry.name}"...`);
@@ -28,11 +29,19 @@ test("Validate stream parsing of single events", async () => {
 					case "MTrk":
 					case "XFIH":
 					case "XFKM": {
-						MICCInternalsSMF.parseSingleEvent(chunk, fileState);
+						try {
+							MICCInternalsSMF.parseSingleEvent(chunk, fileState);
+						} catch (err) {
+							errorCount ++;
+							console.error(err);
+						};
 						break;
 					};
 				};
 			};
 		};
+	};
+	if (errorCount > 0) {
+		throw(`Failed ${errorCount} test(s).`);
 	};
 });

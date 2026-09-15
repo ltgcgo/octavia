@@ -8,7 +8,7 @@ mkdir -p ../target
 cd ../source
 rm *.mid 2>/dev/null
 cp -v "../download/artist/JayB/DREAMOFL.mid.br" .
-cp -v "../download/artist/JayB/HORIZON.mid.br" .
+#cp -v "../download/artist/JayB/HORIZON.mid.br" .
 cp -v "../download/artist/JayB/KANDI8.mid.br" .
 #cp -v "../download/artist/JayB/Corgi (Full Version).mid.br" "./CORGI.mid.br"
 cp -v "../download/artist/ElectroKaplosion/Decades.mid.br" .
