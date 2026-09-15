@@ -676,6 +676,7 @@ export default class MICCInternalsSMF {
 				for (let i = offset; i < subchunk.data.length; i ++) {
 					const viewSizeCurrent = subchunk.data.length - i;
 					const e = subchunk.data[i];
+					//console.debug(persistedState.parseState);
 					switch (persistedState.parseState) {
 						case 0: {// Unknown delta time skimming.
 							// Initialises variables for the new event.
@@ -810,6 +811,9 @@ export default class MICCInternalsSMF {
 								} else {
 									persistedState.expectedDataSize = IntegerHandler.readVLV(data, i);
 								};
+								/*if (persistedState.expectedDataSize > 0) {
+									console.debug(`VLV size field expects ${persistedState.expectedDataSize} B.`);
+								};*/
 								i += sizeSize - 1;
 								persistedState.parseState = 7;
 								continue;
@@ -818,6 +822,7 @@ export default class MICCInternalsSMF {
 								persistedState.readDataSizeBuffer.set(data.subarray(i), persistedState.readDataSizeSize);
 								persistedState.readDataSizeSize += viewSizeCurrent;
 								persistedState.parseState = 6;
+								console.debug(`VLV size field read ${viewSizeCurrent} B out of ${persistedState.readDataSizeSize} B before buffering.`);
 								return 0;
 								//continue;
 							} else {
@@ -830,12 +835,18 @@ export default class MICCInternalsSMF {
 							//console.debug(`Expects ${persistedState.expectedDataSize} B of data, currently accumulated ${persistedState.readDataSize} B for data, ${persistedState.slicedSize} B in total.`);
 							const maxCumulativeDataReadSize = persistedState.readDataSize + viewSizeCurrent;
 							if (maxCumulativeDataReadSize < persistedState.expectedDataSize) {
+								console.debug(`Subchunk split boundary reached. Buffered ${viewSizeCurrent} B.`);
 								persistedState.readDataSize += viewSizeCurrent;
 								return 0;
 							} else {
-								persistedState.slicedSize += persistedState.expectedDataSize;
-								persistedState.parseState = 0;
-								return persistedState.slicedSize;
+								if (persistedState.readDataSize === 0) {
+									persistedState.slicedSize += persistedState.expectedDataSize;
+									persistedState.parseState = 0;
+									return persistedState.slicedSize;
+								} else {
+									persistedState.parseState = 0;
+									return persistedState.expectedDataSize - persistedState.readDataSize;
+								};
 							};
 							break;
 						};
@@ -844,7 +855,7 @@ export default class MICCInternalsSMF {
 						};
 					};
 				};
-				console.debug(`Regulator buffer depleted before reaching a verdict.`);
+				//console.info(`Regulator buffer depleted at state ${persistedState.parseState} before reaching a verdict.`);
 				return 0; // Buffer the remaining subchunk portion if all current bytes in view have been skimmed without a verdict.
 				break;
 			};
