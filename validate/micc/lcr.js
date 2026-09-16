@@ -10,6 +10,11 @@ import {
 	test
 } from "https://jsr.io/@cross/test/0.0.14/mod.ts";
 
+const reducePrecision = function (value, base10Precision = 0) {
+	const base10Factor = Math.pow(10, base10Precision);
+	return Math.round(value * base10Factor) / base10Factor;
+};
+
 const FailRecord = class FailRecord {
 	/** @type {Error} */
 	error;
@@ -34,7 +39,7 @@ test("Validate stream parsing of single events", async () => {
 	skeletalSmfParser.regulateStream = MICCInternalsSMF.streamRegulator;
 	/** @type {FailRecord[]} */
 	const errorHistory = [];
-	let testedFile = 0;
+	let testedFile = 0, cumulativeDuration = 0, cumulativeEvents = 0;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
 			console.info(`Validating skeletal event parsing of "${dirEntry.name}"...\x7f`);
@@ -44,7 +49,8 @@ test("Validate stream parsing of single events", async () => {
 				"hasDelta": true
 			};
 			testedFile ++;
-			let passed = true;
+			const startTime = performance.now();
+			let passed = true, processedCount = 0;
 			for await (let chunk of skeletalSmfParser.readRegulated(fileObject.readable)) {
 				switch (chunk.type) {
 					case "MTrk":
@@ -52,6 +58,7 @@ test("Validate stream parsing of single events", async () => {
 					case "XFKM": {
 						try {
 							MICCInternalsSMF.parseSingleEvent(chunk, fileState);
+							processedCount ++;
 						} catch (err) {
 							passed = false;
 							errorHistory.push(new FailRecord(dirEntry.name, chunk.offsetData, err));
@@ -61,8 +68,14 @@ test("Validate stream parsing of single events", async () => {
 					};
 				};
 			};
+			const runDuration = reducePrecision(performance.now() - startTime, 6);
+			const parseSpeed = reducePrecision(processedCount / runDuration * 1000, 3);
+			cumulativeDuration += runDuration;
+			cumulativeEvents += processedCount;
 			if (passed) {
-				console.info(`Validating skeletal event parsing of "${dirEntry.name}" succeeded.`);
+				console.info(`Validated skeletal parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
+			} else {
+				console.info(`Failed skeletal parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
 			};
 		};
 	};
@@ -73,4 +86,5 @@ test("Validate stream parsing of single events", async () => {
 		};
 		throw(`Failed ${errorHistory.length} test(s) out of ${testedFile}.`);
 	};
+	console.debug(`\nParsed ${cumulativeEvents} event(s) in ${cumulativeDuration}ms. Average ${reducePrecision(cumulativeEvents / cumulativeDuration * 1000, 3)}/s`);
 });

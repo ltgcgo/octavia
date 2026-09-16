@@ -383,8 +383,8 @@ export class MICCSequence {
 	markReady(): Promise<void>;
 	/** Resolves when full usability is met, e.g. the finaliser has been run. Will reject when the parser fails with parser error. */
 	finalised: Promise<void>;
-	/** When set to true, the finaliser will not be called, and the related promise will resolve instantly when the raw data has been fully parsed. */
-	noFinalization: boolean;
+	/** When set to `false`, the finaliser will not be called, and the related promise will resolve instantly when the raw data has been fully parsed. */
+	finalise: boolean;
 	/** Used by parsers to mark the file as finalised. */
 	markFinalised(): Promise<void>;
 	/** Runs the finalization process. Re-runs are useful for programs that mutate events, e.g. editors. */
