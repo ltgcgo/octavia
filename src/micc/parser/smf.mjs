@@ -681,10 +681,14 @@ export default class MICCInternalsSMF {
 					//console.debug(subchunk.sliceId);
 					const viewSizeCurrent = subchunk.data.length - i;
 					const e = subchunk.data[i];
+					if (persistedState.previousSlice !== subchunk.sliceId) {
+						persistedState.slicedSize = 0;
+					};
 					//console.debug(`${persistedState.parseState} ${e.toString(16).padStart(2, "0")}`);
 					switch (persistedState.parseState) {
 						case 0: {// Unknown delta time skimming.
 							// Initialises variables for the new event.
+							persistedState.expectedHeadSize = 0;
 							persistedState.expectedDataSize = 0;
 							persistedState.metaType = 255;
 							persistedState.readDataSize = 0;
@@ -890,7 +894,11 @@ export default class MICCInternalsSMF {
 								persistedState.readDataSize += viewSizeCurrent;
 								return 0;
 							} else {
-								if (persistedState.readDataSize === 0 && 
+								persistedState.slicedSize += persistedState.expectedDataSize - persistedState.readDataSize;
+								persistedState.parseState = 0;
+								persistedState.previousSlice = subchunk.sliceId;
+								return persistedState.slicedSize;
+								/*if (persistedState.readDataSize === 0 && 
 									persistedState.previousSlice === subchunk.sliceId) {
 									persistedState.slicedSize += persistedState.expectedDataSize;
 									persistedState.parseState = 0;
@@ -900,7 +908,7 @@ export default class MICCInternalsSMF {
 									persistedState.parseState = 0;
 									//console.debug(`Full event: expected ${persistedState.expectedDataSize} B in data section, emitted ${persistedState.expectedDataSize - persistedState.readDataSize} B in buffer.`);
 									return persistedState.expectedDataSize - persistedState.readDataSize;
-								};
+								};*/
 							};
 							break;
 						};

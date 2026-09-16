@@ -10,7 +10,7 @@ rm *.mid 2>/dev/null
 cp -v "../download/artist/JayB/DREAMOFL.mid.br" .
 cp -v "../download/artist/JayB/HORIZON.mid.br" .
 cp -v "../download/artist/JayB/KANDI8.mid.br" .
-#cp -v "../download/artist/JayB/Corgi (Full Version).mid.br" "./CORGI.mid.br"
+cp -v "../download/artist/JayB/Corgi (Full Version).mid.br" "./CORGI.mid.br"
 cp -v "../download/artist/ElectroKaplosion/Decades.mid.br" .
 cp -v "../download/artist/David J. Reading/Cybergate.mid.br" .
 cp -v "../download/artist/John Campbell/StarGame.mid.br" .
@@ -44,9 +44,9 @@ cp -v "../download/vendor/yamaha/plg_dx/12VOICE.mid.br" .
 cp -v "../download/vendor/yamaha/plg_sg/fmtnight.mid.br" .
 cp -v "../download/vendor/yamaha/plg_sg/sg_yuki.mid.br" .
 cp -v "../download/vendor/yamaha/plg_vl/DinoJung.mid.br" .
-#cp -v "../download/vendor/yamaha/plg_pvl/BlkHole.mid.br" .
+cp -v "../download/vendor/yamaha/plg_pvl/BlkHole.mid.br" .
 cp -v "../download/vendor/yamaha/qy/QY70D_1.mid.br" .
 cp -v "../download/vendor/yamaha/qy/QY100D_2.mid.br" .
-#cp -v "../download/vendor/yamaha/xgstudio/04Techno.mid.br" .
+cp -v "../download/vendor/yamaha/xgstudio/04Techno.mid.br" .
 brotli -v -dj *.br
 exit

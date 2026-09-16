@@ -262,9 +262,11 @@ export class Seamstress {
 	headerHandler?(buffer: Uint8Array): SeamstressContext|undefined;
 	/** Regulates the incoming stream into desired subchunks, specified manually. Called by `Seamstress.regulateStream()`. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the current chunk for the stream reader.
 	*
-	* A non-zero value will cause the specified length from the current subchunk to be emitted, which the process repeats until the current subchunk depletes or the method returns a zero. A zero cause the current remaining section to be buffered and prepended to the next subchunk, until the entire chunk ends causing a forced flush, essentially making an all-zero regulated stream a fully-buffered stream. Any other numeric values will cause an error.
+	* A non-zero value will cause the specified length from the current subchunk to be emitted, which the process repeats until the current subchunk depletes or the method returns a zero.
 	*
-	* When the previous subchunk caused a buffering request by returning `0`, the subsequent subchunk view handed to the regulator method will be supplied as-is without merging. Use `SeamstressChunk.context` to have state persist across subchunk.
+	* When the method returns a `0`, it will cause the current remaining section to be buffered and prepended to the next subchunk, until the entire chunk ends causing a forced flush, essentially making an all-zero regulated stream a fully-buffered stream. The views of subsequent chunks handed to the regulator method will be supplied as-is without merging. Use `SeamstressChunk.context` to have state persist across subchunk.
+	*
+	* Any other numeric values will cause an error.
 	* @param startOffset The intended read start offset of the provided buffer.
 	* @param chunkInfo The unmodified info of the current (sub)chunk. */
 	regulateStream?(startOffset: number, chunkInfo: SeamstressChunk): number;
