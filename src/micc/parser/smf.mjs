@@ -684,6 +684,7 @@ export default class MICCInternalsSMF {
 					if (persistedState.previousSlice !== subchunk.sliceId) {
 						persistedState.slicedSize = 0;
 					};
+					persistedState.previousSlice = subchunk.sliceId;
 					//console.debug(`${persistedState.parseState} ${e.toString(16).padStart(2, "0")}`);
 					switch (persistedState.parseState) {
 						case 0: {// Unknown delta time skimming.
@@ -710,13 +711,11 @@ export default class MICCInternalsSMF {
 								};
 								persistedState.slicedSize += cumulativeDeltaSize;
 								i += deltaSize - 1;
-								persistedState.previousSlice = subchunk.sliceId;
 								persistedState.parseState = 2;
 								continue;
 							} else if (viewSizeCurrent < 4) {
 								// Incomplete VLV, reached the end of the current subchunk, potentially valid.
 								persistedState.readDeltaSize += viewSizeCurrent;
-								persistedState.previousSlice = subchunk.sliceId;
 								persistedState.parseState = 1;
 								return 0;
 								//continue;
@@ -765,29 +764,21 @@ export default class MICCInternalsSMF {
 								case 0xa:
 								case 0xb:
 								case 0xe: {
-									persistedState.expectedDataSize = 2;
-									persistedState.previousSlice = subchunk.sliceId;
-									persistedState.parseState = 7;
+									persistedState.expectedDataSize = 2;									persistedState.parseState = 7;
 									break;
 								};
 								case 0xc:
 								case 0xd: {
-									persistedState.expectedDataSize = 1;
-									persistedState.previousSlice = subchunk.sliceId;
-									persistedState.parseState = 7;
+									persistedState.expectedDataSize = 1;									persistedState.parseState = 7;
 									break;
 								};
 								case 0xf: {
 									switch (persistedState.statusByte) {
 										case 0xf0:
-										case 0xf7: {
-											persistedState.previousSlice = subchunk.sliceId;
-											persistedState.parseState = 5;
+										case 0xf7: {											persistedState.parseState = 5;
 											break;
 										};
-										case 0xff: {
-											persistedState.previousSlice = subchunk.sliceId;
-											persistedState.parseState = 4;
+										case 0xff: {											persistedState.parseState = 4;
 											break;
 										};
 										default: {
@@ -808,9 +799,7 @@ export default class MICCInternalsSMF {
 							// Should only be reached by event `0xFF`.
 							//console.info(e);
 							persistedState.metaType = e;
-							persistedState.slicedSize ++;
-							persistedState.previousSlice = subchunk.sliceId;
-							persistedState.parseState = 5;
+							persistedState.slicedSize ++;							persistedState.parseState = 5;
 							continue;
 							break;
 						};
@@ -837,16 +826,12 @@ export default class MICCInternalsSMF {
 								} else {
 									console.debug(`Size field expects 0 B with VLV sized at ${sizeSize} B.`);
 								};*/
-								i += sizeSize - 1;
-								persistedState.previousSlice = subchunk.sliceId;
-								persistedState.parseState = 7;
+								i += sizeSize - 1;								persistedState.parseState = 7;
 								continue;
 							} else if (viewSizeCurrent < 4) {
 								// Incomplete VLV, reached the end of the current subchunk, potentially valid.
 								persistedState.readDataSizeBuffer.set(data.subarray(i), persistedState.readDataSizeSize);
-								persistedState.readDataSizeSize += viewSizeCurrent;
-								persistedState.previousSlice = subchunk.sliceId;
-								persistedState.parseState = 6;
+								persistedState.readDataSizeSize += viewSizeCurrent;								persistedState.parseState = 6;
 								console.debug(`VLV size field read ${viewSizeCurrent} B out of ${persistedState.readDataSizeSize} B before buffering.`);
 								return 0;
 								//continue;
@@ -895,9 +880,7 @@ export default class MICCInternalsSMF {
 								return 0;
 							} else {
 								persistedState.slicedSize += persistedState.expectedDataSize - persistedState.readDataSize;
-								persistedState.parseState = 0;
-								persistedState.previousSlice = subchunk.sliceId;
-								return persistedState.slicedSize;
+								persistedState.parseState = 0;								return persistedState.slicedSize;
 								/*if (persistedState.readDataSize === 0 && 
 									persistedState.previousSlice === subchunk.sliceId) {
 									persistedState.slicedSize += persistedState.expectedDataSize;
