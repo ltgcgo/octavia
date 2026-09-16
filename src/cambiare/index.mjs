@@ -240,7 +240,7 @@ let setCanvasText = function (context, text, italic) {
 	};
 	//context.rOffset = 0;
 	let measured = context.measureText(text);
-	context.rWidth = measured.width;
+	context.rWidth = measured.width + 2;
 };
 
 HTMLElement.prototype.setTextRaw = function (text) {
