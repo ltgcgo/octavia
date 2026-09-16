@@ -37,13 +37,14 @@ test("Validate stream parsing of single events", async () => {
 	let testedFile = 0;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
-			console.info(`Validating skeletal event parsing of "${dirEntry.name}"...`);
+			console.info(`Validating skeletal event parsing of "${dirEntry.name}"...\x7f`);
 			const fileObject = await Deno.open(`./cache/source/${dirEntry.name}`);
 			const fileState = {
 				"isSmfWrapped": true,
 				"hasDelta": true
 			};
 			testedFile ++;
+			let passed = true;
 			for await (let chunk of skeletalSmfParser.readRegulated(fileObject.readable)) {
 				switch (chunk.type) {
 					case "MTrk":
@@ -52,12 +53,16 @@ test("Validate stream parsing of single events", async () => {
 						try {
 							MICCInternalsSMF.parseSingleEvent(chunk, fileState);
 						} catch (err) {
+							passed = false;
 							errorHistory.push(new FailRecord(dirEntry.name, chunk.offsetData, err));
 							console.error(err);
 						};
 						break;
 					};
 				};
+			};
+			if (passed) {
+				console.info(`Validating skeletal event parsing of "${dirEntry.name}" succeeded.`);
 			};
 		};
 	};
