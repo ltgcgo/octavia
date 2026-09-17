@@ -100,6 +100,8 @@ declare class MICCConstants {
 	static readonly FILE_SMF_KORG_SONG: uint16;
 	/** File type: Cakewalk project. */
 	static readonly FILE_SEQ_CAKEWALK: uint16;
+	/** File type: REAPER project. */
+	static readonly FILE_SEQ_REAPER: uint16;
 	/** File type: Sequence Object Linking project. */
 	static readonly FILE_SEQ_SOL: uint16;
 	/** File type: XGworks project. */

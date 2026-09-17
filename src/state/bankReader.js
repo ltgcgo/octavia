@@ -845,8 +845,10 @@ let VoiceBank = class {
 					standard = "KG";
 				} else if (args[2] < 128) {
 					standard = "XG";
-				} else if (args[2] < 154) {
+				} else if (args[2] <= 152) {
 					standard = "YP";
+				} else if (args[2] < 154) {
+					standard = "XG";
 				};
 				break;
 			};
