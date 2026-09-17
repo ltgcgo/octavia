@@ -193,16 +193,20 @@ declare interface MICCSMFMIAParserContext {
 	lastSysExHung?: boolean;
 }
 declare interface MICCSMFMIAHandleOptions {
+	/** An optional object to attach assembly status to. */
+	asmContext?: MICCSMFMIAParserContext;
+	/** An optional object to attach parsing status to. */
+	parserContext?: MICCSMFMIAParserContext;
 	/** Provides optional binary stream context for parsing. */
 	streamContext?: SeamstressContext;
 	/** Setting this to true will include delta time parsing. Defaults to `false.` */
 	hasDelta?: boolean;
-	/** An optional object to attach parsing status to. */
-	parserContext?: MICCSMFMIAParserContext;
 	/** If the event has been wrapped in SMF. This can affect how parsers and serialisers function. */
 	isSmfWrapped?: boolean;
 	/** Should the parser ignore some safety checks for potentially large messages. */
 	loosenForSpeed?: boolean;
+	/** When `true`, disassemblers will prefer the readable alternative syntax whenever available. */
+	preferReadable?: boolean;
 }
 /** Internal methods for MIA assembly and disassembly. */
 export class MICCInternalsMIA {
@@ -210,12 +214,12 @@ export class MICCInternalsMIA {
 	static lexLine(text: string): string[];
 	/** Disassemble single raw MIDI events into MIA lines directly. */
 	static dasmSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): string;
-	/** Stringify parsed MIDI events into MIA lines. */
-	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): string;
 	/** Assemble single MIA lines into raw MIDI events directly. */
 	static asmSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): Uint8Array;
-	/** Parse single MIA lines into parsed MIDI events. */
+	/** Parse single MIA lines into parsed MIDI events. Depends on `MICCInternalsSMF.parseSingleEvent`. */
 	static parseSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
+	/** Stringify parsed MIDI events into MIA lines. Depends on `MICCInternalsSMF.emitSingleEvent`. */
+	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): string;
 }
 /** Internal methods for MIDI 1.0/SMF parsing and serialising. */
 export class MICCInternalsSMF {
