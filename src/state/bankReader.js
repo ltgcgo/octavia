@@ -18,7 +18,7 @@ const allowedStandards = {
 	"g2": new Set("gm,GM,g2,G2".split(",")),
 	"xg": new Set()
 };
-for (let e of "XG,MU,AN,AP,DR,DX,PC,PF,SG,VL".split(",")) {
+for (let e of "XG,MU,YP,AN,AP,DR,DX,PC,PF,SG,VL".split(",")) {
 	allowedStandards.xg.add(e);
 	allowedStandards.xg.add(e.toLowerCase());
 };
@@ -843,8 +843,10 @@ let VoiceBank = class {
 					standard = "GM";
 				} else if (args[2] === 5 || args[2] === 7) {
 					standard = "KG";
-				} else if (args[2] < 154) {
+				} else if (args[2] < 128) {
 					standard = "XG";
+				} else if (args[2] < 154) {
+					standard = "YP";
 				};
 				break;
 			};
@@ -956,13 +958,13 @@ let VoiceBank = class {
 				if (args[2] < 128) {
 					standard = "SD"; // Roland StudioCanvas
 				} else if (args[0] === 104) {
-					standard = "XG"; // Yamaha PSR XG compatible
+					standard = "YP"; // Yamaha PSR XG compatible
 				};
 				break;
 			};
 			case 108: {
 				if (args[2] >= 128) {
-					standard = "XG"; // Yamaha PSR XG compatible
+					standard = "YP"; // Yamaha PSR XG compatible
 				};
 				break;
 			};
