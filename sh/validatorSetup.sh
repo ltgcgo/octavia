@@ -12,11 +12,16 @@ cp -v "../download/artist/JayB/HORIZON.mid.br" .
 cp -v "../download/artist/JayB/KANDI8.mid.br" .
 cp -v "../download/artist/JayB/Corgi (Full Version).mid.br" "./CORGI.mid.br"
 cp -v "../download/artist/ElectroKaplosion/Decades.mid.br" .
+cp -v "../download/artist/Adrian Scott/MONOPOLY.mid.br" .
+cp -v "../download/artist/Chas Smith/LOW_FLY.mid.br" .
 cp -v "../download/artist/David J. Reading/Cybergate.mid.br" .
 cp -v "../download/artist/John Campbell/StarGame.mid.br" .
 cp -v "../download/artist/John Campbell/MOON_L.mid.br" .
 cp -v "../download/artist/John Campbell/BOP_U.mid.br" .
 cp -v "../download/artist/Lim Chong Voon/BLUE_P.mid.br" .
+cp -v "../download/artist/TôBach/MIDI Massacre.mid.br" .
+cp -v "../download/artist/Sam Sketty/rushhour.mid.br" .
+cp -v "../download/artist/川口淳一/ETHNO_PA.mid.br" .
 cp -v "../download/vendor/gravis/ultrasound/gdvib6.mid.br" .
 cp -v "../download/vendor/gravis/ultrasound/the_rain.mid.br" .
 cp -v "../download/vendor/korg/ai2/05RWDEMO.mid.br" .
