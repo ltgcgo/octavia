@@ -1430,9 +1430,17 @@ const Seamstress = class Seamstress {
 	};
 };
 
+const SeamstressPresets = Object.seal({
+	"IFF": Seamstress.ENDIAN_B | Seamstress.TYPE_4CC | Seamstress.LENGTH_U32 | Seamstress.PAD_EVEN,
+	"RIFF": Seamstress.ENDIAN_L | Seamstress.TYPE_4CC | Seamstress.LENGTH_U32 | Seamstress.PAD_EVEN,
+	"SMF": Seamstress.ENDIAN_B | Seamstress.TYPE_4CC | Seamstress.LENGTH_U32 | Seamstress.PAD_NONE,
+	"WRK": Seamstress.ENDIAN_L | Seamstress.TYPE_UI8 | Seamstress.LENGTH_U32 | Seamstress.PAD_NONE
+});
+
 export {
 	IntegerHandler,
 	Seamstress,
 	SeamstressChunk,
-	SeamstressStrictWriter
+	SeamstressStrictWriter,
+	SeamstressPresets
 }
