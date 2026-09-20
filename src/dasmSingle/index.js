@@ -18,7 +18,8 @@ import {
 	MIDINakedEvent
 } from "../micc/index.mjs";
 import {
-	MICCInternalsSMF
+	MICCInternalsSMF,
+	MICCInternalsMIA
 } from "../micc/index.mjs";
 
 self.Alpine = Alpine;
@@ -34,6 +35,40 @@ const displayNakedEvent = $e("div#renderer-naked");
 const displayClear = async () => {
 	while (displayNakedEvent.childNodes.length > 0) {
 		displayNakedEvent.childNodes[0].remove();
+	};
+};
+const jsonPrettifier = (k, v) => {
+	switch (typeof v) {
+		case "boolean":
+		case "number":
+		case "string": {
+			return v;
+			break;
+		};
+		case "bigint": {
+			return `${v?.toString()}n`;
+			break;
+		};
+		case "function": {
+			return `${v?.name || "<anonymous>"}() {}`;
+			break;
+		};
+		case "symbol": {
+			return v.toString();
+			break;
+		};
+		default: {
+			switch (v?.constructor) {
+				case Uint8Array:
+				case Uint8ClampedArray: {
+					return `(${v.length} B) ${bufferToDHex(v, 12)}`;
+					break;
+				};
+				default: {
+					return v;
+				};
+			};
+		};
 	};
 };
 
@@ -58,48 +93,17 @@ self.gParseRaw = async () => {
 	const inputLength = sanitisedInput.length;
 	const normalisedInput = sanitisedInput.padEnd(inputLength + (inputLength & 1), "0");
 	try {
-		const inputBuffer = bufferFrom("hex", normalisedInput);
-		//console.debug(inputBuffer);
-		parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer, {
+		const config = {
 			"hasDelta": Alpine.store("hasDelta"),
 			"isSmfWrapped": Alpine.store("schemaIsWrapped")
-		});
+		};
+		const inputBuffer = bufferFrom("hex", normalisedInput);
+		//console.debug(inputBuffer);
+		parsedEvent = MICCInternalsSMF.parseSingleEvent(inputBuffer, config);
 		displayClear();
-		displayNakedEvent.append(JSON.stringify(parsedEvent, (k, v) => {
-			switch (typeof v) {
-				case "boolean":
-				case "number":
-				case "string": {
-					return v;
-					break;
-				};
-				case "bigint": {
-					return `${v?.toString()}n`;
-					break;
-				};
-				case "function": {
-					return `${v?.name || "<anonymous>"}() {}`;
-					break;
-				};
-				case "symbol": {
-					return v.toString();
-					break;
-				};
-				default: {
-					switch (v?.constructor) {
-						case Uint8Array:
-						case Uint8ClampedArray: {
-							return `(${v.length} B) ${bufferToDHex(v, 12)}`;
-							break;
-						};
-						default: {
-							return v;
-						};
-					};
-				};
-			};
-		}, "\t"));
+		displayNakedEvent.append(JSON.stringify(parsedEvent, jsonPrettifier, "\t"));
 		console.debug(parsedEvent);
+		inputMia.value = MICCInternalsMIA.emitSingleEvent(parsedEvent, config);
 	} catch (err) {
 		parsedEvent = null;
 		console.warn(err);

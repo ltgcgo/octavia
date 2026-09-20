@@ -201,6 +201,8 @@ declare interface MICCSMFMIAHandleOptions {
 	parserContext?: MICCSMFMIAParserContext;
 	/** Provides optional binary stream context for parsing. */
 	streamContext?: SeamstressContext;
+	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
+	decoders: Iterable<TextDecoder>;
 	/** Setting this to true will include delta time parsing. Defaults to `false.` */
 	hasDelta?: boolean;
 	/** If the event has been wrapped in SMF. This can affect how parsers and serialisers function. */
@@ -214,14 +216,14 @@ declare interface MICCSMFMIAHandleOptions {
 export class MICCInternalsMIA {
 	/** Convert single MIA lines into split tokens. Rejects with leading colons (`:`). */
 	static lexLine(text: string): string[];
+	/** Parse single MIA lines into parsed MIDI events. */
+	static parseSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
+	/** Stringify parsed MIDI events into MIA lines. */
+	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): string;
 	/** Disassemble single raw MIDI events into MIA lines directly. */
 	static dasmSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): string;
 	/** Assemble single MIA lines into raw MIDI events directly. */
 	static asmSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): Uint8Array;
-	/** Parse single MIA lines into parsed MIDI events. Depends on `MICCInternalsSMF.parseSingleEvent`. */
-	static parseSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
-	/** Stringify parsed MIDI events into MIA lines. Depends on `MICCInternalsSMF.emitSingleEvent`. */
-	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): string;
 }
 /** Internal methods for MIDI 1.0/SMF parsing and serialising. */
 export class MICCInternalsSMF {

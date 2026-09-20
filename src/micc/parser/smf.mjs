@@ -18,6 +18,7 @@ export default class MICCInternalsSMF {
 	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
 	* @returns {MIDINakedEvent} */
 	static parseSingleEvent(inBuffer, options = {}) {
+		/** @type {Uint8Array | Uint8ClampedArray} */
 		let buffer;
 		switch (inBuffer?.constructor) {
 			case Uint8Array:
@@ -57,7 +58,7 @@ export default class MICCInternalsSMF {
 			isStale = true;
 			statusByte = options.parserContext.lastStatus;
 			if (!(statusByte >= 0x80 && statusByte < 0xf0)) {
-				throw(new Error(`Invalid running status 0x${statusByte.toString(16).padStart(2, "0")}.`));
+				throw(new Error(`Invalid running status 0x${statusByte?.toString(16).padStart(2, "0")}.`));
 			};
 		};
 		if (statusByte >= 0xf0) {
@@ -285,7 +286,8 @@ export default class MICCInternalsSMF {
 		return parsedEvent;
 	};*/
 	/** @param {MIDINakedEvent} event
-	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options */
+	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
+	* @returns {Uint8Array} */
 	static emitSingleEvent(event, options = {}) {
 		if (event.constructor !== MIDINakedEvent && event.group !== "mma.midiEvent") {
 			throw(new TypeError(`Provided event is not of type MIDINakedEvent.`));
@@ -655,7 +657,8 @@ export default class MICCInternalsSMF {
 	/**  */
 	static parseHeaderChunk
 	/** @param {number} offset
-	* @param {SeamstressChunk} subchunk  */
+	* @param {SeamstressChunk} subchunk
+	* @returns {number} */
 	static streamRegulator(offset, subchunk) {
 		switch (subchunk.type) {
 			case "MTrk":
