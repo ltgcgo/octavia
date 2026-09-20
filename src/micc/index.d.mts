@@ -218,8 +218,12 @@ export class MICCInternalsMIA {
 	static lexLine(text: string): string[];
 	/** Parse single MIA lines into parsed MIDI events. */
 	static parseSingleEvent(text: string, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
+	/** Stringify parsed SMF header chunk into MIA lines. */
+	static emitHeaderSMF(metadata: MICCSequenceMetadata): Generator<string, void, any>;
 	/** Stringify parsed MIDI events into MIA lines. */
 	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): string;
+	/** Disassemble SMF header chunk into MIA lines. */
+	static dasmHeaderSMF(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk): Generator<string, void, any>;
 	/** Disassemble single raw MIDI events into MIA lines directly. */
 	static dasmSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): string;
 	/** Assemble single MIA lines into raw MIDI events directly. */
@@ -392,7 +396,7 @@ export class MICCSequence {
 	/** Resolves when full usability is met, e.g. the finaliser has been run. Will reject when the parser fails with parser error. */
 	finalised: Promise<void>;
 	/** When set to `false`, the finaliser will not be called, and the related promise will resolve instantly when the raw data has been fully parsed. */
-	finalise: boolean;
+	enableFinalisation: boolean;
 	/** Used by parsers to mark the file as finalised. */
 	markFinalised(): Promise<void>;
 	/** Runs the finalization process. Re-runs are useful for programs that mutate events, e.g. editors. */

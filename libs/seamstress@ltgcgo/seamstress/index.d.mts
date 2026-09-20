@@ -176,7 +176,7 @@ export class SeamstressStrictWriter {
 }
 
 /** A set of pre-defined format configurations to be used with `Seamstress`. Additional setup may still be required. */
-export interface SeamstressPresets {
+export class SeamstressPresets {
 	/** IFF-based format. Examples below.
 	* - `.aif`, `.aiff`: Apple AIFF. */
 	static readonly IFF: number;
