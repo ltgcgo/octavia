@@ -45,7 +45,7 @@ for (let [key, value] of bufferMaps[0]) {
 * @param {string} lastChunkHandling
 * @param {number} maxLength
 * @returns {Uint8Array} */
-const bufferFrom = function bufferFrom (alphabet = "base64", string, lastChunkHandling = "loose", maxLength = 536870911) {
+const bufferFrom = function bufferFrom(alphabet = "base64", string, lastChunkHandling = "loose", maxLength = 536870911) {
 	if (typeof string !== "string") {
 		throw(new TypeError("Input is not a string."));
 	};
@@ -226,12 +226,18 @@ const bufferCarveOut = function (buffer, carvedList = []) {
 	}
 };
 
+/** @param {number[]} sourceBuffer
+* @param {Uint8Array|Uint8ClampedArray} targetBuffer
+* @returns {void} */
 const bitFieldPackA = (sourceBuffer, targetBuffer, options) => {
 	const threshold = options?.threshold > 0 ? options.threshold : 1;
 	for (let i = 0; i < sourceBuffer.length; i ++) {
 		targetBuffer[i >>> 3] |= (sourceBuffer[i] >= threshold ? 1 : 0) << (i & 7);
 	};
 };
+/** @param {number[]} sourceBuffer
+* @param {Uint8Array|Uint8ClampedArray} targetBuffer
+* @returns {void} */
 const bitFieldPackB = (sourceBuffer, targetBuffer, options) => {
 	const threshold = options?.threshold > 0 ? options.threshold : 1;
 	let buffered = 0;
@@ -246,6 +252,9 @@ const bitFieldPackB = (sourceBuffer, targetBuffer, options) => {
 		targetBuffer[targetBuffer.length - 1] = buffered;
 	};
 };
+/** @param {number[]} sourceBuffer
+* @param {Uint8Array|Uint8ClampedArray} targetBuffer
+* @returns {Uint8Array} */
 const bitFieldPack = (sourceBuffer, targetBuffer, options = {
 	"strict": true,
 	"threshold": 1
@@ -281,6 +290,9 @@ const bitFieldPack = (sourceBuffer, targetBuffer, options = {
 	};
 	return targetBuffer;
 };
+/** @param {Uint8Array|Uint8ClampedArray} sourceBuffer
+* @param {number[]} targetBuffer
+* @returns {Uint8Array} */
 const bitFieldUnpack = (sourceBuffer, targetBuffer, options = {
 	"maxSize": 0,
 	"strict": true,
@@ -327,6 +339,73 @@ const bitFieldUnpack = (sourceBuffer, targetBuffer, options = {
 		targetBuffer[i] = (rollingByte & 1) ? value : 0;
 	};
 	return targetBuffer;
+};
+
+/** @param {number} size
+* @param {number} threshold*/
+const runLengthSubtract = (size, threshold) => {
+	if (size > threshold) {
+		return size - threshold - 1; // 
+	} else if (size === threshold) {
+		return -1;
+	} else {
+		return 0;
+	};
+};
+/** @param {Uint8Array|Uint8ClampedArray} buffer */
+const encodeRunLength = function (buffer, repeatThreshold = 4) {
+	if (!(repeatThreshold >= 2)) {
+		throw(new RangeError(`Repeat threshold must be an integer larger than 1.`));
+	};
+	// Length calculation pass
+	const sizeCriterion = 127 + repeatThreshold; // Prepare for later integration with MIDI-style VLV-8.
+	let requiredSize = buffer.length;
+	let lastByte = buffer[0], repeatSize = 1;
+	for (let i = 1; i < buffer.length; i ++) {
+		const e = buffer[i];
+		if (e === lastByte) {
+			repeatSize ++;
+		};
+		if (repeatSize >= sizeCriterion || e !== lastByte) {
+			requiredSize -= runLengthSubtract(repeatSize, repeatThreshold);
+			repeatSize = 0;
+		};
+		lastByte = e;
+	};
+	if (repeatSize > 0) {
+		requiredSize -= runLengthSubtract(repeatSize, repeatThreshold);
+	};
+	// Compression pass
+	const compressed = new Uint8Array(requiredSize);
+	compressed[0] = buffer[0];
+	lastByte = buffer[0], repeatSize = 1;
+	let compressedPointer = 1;
+	for (let i = 1; i < buffer.length; i ++) {
+		const e = buffer[i];
+		if (e === lastByte) {
+			repeatSize ++;
+		};
+		if (repeatSize <= repeatThreshold) {
+			compressed[compressedPointer] = e;
+			compressedPointer ++;
+		};
+		if (repeatSize >= sizeCriterion || e !== lastByte) {
+			if (repeatSize >= repeatThreshold) {
+				// Can be enhanced with VLV here!
+				compressed[compressedPointer] = repeatSize - repeatThreshold;
+				compressedPointer ++;
+				compressed[compressedPointer] = e;
+				compressedPointer ++;
+			};
+			repeatSize = 0;
+		};
+		lastByte = e;
+	};
+	if (repeatSize >= repeatThreshold) {
+		compressed[compressedPointer] = repeatSize - repeatThreshold;
+		compressedPointer ++;
+	};
+	return compressed;
 };
 
 export {
