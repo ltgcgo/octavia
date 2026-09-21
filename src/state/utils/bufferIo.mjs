@@ -12,7 +12,7 @@ const getUsableMemoryMiB = () => {
 		} else {
 			return 256;
 		};
-	} else if (typeof globalThis.process.availableMemory === "function") {
+	} else if (typeof globalThis.process?.availableMemory === "function") {
 		return Math.floor(globalThis.process.availableMemory() / 1048576);
 	} else if (typeof globalThis.navigator?.deviceMemory === "number") {
 		return globalThis.navigator.deviceMemory * 1024;
