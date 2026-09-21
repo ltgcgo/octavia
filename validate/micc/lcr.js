@@ -73,9 +73,9 @@ test("Validate stream parsing of single events", async () => {
 			cumulativeDuration += runDuration;
 			cumulativeEvents += processedCount;
 			if (passed) {
-				console.info(`Validated skeletal parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
+				console.info(`\x8d\rValidated skeletal parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
 			} else {
-				console.info(`Failed skeletal parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
+				console.info(`\x8d\rFailed skeletal parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
 			};
 		};
 	};
