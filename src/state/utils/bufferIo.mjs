@@ -239,6 +239,7 @@ const bitFieldPackB = (sourceBuffer, targetBuffer, options) => {
 		buffered |= (sourceBuffer[i] >= threshold ? 1 : 0) << (i & 7);
 		if ((i & 7) === 7) {
 			targetBuffer[i >>> 3] = buffered;
+			buffered = 0;
 		};
 	};
 	if (buffered > 0) {
@@ -280,7 +281,11 @@ const bitFieldPack = (sourceBuffer, targetBuffer, options = {
 	};
 	return targetBuffer;
 };
-const bitFieldUnpack = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true) => {
+const bitFieldUnpack = (sourceBuffer, targetBuffer, options = {
+	"maxSize": 0,
+	"strict": true,
+	"value": 1
+}) => {
 	switch (sourceBuffer?.constructor) {
 		case Uint8Array:
 		case Uint8ClampedArray: {
@@ -293,33 +298,25 @@ const bitFieldUnpack = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true
 			throw(new TypeError("The source buffer must be an Uint8Array."));
 		};
 	};
-	switch (targetBuffer?.constructor) {
-		case Uint8Array:
-		case Uint8ClampedArray: {
-			if (targetBuffer.length >= 0x80000000) {
-				throw(new RangeError("Target buffer too large."));
-			};
-			break;
-		};
-		default: {
-			throw(new TypeError("The target buffer must be an Uint8Array."));
-		};
-	};
 	let desiredSize = sourceBuffer.length << 3;
+	const maxSize = options?.maxSize ?? 0;
 	if (maxSize > 0) {
 		desiredSize = Math.min(desiredSize, maxSize);
 	};
-	console.debug(sourceBuffer.length, desiredSize);
+	//console.debug(sourceBuffer.length, desiredSize);
 	if (targetBuffer) {
 		if (typeof targetBuffer?.length !== "number") {
 			throw(new SyntaxError("The target buffer must be an array-like object."));
+		} else if (targetBuffer.length >= 0x80000000) {
+			throw(new RangeError("Target buffer too large."));
 		};
-		if (isStrict && targetBuffer.length < desiredSize) {
+		if (options?.strict && targetBuffer.length < desiredSize) {
 			throw(new Error("The target buffer cannot satisfy the packed bit field."));
 		};
 	} else {
 		targetBuffer = new Uint8Array(desiredSize);
 	};
+	const value = options?.value > 0 ? options.value : 0;
 	let rollingByte = 0;
 	for (let i = 0; i < desiredSize; i ++) {
 		if (i & 7) {
@@ -327,7 +324,7 @@ const bitFieldUnpack = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true
 		} else {
 			rollingByte = sourceBuffer[i >>> 3];
 		};
-		targetBuffer[i] = rollingByte & 1;
+		targetBuffer[i] = (rollingByte & 1) ? value : 0;
 	};
 	return targetBuffer;
 };
