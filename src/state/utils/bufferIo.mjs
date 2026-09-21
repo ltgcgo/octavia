@@ -354,7 +354,7 @@ const runLengthSubtract = (size, threshold) => {
 };
 /** @param {Uint8Array|Uint8ClampedArray} buffer */
 const encodeRunLength = function (buffer, repeatThreshold = 4) {
-	if (!(repeatThreshold >= 2)) {
+	if (!(Number.isSafeInteger(repeatThreshold) && repeatThreshold >= 2)) {
 		throw(new RangeError(`Repeat threshold must be an integer larger than 1.`));
 	};
 	// Length calculation pass
@@ -379,15 +379,11 @@ const encodeRunLength = function (buffer, repeatThreshold = 4) {
 	const compressed = new Uint8Array(requiredSize);
 	compressed[0] = buffer[0];
 	lastByte = buffer[0], repeatSize = 1;
-	let compressedPointer = 1;
+	let compressedPointer = 1, byteUnwritten = true;
 	for (let i = 1; i < buffer.length; i ++) {
 		const e = buffer[i];
 		if (e === lastByte) {
 			repeatSize ++;
-		};
-		if (repeatSize <= repeatThreshold) {
-			compressed[compressedPointer] = e;
-			compressedPointer ++;
 		};
 		if (repeatSize >= sizeCriterion || e !== lastByte) {
 			if (repeatSize >= repeatThreshold) {
@@ -396,10 +392,16 @@ const encodeRunLength = function (buffer, repeatThreshold = 4) {
 				compressedPointer ++;
 				compressed[compressedPointer] = e;
 				compressedPointer ++;
+				byteUnwritten = false;
 			};
 			repeatSize = 0;
 		};
+		if (repeatSize <= repeatThreshold && byteUnwritten) {
+			compressed[compressedPointer] = e;
+			compressedPointer ++;
+		};
 		lastByte = e;
+		byteUnwritten = true;
 	};
 	if (repeatSize >= repeatThreshold) {
 		compressed[compressedPointer] = repeatSize - repeatThreshold;
