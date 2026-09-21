@@ -2,6 +2,25 @@
 
 const u8Enc = new TextEncoder();
 
+const getUsableMemoryMiB = () => {
+	if (typeof globalThis?.navigator?.deviceMemory === "number") {
+		return globalThis.navigator.deviceMemory * 1024;
+	} else {
+		return 256; // 256 MiB
+	};
+};
+const safeAllocationMax = Math.floor(Math.min(getUsableMemoryMiB(), 1024) / 16) * 1048576;
+/** @param {number} desiredSize
+* @returns {Uint8Array} */
+const allocateU8 = (desiredSize) => {
+	if (!(desiredSize >= 0)) {
+		throw(new RangeError(`Invalid range!`));
+	} else if (desiredSize >= safeAllocationMax) {
+		throw(new RangeError(`Desired size too large.`));
+	};
+	return new Uint8Array(desiredSize);
+};
+
 /** @type {Map<string,Uint8Array>[]} */
 const bufferMaps = [new Map(), new Map()]; // encode and decode array
 bufferMaps[0].set("base64", u8Enc.encode("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")); // Defer to browser support when available
@@ -423,6 +442,7 @@ const encodeRunLength = function (buffer, repeatThreshold = 4) {
 };
 
 export {
+	allocateU8,
 	bitFieldPack,
 	bitFieldUnpack,
 	bufferFrom,

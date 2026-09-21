@@ -4,6 +4,9 @@
 "use strict";
 
 import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.mjs";
+import {
+	allocateU8
+} from "../state/utils/bufferIo.mjs";
 
 let blankFont = new Uint8Array(40);
 
@@ -282,7 +285,7 @@ let MxBm256 = class MxBm256 {
 			if (i > 0 && e?.length > 0) {
 				let arr = e.split("\t");
 				if (arr[1][0] !== "@") {
-					let bm = new Uint8Array(256 << ((arr[1].length >> 6)) - 1);
+					let bm = allocateU8(256 << ((arr[1].length >> 6)) - 1);
 					Array.from(arr[1]).forEach(function (e, i) {
 						let iOff = i * 4,
 						proxy = parseInt(e, 16), dp = 3;
