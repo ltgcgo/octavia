@@ -12,6 +12,7 @@ dist/deno.json
 .docker_name
 .zcompdump
 .zsh_history
+src/data/generated/**
 src/identity/identity.bin
 src/identity/identity.txt
 c*.png

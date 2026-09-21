@@ -27,5 +27,9 @@ jobs:
         with:
           deno-version: latest
 
+      - name: Generate data for Octavia
+        run: "./shx generate"
+      - name: Build Octavia files
+        run: "./shx build"
       - name: Publish package
         run: "./shx publish"
