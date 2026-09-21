@@ -3,13 +3,24 @@
 const u8Enc = new TextEncoder();
 
 const getUsableMemoryMiB = () => {
-	if (typeof globalThis?.navigator?.deviceMemory === "number") {
+	if (typeof globalThis.Deno?.systemMemoryInfo === "function") {
+		if (Deno.permissions.querySync({
+			"name": "sys",
+			"kind": "systemMemoryInfo"
+		}).state === "granted") {
+			return Math.floor(Deno.systemMemoryInfo().available / 1048576);
+		} else {
+			return 256;
+		};
+	} else if (typeof globalThis.process.availableMemory === "function") {
+		return Math.floor(globalThis.process.availableMemory() / 1048576);
+	} else if (typeof globalThis.navigator?.deviceMemory === "number") {
 		return globalThis.navigator.deviceMemory * 1024;
 	} else {
 		return 256; // 256 MiB
 	};
 };
-const safeAllocationMax = Math.floor(Math.min(getUsableMemoryMiB(), 1024) / 16) * 1048576;
+const safeAllocationMax = Math.floor(Math.min(getUsableMemoryMiB(), 4096) / 16) * 1048576;
 /** @param {number} desiredSize
 * @returns {Uint8Array} */
 const allocateU8 = (desiredSize) => {
