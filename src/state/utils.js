@@ -3,10 +3,6 @@
 import {
 	BinaryStreamCodecs
 } from "./utils/codec.mjs";
-import {
-	bufferFrom,
-	bufferTo
-} from "./utils/bufferIo.mjs";
 
 let arrayCompare = (arr1, arr2) => {
 	let minLength = Math.min(arr1.length, arr2.length);
@@ -209,7 +205,5 @@ export {
 	getDebugState,
 	bufferToDHex,
 	bufferToBracketed,
-	bufferFrom,
-	bufferTo,
 	pruneObjects
 };
