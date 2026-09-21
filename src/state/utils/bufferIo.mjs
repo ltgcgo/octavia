@@ -357,7 +357,19 @@ const encodeRunLength = function (buffer, repeatThreshold = 4) {
 	if (!(Number.isSafeInteger(repeatThreshold) && repeatThreshold >= 2)) {
 		throw(new RangeError(`Repeat threshold must be an integer larger than 1.`));
 	};
-	// Length calculation pass
+	switch (buffer.constructor) {
+		case Uint8Array:
+		case Uint8ClampedArray: {
+			if (buffer.length <= 0) {
+				throw(new RangeError("The buffer must not be empty."));
+			};
+			break;
+		};
+		default: {
+			throw(new TypeError("The buffer must be an Uint8Array."));
+		};
+	};
+	// Length calculation pass.
 	const sizeCriterion = 127 + repeatThreshold; // Prepare for later integration with MIDI-style VLV-8.
 	let requiredSize = buffer.length;
 	let lastByte = buffer[0], repeatSize = 1;
@@ -375,7 +387,7 @@ const encodeRunLength = function (buffer, repeatThreshold = 4) {
 	if (repeatSize > 0) {
 		requiredSize -= runLengthSubtract(repeatSize, repeatThreshold);
 	};
-	// Compression pass
+	// Compression pass. REQUIRES FULL REWRITE!
 	const compressed = new Uint8Array(requiredSize);
 	compressed[0] = buffer[0];
 	lastByte = buffer[0], repeatSize = 1;
