@@ -45,7 +45,7 @@ on:
 
 # Allow one concurrent deployment
 concurrency:
-  group: "validate"
+  group: "validator"
   cancel-in-progress: true
 
 jobs:

@@ -10,6 +10,10 @@ on:
       - 'src/*/index.d.mts'
   workflow_dispatch:
 
+concurrency:
+  group: "publish"
+  cancel-in-progress: false
+
 jobs:
   publish:
     if: github.repository == 'ltgcgo/octavia'
