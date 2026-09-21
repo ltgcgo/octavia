@@ -227,6 +227,7 @@ const bufferCarveOut = function (buffer, carvedList = []) {
 };
 
 const bitFieldPack = (sourceBuffer, targetBuffer, options = {
+	"flush": false,
 	"strict": true,
 	"threshold": 1
 }) => {
@@ -255,6 +256,9 @@ const bitFieldPack = (sourceBuffer, targetBuffer, options = {
 		};
 	};
 	const threshold = options?.threshold > 0 ? options.threshold : 1;
+	if (options?.flush) {
+		targetBuffer.fill(0);
+	};
 	for (let i = 0; i < sourceBuffer.length; i ++) {
 		targetBuffer[i >>> 3] |= (sourceBuffer[i] >= threshold ? 1 : 0) << (i & 7);
 	};
