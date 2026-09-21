@@ -226,7 +226,95 @@ const bufferCarveOut = function (buffer, carvedList = []) {
 	}
 };
 
+const bitFieldPack = (sourceBuffer, targetBuffer, options = {
+	"strict": true,
+	"threshold": 1
+}) => {
+	if (typeof sourceBuffer?.length !== "number") {
+		throw(new SyntaxError("The source buffer must be an array-like object."));
+	} else if (sourceBuffer.length >= 0x80000000) {
+		throw(new RangeError("Source buffer too large."));
+	};
+	const desiredSize = (sourceBuffer.length >>> 3) + (sourceBuffer.length & 7 ? 1 : 0);
+	switch (targetBuffer?.constructor) {
+		case Uint8Array:
+		case Uint8ClampedArray: {
+			if (targetBuffer.length >= 0x10000000) {
+				throw(new RangeError("Target buffer too large."));
+			} else if (options?.strict && targetBuffer.length < desiredSize) {
+				throw(new RangeError("The target buffer cannot satisfy the packed bit field."));
+			};
+			break;
+		};
+		default: {
+			if (targetBuffer == null) {
+				targetBuffer = new Uint8Array(desiredSize);
+			} else {
+				throw(new TypeError("The target buffer must be an Uint8Array."));
+			};
+		};
+	};
+	const threshold = options?.threshold > 0 ? options.threshold : 1;
+	for (let i = 0; i < sourceBuffer.length; i ++) {
+		targetBuffer[i >>> 3] |= (sourceBuffer[i] >= threshold ? 1 : 0) << (i & 7);
+	};
+	return targetBuffer;
+};
+const bitFieldUnpack = (sourceBuffer, targetBuffer, maxSize = 0, isStrict = true) => {
+	switch (sourceBuffer?.constructor) {
+		case Uint8Array:
+		case Uint8ClampedArray: {
+			if (sourceBuffer.length >= 0x10000000) {
+				throw(new RangeError("Source buffer too large."));
+			};
+			break;
+		};
+		default: {
+			throw(new TypeError("The source buffer must be an Uint8Array."));
+		};
+	};
+	switch (targetBuffer?.constructor) {
+		case Uint8Array:
+		case Uint8ClampedArray: {
+			if (targetBuffer.length >= 0x80000000) {
+				throw(new RangeError("Target buffer too large."));
+			};
+			break;
+		};
+		default: {
+			throw(new TypeError("The target buffer must be an Uint8Array."));
+		};
+	};
+	let desiredSize = sourceBuffer.length << 3;
+	if (maxSize > 0) {
+		desiredSize = Math.min(desiredSize, maxSize);
+	};
+	console.debug(sourceBuffer.length, desiredSize);
+	if (targetBuffer) {
+		if (typeof targetBuffer?.length !== "number") {
+			throw(new SyntaxError("The target buffer must be an array-like object."));
+		};
+		if (isStrict && targetBuffer.length < desiredSize) {
+			throw(new Error("The target buffer cannot satisfy the packed bit field."));
+		};
+	} else {
+		targetBuffer = new Uint8Array(desiredSize);
+	};
+	let rollingByte = 0;
+	for (let i = 0; i < desiredSize; i ++) {
+		if (i & 7) {
+			rollingByte >>= 1;
+		} else {
+			rollingByte = sourceBuffer[i >>> 3];
+		};
+		targetBuffer[i] = rollingByte & 1;
+	};
+	return targetBuffer;
+};
+
 export {
+	bitFieldPack,
+	bitFieldUnpack,
 	bufferFrom,
 	bufferTo,
 	bufferCarveOut

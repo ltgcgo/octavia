@@ -93,9 +93,11 @@ self.gParseRaw = async () => {
 	const inputLength = sanitisedInput.length;
 	const normalisedInput = sanitisedInput.padEnd(inputLength + (inputLength & 1), "0");
 	try {
+		/** @type {import("../micc/index.mjs").MICCSMFMIAHandleOptions} */
 		const config = {
 			"hasDelta": Alpine.store("hasDelta"),
-			"isSmfWrapped": Alpine.store("schemaIsWrapped")
+			"isSmfWrapped": Alpine.store("schemaIsWrapped"),
+			"preferReadable": Alpine.store("useReadable")
 		};
 		const inputBuffer = bufferFrom("hex", normalisedInput);
 		//console.debug(inputBuffer);

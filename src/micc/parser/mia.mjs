@@ -12,6 +12,7 @@ import MICCConstants from "../classes/constants.mjs";
 const mapMiaCommandTypes = new Map();
 const mapMiaCommandNames = new Map();
 const mapMiaDisassembleTypes = new Uint8Array(128);
+const mapMiaRejectedCP = new Uint8Array(256);
 {
 	mapMiaCommandTypes.set(MICCConstants.MIDI_NOTE_OFF, ["of", "off"]);
 	mapMiaCommandTypes.set(MICCConstants.MIDI_NOTE_ON, ["on", "on"]);
@@ -109,6 +110,9 @@ export default class MICCInternalsMIA {
 				break;
 			};
 			case MICCConstants.MIDI_META: {
+				if (options.preferReadable) {
+					miaText += ` (${event.data.length})`;
+				};
 				let useTextDecode = false;
 				if (mapMiaDisassembleTypes[event.meta] === 15) {
 					useTextDecode = options.preferReadable ? true : false;

@@ -4,7 +4,6 @@
 "use strict";
 
 import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.mjs";
-import {packBitField, unpackBitField} from "../state/utils";
 
 let blankFont = new Uint8Array(40);
 

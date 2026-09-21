@@ -16,25 +16,6 @@ import type {
 	SeamstressContext
 } from "../../libs/seamstress@ltgcgo/seamstress/index.d.mts";
 
-/** The helper string decoder allowing re-interpretation. */
-export class BinaryString {
-	/** The attached list of decoders. When all of them fail, Latin 9 will be the fallback. Defaults to UTF-8 only. */
-	decoders?: Iterable<TextDecoder>;
-	/** The attached buffer to decode. */
-	buffer?: Uint8Array|Uint8ClampedArray;
-	/** The decoded result. */
-	text?: string;
-	/** The text encoding label used in the decoded result. */
-	label?: string;
-	/** Decode the buffer, both return it and overwrite the `text` property. Will error out if there's no attached buffer.
-	* @param buffer When this argument is supplied, the `buffer` property will be overridden with it. */
-	decode(buffer?: Uint8Array|Uint8ClampedArray): string;
-	/** Encode the result into a buffer, both return it and overwrite the `buffer` property. Defaults to UTF-8 encoding with no labels. Will error out if there's no attached text.
-	* @param text When this argument is supplied, the `text` property will be overridden with it.
-	* @param label When this argument is supplied, the `label` property will be overridden with it. */
-	encode(text?: string, label?: string): Uint8Array;
-}
-
 // Native implementations
 /** Utility constants for MICC. */
 declare class MICCConstants {
