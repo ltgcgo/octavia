@@ -2,7 +2,7 @@
 
 import liteBench from "./liteBench.mjs";
 
-const bufferSize = 1 << 16,
+const bufferSize = 1 << 18,
 dummyBuffer1 = new Uint8Array(bufferSize),
 dummyBuffer2 = new Uint8Array(bufferSize);
 
