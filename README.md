@@ -28,19 +28,20 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 ## What is Octavia?
 The current MIDI landscape is a dumpster fire, at least in the FOSS world. Only proprietary software solutions respect existing MIDI standards, while the FOSS ecosystem largely ignores or even violates the conventions, with TiMidity as the single exception. Octavia, born out of being fed up by the existing antics exhibited by existing FOSS solutions, aims to reach full compliance with existing MIDI standards (MT-32, GM, XG, GS, GM2 and etc.), while exposing simple yet powerful interfaces for developers to build upon.
 
-With Octavia, no longer will you worry about standard compliance. Just focus on building what's important, be it visualizers, state browsers, event routers or even realtime event translators, Octavia's got your back. Feel free to test Octavia's capabilities with all available demos.
+With Octavia, no longer will you worry about either standard compliance or non-standard environment extensions. Just focus on building what's important, be it visualizers, state browsers, event routers or even realtime event translators, Octavia's got your back. Feel free to test Octavia's capabilities with all available demos.
 
 ## Why Octavia over others?
-* Free, libre and open-source, licensed under GNU LGPL v3.0.
-* Keep your focus on building what matters, as Octavia behaves like a real MIDI module, taking over the heavy-lifting for you.
-* Built-in support for multiple plug-in cards and tons of other devices.
-* Wide support of bank mapping and bitmaps via [Octavia Scroll](https://github.com/ltgcgo/midi-db).
-* Stringent compliance of existing established standards.
-* Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
-* Available in web-compliant JS (standard ESM; browser and Deno).
-* Developed with Firefox and an open Web in mind, not just bootlicking Chromium and V8.
-* No modification required to run in hardened forks of browsers, like Tor Browser, Cromite and LibreWolf.
-* Supports 16 ports, 256 channels, 768-voice polyphony maximum. More than you'll ever need.
+- Free, libre and open-source, licensed under GNU LGPL v3.0.
+- Beyond a capable runtime, standard ECMAScript, and Web-compliance, it assumes nothing about the environment.
+- Keep your focus on building what matters, as Octavia behaves like a real MIDI module, taking over the heavy-lifting for you.
+- Built-in support for multiple plug-in cards and tons of other devices.
+- Wide support of bank mapping and bitmaps via [Octavia Scroll](https://github.com/ltgcgo/midi-db).
+- Stringent compliance of existing established standards.
+- Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
+- Available in Web-compliant JS (standard ESM; browser and Deno).
+- Developed with Firefox and open Web in mind, not just bootlicking Chromium and V8. Independent browsers like Servo and Ladybird are irregularly tested as well.
+- No modification required to run in hardened forks of browsers, like Tor Browser, Cromite and LibreWolf. Web MIDI API however may not be present in these hardened forks.
+- Supports 16 ports, 256 channels, 768-voice polyphony maximum. More than you'll ever need.
 
 ## Supported targets
 Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](https://kb.ltgc.cc/octavia/support/target.html) for more information.
@@ -50,9 +51,9 @@ To have a general idea of how MIDI is implemented, refer to the [MIDI Implementa
 ## Dev talks
 We've been hosting places to handle development discussions! If you don't have a GitHub account, or just prefer to report bugs or give suggestions in a more casual way, feel free to chat with us with links below!
 
-* Fediverse (Mastodon): [@lightingale@fosstodon.org](https://fosstodon.org/@lightingale)
-* Telegram channel: [@ltgc_t](https://t.me/s/ltgc_t)
-* Telegram group chat: [Click to join](https://t.me/+0I30mcOPTSQ0ZGIx)
+- Fediverse (Mastodon): [@lightingale@fosstodon.org](https://fosstodon.org/@lightingale)
+- Telegram channel: [@ltgc_t](https://t.me/s/ltgc_t)
+- Telegram group chat: [Click to join](https://t.me/+0I30mcOPTSQ0ZGIx)
 
 ## Credits
 Please read [CREDITS.md](CREDITS.md).
@@ -65,13 +66,13 @@ If it exists, please check out the `/examples/` directory.
 
 ## Contribute
 You can help with Octavia's development, by doing any of the following, or more...
-* Test Octavia, whether under production environment or not.
-* Write anything utilizing Octavia's API.
-* Report any bugs you find.
-* Submit feature requests.
-* Participate in programming (read the docs for further info).
-* Reward the developers some donation.
-* Spread the word about Octavia.
+- Test Octavia, whether under production environment or not.
+- Write anything utilizing Octavia's API.
+- Report any bugs you find.
+- Submit feature requests.
+- Participate in programming (read the docs for further info).
+- Reward the developers some donation.
+- Spread the word about Octavia.
 
 ## Stargazers over time
 [![Stargazers over time](https://starchart.cc/ltgcgo/octavia.svg?variant=adaptive)](https://starchart.cc/ltgcgo/octavia)
