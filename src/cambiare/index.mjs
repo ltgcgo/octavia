@@ -687,8 +687,8 @@ const Cambiare = class extends RootDisplay {
 					};
 					const runCourse = clock - (e.metre.rOffset || 0),
 					runPadding = 32,
-					runBoundary = e.metre.rWidth - e.metre.canvas.width + runPadding,
-					offsetX = (runCourse * -25) % (e.metre.rWidth + runPadding + 48) + 48;
+					runBoundary = e.metre.rWidth - e.metre.canvas.width + runPadding;
+					let offsetX = (runCourse * -25) % (e.metre.rWidth + runPadding + 48) + 48;
 					if (offsetX > 0) {
 						offsetX = 0;
 					};
@@ -893,7 +893,8 @@ const Cambiare = class extends RootDisplay {
 			};
 		});
 		upThis.#bufLo.forEach((e, i) => {
-			const y = Math.floor(i * 0.0125), x = i % 80;
+			const y = Math.floor(i * 0.0125);
+			let x = i % 80;
 			x += Math.floor(x / 5);
 			if (upThis.#bufLm[i] !== e) {
 				ccxt.clearRect(x << 2, (y | 16) << 2, 3, 3);
@@ -914,7 +915,8 @@ const Cambiare = class extends RootDisplay {
 			let refresh = false;
 			if (i < chordBreakpoint) {
 				const ri = i;
-				const x = ri % chordRootWidth, y = Math.floor(ri / chordRootWidth);
+				const y = Math.floor(ri / chordRootWidth);
+				let x = ri % chordRootWidth;
 				x += 21 * Math.floor(0.166667 * x);
 				//let e = 255;
 				if (upThis.#bufCm[i] !== e) {
@@ -930,7 +932,8 @@ const Cambiare = class extends RootDisplay {
 				};
 			} else {
 				const ri = i - chordBreakpoint;
-				const x = ri % chordDetailWidth, y = Math.floor(ri / chordDetailWidth);
+				const y = Math.floor(ri / chordDetailWidth);
+				let x = ri % chordDetailWidth;
 				x += 10 * Math.floor(0.058824 * x);
 				//let e = 127;
 				if (upThis.#bufCm[i] !== e) {
@@ -1168,7 +1171,7 @@ const Cambiare = class extends RootDisplay {
 				break;
 			};
 			case "meta" : {
-				const mappedFamily = fontFamily;
+				let mappedFamily = fontFamily;
 				if (mappedFamily === "Follow UI") {
 					mappedFamily = "A Random Invalid Font Name To Make It Fall Back";
 				};
@@ -1399,7 +1402,7 @@ const Cambiare = class extends RootDisplay {
 			upThis.#sectPart[port] = [];
 			upThis.#sectPart[port].root = createElement("div", [`boundary`, `part-port-${port}`]);
 			for (let part = 0; part < 16; part ++) {
-				const dispPart = (startCh | part) + 1;
+				let dispPart = (startCh | part) + 1;
 				if (dispPart >= 100) {
 					dispPart = `${Math.floor(dispPart / 10).toString(16)}${dispPart % 10}`;
 				} else {

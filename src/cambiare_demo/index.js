@@ -30,6 +30,19 @@ HTMLElement.prototype.$a = function (selector) {
 };
 self.Alpine = Alpine;
 
+let alpineJsTrigger = "@";
+try {
+	const dummyElement = createElement("span", []);
+	dummyElement.setAttribute("@expa", "nded");
+	console.info(`Expanded character set in DOM attributes is permitted.`);
+} catch (err) {
+	if (err.name === "InvalidCharacterError") {
+		alpineJsTrigger = "x-on:";
+		console.info(`Expanded character set in DOM attributes isn't permitted. Proceeding with fallback behaviour.`);
+	} else {
+		alert(`The current version of browser is not compliant to the W3C specification.\n${err.stack}`);
+	};
+};
 const createDropDown = function (mountedElement, opt = {}) {
 	/*
 	activeSlot: number
@@ -64,10 +77,10 @@ const createDropDown = function (mountedElement, opt = {}) {
 	// Reactivity via AlpineJS
 	mountedElement.setAttribute(":active", `active[${opt.activeSlot}]`);
 	mountedElement.setAttribute(":class", `\x60column column-option column-button column-nowrap dropdown\x24{active[${opt.activeSlot}]?' is-active':''}\x60`);
-	//dropdownTrigger.setAttribute("@click", `"";for(let i=0;i<active.length;i++){if(i==${opt.activeSlot}){active[${opt.activeSlot}]=!active[${opt.activeSlot}]}else{active[i]=0}}`);
+	//dropdownTrigger.setAttribute(`${alpineJsTrigger}click`, `"";for(let i=0;i<active.length;i++){if(i==${opt.activeSlot}){active[${opt.activeSlot}]=!active[${opt.activeSlot}]}else{active[i]=0}}`);
 	try {
 		// The @ character may error out on some browsers.
-		dropdownTrigger.setAttribute("@click", `active[${opt.activeSlot}]=!active[${opt.activeSlot}]`);
+		dropdownTrigger.setAttribute(`${alpineJsTrigger}click`, `active[${opt.activeSlot}]=!active[${opt.activeSlot}]`);
 	} catch (err) {
 		alert(`The current version of browser is not compliant to the W3C specification.\n${err.stack}`);
 	};
@@ -92,8 +105,8 @@ const createDropDown = function (mountedElement, opt = {}) {
 		dropdownOption.setAttribute(":style", opt.optionStyle);
 	};
 	if (typeof opt.optionClick === "string") {
-		//dropdownOption.setAttribute("@click", `${opt.optionClick};active[${opt.activeSlot}]=false`);
-		dropdownOption.setAttribute("@click", `${opt.optionClick};active[${opt.activeSlot}]=false`);
+		//dropdownOption.setAttribute(`${alpineJsTrigger}click`, `${opt.optionClick};active[${opt.activeSlot}]=false`);
+		dropdownOption.setAttribute(`${alpineJsTrigger}click`, `${opt.optionClick};active[${opt.activeSlot}]=false`);
 	};
 	dropdownTemplate.content.append(dropdownOption);
 	if (typeof opt.eachExpr === "string") {
