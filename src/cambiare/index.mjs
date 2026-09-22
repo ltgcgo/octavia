@@ -159,12 +159,12 @@ piMulti.forEach((e, i, a) => {
 	a[i] = Math.PI * i / 12;
 });
 
-let createElement = function (tag, classes, details = {}) {
-	let target = document.createElement(tag);
+const createElement = function (tag, classes, details = {}) {
+	const target = document.createElement(tag);
 	classes?.forEach((e) => {
 		target.classList.add(e);
 	});
-	let {t, l, w, h, i, a} = details;
+	const {t, l, w, h, i, a} = details;
 	t?.constructor && (target.style.top = t?.length ? t : `${t}px`);
 	l?.constructor && (target.style.left = l?.length ? l :`${l}px`);
 	w?.constructor && (target.style.width = w?.length ? w :`${w}px`);
@@ -173,19 +173,19 @@ let createElement = function (tag, classes, details = {}) {
 	a?.constructor && (target.style.textAlign = a);
 	return target;
 };
-let createSVG = function (tag, details) {
-	let target = document.createElementNS("http://www.w3.org/2000/svg", tag);
-	for (let key in details) {
+const createSVG = function (tag, details) {
+	const target = document.createElementNS("http://www.w3.org/2000/svg", tag);
+	for (const key in details) {
 		target.setAttribute(key, details[key]);
 	};
 	return target;
 };
-let mountElement = function (root, children) {
+const mountElement = function (root, children) {
 	children?.forEach((e) => {
 		root.append(e);
 	});
 };
-let classOff = function (target, classes) {
+const classOff = function (target, classes) {
 	classes.forEach((e) => {
 		if (target.classList.contains(e)) {
 			target.classList.remove(e);
@@ -193,7 +193,7 @@ let classOff = function (target, classes) {
 		};
 	});
 };
-let classOn = function (target, classes) {
+const classOn = function (target, classes) {
 	classes.forEach((e) => {
 		if (!target.classList.contains(e)) {
 			target.classList.add(e);
@@ -205,21 +205,21 @@ let classOn = function (target, classes) {
 };
 
 // Cache for CC register display heights
-let heightCache = new Array(128).fill(0);
+const heightCache = new Float64Array(128).fill(0);
 heightCache.forEach((e, i, a) => {
 	a[i] = Math.floor(24 * i / 12.7) / 10;
 });
 // Cache for panpot display widths
-let widthCache = new Array(128).fill(0);
+const widthCache = new Float64Array(128).fill(0);
 widthCache.forEach((e, i, a) => {
 	a[i] = Math.abs(Math.round(48 * (i - 64) / 12.7) / 10);
 });
 // Cache for the scale segments
-let leftCache = new Array(11).fill(null);
+const leftCache = new Array(11).fill(null);
 leftCache.forEach((e, i, a) => {
 	a[i] = `${Math.round(i * 12 / 0.0128) / 100}%`;
 });
-let centCache = new Array(128).fill(null);
+const centCache = new Array(128).fill(null);
 centCache.forEach((e, i, a) => {
 	a[i] = `${Math.round(i / 1.27) / 100}`;
 });
@@ -229,17 +229,17 @@ centCache.forEach((e, i, a) => {
 	svg.setAttribute("y", 24 - hV);
 };*/
 
-let setCanvasText = function (context, text, italic) {
+const setCanvasText = function (context, text, italic) {
 	context.innerText = text;
 	context.rNew = true;
-	let fontIsItalic = context.font.substring(0, 6) === "italic";
+	const fontIsItalic = context.font.substring(0, 6) === "italic";
 	if (italic && !fontIsItalic) {
 		context.font = `italic ${context.font}`;
 	} else if (!italic && fontIsItalic) {
 		context.font = context.font.substring(7);
 	};
 	//context.rOffset = 0;
-	let measured = context.measureText(text);
+	const measured = context.measureText(text);
 	context.rWidth = measured.width + 2;
 };
 
@@ -264,11 +264,11 @@ chordDetailWidth = chordMax * 17;
 
 const wallpaperStrategies = "cover,fit,tile,stretch,preserve".split(","),
 wallpaperStratClasses = [];
-for (let e of wallpaperStrategies) {
+for (const e of wallpaperStrategies) {
 	wallpaperStratClasses.push(`wall-strat-${e}`);
 };
 
-let Cambiare = class extends RootDisplay {
+const Cambiare = class extends RootDisplay {
 	#metaGcLine = 16;
 	#metaGcStart = 32;
 	#metaMaxLine = 128;
@@ -336,10 +336,10 @@ let Cambiare = class extends RootDisplay {
 	freeChord = new MxBmDef(); // Close recreation
 	#drawNote(context, note, velo, state = 0, pitch = 0, part) {
 		// Param calculation
-		let upThis = this;
-		let {width, height} = context.canvas;
+		const upThis = this;
+		const {width, height} = context.canvas;
 		let sx, ex, dx, border;
-		let range = upThis.#renderRange;
+		const range = upThis.#renderRange;
 		let internalNoteStyle = 0,
 		isBlackKey = blackKeys.indexOf(note % 12) > -1;
 		switch (state) {
@@ -390,7 +390,7 @@ let Cambiare = class extends RootDisplay {
 		// Draw calls
 		switch (upThis.#style) {
 			case "block": {
-				let h = context.canvas.height - 1;
+				const h = context.canvas.height - 1;
 				context.fillRect(sx, 0, dx, h);
 				if (internalNoteStyle > 0) {
 					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
@@ -401,7 +401,7 @@ let Cambiare = class extends RootDisplay {
 				break;
 			};
 			case "comb": {
-				let h = (isBlackKey ? Math.round((context.canvas.height << 1) / 3) : context.canvas.height) - 1;
+				const h = (isBlackKey ? Math.round((context.canvas.height << 1) / 3) : context.canvas.height) - 1;
 				context.fillRect(sx, 0, dx, h);
 				if (internalNoteStyle > 0) {
 					context.clearRect(sx + border, border, dx - (border << 1), h - (border << 1));
@@ -412,7 +412,7 @@ let Cambiare = class extends RootDisplay {
 				break;
 			};
 			case "piano": {
-				let sh = (isBlackKey ? 0 : context.canvas.height >> 1),
+				const sh = (isBlackKey ? 0 : context.canvas.height >> 1),
 				dh = (context.canvas.height >> 1) - 1;
 				context.fillRect(sx, sh, dx, dh);
 				if (internalNoteStyle > 0) {
@@ -456,10 +456,10 @@ let Cambiare = class extends RootDisplay {
 		};
 	};
 	#redrawNotesInternal(sum, overrideActiveCh) {
-		let upThis = this;
+		const upThis = this;
 		(upThis.device?.getActive() || overrideActiveCh).forEach((e, part) => {
 			if (e) {
-				let context = upThis.#sectPart[part >> 4][part & 15].cxt;
+				const context = upThis.#sectPart[part >> 4][part & 15].cxt;
 				context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 				sum.chKeyPr[part].forEach(({v, s}, note) => {
 					upThis.#drawNote(context, note, v, s, upThis.device.getChPitch(part), part);
@@ -468,7 +468,7 @@ let Cambiare = class extends RootDisplay {
 		});
 	};
 	#scrollMeta(resetTime) {
-		let upThis = this;
+		const upThis = this;
 		if (upThis.clockSource.now() - upThis.#metaLastWheel > 4000) {
 			upThis.#metaMoveX = 0;
 			upThis.#metaMoveY = 142 - upThis.#sectMeta.view.clientHeight;
@@ -482,7 +482,7 @@ let Cambiare = class extends RootDisplay {
 		};
 	};
 	#resizerSrc() {
-		let aspectRatio = self.innerWidth / self.innerHeight;
+		const aspectRatio = self.innerWidth / self.innerHeight;
 		let targetZoom = 1;
 		let targetWidth = self.innerWidth,
 		targetHeight = self.innerHeight;
@@ -500,12 +500,12 @@ let Cambiare = class extends RootDisplay {
 	};
 	#resizer;
 	#rendererSrc() {
-		let upThis = this,
+		const upThis = this,
 		clock = upThis.#clockSource?.currentTime || 0,
 		sum = upThis.render(clock),
 		timeNow = upThis.clockSource.now();
-		let curPoly = sum.curPoly + sum.extraPoly;
-		let curPolyEC = sum.curPolyEC + sum.extraPolyEC;
+		const curPoly = sum.curPoly + sum.extraPoly;
+		const curPolyEC = sum.curPolyEC + sum.extraPolyEC;
 		if (upThis.#maxPoly < curPoly) {
 			upThis.#maxPoly = curPoly;
 		};
@@ -524,10 +524,10 @@ let Cambiare = class extends RootDisplay {
 			upThis.#sectInfo.barNote.setTextRaw(Math.floor(sum.noteBeat) + 1);
 		};
 		//upThis.#scrollMeta(true);
-		let ccCandidates = [7, 11, 1, 91, 93, 94, 74, 5, 256, 256];
-		let renderPortMax = upThis.#renderPort + upThis.#renderRange;
+		const ccCandidates = [7, 11, 1, 91, 93, 94, 74, 5, 256, 256];
+		const renderPortMax = upThis.#renderPort + upThis.#renderRange;
 		for (let part = 0; part < allocated.ch; part ++) {
-			let port = part >> 4,
+			const port = part >> 4,
 			aceOff = part * allocated.ace,
 			e = upThis.#sectPart[port][part & 15];
 			if (upThis.device.getActive()[part] && port >= upThis.#renderPort && port < renderPortMax) {
@@ -539,17 +539,17 @@ let Cambiare = class extends RootDisplay {
 				e.ccVis.strokeStyle = `#${upThis.getChAccent(part)}`;
 				e.ccVis.lineWidth = 2;
 				for (let cci = 0; cci < ccCandidates.length; cci ++) {
-					let cce = ccCandidates[cci];
+					const cce = ccCandidates[cci];
 					if (cce < 256) {
-						let ccValue = upThis.device?.getChCc(part, cce),
+						const ccValue = upThis.device?.getChCc(part, cce),
 						ccHeight = ccValue * 24 / 127;
 						if (ccHeight > 0) {
-							let ccTop = 24 - ccHeight;
+							const ccTop = 24 - ccHeight;
 							e.ccVis.fillRect(cci * 6, ccTop, 4, ccHeight);
 						};
 					};
 				};
-				let pan = upThis.device?.getChCc(part, 10) || 1;
+				const pan = upThis.device?.getChCc(part, 10) || 1;
 				switch (upThis.panStyle) {
 					case 7:
 					case 6:
@@ -558,7 +558,7 @@ let Cambiare = class extends RootDisplay {
 					case 2:
 					case 1: {
 						// Calculate pan
-						let panDegreeCache = (pan + 125) * 0.024933275, // - 64 + 3 * 63
+						const panDegreeCache = (pan + 125) * 0.024933275, // - 64 + 3 * 63
 						panRotateCache = (pan - 64) * 0.024933275;
 						e.ccVis.beginPath();
 						// Render pan needle
@@ -602,7 +602,7 @@ let Cambiare = class extends RootDisplay {
 					case 10:
 					case 9: {
 						// Calculate pan
-						let panDegreeCache = (pan + 77) * 0.033244367, // - 64 + 3 * 63
+						const panDegreeCache = (pan + 77) * 0.033244367, // - 64 + 3 * 63
 						panRotateCache = (pan - 64) * 0.033244367;
 						e.ccVis.beginPath();
 						// Render pan needle
@@ -644,7 +644,7 @@ let Cambiare = class extends RootDisplay {
 					};
 					default: {
 						// Calculate pan
-						let panWidthCache = Math.abs(pan - 64) / 2.625;
+						const panWidthCache = Math.abs(pan - 64) / 2.625;
 						if (pan < 64) {
 							e.ccVis.fillRect(84 - panWidthCache, 0, panWidthCache, 24);
 						} else if (pan > 127) {
@@ -664,7 +664,7 @@ let Cambiare = class extends RootDisplay {
 				e.metre.strokeStyle = `#${upThis.#foreground}`;
 				e.metre.lineWidth = 1;
 				e.metre.globalCompositeOperation = "source-over";
-				let metreLength = sum.strength[part] * 121 / 32767;
+				const metreLength = sum.strength[part] * 121 / 32767;
 				switch (e.metre.decoration) {
 					case 1: {
 						// Outline.
@@ -685,7 +685,7 @@ let Cambiare = class extends RootDisplay {
 						e.metre.rNew = false;
 						e.metre.rOffset = clock;
 					};
-					let runCourse = clock - (e.metre.rOffset || 0),
+					const runCourse = clock - (e.metre.rOffset || 0),
 					runPadding = 32,
 					runBoundary = e.metre.rWidth - e.metre.canvas.width + runPadding,
 					offsetX = (runCourse * -25) % (e.metre.rWidth + runPadding + 48) + 48;
@@ -738,7 +738,7 @@ let Cambiare = class extends RootDisplay {
 							velocity = sum.rawStrength[part] * upThis.device?.getChCc(part, 11) / 16129;
 						};
 						velocity *= 32;
-						let breathNoise = upThis.device?.getChCc(part, 1) / 127 * 8;
+						const breathNoise = upThis.device?.getChCc(part, 1) / 127 * 8;
 						e.extVis.beginPath();
 						e.extVis.moveTo(0, 12 - mouth - 3);
 						e.extVis.lineTo(7 + velocity, 12);
@@ -753,13 +753,13 @@ let Cambiare = class extends RootDisplay {
 					};
 					case upThis.device.EXT_DX: {
 						for (let i = 0; i < 16; i ++) {
-							let dxCc = i + 142,
+							const dxCc = i + 142,
 							v = upThis.device?.getChCc(part, dxCc);
 							if (i >= 8) {
 								e.extVis.fillStyle = `#${upThis.getChAccent(part)}`;
 							};
-							let x = i * 3;
-							let size = (v - 64) / 5.82;
+							const x = i * 3;
+							const size = (v - 64) / 5.82;
 							if (size >= 0) {
 								e.extVis.fillRect(x, 12 - size, 2, size + 1);
 							} else {
@@ -772,7 +772,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		};
 		// Note visualization
-		let channels = new Array(allocated.ch);
+		const channels = new Array(allocated.ch);
 		upThis.#sectPart.forEach((e, port) => {
 			e.forEach((e0, part) => {
 				if (e0.refresh) {
@@ -784,7 +784,7 @@ let Cambiare = class extends RootDisplay {
 		if (['line'].indexOf(upThis.#style) > -1) {
 			// Sift through pitch events
 			while (upThis.#pitchEvents.length > 0) {
-				let e = upThis.#pitchEvents.shift();
+				const e = upThis.#pitchEvents.shift();
 				channels[e.part] = true;
 			};
 		};
@@ -792,13 +792,13 @@ let Cambiare = class extends RootDisplay {
 		upThis.#redrawNotesInternal(sum, channels);
 		// Draw every note inside extraStates
 		sum.extraNotes.forEach((ev) => {
-			let {part, note, velo, state} = ev;
-			let context = upThis.#sectPart[part >> 4][part & 15].cxt;
+			const {part, note, velo, state} = ev;
+			const context = upThis.#sectPart[part >> 4][part & 15].cxt;
 			upThis.#drawNote(context, note, velo, state, upThis.device.getChPitch(part), part);
 			//console.debug(part, note);
 		});
 		// Write to the new pixel display buffers
-		let bitmapDisp = upThis.device?.getBitmap(),
+		const bitmapDisp = upThis.device?.getBitmap(),
 		ccxt = upThis.#sectPix.cxt;
 		if (timeNow > bitmapDisp.expire) {
 			upThis.#bufBn.fill(0);
@@ -813,7 +813,7 @@ let Cambiare = class extends RootDisplay {
 			});
 		};
 		upThis.#bufLn.fill(0);
-		let letterDisp = upThis.device?.getLetter();
+		const letterDisp = upThis.device?.getLetter();
 		if (timeNow <= letterDisp.expire) {
 			upThis.textFont.getStr(letterDisp.text.padEnd(32, " ")).forEach((e0, i0) => {
 				// Per character
@@ -827,7 +827,7 @@ let Cambiare = class extends RootDisplay {
 		};
 		upThis.#bufCn.fill(0);
 		for (let i = 0; i < upThis.device?.modelEx?.xg.chords.length; i ++) {
-			let chord = upThis.device?.modelEx?.xg.chords[i];
+			const chord = upThis.device?.modelEx?.xg.chords[i];
 			//console.debug(upThis.device?.modelEx?.xg.chords.length);
 			//console.debug(chord);
 			if (chord >= 0x0100) { // Lowest possible packed chord
@@ -837,7 +837,7 @@ let Cambiare = class extends RootDisplay {
 				upThis.freeChord.getBm(`a${ChordDict.getChordShiftRaw(chord)}`)?.render((e, x, y) => {
 					upThis.#bufCnD[x + 17 * i + y * chordDetailWidth] = e ? upThis.pixelMax : 0;
 				});
-				let chordPlan = getFreePlan(ChordDict.getChordId(chord));
+				const chordPlan = getFreePlan(ChordDict.getChordId(chord));
 				if (chordPlan.m) {
 					upThis.freeChord.getBm(chordPlan.m)?.render((e, x, y) => {
 						upThis.#bufCnD[x + 17 * i + (y + 7) * chordDetailWidth] = e ? upThis.pixelMax : 0;
@@ -852,7 +852,7 @@ let Cambiare = class extends RootDisplay {
 		};
 		// Apply pixel blurs
 		upThis.#bufBo.forEach((e, i, a) => {
-			let e0 = upThis.#bufBn[i];
+			const e0 = upThis.#bufBn[i];
 			if (e0 > e) {
 				a[i] += Math.min(e0 - e, pixelBlurSpeed);
 			} else if (e0 < e) {
@@ -860,7 +860,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		});
 		upThis.#bufLo.forEach((e, i, a) => {
-			let e0 = upThis.#bufLn[i];
+			const e0 = upThis.#bufLn[i];
 			if (e0 > e) {
 				a[i] += Math.min(e0 - e, pixelBlurSpeed);
 			} else if (e0 < e) {
@@ -868,7 +868,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		});
 		upThis.#bufCo.forEach((e, i, a) => {
-			let e0 = upThis.#bufCn[i];
+			const e0 = upThis.#bufCn[i];
 			if (e0 > e) {
 				a[i] += Math.min(e0 - e, pixelBlurSpeed);
 			} else if (e0 < e) {
@@ -877,7 +877,7 @@ let Cambiare = class extends RootDisplay {
 		});
 		// Render the old pixel display buffers
 		upThis.#bufBo.forEach((e, i) => {
-			let y = i >> 5, x = i & 31;
+			const y = i >> 5, x = i & 31;
 			if (upThis.#bufBm[i] !== e) {
 				ccxt.clearRect(252 + (x << 2), y << 2, 3, 3);
 				if (e) {
@@ -893,7 +893,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		});
 		upThis.#bufLo.forEach((e, i) => {
-			let y = Math.floor(i * 0.0125), x = i % 80;
+			const y = Math.floor(i * 0.0125), x = i % 80;
 			x += Math.floor(x / 5);
 			if (upThis.#bufLm[i] !== e) {
 				ccxt.clearRect(x << 2, (y | 16) << 2, 3, 3);
@@ -909,12 +909,12 @@ let Cambiare = class extends RootDisplay {
 				};
 			};
 		});
-		let chordBreakpoint = chordMax * 66;
+		const chordBreakpoint = chordMax * 66;
 		upThis.#bufCo.forEach((e, i) => {
 			let refresh = false;
 			if (i < chordBreakpoint) {
-				let ri = i;
-				let x = ri % chordRootWidth, y = Math.floor(ri / chordRootWidth);
+				const ri = i;
+				const x = ri % chordRootWidth, y = Math.floor(ri / chordRootWidth);
 				x += 21 * Math.floor(0.166667 * x);
 				//let e = 255;
 				if (upThis.#bufCm[i] !== e) {
@@ -929,8 +929,8 @@ let Cambiare = class extends RootDisplay {
 					ccxt.fillRect((x + 8) << 2, (y + 4) << 2, 3, 3);
 				};
 			} else {
-				let ri = i - chordBreakpoint;
-				let x = ri % chordDetailWidth, y = Math.floor(ri / chordDetailWidth);
+				const ri = i - chordBreakpoint;
+				const x = ri % chordDetailWidth, y = Math.floor(ri / chordDetailWidth);
 				x += 10 * Math.floor(0.058824 * x);
 				//let e = 127;
 				if (upThis.#bufCm[i] !== e) {
@@ -960,7 +960,7 @@ let Cambiare = class extends RootDisplay {
 		if (getDebugState()) {
 			ccxt.clearRect(0, 0, 251, 63);
 			for (let slot = 0; slot <= upThis.device.polyIndexLast; slot ++) {
-				let pX = slot & 31, pY = slot >> 5;
+				const pX = slot & 31, pY = slot >> 5;
 				if (slot + 1 === upThis.device.polyIndexLatest) {
 					ccxt.fillStyle = "#ff0"; // Yellow for the most recently accessed register
 				} else {
@@ -994,7 +994,7 @@ let Cambiare = class extends RootDisplay {
 				ccxt.fillRect(pX << 2, pY << 2, 3, 3);
 			};
 		};
-		let finishNow = (self.performance || self.Date).now();
+		const finishNow = (self.performance || self.Date).now();
 		switch (upThis.eventViewMode) {
 			case 0: {
 				upThis.#sectInfo.events.setTextRaw(`${sum.eventCount}`.padStart(3, "0"));
@@ -1030,7 +1030,7 @@ let Cambiare = class extends RootDisplay {
 		return this.#style;
 	};
 	set style(value) {
-		let upThis = this;
+		const upThis = this;
 		upThis.#style = value;
 		upThis.#redrawNotesInternal(upThis.render(upThis.#clockSource?.currentTime || 0));
 		classOff(upThis.#canvas, [`cambiare-style-block`, `cambiare-style-comb`, `cambiare-style-piano`, `cambiare-style-line`]);
@@ -1040,14 +1040,14 @@ let Cambiare = class extends RootDisplay {
 		if (part >= allocated.ch) {
 			throw(new RangeError("Invalid part number"));
 		};
-		let upThis = this;
+		const upThis = this;
 		return upThis.#chAccent[part] ?? upThis.#accent;
 	};
 	getChMode(part = 0, disableFallback) {
 		if (part >= allocated.ch) {
 			throw(new RangeError("Invalid part number"));
 		};
-		let upThis = this;
+		const upThis = this;
 		if (disableFallback) {
 			return upThis.#chMode[part];
 		} else {
@@ -1077,7 +1077,7 @@ let Cambiare = class extends RootDisplay {
 		this.#clockSource = clockSource;
 	};
 	setFrameTime(frameTime = 20) {
-		let upThis = this;
+		const upThis = this;
 		if (upThis.#renderThread?.constructor) {
 			clearInterval(upThis.#renderThread);
 		};
@@ -1091,11 +1091,11 @@ let Cambiare = class extends RootDisplay {
 		upThis.smoothingDcy = Math.pow(0.75, frameTime / 20);
 	};
 	setMode(mode) {
-		let upThis = this;
+		const upThis = this;
 		upThis.#mode = mode;
 		upThis.#accent = getPresetAccentColour(modeColourPool[mode] || ["fcdaff", "6c007f"], upThis.#scheme);
 		//classOff(upThis.#canvas, modeGlobalClasses);
-		for (let className of upThis.#canvas.classList) {
+		for (const className of upThis.#canvas.classList) {
 			if (className.substring(0, 14) === "cambiare-mode-") {
 				upThis.#canvas.classList.remove(className);
 			};
@@ -1105,9 +1105,9 @@ let Cambiare = class extends RootDisplay {
 		};
 	};
 	setPixelProfile(profileName) {
-		let upThis = this;
+		const upThis = this;
 		if (pixelProfiles[profileName]) {
-			let profileDetails = pixelProfiles[profileName]
+			const profileDetails = pixelProfiles[profileName]
 			upThis.#pixelProfile = profileDetails;
 			if (upThis.#canvas) {
 				upThis.#canvas.style.setProperty("--pcp-font4", `translate(${profileDetails.font4[1]}px, ${profileDetails.font4[0]}px)`);
@@ -1122,21 +1122,21 @@ let Cambiare = class extends RootDisplay {
 		};
 	};
 	setPort(port) {
-		let upThis = this;
+		const upThis = this;
 		classOff(upThis.#canvas, [`cambiare-start0`, `cambiare-start1`, `cambiare-start2`, `cambiare-start3`, `cambiare-start4`, `cambiare-start5`, `cambiare-start6`, `cambiare-start7`]);
 		classOn(upThis.#canvas, [`cambiare-start${port}`]);
 		upThis.#renderPort = port;
 		upThis.#setPortView(false);
 	};
 	setRange(mode) {
-		let upThis = this;
+		const upThis = this;
 		classOff(upThis.#canvas, [`cambiare-port1`, `cambiare-port2`, `cambiare-port4`, `cambiare-compact`]);
 		classOn(upThis.#canvas, [`cambiare-${mode}`]);
 		upThis.#renderRange = parseInt(mode.slice(4)) || 1;
 		upThis.#setPortView(true);
 	};
 	setScheme(scheme = 0) {
-		let upThis = this;
+		const upThis = this;
 		upThis.#scheme = (scheme >= 0 && scheme < 3) ? scheme : 0;
 		upThis.#foreground = ["ffffff", "000000", "ffffff"][upThis.#scheme];
 		classOff(upThis.#canvas, [`cambiare-scheme-light`, `cambiare-scheme-luma`]);
@@ -1152,7 +1152,7 @@ let Cambiare = class extends RootDisplay {
 				continue;
 			};
 			if (upThis.#chAccent[part]) {
-				let targetColour = modeColourPool[upThis.#chMode[part]];
+				const targetColour = modeColourPool[upThis.#chMode[part]];
 				if (targetColour) {
 					upThis.#chAccent[part] = getPresetAccentColour(targetColour, upThis.#scheme);
 				};
@@ -1168,7 +1168,7 @@ let Cambiare = class extends RootDisplay {
 				break;
 			};
 			case "meta" : {
-				let mappedFamily = fontFamily;
+				const mappedFamily = fontFamily;
 				if (mappedFamily === "Follow UI") {
 					mappedFamily = "A Random Invalid Font Name To Make It Fall Back";
 				};
@@ -1182,10 +1182,10 @@ let Cambiare = class extends RootDisplay {
 		};
 	};
 	setChMode(part, mode) {
-		let upThis = this;
+		const upThis = this;
 		upThis.#chMode[part] = mode;
-		let partViewer = upThis.#sectPart[part >> 4][part & 15];
-		for (let className of partViewer.root.classList) {
+		const partViewer = upThis.#sectPart[part >> 4][part & 15];
+		for (const className of partViewer.root.classList) {
 			if (className.substring(0, 10) === "part-mode-") {
 				partViewer.root.classList.remove(className);
 			};
@@ -1195,13 +1195,13 @@ let Cambiare = class extends RootDisplay {
 		};
 	};
 	#setPortView(canvasUpdate) {
-		let upThis = this;
-		let range = upThis.#renderRange, port = upThis.#renderPort;
+		const upThis = this;
+		const range = upThis.#renderRange, port = upThis.#renderPort;
 		upThis.#sectPart.forEach((e, i) => {
 			if (i >= port && i < (port + range)) {
 				classOn(e.root, [`port-active`]);
-				let index = i - port;
-				let {l, t} = portPos[index * (4 / range)];
+				const index = i - port;
+				const {l, t} = portPos[index * (4 / range)];
 				e.root.style.top = `${t}px`;
 				e.root.style.left = `${l}px`;
 				e.forEach((e, i) => {
@@ -1241,7 +1241,7 @@ let Cambiare = class extends RootDisplay {
 		const upThis = this, stratId = wallpaperStrategies.indexOf(strategy);
 		if (stratId >= 0) {
 			const wallClassList = upThis.#sectExtra.wall.classList;
-			for (let strategyCurrent of wallpaperStratClasses) {
+			for (const strategyCurrent of wallpaperStratClasses) {
 				if (wallClassList.contains(strategyCurrent)) {
 					wallClassList.remove(strategyCurrent);
 				};
@@ -1261,14 +1261,14 @@ let Cambiare = class extends RootDisplay {
 		this.#sectExtra.wall.style.backgroundImage = url.length > 6 ? `url(${JSON.stringify(url)})` : "";
 	};
 	attach(attachElement) {
-		let upThis = this;
+		const upThis = this;
 		upThis.#visualiser = attachElement;
 		// Insert a container
-		let containerElement = createElement("div", ["cambiare-container"]);
+		const containerElement = createElement("div", ["cambiare-container"]);
 		attachElement.appendChild(containerElement);
 		upThis.#container = containerElement;
 		// Insert the canvas
-		let canvasElement = createElement("div", [/*"debug",*/ "cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-comb"]);
+		const canvasElement = createElement("div", [/*"debug",*/ "cambiare-canvas", "cambiare-port1", "cambiare-start0", "cambiare-style-comb"]);
 		containerElement.appendChild(canvasElement);
 		upThis.#canvas = canvasElement;
 		// Start the resizer
@@ -1395,11 +1395,11 @@ let Cambiare = class extends RootDisplay {
 		// Begin inserting the channel section
 		upThis.#sectPart.root = createElement("div", ["sect-part"]);
 		for (let port = 0; port < (allocated.ch >> 4); port ++) {
-			let startCh = port << 4;
+			const startCh = port << 4;
 			upThis.#sectPart[port] = [];
 			upThis.#sectPart[port].root = createElement("div", [`boundary`, `part-port-${port}`]);
 			for (let part = 0; part < 16; part ++) {
-				let dispPart = (startCh | part) + 1;
+				const dispPart = (startCh | part) + 1;
 				if (dispPart >= 100) {
 					dispPart = `${Math.floor(dispPart / 10).toString(16)}${dispPart % 10}`;
 				} else {
@@ -1424,7 +1424,7 @@ let Cambiare = class extends RootDisplay {
 					"extVis": createElement("canvas", [`field`], {l: 207, t: 1}).getContext("2d"),
 					ccUpdate: false
 				};
-				let e = upThis.#sectPart[port][part];
+				const e = upThis.#sectPart[port][part];
 				leftCache.forEach((e0) => {
 					e.notes.appendChild(createElement("span", [`field`, `part-csplit`], {l: e0}));
 				});
@@ -1471,7 +1471,7 @@ let Cambiare = class extends RootDisplay {
 				e.number.addEventListener("contextmenu", (ev) => {
 					ev.preventDefault();
 					ev.stopImmediatePropagation();
-					let ch = (port << 4) | part;
+					const ch = (port << 4) | part;
 					upThis.#hideCh[ch] = +!upThis.#hideCh[ch];
 					//console.debug(upThis.#hideCh[ch]);
 					[classOff, classOn][upThis.#hideCh[ch]](e.root, ['part-hidden']);
@@ -1503,11 +1503,11 @@ let Cambiare = class extends RootDisplay {
 			upThis.setMode(ev.data);
 		});
 		upThis.addEventListener("mastervolume", (ev) => {
-			let cramVolume = Math.round(ev.data * 100) / 100;
+			const cramVolume = Math.round(ev.data * 100) / 100;
 			upThis.#sectInfo.volume.setTextRaw(`${Math.floor(cramVolume)}.${`${Math.floor((cramVolume % 1) * 100)}`.padStart(2, "0")}`);
 		});
 		upThis.addEventListener("tempo", (ev) => {
-			let cramTempo = Math.round(ev.data * 100);
+			const cramTempo = Math.round(ev.data * 100);
 			upThis.#sectInfo.tempo.setTextRaw(`${Math.floor(cramTempo / 100)}.${`${Math.floor(cramTempo % 100)}`.padStart(2, "0")}`);
 		});
 		upThis.addEventListener("tsig", (ev) => {
@@ -1523,7 +1523,7 @@ let Cambiare = class extends RootDisplay {
 			};*/
 		});
 		upThis.addEventListener("voice", ({data}) => {
-			let voice = upThis.getCachedChVoice(data.part, true),
+			const voice = upThis.getCachedChVoice(data.part, true),
 			voicePrimitives = upThis.getChPrimitives(data.part, true),
 			target = upThis.#sectPart[data.part >> 4][data.part & 15];
 			//console.debug(voice.refreshFailure);
@@ -1556,7 +1556,7 @@ let Cambiare = class extends RootDisplay {
 			//console.debug(data);
 		});
 		upThis.addEventListener("pitch", (ev) => {
-			let {part, pitch} = ev.data;
+			const {part, pitch} = ev.data;
 			upThis.#sectPart[part >> 4][part & 15].notes.style.transform = `translateX(${pitch / 1.28}%)`;
 		});
 		upThis.addEventListener("efxreverb", (ev) => {
@@ -1628,7 +1628,7 @@ let Cambiare = class extends RootDisplay {
 			};
 		});
 		upThis.addEventListener("partefxtoggle", (ev) => {
-			let {part, active} = ev.data;
+			const {part, active} = ev.data;
 			if (part >= allocated.ch) {
 				throw(new Error("HORNI"));
 				console.error(`Setting part ${part + 1} as ${active ? "" : "in"}active is invalid.`);
@@ -1639,25 +1639,26 @@ let Cambiare = class extends RootDisplay {
 			]);
 		});
 		upThis.addEventListener("channeltoggle", (ev) => {
-			let {part, active} = ev.data;
+			const {part, active} = ev.data;
 			([classOff, classOn][active ? 1 : 0])(upThis.#sectPart[part >> 4][part & 15].root, [
 				`part-active`
 			]);
 		});
 		upThis.addEventListener("partfocus", (ev) => {
 			if (upThis.#underlinedCh < allocated.ch) {
-				let lastCh = upThis.#sectPart[upThis.#underlinedCh >> 4][upThis.#underlinedCh & 15].number;
+				const lastCh = upThis.#sectPart[upThis.#underlinedCh >> 4][upThis.#underlinedCh & 15].number;
 				classOff(lastCh, ["part-focus"]);
 			};
-			let part = ev.data;
+			const part = ev.data;
 			if (part < allocated.ch) {
-				let newCh = upThis.#sectPart[part >> 4][part & 15].number;
+				const newCh = upThis.#sectPart[part >> 4][part & 15].number;
 				classOn(newCh, ["part-focus"]);
 				upThis.#underlinedCh = part;
 			};
 		});
 		upThis.addEventListener("metacommit", (ev) => {
-			let meta = ev.data, isHandled = false;
+			const meta = ev.data;
+			let isHandled = false;
 			//console.debug(meta);
 			if (upThis.#metaAmend && meta.type === upThis.#metaType && upThis.#metaLastLine) {
 				// Amend the last line
@@ -1677,7 +1678,7 @@ let Cambiare = class extends RootDisplay {
 				isHandled = true;
 			} else if ((meta.data?.length || typeof meta.data === "object") && metaBlocklist.indexOf(meta.type) === -1) {
 				// Commit a new line
-				let metaLineRoot = createElement("div", ["meta-line"]),
+				const metaLineRoot = createElement("div", ["meta-line"]),
 				metaLineType = createElement("span", ["field", "field-key", "meta-type"], {i: metaNames[meta.type] || meta.type});
 				if (meta.mask) {
 					metaLineType.style.display = "none";
@@ -1693,11 +1694,11 @@ let Cambiare = class extends RootDisplay {
 						break;
 					};
 					case "OSysMeta": {
-						let data = meta?.data,
-						text;
+						const data = meta?.data;
+						let text;
 						switch (meta?.msg) {
 							case "part.rename": {
-								let chVoiceId = upThis.device?.getVoice(... upThis.getCachedChVoice(data.part).sid, upThis.device?.getChMode(0)).name;
+								const chVoiceId = upThis.device?.getVoice(... upThis.getCachedChVoice(data.part).sid, upThis.device?.getChMode(0)).name;
 								text = `CH${data.part + 1} was renamed from "${upThis.getMapped(chVoiceId)}" (${chVoiceId}) to "${upThis.device?.getChCvnString(0)}".`;
 								break;
 							};
@@ -1710,8 +1711,8 @@ let Cambiare = class extends RootDisplay {
 					};
 					case "YStyleId": {
 						// Readable Yamaha device-specific style patterns
-						let styleName = upThis.styles?.getStyle(upThis.device?.modelEx?.xg.styleDev ?? 0, upThis.device?.modelEx?.xg.styleId ?? 0),
-						text;
+						const styleName = upThis.styles?.getStyle(upThis.device?.modelEx?.xg.styleDev ?? 0, upThis.device?.modelEx?.xg.styleId ?? 0);
+						let text;
 						if (styleName) {
 							text = styleName.full;
 						} else {
@@ -1749,7 +1750,7 @@ let Cambiare = class extends RootDisplay {
 		});
 		upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
 		upThis.#metaGcThread = setInterval(async () => {
-			let timeNow = upThis.clockSource.now();
+			const timeNow = upThis.clockSource.now();
 			if (upThis.#metaGcScheduled === 0) {
 				return;
 			};
@@ -1792,7 +1793,7 @@ let Cambiare = class extends RootDisplay {
 		upThis.#setPortView(true);
 	};
 	detach() {
-		let upThis = this;
+		const upThis = this;
 		self.removeEventListener("resize", upThis.#resizer);
 		upThis.#canvas.remove();
 		upThis.#canvas = undefined;
@@ -1804,7 +1805,7 @@ let Cambiare = class extends RootDisplay {
 	};
 	constructor(attachElement, clockSource) {
 		super(new OctaviaDevice, 0.1, 0.75);
-		let upThis = this;
+		const upThis = this;
 		upThis.#resizer = upThis.#resizerSrc.bind(this);
 		upThis.#renderer = upThis.#rendererSrc.bind(this);
 		upThis.#chAccent.fill(null);
@@ -1834,21 +1835,21 @@ let Cambiare = class extends RootDisplay {
 			classOff(upThis.#sectInfo.inscon4, ["field-active"]);
 			try {
 				// Remove all meta
-				let list = upThis.#sectMeta.view.children;
+				const list = upThis.#sectMeta.view.children;
 				for (let pointer = list.length - 1; pointer >= 0; pointer --) {
 					list[pointer].remove();
 				};
 				upThis.#sectMeta.view.style.transform = `translateX(0px) translateY(140px)`;
 				// Reset channels
 				for (let part = 0; part < allocated.ch; part ++) {
-					let e = upThis.#sectPart[part >> 4][part & 15];
+					const e = upThis.#sectPart[part >> 4][part & 15];
 					classOff(e.root, [
 						`part-active`
 					]);
 					classOff(e.number, [
 						`part-efx`, `part-focus`
 					]);
-					for (let className of e.root.classList) {
+					for (const className of e.root.classList) {
 						if (className.substring(0, 10) === "part-mode-") {
 							e.root.classList.remove(className);
 						};
@@ -1869,12 +1870,12 @@ let Cambiare = class extends RootDisplay {
 			//console.debug(data);
 		});*/
 		upThis.addEventListener("chmode", ({data}) => {
-			let {part, mode} = data;
+			const {part, mode} = data;
 			/* classOn(upThis.#sectPart[part >> 4][part & 15]?.root, [
 				`part-mode-${mode}`
 			]); */
 			upThis.setChMode(part, mode);
-			let resultColour = modeColourPool[mode];
+			const resultColour = modeColourPool[mode];
 			if (resultColour) {
 				upThis.#chAccent[part] = getPresetAccentColour(resultColour, upThis.#scheme);
 			};

@@ -30,7 +30,7 @@ HTMLElement.prototype.$a = function (selector) {
 };
 self.Alpine = Alpine;
 
-let createDropDown = function (mountedElement, opt = {}) {
+const createDropDown = function (mountedElement, opt = {}) {
 	/*
 	activeSlot: number
 	*/
@@ -288,8 +288,8 @@ let deriveFactor = (baseFactor, baseTime, newTime) => {
 };
 
 let useMidiBus = false;
-let audioFilePlayer = $e("#audioFilePlayer");
-let timeMuxer = {};
+const audioFilePlayer = $e("#audioFilePlayer");
+const timeMuxer = {};
 Object.defineProperty(timeMuxer, "currentTime", {
 	get: () => {
 		if (useMidiBus) {
@@ -355,7 +355,7 @@ visualiser.addEventListener("banklevel", (ev) => {
 });
 
 const srcPaths = ['../../midi-data/collection/octavia/', './demo/'];
-let getBlobFrom = async function (filename) {
+const getBlobFrom = async function (filename) {
 	let i = 0;
 	while (i < srcPaths.length) {
 		let e = srcPaths[i];
@@ -455,8 +455,8 @@ self.gEcMode = (ecMode) => {
 	visualiser.useElementCount = ecMode;
 	Alpine.store("useElementCount", ecMode);
 };
-let fileTooltip = $e("div#show-wallpaper-tooltip"),
-schemeCat = 0, schemeSubCat = 0, schemeGroup, bgChosen, bgColour, bgOnDevice;
+const fileTooltip = $e("div#show-wallpaper-tooltip");
+let schemeCat = 0, schemeSubCat = 0, schemeGroup, bgChosen, bgColour, bgOnDevice;
 const setWallpaper = async (invokeButton) => {
 	if (schemeGroup === "imageLuma" || schemeGroup === "imageColour") {
 		if (typeof bgChosen[2]?.length === "number") {
@@ -647,7 +647,7 @@ self.formatTime = function (seconds, withMs = false) {
 	return result;
 };
 
-let demoPool = new SheetData();
+const demoPool = new SheetData();
 (async () => {
 	visualiser.loadEfx(await(await fetch(`../../midi-db/misc/efxId.tsv`)).text());
 	visualiser.loadMapPaths([
@@ -682,11 +682,11 @@ let demoPool = new SheetData();
 
 document.body.addEventListener("keydown", async (ev) => {
 	let preventKey = true;
-	let {
+	const {
 		metaKey, ctrlKey, altKey, shiftKey,
 		location, key
 	} = ev;
-	let portSwitch = "12345678".indexOf(key),
+	const portSwitch = "12345678".indexOf(key),
 	modeSwitch = "[]\\".indexOf(key);
 	if (portSwitch > -1) {
 		gPort(portSwitch);
@@ -730,8 +730,8 @@ document.body.addEventListener("keydown", async (ev) => {
 			};
 			case "z": {
 				// Show time signature
-				let roundedBeat = Math.floor(visualiser.noteBeat * 2) / 2;
-				let roundedTime = (visualiser.noteBar * visualiser.getTimeSig()[0] + roundedBeat + visualiser.noteOffset) * 60 / visualiser.getTempo();
+				const roundedBeat = Math.floor(visualiser.noteBeat * 2) / 2;
+				const roundedTime = (visualiser.noteBar * visualiser.getTimeSig()[0] + roundedBeat + visualiser.noteOffset) * 60 / visualiser.getTempo();
 				//visualiser.getTimeSig()
 				console.info(`Requested rounded note progress: ${visualiser.noteBar + 1}/${roundedBeat + 1}, ${Math.round(roundedTime * 1000) / 1000}s (${Math.round(timeMuxer.currentTime * 1000) / 1000}s)`);
 				break;
@@ -756,16 +756,16 @@ getBridge().addEventListener("message", function (ev) {
 
 (async () => {
 	try {
-		let commitInfo = await (await fetch("../latest.json")).json();
+		const commitInfo = await (await fetch("../latest.json")).json();
 		console.info(`Latest commit: ${commitInfo.hash}\nCommit time: %o`, new Date(commitInfo.time));
 	} catch (err) {
 		console.info(`Development build detected.`);
 	};
 	try {
-		let bundledBackgrounds = await (await fetch("./bg/defaults.json")).json();
-		let bgData = [];
+		const bundledBackgrounds = await (await fetch("./bg/defaults.json")).json();
+		const bgData = [];
 		for (let i = 0; i < bundledBackgrounds.length; i ++) {
-			let e = bundledBackgrounds[i];
+			const e = bundledBackgrounds[i];
 			//console.debug(e);
 			bgData.push([`#${i + 1}`, `Authored by ${e[0].artist}, ${e[1].artist}.`, e]);
 		};
