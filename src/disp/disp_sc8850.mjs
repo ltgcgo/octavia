@@ -265,7 +265,7 @@ let Sc8850Display = class extends FocusedPartDisplay {
 						};
 					});
 				});
-				upThis.font56.getStr(`${upThis.device?.getChPrimitive(upThis.part, 0, true)}`.padStart(3, "0")).forEach((e0, i0) => {
+				upThis.font56.getStr(`${upThis.device?.getChPrimitive(upThis.part, 0, true) + 1}`.padStart(3, "0")).forEach((e0, i0) => {
 					let offsetX = i0 * 6 + 43;
 					e0.forEach((e1, i1) => {
 						let pX = (i1 % 5) + offsetX, pY = Math.floor(i1 / 5) + 2;
@@ -578,9 +578,9 @@ let Sc8850Display = class extends FocusedPartDisplay {
 				};
 			};
 			// EFX and bank?
-			if (upThis.device.getChEffectSink(upThis.part)) {
-				let cx = 153, cy = 19;
-				upThis.sysBm.getBm("efxOn")?.render((e, x, y) => {
+			{
+				const cx = 153, cy = 19;
+				upThis.sysBm.getBm(upThis.device.getChEffectSink(upThis.part) > 0 ? "efxOn" : "efxOff")?.render((e, x, y) => {
 					if (e) {
 						upThis.#nmdb[cx + x + (y + cy) * totalWidth] = 255;
 					};

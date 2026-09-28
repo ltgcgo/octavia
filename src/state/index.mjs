@@ -47,6 +47,9 @@ import {
 	bufferToBracketed
 } from "./utils.js";
 import {
+	decode7bitUint
+} from "./utils/bufferIo.mjs";
+import {
 	contrastCache
 } from "../disp/colour.js"
 import {ChordDict} from "../chord/index.mjs";
@@ -1725,13 +1728,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						for (let i = 0; i <= bulkOffset; i ++) {
 							msgPs[i] = msg[i];
 						};
-						this.#seXg.run(msgPs, track, id & 15);
+						this.#seXg.run(msgPs, track, id & 15, id >> 4);
 					};
 					break;
 				};
 				case 1: {
 					// parameter sets
-					this.#seXg.run(msg, track, id & 15);
+					this.#seXg.run(msg, track, id & 15, id >> 4);
 					break;
 				};
 				case 2: {
@@ -4660,6 +4663,52 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			});
 			/*getDebugState() && */console.debug(`YMCS chord data: [${ChordDict.stringify(data)}${fixed ? " (fixed)" : ""}] - ${bufferToDHex(msg)}`);
 		});
+		upThis.#seXg.add([95], (msg, track, id, type) => {
+			switch (type) {
+				case 0: {
+					// QY EPROM dump
+					console.debug(`Wrote data!`);
+					break;
+				};
+				case 1: {
+					const param = ((msg[0] & 127) << 7) | (msg[1] & 127);
+					//console.debug(param);
+					switch (param) {
+						case 128: {
+							// QY EPROM base pointer
+							if (msg.length < 5) {
+								console.warn(`QY EPROM jump offset length insufficient.`);
+								return;
+							};
+							const targetOffset = decode7bitUint(msg.subarray(2, 5));
+							console.debug(`QY EPROM jumped to: 0x${targetOffset.toString(16).padStart(6, "0")}.`);
+							if (upThis.eprom) {
+								upThis.eprom.offset = targetOffset;
+							};
+							break;
+						};
+						case 384: {
+							// QY EPROM write validation/checksum
+							if (msg.length < 8) {
+								console.warn(`QY EPROM validation length insufficient.`);
+								return;
+							};
+							const targetOffset = decode7bitUint(msg.subarray(2, 5));
+							const targetSize = decode7bitUint(msg.subarray(5, 8));
+							console.debug(`QY EPROM requested validation: Wrote to 0x${targetOffset.toString(16).padStart(6, "0")}, size 0x${targetSize.toString(16).padStart(6, "0")}.`);
+							break;
+						};
+						default: {
+							console.debug(`Unknown parameter: ${param} (${bufferToDHex(msg)}).\n`, msg);
+						};
+					};
+					break;
+				};
+				default: {
+					console.warn(`Invalid device type ${id.toString(16)}.`);
+				};
+			};
+		});
 		let sysExDrumWrite = function (drumId, note, key, value) {};
 		let sysExDrumsY = function (drumId, msg) {
 			// The Yamaha XG-style drum setup
@@ -4827,9 +4876,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// XG drum setup 8
 			sysExDrumsY(7, msg);
 		});
-		// MU1000/2000 EPROM write
+		// MU EPROM write
 		this.#seXg.add([89, 0], (msg, track, id) => {
-			// EPROM trail write
+			// MU EPROM trail write
 			if (upThis.eprom) {
 				let length = msg[0];
 				let addr = (msg[1] << 14) + (msg[2] << 7) + msg[3] + (upThis.eprom.offset || 0);
@@ -4848,14 +4897,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				});
 			};
 		}).add([89, 1], (msg, track, id) => {
-			// EPROM base pointer jump
+			// MU EPROM base pointer jump
 			let addr = (msg[0] << 21) + (msg[1] << 14) + (msg[2] << 7) + msg[3];
 			getDebugState() && console.debug(`MU1000 EPROM jump to 0x${addr.toString(16).padStart(6, "0")}.`);
 			if (upThis.eprom) {
 				upThis.eprom.offset = addr;
 			};
 		}).add([89, 2], (msg, track, id) => {
-			// EPROM bulk write
+			// MU EPROM bulk write
 			// The first byte always seem to be zero
 			if (upThis.eprom) {
 				let addr = (msg[0] << 21) + (msg[1] << 14) + (msg[2] << 7) + msg[3] + (upThis.eprom.offset || 0);
@@ -4875,6 +4924,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			};
 		}).add([89, 3], (msg, track, id) => {
 			// Unknown instruction
+			console.debug(`Unknown MU EPROM instruction.\n`, msg);
 		});
 		// TG300 SysEx section, the parent of XG
 		this.#seXg.add([39, 48], (msg, track, id) => {

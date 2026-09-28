@@ -382,6 +382,30 @@ const runLengthSubtract = (size, threshold) => {
 		return 0;
 	};
 };
+
+/** @param {Uint8Array|Uint8ClampedArray} buffer
+* @param {boolean|null} isLittleEndian
+* @returns {number} */
+const decode7bitUint = function (buffer, isLittleEndian = false) {
+	if (buffer?.BYTES_PER_ELEMENT !== 1) {
+		throw(new TypeError(`Input buffer must be one of the 8-bit typed arrays.`));
+	};
+	if (!(buffer?.length <= 4)) {
+		throw(new RangeError(`Length of the input buffer must be between 0 and 4.`));
+	};
+	let decoded = 0;
+	if (isLittleEndian) {
+		for (let i = 0; i < buffer.length; i ++) {
+			decoded |= (buffer[i] & 127) << (i * 7);
+		};
+	} else {
+		for (let i = 0; i < buffer.length; i ++) {
+			decoded = (decoded << 7) | (buffer[i] & 127);
+		};
+	};
+	return decoded;
+};
+
 /** @param {Uint8Array|Uint8ClampedArray} buffer */
 const encodeRunLength = function (buffer, repeatThreshold = 4) {
 	if (!(Number.isSafeInteger(repeatThreshold) && repeatThreshold >= 2)) {
@@ -458,5 +482,6 @@ export {
 	bitFieldUnpack,
 	bufferFrom,
 	bufferTo,
-	bufferCarveOut
+	bufferCarveOut,
+	decode7bitUint
 };
