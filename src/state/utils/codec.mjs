@@ -1,6 +1,25 @@
 "use strict";
 
 const BinaryStreamCodecs = class BinaryStreamCodecs {
+	/** Stream from Yamaha 8-on-7 bytes. Does not allocate the full decoded buffer.
+	* 
+	* This schema is not as versatile as Korg 8-on-7, as it requires the data size to be an integer multiple of 8.
+	* @param {Uint8Array | Uint8ClampedArray} buffer */
+	static *decodeYamaha(buffer) {
+		const buffered = new Uint8Array(8);
+		for (let i = 0; i < buffer.length; i ++) {
+			const e = buffer[i];
+			if ((i & 7) === 7) {
+				// Overlay byte.
+				for (let i1 = 0; i1 < 7; i1 ++) {
+					yield buffered[i1] | (e >> (6 - i1) & 1) << 7;
+				};
+			} else {
+				// Data byte.
+				buffered[i & 7] = e;
+			};
+		};
+	};
 	/** Stream from Korg 8-on-7 bytes. Does not allocate the full decoded buffer.
 	* @param {Uint8Array | Uint8ClampedArray} buffer */
 	static *decodeKorg(buffer) {
@@ -38,7 +57,7 @@ const BinaryStreamCodecs = class BinaryStreamCodecs {
 const BinaryBufferCodecs = class BinaryBufferCodecs {
 	/** Decode from Yamaha 8-on-7 bytes to raw buffer. Allocates the full decoded buffer.
 	* 
-	* This schema is not as versatile as Korg 8-on-7.
+	* This schema is not as versatile as Korg 8-on-7, as it requires the data size to be an integer multiple of 8.
 	* @param {Uint8Array | Uint8ClampedArray} inBuffer */
 	static decodeYamaha(inBuffer) {
 		const outBuffer = new Uint8Array((inBuffer.length * 7) >>> 3);
