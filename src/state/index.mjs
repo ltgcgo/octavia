@@ -4667,7 +4667,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			switch (type) {
 				case 0: {
 					// QY EPROM dump
-					console.debug(`Wrote data!`);
+					const targetOffset = decode7bitUint(msg.subarray(0, 3));
+					console.debug(`QY EPROM received data: ${msg.length - 3} B.`);
 					break;
 				};
 				case 1: {

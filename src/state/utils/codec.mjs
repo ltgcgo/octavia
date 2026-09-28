@@ -1,7 +1,7 @@
 "use strict";
 
 const BinaryStreamCodecs = class BinaryStreamCodecs {
-	/** Stream from KORG 8-on-7 bytes. Does not allocate the full decoded buffer.
+	/** Stream from Korg 8-on-7 bytes. Does not allocate the full decoded buffer.
 	* @param {Uint8Array | Uint8ClampedArray} buffer */
 	static *decodeKorg(buffer) {
 		let overlayByte = 0;
@@ -18,7 +18,7 @@ const BinaryStreamCodecs = class BinaryStreamCodecs {
 			};
 		};
 	};
-	/** Encode from raw buffer to KORG 8-on-7 bytes. Does not allocate the full decoded buffer.
+	/** Encode from raw buffer to Korg 8-on-7 bytes. Does not allocate the full decoded buffer.
 	* @param {Uint8Array | Uint8ClampedArray} inBuffer */
 	static *encodeKorg(inBuffer) {
 		for (let i = 0; i < inBuffer.length; i += 7) {
@@ -36,7 +36,27 @@ const BinaryStreamCodecs = class BinaryStreamCodecs {
 	};
 };
 const BinaryBufferCodecs = class BinaryBufferCodecs {
-	/** Decode from KORG 8-on-7 bytes to raw buffer. Allocates the full decoded buffer.
+	/** Decode from Yamaha 8-on-7 bytes to raw buffer. Allocates the full decoded buffer.
+	* 
+	* This schema is not as versatile as Korg 8-on-7.
+	* @param {Uint8Array | Uint8ClampedArray} inBuffer */
+	static decodeYamaha(inBuffer) {
+		const outBuffer = new Uint8Array((inBuffer.length * 7) >>> 3);
+		for (let i = 0; i < inBuffer.length; i ++) {
+			const e = inBuffer[i], chunkOffset = (i >>> 3) * 7;
+			if ((i & 7) === 7) {
+				// Overlay byte.
+				for (let i1 = 0; i1 < 7; i1 ++) {
+					outBuffer[chunkOffset + i1] |= (e >> (6 - i1) & 1) << 7;
+				};
+			} else {
+				// Data byte.
+				outBuffer[chunkOffset + (i & 7)] = e;
+			};
+		};
+		return outBuffer;
+	};
+	/** Decode from Korg 8-on-7 bytes to raw buffer. Allocates the full decoded buffer.
 	* @param {Uint8Array | Uint8ClampedArray} inBuffer */
 	static decodeKorg(inBuffer) {
 		const outBuffer = new Uint8Array((inBuffer.length * 7) >>> 3);
@@ -55,7 +75,7 @@ const BinaryBufferCodecs = class BinaryBufferCodecs {
 		};
 		return outBuffer;
 	};
-	/** Encode from raw buffer to KORG 8-on-7 bytes. Allocates the full decoded buffer.
+	/** Encode from raw buffer to Korg 8-on-7 bytes. Allocates the full decoded buffer.
 	* @param {Uint8Array | Uint8ClampedArray} inBuffer */
 	static encodeKorg(inBuffer) {
 		const outBuffer = new Uint8Array(Math.ceil((inBuffer.length << 3) / 7));
