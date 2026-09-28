@@ -47,9 +47,6 @@ import {
 	bufferToBracketed
 } from "./utils.js";
 import {
-	decode7bitUint
-} from "./utils/bufferIo.mjs";
-import {
 	contrastCache
 } from "../disp/colour.js"
 import {ChordDict} from "../chord/index.mjs";
@@ -57,6 +54,9 @@ import {
 	MIDINakedEvent,
 	MIDIUMPEvent,
 } from "../micc/index.mjs";
+import {
+	decode7bitUint
+} from "./utils/bufferIo.mjs";
 import {
 	BinaryBufferCodecs,
 	BinaryStreamCodecs,
@@ -4666,9 +4666,17 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.#seXg.add([95], (msg, track, id, type) => {
 			switch (type) {
 				case 0: {
-					// QY EPROM dump
+					// QY EPROM write
 					const targetOffset = decode7bitUint(msg.subarray(0, 3));
-					console.debug(`QY EPROM received data: ${msg.length - 3} B.`);
+					const originalData = BinaryBufferCodecs.decodeYamaha(msg.subarray(3));
+					if (upThis.eprom) {
+						if (typeof upThis.eprom.offset !== "number") {
+							console.debug(`QY EPROM write failed: Invalid offset.`);
+						};
+						const trueOffset = upThis.eprom.offset + targetOffset;
+						//console.debug(`QY EPROM write: 0x${trueOffset.toString(16).padStart(6, "0")}, ${originalData.length} B.`);
+						upThis.eprom.data.set(originalData, trueOffset);
+					};
 					break;
 				};
 				case 1: {
@@ -4696,7 +4704,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							};
 							const targetOffset = decode7bitUint(msg.subarray(2, 5));
 							const targetSize = decode7bitUint(msg.subarray(5, 8));
-							console.debug(`QY EPROM requested validation: Wrote to 0x${targetOffset.toString(16).padStart(6, "0")}, size 0x${targetSize.toString(16).padStart(6, "0")}.`);
+							console.debug(`QY EPROM requested validation: Finished writing to 0x${targetOffset.toString(16).padStart(6, "0")}, size 0x${targetSize.toString(16).padStart(6, "0")}.`);
 							break;
 						};
 						default: {

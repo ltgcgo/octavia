@@ -6,6 +6,9 @@ const BinaryStreamCodecs = class BinaryStreamCodecs {
 	* This schema is not as versatile as Korg 8-on-7, as it requires the data size to be an integer multiple of 8.
 	* @param {Uint8Array | Uint8ClampedArray} buffer */
 	static *decodeYamaha(buffer) {
+		if (buffer.length & 7 !== 0) {
+			console.warn(`Length of the input buffer is not a multiple of 8.`);
+		};
 		const buffered = new Uint8Array(8);
 		for (let i = 0; i < buffer.length; i ++) {
 			const e = buffer[i];
@@ -60,6 +63,9 @@ const BinaryBufferCodecs = class BinaryBufferCodecs {
 	* This schema is not as versatile as Korg 8-on-7, as it requires the data size to be an integer multiple of 8.
 	* @param {Uint8Array | Uint8ClampedArray} inBuffer */
 	static decodeYamaha(inBuffer) {
+		if (inBuffer.length & 7 !== 0) {
+			console.warn(`Length of the input buffer is not a multiple of 8.`);
+		};
 		const outBuffer = new Uint8Array((inBuffer.length * 7) >>> 3);
 		for (let i = 0; i < inBuffer.length; i ++) {
 			const e = inBuffer[i], chunkOffset = (i >>> 3) * 7;
