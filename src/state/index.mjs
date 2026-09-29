@@ -4669,12 +4669,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					// QY EPROM write
 					const targetOffset = decode7bitUint(msg.subarray(0, 3));
 					const originalData = BinaryBufferCodecs.decodeYamaha(msg.subarray(3));
+					//console.debug(`QY EPROM write: 0x${trueOffset.toString(16).padStart(6, "0")}, ${originalData.length} B.`);
+					//console.debug(`QY EPROM write: ${originalData.length} B.`);
 					if (upThis.eprom) {
 						if (typeof upThis.eprom.offset !== "number") {
 							console.debug(`QY EPROM write failed: Invalid offset.`);
 						};
 						const trueOffset = upThis.eprom.offset + targetOffset;
-						//console.debug(`QY EPROM write: 0x${trueOffset.toString(16).padStart(6, "0")}, ${originalData.length} B.`);
 						upThis.eprom.data.set(originalData, trueOffset);
 					};
 					break;

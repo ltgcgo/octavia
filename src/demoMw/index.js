@@ -83,6 +83,7 @@ const inputConv = function (ev) {
 	try {
 		for (const newEvent of pruneObjects(MICCInternalsSMF.parseRawEvents(ev.data))) {
 			newEvent.port = inPortMap[ev.target.id];
+			newEvent.track = newEvent.port + 240;
 			const fakeOldEvent = midiNaked2ColxiAlt(newEvent);
 			midiLine.postMessage(fakeOldEvent);
 			switch (newEvent.type) {
