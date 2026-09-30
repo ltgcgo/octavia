@@ -6,6 +6,9 @@ deno.lock
 dist/*.js
 dist/*.gz
 dist/*.br
+dist/**/*.js
+dist/**/*.gz
+dist/**/*.br
 test/caches
 ghp/sitemap.xml
 jsr/deno.json

@@ -1,6 +1,7 @@
 #!/bin/bash
+rm test/caches 2>/dev/null
+ln -s ../dist/caches test/caches
 cd test/js
-ln -fs ../dist/caches ../caches
 ls -1 ../../dist/*.mjs | while IFS= read -r file; do
 	ln -s "$file" 2>/dev/null
 	ln -s "$file".map 2>/dev/null
