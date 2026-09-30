@@ -22,6 +22,10 @@ ls -1 src | while IFS= read -r entry; do
 done
 sleep 1s
 echo "Starting..."
-esbuild --log-level=$logLevel --log-limit=0 --format=esm --splitting --bundle src/*/index.js --entry-names="bundle/[dir]" --chunk-names="caches/[hash]" --charset=utf8 --keep-names --preserve-symlinks --loader:.htm=text --loader:.css=text --loader:.svg=text --loader:.wasm=binary --outdir=dist ${2:---minify-whitespace --minify-syntax --sourcemap --watch} $3
+defaultBuild='--minify-whitespace --minify-syntax --sourcemap'
+if [ -t 0 ]; then
+	defaultBuild='--minify --sourcemap --watch'
+fi
+esbuild --log-level=$logLevel --log-limit=0 --format=esm --splitting --bundle src/*/index.js --entry-names="bundle/[dir]" --chunk-names="caches/[hash]" --charset=utf8 --keep-names --preserve-symlinks --loader:.htm=text --loader:.css=text --loader:.svg=text --loader:.wasm=binary --outdir=dist ${1:-${defaultBuild}} $2
 #cat proxy/${1:-default}.js
 exit

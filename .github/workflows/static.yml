@@ -18,6 +18,7 @@ on:
       - "sh/generate.sh"
       - "sh/ghGenerate.sh"
       - "sh/live.sh"
+      - "sh/liveBulk.sh"
       - "sh/sitemap.sh"
       - "sh/srcMap.sh"
       - "src/**"
