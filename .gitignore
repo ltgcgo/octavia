@@ -10,6 +10,10 @@ dist/**/*.js
 dist/**/*.gz
 dist/**/*.br
 test/caches
+test/js/*.js
+test/js/*.map
+test/js/*.mjs
+!test/js/snowy.js
 ghp/sitemap.xml
 jsr/deno.json
 dist/deno.json

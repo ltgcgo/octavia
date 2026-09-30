@@ -1,1 +1,0 @@
-../../dist/chord.mjs
