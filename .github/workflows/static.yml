@@ -67,6 +67,8 @@ jobs:
         run: "./shx generate"
       - name: Build Octavia files
         run: "./shx build"
+      - name: Build certain split Octavia files
+        run: "./shx liveBulk"
       - name: Build Windows XP-compatible Octavia files
         run: "./shx babel"
       - name: Generate simple sitemap
