@@ -71,6 +71,7 @@ const MICC = class MICC {
 					//console.info(subchunk);
 					switch (subchunk.type) {
 						case "MThd": {
+							sequence.meta.format = "mma.smf";
 							MICCInternalsSMF.parseHeaderChunk(subchunk, sequence.meta);
 							break;
 						};

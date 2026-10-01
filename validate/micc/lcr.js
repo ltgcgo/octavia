@@ -100,9 +100,9 @@ test("Validate stream roundtripping of files", async () => {
 			console.info(`Validating full parsing of "${dirEntry.name}"...\x7f`);
 			const fileObject = await Deno.open(`./cache/source/${dirEntry.name}`);
 			testedFile ++;
-			const startTime = performance.now();
+			const startTimeParse = performance.now();
 			let passed = true, processedCount = 0;
-			let countStartTime = startTime, countEndTime = startTime;
+			let countStartTime = startTimeParse, countEndTime = startTimeParse;
 			try {
 				const sequence = MICC.parseSmf(fileObject.readable);
 				await sequence.finalised;
@@ -116,7 +116,7 @@ test("Validate stream roundtripping of files", async () => {
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
-			const runDuration = reducePrecision(performance.now() - startTime - countEndTime + countStartTime, 6);
+			const runDuration = reducePrecision(performance.now() - startTimeParse - countEndTime + countStartTime, 6);
 			const parseSpeed = reducePrecision(processedCount / runDuration * 1000, 3);
 			cumulativeDuration += runDuration;
 			cumulativeEvents += processedCount;

@@ -676,6 +676,33 @@ export default class MICCInternalsSMF {
 				};
 			};
 		};
+		const smfFormat = IntegerHandler.readUint16(buffer, false, 0);
+		const smfTracks = IntegerHandler.readUint16(buffer, false, 2);
+		const smfDivision = IntegerHandler.readInt16(buffer, false, 4);
+		switch (smfFormat) {
+			case 0: {
+				if (smfTracks > 1) {
+					console.info(`Type 0 expected ${smfTracks} tracks instead of 1. This is non-standard and may break other parsers.`);
+				};
+				// Fallthrough.
+			};
+			case 1:
+			case 2: {
+				metadata.type = smfFormat;
+				break;
+			};
+			default: {
+				throw(new RangeError(`Unknown SMF type ${smfFormat}.`));
+			};
+		};
+		metadata.track = smfTracks;
+		if (smfDivision < 0) {
+			metadata.isSmpte = true;
+			console.debug(`SMPTE-based time division is not supported yet. Offset maps may not function.`);
+		} else {
+			metadata.division = smfDivision;
+		};
+		//console.debug(metadata);
 	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk

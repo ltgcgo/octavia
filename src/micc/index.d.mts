@@ -302,8 +302,31 @@ export class MICCBaseMetadata extends MICCBaseElement {}
 *
 * The group specifier is `ltgc.micc.meta.midi`. */
 export class MICCSequenceMetadata extends MICCBaseMetadata {
-	/** The full format specifier of the current file. */
+	/** The full format specifier of the current file. Examples below.
+	* ## MIDI
+	* - `12tone.cakewalk`
+	* - `12tone.cakewalk.bundle`
+	* - `korg.song`
+	* - `ltgc.mia`
+	* - `mma.smf`
+	* - `mma.smf2`
+	* - `yamaha.sol`
+	* - `yamaha.xgworks`
+	* ## Tracker
+	* - `tracker.fast2`
+	* - `tracker.impulse`
+	* - `tracker.modplug`
+	* - `tracker.octamed`
+	* - `tracker.pro`
+	* - `tracker.scream2`
+	* - `tracker.scream3`
+	* - `tracker.soundfx`
+	* - `tracker.ultra` */
 	format: string;
+	/** When true, the native division value is in SMPTE instead.
+	* 
+	* MICC does not yet support SMPTE-based time divisions. */
+	isSmpte: boolean;
 	/** MIDI time division. `480` is the most common.
 	*
 	* For tracker music with 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 24, 30, 32, 40, 48, 60, 80, 96, 120, 160 or 240 rows per beat, `480` will be used. `600` will be used with 25, 50, 75, 100, 150, 200, 300 or 600 rows. `720` will be used with 9, 18, 36, 40, 45, 72, 144, 180, 360, 720 rows. `960` will be used with 64, 192, 320, 480 or 960 rows. Any other value that doesn't have an existing mapping will cause the value `4096` be used, with the actual tick time be rounded to the nearest value.
@@ -314,12 +337,12 @@ export class MICCSequenceMetadata extends MICCBaseMetadata {
 	*
 	* For Standard MIDI Files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`. */
 	type: uint16;
-	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead. */
-	track?: number;
-	/** For files utilising pointers, amount of expected normal MIDI blocks/clips. This is typically seen in project (sequencer) files and tracker music. */
-	clip?: number;
-	/** For files utilising styles, amount of expected styles. Currently unused. */
-	style?: number;
+	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead. Always check the actual track count! */
+	track?: uint32;
+	/** For files utilising pointers, amount of expected normal MIDI blocks/clips. This is typically seen in project (sequencer) files and tracker music. Always check the actual clip count! */
+	clip?: uint32;
+	/** For files utilising styles, amount of expected styles. Currently unused. Always check the actual style count! */
+	style?: uint32;
 	/** For formats directly specifying names. Pure Standard MIDI Files and XWS files don't have this field, but formats like tracker music modules and KORG SNG have it. */
 	title?: string;
 }

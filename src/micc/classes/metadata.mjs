@@ -3,10 +3,19 @@
 
 const MICCSequenceMetadata = class MICCSequenceMetadata {
 	clip = 0;
+	division = 480;
+	isSmpte = false;
+	style = 0;
+	track = 0;
+	type = 1;
+	/** @type {string} */
+	format;
+	/** @type {string?} */
+	title;
 };
 
 const MICCTrackerMetadata = class MICCTrackerMetadata {
-	clip = 0;
+	isTracker = false;
 };
 
 export {
