@@ -119,7 +119,9 @@ export class MICCBaseElement {
 *
 * The group specifier is `ltgc.micc.trackChild`. */
 export class MICCTrackElement extends MICCBaseElement {
-	/** The offset of the current atom in the original root stream, if the current atom was created from a file-like binary stream (e.g. SMF). Useful for debugging, unused by assemblers and serializers. This isn't the chunk offset value. */
+	/** The offset of the current atom in the original root stream, if the current atom was created from a file-like binary stream (e.g. SMF).
+	* 
+	* Useful for debugging, unused by assemblers and serializers. This isn't the chunk offset value. */
 	offset?: number;
 }
 /** Representation of a MIDI event.
