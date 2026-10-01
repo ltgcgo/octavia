@@ -5,6 +5,11 @@ const MICCSequenceMetadata = class MICCSequenceMetadata {
 	clip = 0;
 };
 
+const MICCTrackerMetadata = class MICCTrackerMetadata {
+	clip = 0;
+};
+
 export {
-	MICCSequenceMetadata
+	MICCSequenceMetadata,
+	MICCTrackerMetadata
 };

@@ -64,10 +64,10 @@ declare class MICCConstants {
 	static readonly PTRB_NORMAL: uint16;
 	/** Track pointer block: linked (pointer). Compatible with XGworks. */
 	static readonly PTRB_LINKED: uint16;
-	/** Finalisation type: MIDI. */
-	static readonly AS_MIDI: number;
-	/** Finalisation type: Tracker. */
-	static readonly AS_TRACKER: number;
+	/** (WIP) Finalisation type: MIDI. */
+	static readonly AS_MIDI: uint8;
+	/** (WIP) Finalisation type: Tracker. */
+	static readonly AS_TRACKER: uint8;
 	/** File type: Unset. */
 	static readonly FILE_UNSET: uint16;
 	/** File type: SMF type 0 - single track. */
@@ -107,6 +107,15 @@ declare class MICCConstants {
 	/** File type: OpenMPT (MPTM). */
 	static readonly FILE_TRK_OPENMPT: uint16;
 }
+/** Conversion of tempo for MICC. */
+export class MICCInternalsTempo {
+	/** Get tempo from microseconds-per-quarter-note for MIDI. */
+	fromMPQN(mpqn: uint32): number;
+	/** Turn tempo into microseconds-per-quarter-note for MIDI. The final result will be rounded to the nearest integer. */
+	toMPQN(tempo: number): uint32;
+	/** Get tempo from declared tempo, tracker tick speed and rows-per-beat. */
+	fromTracker(rows: number, tickSpeed: number, definedTempo: number): number;
+}
 /** Base type for some MICC classes.
 *
 * The group specifier is `ltgc.micc.unknown`. */
@@ -122,7 +131,7 @@ export class MICCTrackElement extends MICCBaseElement {
 	/** The offset of the current atom in the original root stream, if the current atom was created from a file-like binary stream (e.g. SMF).
 	* 
 	* Useful for debugging, unused by assemblers and serializers. This isn't the chunk offset value. */
-	offset?: number;
+	offset?: uint32;
 }
 /** Representation of a MIDI event.
 *
@@ -139,7 +148,7 @@ export class MIDIBaseEvent extends MICCTrackElement {
 	/** The parsed value of the event set by the finaliser, can be decoded strings. Only applicable to some `0xff` (meta) events, unused by assemblers and serializers. */
 	parsed?: number|BinaryString;
 	/** The parsed time in MIDI ticks, usually set by the event funnel. Use a time offset map to grab the actual seconds. Unused by assemblers and serializers. */
-	tick?: number;
+	tick?: uint32;
 	/** The port for the event, usually set by the event funnel or the finaliser. Defaults to `null`. Unless used by multi-port event transports, this is unused by assemblers and serializers. */
 	port?: uint8;
 	/** Populated if the parsed value has additional data. If the parsed value is a string, this property can denote the text encoding used. Unused by assemblers and serializers. */
@@ -167,9 +176,9 @@ export class WrappedMIDIEvent {
 	/** The actual MIDI event. */
 	event: MIDINakedEvent;
 	/** Chunk type. Same as `SeamstressChunk.type`. */
-	type: number|string;
+	type: uint8|uint32|string;
 	/** Chunk ID. Same as `SeamstressChunk.chunkId`. */
-	chunk: number;
+	chunk: uint32;
 }
 declare interface MICCSMFMIAParserContext {
 	/** Status byte of the last event. Same as `MIDINakedEvent.type`. */
@@ -410,12 +419,6 @@ export class MICCSequence {
 	tracks: MICCTrack[];
 	/** The offset map for the track mapping time to ticks and time signature changes. */
 	offset: Object;
-	/** Get tempo from microseconds-per-minute for MIDI. */
-	tempoFromMPM(mpm: number): number;
-	/** Turn tempo into microseconds-per-minute for MIDI. The final result will be rounded to the nearest integer. */
-	tempoToMPM(tempo: number): number;
-	/** Get tempo from declared tempo, tracker tick speed and rows-per-beat. */
-	tempoFromTracker(rows: number, tickSpeed: number, definedTempo: number): number;
 }
 /** The MIDI serialiser. */
 export class MICC extends MICCConstants {

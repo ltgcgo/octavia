@@ -2,9 +2,17 @@
 // Licensed under GNU LGPL v3.0 license.
 
 import {
-	MICCBaseElement,
-	MIDINakedEvent
+	MICCInternalsTempo
+} from "./classes/conversions.mjs";
+import {
+	MIDIBaseEvent,
+	MIDINakedEvent,
+	MIDIUMPEvent
 } from "./classes/event.mjs";
+import {
+	MICCBaseElement,
+	MICCSequence
+} from "./classes/fundamentals.mjs";
 import MICCConstants from "./classes/constants.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
 import MICCInternalsMIA from "./parser/mia.mjs";
@@ -20,10 +28,26 @@ if (typeof globalThis?.require !== "undefined") {
 	delete globalThis.process;
 };
 
+const MICC = class MICC {
+	/** @type {Iterable<TextDecoder} */
+	static decoders;
+	/** @param {ReadableStream<Uint8Array>} data  */
+	static parseSmf(data) {
+		if (data.constructor !== Uint8Array) {
+			throw(new TypeError(`Input must be a valid stream.`));
+		};
+	};
+};
+
 export {
 	MICCBaseElement,
-	MIDINakedEvent,
 	MICCConstants,
+	MICCSequence,
+	MICCInternalsTempo,
 	MICCInternalsSMF,
-	MICCInternalsMIA
+	MICCInternalsMIA,
+	MIDIBaseEvent,
+	MIDINakedEvent,
+	MIDIUMPEvent,
+	MICC
 };

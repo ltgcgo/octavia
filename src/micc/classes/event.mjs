@@ -1,26 +1,19 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
-const MICCBaseElement = class MICCBaseElement {
-	group = "ltgc.micc.unknown";
-	constructor(group) {
-		if (group?.length > 0) {
-			this.group = group;
-		};
-	};
-};
+import {
+	MICCTrackElement
+} from "./fundamentals.mjs";
 
 // Octavia natives
 
-const MIDIBaseEvent = class MIDIBaseEvent extends MICCBaseElement {
+const MIDIBaseEvent = class MIDIBaseEvent extends MICCTrackElement {
 	delta = 0;
 	type = 0;
 	/** @type {number?} */
 	ch = null;
 	/** @type {Uint8Array} */
 	data;
-	/** @type {number?} */
-	offset = null;
 	/** @type {number|string?} */
 	parsed = null;
 	/** @type {number?} */
@@ -93,7 +86,7 @@ const ColxiMIDIFile = class ColxiMIDIFile {
 };
 
 export {
-	MICCBaseElement,
+	MIDIBaseEvent,
 	MIDINakedEvent,
 	MIDIUMPEvent,
 	ColxiMIDIEvent,
