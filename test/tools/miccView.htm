@@ -35,7 +35,7 @@
 			<!--Copied from dasmSingle, not adjusted yet.-->
 			<div class="column" style="min-width: 300px;">
 				<div class="control">
-					<input type="text" id="text-raw" class="input text-functional" placeholder="https://app.deerchi.ps/horni/nom.mid"></input>
+					<input type="text" id="text-raw" class="input text-functional" placeholder="https://app.deerchi.ps/horni/nom.mid" value="/midi-data/vendor/yamaha/mu/R-loveLM.mid"></input>
 				</div>
 			</div>
 			<div class="column column-option">
@@ -46,7 +46,9 @@
 			</div>
 		</div>
 		<div id="info-renderer" class="text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">
-			<div>Open a file to begin.</div>
+			<div id="info-title-standby" class="text-functional">Open a file to begin. Polak is cute.</div>
+			<div id="info-title-success" class="text-functional has-text-success">Showing the parsed result of binary stream "<span>nom.mid</span>" (<span>114514</span> B).</div>
+			<div id="info-title-failure" class="text-functional text-verbose has-text-danger">Uncaught UnnommedDeerError: The deer has not been nommed.</div>
 			<div id="info-meta-seq" class="py-2">
 				<h3>Sequence metadata</h3>
 				<table class="table is-striped is-hoverable">
@@ -97,7 +99,7 @@
 						<th><abbr title="Binary Stream Offset">Offset</abbr></th>
 						<th><abbr title="Delta Time">Δ</abbr></th>
 						<th><abbr title="Cumulative Tick Time"><i style="font-family:serif;">t</i></abbr></th>
-						<th><abbr title="Is Stale"><i style="font-family:serif;">r</i></abbr></th>
+						<th><abbr title="Is it stale?"><i style="font-family:serif;">r</i></abbr></th>
 						<th><abbr title="Type">T</abbr></th>
 						<th><abbr title="Port">P</abbr></th>
 						<th><abbr title="Channel/Meta type">CH</abbr></th>
