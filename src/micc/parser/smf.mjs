@@ -7,18 +7,21 @@ import {
 import {
 	bufferCarveOut
 } from "../../state/utils/bufferIo.mjs";
+import MICCConstants from "../classes/constants.mjs";
 import {
 	MIDINakedEvent
 } from "../classes/event.mjs";
-import MICCConstants from "../classes/constants.mjs";
+import {
+	MICCSequenceMetadata
+} from "../classes/metadata.mjs";
 
 /** Standard MIDI Files (MIDI 1.0) or raw MIDI 1.0 messages. */
 export default class MICCInternalsSMF {
-	/** @param {Uint8Array | Uint8ClampedArray | SeamstressChunk} inBuffer
+	/** @param {Uint8Array|Uint8ClampedArray|SeamstressChunk} inBuffer
 	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
 	* @returns {MIDINakedEvent} */
 	static parseSingleEvent(inBuffer, options = {}) {
-		/** @type {Uint8Array | Uint8ClampedArray} */
+		/** @type {Uint8Array|Uint8ClampedArray} */
 		let buffer;
 		switch (inBuffer?.constructor) {
 			case Uint8Array:
@@ -654,8 +657,26 @@ export default class MICCInternalsSMF {
 			};
 		};
 	};
-	/**  */
-	static parseHeaderChunk
+	/** @param {Uint8Array|Uint8ClampedArray|SeamstressChunk} inBuffer
+	* @param {MICCSequenceMetadata} metadata  */
+	static parseHeaderChunk(inBuffer, metadata) {
+		/** @type {Uint8Array|Uint8ClampedArray} */
+		let buffer;
+		switch (inBuffer?.constructor) {
+			case Uint8Array:
+			case Uint8ClampedArray: {
+				buffer = inBuffer;
+				break;
+			};
+			default: {
+				if (inBuffer?.data?.constructor === Uint8Array) {
+					buffer = inBuffer.data;
+				} else {
+					throw(new TypeError(`Input buffer must be Uint8Array or SeamstressChunk.`));
+				};
+			};
+		};
+	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk
 	* @returns {number} */

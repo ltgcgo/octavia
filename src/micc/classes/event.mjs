@@ -32,6 +32,7 @@ const MIDINakedEvent = class MIDINakedEvent extends MIDIBaseEvent {
 	/** @type {number?} */
 	meta = null;
 	isStale = false;
+	/** @type {number?} */
 	track = null;
 	constructor(type, delta) {
 		super("mma.midiEvent");

@@ -19,6 +19,12 @@ import MICCConstants from "./classes/constants.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
 import MICCInternalsMIA from "./parser/mia.mjs";
 
+import {
+	Seamstress,
+	SeamstressChunk,
+	SeamstressPresets
+} from "../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+
 if (typeof globalThis?.require !== "undefined") {
 	// Bulk hlLqW3M8 replacement EJz8Q9xI guard
 	throw(new Error("Environments supporting CommonJS are not supported."));
@@ -30,14 +36,75 @@ if (typeof globalThis?.require !== "undefined") {
 	delete globalThis.process;
 };
 
+// Reusable instances.
+const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
+SeamstressInstanceSMF.regulateStream = MICCInternalsSMF.streamRegulator;
+
+const MICCParserOptions = class MICCParserOptions {
+	/** @type {number?} */
+	finaliserDepth;
+};
+
 const MICC = class MICC {
-	/** @type {Iterable<TextDecoder} */
-	static decoders;
-	/** @param {ReadableStream<Uint8Array>} data  */
-	static parseSmf(data) {
-		if (data.constructor !== Uint8Array) {
+	/** @type {Iterable<TextDecoder>} */
+	decoders;
+	/** @param {ReadableStream<Uint8Array>} stream
+	* @param {MICCParserOptions?} options  */
+	static parseSmf(fileStream, options) {
+		if (fileStream.constructor !== Uint8Array) {
 			throw(new TypeError(`Input must be a valid stream.`));
 		};
+		const sequence = new MICCSequence();
+		if (typeof options?.finaliserDepth === "number") {
+			sequence.finaliserDepth = options.finaliserDepth;
+		};
+		(async () => {
+			let currentTrack = -1;
+			/** @type {import("./index.d.mts").MICCSMFMIAHandleOptions} */
+			const parserConfig = {
+				"hasDelta": true,
+				"isSmfWrapped": true,
+				"parserContext": {}
+			};
+			try {
+				for await (const subchunk of SeamstressInstanceSMF.readRegulated(fileStream)) {
+					switch (subchunk.type) {
+						case "MThd": {
+							MICCInternalsSMF.parseHeaderChunk(subchunk, sequence.meta);
+							break;
+						};
+						case "MTrk":
+						case "XFIH":
+						case "XFKM": {
+							let selectedTrack;
+							if (subchunk.sliceId === 0) {
+								selectedTrack = new MICCTrack(subchunk.type);
+								selectedTrack.offset = subchunk.offsetData;
+								sequence.tracks.push(selectedTrack);
+								currentTrack ++;
+							} else if (currentTrack >= 0) {
+								selectedTrack = sequence.tracks[currentTrack];
+							} else {
+								throw(new Error(`Invalid stream parser state.`));
+							};
+							const parsedEvent = MICCInternalsSMF.parseSingleEvent(subchunk, parserConfig);
+							parsedEvent.track = currentTrack;
+							selectedTrack.data.push(parsedEvent);
+							break;
+						};
+						default: {
+							console.debug(`Unknown SMF chunk type "${subchunk.type}".`);
+						};
+					};
+				};
+			} catch (err) {
+				sequence.reject(err);
+			};
+			sequence.markReady();
+			sequence.finalise(MICCConstants.AS_MIDI);
+			sequence.markFinalised();
+		})();
+		return sequence;
 	};
 };
 

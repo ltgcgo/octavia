@@ -199,7 +199,7 @@ declare interface MICCSMFMIAHandleOptions {
 	/** Provides optional binary stream context for parsing. */
 	streamContext?: SeamstressContext;
 	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
-	decoders: Iterable<TextDecoder>;
+	//decoders: Iterable<TextDecoder>;
 	/** Setting this to true will include delta time parsing. Defaults to `false.` */
 	hasDelta?: boolean;
 	/** If the event has been wrapped in SMF. This can affect how parsers and serialisers function. */
@@ -208,6 +208,10 @@ declare interface MICCSMFMIAHandleOptions {
 	loosenForSpeed?: boolean;
 	/** When `true`, disassemblers will prefer the readable alternative syntax whenever available. */
 	preferReadable?: boolean;
+}
+declare class MICCParserOptions {
+	/** Defines how deep should the finalisers go. Same as `MICCSequence.finaliserDepth`. */
+	finaliserDepth: int8;
 }
 /** Internal methods for MIA assembly and disassembly. */
 export class MICCInternalsMIA {
@@ -228,6 +232,8 @@ export class MICCInternalsMIA {
 }
 /** Internal methods for MIDI 1.0/SMF parsing and serialising. */
 export class MICCInternalsSMF {
+	/** Parse the header chunk, and populate the given metadata object. */
+	static parseHeaderChunk(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, metadata: MICCSequenceMetadata): void;
 	/** Parse single raw MIDI events from buffers. Requires clean full single events.
 	* @param buffer The input buffer.
 	* @param options Parser options. Only reuse the same options object for a single SMF track. */
@@ -414,7 +420,7 @@ export class MICCSequence {
 	flatten(format: string): Promise<void>;
 	/** (WIP) Disassemble the file into MIA instructions. Will error out if the file type isn't one of `SMF_SINGLE`, `SMF_MULTIPLE` and `SMF_SEQUENTIAL`.
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
-	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
+	disassemble(stream: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
 	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
 	decoders: Iterable<TextDecoder>;
 	/** The metadata of the current file. */
@@ -430,25 +436,26 @@ export class MICCSequence {
 }
 /** The MIDI serialiser. */
 export class MICC extends MICCConstants {
+	// Persisted settings.
 	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
 	decoders: Iterable<TextDecoder>;
 	// Pure MIDI.
 	/** Parse the incoming Standard MIDI File byte stream. */
-	parseSmf(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
+	parseSmf(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
 	/** Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of Standard MIDI Files) stream. */
-	parseMia(data: ReadableStream<Uint8Array>, label?: string): MICCSequence;
+	parseMia(stream: ReadableStream<Uint8Array>, label?: string): MICCSequence;
 	/** (WIP) Parse the incoming RMI byte stream. Contained Standard MIDI Files will be flattened. */
-	parseRmi(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
+	parseRmi(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
 	// MIDI-containing project files.
 	/** (WIP) Parse the incoming XWS byte stream. */
-	parseXws(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
+	parseXws(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
 	// Tracker files.
 	/** (WIP) Parse the incoming Impulse Tracker byte stream. */
-	parseIt(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
+	parseIt(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
 	// Assembly and disassembly.
 	/** Directly assemble MIA into SMF without going through a sequence object. */
-	assemble(data: ReadableStream<string>, context?: object): ReadableStream<Uint8Array>;
+	assemble(data: ReadableStream<string>, options?: MICCParserOptions): ReadableStream<Uint8Array>;
 	/** Directly disassemble SMF into MIA without going through a sequence object.
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
-	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
+	disassemble(stream: ReadableStream<Uint8Array>, useReadable?: boolean, options?: MICCParserOptions): ReadableStream<string>;
 }

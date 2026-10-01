@@ -81,30 +81,34 @@ const MICCSequence = class MICCSequence {
 			console.debug(`Finalisation has been disabled.`);
 			return;
 		};
-		switch (asType) {
-			case MICCConstants.AS_MIDI: {
-				for (const track of upThis.tracks) {
-					switch (track.vendor) {
-						case "mma.MTrk":
-						case "yamaha.XFIH":
-						case "yamaha.XFKM": {
-							for (const event of track.data) {
-								MICCInternalsFinalisers.smfMetaFilter(event, finaliserDepth > 1);
+		try {
+			switch (asType) {
+				case MICCConstants.AS_MIDI: {
+					for (const track of upThis.tracks) {
+						switch (track.vendor) {
+							case "mma.MTrk":
+							case "yamaha.XFIH":
+							case "yamaha.XFKM": {
+								for (const event of track.data) {
+									MICCInternalsFinalisers.smfMetaFilter(event, finaliserDepth > 1);
+								};
+								break;
 							};
-							break;
 						};
 					};
+					break;
 				};
-				break;
+				case MICCConstants.AS_TRACKER: {
+					// WIP
+					console.debug(`WIP`);
+					break;
+				};
+				default: {
+					throw(new TypeError(`Unknown finalisation type "${asType}".`));
+				};
 			};
-			case MICCConstants.AS_TRACKER: {
-				// WIP
-				console.debug(`WIP`);
-				break;
-			};
-			default: {
-				throw(new TypeError(`Unknown finalisation type "${asType}".`));
-			};
+		} catch (err) {
+			upThis.reject(err);
 		};
 	};
 	flatten() {};

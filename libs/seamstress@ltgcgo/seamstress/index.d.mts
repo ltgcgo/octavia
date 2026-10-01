@@ -125,7 +125,7 @@ export class SeamstressChunk {
 	id: uint32;
 	/** Cumulative index of the current chunk in u32, starts from 0 and increases by 1 when a new chunk of the same type is progressed. */
 	chunkId: uint32;
-	/** Cumulative index of the current subchunk in u32, starts from 0 for every new chunk and increases by 1 when a new subchunk in the same chunk.
+	/** Cumulative index of the current subchunk in u32, starts from 0 for every new chunk and increases by 1 for every new subchunk in the same chunk.
 	* 
 	* This field is always `0` for fully buffered chunks. */
 	sliceId: uint32;
@@ -298,7 +298,7 @@ export class Seamstress {
 	* @param buffer The header getting passed into the handler.
 	* @returns The parsed object that will modify the reader behaviour and provide as the initial context for the streams. */
 	headerHandler?(buffer: Uint8Array): SeamstressContext|undefined;
-	/** Regulates the incoming stream into desired subchunks, specified manually. Called by `Seamstress.regulateStream()`. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the current chunk for the stream reader.
+	/** Regulates the incoming stream into desired subchunks, specified manually. Called by `Seamstress.readRegulated()`. When defined, the method receives the incoming stream chunk buffer first, and its return value is used to truncate the current chunk for the stream reader.
 	*
 	* A non-zero value will cause the specified length from the current subchunk to be emitted, which the process repeats until the current subchunk depletes or the method returns a zero.
 	*
