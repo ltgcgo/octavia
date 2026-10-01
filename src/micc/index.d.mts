@@ -15,6 +15,7 @@ import type {
 	SeamstressChunk,
 	SeamstressContext
 } from "../../libs/seamstress@ltgcgo/seamstress/index.d.mts";
+import type BinaryString from "../../libs/rochelle@ltgcgo/binaryString.d.mts";
 
 // Native implementations
 /** Utility constants for MICC. */
