@@ -53,6 +53,7 @@ const metaModNames = {
 	"isTracker": "Tracker module?"
 };
 
+const inputUrl = $e("input#text-raw");
 const [dispFileName, dispSize] = $a("div#info-title-success > span");
 const dispCrashError = $e("div#info-title-failure");
 
@@ -202,6 +203,23 @@ self.gShowTrack = async (trackId) => {
 	Alpine.store("trackContent", infoSeq);
 };
 
+self.gParseUrl = async () => {
+	Alpine.store("appState", 1);
+	try {
+		sequence = MICC.parseSmf((await fetch(inputUrl.value)).body);
+		await sequence.finalised;
+		Alpine.store("appState", 2);
+		dispFileName.innerText = "<stream>";
+		dispSize.innerText = "N/A";
+		await populateViewer();
+	} catch (err) {
+		console.error(err);
+		let errorText = `Uncaught ${err.name}: ${err.message}\n\t`;
+		errorText += err.stack.split("\n").join("\n\t");
+		dispCrashError.innerText = errorText;
+		Alpine.store("appState", 3);
+	};
+};
 self.gParseFile = async () => {
 	const file = await fileOpen(fileProps);
 	if (file) {
