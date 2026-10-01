@@ -2,6 +2,9 @@
 // Licensed under GNU LGPL v3.0 license.
 
 import {
+	BinaryString
+} from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+import {
 	MICCBaseElement,
 	MICCTrackElement
 } from "./fundamentals.mjs";
@@ -15,7 +18,7 @@ const MIDIBaseEvent = class MIDIBaseEvent extends MICCTrackElement {
 	ch = null;
 	/** @type {Uint8Array} */
 	data;
-	/** @type {number|string?} */
+	/** @type {number|BinaryString?} */
 	parsed = null;
 	/** @type {number?} */
 	tick = null;

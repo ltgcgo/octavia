@@ -8,7 +8,7 @@
 */
 
 /** The helper string decoder object allowing convenient re-interpretation. */
-export default class BinaryString {
+export class BinaryString {
 	/** Return an array of decoders from specified labels. */
 	static getDecoders(labels: string[]): TextDecoder[];
 	/** Restore original text from text with C escape sequences. */

@@ -2,6 +2,9 @@
 // Licensed under GNU LGPL v3.0 license.
 
 export default class MICCConstants {
+	// Finalisation types.
+	static AS_MIDI = 0x00;
+	static AS_TRACKER = 0x00;
 	// MIDI event types.
 	static MIDI_NOTE_OFF = 0x08;
 	static MIDI_NOTE_ON = 0x09;
@@ -23,6 +26,25 @@ export default class MICCConstants {
 	static MIDI_ACTIVE_SENSE = 0xfe;
 	static MIDI_RESET = 0xff;
 	static MIDI_META = 0xef;
+	// MIDI meta event types.
+	static META_SEQ_NUMBER = 0x00;
+	static META_TEXT = 0x01;
+	static META_COPYRIGHT = 0x02;
+	static META_TITLE = 0x03;
+	static META_INSTRUMENT = 0x04;
+	static META_LYRICS = 0x05;
+	static META_MARKER = 0x06;
+	static META_CUE_POINT = 0x07;
+	static META_VOICE_NAME = 0x08;
+	static META_DEVICE_NAME = 0x09;
+	static META_TRACK_CH = 0x20;
+	static META_TRACK_PORT = 0x21;
+	static META_TRACK_END = 0x2f;
+	static META_SET_TEMPO = 0x51;
+	static META_SET_SMPTE_OFFSET = 0x54;
+	static META_SET_TIME_SIG = 0x58;
+	static META_SET_KEY_SIG = 0x59;
+	static META_SEQEX = 0x7f;
 	// Sequence file types.
 	static FILE_UNSET = 0xffff;
 	// Exported MIDI sequence.

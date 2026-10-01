@@ -4,9 +4,16 @@
 "use strict";
 
 import {
+	BinaryString
+} from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+import MICCConstants from "./constants.mjs";
+import {
 	MICCSequenceMetadata,
 	MICCTrackerMetadata
 } from "./metadata.mjs";
+
+import trackVendorData from "../../data/generated/trackVendors.json" with {type: "json"};
+import MICCInternalsFinalisers from "./finalisers.mjs";
 
 const MICCBaseElement = class MICCBaseElement {
 	group = "ltgc.micc.unknown";
@@ -23,16 +30,36 @@ const MICCTrackElement = class MICCTrackElement extends MICCBaseElement {
 		super(group ?? "ltgc.micc.trackChild");
 	};
 };
+const MICCTrack = class MICCTrack extends MICCTrackElement {
+	/** @type {(MICCTrackElement|import("./event.mjs").MIDIBaseEvent|import("./event.mjs").MIDINakedEvent|import("./event.mjs").MIDIUMPEvent)[]} */
+	data = [];
+	/** @type {string} */
+	type;
+	/** @type {string} */
+	vendor;
+	constructor(type) {
+		super("mma.smfTrack");
+		const vendor = trackVendorData[type];
+		if (vendor) {
+			upThis.type = type;
+			upThis.vendor = `${vendor}.${type}`;
+		} else {
+			throw(new TypeError(`Unknown type "${type}".`));
+		};
+	};
+};
 
 const MICCSequence = class MICCSequence {
 	enableFinalisation = true;
 	meta = new MICCSequenceMetadata();
 	tracker = new MICCTrackerMetadata();
+	/** @type {Iterable<TextDecoder>} */
+	decoders;
 	/** @type {object} */
 	offset;
-	/** @type {Map<string, MICCBaseElement>} */
+	/** @type {Map<string, MICCBaseElement[]>} */
 	pool = new Map();
-	/** @type {MICCTrackElement[]} */
+	/** @type {(MICCTrack)[]} */
 	tracks = [];
 	#ready = false;
 	/** @type {Promise<void>} */
@@ -47,7 +74,39 @@ const MICCSequence = class MICCSequence {
 	/** @type {(err: any) => void} */
 	reject;
 	disassemble() {};
-	finalise() {};
+	/** @param {number} asType  */
+	finalise(asType) {
+		const upThis = this;
+		if (!upThis.enableFinalisation) {
+			console.debug(`Finalisation has been disabled.`);
+			return;
+		};
+		switch (asType) {
+			case MICCConstants.AS_MIDI: {
+				for (const track of upThis.tracks) {
+					switch (track.vendor) {
+						case "mma.MTrk":
+						case "yamaha.XFIH":
+						case "yamaha.XFKM": {
+							for (const event of track.data) {
+								MICCInternalsFinalisers.smfMetaFilter(event);
+							};
+							break;
+						};
+					};
+				};
+				break;
+			};
+			case MICCConstants.AS_TRACKER: {
+				// WIP
+				console.debug(`WIP`);
+				break;
+			};
+			default: {
+				throw(new TypeError(`Unknown finalisation type "${asType}".`));
+			};
+		};
+	};
 	flatten() {};
 	propagate() {};
 	serialise() {};
@@ -85,5 +144,6 @@ const MICCSequence = class MICCSequence {
 export {
 	MICCBaseElement,
 	MICCTrackElement,
+	MICCTrack,
 	MICCSequence
 };

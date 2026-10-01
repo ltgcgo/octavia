@@ -54,8 +54,16 @@ import {
 	await Deno.writeTextFile("./src/data/generated/psr170ChordPlan.json", JSON.stringify(psr170Plan));
 };
 
-// Blocklisted code points
 {
+	const trackVendors = {};
+	for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.open("./src/data/trackVendors.tsv")).readable))) {
+		trackVendors[line.type] = line.vendor;
+	};
+	await Deno.writeTextFile("./src/data/generated/trackVendors.json", JSON.stringify(trackVendors));
+};
+
+{
+	// Blocklisted code points
 	const bcps = new Uint8Array(256);
 	bcps[0x0000] = 85; // Null
 	bcps[0x0004] = 85; // End of transmission

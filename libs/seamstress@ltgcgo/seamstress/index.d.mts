@@ -61,6 +61,10 @@ export class IntegerHandler {
 	static readInt16(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): int16;
 	/** Reads a uint16 value. Will error out if out of bounds. */
 	static readUint16(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): uint16;
+	/** Reads an int24 value. Will error out if out of bounds. */
+	static readInt24(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): int32;
+	/** Reads a uint24 value. Will error out if out of bounds. */
+	static readUint24(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): uint32;
 	/** Reads an int32 value. Will error out if out of bounds. */
 	static readInt32(buffer: Uint8Array|Uint8ClampedArray, isLittleEndian?: boolean, offset?: number): int32;
 	/** Reads a uint32 value. Will error out if out of bounds. */

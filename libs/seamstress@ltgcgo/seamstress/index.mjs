@@ -447,6 +447,33 @@ let IntegerHandler = class IntegerHandler {
 			};
 		};
 	};
+	static readUint24(buffer, isLittleEndian = false, offset = 0) {
+		this.#ensureU8(buffer);
+		if (offset < 0 || offset + 2 >= buffer.length) {
+			throw(new RangeError(`Invalid offset. (${offset})`));
+		};
+		if (this.useNative) {
+			if (isLittleEndian) {
+				return this.#obtainDataView(buffer).getUint16(offset, isLittleEndian) | (buffer[offset + 2] << 16);
+			} else {
+				return (this.#obtainDataView(buffer).getUint16(offset, isLittleEndian) << 8) | buffer[offset + 2];
+			};
+		} else {
+			if (isLittleEndian) {
+				return buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16);
+			} else {
+				return (buffer[offset] << 16) | (buffer[offset + 1] << 8) | buffer[offset + 2];
+			};
+		};
+	};
+	static readInt24(buffer, isLittleEndian = false, offset = 0) {
+		let result = this.readUint24(buffer, isLittleEndian, offset);
+		if (result < 8388608) {
+			return result;
+		} else {
+			return result - 16777216;
+		};
+	};
 	static readInt32(buffer, isLittleEndian = false, offset = 0) {
 		if (this.useNative) {
 			return this.#obtainDataView(buffer).getInt32(offset, isLittleEndian);

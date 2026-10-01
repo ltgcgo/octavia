@@ -15,7 +15,9 @@ import type {
 	SeamstressChunk,
 	SeamstressContext
 } from "../../libs/seamstress@ltgcgo/seamstress/index.d.mts";
-import type BinaryString from "../../libs/rochelle@ltgcgo/binaryString.d.mts";
+import type {
+	BinaryString
+} from "../../libs/rochelle@ltgcgo/binaryString.d.mts";
 
 // Native implementations
 /** Utility constants for MICC. */
@@ -394,7 +396,7 @@ export class MICCSequence {
 	/** Used by parsers to mark the file as finalised. */
 	markFinalised(): Promise<void>;
 	/** Runs the finalization process. Re-runs are useful for programs that mutate events, e.g. editors. */
-	finalise(asType: number): Promise<void>;
+	finalise(asType: uint8): Promise<void>;
 	/** Runs the propagation process to convert parsed properties, which may have been modified, back into raw data used by assemblers and serialisers. */
 	propagate(asType: number): Promise<void>;
 	/** Used by parsers to reject the file.
@@ -409,6 +411,8 @@ export class MICCSequence {
 	/** (WIP) Disassemble the file into MIA instructions. Will error out if the file type isn't one of `SMF_SINGLE`, `SMF_MULTIPLE` and `SMF_SEQUENTIAL`.
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
+	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
+	decoders: Iterable<TextDecoder>;
 	/** The metadata of the current file. */
 	meta: MICCSequenceMetadata;
 	/** If the current file is a tracker, the additional metadata of the current file. */

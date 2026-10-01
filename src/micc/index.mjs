@@ -11,7 +11,9 @@ import {
 } from "./classes/event.mjs";
 import {
 	MICCBaseElement,
-	MICCSequence
+	MICCSequence,
+	MICCTrackElement,
+	MICCTrack
 } from "./classes/fundamentals.mjs";
 import MICCConstants from "./classes/constants.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
@@ -43,6 +45,8 @@ export {
 	MICCBaseElement,
 	MICCConstants,
 	MICCSequence,
+	MICCTrackElement,
+	MICCTrack,
 	MICCInternalsTempo,
 	MICCInternalsSMF,
 	MICCInternalsMIA,
