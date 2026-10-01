@@ -14,4 +14,4 @@ let textBuffer = await Deno.readTextFile(Deno.args[0]);
 for (const [k, v] of replaceMap) {
 	textBuffer = textBuffer.replaceAll(`from "${k}"`, `from "${v}"`);
 };
-await Deno.writeTextFile(`${Deno.args[0]}.tmp`);
+await Deno.writeTextFile(`${Deno.args[0]}.tmp`, textBuffer);
