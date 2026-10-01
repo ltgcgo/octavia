@@ -45,7 +45,67 @@
 				<button @click="gParseFile()" class="button is-link" title="Open and parse a file from your device. Supports everything MICC currently supports.">Open</button>
 			</div>
 		</div>
-		<div id="renderer-naked" class="text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">Open a file to begin.</div>
+		<div id="info-renderer" class="text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">
+			<div>Open a file to begin.</div>
+			<div id="info-meta-seq" class="py-2">
+				<h3>Sequence metadata</h3>
+				<table class="table is-striped is-hoverable">
+					<thead>
+						<th>Field</th>
+						<th>Name</th>
+						<th>Value</th>
+					</thead>
+				</table>
+			</div>
+			<div id="info-meta-mod" class="py-2">
+				<h3>Tracker metadata</h3>
+				<table class="table is-striped is-hoverable">
+					<thead>
+						<th>Field</th>
+						<th>Name</th>
+						<th>Value</th>
+					</thead>
+				</table>
+			</div>
+			<div id="info-meta-trk" class="py-2">
+				<h3>Tracks</h3>
+				<table class="table is-striped is-hoverable">
+					<thead>
+						<th>#</th>
+						<th>Type</th>
+						<th>Vendor</th>
+						<th>Action</th>
+					</thead>
+				</table>
+			</div>
+			<div id="info-meta-clp" class="py-2">
+				<h3>Pool resources</h3>
+				<table class="table is-striped is-hoverable">
+					<thead>
+						<th>#</th>
+						<th>Type</th>
+						<th>Vendor</th>
+						<th>Action</th>
+					</thead>
+				</table>
+			</div>
+			<div id="info-meta-nfo" class="py-2">
+				<h3>Event list for <span>track</span> #<span>0</span></h3>
+				<table class="table is-striped is-hoverable">
+					<thead>
+						<th>#</th>
+						<th><abbr title="Binary Stream Offset">Offset</abbr></th>
+						<th><abbr title="Delta Time">Δ</abbr></th>
+						<th><abbr title="Cumulative Tick Time"><i style="font-family:serif;">t</i></abbr></th>
+						<th><abbr title="Is Stale"><i style="font-family:serif;">r</i></abbr></th>
+						<th><abbr title="Type">T</abbr></th>
+						<th><abbr title="Port">P</abbr></th>
+						<th><abbr title="Channel/Meta type">CH</abbr></th>
+						<th>Data</th>
+					</thead>
+				</table>
+			</div>
+		</div>
 		<footer class="footer px-5 py-4">
 			<div class="content">
 				<p>This utility is mainly for developers and power users. If you suspect MICC might be misbehaving, or you're simply curious about what a file contains, this utility is perfect for you.</p>
