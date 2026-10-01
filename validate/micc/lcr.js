@@ -4,6 +4,9 @@ import {
 	Seamstress
 } from "../../libs/seamstress@ltgcgo/seamstress/index.mjs";
 import {
+	MICC
+} from "../../src/micc/index.mjs";
+import {
 	MICCInternalsSMF
 } from "../../src/micc/index.mjs";
 import {
@@ -76,6 +79,51 @@ test("Validate stream parsing of single events", async () => {
 				console.info(`\x8d\rValidated skeletal parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
 			} else {
 				console.info(`\x8d\rFailed skeletal parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
+			};
+		};
+	};
+	if (errorHistory.length > 0) {
+		console.debug(`\n\x1b[1;31mFinal casualty report\x1b[0m:`);
+		for (const failRecord of errorHistory) {
+			console.debug(`File "${failRecord.fileName}" failed at 0x${failRecord.offset.toString(16).padStart(6, "0")} with\n  ${failRecord.error.name}: ${failRecord.error.message}`);
+		};
+		throw(`Failed ${errorHistory.length} test(s) out of ${testedFile}.`);
+	};
+	console.debug(`\nParsed ${cumulativeEvents} event(s) in ${cumulativeDuration}ms. Average ${reducePrecision(cumulativeEvents / cumulativeDuration * 1000, 3)}/s`);
+});
+test("Validate stream roundtripping of files", async () => {
+	/** @type {FailRecord[]} */
+	const errorHistory = [];
+	let testedFile = 0, cumulativeDuration = 0, cumulativeEvents = 0;
+	for await (const dirEntry of Deno.readDir("./cache/source")) {
+		if (dirEntry.isFile) {
+			console.info(`Validating full parsing of "${dirEntry.name}"...\x7f`);
+			const fileObject = await Deno.open(`./cache/source/${dirEntry.name}`);
+			testedFile ++;
+			const startTime = performance.now();
+			let passed = true, processedCount = 0;
+			let countStartTime = startTime, countEndTime = startTime;
+			try {
+				const sequence = MICC.parseSmf(fileObject.readable);
+				await sequence.finalised;
+				countStartTime = performance.now();
+				for (const track of sequence.tracks) {
+					processedCount += track.data.length;
+				};
+				countEndTime = performance.now();
+			} catch (err) {
+				passed = false;
+				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
+				console.error(err);
+			};
+			const runDuration = reducePrecision(performance.now() - startTime - countEndTime + countStartTime, 6);
+			const parseSpeed = reducePrecision(processedCount / runDuration * 1000, 3);
+			cumulativeDuration += runDuration;
+			cumulativeEvents += processedCount;
+			if (passed) {
+				console.info(`\x8d\rValidated full parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
+			} else {
+				console.info(`\x8d\rFailed full parsing of "${dirEntry.name}" in ${runDuration}ms. ${processedCount} event(s) at ${parseSpeed}/s.`);
 			};
 		};
 	};

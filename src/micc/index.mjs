@@ -47,11 +47,11 @@ const MICCParserOptions = class MICCParserOptions {
 
 const MICC = class MICC {
 	/** @type {Iterable<TextDecoder>} */
-	decoders;
+	static decoders;
 	/** @param {ReadableStream<Uint8Array>} stream
 	* @param {MICCParserOptions?} options  */
 	static parseSmf(fileStream, options) {
-		if (fileStream.constructor !== Uint8Array) {
+		if (fileStream.constructor !== ReadableStream) {
 			throw(new TypeError(`Input must be a valid stream.`));
 		};
 		const sequence = new MICCSequence();
@@ -68,6 +68,7 @@ const MICC = class MICC {
 			};
 			try {
 				for await (const subchunk of SeamstressInstanceSMF.readRegulated(fileStream)) {
+					//console.info(subchunk);
 					switch (subchunk.type) {
 						case "MThd": {
 							MICCInternalsSMF.parseHeaderChunk(subchunk, sequence.meta);
@@ -85,6 +86,7 @@ const MICC = class MICC {
 							} else if (currentTrack >= 0) {
 								selectedTrack = sequence.tracks[currentTrack];
 							} else {
+								console.info(currentTrack);
 								throw(new Error(`Invalid stream parser state.`));
 							};
 							const parsedEvent = MICCInternalsSMF.parseSingleEvent(subchunk, parserConfig);

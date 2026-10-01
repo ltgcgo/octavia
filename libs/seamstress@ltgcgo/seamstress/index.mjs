@@ -1259,7 +1259,7 @@ const Seamstress = class Seamstress {
 						throw(new RangeError(`Instructed read length ${readLength} exceeds the boundary of the current subchunk, only ${remainingSize} B remains.`));
 					} else if (readLength > 0) {
 						let subChunk = new SeamstressChunk(id, chunkId, type, unbufferedChunk.offset + inChunkPtr, size);
-						subChunk.sliceId = upThis.#increaseInMap(seamSliceMap, chunkId);
+						subChunk.sliceId = upThis.#increaseInMap(seamSliceMap, id);
 						subChunk.offsetData = unbufferedChunk.offsetData + inChunkPtr;
 						subChunk.context = context;
 						if (buffer.length > 0) {
@@ -1277,7 +1277,7 @@ const Seamstress = class Seamstress {
 					} else if (readLength === 0) {
 						if (unbufferedChunk.isFinal) {
 							let subChunk = new SeamstressChunk(id, chunkId, type, unbufferedChunk.offset + inChunkPtr, size);
-							subChunk.sliceId = upThis.#increaseInMap(seamSliceMap, chunkId);
+							subChunk.sliceId = upThis.#increaseInMap(seamSliceMap, id);
 							subChunk.offsetData = unbufferedChunk.offsetData + inChunkPtr;
 							subChunk.context = context;
 							buffer.push(unbufferedChunk.data.subarray(inChunkPtr));

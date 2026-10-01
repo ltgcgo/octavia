@@ -3,9 +3,6 @@
 
 "use strict";
 
-import {
-	BinaryString
-} from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
 import MICCConstants from "./constants.mjs";
 import {
 	MICCSequenceMetadata,
@@ -41,8 +38,8 @@ const MICCTrack = class MICCTrack extends MICCTrackElement {
 		super("mma.smfTrack");
 		const vendor = trackVendorData[type];
 		if (vendor) {
-			upThis.type = type;
-			upThis.vendor = `${vendor}.${type}`;
+			this.type = type;
+			this.vendor = `${vendor}.${type}`;
 		} else {
 			throw(new TypeError(`Unknown type "${type}".`));
 		};
@@ -90,7 +87,7 @@ const MICCSequence = class MICCSequence {
 							case "yamaha.XFIH":
 							case "yamaha.XFKM": {
 								for (const event of track.data) {
-									MICCInternalsFinalisers.smfMetaFilter(event, finaliserDepth > 1);
+									MICCInternalsFinalisers.smfMetaFilter(upThis, event, upThis.finaliserDepth > 1);
 								};
 								break;
 							};

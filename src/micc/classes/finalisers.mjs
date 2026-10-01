@@ -4,6 +4,9 @@
 "use strict";
 
 import {
+	BinaryString
+} from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+import {
 	IntegerHandler
 } from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
 import {
@@ -18,7 +21,7 @@ import {
 export default class MICCInternalsFinalisers {
 	/** @param {MIDINakedEvent|MIDIUMPEvent} event
 	* @returns {void} */
-	static smfMetaFilter(event, parseExtended = false) {
+	static smfMetaFilter(upThis, event, parseExtended = false) {
 		if (event.type !== MICCConstants.MIDI_META) return;
 		const noParseExtended = !parseExtended;
 		switch (event.meta) {

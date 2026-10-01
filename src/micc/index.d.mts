@@ -434,28 +434,28 @@ export class MICCSequence {
 	/** The offset map for the track mapping time to ticks and time signature changes. */
 	offset: Object;
 }
-/** The MIDI serialiser. */
+/** Musical Instructions Compiler Collection. */
 export class MICC extends MICCConstants {
 	// Persisted settings.
 	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
-	decoders: Iterable<TextDecoder>;
+	static decoders: Iterable<TextDecoder>;
 	// Pure MIDI.
 	/** Parse the incoming Standard MIDI File byte stream. */
-	parseSmf(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+	static parseSmf(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
 	/** Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of Standard MIDI Files) stream. */
-	parseMia(stream: ReadableStream<Uint8Array>, label?: string): MICCSequence;
+	static parseMia(stream: ReadableStream<Uint8Array>, label?: string): MICCSequence;
 	/** (WIP) Parse the incoming RMI byte stream. Contained Standard MIDI Files will be flattened. */
-	parseRmi(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+	static parseRmi(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
 	// MIDI-containing project files.
 	/** (WIP) Parse the incoming XWS byte stream. */
-	parseXws(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+	static parseXws(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
 	// Tracker files.
 	/** (WIP) Parse the incoming Impulse Tracker byte stream. */
-	parseIt(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+	static parseIt(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
 	// Assembly and disassembly.
 	/** Directly assemble MIA into SMF without going through a sequence object. */
-	assemble(data: ReadableStream<string>, options?: MICCParserOptions): ReadableStream<Uint8Array>;
+	static assemble(data: ReadableStream<string>, options?: MICCParserOptions): ReadableStream<Uint8Array>;
 	/** Directly disassemble SMF into MIA without going through a sequence object.
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
-	disassemble(stream: ReadableStream<Uint8Array>, useReadable?: boolean, options?: MICCParserOptions): ReadableStream<string>;
+	static disassemble(stream: ReadableStream<Uint8Array>, useReadable?: boolean, options?: MICCParserOptions): ReadableStream<string>;
 }
