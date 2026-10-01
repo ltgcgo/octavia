@@ -6,6 +6,12 @@
 		"@ltgc/rochelle": "jsr:@ltgc/rochelle@^0.3.2",
 		"@ltgc/seamstress": "jsr:@ltgc/seamstress@^0.1.2"
 	},
+	"minimumDependencyAge": {
+		"exclude": [
+			"jsr:@ltgc/rochelle",
+			"jsr:@ltgc/seamstress"
+		]
+	},
 	"exports": {
 		"./basic": "./dist/basic.d.mts",
 		"./bridge": "./dist/bridge.d.mts",
