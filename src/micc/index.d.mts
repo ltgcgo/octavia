@@ -117,7 +117,10 @@ export class MICCBaseElement {
 /** Base type for subtypes capable of populating tracks.
 *
 * The group specifier is `ltgc.micc.trackChild`. */
-export class MICCTrackElement extends MICCBaseElement {}
+export class MICCTrackElement extends MICCBaseElement {
+	/** The offset of the current atom in the original root stream, if the current atom was created from a file-like binary stream (e.g. SMF). Useful for debugging, unused by assemblers and serializers. This isn't the chunk offset value. */
+	offset?: number;
+}
 /** Representation of a MIDI event.
 *
 * The group specifier is `ltgc.micc.baseEvent`. */
@@ -130,8 +133,6 @@ export class MIDIBaseEvent extends MICCTrackElement {
 	ch?: uint8;
 	/** The raw data of the MIDI event. */
 	data: Uint8Array;
-	/** The offset of the current event in the original root event stream, if the current event was created from a file-like binary event stream (e.g. SMF). Useful for debugging, unused by assemblers and serializers. This isn't the chunk offset value. */
-	offset?: number;
 	/** The parsed value of the event set by the finaliser, can be decoded strings. Only applicable to some `0xff` (meta) events, unused by assemblers and serializers. */
 	parsed?: number|string;
 	/** The parsed time in MIDI ticks, usually set by the event funnel. Use a time offset map to grab the actual seconds. Unused by assemblers and serializers. */
