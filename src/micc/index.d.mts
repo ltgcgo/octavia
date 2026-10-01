@@ -135,7 +135,7 @@ export class MIDIBaseEvent extends MICCTrackElement {
 	/** The raw data of the MIDI event. */
 	data: Uint8Array;
 	/** The parsed value of the event set by the finaliser, can be decoded strings. Only applicable to some `0xff` (meta) events, unused by assemblers and serializers. */
-	parsed?: number|string;
+	parsed?: number|BinaryString;
 	/** The parsed time in MIDI ticks, usually set by the event funnel. Use a time offset map to grab the actual seconds. Unused by assemblers and serializers. */
 	tick?: number;
 	/** The port for the event, usually set by the event funnel or the finaliser. Defaults to `null`. Unless used by multi-port event transports, this is unused by assemblers and serializers. */

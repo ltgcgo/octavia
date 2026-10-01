@@ -35,5 +35,7 @@ jobs:
         run: "./shx generate"
       - name: Build Octavia files
         run: "./shx build"
+      - name: Apply dependency graph
+        run: "./shx depGraph"
       - name: Publish package
         run: "./shx publish"
