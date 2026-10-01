@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="200" charset="utf-8" />
+	<title>Sequenced File Internals Viewing</title>
+	<meta content="true" name="HandheldFriendly" />
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+	<meta name="application-name" content="MICC Sequenced File Internals" />
+	<meta name="author" content="Lightingale Community, Lumière Élevé" />
+	<meta name="description" content="A utility for power users. Open a file supported by MICC, and see how MICC interprets it." />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="og:image" content="../img/fallback.webp" />
+	<meta name="twitter:image" content="../img/fallback.webp" />
+	<meta name="og:title" content="Sequenced File Internals Viewing (OpenGraph)" />
+	<meta name="twitter:title" content="Sequenced File Internals Viewing (Twitter)" />
+	<meta name="og:description" content="(OpenGraph) A utility for power users. Open a file supported by MICC, and see how MICC interprets it." />
+	<meta name="twitter:description" content="(Twitter) A utility for power users. Open a file supported by MICC, and see how MICC interprets it." />
+	<meta name="keywords" content="Octavia,Lightingale,MIDI,tracker,module,sequenced,music,SMF,MIA,MICC,MIDI file,MIDI Clip,XGworks,Cakewalk,Scream,Fast,Impulse,ModPlug,MID,KAR,RMI,XWS,WRK,BUN,S3M,XM,IT,MPTM" />
+	<link rel="icon" href="../img/fallback.webp" />
+	<link rel="stylesheet" href="../css/bulma.css" />
+	<link rel="stylesheet" href="../css/fonts.css" />
+	<link rel="stylesheet" href="../css/toolsGlobal.css" />
+	<link rel="stylesheet" href="../css/cambiare_demo.css" />
+	<script defer type="module" src="../js/miccView.js"></script>
+</head>
+<body>
+	<div class="container is-max-widescreen">
+		<section class="hero">
+			<div class="hero-body">
+				<p class="title">Sequenced File Internals Viewing</p>
+				<p class="subtitle">Open a file supported by MICC, and see how MICC interprets it.</p>
+			</div>
+		</section>
+		<div class="columns is-multiline is-mobile is-vcentered" x-data="{}">
+			<!--Copied from dasmSingle, not adjusted yet.-->
+			<div class="column" style="min-width: 300px;">
+				<div class="control">
+					<input type="text" id="text-raw" class="input text-functional" placeholder="https://app.deerchi.ps/horni/nom.mid"></input>
+				</div>
+			</div>
+			<div class="column column-option">
+				<button @click="gParseUrl()" class="button is-success" title="Download and parse a file from the given remote URL. Due to MIME assignments, mostly SMF-only.">Fetch</button>
+			</div>
+			<div class="column column-option">
+				<button @click="gParseFile()" class="button is-link" title="Open and parse a file from your device. Supports everything MICC currently supports.">Open</button>
+			</div>
+		</div>
+		<div id="renderer-naked" class="text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">Open a file to begin.</div>
+		<footer class="footer px-5 py-4">
+			<div class="content">
+				<p>This utility is mainly for developers and power users. If you suspect MICC might be misbehaving, or you're simply curious about what a file contains, this utility is perfect for you.</p>
+			</div>
+			<hr/>
+			<div class="content has-text-centered">
+				<p>Copyright 2024-2026 © Lumière Élevé, Lightingale Community</p>
+				<p>The Octavia toolchain is licensed under GNU LGPL v3.0 License. Source code available on <a href="https://codeberg.org/ltgc/octavia" target="_blank">Codeberg</a> and <a href="https://github.com/ltgcgo/octavia" target="_blank">GitHub</a>.</p>
+				<p>Learn more: <a target="_blank" href="https://github.com/ltgcgo/octavia/issues/79">MICC</a></p>
+			</div>
+		</footer>
+	</div>
+</body>
+</html>

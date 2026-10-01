@@ -32,7 +32,6 @@
 			</div>
 		</section>
 		<div class="columns is-multiline is-mobile is-vcentered" x-data="{'schema':[['Raw','Raw MIDI 1.0 event binary string.'],['SMF','MIDI event binary string wrapped in SMF events.']],'delta':['Unused','Included'],'readable':[['No','Use the standard baseline MIA instruction set without any readable remapping.'],['Yes','Use the readable alternative MIA instruction set, with remapping selectively provided by Octavia Mane (midi-db).']],'finalise':[['No','Do not go through the finalisation pass.'],['Yes','Add a single-event finalisation pass after parsing.']]}">
-			<!--This section should have interactivity implemented via AlpineJS instead.-->
 			<div class="column column-option"><b>Schema</b></div>
 			<template x-for="(option, value) in schema">
 				<div class="column column-option column-button" @click="gSchemaIsWrapped(value>0)" x-text="option[0]" :title="option[1]" :active="($store.schemaIsWrapped??false)===(value>0)?'true':'false'"></div>
@@ -91,3 +90,4 @@
 		</footer>
 	</div>
 </body>
+</html>
