@@ -59,7 +59,7 @@ const MICC = class MICC {
 			sequence.finaliserDepth = options.finaliserDepth;
 		};
 		(async () => {
-			let currentTrack = -1;
+			let currentTrack = -1, currentTick = 0;
 			/** @type {import("./index.d.mts").MICCSMFMIAHandleOptions} */
 			const parserConfig = {
 				"hasDelta": true,
@@ -84,6 +84,10 @@ const MICC = class MICC {
 								selectedTrack.offset = subchunk.offsetData;
 								sequence.tracks.push(selectedTrack);
 								currentTrack ++;
+								selectedTrack.id = currentTrack;
+								if (sequence.meta.type < MICCConstants.FILE_SMF_SEQUENTIAL) {
+									currentTick = 0;
+								};
 							} else if (currentTrack >= 0) {
 								selectedTrack = sequence.tracks[currentTrack];
 							} else {
@@ -91,6 +95,8 @@ const MICC = class MICC {
 								throw(new Error(`Invalid stream parser state.`));
 							};
 							const parsedEvent = MICCInternalsSMF.parseSingleEvent(subchunk, parserConfig);
+							currentTick += parsedEvent.delta;
+							parsedEvent.tick = currentTick;
 							parsedEvent.track = currentTrack;
 							selectedTrack.data.push(parsedEvent);
 							break;

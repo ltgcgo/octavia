@@ -82,7 +82,7 @@ let IntegerHandler = class IntegerHandler {
 	};
 	static #obtainDataView(typedArray) {
 		if (!typedArray[this.#hiddenDataView]) {
-			typedArray[this.#hiddenDataView] = new DataView(typedArray.buffer);
+			typedArray[this.#hiddenDataView] = new DataView(typedArray.buffer, typedArray.byteOffset, typedArray.byteLength);
 		};
 		return typedArray[this.#hiddenDataView];
 	};
@@ -452,19 +452,19 @@ let IntegerHandler = class IntegerHandler {
 		if (offset < 0 || offset + 2 >= buffer.length) {
 			throw(new RangeError(`Invalid offset. (${offset})`));
 		};
-		if (this.useNative) {
+		/*if (this.useNative) {
 			if (isLittleEndian) {
 				return this.#obtainDataView(buffer).getUint16(offset, isLittleEndian) | (buffer[offset + 2] << 16);
 			} else {
 				return (this.#obtainDataView(buffer).getUint16(offset, isLittleEndian) << 8) | buffer[offset + 2];
 			};
-		} else {
+		} else {*/
 			if (isLittleEndian) {
 				return buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16);
 			} else {
 				return (buffer[offset] << 16) | (buffer[offset + 1] << 8) | buffer[offset + 2];
 			};
-		};
+		//};
 	};
 	static readInt24(buffer, isLittleEndian = false, offset = 0) {
 		let result = this.readUint24(buffer, isLittleEndian, offset);

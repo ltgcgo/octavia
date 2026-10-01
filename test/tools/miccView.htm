@@ -21,6 +21,13 @@
 	<link rel="stylesheet" href="../css/fonts.css" />
 	<link rel="stylesheet" href="../css/toolsGlobal.css" />
 	<link rel="stylesheet" href="../css/cambiare_demo.css" />
+	<style>
+.has-text-white {color:#fff;}
+.has-text-shaded {color:#aaa;}
+.has-text-purple {color:#a7f;}
+.has-text-magenta {color:#f7f;}
+code {background:#222 !important;}
+	</style>
 	<script defer type="module" src="../js/miccView.js"></script>
 </head>
 <body>
@@ -45,7 +52,7 @@
 				<button @click="gParseFile()" class="button is-link" title="Open and parse a file from your device. Supports everything MICC currently supports.">Open</button>
 			</div>
 		</div>
-		<div id="info-renderer" class="text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4" x-data="{}">
+		<div id="info-renderer" class="text-renderer content has-radius-normal px-5 py-4" style="background:#7f7f7f22;" x-data="{}">
 			<div id="info-title-standby" class="text-functional" x-show="$store.appState===0">Open a file to begin. Polak is cute.</div>
 			<div id="info-title-standby" class="text-functional has-text-info" x-show="$store.appState===1">Loading file data...</div>
 			<div id="info-title-success" class="text-functional has-text-success" x-show="$store.appState===2">Showing the parsed result of binary stream "<span>nom.mid</span>" (<span>114514</span> B).</div>
@@ -63,7 +70,7 @@
 							<tr>
 								<td><code class="has-text-warning" x-text="entry[0]"></code></td>
 								<td><span x-text="entry[1]"></span></td>
-								<td><code class="has-text-inherit" x-text="entry[2]"></code></td>
+								<td><code class="has-text-white" x-text="entry[2]"></code></td>
 							</tr>
 						</template>
 					</tbody>
@@ -82,7 +89,7 @@
 							<tr>
 								<td><code class="has-text-warning" x-text="entry[0]"></code></td>
 								<td><span x-text="entry[1]"></span></td>
-								<td><code class="has-text-inherit" x-text="entry[2]"></code></td>
+								<td><code class="has-text-white" x-text="entry[2]"></code></td>
 							</tr>
 						</template>
 					</tbody>
@@ -96,8 +103,19 @@
 						<th>#</th>
 						<th>Type</th>
 						<th>Vendor</th>
-						<th>Action</th>
+						<th>Events</th>
 					</thead>
+					<tbody>
+						<template x-for="(entry, index) in $store.trackInfo">
+							<tr style="cursor:pointer;" @click="gShowTrack(index)">
+								<td><code class="has-text-white" x-text="entry[0]"></code></td>
+								<td><span x-text="entry[1]" style="text"></span></td>
+								<td><code class="has-text-white" x-text="entry[2]"></code></td>
+								<td><code class="has-text-white" x-text="entry[3]"></code></td>
+								<td><span x-text="entry[4]"></span></td>
+							</tr>
+						</template>
+					</tbody>
 				</table>
 			</div>
 			<div id="info-meta-clp" class="py-2" x-show="$store.appState===2">
@@ -108,12 +126,12 @@
 						<th>#</th>
 						<th>Type</th>
 						<th>Vendor</th>
-						<th>Action</th>
+						<th>Events</th>
 					</thead>
 				</table>
 			</div>
-			<div id="info-meta-nfo" class="py-2" x-show="Number.isSafeInteger($store.trackNum)">
-				<h3>Event list for <span>track</span> #<span>0</span></h3>
+			<div id="info-meta-nfo" class="py-2" x-show="$store.trackContent?.length > 0">
+				<h3>Event list for <span>track #0</span></h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
 						<th><abbr title="Binary Stream Offset">Offset</abbr></th>
@@ -126,12 +144,28 @@
 						<th><abbr title="Channel/Meta type">CH</abbr></th>
 						<th>Data</th>
 					</thead>
+					<tbody>
+						<template x-for="(entry, index) in $store.trackContent">
+							<tr>
+								<td><code class="has-text-white" x-text="entry[1]"></code></td>
+								<td><span x-text="entry[2]"></span></td>
+								<td><code class="has-text-white" x-text="entry[3]"></code></td>
+								<td><code class="has-text-white text-verbose" x-text="entry[4]"></code></td>
+								<td><span x-text="entry[5]"></span></td>
+								<td><code :class="entry[0]??'has-text-white'" x-text="entry[6]"></code></td>
+								<td><code :class="entry[0]??'has-text-white'" x-text="entry[7]"></code></td>
+								<td><code :class="entry[0]??'has-text-white'" x-text="entry[8]"></code></td>
+								<td><code :class="entry[0]??'has-text-white'" x-text="entry[9]"></code></td>
+							</tr>
+						</template>
+					</tbody>
 				</table>
 			</div>
 		</div>
 		<footer class="footer px-5 py-4">
 			<div class="content">
 				<p>This utility is mainly for developers and power users. If you suspect MICC might be misbehaving, or you're simply curious about what a file contains, this utility is perfect for you.</p>
+				<p>Because this utility will load all events at once upon selection, for tracks or clips having a lot of events, slowdowns or even memory spikes are expected.</p>
 			</div>
 			<hr/>
 			<div class="content has-text-centered">

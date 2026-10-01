@@ -10,6 +10,9 @@ import {
 	IntegerHandler
 } from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
 import {
+	decode7bitUint
+} from "../../state/utils/bufferIo.mjs";
+import {
 	MICCInternalsTempo
 } from "./conversions.mjs";
 import MICCConstants from "./constants.mjs";
@@ -18,11 +21,15 @@ import {
 	MIDIUMPEvent
 } from "./event.mjs";
 
+const defaultDecoders = BinaryString.getDecoders(/*"u8", "sjis"*/);
+
 export default class MICCInternalsFinalisers {
 	/** @param {MIDINakedEvent|MIDIUMPEvent} event
 	* @returns {void} */
 	static smfMetaFilter(upThis, event, parseExtended = false) {
-		if (event.type !== MICCConstants.MIDI_META) return;
+		if (event.type === MICCConstants.MIDI_CH_PITCH) {
+			event.parsed = decode7bitUint(event.data, true) - 8192;
+		} else if (event.type !== MICCConstants.MIDI_META) return;
 		const noParseExtended = !parseExtended;
 		switch (event.meta) {
 			case MICCConstants.META_SEQ_NUMBER: {
@@ -41,7 +48,7 @@ export default class MICCInternalsFinalisers {
 				// Strings!
 				/** @type {BinaryString} */
 				const parsed = new BinaryString();
-				parsed.decoders = upThis.decoders;
+				parsed.decoders = upThis.decoders ?? defaultDecoders;
 				parsed.decode(event.data);
 				event.parsed = parsed;
 				break;
@@ -52,7 +59,9 @@ export default class MICCInternalsFinalisers {
 				break;
 			};
 			case MICCConstants.META_SET_TEMPO: {
-				event.parsed = MICCInternalsTempo.fromMPQN(IntegerHandler.readUint24(event.data));
+				const mpqn = IntegerHandler.readUint24(event.data);
+				//console.debug(`${mpqn} ${mpqn.toString(16)}`);
+				event.parsed = MICCInternalsTempo.fromMPQN(mpqn);
 				break;
 			};
 			case MICCConstants.META_SET_SMPTE_OFFSET: {
