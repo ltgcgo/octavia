@@ -39,6 +39,19 @@ for (let extension in fileTypes) {
 	fileProps.extensions.push(`.${extension.toLowerCase()}`);
 	fileProps.extensions.push(`.${extension.toUpperCase()}`);
 };
+const metaSeqNames = {
+	"format": "File format",
+	"type": "File type",
+	"title": "File title",
+	"isSmpte": "SMPTE time division?",
+	"division": "Ticks per quarter note",
+	"track": "Expected tracks",
+	"style": "Expected styles",
+	"clip": "Expected clips"
+};
+const metaModNames = {
+	"isTracker": "Tracker module?"
+};
 
 const [dispFileName, dispSize] = $a("div#info-title-success > span");
 const dispCrashError = $e("div#info-title-failure");
@@ -75,6 +88,54 @@ self.gParseFile = async () => {
 			};
 			await sequence.finalised;
 			Alpine.store("appState", 2);
+			{
+				const infoSeq = [];
+				for (let k in metaSeqNames) {
+					const metaEntry = sequence.meta[k];
+					if (metaEntry == null) continue;
+					switch (k) {
+						case "division": {
+							if (sequence.meta.isSmpte) continue;
+							break;
+						};
+					};
+					switch (typeof metaEntry) {
+						case "boolean": {
+							infoSeq.push([k, metaSeqNames[k], metaEntry ? "Yes" : "No"]);
+							break;
+						};
+						default: {
+							infoSeq.push([k, metaSeqNames[k], metaEntry]);
+						};
+					};
+				};
+				Alpine.store("metaSequence", infoSeq);
+			};
+			{
+				const infoSeq = [];
+				for (let k in metaModNames) {
+					const metaEntry = sequence.tracker[k];
+					if (metaEntry == null) continue;
+					switch (k) {
+						case "isTracker": {
+							break;
+						};
+						default: {
+							if (!sequence.tracker.isTracker) continue;
+						};
+					};
+					switch (typeof metaEntry) {
+						case "boolean": {
+							infoSeq.push([k, metaModNames[k], metaEntry ? "Yes" : "No"]);
+							break;
+						};
+						default: {
+							infoSeq.push([k, metaModNames[k], metaEntry]);
+						};
+					};
+				};
+				Alpine.store("metaTracker", infoSeq);
+			};
 		} catch (err) {
 			console.error(err);
 			let errorText = `Uncaught ${err.name}: ${err.message}\n\t`;
@@ -87,5 +148,7 @@ self.gParseFile = async () => {
 
 (async () => {
 	Alpine.store("appState", 0);
+	Alpine.store("metaSequence", []);
+	Alpine.store("metaTracker", []);
 	Alpine.start();
 })();

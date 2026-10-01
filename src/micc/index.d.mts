@@ -327,7 +327,7 @@ export class MICCSequenceMetadata extends MICCBaseMetadata {
 	* 
 	* MICC does not yet support SMPTE-based time divisions. */
 	isSmpte: boolean;
-	/** MIDI time division. `480` is the most common.
+	/** MIDI time division in ticks per quarter note. `480` is the most common.
 	*
 	* For tracker music with 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 24, 30, 32, 40, 48, 60, 80, 96, 120, 160 or 240 rows per beat, `480` will be used. `600` will be used with 25, 50, 75, 100, 150, 200, 300 or 600 rows. `720` will be used with 9, 18, 36, 40, 45, 72, 144, 180, 360, 720 rows. `960` will be used with 64, 192, 320, 480 or 960 rows. Any other value that doesn't have an existing mapping will cause the value `4096` be used, with the actual tick time be rounded to the nearest value.
 	*

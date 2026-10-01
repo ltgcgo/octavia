@@ -58,6 +58,15 @@
 						<th>Name</th>
 						<th>Value</th>
 					</thead>
+					<tbody>
+						<template x-for="entry in $store.metaSequence">
+							<tr>
+								<td><code class="has-text-warning" x-text="entry[0]"></code></td>
+								<td><span x-text="entry[1]"></span></td>
+								<td><code class="has-text-inherit" x-text="entry[2]"></code></td>
+							</tr>
+						</template>
+					</tbody>
 				</table>
 			</div>
 			<div id="info-meta-mod" class="py-2" x-show="$store.appState===2">
@@ -68,6 +77,15 @@
 						<th>Name</th>
 						<th>Value</th>
 					</thead>
+					<tbody>
+						<template x-for="entry in $store.metaTracker">
+							<tr>
+								<td><code class="has-text-warning" x-text="entry[0]"></code></td>
+								<td><span x-text="entry[1]"></span></td>
+								<td><code class="has-text-inherit" x-text="entry[2]"></code></td>
+							</tr>
+						</template>
+					</tbody>
 				</table>
 			</div>
 			<div id="info-meta-trk" class="py-2" x-show="$store.appState===2">
