@@ -50,7 +50,7 @@ const MICCTrack = class MICCTrack extends MICCTrackElement {
 };
 
 const MICCSequence = class MICCSequence {
-	enableFinalisation = true;
+	finaliserDepth = 1;
 	meta = new MICCSequenceMetadata();
 	tracker = new MICCTrackerMetadata();
 	/** @type {Iterable<TextDecoder>} */
@@ -77,7 +77,7 @@ const MICCSequence = class MICCSequence {
 	/** @param {number} asType  */
 	finalise(asType) {
 		const upThis = this;
-		if (!upThis.enableFinalisation) {
+		if (upThis.finaliserDepth < 1) {
 			console.debug(`Finalisation has been disabled.`);
 			return;
 		};
@@ -89,7 +89,7 @@ const MICCSequence = class MICCSequence {
 						case "yamaha.XFIH":
 						case "yamaha.XFKM": {
 							for (const event of track.data) {
-								MICCInternalsFinalisers.smfMetaFilter(event);
+								MICCInternalsFinalisers.smfMetaFilter(event, finaliserDepth > 1);
 							};
 							break;
 						};

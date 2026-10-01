@@ -7,6 +7,7 @@
 */
 
 import type {
+	int8,
 	uint8,
 	uint16,
 	uint32
@@ -391,8 +392,11 @@ export class MICCSequence {
 	markReady(): Promise<void>;
 	/** Resolves when full usability is met, e.g. the finaliser has been run. Will reject when the parser fails with parser error. */
 	finalised: Promise<void>;
-	/** When set to `false`, the finaliser will not be called, and the related promise will resolve instantly when the raw data has been fully parsed. */
-	enableFinalisation: boolean;
+	/** Defines how deep should the finalisers go.
+	* - When set to `0`, the finaliser will refuse to run, and the related promise will resolve instantly when the raw data has been fully parsed.
+	* - When set to `1`, only data containing primitive values will be parsed, like numbers and strings.
+	* - When set to `2`, data having extended structure will also be parsed. */
+	finaliserDepth: int8;
 	/** Used by parsers to mark the file as finalised. */
 	markFinalised(): Promise<void>;
 	/** Runs the finalization process. Re-runs are useful for programs that mutate events, e.g. editors. */
