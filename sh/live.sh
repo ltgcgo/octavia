@@ -20,6 +20,7 @@ inject=" "
 prepend=" "
 append=" "
 buildOpt=" "
+platform="--platform=neutral"
 format="iife"
 ext="js"
 if [ -e "src/${1:-default}/inject.js" ] ; then
