@@ -438,9 +438,9 @@ export class MICC extends MICCConstants {
 	/** (WIP) Parse the incoming Impulse Tracker byte stream. */
 	parseIt(data: ReadableStream<Uint8Array>, context?: object): MICCSequence;
 	// Assembly and disassembly.
-	/** Directly assemble MIA into SMF without going through a file object. */
+	/** Directly assemble MIA into SMF without going through a sequence object. */
 	assemble(data: ReadableStream<string>, context?: object): ReadableStream<Uint8Array>;
-	/** Directly disassemble SMF into MIA without going through a file object.
+	/** Directly disassemble SMF into MIA without going through a sequence object.
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
 	disassemble(data: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
 }

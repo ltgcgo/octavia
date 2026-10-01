@@ -2,6 +2,7 @@
 // Licensed under GNU LGPL v3.0 license.
 
 import {
+	MICCBaseElement,
 	MICCTrackElement
 } from "./fundamentals.mjs";
 
