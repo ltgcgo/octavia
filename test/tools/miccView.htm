@@ -45,11 +45,12 @@
 				<button @click="gParseFile()" class="button is-link" title="Open and parse a file from your device. Supports everything MICC currently supports.">Open</button>
 			</div>
 		</div>
-		<div id="info-renderer" class="text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4">
-			<div id="info-title-standby" class="text-functional">Open a file to begin. Polak is cute.</div>
-			<div id="info-title-success" class="text-functional has-text-success">Showing the parsed result of binary stream "<span>nom.mid</span>" (<span>114514</span> B).</div>
-			<div id="info-title-failure" class="text-functional text-verbose has-text-danger">Uncaught UnnommedDeerError: The deer has not been nommed.</div>
-			<div id="info-meta-seq" class="py-2">
+		<div id="info-renderer" class="text-renderer content has-radius-normal has-background-dark has-text-dark-invert px-5 py-4" x-data="{}">
+			<div id="info-title-standby" class="text-functional" x-show="$store.appState===0">Open a file to begin. Polak is cute.</div>
+			<div id="info-title-standby" class="text-functional has-text-info" x-show="$store.appState===1">Loading file data...</div>
+			<div id="info-title-success" class="text-functional has-text-success" x-show="$store.appState===2">Showing the parsed result of binary stream "<span>nom.mid</span>" (<span>114514</span> B).</div>
+			<div id="info-title-failure" class="text-functional text-verbose has-text-danger" x-show="$store.appState===3">Uncaught UnnommedDeerError: The deer has not been nommed.</div>
+			<div id="info-meta-seq" class="py-2" x-show="$store.appState===2">
 				<h3>Sequence metadata</h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
@@ -59,7 +60,7 @@
 					</thead>
 				</table>
 			</div>
-			<div id="info-meta-mod" class="py-2">
+			<div id="info-meta-mod" class="py-2" x-show="$store.appState===2">
 				<h3>Tracker metadata</h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
@@ -69,7 +70,7 @@
 					</thead>
 				</table>
 			</div>
-			<div id="info-meta-trk" class="py-2">
+			<div id="info-meta-trk" class="py-2" x-show="$store.appState===2">
 				<h3>Tracks</h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
@@ -81,7 +82,7 @@
 					</thead>
 				</table>
 			</div>
-			<div id="info-meta-clp" class="py-2">
+			<div id="info-meta-clp" class="py-2" x-show="$store.appState===2">
 				<h3>Pool resources</h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
@@ -93,7 +94,7 @@
 					</thead>
 				</table>
 			</div>
-			<div id="info-meta-nfo" class="py-2">
+			<div id="info-meta-nfo" class="py-2" x-show="Number.isSafeInteger($store.trackNum)">
 				<h3>Event list for <span>track</span> #<span>0</span></h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
