@@ -1,6 +1,9 @@
 #!/bin/bash
 #echo "Building..."
 #shx build
+if [ "$NODE_AUTH_TOKEN" != "" ]; then
+	echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+fi
 echo "Constructing isolates..."
 ln -s ../../dist isolated/midi-parser-ecosystem/dist
 ln -s ../../libs isolated/midi-parser-ecosystem/libs
@@ -10,6 +13,7 @@ echo "Publishing to JSR..."
 deno publish --allow-dirty --config isolated/midi-parser-ecosystem/deno.json
 echo "Publishing to NPM..."
 cd isolated/midi-parser-ecosystem
-npm publish --dry-run --provenance --access public
+npm publish --provenance --access public
+#npm publish --dry-run --provenance --access public
 cd ../..
 exit

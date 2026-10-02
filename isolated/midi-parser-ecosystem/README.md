@@ -1,5 +1,11 @@
 # midi-parser-ecosystem
 
+> **Warning**
+> 
+> If you are checking this package out on NPM (`npmjs.org`), you are likely accessing an outdated version. You can access up-to-date versions on [JSR](https://jsr.io/@ltgc/midi-parser-ecosystem) instead.
+> 
+> Due to NPM's hostility towards privacy/pseudo-anonimity by rejecting TOTP and forcing biometrics-based or hardware-based 2FA, if the remaining route of circumventing such restrictions for package publishing is closed down, **we are not going to comply, and the NPM version will be left to rot**.
+
 💪 Robust compatibility layers for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project.
 
 For additional benefits, such as [extensive file import and export support](https://kb.ltgc.cc/octavia/impl/format.html) and MIDI 2.0 wire format support, provided by the MICC subsystem, or such as synth behaviour emulation, and extended standard compliance, provided by the Octavia state engine, we strongly recommend you to migrate to Octavia MICC ([Codeberg](https://codeberg.org/ltgc/octavia/), [GitHub](https://github.com/ltgcgo/octavia/), [JSR](https://jsr.io/@ltgc/octavia/doc/micc/)) instead, which can integrate strongly with the rest of the Octavia ecosystem.
