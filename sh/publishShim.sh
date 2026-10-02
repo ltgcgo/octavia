@@ -11,18 +11,17 @@ echo "Publishing to JSR..."
 deno publish --allow-dirty --config isolated/midi-parser-ecosystem/deno.json
 echo "Preparing for Node registries..."
 cd isolated/midi-parser-ecosystem
-if [ "$GITHUB_AUTH_TOKEN" != ""]; then
-	echo "Publishing to GitHub..."
-	echo "//npm.pkg.github.com/:_authToken=${GITHUB_AUTH_TOKEN}" > ~/.npmrc
-	echo "@ltgc:registry=https://npm.pkg.github.com" >> ~/.npmrc
-	echo "always-auth=true" >> ~/.npmrc
-	npm publish --provenance --access public
-fi
 if [ "$NPM_AUTH_TOKEN" != "" ]; then
 	echo "Publishing to NPM..."
 	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
 	npm publish --provenance --access public
-	#npm publish --dry-run --provenance --access public
+fi
+if [ "$GITHUB_AUTH_TOKEN" != "" ]; then
+	echo "Publishing to GitHub..."
+	echo "//npm.pkg.github.com/:_authToken=${GITHUB_AUTH_TOKEN}" > ~/.npmrc
+	echo "@ltgcgo:registry=https://npm.pkg.github.com" >> ~/.npmrc
+	sed -i "s/\"@ltgc\//\"@ltgcgo\//" package.json
+	npm publish --provenance --access public
 fi
 cd ../..
 exit
