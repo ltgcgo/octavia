@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/publishShim.yml"
       - 'deno.miccCompat.json'
+      - 'sh/publishShim.sh'
       - 'src/micc/**.js'
       - 'src/micc/**.mjs'
       - 'src/miccCompat/**.js'
@@ -41,4 +42,4 @@ jobs:
       - name: Apply dependency graph
         run: "./shx depGraph"
       - name: Publish shim to JSR
-        run: "deno publish --allow-dirty --config deno.miccCompat.json"
+        run: "./shx publishShim"

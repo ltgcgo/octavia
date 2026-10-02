@@ -1,0 +1,29 @@
+{
+	"name": "@ltgc/midi-parser-ecosystem",
+	"type": "module",
+	"version": "0.0.2",
+	"license": "LGPL-3.0-only",
+	"author": {
+		"name": "Lightingale Community",
+		"url": "https://github.com/ltgcgo"
+	},
+	"homepage": "https://jsr.io/@ltgc/midi-parser-ecosystem/doc",
+	"bugs": {
+		"url": "https://github.com/ltgcgo/octavia/issues"
+	},
+	"description": "💪 Robust compatibility layers for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project.",
+	"keywords": [
+		"deno", "denoland", "bun js",
+		"midi", "midi parser", "octavia", "micc"
+	],
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"os": ["linux", "android", "darwin", "windows"],
+	"cpu": ["x64", "arm64"],
+	"files": [
+		"README.md",
+		"miccCompat.mjs",
+		"miccCompat.d.mts"
+	]
+}
