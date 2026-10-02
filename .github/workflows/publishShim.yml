@@ -35,6 +35,10 @@ jobs:
         uses: denoland/setup-deno@v2
         with:
           deno-version: latest
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: latest
 
       - name: Generate data for Octavia
         run: "./shx generate"
@@ -44,3 +48,5 @@ jobs:
         run: "./shx depGraph"
       - name: Publish shims
         run: "./shx publishShim"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
