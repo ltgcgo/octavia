@@ -53,3 +53,8 @@ jobs:
           CODEBERG_AUTH_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Upload generated Node bundles
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-bundle
+          path: isolated/**/*.tgz

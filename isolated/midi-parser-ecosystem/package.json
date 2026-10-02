@@ -26,9 +26,9 @@
 	"os": ["linux", "android", "darwin", "windows"],
 	"cpu": ["x64", "arm64"],
 	"files": [
-		"README.md",
-		"miccCompat.mjs",
-		"miccCompat.d.mts"
+		"**.md",
+		"**.mjs",
+		"**.d.mts"
 	],
 	"exports": {
 		".": {
