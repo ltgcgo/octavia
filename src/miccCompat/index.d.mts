@@ -34,12 +34,25 @@ declare interface ColxiMIDIEvent {
 	channel?: uint8;
 	/** MIDI delta time. */
 	deltaTime: uint32;
-	/** MIDI event type. Note that event type `240` (SysEx) from MICC will be converted to type `15` instead to support behaviour. */
+	/** MIDI event type. Note that event type `240` (SysEx) from MICC will be converted to type `15` (`f`) instead to match behaviour. */
 	type: uint8;
-	/** If the event is a meta event, the meta event type. */
+	/** If the event is a meta event (`ff` events), the meta event type. */
 	metaType?: uint8;
-	/** Actual data of the event. */
-	data?: number|Uint8Array|string|number[];
+	/** Actual data of the event.
+	* ## Channel events
+	* - For `8`, `9`, `a`, `b` and `e` events, this is always a two-element `Uint8Array`.
+	* - For `c` and `d` events, this is always `uint8`.
+	* - For `f` (new SysEx) events, unless altered by the customised interpreter method, this defaults to `Uint8Array`.
+	* ## Meta events
+	* For `ff` (meta) events, the value type depends on the meta event type in the following order.
+	* - For `2f` (track end), this is null.
+	* - For `21` (track port), this is always `uint8`.
+	* - For `59` (key signature), this is always `uint16`.
+	* - For `51` (tempo), this is always `uint32`.
+	* - For `54` (SMPTE offset) and `58` (time signature), this is always `Uint8Array` from the raw event bytes.
+	* - For meta events MICC parses into strings (e.g. text events), this will also be a string.
+	* - For all other events, unless altered by the customised interpreter method, the raw event data is passed through as `Uint8Array` by default. */
+	data?: uint8|uint16|uint32|Uint8Array|string;
 }
 /** A MIDI track containing events in the `colxi/midi-parser-js` scheme. */
 declare interface ColxiMIDITrack {
@@ -90,13 +103,13 @@ export class ColxiMIDIParser {
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, a hexadecimal string, or readable byte streams.
 	* @param callback The method to invoke when parsing is finished. */
 	static parse(input: string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>, callback?: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
-	/** Defines custom interpreter behaviour, should only invoked by the parser. The returned value will populate the data property. Returning `false` will assume default behaviour.
-	*
-	* Unlike in the original parser, you will get the original unparsed bytes by default. Set this property to `null` or `undefined` to prevent this behaviour.
+	/** Defines custom interpreter behaviour, should only invoked by the parser. The returned value will populate the data property.
+	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour.
+	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `uint32`) will be assumed.
 	* @param type The event type.
 	* @param view A view into the MIDI data currently being parsed.
 	* @param metaLength Length of the meta event. Will only be present for 0xff events. */
-	static customInterpreter?: (type: number, view: ColxiMIDIView, metaLength?: number) => any;
+	static customInterpreter?: boolean|((type: number, view: ColxiMIDIView, metaLength?: number) => any);
 	/** A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
 	static decoders?: Iterable<TextDecoder>;
 }
