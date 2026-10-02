@@ -5,7 +5,8 @@ on:
       - main
     paths:
       - ".github/workflows/publishShim.yml"
-      - 'deno.miccCompat.json'
+      - 'isolated/midi-parser-ecosystem/deno.json'
+      - 'isolated/midi-parser-ecosystem/package.json'
       - 'sh/publishShim.sh'
       - 'src/micc/**.js'
       - 'src/micc/**.mjs'
@@ -41,5 +42,5 @@ jobs:
         run: "./shx build"
       - name: Apply dependency graph
         run: "./shx depGraph"
-      - name: Publish shim to JSR
+      - name: Publish shims
         run: "./shx publishShim"

@@ -20,7 +20,8 @@
 			"dist/miccCompat.mjs",
 			"dist/miccCompat.d.mts",
 			"libs/libs",
-			"libs/**/*.d.mts"
+			"libs/**/*.d.mts",
+			"README.md"
 		]
 	},
 	"compilerOptions": {
