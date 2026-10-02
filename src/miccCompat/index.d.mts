@@ -45,7 +45,7 @@ declare interface ColxiMIDIEvent {
 	* - For `f` (new SysEx) events, unless altered by the customised interpreter method, this defaults to `Uint8Array`.
 	* ## Meta events
 	* For `ff` (meta) events, the value type depends on the meta event type in the following order.
-	* - For `2f` (track end), this is null.
+	* - For `2f` (track end), this is undefined.
 	* - For `21` (track port), this is always `uint8`.
 	* - For `59` (key signature), this is always `uint16`.
 	* - For `51` (tempo), this is always `uint32`.
