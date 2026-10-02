@@ -25,5 +25,11 @@
 		"README.md",
 		"miccCompat.mjs",
 		"miccCompat.d.mts"
-	]
+	],
+	"exports": {
+		".": {
+			"import": "./miccCompat.mjs",
+			"types": "./miccCompat.d.mts"
+		}
+	}
 }
