@@ -13,8 +13,18 @@ echo "Preparing for Node registries..."
 cd isolated/midi-parser-ecosystem
 if [ "$NPM_AUTH_TOKEN" != "" ]; then
 	echo "Publishing to NPM..."
-	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
-	npm publish --provenance --access public
+	if [ "$(grep -E '\B"version": "[0-9]+\.[0-9]+(|\.0)"' package.json)" != "" ]; then
+		echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
+		npm publish --provenance --access public
+	else
+		echo "NPM publishing skipped. NPM will only have non-patch versions to be kept out-of-date."
+	fi
+fi
+if [ "$CODEBERG_AUTH_TOKEN" != "" ]; then
+	echo "Publishing to Codeberg..."
+	echo "//codeberg.org/api/packages/ltgc/npm/:_authToken=${CODEBERG_AUTH_TOKEN}" > ~/.npmrc
+	echo "registry=https://codeberg.org/api/packages/ltgc/npm/" >> ~/.npmrc
+	npm publish --access public
 fi
 if [ "$GITHUB_AUTH_TOKEN" != "" ]; then
 	echo "Publishing to GitHub..."
@@ -22,13 +32,6 @@ if [ "$GITHUB_AUTH_TOKEN" != "" ]; then
 	echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
 	sed -i "s/\"@ltgc\//\"@ltgcgo\//" package.json
 	npm publish --provenance --access public
-fi
-if [ "$CODEBERG_AUTH_TOKEN" != "" ]; then
-	echo "Publishing to Codeberg..."
-	echo "//codeberg.org/api/packages/ltgc/npm/:_authToken=${CODEBERG_AUTH_TOKEN}" > ~/.npmrc
-	echo "registry=https://codeberg.org/api/packages/ltgc/npm/" >> ~/.npmrc
-	sed -i "s/\"@ltgcgo\//\"/" package.json
-	npm publish --access public
 fi
 cd ../..
 exit

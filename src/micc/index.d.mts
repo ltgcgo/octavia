@@ -337,9 +337,9 @@ export class MICCSequenceMetadata extends MICCBaseMetadata {
 	*
 	* For Standard MIDI Files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`. */
 	type: uint16;
-	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead. Always check the actual track count! */
-	track?: uint32;
-	/** For files utilising pointers, amount of expected normal MIDI blocks/clips. This is typically seen in project (sequencer) files and tracker music. Always check the actual clip count! */
+	/** Amount of expected tracks. For tracker music, this denotes allocated channels instead, due to each track occupying a single monophonic channel. Always check the actual track count! */
+	track?: uint16;
+	/** For files utilising pointers, amount of expected normal MIDI blocks/clips. This is typically seen in project (sequencer) files due to their tendency to reuse blocks, and tracker music as their patterns are treated as clips. Always check the actual clip count! */
 	clip?: uint32;
 	/** For files utilising styles, amount of expected styles. Currently unused. Always check the actual style count! */
 	style?: uint32;
