@@ -1,0 +1,44 @@
+name: Publish shims to registries
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/publishShim.yml"
+      - 'deno.miccCompat.json'
+      - 'src/micc/**.js'
+      - 'src/micc/**.mjs'
+      - 'src/miccCompat/**.js'
+      - 'src/miccCompat/**.mjs'
+      - 'src/miccCompat/index.d.mts'
+  workflow_dispatch:
+
+concurrency:
+  group: "publishShim"
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'ltgcgo/octavia'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: latest
+
+      - name: Generate data for Octavia
+        run: "./shx generate"
+      - name: Build Octavia files
+        run: "./shx build"
+      - name: Apply dependency graph
+        run: "./shx depGraph"
+      - name: Publish shim to JSR
+        run: "deno publish --allow-dirty --config deno.miccCompat.json"

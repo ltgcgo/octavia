@@ -13,7 +13,7 @@
 		]
 	},
 	"exports": {
-		"./miccCompat": "./dist/miccCompat.d.mts"
+		".": "./dist/miccCompat.d.mts"
 	},
 	"publish": {
 		"include": [
