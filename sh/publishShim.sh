@@ -1,11 +1,22 @@
 #!/bin/bash
 #echo "Building..."
 #shx build
+if [ ! -f "$(which tree)" ]; then
+	if [ -f "$(which doas)" ]; then
+		doas apt install -y tree
+	elif [ -f "$(which sudo)" ]; then
+		sudo apt install -y tree
+	else
+		apt install -y tree
+	fi
+fi
 echo "Constructing isolates..."
 ln -s ../../dist isolated/midi-parser-ecosystem/dist
 ln -s ../../libs isolated/midi-parser-ecosystem/libs
-ln -s ../../dist/miccCompat.mjs isolated/midi-parser-ecosystem/
-ln -s ../../dist/miccCompat.d.mts isolated/midi-parser-ecosystem/
+cp -v dist/miccCompat.mjs isolated/midi-parser-ecosystem/
+cp -v dist/miccCompat.d.mts isolated/midi-parser-ecosystem/
+echo "Tree structure for the isolates:"
+tree isolated
 echo "Preparing for neutral registries..."
 echo "Publishing to JSR..."
 deno publish --allow-dirty --config isolated/midi-parser-ecosystem/deno.json
@@ -13,8 +24,8 @@ echo "Preparing for Node registries..."
 cd isolated/midi-parser-ecosystem
 if [ "$NPM_AUTH_TOKEN" != "" ]; then
 	echo "Publishing to NPM..."
-	if [ "$(grep -E '\B"version": "[0-9]+\.[0-9]+(|\.0)"' package.json)" != "" ]; then
-		echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
+	if [ "$(grep -E '\B"version": "[0-9]+\.[0-9]+(|\.0)"' package.json)" == "" ]; then
+		#echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
 		npm publish --provenance --access public
 	else
 		echo "NPM publishing skipped. NPM will only have non-patch versions to be kept out-of-date."

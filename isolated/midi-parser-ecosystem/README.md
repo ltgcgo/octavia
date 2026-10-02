@@ -2,7 +2,7 @@
 
 > **Warning**
 > 
-> If you are checking this package out on NPM (`npmjs.org`), you are likely accessing an outdated version. You can access up-to-date versions on [JSR](https://jsr.io/@ltgc/midi-parser-ecosystem) instead, or via [Codeberg Packages](https://codeberg.org/ltgc/-/packages/npm/midi-parser-ecosystem) and [GitHub Packages](https://github.com/ltgcgo/octavia/pkgs/npm/midi-parser-ecosystem).
+> If you are checking this package out on NPM (`npmjs.org`), you are likely accessing an outdated version. You can access up-to-date versions on [JSR](https://jsr.io/@ltgc/midi-parser-ecosystem) instead, or via [Codeberg Packages](https://codeberg.org/ltgc/-/packages/npm/@ltgc%2Fmidi-parser-ecosystem) and [GitHub Packages](https://github.com/ltgcgo/octavia/pkgs/npm/midi-parser-ecosystem).
 > 
 > Due to NPM's hostility towards privacy/pseudo-anonimity by rejecting TOTP and forcing biometrics-based or hardware-based 2FA, if the remaining route of circumventing such restrictions for package publishing is closed down, without NPM offering a privacy-friendly alternative like TOTP, **we are not going to comply, and the NPM version will be left to either rot or deliberately be kept out-of-date**.
 
