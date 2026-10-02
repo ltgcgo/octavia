@@ -16,6 +16,12 @@ if [ "$NPM_AUTH_TOKEN" != "" ]; then
 	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
 	npm publish --provenance --access public
 fi
+if [ "$CODEBERG_AUTH_TOKEN" != "" ]; then
+	echo "Publishing to Codeberg..."
+	echo "//codeberg.org/api/packages/ltgc/npm/:_authToken=${CODEBERG_AUTH_TOKEN}" > ~/.npmrc
+	echo "@ltgc:registry=https://codeberg.org/api/packages/ltgc/npm/" >> ~/.npmrc
+	npm publish --provenance --access public
+fi
 if [ "$GITHUB_AUTH_TOKEN" != "" ]; then
 	echo "Publishing to GitHub..."
 	echo "//npm.pkg.github.com/:_authToken=${GITHUB_AUTH_TOKEN}" > ~/.npmrc

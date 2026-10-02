@@ -13,7 +13,8 @@
 	},
 	"description": "💪 Robust compatibility layers for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project.",
 	"repository": {
-		"url": "https://github.com/ltgcgo/octavia"
+		"type": "url",
+		"url": "git+https://github.com/ltgcgo/octavia.git"
 	},
 	"keywords": [
 		"deno", "denoland", "bun js",
