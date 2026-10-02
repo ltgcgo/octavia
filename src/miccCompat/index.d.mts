@@ -103,7 +103,7 @@ export class ColxiMIDIParser {
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, a hexadecimal string, or readable byte streams.
 	* @param callback The method to invoke when parsing is finished. */
 	static parse(input: string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>, callback?: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
-	/** Defines custom interpreter behaviour, should only invoked by the parser. The returned value will populate the data property.
+	/** Defines custom interpreter behaviour, should only be invoked by the parser. The returned value will populate the data property.
 	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour.
 	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `uint32`) will be assumed.
 	* @param type The event type.

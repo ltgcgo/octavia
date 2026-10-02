@@ -1,7 +1,7 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
-/** Fake classess intended to specify native types. For documentation only.
+/** Fake classes intended to specify native types. For documentation only.
 * @license LGPL-3.0-only
 * @module cc.ltgc.seamstress.nativeType
 */

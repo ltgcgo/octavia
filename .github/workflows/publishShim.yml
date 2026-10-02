@@ -26,6 +26,7 @@ jobs:
 
     permissions:
       contents: read
+      packages: write
       id-token: write
 
     steps:
@@ -49,4 +50,5 @@ jobs:
       - name: Publish shims
         run: "./shx publishShim"
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

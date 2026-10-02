@@ -1,19 +1,28 @@
 #!/bin/bash
 #echo "Building..."
 #shx build
-if [ "$NODE_AUTH_TOKEN" != "" ]; then
-	echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
-fi
 echo "Constructing isolates..."
 ln -s ../../dist isolated/midi-parser-ecosystem/dist
 ln -s ../../libs isolated/midi-parser-ecosystem/libs
 ln -s ../../dist/miccCompat.mjs isolated/midi-parser-ecosystem/
 ln -s ../../dist/miccCompat.d.mts isolated/midi-parser-ecosystem/
+echo "Preparing for neutral registries..."
 echo "Publishing to JSR..."
 deno publish --allow-dirty --config isolated/midi-parser-ecosystem/deno.json
-echo "Publishing to NPM..."
+echo "Preparing for Node registries..."
 cd isolated/midi-parser-ecosystem
-npm publish --provenance --access public
-#npm publish --dry-run --provenance --access public
+if [ "$GITHUB_AUTH_TOKEN" != ""]; then
+	echo "Publishing to GitHub..."
+	echo "//npm.pkg.github.com/:_authToken=${GITHUB_AUTH_TOKEN}" > ~/.npmrc
+	echo "@ltgc:registry=https://npm.pkg.github.com" >> ~/.npmrc
+	echo "always-auth=true" >> ~/.npmrc
+	npm publish --provenance --access public
+fi
+if [ "$NPM_AUTH_TOKEN" != "" ]; then
+	echo "Publishing to NPM..."
+	echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
+	npm publish --provenance --access public
+	#npm publish --dry-run --provenance --access public
+fi
 cd ../..
 exit
