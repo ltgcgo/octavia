@@ -19,9 +19,16 @@ fi
 if [ "$GITHUB_AUTH_TOKEN" != "" ]; then
 	echo "Publishing to GitHub..."
 	echo "//npm.pkg.github.com/:_authToken=${GITHUB_AUTH_TOKEN}" > ~/.npmrc
-	echo "@ltgcgo:registry=https://npm.pkg.github.com" >> ~/.npmrc
+	echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
 	sed -i "s/\"@ltgc\//\"@ltgcgo\//" package.json
 	npm publish --provenance --access public
+fi
+if [ "$CODEBERG_AUTH_TOKEN" != "" ]; then
+	echo "Publishing to Codeberg..."
+	echo "//codeberg.org/api/packages/ltgc/npm/:_authToken=${CODEBERG_AUTH_TOKEN}" > ~/.npmrc
+	echo "registry=https://codeberg.org/api/packages/ltgc/npm/" >> ~/.npmrc
+	sed -i "s/\"@ltgcgo\//\"/" package.json
+	npm publish --access public
 fi
 cd ../..
 exit
