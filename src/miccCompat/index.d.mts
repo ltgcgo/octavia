@@ -39,7 +39,7 @@ declare interface ColxiMIDIEvent {
 	/** If the event is a meta event, the meta event type. */
 	metaType?: uint8;
 	/** Actual data of the event. */
-	data?: number|Uint8Array|string;
+	data?: number|Uint8Array|string|number[];
 }
 /** A MIDI track containing events in the `colxi/midi-parser-js` scheme. */
 declare interface ColxiMIDITrack {
@@ -52,8 +52,10 @@ declare interface ColxiMIDITrack {
 declare interface ColxiMIDIFile {
 	/** MIDI file type (0, 1, 2). */
 	formatType: uint16;
-	/** The time division used by files. 480 is the most common value. */
-	timeDivision: uint16;
+	/** The time division used by files.
+	* - When the value is a single `uint16`, this is in TPQN mode. TPQN 480 is the most common value.
+	* - When the value is a two-element `uint8` array, this is in SMPTE mode. The first element is the SMPTE frame rate (not guaranteed to be the true frame rate), and the second element is the number of ticks existing per frame. */
+	timeDivision: uint16|[uint8, uint8];
 	/** Number of expected tracks specified by the MIDI file. Not guaranteed to the the exact number of tracks supplied by the MIDI file. */
 	tracks: number;
 	/** Actual tracks with events. */
