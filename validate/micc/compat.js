@@ -44,9 +44,9 @@ test("Validate Colxi against streamed and buffered", async () => {
 	const errorHistory = [];
 	let testedFile = 0;
 	let cumulativeDurationColxi = 0, cumulativeEventsColxi = 0;
-	let cumulativeDurationMICC = 0, cumulativeEventsMICC = 0;
-	let cumulativeDurationMICCMatched = 0, cumulativeEventsMICCMatched = 0;
-	let cumulativeDurationMICCBuffered = 0, cumulativeEventsMICCBuffered = 0;
+	let cumulativeDurationMICCNativeStreamed = 0, cumulativeEventsMICCNativeStreamed = 0;
+	let cumulativeDurationMICCMatchedStreamed = 0, cumulativeEventsMICCMatchedStreamed = 0;
+	let cumulativeDurationMICCNativeBuffered = 0, cumulativeEventsMICCNativeBuffered = 0;
 	ColxiMIDIParser.debug = true;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
@@ -54,21 +54,21 @@ test("Validate Colxi against streamed and buffered", async () => {
 			const filePath = `./cache/source/${dirEntry.name}`;
 			const fileColxi = await Deno.readFile(filePath);
 			const fileMICCStreamed = (await Deno.open(filePath)).readable;
-			const fileMICCMatched = (await Deno.open(filePath)).readable;
+			const fileMICCMatchedStreamed = (await Deno.open(filePath)).readable;
 			testedFile ++;
 			let passed = true;
 			let processedCountColxi = 0,
-			processedCountMICC = 0,
-			processedCountMICCMatched = 0,
-			processedCountMICCBuffered = 0;
+			processedCountMICCNativeStreamed = 0,
+			processedCountMICCMatchedStreamed = 0,
+			processedCountMICCNativeBuffered = 0;
 			/** @type {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} */
 			let sequenceColxi;
 			/** @type {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} */
-			let sequenceMICC;
+			let sequenceMICCNativeStreamed;
 			/** @type {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} */
-			let sequenceMICCMatched;
+			let sequenceMICCMatchedStreamed;
 			/** @type {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} */
-			let sequenceMICCBuffered;
+			let sequenceMICCNativeBuffered;
 			// Original section
 			const startTimeColxi = performance.now();
 			try {
@@ -82,44 +82,44 @@ test("Validate Colxi against streamed and buffered", async () => {
 			// Native run section
 			ColxiMIDIParser.extended = true;
 			ColxiMIDIParser.customInterpreter = true;
-			const startTimeMICC = performance.now();
+			const startTimeMICCNativeStreamed = performance.now();
 			try {
-				sequenceMICC = await ColxiMIDIParser.parse(fileMICCStreamed);
+				sequenceMICCNativeStreamed = await ColxiMIDIParser.parse(fileMICCStreamed);
 			} catch (err) {
 				passed = false;
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
-			const runDurationMICC = performance.now() - startTimeMICC;
-			const startTimeMICCBuffered = performance.now();
+			const runDurationMICCNativeStreamed = performance.now() - startTimeMICCNativeStreamed;
+			const startTimeMICCNativeBuffered = performance.now();
 			try {
-				sequenceMICCBuffered = null;
+				sequenceMICCNativeBuffered = null;
 			} catch (err) {
 				passed = false;
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
-			const runDurationMICCBuffered = performance.now() - startTimeMICCBuffered;
+			const runDurationMICCNativeBuffered = performance.now() - startTimeMICCNativeBuffered;
 			// Behaviour match section
 			ColxiMIDIParser.extended = false;
 			ColxiMIDIParser.customInterpreter = false;
-			const startTimeMICCMatched = performance.now();
+			const startTimeMICCMatchedStreamed = performance.now();
 			try {
-				sequenceMICCMatched = await ColxiMIDIParser.parse(fileMICCMatched);
+				sequenceMICCMatchedStreamed = await ColxiMIDIParser.parse(fileMICCMatchedStreamed);
 			} catch (err) {
 				passed = false;
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
-			const runDurationMICCMatched = performance.now() - startTimeMICCMatched;
+			const runDurationMICCMatchedStreamed = performance.now() - startTimeMICCMatchedStreamed;
 			try {
 				// Enumerate streamed MICC
-				for (const track of sequenceMICC.track) {
-					processedCountMICC += track.event.length;
+				for (const track of sequenceMICCNativeStreamed.track) {
+					processedCountMICCNativeStreamed += track.event.length;
 				};
 				// Enumerate streamed matched MICC
-				for (const track of sequenceMICCMatched.track) {
-					processedCountMICCMatched += track.event.length;
+				for (const track of sequenceMICCMatchedStreamed.track) {
+					processedCountMICCMatchedStreamed += track.event.length;
 				};
 				// Enumerate buffered MICC
 				if (sequenceColxi?.track?.length > 0) {
@@ -140,16 +140,16 @@ test("Validate Colxi against streamed and buffered", async () => {
 			const parseSpeedColxi = reducePrecisionText(processedCountColxi / runDurationColxi * 1000, 3);
 			cumulativeDurationColxi += runDurationColxi;
 			cumulativeEventsColxi += processedCountColxi;
-			const parseSpeedMICC = reducePrecisionText(processedCountMICC / runDurationMICC * 1000, 3);
-			cumulativeDurationMICC += runDurationMICC;
-			cumulativeEventsMICC += processedCountMICC;
-			const parseSpeedMICCMatched = reducePrecisionText(processedCountMICCMatched / runDurationMICCMatched * 1000, 3);
-			cumulativeDurationMICCMatched += runDurationMICCMatched;
-			cumulativeEventsMICCMatched += processedCountMICCMatched;
-			const parseSpeedMICCBuffered = reducePrecisionText(processedCountMICCBuffered / runDurationMICCBuffered * 1000, 3);
-			cumulativeDurationMICCBuffered += runDurationMICCBuffered;
-			cumulativeEventsMICCBuffered += processedCountMICCBuffered;
-			let reportText = `${processedCountColxi} / ${processedCountMICCMatched} / ${processedCountMICC} / ${processedCountMICCBuffered} event(s).\nDuration: ${reducePrecisionText(runDurationColxi + runDurationMICCMatched + runDurationMICC + runDurationMICCBuffered, 3)}ms (${reducePrecisionText(runDurationColxi, 3)}ms + ${reducePrecisionText(runDurationMICCMatched, 3)}ms + ${reducePrecisionText(runDurationMICC, 3)}ms + ${reducePrecisionText(runDurationMICCBuffered, 3)}ms).\nThroughput: ${parseSpeedColxi}/s | ${parseSpeedMICCMatched}/s | ${parseSpeedMICC}/s | ${parseSpeedMICCBuffered}/s.`;
+			const parseSpeedMICCNativeStreamed = reducePrecisionText(processedCountMICCNativeStreamed / runDurationMICCNativeStreamed * 1000, 3);
+			cumulativeDurationMICCNativeStreamed += runDurationMICCNativeStreamed;
+			cumulativeEventsMICCNativeStreamed += processedCountMICCNativeStreamed;
+			const parseSpeedMICCMatchedStreamed = reducePrecisionText(processedCountMICCMatchedStreamed / runDurationMICCMatchedStreamed * 1000, 3);
+			cumulativeDurationMICCMatchedStreamed += runDurationMICCMatchedStreamed;
+			cumulativeEventsMICCMatchedStreamed += processedCountMICCMatchedStreamed;
+			const parseSpeedMICCNativeBuffered = reducePrecisionText(processedCountMICCNativeBuffered / runDurationMICCNativeBuffered * 1000, 3);
+			cumulativeDurationMICCNativeBuffered += runDurationMICCNativeBuffered;
+			cumulativeEventsMICCNativeBuffered += processedCountMICCNativeBuffered;
+			let reportText = `${processedCountColxi} / ${processedCountMICCMatchedStreamed} / ${processedCountMICCNativeStreamed} / ${processedCountMICCNativeBuffered} event(s).\nDuration: ${reducePrecisionText(runDurationColxi + runDurationMICCMatchedStreamed + runDurationMICCNativeStreamed + runDurationMICCNativeBuffered, 3)}ms (${reducePrecisionText(runDurationColxi, 3)}ms + ${reducePrecisionText(runDurationMICCMatchedStreamed, 3)}ms + ${reducePrecisionText(runDurationMICCNativeStreamed, 3)}ms + ${reducePrecisionText(runDurationMICCNativeBuffered, 3)}ms).\nThroughput: ${parseSpeedColxi}/s | ${parseSpeedMICCMatchedStreamed}/s | ${parseSpeedMICCNativeStreamed}/s | ${parseSpeedMICCNativeBuffered}/s.`;
 			if (passed) {
 				console.info(`\x8d\r[\x1b[1;32mPASS\x1b[0m] "${dirEntry.name}": Validation success with ${reportText}`);
 			} else {
@@ -165,7 +165,7 @@ test("Validate Colxi against streamed and buffered", async () => {
 		throw(`Failed ${errorHistory.length} test(s) out of ${testedFile}.`);
 	};
 	console.debug(`\nColxi: Parsed ${cumulativeEventsColxi} event(s) in ${reducePrecisionText(cumulativeDurationColxi, 3)}ms. Average ${reducePrecisionText(cumulativeEventsColxi / cumulativeDurationColxi * 1000, 3)}/s`);
-	console.debug(`MICC streamed (matched): Parsed ${cumulativeEventsMICCMatched} event(s) in ${reducePrecisionText(cumulativeDurationMICCMatched, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCMatched / cumulativeDurationMICCMatched * 1000, 3)}/s`);
-	console.debug(`MICC streamed (native): Parsed ${cumulativeEventsMICC} event(s) in ${reducePrecisionText(cumulativeDurationMICC, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICC / cumulativeDurationMICC * 1000, 3)}/s`);
-	console.debug(`MICC buffered (native): Parsed ${cumulativeEventsMICCBuffered} event(s) in ${reducePrecisionText(cumulativeDurationMICCBuffered, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCBuffered / cumulativeDurationMICCBuffered * 1000, 3)}/s`);
+	console.debug(`MICC streamed (matched): Parsed ${cumulativeEventsMICCMatchedStreamed} event(s) in ${reducePrecisionText(cumulativeDurationMICCMatchedStreamed, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCMatchedStreamed / cumulativeDurationMICCMatchedStreamed * 1000, 3)}/s`);
+	console.debug(`MICC streamed (native): Parsed ${cumulativeEventsMICCNativeStreamed} event(s) in ${reducePrecisionText(cumulativeDurationMICCNativeStreamed, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCNativeStreamed / cumulativeDurationMICCNativeStreamed * 1000, 3)}/s`);
+	console.debug(`MICC buffered (native): Parsed ${cumulativeEventsMICCNativeBuffered} event(s) in ${reducePrecisionText(cumulativeDurationMICCNativeBuffered, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCNativeBuffered / cumulativeDurationMICCNativeBuffered * 1000, 3)}/s`);
 });
