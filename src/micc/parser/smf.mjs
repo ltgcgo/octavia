@@ -63,8 +63,12 @@ export default class MICCInternalsSMF {
 		} else {
 			isStale = true;
 			statusByte = options.parserContext.lastStatus;
-			if (!(statusByte >= 0x80 && statusByte < 0xf0)) {
+			if (statusByte >= 0x80 && statusByte < 0xf0) {
+				// No-op.
+			} else if (Number.isSafeInteger(statusByte)) {
 				throw(new Error(`Invalid running status 0x${statusByte?.toString(16).padStart(2, "0")}.`));
+			} else {
+				throw(new Error(`Non-existent running status "${statusByte}".`));
 			};
 		};
 		if (statusByte >= 0xf0) {
@@ -212,6 +216,7 @@ export default class MICCInternalsSMF {
 			};
 		};
 		nakedEvent.type = eventType;
+		nakedEvent.byteSize = dataEndPointer;
 		// Final pass
 		if (buffer.length < dataEndPointer) {
 			throw(new Error(`Incomplete 0x${eventType.toString(16)} event: expected ${dataEndPointer} B, received ${buffer.length} B.`));
