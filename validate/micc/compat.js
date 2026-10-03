@@ -98,6 +98,8 @@ test("Validate Colxi against streamed and buffered", async () => {
 				console.error(err);
 			};
 			const runDurationMICCNativeStreamed = performance.now() - startTimeMICCNativeStreamed;
+			ColxiMIDIParserBuffered.extended = true;
+			ColxiMIDIParserBuffered.customInterpreter = true;
 			const startTimeMICCNativeBuffered = performance.now();
 			try {
 				sequenceMICCNativeBuffered = await ColxiMIDIParserBuffered.parse(fileMICCNativeBuffered);
@@ -119,6 +121,8 @@ test("Validate Colxi against streamed and buffered", async () => {
 				console.error(err);
 			};
 			const runDurationMICCMatchedStreamed = performance.now() - startTimeMICCMatchedStreamed;
+			ColxiMIDIParserBuffered.extended = false;
+			ColxiMIDIParserBuffered.customInterpreter = true;
 			const startTimeMICCMatchedBuffered = performance.now();
 			try {
 				sequenceMICCMatchedBuffered = await ColxiMIDIParserBuffered.parse(fileMICCMatchedBuffered);
