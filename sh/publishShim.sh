@@ -45,7 +45,7 @@ if [ "$GITHUB_AUTH_TOKEN" != "" ]; then
 	echo "//npm.pkg.github.com/:_authToken=${GITHUB_AUTH_TOKEN}" > ~/.npmrc
 	echo "registry=https://npm.pkg.github.com" >> ~/.npmrc
 	sed -i "s/\"@ltgc\//\"@ltgcgo\//" package.json
-	npm publish *.tgz --provenance --access public
+	npm publish --provenance --access public
 fi
 cd ../..
 exit
