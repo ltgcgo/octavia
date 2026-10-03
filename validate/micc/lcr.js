@@ -4,36 +4,19 @@ import {
 	Seamstress
 } from "../../libs/seamstress@ltgcgo/seamstress/index.mjs";
 import {
-	MICC
-} from "../../src/micc/index.mjs";
-import {
+	MICC,
 	MICCInternalsSMF
 } from "../../src/micc/index.mjs";
+import {
+} from "../../src/micc/index.mjs";
+import {
+	reducePrecision
+} from "../../src/state/utils.js";
 import {
 	test
 } from "https://jsr.io/@cross/test/0.0.14/mod.ts";
 
-const reducePrecision = function (value, base10Precision = 0) {
-	const base10Factor = Math.pow(10, base10Precision);
-	return Math.round(value * base10Factor) / base10Factor;
-};
-
-const FailRecord = class FailRecord {
-	/** @type {Error} */
-	error;
-	/** @type {string} */
-	fileName;
-	/** @type {number} */
-	offset;
-	/** @param {string} fileName 
-	* @param {number} offset 
-	* @param {Error} error  */
-	constructor(fileName, offset, error) {
-		this.fileName = fileName;
-		this.offset = offset;
-		this.error = error;
-	};
-};
+import FailRecord from "../common/failRecord.mjs";
 
 // Screw it, Deno APIs can be easily shimmed anyway.
 test("Validate stream parsing of single events", async () => {
@@ -45,7 +28,7 @@ test("Validate stream parsing of single events", async () => {
 	let testedFile = 0, cumulativeDuration = 0, cumulativeEvents = 0;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
-			console.info(`Validating skeletal event parsing of "${dirEntry.name}"...\x7f`);
+			console.info(`Validating skeletal event parsing of "${dirEntry.name}"...`);
 			const fileObject = await Deno.open(`./cache/source/${dirEntry.name}`);
 			const fileState = {
 				"isSmfWrapped": true,
@@ -97,7 +80,7 @@ test("Validate stream roundtripping of files", async () => {
 	let testedFile = 0, cumulativeDuration = 0, cumulativeEvents = 0;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
-			console.info(`Validating full parsing of "${dirEntry.name}"...\x7f`);
+			console.info(`Validating full parsing of "${dirEntry.name}"...`);
 			const fileObject = await Deno.open(`./cache/source/${dirEntry.name}`);
 			testedFile ++;
 			const startTimeParse = performance.now();

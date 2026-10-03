@@ -926,7 +926,7 @@ export default class MICCInternalsSMF {
 							};*/
 							const maxCumulativeDataReadSize = persistedState.readDataSize + viewSizeCurrent;
 							if (maxCumulativeDataReadSize < persistedState.expectedDataSize) {
-								console.debug(`Subchunk split boundary reached: expected ${persistedState.expectedDataSize} in data section, buffered ${viewSizeCurrent} B.`); // The following subchunk should have appropriate size subtracted.
+								//console.debug(`Subchunk split boundary reached: expected ${persistedState.expectedDataSize} in data section, buffered ${viewSizeCurrent} B.`); // The following subchunk should have appropriate size subtracted.
 								persistedState.readDataSize += viewSizeCurrent;
 								return 0;
 							} else {

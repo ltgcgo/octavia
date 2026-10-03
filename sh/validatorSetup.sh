@@ -28,6 +28,7 @@ cp -v "../download/vendor/korg/ai2/05RWDEMO.mid.br" .
 cp -v "../download/vendor/korg/ai2/AGDEMO1.mid.br" .
 cp -v "../download/vendor/korg/ai2/AGDEMO2.mid.br" .
 cp -v "../download/vendor/korg/ai2/Korg - We've Got Dreams.mid.br" "./X5DDEMO2.mid.br"
+cp -v "../download/vendor/korg/ns5r/KORG - 2000 Fever.mid.br" "./2KFEVER.mid.br"
 cp -v "../download/vendor/korg/ns5r/KORG - MissionMan.mid.br" "./MISSION.mid.br"
 cp -v "../download/vendor/microsoft/windows/onestop.mid.br" .
 cp -v "../download/vendor/roland/hypercanvas/04Orch.mid.br" .

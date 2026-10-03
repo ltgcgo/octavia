@@ -71,3 +71,5 @@ jobs:
         run: "./shx validate micc/smf.js"
       - name: Validate MICC lossless canonical roundtrip routes
         run: "./shx validate micc/lcr.js"
+      - name: Validate MICC compatibility shims
+        run: "./shx validate micc/compat.js"

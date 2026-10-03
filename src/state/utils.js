@@ -192,6 +192,12 @@ const pruneObjects = function* (ingress) {
 	};
 };
 
+/** @param {number} value */
+const reducePrecision = function (value, base10Precision = 0) {
+	const base10Factor = Math.pow(10, base10Precision);
+	return Math.round(value * base10Factor) / base10Factor;
+};
+
 export {
 	arrayCompare,
 	toDecibel,
@@ -205,5 +211,6 @@ export {
 	getDebugState,
 	bufferToDHex,
 	bufferToBracketed,
-	pruneObjects
+	pruneObjects,
+	reducePrecision
 };

@@ -9,6 +9,10 @@
 
 /** The helper string decoder object allowing convenient re-interpretation. */
 export class BinaryString {
+	/** If the subsequent objects will have debug mode enabled. Defaults to `false`. */
+	static debugMode: boolean;
+	/** If debug mode is enabled. */
+	debugMode: boolean;
 	/** Return an array of decoders from specified labels. */
 	static getDecoders(labels: string[]): TextDecoder[];
 	/** Restore original text from text with C escape sequences. */
