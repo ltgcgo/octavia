@@ -69,7 +69,7 @@ const populateViewer = async () => {
 			if (metaEntry == null) continue;
 			switch (k) {
 				case "tpqn": {
-					if (sequence.meta.isSmpte) continue;
+					//if (sequence.meta.isSmpte) continue;
 					break;
 				};
 				case "smpte": {
@@ -197,7 +197,7 @@ self.gShowTrack = async (trackId) => {
 			event.offset?.toString(16).padStart(6, "0") ?? "N/A",
 			i,
 			event.delta,
-			`${Math.floor(event.tick / sequence.meta.division).toString().padStart(4, "0")} ${(event.tick % sequence.meta.division).toString().padStart(3, "0")}`,
+			`${Math.floor(event.tick / sequence.meta.tpqn).toString().padStart(4, "0")} ${(event.tick % sequence.meta.tpqn).toString().padStart(3, "0")}`,
 			event.isStale ? "*" : "",
 			event.type.toString(16).padStart(2, "0"),
 			event.port,

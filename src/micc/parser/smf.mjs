@@ -706,7 +706,20 @@ export default class MICCInternalsSMF {
 		metadata.track = smfTracks;
 		if (smfDivision < 0) {
 			metadata.isSmpte = true;
-			console.debug(`SMPTE-based time division is not supported yet. Offset maps may not function.`);
+			metadata.smpte = [256 - buffer[4], buffer[5]];
+			let frameConvBase = metadata.smpte[0];
+			switch (frameConvBase) {
+				case 29:
+				case 59:
+				case 89:
+				case 119: {
+					// Divide by 29.
+					frameConvBase += Math.round(frameConvBase * 0.0344827586);
+					break;
+				};
+			};
+			metadata.tpqn = (metadata.smpte[1] * frameConvBase) >> 1;
+			console.debug(`SMPTE-based time division is not fully supported yet. Offset maps may not function.`);
 		} else {
 			metadata.tpqn = smfDivision;
 		};
