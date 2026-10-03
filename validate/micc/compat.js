@@ -25,8 +25,14 @@ if (!ColxiMIDIParserOriginal) {
 
 import FailRecord from "../common/failRecord.mjs";
 import {
+	customInterpreter,
 	reducePrecision
 } from "../../src/state/utils.js";
+
+if (ColxiMIDIParserOriginal) {
+	// The original Colxi will ABSOLUTELY WHINE without our own customised interpreter.
+	ColxiMIDIParserOriginal.customInterpreter = customInterpreter;
+};
 
 test("Validate Colxi", async () => {
 	//
@@ -62,14 +68,6 @@ test("Validate Colxi", async () => {
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
-			const runDurationColxi = reducePrecision(performance.now() - startTimeColxi, 6);
-			const parseSpeedColxi = reducePrecision(processedCountColxi / runDurationColxi * 1000, 3);
-			cumulativeDurationColxi += runDurationColxi;
-			cumulativeEventsColxi += processedCountColxi;
-			const runDurationMICC = reducePrecision(performance.now() - startTimeMICC, 6);
-			const parseSpeedMICC = reducePrecision(processedCountMICC / runDurationMICC * 1000, 3);
-			cumulativeDurationMICC += runDurationMICC;
-			cumulativeEventsMICC += processedCountMICC;
 			try {
 				// Enumerate MICC
 				if (sequenceColxi?.track?.length > 0) {
@@ -87,6 +85,14 @@ test("Validate Colxi", async () => {
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
+			const runDurationColxi = reducePrecision(performance.now() - startTimeColxi, 3);
+			const parseSpeedColxi = reducePrecision(processedCountColxi / runDurationColxi * 1000, 3);
+			cumulativeDurationColxi += runDurationColxi;
+			cumulativeEventsColxi += processedCountColxi;
+			const runDurationMICC = reducePrecision(performance.now() - startTimeMICC, 3);
+			const parseSpeedMICC = reducePrecision(processedCountMICC / runDurationMICC * 1000, 3);
+			cumulativeDurationMICC += runDurationMICC;
+			cumulativeEventsMICC += processedCountMICC;
 			if (passed) {
 				console.info(`\x8d\r[\x1b[1;32mPASS\x1b[0m] "${dirEntry.name}": ${runDurationColxi + runDurationMICC}ms (${runDurationColxi}ms + ${runDurationMICC}ms). ${Math.max(processedCountColxi, processedCountMICC)} event(s) at ${parseSpeedColxi}/s | ${parseSpeedMICC}/s.`);
 			} else {
