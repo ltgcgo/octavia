@@ -30,6 +30,8 @@ const ColxiMIDIFile = class ColxiMIDIFile {
 	track = [];
 };
 const ColxiMIDIView = class ColxiMIDIView {};
+
+/** Streamed Colxi variant. */
 const ColxiMIDIParser = class ColxiMIDIParser {
 	static customInterpreter = true;
 	/** @type {Iterable<TextDecoder>?} */

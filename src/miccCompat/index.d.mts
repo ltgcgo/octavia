@@ -115,10 +115,35 @@ declare type ColxiMIDICustomInterpreter = (
 ) => any;
 /** (WIP) Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
 *
-* This variant is mostly a wrapper around parsed MICC sequences to minimise resource usage during parsing, as such it is slower than the original implementation, at around 25% of the original throughput. If the lower throughput is not ideal, with enough demand, `ColxiMIDIParserBuffered` can be added as an alternative that throws resource constraint into the wind to prioritise speed.
+* While recommended, this variant nonetheless is mostly a wrapper around parsed MICC sequences to minimise resource usage during parsing, as such it is slower than the original implementation, at around 25% of the original throughput. If the lower throughput is not ideal, `ColxiMIDIParserBuffered` can be used as an alternative that throws resource constraint into the wind to prioritise speed.
 *
 * For extensive additional benefits, we strongly recommend you to migrate to Octavia MICC instead, which can integrate strongly with the rest of the Octavia ecosystem. This compatibility layer only provides up-to-date SMF support (type 0, type 1, type 2; you also get free MUSEQ and XF extension support by migrating to this compatibility shim). */
 export class ColxiMIDIParser {
+	/** Parses the input into a structured representation.
+	*
+	* Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.
+	* 
+	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
+	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, or readable byte streams.
+	* @param callback The method to invoke when parsing is finished. */
+	static parse(input: UnifiedBinaryIntake, callback?: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
+	/** Defines custom interpreter behaviour, should only be invoked by the parser. The returned value will populate the data property.
+	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour.
+	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `uint32`) will be assumed. */
+	static customInterpreter?: boolean|ColxiMIDICustomInterpreter;
+	/** A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
+	static decoders?: Iterable<TextDecoder>;
+	/** When `true`, the parser will also include extensions not seen in regular MIDI files that MICC supports (e.g. XF, MUSEQ). Defaults to `true`.
+	*
+	* Not present in the original implementation. */
+	static extended: boolean;
+}
+/** (WIP) Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
+*
+* While not recommended, if the speed of `ColxiMIDIParser` isn't up to your taste, this is offered as an alternative to the mentioned implementation.
+*
+* For extensive additional benefits, we strongly recommend you to migrate to Octavia MICC instead, which can integrate strongly with the rest of the Octavia ecosystem. This compatibility layer only provides up-to-date SMF support (type 0, type 1, type 2; you also get free MUSEQ and XF extension support by migrating to this compatibility shim). */
+export class ColxiMIDIParserBuffered {
 	/** Parses the input into a structured representation.
 	*
 	* Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.

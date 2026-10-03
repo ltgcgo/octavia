@@ -20,7 +20,11 @@ import {
 import MICCConstants from "./classes/constants.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
 import MICCInternalsMIA from "./parser/mia.mjs";
-import toByteStream from "./utils/ubi.mjs";
+import {
+	toBuffer,
+	toBytes,
+	toByteStream
+} from "./utils/ubi.mjs";
 
 import {
 	Seamstress,
@@ -48,8 +52,13 @@ const MICCParserOptions = class MICCParserOptions {
 	finaliserDepth;
 };
 
-const MICC = class MICC {
+const IntakeNormaliser = class IntakeNormaliser {
+	static toBuffer = toBuffer;
+	static toBytes = toBytes;
 	static toByteStream = toByteStream;
+};
+
+const MICC = class MICC {
 	/** @type {Iterable<TextDecoder>} */
 	static decoders;
 	/** @param {ReadableStream<Uint8Array>} stream
@@ -133,5 +142,6 @@ export {
 	MIDIBaseEvent,
 	MIDINakedEvent,
 	MIDIUMPEvent,
-	MICC
+	MICC,
+	IntakeNormaliser
 };
