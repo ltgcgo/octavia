@@ -54,7 +54,7 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 					// Fallthrough!
 				};
 				case "mma.MTrk": {
-					if (iteratedTracks >= file.tracks) continue;
+					if (iteratedTracks >= file.tracks && !upThis.extended) continue;
 					const colxiTrack = new ColxiMIDITrack(miccTrack.type);
 					for (const e of miccTrack.data) {
 						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, e);
@@ -112,7 +112,7 @@ const ColxiMIDIParserBuffered = class ColxiMIDIParser extends ColxiMIDIParserBas
 					// Fallthrough!
 				};
 				case "MTrk": {
-					if (iteratedTracks >= file.tracks) continue;
+					if (iteratedTracks >= file.tracks && !upThis.extended) continue;
 					const colxiTrack = new ColxiMIDITrack(chunk.type);
 					const parsedEvents = ColxiMethods.parseEntireTrack(chunk.data);
 					for (let i = 0; i < parsedEvents.length; i ++) {
