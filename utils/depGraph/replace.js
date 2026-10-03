@@ -4,7 +4,7 @@ import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
 import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 
 const replaceMap = new Map();
-for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.open("./conf/depGraph.tsv")).readable))) {
+for await (let line of DSVParser.parseObjects(0, TextReader.line((await Deno.open(Deno.args[1] ? `./conf/depGraph/${Deno.args[1]}.tsv` : "./conf/depGraph.tsv")).readable))) {
 	if (line.from && line.to) {
 		replaceMap.set(line.from, line.to);
 	};
