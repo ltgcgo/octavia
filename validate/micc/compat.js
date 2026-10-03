@@ -31,7 +31,7 @@ import {
 } from "../../src/state/utils.js";
 import {
 	ColxiMIDIParser,
-	ColxiMIDIParserBuffered
+	ColxiMIDIParserStreamed
 } from "../../src/miccCompat/index.mjs";
 
 if (ColxiMIDIParserOriginal) {
@@ -49,7 +49,6 @@ test("Validate Colxi against streamed and buffered", async () => {
 	let cumulativeDurationMICCMatchedStreamed = 0, cumulativeEventsMICCMatchedStreamed = 0;
 	let cumulativeDurationMICCNativeBuffered = 0, cumulativeEventsMICCNativeBuffered = 0;
 	let cumulativeDurationMICCMatchedBuffered = 0, cumulativeEventsMICCMatchedBuffered = 0;
-	ColxiMIDIParser.debug = true;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
 			console.info(`[\x1b[1;33mTEST\x1b[0m] "${dirEntry.name}": ...`);
@@ -87,22 +86,22 @@ test("Validate Colxi against streamed and buffered", async () => {
 			};
 			const runDurationColxi = performance.now() - startTimeColxi;
 			// Native run section
-			ColxiMIDIParser.extended = true;
-			ColxiMIDIParser.customInterpreter = true;
+			ColxiMIDIParserStreamed.extended = true;
+			ColxiMIDIParserStreamed.customInterpreter = true;
 			const startTimeMICCNativeStreamed = performance.now();
 			try {
-				sequenceMICCNativeStreamed = await ColxiMIDIParser.parse(fileMICCNativeStreamed);
+				sequenceMICCNativeStreamed = await ColxiMIDIParserStreamed.parse(fileMICCNativeStreamed);
 			} catch (err) {
 				passed = false;
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
 			const runDurationMICCNativeStreamed = performance.now() - startTimeMICCNativeStreamed;
-			ColxiMIDIParserBuffered.extended = true;
-			ColxiMIDIParserBuffered.customInterpreter = true;
+			ColxiMIDIParser.extended = true;
+			ColxiMIDIParser.customInterpreter = true;
 			const startTimeMICCNativeBuffered = performance.now();
 			try {
-				sequenceMICCNativeBuffered = await ColxiMIDIParserBuffered.parse(fileMICCNativeBuffered);
+				sequenceMICCNativeBuffered = await ColxiMIDIParser.parse(fileMICCNativeBuffered);
 			} catch (err) {
 				passed = false;
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
@@ -110,22 +109,22 @@ test("Validate Colxi against streamed and buffered", async () => {
 			};
 			const runDurationMICCNativeBuffered = performance.now() - startTimeMICCNativeBuffered;
 			// Behaviour match section
-			ColxiMIDIParser.extended = false;
-			ColxiMIDIParser.customInterpreter = true;
+			ColxiMIDIParserStreamed.extended = false;
+			ColxiMIDIParserStreamed.customInterpreter = true;
 			const startTimeMICCMatchedStreamed = performance.now();
 			try {
-				sequenceMICCMatchedStreamed = await ColxiMIDIParser.parse(fileMICCMatchedStreamed);
+				sequenceMICCMatchedStreamed = await ColxiMIDIParserStreamed.parse(fileMICCMatchedStreamed);
 			} catch (err) {
 				passed = false;
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
 			const runDurationMICCMatchedStreamed = performance.now() - startTimeMICCMatchedStreamed;
-			ColxiMIDIParserBuffered.extended = false;
-			ColxiMIDIParserBuffered.customInterpreter = true;
+			ColxiMIDIParser.extended = false;
+			ColxiMIDIParser.customInterpreter = true;
 			const startTimeMICCMatchedBuffered = performance.now();
 			try {
-				sequenceMICCMatchedBuffered = await ColxiMIDIParserBuffered.parse(fileMICCMatchedBuffered);
+				sequenceMICCMatchedBuffered = await ColxiMIDIParser.parse(fileMICCMatchedBuffered);
 			} catch (err) {
 				passed = false;
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));

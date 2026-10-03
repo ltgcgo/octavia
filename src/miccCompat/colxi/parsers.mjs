@@ -24,7 +24,7 @@ import ColxiMethods from "./methods.mjs";
 const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
 
 /** Streamed Colxi variant. */
-const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
+const ColxiMIDIParserStreamed = class ColxiMIDIParser extends ColxiMIDIParserBase {
 	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input 
 	* @param {(file: import("../index.d.mts").ColxiMIDIFile) => void} callback */
 	static async parse(input, callback) {
@@ -79,7 +79,7 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 	};
 };
 /** Buffered Colxi variant. */
-const ColxiMIDIParserBuffered = class ColxiMIDIParser extends ColxiMIDIParserBase {
+const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input 
 	* @param {(file: import("../index.d.mts").ColxiMIDIFile) => void} callback */
 	static async parse(input, callback) {
@@ -140,5 +140,5 @@ const ColxiMIDIParserBuffered = class ColxiMIDIParser extends ColxiMIDIParserBas
 
 export {
 	ColxiMIDIParser,
-	ColxiMIDIParserBuffered
+	ColxiMIDIParserStreamed
 };

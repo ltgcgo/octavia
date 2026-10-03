@@ -5,10 +5,10 @@
 
 import {
 	ColxiMIDIParser,
-	ColxiMIDIParserBuffered
+	ColxiMIDIParserStreamed
 } from "./colxi/parsers.mjs";
 
 export {
 	ColxiMIDIParser,
-	ColxiMIDIParserBuffered
+	ColxiMIDIParserStreamed
 };
