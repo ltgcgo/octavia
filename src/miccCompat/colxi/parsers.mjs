@@ -4,6 +4,11 @@
 "use strict";
 
 import {
+	Seamstress,
+	SeamstressPresets
+} from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+import { MICCInternalsSMF } from "../../micc/index.mjs";
+import {
 	IntakeNormaliser,
 	MICCSequenceMetadata,
 	MICC
@@ -16,6 +21,7 @@ import {
 } from "./classes.mjs";
 import ColxiMethods from "./methods.mjs";
 
+const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
 
 /** Streamed Colxi variant. */
 const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
@@ -36,17 +42,19 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 		} else {
 			file.timeDivision = sequence.meta.tpqn;
 		};
+		let iteratedTracks = 0;
 		for (const miccTrack of sequence.tracks) {
 			switch (miccTrack.vendor) {
 				case "yamaha.XFIH":
 				case "yamaha.XFKM": {
 					if (!upThis.extended) {
 						upThis.debug ?? console.debug(`Skipped extension track "${miccTrack.type}" (${miccTrack.vendor}).`);
-						break;
+						continue;
 					};
 					// Fallthrough!
 				};
 				case "mma.MTrk": {
+					if (iteratedTracks >= file.tracks) continue;
 					const colxiTrack = new ColxiMIDITrack(miccTrack.type);
 					for (const e of miccTrack.data) {
 						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, e);
@@ -59,7 +67,9 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 				};
 				default: {
 					upThis.debug ?? console.debug(`Skipped unknown track "${miccTrack.type}" (${miccTrack.vendor}).`);
+					continue;
 				};
+				iteratedTracks ++;
 			};
 		};
 		if (typeof callback === "function") {
@@ -77,6 +87,47 @@ const ColxiMIDIParserBuffered = class ColxiMIDIParser extends ColxiMIDIParserBas
 		/** @type {MICCSequenceMetadata} */
 		const metaSink = {};
 		const file = new ColxiMIDIFile();
+		/** @type {import("../../micc/index.mjs").MICCSMFMIAHandleOptions} */
+		const parserConfig = {
+			"hasDelta": true,
+			"isSmfWrapped": true,
+			"parserContext": {}
+		};
+		let iteratedTracks = 0;
+		for await (const chunk of SeamstressInstanceSMF.readChunks(IntakeNormaliser.toByteStream(input))) {
+			switch (chunk.type) {
+				// Header
+				case "MThd": {
+					MICCInternalsSMF.parseHeaderChunk(chunk, metaSink);
+					file.formatType = metaSink.type;
+					file.tracks = metaSink.track ?? 0;
+					if (metaSink.isSmpte) {
+						file.timeDivision = metaSink.smpte;
+					} else {
+						file.timeDivision = metaSink.tpqn;
+					};
+					continue;
+				};
+				// Track-like chunks
+				case "XFIH":
+				case "XFKM": {
+					if (!upThis.extended) {
+						upThis.debug ?? console.debug(`Skipped extension track "${miccTrack.type}" (${miccTrack.vendor}).`);
+						continue;
+					};
+					// Fallthrough!
+				};
+				case "MTrk": {
+					if (iteratedTracks >= file.tracks) continue;
+					break;
+				};
+				default: {
+					upThis.debug ?? console.debug(`Skipped unknown track "${miccTrack.type}" (${miccTrack.vendor}).`);
+					continue;
+				};
+			};
+			iteratedTracks ++;
+		};
 		if (typeof callback === "function") {
 			callback.call(upThis, file);
 		};
