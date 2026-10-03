@@ -82,6 +82,9 @@ test("Validate Colxi against streamed and buffered", async () => {
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
+			const runDurationColxi = performance.now() - startTimeColxi;
+			const runDurationMICC = performance.now() - startTimeMICC;
+			const runDurationMICCBuffered = performance.now() - startTimeMICCBuffered;
 			try {
 				// Enumerate MICC
 				// Enumerate buffered MICC
@@ -100,15 +103,12 @@ test("Validate Colxi against streamed and buffered", async () => {
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
-			const runDurationColxi = performance.now() - startTimeColxi;
 			const parseSpeedColxi = reducePrecisionText(processedCountColxi / runDurationColxi * 1000, 3);
 			cumulativeDurationColxi += runDurationColxi;
 			cumulativeEventsColxi += processedCountColxi;
-			const runDurationMICC = performance.now() - startTimeMICC;
 			const parseSpeedMICC = reducePrecisionText(processedCountMICC / runDurationMICC * 1000, 3);
 			cumulativeDurationMICC += runDurationMICC;
 			cumulativeEventsMICC += processedCountMICC;
-			const runDurationMICCBuffered = performance.now() - startTimeMICCBuffered
 			const parseSpeedMICCBuffered = reducePrecisionText(processedCountMICCBuffered / runDurationMICCBuffered * 1000, 3);
 			cumulativeDurationMICCBuffered += runDurationMICCBuffered;
 			cumulativeEventsMICCBuffered += processedCountMICCBuffered;
@@ -127,6 +127,7 @@ test("Validate Colxi against streamed and buffered", async () => {
 		};
 		throw(`Failed ${errorHistory.length} test(s) out of ${testedFile}.`);
 	};
-	console.debug(`\nColxi: Parsed ${cumulativeEventsColxi} event(s) in ${cumulativeDurationColxi}ms. Average ${reducePrecision(cumulativeEventsColxi / cumulativeDurationColxi * 1000, 3)}/s`);
-	console.debug(`MICC: Parsed ${cumulativeEventsMICC} event(s) in ${cumulativeDurationMICC}ms. Average ${reducePrecision(cumulativeEventsMICC / cumulativeDurationMICC * 1000, 3)}/s`);
+	console.debug(`\nColxi: Parsed ${cumulativeEventsColxi} event(s) in ${reducePrecisionText(cumulativeDurationColxi, 3)}ms. Average ${reducePrecisionText(cumulativeEventsColxi / cumulativeDurationColxi * 1000, 3)}/s`);
+	console.debug(`MICC streamed: Parsed ${cumulativeEventsMICC} event(s) in ${reducePrecisionText(cumulativeDurationMICC, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICC / cumulativeDurationMICC * 1000, 3)}/s`);
+	console.debug(`MICC buffered: Parsed ${cumulativeEventsMICCBuffered} event(s) in ${reducePrecisionText(cumulativeDurationMICCBuffered, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCBuffered / cumulativeDurationMICCBuffered * 1000, 3)}/s`);
 });
