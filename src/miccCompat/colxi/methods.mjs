@@ -178,7 +178,7 @@ export default class ColxiMethods {
 		const trackEvents = [];
 		let ptr = 0;
 		while (ptr < buffer.length) {
-			const parsedEvent = MICCInternalsSMF.parseSingleEvent(buffer, parserConfig);
+			const parsedEvent = MICCInternalsSMF.parseSingleEvent(buffer.subarray(ptr), parserConfig);
 			trackEvents.push(parsedEvent);
 			if (parsedEvent.byteSize > 0) {
 				ptr += parsedEvent.byteSize;
