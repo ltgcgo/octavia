@@ -3,11 +3,13 @@
 	"version": "0.0.5",
 	"license": "LGPL-3.0-only",
 	"imports": {
+		"@ltgc/octavia": "jsr:@ltgc/octavia@^0.0.19",
 		"@ltgc/rochelle": "jsr:@ltgc/rochelle@^0.3.3",
 		"@ltgc/seamstress": "jsr:@ltgc/seamstress@^0.1.2"
 	},
 	"minimumDependencyAge": {
 		"exclude": [
+			"jsr:@ltgc/octavia",
 			"jsr:@ltgc/rochelle",
 			"jsr:@ltgc/seamstress"
 		]
