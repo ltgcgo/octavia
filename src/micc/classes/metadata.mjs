@@ -3,7 +3,7 @@
 
 const MICCSequenceMetadata = class MICCSequenceMetadata {
 	clip = 0;
-	division = 480;
+	tpqn = 480;
 	isSmpte = false;
 	style = 0;
 	track = 0;

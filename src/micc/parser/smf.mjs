@@ -700,7 +700,7 @@ export default class MICCInternalsSMF {
 			metadata.isSmpte = true;
 			console.debug(`SMPTE-based time division is not supported yet. Offset maps may not function.`);
 		} else {
-			metadata.division = smfDivision;
+			metadata.tpqn = smfDivision;
 		};
 		//console.debug(metadata);
 	};

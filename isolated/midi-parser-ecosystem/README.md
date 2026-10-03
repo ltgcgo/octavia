@@ -6,7 +6,15 @@
 > 
 > Due to NPM's hostility towards privacy/pseudo-anonimity by rejecting TOTP and forcing biometrics-based or hardware-based 2FA, if the remaining route of circumventing such restrictions for package publishing is closed down, without NPM offering a privacy-friendly alternative like TOTP, **we are not going to comply, and the NPM version will be left to either rot or deliberately be kept out-of-date**.
 
-💪 Robust compatibility layers for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project.
+💪 Robust compatibility layers for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project. The shims do not incorporate any code from the original implementations, only attempting to mimic their shapes and behaviour via blackbox experiments.
+
+Shims for the following packages are available.
+- Colxi: `colxi/midi-parser-js`
+- MJT: `chrisguttandin/midi-json-parser` (WIP)
+- MJT: `midi-json-tools/midi-to-json` (WIP)
+- jasmid: `gasman/jasmid/midifile.js` (WIP)
+- jasmid: `carter-thaxton/midi-file` (WIP)
+- jasmid: `ryohey/midifile-ts` (WIP)
 
 For additional benefits, such as [extensive file import and export support](https://kb.ltgc.cc/octavia/impl/format.html) and MIDI 2.0 wire format support, provided by the MICC subsystem, or such as synth behaviour emulation, and extended standard compliance, provided by the Octavia state engine, we strongly recommend you to migrate to Octavia MICC ([Codeberg](https://codeberg.org/ltgc/octavia/), [GitHub](https://github.com/ltgcgo/octavia/), [JSR](https://jsr.io/@ltgc/octavia/doc/micc/)) instead, which can integrate strongly with the rest of the Octavia ecosystem.
 

@@ -44,7 +44,7 @@ const metaSeqNames = {
 	"type": "File type",
 	"title": "File title",
 	"isSmpte": "SMPTE time division?",
-	"division": "Ticks per quarter note",
+	"tpqn": "Ticks per quarter note",
 	"track": "Expected tracks",
 	"style": "Expected styles",
 	"clip": "Expected clips"
@@ -67,7 +67,7 @@ const populateViewer = async () => {
 			const metaEntry = sequence.meta[k];
 			if (metaEntry == null) continue;
 			switch (k) {
-				case "division": {
+				case "tpqn": {
 					if (sequence.meta.isSmpte) continue;
 					break;
 				};

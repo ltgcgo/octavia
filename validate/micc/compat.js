@@ -8,8 +8,20 @@ import {
 	assertObjectMatch,
 	assertThrows
 } from "https://jsr.io/@std/assert/1.0.19/mod.ts";
-// import ColxiMidiParser from "https://ltgcgo.github.io/midi-parser-js/dist/bundle.mjs";
-import {MidiParser as ColxiMIDIParserOriginal} from "https://unpkg.com/midi-parser-js@4.0.4/src/midi-parser.js";
+let ColxiMIDIParserOriginal;
+try {
+	ColxiMIDIParserOriginal = (await import("https://ltgcgo.github.io/midi-parser-js/dist/bundle.mjs")).MidiParser;
+	//ColxiMIDIParserOriginal = (await import("../../../midi-parser-js/dist/bundle.mjs")).MidiParser;
+	console.debug(`Used the patched version for Colxi.`);
+	//console.debug(ColxiMIDIParserOriginal);
+} catch (err) {
+	console.error(`The patched distribution is no longer available.`);
+	console.error(err);
+};
+if (!ColxiMIDIParserOriginal) {
+	ColxiMIDIParserOriginal = (await import("https://unpkg.com/midi-parser-js@4.0.4/src/midi-parser.js")).MidiParser;
+	console.debug(`Used the original version for Colxi via Unpkg.`);
+};
 
 import FailRecord from "../common/failRecord.mjs";
 import {

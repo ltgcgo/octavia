@@ -23,6 +23,8 @@ const MICCBaseElement = class MICCBaseElement {
 const MICCTrackElement = class MICCTrackElement extends MICCBaseElement {
 	/** @type {number?} */
 	offset = null;
+	/** @type {number?} */
+	byteSize = null;
 	constructor(group) {
 		super(group ?? "ltgc.micc.trackChild");
 	};

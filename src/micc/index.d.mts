@@ -131,10 +131,14 @@ export class MICCBaseElement {
 *
 * The group specifier is `ltgc.micc.trackChild`. */
 export class MICCTrackElement extends MICCBaseElement {
-	/** The offset of the current atom in the original root stream, if the current atom was created from a file-like binary stream (e.g. SMF).
-	* 
-	* Useful for debugging, unused by assemblers and serializers. This isn't the chunk offset value. */
+	/** The offset of the current atom in the original root stream, if the current atom was created from a file-like binary stream (e.g. SMF) rather than from other means (e.g. MIA).
+	*
+	* Useful for debugging, unused by assemblers and serializers. This is not the chunk offset. */
 	offset?: uint32;
+	/** The size of the current atom in the original root stream, if the current atom was created from a file-like binary stream (e.g. SMF) rather than from other means (e.g. MIA).
+	*
+	* Useful for debugging, unused by assemblers and serializers. This is not the chunk offset. */
+	byteSize?: uint32;
 }
 /** Representation of a MIDI event.
 *
@@ -324,7 +328,7 @@ export class MICCSequenceMetadata extends MICCBaseMetadata {
 	* - `tracker.ultra` */
 	format: string;
 	/** When true, the native division value is in SMPTE instead.
-	* 
+	*
 	* MICC does not yet support SMPTE-based time divisions. */
 	isSmpte: boolean;
 	/** MIDI time division in ticks per quarter note. `480` is the most common.
