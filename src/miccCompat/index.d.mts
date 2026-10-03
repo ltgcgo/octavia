@@ -113,7 +113,9 @@ declare type ColxiMIDICustomInterpreter = (
 	/** Length of the meta event. Will only be present for 0xff events. */
 	metaLength?: number
 ) => any;
-/** (WIP) Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission), migrating to Octavia's compatibility layer may help handle those files.
+/** (WIP) Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
+*
+* This variant is mostly a wrapper around parsed MICC sequences to minimise resource usage during parsing, as such it is slower than the original implementation, at around 25% of the original throughput. If the lower throughput is not ideal, with enough demand, `ColxiMIDIParserBuffered` can be added as an alternative that throws resource constraint into the wind to prioritise speed.
 *
 * For extensive additional benefits, we strongly recommend you to migrate to Octavia MICC instead, which can integrate strongly with the rest of the Octavia ecosystem. This compatibility layer only provides up-to-date SMF support (type 0, type 1, type 2; you also get free MUSEQ and XF extension support by migrating to this compatibility shim). */
 export class ColxiMIDIParser {

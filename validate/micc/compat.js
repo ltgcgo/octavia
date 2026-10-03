@@ -26,7 +26,8 @@ if (!ColxiMIDIParserOriginal) {
 import FailRecord from "../common/failRecord.mjs";
 import {
 	customInterpreter,
-	reducePrecision
+	reducePrecision,
+	reducePrecisionText
 } from "../../src/state/utils.js";
 
 if (ColxiMIDIParserOriginal) {
@@ -34,24 +35,29 @@ if (ColxiMIDIParserOriginal) {
 	ColxiMIDIParserOriginal.customInterpreter = customInterpreter;
 };
 
-test("Validate Colxi", async () => {
+test("Validate Colxi against streamed and buffered", async () => {
 	//
 	/** @type {FailRecord[]} */
 	const errorHistory = [];
 	let testedFile = 0;
 	let cumulativeDurationColxi = 0, cumulativeEventsColxi = 0;
 	let cumulativeDurationMICC = 0, cumulativeEventsMICC = 0;
+	let cumulativeDurationMICCBuffered = 0, cumulativeEventsMICCBuffered = 0;
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
 			console.info(`[\x1b[1;33mTEST\x1b[0m] "${dirEntry.name}": ...`);
 			const fileColxi = await Deno.readFile(`./cache/source/${dirEntry.name}`);
 			testedFile ++;
 			let passed = true;
-			let processedCountColxi = 0, processedCountMICC = 0;
+			let processedCountColxi = 0,
+			processedCountMICC = 0,
+			processedCountMICCBuffered = 0;
 			/** @type {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} */
 			let sequenceColxi;
 			/** @type {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} */
 			let sequenceMICC;
+			/** @type {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} */
+			let sequenceMICCBuffered;
 			const startTimeColxi = performance.now();
 			try {
 				sequenceColxi = ColxiMIDIParserOriginal.parse(fileColxi);
@@ -68,8 +74,17 @@ test("Validate Colxi", async () => {
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
+			const startTimeMICCBuffered = performance.now();
+			try {
+				sequenceMICCBuffered = null;
+			} catch (err) {
+				passed = false;
+				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
+				console.error(err);
+			};
 			try {
 				// Enumerate MICC
+				// Enumerate buffered MICC
 				if (sequenceColxi?.track?.length > 0) {
 					// Metadata comparison
 					// Enumerate Colxi
@@ -85,18 +100,23 @@ test("Validate Colxi", async () => {
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
 				console.error(err);
 			};
-			const runDurationColxi = reducePrecision(performance.now() - startTimeColxi, 3);
-			const parseSpeedColxi = reducePrecision(processedCountColxi / runDurationColxi * 1000, 3);
+			const runDurationColxi = performance.now() - startTimeColxi;
+			const parseSpeedColxi = reducePrecisionText(processedCountColxi / runDurationColxi * 1000, 3);
 			cumulativeDurationColxi += runDurationColxi;
 			cumulativeEventsColxi += processedCountColxi;
-			const runDurationMICC = reducePrecision(performance.now() - startTimeMICC, 3);
-			const parseSpeedMICC = reducePrecision(processedCountMICC / runDurationMICC * 1000, 3);
+			const runDurationMICC = performance.now() - startTimeMICC;
+			const parseSpeedMICC = reducePrecisionText(processedCountMICC / runDurationMICC * 1000, 3);
 			cumulativeDurationMICC += runDurationMICC;
 			cumulativeEventsMICC += processedCountMICC;
+			const runDurationMICCBuffered = performance.now() - startTimeMICCBuffered
+			const parseSpeedMICCBuffered = reducePrecisionText(processedCountMICCBuffered / runDurationMICCBuffered * 1000, 3);
+			cumulativeDurationMICCBuffered += runDurationMICCBuffered;
+			cumulativeEventsMICCBuffered += processedCountMICCBuffered;
+			let reportText = `${processedCountColxi} / ${processedCountMICC} / ${processedCountMICCBuffered} event(s).\nDuration: ${reducePrecisionText(runDurationColxi + runDurationMICC + runDurationMICCBuffered, 3)}ms (${reducePrecisionText(runDurationColxi, 3)}ms + ${reducePrecisionText(runDurationMICC, 3)}ms + ${reducePrecisionText(runDurationMICCBuffered, 3)}ms).\nThroughput: ${parseSpeedColxi}/s | ${parseSpeedMICC}/s | ${parseSpeedMICCBuffered}/s.`;
 			if (passed) {
-				console.info(`\x8d\r[\x1b[1;32mPASS\x1b[0m] "${dirEntry.name}": ${runDurationColxi + runDurationMICC}ms (${runDurationColxi}ms + ${runDurationMICC}ms). ${processedCountColxi}/${processedCountMICC} event(s) at ${parseSpeedColxi}/s | ${parseSpeedMICC}/s.`);
+				console.info(`\x8d\r[\x1b[1;32mPASS\x1b[0m] "${dirEntry.name}": Validation success with ${reportText}`);
 			} else {
-				console.info(`\x8d\r[\x1b[1;31mFAIL\x1b[0m] "${dirEntry.name}": ${runDurationColxi}ms (${runDurationColxi}ms). ${processedCountColxi}/${processedCountMICC} event(s) at ${parseSpeedColxi}/s | ${parseSpeedMICC}/s.`);
+				console.info(`\x8d\r[\x1b[1;31mFAIL\x1b[0m] "${dirEntry.name}": Validation failure with ${reportText}`);
 			};
 		};
 	};

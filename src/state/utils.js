@@ -197,6 +197,16 @@ const reducePrecision = function (value, base10Precision = 0) {
 	const base10Factor = Math.pow(10, base10Precision);
 	return Math.round(value * base10Factor) / base10Factor;
 };
+const reducePrecisionText = function (value, base10Precision = 0) {
+	const base10Factor = Math.pow(10, base10Precision);
+	const amplified = Math.round(value * base10Factor).toString().padStart(base10Precision + 1, "0");
+	if (base10Precision > 0) {
+		const splitPoint = amplified.length - base10Precision;
+		return `${amplified.substring(0, splitPoint)}.${amplified.substring(splitPoint)}`;
+	} else {
+		return amplified;
+	};
+};
 
 export {
 	arrayCompare,
@@ -212,5 +222,6 @@ export {
 	bufferToDHex,
 	bufferToBracketed,
 	pruneObjects,
-	reducePrecision
+	reducePrecision,
+	reducePrecisionText
 };
