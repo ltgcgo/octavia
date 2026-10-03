@@ -94,9 +94,9 @@ test("Validate Colxi", async () => {
 			cumulativeDurationMICC += runDurationMICC;
 			cumulativeEventsMICC += processedCountMICC;
 			if (passed) {
-				console.info(`\x8d\r[\x1b[1;32mPASS\x1b[0m] "${dirEntry.name}": ${runDurationColxi + runDurationMICC}ms (${runDurationColxi}ms + ${runDurationMICC}ms). ${Math.max(processedCountColxi, processedCountMICC)} event(s) at ${parseSpeedColxi}/s | ${parseSpeedMICC}/s.`);
+				console.info(`\x8d\r[\x1b[1;32mPASS\x1b[0m] "${dirEntry.name}": ${runDurationColxi + runDurationMICC}ms (${runDurationColxi}ms + ${runDurationMICC}ms). ${processedCountColxi}/${processedCountMICC} event(s) at ${parseSpeedColxi}/s | ${parseSpeedMICC}/s.`);
 			} else {
-				console.info(`\x8d\r[\x1b[1;31mFAIL\x1b[0m] "${dirEntry.name}": ${runDurationColxi}ms (${runDurationColxi}ms). ${Math.max(processedCountColxi, processedCountMICC)} event(s) at ${parseSpeedColxi}/s | ${parseSpeedMICC}/s.`);
+				console.info(`\x8d\r[\x1b[1;31mFAIL\x1b[0m] "${dirEntry.name}": ${runDurationColxi}ms (${runDurationColxi}ms). ${processedCountColxi}/${processedCountMICC} event(s) at ${parseSpeedColxi}/s | ${parseSpeedMICC}/s.`);
 			};
 		};
 	};
