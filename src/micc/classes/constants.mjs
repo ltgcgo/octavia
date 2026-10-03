@@ -1,6 +1,8 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+"use strict";
+
 export default class MICCConstants {
 	// Finalisation types.
 	static AS_MIDI = 0x00;

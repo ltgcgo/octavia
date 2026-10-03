@@ -1,11 +1,12 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+"use strict";
+
 import {
 	BinaryString
 } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
 import {
-	MICCBaseElement,
 	MICCTrackElement
 } from "./fundamentals.mjs";
 
@@ -61,40 +62,8 @@ const WrappedMIDIEvent = class WrappedMIDIEvent {
 	chunk;
 };
 
-// Colxi compatibles
-
-const ColxiMIDIEvent = class ColxiMIDIEvent extends MICCBaseElement {
-	deltaTime = 0;
-	type = 255;
-	channel;
-	metaType;
-	data;
-	constructor(type, deltaTime) {
-		super("colxi.midiEvent");
-		if (typeof type === "number") {
-			this.type = type;
-		};
-		if (typeof deltaTime === "number") {
-			this.deltaTime = deltaTime;
-		};
-	};
-};
-const ColxiMIDITrack = class ColxiMIDITrack {
-	event;
-	type;
-};
-const ColxiMIDIFile = class ColxiMIDIFile {
-	formatType = 0;
-	timeDivision = 480;
-	tracks;
-	track = [];
-};
-
 export {
 	MIDIBaseEvent,
 	MIDINakedEvent,
-	MIDIUMPEvent,
-	ColxiMIDIEvent,
-	ColxiMIDITrack,
-	ColxiMIDIFile
+	MIDIUMPEvent
 };

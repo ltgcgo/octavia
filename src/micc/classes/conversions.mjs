@@ -1,6 +1,8 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+"use strict";
+
 const MICCInternalsTempo = class MICCInternalsTempo {
 	static fromMPQN(mpqn = 500000) {
 		return 60000000 / mpqn;

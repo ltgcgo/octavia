@@ -36,6 +36,8 @@ import type {
 	int16
 } from "../../libs/seamstress@ltgcgo/nativeType/index.d.mts";
 
+declare type UnifiedBinaryIntake = string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>;
+
 // `colxi/midi-parser-js`
 
 /** A MIDI event in the `colxi/midi-parser-js` scheme. */
@@ -101,6 +103,15 @@ declare interface ColxiMIDIView {
 	/** Read a string. If the `decoders` property of the parser object can be accessed, it will attempt to decode string supplied by the decoders in the `decoders` property, advancing to the next one whenever the current decoder fails. The catch-all decoder is X-ASCII. */
 	readStr(readSize: number): string;
 }
+/** Custom interpreters in Colxi. */
+declare type ColxiMIDICustomInterpreter = (
+	/** The event type. */
+	type: number,
+	/** A view into the MIDI data currently being parsed. */
+	view: ColxiMIDIView,
+	/** Length of the meta event. Will only be present for 0xff events. */
+	metaLength?: number
+) => any;
 /** (WIP) Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission), migrating to Octavia's compatibility layer may help handle those files.
 *
 * For extensive additional benefits, we strongly recommend you to migrate to Octavia MICC instead, which can integrate strongly with the rest of the Octavia ecosystem. This compatibility layer only provides up-to-date SMF support (type 0, type 1, type 2; you also get free MUSEQ and XF extension support by migrating to this compatibility shim). */
@@ -112,14 +123,11 @@ export class ColxiMIDIParser {
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, a hexadecimal string, or readable byte streams.
 	* @param callback The method to invoke when parsing is finished. */
-	static parse(input: string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>, callback?: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
+	static parse(input: UnifiedBinaryIntake, callback?: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
 	/** Defines custom interpreter behaviour, should only be invoked by the parser. The returned value will populate the data property.
 	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour.
-	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `uint32`) will be assumed.
-	* @param type The event type.
-	* @param view A view into the MIDI data currently being parsed.
-	* @param metaLength Length of the meta event. Will only be present for 0xff events. */
-	static customInterpreter?: boolean|((type: number, view: ColxiMIDIView, metaLength?: number) => any);
+	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `uint32`) will be assumed. */
+	static customInterpreter?: boolean|ColxiMIDICustomInterpreter;
 	/** A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
 	static decoders?: Iterable<TextDecoder>;
 	/** When `true`, the parser will also include extensions not seen in regular MIDI files that MICC supports (e.g. XF, MUSEQ). Defaults to `true`.
@@ -248,12 +256,12 @@ export class MidiJsonTools {
 	* 
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, a hexadecimal string, or readable byte streams. */
-	static midiToJson(input: string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>): Promise<MJTMIDIFile>;
+	static midiToJson(input: UnifiedBinaryIntake): Promise<MJTMIDIFile>;
 	/** Parses the input into a structured representation. Entrypoint used by `chrisguttandin/midi-json-parser`. Does not offer a Mojibake handler like the `ColxiMIDIParser` shim.
 	* 
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, a hexadecimal string, or readable byte streams. */
-	static parseArrayBuffer(input: string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>): Promise<MJTMIDIFile>;
+	static parseArrayBuffer(input: UnifiedBinaryIntake): Promise<MJTMIDIFile>;
 	/** A list of text decoders to be used. Not present in the original implementations, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
 	static decoders?: Iterable<TextDecoder>;
 	/** When `true`, the parser will also include extensions not seen in regular MIDI files that MICC supports (e.g. XF, MUSEQ). Defaults to `true`.
