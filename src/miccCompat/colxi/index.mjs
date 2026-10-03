@@ -31,13 +31,20 @@ const ColxiMIDIFile = class ColxiMIDIFile {
 };
 const ColxiMIDIView = class ColxiMIDIView {};
 
-/** Streamed Colxi variant. */
-const ColxiMIDIParser = class ColxiMIDIParser {
+/** Basis for both Colxi variants. */
+const ColxiMIDIParserBase = class ColxiMIDIParser {
 	static customInterpreter = true;
 	/** @type {Iterable<TextDecoder>?} */
 	static decoders;
 	static extended = true;
-	static parse() {};
+};
+/** Streamed Colxi variant. */
+const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
+	static async parse() {};
+};
+/** Buffered Colxi variant. */
+const ColxiMIDIParserBuffered = class ColxiMIDIParser extends ColxiMIDIParserBase {
+	static async parse() {};
 };
 
 export {
@@ -45,5 +52,6 @@ export {
 	ColxiMIDIFile,
 	ColxiMIDITrack,
 	ColxiMIDIView,
-	ColxiMIDIParser
+	ColxiMIDIParser,
+	ColxiMIDIParserBuffered
 };

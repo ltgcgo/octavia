@@ -3,8 +3,12 @@
 
 "use strict";
 
-import {ColxiMIDIParser} from "./colxi/index.mjs";
+import {
+	ColxiMIDIParser,
+	ColxiMIDIParserBuffered
+} from "./colxi/index.mjs";
 
 export {
-	ColxiMIDIParser
+	ColxiMIDIParser,
+	ColxiMIDIParserBuffered
 };
