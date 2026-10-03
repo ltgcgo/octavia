@@ -167,7 +167,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "834A7F"), dummyState);
+		const buffer = bufferFrom("hex", "834A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_OFF);
 		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
@@ -179,7 +181,9 @@ test("Single event validation", () => {
 			"hasDelta": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52834A7F"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52834A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_OFF);
 		assertEquals(e.isStale, false);
@@ -191,6 +195,7 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
+		const buffer = bufferFrom("hex", "934A7F");
 		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "934A7F"), dummyState);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_ON);
 		assertEquals(e.isStale, false);
@@ -203,7 +208,9 @@ test("Single event validation", () => {
 			"hasDelta": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52934A7F"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52934A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_ON);
 		assertEquals(e.isStale, false);
@@ -215,7 +222,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "A34A7F"), dummyState);
+		const buffer = bufferFrom("hex", "A34A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_AT);
 		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
@@ -227,7 +236,9 @@ test("Single event validation", () => {
 			"hasDelta": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52A34A7F"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52A34A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_NOTE_AT);
 		assertEquals(e.isStale, false);
@@ -239,7 +250,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "B34A7F"), dummyState);
+		const buffer = bufferFrom("hex", "B34A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_CONTROL);
 		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
@@ -251,7 +264,9 @@ test("Single event validation", () => {
 			"hasDelta": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52B34A7F"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52B34A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_CONTROL);
 		assertEquals(e.isStale, false);
@@ -263,7 +278,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "C37F"), dummyState);
+		const buffer = bufferFrom("hex", "C37F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_PROGRAM);
 		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
@@ -275,7 +292,9 @@ test("Single event validation", () => {
 			"hasDelta": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52C37F"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52C37F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_PROGRAM);
 		assertEquals(e.isStale, false);
@@ -287,7 +306,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "D37F"), dummyState);
+		const buffer = bufferFrom("hex", "D37F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_CH_AT);
 		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
@@ -299,7 +320,9 @@ test("Single event validation", () => {
 			"hasDelta": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52D37F"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52D37F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_CH_AT);
 		assertEquals(e.isStale, false);
@@ -311,7 +334,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "E34A7F"), dummyState);
+		const buffer = bufferFrom("hex", "E34A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_CH_PITCH);
 		assertEquals(e.isStale, false);
 		assertEquals(e.ch, 3);
@@ -323,7 +348,9 @@ test("Single event validation", () => {
 			"hasDelta": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52E34A7F"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52E34A7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_CH_PITCH);
 		assertEquals(e.isStale, false);
@@ -335,7 +362,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F07E7F0901F7"), dummyState);
+		const buffer = bufferFrom("hex", "F07E7F0901F7");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_NEW);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 5);
@@ -343,7 +372,8 @@ test("Single event validation", () => {
 		assertEquals(dummyState.parserContext.lastSysExHung, false);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F0057E7F0901F7"), parseTypeWrapped);
+		const buffer = bufferFrom("hex", "F0057E7F0901F7");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, parseTypeWrapped);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_NEW);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 5);
@@ -353,7 +383,9 @@ test("Single event validation", () => {
 			"hasDelta": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52F07E7F0901F7"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52F07E7F0901F7");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_NEW);
 		assertEquals(e.isStale, false);
@@ -362,7 +394,8 @@ test("Single event validation", () => {
 		assertEquals(dummyState.parserContext.lastSysExHung, false);
 	};
 	{
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("base64", "8IEBfUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUH3"), parseTypeWrapped);
+		const buffer = bufferFrom("base64", "8IEBfUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUH3");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, parseTypeWrapped);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_NEW);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 129);
@@ -373,7 +406,9 @@ test("Single event validation", () => {
 			"isSmfWrapped": true,
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("base64", "hv5S8IEBfUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUH3"), dummyState);
+		const buffer = bufferFrom("base64", "hv5S8IEBfUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUH3");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_NEW);
 		assertEquals(e.isStale, false);
@@ -384,7 +419,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F17F"), dummyState);
+		const buffer = bufferFrom("hex", "F17F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_TIME_CODE);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 1);
@@ -394,7 +431,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F27F7F"), dummyState);
+		const buffer = bufferFrom("hex", "F27F7F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_SONG_POSITION);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 2);
@@ -404,7 +443,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F37F"), dummyState);
+		const buffer = bufferFrom("hex", "F37F");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_SONG_SELECT);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 1);
@@ -414,7 +455,9 @@ test("Single event validation", () => {
 		const dummyState = {
 			"parserContext": {}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F6"), dummyState);
+		const buffer = bufferFrom("hex", "F6");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_TUNE_REQUEST);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
@@ -427,7 +470,9 @@ test("Single event validation", () => {
 				"lastSysExHung": true
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F7057E7F0901F7"), dummyState);
+		const buffer = bufferFrom("hex", "F7057E7F0901F7");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_SYSEX_RESUME);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 5);
@@ -440,7 +485,9 @@ test("Single event validation", () => {
 				"lastStatus": 0x9f
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F8"), dummyState);
+		const buffer = bufferFrom("hex", "F8");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_CLOCK);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
@@ -452,7 +499,9 @@ test("Single event validation", () => {
 				"lastStatus": 0x9f
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FA"), dummyState);
+		const buffer = bufferFrom("hex", "FA");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_START);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
@@ -464,7 +513,9 @@ test("Single event validation", () => {
 				"lastStatus": 0x9f
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FB"), dummyState);
+		const buffer = bufferFrom("hex", "FB");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_RESUME);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
@@ -476,7 +527,9 @@ test("Single event validation", () => {
 				"lastStatus": 0x9f
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FC"), dummyState);
+		const buffer = bufferFrom("hex", "FC");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_STOP);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
@@ -488,7 +541,9 @@ test("Single event validation", () => {
 				"lastStatus": 0x9f
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FE"), dummyState);
+		const buffer = bufferFrom("hex", "FE");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_ACTIVE_SENSE);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
@@ -500,7 +555,9 @@ test("Single event validation", () => {
 				"lastStatus": 0x9f
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF"), dummyState);
+		const buffer = bufferFrom("hex", "FF");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_RESET);
 		assertEquals(e.isStale, false);
 		assertEquals(e.data.length, 0);
@@ -513,7 +570,9 @@ test("Single event validation", () => {
 				"lastStatus": 0x9f
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF01023032"), dummyState);
+		const buffer = bufferFrom("hex", "FF01023032");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.type, MICCConstants.MIDI_META);
 		assertEquals(e.isStale, false);
 		assertEquals(e.meta, 1);
@@ -529,7 +588,9 @@ test("Single event validation", () => {
 				"lastStatus": 0x9f
 			}
 		};
-		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "86FE52FF01023032"), dummyState);
+		const buffer = bufferFrom("hex", "86FE52FF01023032");
+		const e = MICCInternalsSMF.parseSingleEvent(buffer, dummyState);
+		assertEquals(e.byteSize, buffer.length);
 		assertEquals(e.delta, 114514);
 		assertEquals(e.type, MICCConstants.MIDI_META);
 		assertEquals(e.isStale, false);
