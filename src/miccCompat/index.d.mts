@@ -55,7 +55,7 @@ declare interface ColxiMIDIEvent {
 	* ## Channel events
 	* - For `8`, `9`, `a`, `b` and `e` events, this is always a two-element `Uint8Array`.
 	* - For `c` and `d` events, this is always `uint8`.
-	* - For `f` (new SysEx) events, unless altered by the customised interpreter method, this defaults to `Uint8Array`.
+	* - For `f` (new SysEx) events, when extended parsing is enabled, this is always `Uint8Array`, otherwise this is dictated by the custom interpreter.
 	* ## Meta events
 	* For `ff` (meta) events, the value type depends on the meta event type in the following order.
 	* - For `2f` (track end), this is undefined.
@@ -63,8 +63,9 @@ declare interface ColxiMIDIEvent {
 	* - For `59` (key signature), this is always `uint16`.
 	* - For `51` (tempo), this is always `uint32`.
 	* - For `54` (SMPTE offset) and `58` (time signature), this is always `Uint8Array` from the raw event bytes.
-	* - For meta events MICC parses into strings (e.g. text events), this will also be a string.
-	* - For all other events, unless altered by the customised interpreter method, the raw event data is passed through as `Uint8Array` by default. */
+	* - For `1` (text), `2` (copyright), `3` (title), `4` (instrument), `5` (lyrics), `6` (marker) and `7` (cue point), this is always a string.
+	* - For other meta events MICC parses into strings, like `8` (voice name) and `9` (device name), if extended parsing is enabled, this is always a string, otherwise this is dictated by the custom interpreter.
+	* - For all other events, this is dictated by the custom interpreter. */
 	data?: uint8|uint16|uint32|Uint8Array|string;
 }
 /** A MIDI track containing events in the `colxi/midi-parser-js` scheme. */
