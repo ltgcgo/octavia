@@ -39,3 +39,14 @@ jobs:
         run: "./shx depGraph"
       - name: Publish package
         run: "./shx publish"
+      - name: Upload generated files
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-bundle
+          path: |
+            README.md
+            dist/README.md
+            dist/*.mjs
+            dist/*.mts
+            libs/libs
+            libs/**/*.d.mts
