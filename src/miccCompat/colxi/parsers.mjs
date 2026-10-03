@@ -87,12 +87,6 @@ const ColxiMIDIParserBuffered = class ColxiMIDIParser extends ColxiMIDIParserBas
 		/** @type {MICCSequenceMetadata} */
 		const metaSink = {};
 		const file = new ColxiMIDIFile();
-		/** @type {import("../../micc/index.mjs").MICCSMFMIAHandleOptions} */
-		const parserConfig = {
-			"hasDelta": true,
-			"isSmfWrapped": true,
-			"parserContext": {}
-		};
 		let iteratedTracks = 0;
 		for await (const chunk of SeamstressInstanceSMF.readChunks(IntakeNormaliser.toByteStream(input))) {
 			switch (chunk.type) {
@@ -119,6 +113,15 @@ const ColxiMIDIParserBuffered = class ColxiMIDIParser extends ColxiMIDIParserBas
 				};
 				case "MTrk": {
 					if (iteratedTracks >= file.tracks) continue;
+					const colxiTrack = new ColxiMIDITrack(chunk.type);
+					const parsedEvents = ColxiMethods.parseEntireTrack(chunk.data);
+					for (let i = 0; i < parsedEvents.length; i ++) {
+						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, parsedEvents[i]);
+						if (colxiEvent.type !== 0) {
+							colxiTrack.event.push(colxiEvent);
+						};
+					};
+					file.track.push(colxiTrack);
 					break;
 				};
 				default: {
