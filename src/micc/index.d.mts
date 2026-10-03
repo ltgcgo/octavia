@@ -20,6 +20,8 @@ import type {
 	BinaryString
 } from "../../libs/rochelle@ltgcgo/binaryString.d.mts";
 
+export type UnifiedBinaryIntake = string|ArrayBuffer|ArrayBufferView|Blob|File|HTMLInputElement|FileList|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>;
+
 // Native implementations
 /** Utility constants for MICC. */
 declare class MICCConstants {
@@ -466,6 +468,9 @@ export class MICC extends MICCConstants {
 	// Persisted settings.
 	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
 	static decoders: Iterable<TextDecoder>;
+	// Crimimnally common helpers.
+	/** Turn common input types into input types accepted by MICC (if you don't trust yourself). */
+	static toByteStream(intake: UnifiedBinaryIntake): ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>;
 	// Pure MIDI.
 	/** Parse the incoming Standard MIDI File byte stream. */
 	static parseSmf(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;

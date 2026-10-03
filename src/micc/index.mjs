@@ -20,6 +20,7 @@ import {
 import MICCConstants from "./classes/constants.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
 import MICCInternalsMIA from "./parser/mia.mjs";
+import toByteStream from "./utils/ubi.mjs";
 
 import {
 	Seamstress,
@@ -48,6 +49,7 @@ const MICCParserOptions = class MICCParserOptions {
 };
 
 const MICC = class MICC {
+	static toByteStream = toByteStream;
 	/** @type {Iterable<TextDecoder>} */
 	static decoders;
 	/** @param {ReadableStream<Uint8Array>} stream

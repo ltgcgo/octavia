@@ -35,7 +35,7 @@ const ColxiMIDIParser = class ColxiMIDIParser {
 	/** @type {Iterable<TextDecoder>?} */
 	static decoders;
 	static extended = true;
-	static parse()
+	static parse() {};
 };
 
 export {

@@ -35,8 +35,9 @@ import type {
 	uint32,
 	int16
 } from "../../libs/seamstress@ltgcgo/nativeType/index.d.mts";
-
-declare type UnifiedBinaryIntake = string|ArrayBuffer|Uint8Array|Uint8ClampedArray|HTMLInputElement|Blob|File|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>;
+import type {
+	UnifiedBinaryIntake
+} from "../micc/index.d.mts";
 
 // `colxi/midi-parser-js`
 
@@ -121,7 +122,7 @@ export class ColxiMIDIParser {
 	* Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.
 	* 
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
-	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, a hexadecimal string, or readable byte streams.
+	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, or readable byte streams.
 	* @param callback The method to invoke when parsing is finished. */
 	static parse(input: UnifiedBinaryIntake, callback?: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
 	/** Defines custom interpreter behaviour, should only be invoked by the parser. The returned value will populate the data property.
@@ -255,12 +256,12 @@ export class MidiJsonTools {
 	* Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.
 	* 
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
-	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, a hexadecimal string, or readable byte streams. */
+	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, or readable byte streams. */
 	static midiToJson(input: UnifiedBinaryIntake): Promise<MJTMIDIFile>;
 	/** Parses the input into a structured representation. Entrypoint used by `chrisguttandin/midi-json-parser`. Does not offer a Mojibake handler like the `ColxiMIDIParser` shim.
 	* 
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
-	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, a hexadecimal string, or readable byte streams. */
+	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, or readable byte streams. */
 	static parseArrayBuffer(input: UnifiedBinaryIntake): Promise<MJTMIDIFile>;
 	/** A list of text decoders to be used. Not present in the original implementations, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
 	static decoders?: Iterable<TextDecoder>;
