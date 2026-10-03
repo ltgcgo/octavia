@@ -17,6 +17,10 @@ import {
 	MICCTrackElement,
 	MICCTrack
 } from "./classes/fundamentals.mjs";
+import {
+	MICCSequenceMetadata,
+	MICCTrackerMetadata
+} from "./classes/metadata.mjs";
 import MICCConstants from "./classes/constants.mjs";
 import MICCInternalsSMF from "./parser/smf.mjs";
 import MICCInternalsMIA from "./parser/mia.mjs";
@@ -141,7 +145,9 @@ export {
 	MICCBaseElement,
 	MICCConstants,
 	MICCSequence,
+	MICCSequenceMetadata,
 	MICCTrackElement,
+	MICCTrackerMetadata,
 	MICCTrack,
 	MICCInternalsTempo,
 	MICCInternalsSMF,

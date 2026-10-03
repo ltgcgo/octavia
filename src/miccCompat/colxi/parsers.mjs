@@ -5,6 +5,7 @@
 
 import {
 	IntakeNormaliser,
+	MICCSequenceMetadata,
 	MICC
 } from "../../micc/index.mjs";
 
@@ -71,7 +72,16 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 const ColxiMIDIParserBuffered = class ColxiMIDIParser extends ColxiMIDIParserBase {
 	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input 
 	* @param {(file: import("../index.d.mts").ColxiMIDIFile) => void} callback */
-	static async parse(input, callback) {};
+	static async parse(input, callback) {
+		const upThis = this;
+		/** @type {MICCSequenceMetadata} */
+		const metaSink = {};
+		const file = new ColxiMIDIFile();
+		if (typeof callback === "function") {
+			callback.call(upThis, file);
+		};
+		return file;
+	};
 };
 
 export {
