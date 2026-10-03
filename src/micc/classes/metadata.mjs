@@ -5,8 +5,11 @@
 
 const MICCSequenceMetadata = class MICCSequenceMetadata {
 	clip = 0;
-	tpqn = 480;
 	isSmpte = false;
+	/** @type {number?} */
+	tpqn;
+	/** @type {[number, number]?} */
+	smpte;
 	style = 0;
 	track = 0;
 	type = 1;

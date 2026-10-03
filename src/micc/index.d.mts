@@ -75,6 +75,42 @@ declare class MICCConstants {
 	static readonly MIDI_RESET: uint8;
 	/** Meta events, remapped from `0xff`. Should not appear on live wire. */
 	static readonly MIDI_META: uint8;
+	/** Meta event: Sequence number. */
+	static readonly META_SEQ_NUMBER: uint8;
+	/** Meta event: Text. */
+	static readonly META_TEXT: uint8;
+	/** Meta event: Copyright notice. */
+	static readonly META_COPYRIGHT: uint8;
+	/** Meta event: Title, or sequence name. */
+	static readonly META_TITLE: uint8;
+	/** Meta event: Instrument name. */
+	static readonly META_INSTRUMENT: uint8;
+	/** Meta event: Lyrics feed. For various lyrics extensions, [read here](https://kb.ltgc.cc/octavia/impl/ext.html#lyrics). */
+	static readonly META_LYRICS: uint8;
+	/** Meta event: Marker. */
+	static readonly META_MARKER: uint8;
+	/** Meta event: Cue point. */
+	static readonly META_CUE_POINT: uint8;
+	/** Meta event: Voice name. */
+	static readonly META_VOICE_NAME: uint8;
+	/** Meta event: Device name. */
+	static readonly META_DEVICE_NAME: uint8;
+	/** Meta event: Track channel assign. */
+	static readonly META_TRACK_CH: uint8;
+	/** Meta event: Track port assign. For XGworks port assign, [read here](https://kb.ltgc.cc/octavia/impl/ext.html#xgworks-port-assign). */
+	static readonly META_TRACK_PORT: uint8;
+	/** Meta event: Track end. */
+	static readonly META_TRACK_END: uint8;
+	/** Meta event: Set tempo. */
+	static readonly META_SET_TEMPO: uint8;
+	/** Meta event: Set SMPTE offset. */
+	static readonly META_SET_SMPTE_OFFSET: uint8;
+	/** Meta event: Set time signature. */
+	static readonly META_SET_TIME_SIG: uint8;
+	/** Meta event: Set key signature. */
+	static readonly META_SET_KEY_SIG: uint8;
+	/** Meta event: Sequencer exclusive. */
+	static readonly META_SEQEX: uint8;
 	/** Track pointer block: normal. Compatible with XGworks. */
 	static readonly PTRB_NORMAL: uint16;
 	/** Track pointer block: linked (pointer). Compatible with XGworks. */
@@ -226,8 +262,10 @@ declare interface MICCSMFMIAHandleOptions {
 	preferReadable?: boolean;
 }
 declare class MICCParserOptions {
+	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
+	decoders?: Iterable<TextDecoder>;
 	/** Defines how deep should the finalisers go. Same as `MICCSequence.finaliserDepth`. */
-	finaliserDepth: int8;
+	finaliserDepth?: int8;
 }
 /** Internal methods for MIA assembly and disassembly. */
 export class MICCInternalsMIA {
@@ -348,7 +386,11 @@ export class MICCSequenceMetadata extends MICCBaseMetadata {
 	* For tracker music with 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 24, 30, 32, 40, 48, 60, 80, 96, 120, 160 or 240 rows per beat, `480` will be used. `600` will be used with 25, 50, 75, 100, 150, 200, 300 or 600 rows. `720` will be used with 9, 18, 36, 40, 45, 72, 144, 180, 360, 720 rows. `960` will be used with 64, 192, 320, 480 or 960 rows. Any other value that doesn't have an existing mapping will cause the value `4096` be used, with the actual tick time be rounded to the nearest value.
 	*
 	* Patterns (measures) with overridden row numbers of beats, overiiden row numbers of measures, derived denominators not a power of 2, or derived non-integer nominators will have the value rounded up to the nearest equivalent valid MIDI time signature in the raw time signature MIDI event, then have custom meta events that shifts the offset map. */
-	tpqn: uint16;
+	tpqn?: uint16;
+	/** MIDI time division in SMPTE frames. Further information on interpretation should refer to Octavia documentation.
+	*
+	* Tracker modules do not populate this value. */
+	smpte?: [uint8, uint8];
 	/** Definition vary by file type.
 	*
 	* For Standard MIDI Files, this indicates the SMF file type. For tracker files, this indicates the original format used. Full definition under `MICCConstants.FILE_*`. */

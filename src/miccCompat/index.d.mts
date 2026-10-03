@@ -115,11 +115,13 @@ declare type ColxiMIDICustomInterpreter = (
 ) => any;
 /** Shared properties for both variants. */
 declare class ColxiMIDIParserBase {
+	/** When `true`, this enables verbose debugging logs. This is a hidden property in the original implementation. Defaults to `false`. */
+	static debug: boolean;
 	/** Defines custom interpreter behaviour. This should only be invoked by the parser.
 	*
 	* The returned value will populate the data property. Like the original implementation, you are not supposed to return `Promise`s.
-	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour.
-	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `uint32`) will be assumed. */
+	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour, which does not exist in the original implementation.
+	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `int32`) will be assumed. */
 	static customInterpreter?: boolean|ColxiMIDICustomInterpreter;
 	/** A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
 	static decoders?: Iterable<TextDecoder>;

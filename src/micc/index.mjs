@@ -48,6 +48,8 @@ const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
 SeamstressInstanceSMF.regulateStream = MICCInternalsSMF.streamRegulator;
 
 const MICCParserOptions = class MICCParserOptions {
+	/** @type {Iterable<TextDecoder>} */
+	decoders;
 	/** @type {number?} */
 	finaliserDepth;
 };
@@ -70,6 +72,11 @@ const MICC = class MICC {
 		const sequence = new MICCSequence();
 		if (typeof options?.finaliserDepth === "number") {
 			sequence.finaliserDepth = options.finaliserDepth;
+		};
+		if (options?.decoders) {
+			sequence.decoders = options.decoders;
+		} else if (this.decoders) {
+			sequence.decoders = this.decoders;
 		};
 		(async () => {
 			let currentTrack = -1, currentTick = 0;
