@@ -41,6 +41,7 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 				case "yamaha.XFKM": {
 					if (!upThis.extended) {
 						upThis.debug ?? console.debug(`Skipped extension track "${miccTrack.type}" (${miccTrack.vendor}).`);
+						break;
 					};
 					// Fallthrough!
 				};

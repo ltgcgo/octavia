@@ -131,9 +131,9 @@ declare class ColxiMIDIParserBase {
 	* Not present in the original implementation. */
 	static extended: boolean;
 }
-/** (WIP) Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
+/** Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js` with minimal required code changes. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
 *
-* While recommended, this variant nonetheless is mostly a wrapper around parsed MICC sequences to minimise resource usage during parsing, as such it is slower than the original implementation, at around 25% of the original throughput. If the lower throughput is not ideal, `ColxiMIDIParserBuffered` can be used as an alternative that throws resource constraint into the wind to prioritise speed.
+* While recommended, this variant nonetheless is mostly a wrapper around parsed MICC sequences to minimise resource usage during parsing, as such it is at most 6 times slower than the original implementation (16.7% of the original throughput). If the lower throughput is not ideal, `ColxiMIDIParserBuffered` can be used as an alternative that throws resource constraint into the wind to prioritise speed.
 *
 * For extensive additional benefits, we strongly recommend you to migrate to Octavia MICC instead, which can integrate strongly with the rest of the Octavia ecosystem. This compatibility layer only provides up-to-date SMF support (type 0, type 1, type 2; you also get free MUSEQ and XF extension support by migrating to this compatibility shim). */
 export class ColxiMIDIParser extends ColxiMIDIParserBase {
@@ -146,7 +146,7 @@ export class ColxiMIDIParser extends ColxiMIDIParserBase {
 	* @param callback The method to invoke when parsing is finished. */
 	static parse(input: UnifiedBinaryIntake, callback?: (file: ColxiMIDIFile) => void): Promise<ColxiMIDIFile>;
 }
-/** (WIP) Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js`. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
+/** (WIP) Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js` with minimal required code changes. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
 *
 * While not recommended, if the speed of `ColxiMIDIParser` isn't up to your taste, this is offered as an alternative to the mentioned implementation. This implementation bypasses `MICCSequence` entirely to directly operate with the MICC internals via fully buffered chunks, avoiding overhead introduced by the regulated reads necessary for limiting resource usage.
 *
@@ -272,7 +272,7 @@ export interface MJTMIDIFile {
 	/** Actual tracks with events. */
 	tracks: MJTMIDIStatusEvent[][]|MJTMIDIMetaEvent[][];
 }
-/** (WIP) Mostly a drop-in replacement for `midi-json-tools/midi-to-json` and `chrisguttandin/midi-json-parser`. Customised parser support has not been added yet.
+/** (WIP) Mostly a drop-in replacement for `midi-json-tools/midi-to-json` and `chrisguttandin/midi-json-parser` with minimal required code changes. Customised parser support has not been added yet.
 *
 * For extensive additional benefits, we strongly recommend you to migrate to Octavia MICC instead, which can integrate strongly with the rest of the Octavia ecosystem. This compatibility layer only provides up-to-date SMF support (type 0, type 1, type 2; you also get free MUSEQ and XF extension support by migrating to this compatibility shim). */
 export class MidiJsonTools {
