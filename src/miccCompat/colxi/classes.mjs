@@ -3,8 +3,10 @@
 
 "use strict";
 
+import { BinaryString } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+
 const ColxiMIDIView = class ColxiMIDIView {};
-const ColxiMIDIEvent = class ColxiMIDIEvent extends MICCBaseElement {
+const ColxiMIDIEvent = class ColxiMIDIEvent {
 	/** @type {number?} */
 	channel;
 	/** @type {number} */
@@ -15,11 +17,7 @@ const ColxiMIDIEvent = class ColxiMIDIEvent extends MICCBaseElement {
 	metaType;
 	/** @type {number|string|Uint8Array|undefined} */
 	data = undefined;
-	constructor(type, deltaTime) {
-		super("colxi.midiEvent");
-		if (typeof type === "number") {
-			this.type = type;
-		};
+	constructor(deltaTime) {
 		if (typeof deltaTime === "number") {
 			this.deltaTime = deltaTime;
 		};
@@ -47,7 +45,7 @@ const ColxiMIDIParserBase = class ColxiMIDIParser {
 	static debug = false;
 	static customInterpreter = true;
 	/** @type {Iterable<TextDecoder>?} */
-	static decoders = BinaryString.getDecoders("u8", "sjis");
+	static decoders = BinaryString.getDecoders(["utf-8", "sjis"]);
 	static extended = true;
 };
 

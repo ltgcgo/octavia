@@ -6,6 +6,7 @@
 import {
 	IntegerHandler
 } from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+import MICCInternalsFinalisers from "../../micc/classes/finalisers.mjs";
 import {
 	MICCConstants,
 	MIDINakedEvent
@@ -34,7 +35,7 @@ export default class ColxiMethods {
 				break;
 			};
 			default: {
-				throw(new TypeError(`Unknown MICC event type ${type}.`));
+				throw(new TypeError(`Unknown MICC event type ${miccEvent.type}.`));
 			};
 		};
 		const result = typeof upThis.customInterpreter === "function" ? upThis.customInterpreter.call(upThis) : upThis.customInterpreter;
@@ -70,8 +71,7 @@ export default class ColxiMethods {
 	* @param {typeof import("../index.d.mts").ColxiMIDIParserBase} upThis 
 	* @returns {ColxiMIDIEvent} */
 	static fromNakedEvent(upThis, miccEvent) {
-		const colxiEvent = new ColxiMIDIEvent();
-		colxiEvent.deltaTime = miccEvent.delta;
+		const colxiEvent = new ColxiMIDIEvent(miccEvent.delta);
 		switch (miccEvent.type) {
 			case MICCConstants.MIDI_PROGRAM:
 			case MICCConstants.MIDI_CH_AT: {
@@ -93,7 +93,7 @@ export default class ColxiMethods {
 			case MICCConstants.MIDI_SYSEX_RESUME: // Don't blame me!
 			case MICCConstants.MIDI_SYSEX_NEW: {
 				colxiEvent.type = 15;
-				colxiEvent.data = this.handleExtended(upThis, miccEvent.data);
+				colxiEvent.data = this.handleExtended(upThis, miccEvent);
 				break;
 			};
 			case MICCConstants.MIDI_META: {

@@ -29,6 +29,9 @@ import {
 	reducePrecision,
 	reducePrecisionText
 } from "../../src/state/utils.js";
+import {
+	ColxiMIDIParser
+} from "../../src/miccCompat/index.mjs";
 
 if (ColxiMIDIParserOriginal) {
 	// The original Colxi will ABSOLUTELY WHINE without our own customised interpreter.
@@ -46,7 +49,9 @@ test("Validate Colxi against streamed and buffered", async () => {
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
 		if (dirEntry.isFile) {
 			console.info(`[\x1b[1;33mTEST\x1b[0m] "${dirEntry.name}": ...`);
-			const fileColxi = await Deno.readFile(`./cache/source/${dirEntry.name}`);
+			const filePath = `./cache/source/${dirEntry.name}`;
+			const fileColxi = await Deno.readFile(filePath);
+			const fileMICCStreamed = (await Deno.open(filePath)).readable;
 			testedFile ++;
 			let passed = true;
 			let processedCountColxi = 0,
@@ -68,7 +73,7 @@ test("Validate Colxi against streamed and buffered", async () => {
 			};
 			const startTimeMICC = performance.now();
 			try {
-				sequenceMICC = null;
+				sequenceMICC = await ColxiMIDIParser.parse(fileMICCStreamed);
 			} catch (err) {
 				passed = false;
 				errorHistory.push(new FailRecord(dirEntry.name, 0, err));
@@ -86,7 +91,10 @@ test("Validate Colxi against streamed and buffered", async () => {
 			const runDurationMICC = performance.now() - startTimeMICC;
 			const runDurationMICCBuffered = performance.now() - startTimeMICCBuffered;
 			try {
-				// Enumerate MICC
+				// Enumerate streamed MICC
+				for (const track of sequenceMICC.track) {
+					processedCountMICC += track.event.length;
+				};
 				// Enumerate buffered MICC
 				if (sequenceColxi?.track?.length > 0) {
 					// Metadata comparison

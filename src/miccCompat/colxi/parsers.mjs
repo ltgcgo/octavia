@@ -3,18 +3,12 @@
 
 "use strict";
 
-import { BinaryString } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
-import MICCInternalsFinalisers from "../../micc/classes/finalisers.mjs";
 import {
 	IntakeNormaliser,
-	MICCConstants,
-	MIDINakedEvent,
 	MICC
 } from "../../micc/index.mjs";
 
 import {
-	ColxiMIDIView,
-	ColxiMIDIEvent,
 	ColxiMIDITrack,
 	ColxiMIDIFile,
 	ColxiMIDIParserBase

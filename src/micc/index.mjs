@@ -130,7 +130,7 @@ const MICC = class MICC {
 				sequence.reject(err);
 			};
 			sequence.markReady();
-			sequence.finalise(MICCConstants.AS_MIDI);
+			if (sequence.finaliserDepth > 0) sequence.finalise(MICCConstants.AS_MIDI);
 			sequence.markFinalised();
 		})();
 		return sequence;
