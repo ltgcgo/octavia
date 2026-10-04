@@ -106,7 +106,7 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 				case "XFIH":
 				case "XFKM": {
 					if (!upThis.extended) {
-						upThis.debug ?? console.debug(`Skipped extension track "${miccTrack.type}" (${miccTrack.vendor}).`);
+						upThis.debug ?? console.debug(`Skipped extension track "${chunk.type}".`);
 						continue;
 					};
 					// Fallthrough!
