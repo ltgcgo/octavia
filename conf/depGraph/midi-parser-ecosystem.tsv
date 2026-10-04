@@ -1,2 +1,4 @@
 from	to
 ./micc.d.mts	@ltgc/octavia/micc
+../libs/rochelle@ltgcgo/binaryString.d.mts	@ltgc/rochelle/binaryString
+../libs/seamstress@ltgcgo/nativeType/index.d.mts	@ltgc/seamstress/nativeType

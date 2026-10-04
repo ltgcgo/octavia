@@ -6,7 +6,7 @@
 import {
 	ColxiMIDIParser,
 	ColxiMIDIParserStreamed
-} from "./colxi/parsers.mjs";
+} from "./colxi/funnels.mjs";
 
 export {
 	ColxiMIDIParser,
