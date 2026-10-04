@@ -294,6 +294,11 @@ export class MICCInternalsSMF {
 	static parseSingleEvent(buffer: Uint8Array|Uint8ClampedArray|SeamstressChunk, options?: MICCSMFMIAHandleOptions): MIDINakedEvent;
 	/** Serialise single parsed MIDI events into clean buffers. */
 	static emitSingleEvent(event: MIDINakedEvent, options?: MICCSMFMIAHandleOptions): Uint8Array;
+	/** Parse _clean_ full MIDI events from buffers. Returns the number of bytes read. Use `parseRawEvents` for raw live events.
+	* @param offset The starting offset.
+	* @param buffer The input buffer.
+	* @param options Parser options. Do not reuse the same options object for different sessions. */
+	static parseCleanEvents(offset: number, buffer: Uint8Array|Uint8ClampedArray, options?: MICCSMFMIAHandleOptions): Generator<MIDINakedEvent, number, any>;
 	/** Parse _raw_ MIDI events from buffers, which doesn't guarantee the buffer itself to be clean. For raw event ingestion only, like from real-time MIDI port IO.
 	* @param buffer The input buffer.
 	* @param options Parser options. Only reuse the same options object for a single port in a single MIDI 1.0 session. */

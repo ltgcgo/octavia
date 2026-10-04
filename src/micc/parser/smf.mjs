@@ -481,6 +481,29 @@ export default class MICCInternalsSMF {
 		//this.debugMode && console.debug(buffer);
 		return buffer;
 	};
+	/** @param {number} offset
+	* @param {Uint8Array} buffer
+	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
+	* @returns {Generator<MIDINakedEvent, number, any>} */
+	static *parseCleanEvents(offset, buffer, options = {}) {
+		/** @type {import("../../micc/index.mjs").MICCSMFMIAHandleOptions} */
+		if (!Number.isSafeInteger(offset)) {
+			throw(new TypeError(`Provided offset "${offset} is invalid."`));
+		};
+		let ptr = offset, readSize = 0;
+		try {} catch (err) {};
+		while (ptr < buffer.length) {
+			const parsedEvent = this.parseSingleEvent(buffer.subarray(ptr), options);
+			yield parsedEvent;
+			if (parsedEvent.byteSize > 0) {
+				ptr += parsedEvent.byteSize;
+				readSize += parsedEvent.byteSize;
+			} else {
+				throw(new RangeError(`Encountered a MIDI event with invalid size: ${parsedEvent.byteSize}.`));
+			};
+		};
+		return readSize;
+	};
 	/** @param {Uint8Array|Uint8ClampedArray} buffer
 	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
 	* @returns {Generator<MIDINakedEvent, void, any>} */
@@ -725,6 +748,11 @@ export default class MICCInternalsSMF {
 		};
 		//console.debug(metadata);
 	};
+	/** @param {number} offset
+	* @param {SeamstressChunk} subchunk
+	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
+	* @returns {Generator<MIDINakedEvent, number, any>} */
+	static *streamIterator(offset, subchunk, options) {};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk
 	* @returns {number} */
