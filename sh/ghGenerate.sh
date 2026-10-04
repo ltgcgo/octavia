@@ -1,10 +1,14 @@
 #!/bin/bash
 COMPRESS_CRIT="\.(ass|atom|bin|bm|bmp|conf|css|csv|htm|html|ico|ini|ins|js|json|kar|list|lrc|lst|map|md|mid|mjs|mod|mts|otf|rss|sbv|srt|ssa|svg|tex|toml|trc|ts|tsv|ttf|ttml|txt|vgm|vtt|wasm|webmanifest|xml|ytt)$"
 
+compressionGzip="-7"
+compressionBrotli="-v6j"
 if [ "$1" != "" ]; then
-	if [ ! -f "$(which zopfli)" ]; then
-		sudo apt install -y zopfli
-	fi
+	#if [ ! -f "$(which zopfli)" ]; then
+		#sudo apt install -y zopfli
+	#fi
+	compressionGzip="-9"
+	compressionBrotli="-vjq 10"
 fi
 #if [ ! -f "$(which tree)" ]; then
 	#sudo apt install -y tree
@@ -34,7 +38,7 @@ tar cf ../pages-build.tar *
 echo "Built uncompressed files: $(wc -c ../pages-build.tar | cut -d' ' -f1) B"
 cd ..
 #zopfli --i1 -v pages-build.tar
-gzip -9v pages-build.tar
+gzip ${compressionGzip}v pages-build.tar
 rm -v pages-build.tar 2>/dev/null
 rm -r ghp-raw
 cp -Lr ghp ghp-base
@@ -104,7 +108,7 @@ tree -ifl | while IFS= read -r file; do
 				#if [ "$1" != "" ]; then
 					#zopfli --i1 "$file" && echo "Compressed \"${file}\" with Zopfli."
 				#else
-					gzip -9 "$file" && echo "Compressed \"${file}\" with Gzip."
+					gzip ${compressionGzip} "$file" && echo "Compressed \"${file}\" with Gzip."
 				#fi
 			fi
 		#else
@@ -142,11 +146,7 @@ tree -ifl | while IFS= read -r file; do
 				rm "$file"
 			else
 				echo "${fileHash}	$(realpath -s "${file}")" >> ../fileHashes.tsv
-				if [ "$1" != "" ]; then
-					brotli -vjq 10 "$file"
-				else
-					brotli -v9j "$file"
-				fi
+				brotli ${compressionBrotli} "$file"
 			fi
 		#else
 			#echo "File \"${file}\" cannot be compressed."
