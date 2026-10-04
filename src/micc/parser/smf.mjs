@@ -8,6 +8,15 @@ import {
 	SeamstressChunk
 } from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
 import {
+	ConditionalError,
+	IncompleteError,
+	IncompleteDataSizeError,
+	IncompleteDeltaTimeError,
+	IncompleteMetaTypeError,
+	IncompleteStatusByteError,
+	MIDIStateErrorSysEx
+} from "../../errors/index.mjs";
+import {
 	bufferCarveOut
 } from "../../state/utils/bufferIo.mjs";
 import MICCConstants from "../classes/constants.mjs";
@@ -44,10 +53,12 @@ export default class MICCInternalsSMF {
 		let deltaSize = 0;
 		if (options.hasDelta) {
 			if (buffer.length < 1) {
-				throw(new Error(`Delta time expects at least a single byte.`));
+				throw(new IncompleteDeltaTimeError(`Delta time expects at least a single byte.`));
 			};
 			deltaSize = IntegerHandler.sizeVLV(buffer);
-			if (deltaSize > 4 || deltaSize <= 0) {
+			if (deltaSize === 0) {
+				throw(new IncompleteDeltaTimeError(`Delta time is not complete.`));
+			} else if (deltaSize > 4 || deltaSize < 0) {
 				throw(new RangeError(`Invalid delta time.`));
 			};
 		};
@@ -55,7 +66,7 @@ export default class MICCInternalsSMF {
 		options.parserContext = options.parserContext ?? {};
 		// Status byte
 		if (buffer.length < (1 + deltaSize)) {
-			throw(new Error(`Status byte expects at least a single byte.`))
+			throw(new IncompleteStatusByteError(`Status byte expects at least a single byte.`));
 		};
 		let statusByte = 0, eventType = 0, eventCh = null, isStale = false;
 		if (buffer[deltaSize] >> 7) {
@@ -66,9 +77,9 @@ export default class MICCInternalsSMF {
 			if (statusByte >= 0x80 && statusByte < 0xf0) {
 				// No-op.
 			} else if (Number.isSafeInteger(statusByte)) {
-				throw(new Error(`Invalid running status 0x${statusByte?.toString(16).padStart(2, "0")}.`));
+				throw(new RangeError(`Invalid running status 0x${statusByte?.toString(16).padStart(2, "0")}.`));
 			} else {
-				throw(new Error(`Non-existent running status "${statusByte}".`));
+				throw(new TypeError(`Non-existent running status "${statusByte}".`));
 			};
 		};
 		if (statusByte >= 0xf0) {
@@ -86,17 +97,17 @@ export default class MICCInternalsSMF {
 						break;
 					};
 					default: {
-						throw(new Error(`The previous SysEx event was not terminated.`));
+						throw(new MIDIStateErrorSysEx(`The previous SysEx event was not terminated.`));
 					};
 				};
 			} else {
 				if (eventType === 0xf7 && options.isSmfWrapped) {
-					throw(new Error(`Illegal SysEx continuation. The previous SysEx event had already terminated.`));
+					throw(new MIDIStateErrorSysEx(`Illegal SysEx continuation. The previous SysEx event had already terminated.`));
 				};
 			};
 		} else if (statusByte & 0x80) {
 			if (options.parserContext.lastSysExHung) {
-				throw(new Error(`The ongoing SysEx event was not terminated.`));
+				throw(new MIDIStateErrorSysEx(`The ongoing SysEx event was not terminated.`));
 			};
 			eventType = statusByte >> 4;
 			eventCh = statusByte & 15;
@@ -132,8 +143,10 @@ export default class MICCInternalsSMF {
 				if (options.isSmfWrapped) {
 					// SMF allows 0xF7 to appear in a subsequent 0xF7 event.
 					const dataSizeLength = IntegerHandler.sizeVLV(buffer, dataEndPointer);
-					if (dataSizeLength <= 0 || dataSizeLength > 4) {
-						throw(new RangeError(`Invalid data length.`));
+					if (dataSizeLength === 0) {
+						throw(new IncompleteDataSizeError(`Data size is not complete.`));
+					} else if (dataSizeLength < 0 || dataSizeLength > 4) {
+						throw(new RangeError(`Invalid data size.`));
 					};
 					dataStartPointer += dataSizeLength;
 					dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
@@ -144,18 +157,20 @@ export default class MICCInternalsSMF {
 					if (endPointer >= dataEndPointer) {
 						dataEndPointer = endPointer + 1;
 					} else {
-						throw(new Error(`Incomplete new SysEx: termination byte not found.`));
+						throw(new MIDIStateErrorSysEx(`Incomplete new SysEx: termination byte not found.`));
 					};
 				};
 				break;
 			};
 			case MICCConstants.MIDI_SYSEX_RESUME: {
 				if (!options.isSmfWrapped) {
-					throw(new Error(`0xF7 event can only exist in SMF.`));
+					throw(new ConditionalError(`0xF7 event can only exist in SMF.`));
 				};
 				const dataSizeLength = IntegerHandler.sizeVLV(buffer, dataEndPointer);
-				if (dataSizeLength <= 0 || dataSizeLength > 4) {
-					throw(new RangeError(`Invalid data length.`));
+				if (dataSizeLength === 0) {
+					throw(new IncompleteDataSizeError(`Data size is not complete.`));
+				} else if (dataSizeLength < 0 || dataSizeLength > 4) {
+					throw(new RangeError(`Invalid data size.`));
 				};
 				dataStartPointer += dataSizeLength;
 				dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
@@ -169,16 +184,18 @@ export default class MICCInternalsSMF {
 					break;
 				};
 				if (buffer.length <= dataEndPointer) {
-					throw(new Error(`Incomplete meta event: meta type does not exist.`))
+					throw(new IncompleteMetaTypeError(`Incomplete meta event: meta type does not exist.`))
 				};
 				nakedEvent.meta = buffer[dataEndPointer];
 				dataEndPointer ++;
 				if (buffer.length <= dataEndPointer) {
-					throw(new Error(`Incomplete meta event: size does not exist.`))
+					throw(new IncompleteDataSizeError(`Incomplete meta event: size does not exist.`))
 				};
 				const dataSizeLength = IntegerHandler.sizeVLV(buffer, dataEndPointer);
-				if (dataSizeLength <= 0 || dataSizeLength > 4) {
-					throw(new RangeError(`Invalid data length.`));
+				if (dataSizeLength === 0) {
+					throw(new IncompleteDataSizeError(`Data size is not complete.`));
+				} else if (dataSizeLength < 0 || dataSizeLength > 4) {
+					throw(new RangeError(`Invalid data size.`));
 				};
 				dataStartPointer += dataSizeLength + 1;
 				dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
@@ -191,21 +208,21 @@ export default class MICCInternalsSMF {
 			case MICCConstants.MIDI_STOP:
 			case MICCConstants.MIDI_ACTIVE_SENSE: {
 				if (options.isSmfWrapped) {
-					throw(new Error(`Realtime event ${eventType.toString(16).toUpperCase()} can only exist raw.`));
+					throw(new ConditionalError(`Realtime event ${eventType.toString(16).toUpperCase()} can only exist raw.`));
 				};
 				break;
 			};
 			case MICCConstants.MIDI_TIME_CODE:
 			case MICCConstants.MIDI_SONG_SELECT: {
 				if (options.isSmfWrapped) {
-					throw(new Error(`Common event ${eventType.toString(16).toUpperCase()} can only exist raw.`));
+					throw(new ConditionalError(`Common event ${eventType.toString(16).toUpperCase()} can only exist raw.`));
 				};
 				dataEndPointer += 1;
 				break;
 			};
 			case MICCConstants.MIDI_SONG_POSITION: {
 				if (options.isSmfWrapped) {
-					throw(new Error(`Song position pointers can only exist raw.`));
+					throw(new ConditionalError(`Song position pointers can only exist raw.`));
 				};
 				dataEndPointer += 2;
 				break;
@@ -219,7 +236,7 @@ export default class MICCInternalsSMF {
 		nakedEvent.byteSize = dataEndPointer;
 		// Final pass
 		if (buffer.length < dataEndPointer) {
-			throw(new Error(`Incomplete 0x${eventType.toString(16)} event: expected ${dataEndPointer} B, received ${buffer.length} B.`));
+			throw(new IncompleteError(`Incomplete 0x${eventType.toString(16)} event: expected ${dataEndPointer} B, received ${buffer.length} B.`));
 		};
 		nakedEvent.data = buffer.subarray(dataStartPointer, dataEndPointer);
 		let isSysExActive = false;
@@ -254,13 +271,13 @@ export default class MICCInternalsSMF {
 								if (isSysExActive) {
 									isSysExActive = false;
 								} else {
-									throw(new Error(`Illegal termination after terminated SysEx event.`));
+									throw(new MIDIStateErrorSysEx(`Illegal termination after terminated SysEx event.`));
 								};
 								//continue;
 							} else if (e === 0xf0) {
 								if (isSysExActive) {
 									// Also rejects the live message embedding trick.
-									throw(new RangeError(`New SysEx events cannot appear without the previous SysEx event terminating.`));
+									throw(new MIDIStateErrorSysEx(`New SysEx events cannot appear without the previous SysEx event terminating.`));
 								} else {
 									isSysExActive = true;
 									//continue;
@@ -268,7 +285,7 @@ export default class MICCInternalsSMF {
 							} else if (e >= 0x80) {
 								throw(new RangeError(`SysEx payloads cannot contain bytes greater than or equal to 0x80.`));
 							} else if (isSysExActive === false) {
-								throw(new Error(`SysEx payloads cannot contain bytes after termination and before new initialisation.`));
+								throw(new MIDIStateErrorSysEx(`SysEx payloads cannot contain bytes after termination and before new initialisation.`));
 							};
 							break;
 						};

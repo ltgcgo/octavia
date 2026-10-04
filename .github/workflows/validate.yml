@@ -15,7 +15,9 @@ on:
       - "sh/live.sh"
       - "sh/validate.sh"
       - "sh/validatorSetup.sh"
-      - "src/**"
+      - "src/errors/**"
+      - "src/micc/**"
+      - "src/miccCompat/**"
       - "!src/*/index.d.mts"
       - "validate/**"
   # Runs on pull requests targeting the working branches
