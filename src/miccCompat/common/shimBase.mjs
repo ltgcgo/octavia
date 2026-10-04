@@ -3,6 +3,8 @@
 
 "use strict";
 
+import { BinaryString } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+
 /** Shared properties for all parser shims. */
 export default class UnifiedShimBase {
 	static debug = false;
