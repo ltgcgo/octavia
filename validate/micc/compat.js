@@ -23,6 +23,7 @@ if (!ColxiMIDIParserOriginal) {
 	console.debug(`Used the original version for Colxi via Unpkg.`);
 };
 
+import optLogFile from "../common/optLogFile.json" with {"type": "json"};
 import FailRecord from "../common/failRecord.mjs";
 import {
 	customInterpreter,
@@ -196,9 +197,15 @@ test("Validate Colxi against streamed and buffered", async () => {
 		};
 		throw(`Failed ${errorHistory.length} test(s) out of ${testedFile}.`);
 	};
-	console.debug(`\nColxi: Parsed ${cumulativeEventsColxi} event(s) in ${reducePrecisionText(cumulativeDurationColxi, 3)}ms. Average ${reducePrecisionText(cumulativeEventsColxi / cumulativeDurationColxi * 1000, 3)}/s`);
-	console.debug(`MICC streamed (matched): Parsed ${cumulativeEventsMICCMatchedStreamed} event(s) in ${reducePrecisionText(cumulativeDurationMICCMatchedStreamed, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCMatchedStreamed / cumulativeDurationMICCMatchedStreamed * 1000, 3)}/s`);
-	console.debug(`MICC streamed (native): Parsed ${cumulativeEventsMICCNativeStreamed} event(s) in ${reducePrecisionText(cumulativeDurationMICCNativeStreamed, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCNativeStreamed / cumulativeDurationMICCNativeStreamed * 1000, 3)}/s`);
-	console.debug(`MICC buffered (matched): Parsed ${cumulativeEventsMICCMatchedBuffered} event(s) in ${reducePrecisionText(cumulativeDurationMICCMatchedBuffered, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCMatchedBuffered / cumulativeDurationMICCMatchedBuffered * 1000, 3)}/s`);
-	console.debug(`MICC buffered (native): Parsed ${cumulativeEventsMICCNativeBuffered} event(s) in ${reducePrecisionText(cumulativeDurationMICCNativeBuffered, 3)}ms. Average ${reducePrecisionText(cumulativeEventsMICCNativeBuffered / cumulativeDurationMICCNativeBuffered * 1000, 3)}/s`);
+	const speedAvgColxi = reducePrecisionText(cumulativeEventsColxi / cumulativeDurationColxi * 1000, 3);
+	const speedAvgMatchedStreamed = reducePrecisionText(cumulativeEventsMICCMatchedStreamed / cumulativeDurationMICCMatchedStreamed * 1000, 3);
+	const speedAvgNativeStreamed = reducePrecisionText(cumulativeEventsMICCNativeStreamed / cumulativeDurationMICCNativeStreamed * 1000, 3);
+	const speedAvgMatchedBuffered = reducePrecisionText(cumulativeEventsMICCMatchedBuffered / cumulativeDurationMICCMatchedBuffered * 1000, 3);
+	const speedAvgNativeBuffered = reducePrecisionText(cumulativeEventsMICCNativeBuffered / cumulativeDurationMICCNativeBuffered * 1000, 3);
+	console.debug(`\nColxi: Parsed ${cumulativeEventsColxi} event(s) in ${reducePrecisionText(cumulativeDurationColxi, 3)}ms. Average ${speedAvgColxi}/s`);
+	console.debug(`MICC streamed (matched): Parsed ${cumulativeEventsMICCMatchedStreamed} event(s) in ${reducePrecisionText(cumulativeDurationMICCMatchedStreamed, 3)}ms. Average ${speedAvgMatchedStreamed}/s`);
+	console.debug(`MICC streamed (native): Parsed ${cumulativeEventsMICCNativeStreamed} event(s) in ${reducePrecisionText(cumulativeDurationMICCNativeStreamed, 3)}ms. Average ${speedAvgNativeStreamed}/s`);
+	console.debug(`MICC buffered (matched): Parsed ${cumulativeEventsMICCMatchedBuffered} event(s) in ${reducePrecisionText(cumulativeDurationMICCMatchedBuffered, 3)}ms. Average ${speedAvgMatchedBuffered}/s`);
+	console.debug(`MICC buffered (native): Parsed ${cumulativeEventsMICCNativeBuffered} event(s) in ${reducePrecisionText(cumulativeDurationMICCNativeBuffered, 3)}ms. Average ${speedAvgNativeBuffered}/s`);
+	await Deno.writeTextFile(`./cache/speed.compat.colxi.tsv`, `${speedAvgColxi}\t${speedAvgMatchedStreamed}\t${speedAvgNativeStreamed}\t${speedAvgMatchedBuffered}\t${speedAvgNativeBuffered}\n`, optLogFile);
 });
