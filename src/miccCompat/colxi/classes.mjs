@@ -3,7 +3,7 @@
 
 "use strict";
 
-import { BinaryString } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+import UnifiedShimBase from "../common/shimBase.mjs";
 
 const ColxiMIDIView = class ColxiMIDIView {};
 const ColxiMIDIEvent = class ColxiMIDIEvent {
@@ -41,12 +41,8 @@ const ColxiMIDIFile = class ColxiMIDIFile {
 	track = [];
 };
 /** Basis for both Colxi variants. */
-const ColxiMIDIParserBase = class ColxiMIDIParser {
-	static debug = false;
+const UnifiedShimColxi = class UnifiedShimColxi extends UnifiedShimBase {
 	static customInterpreter = true;
-	/** @type {Iterable<TextDecoder>?} */
-	static decoders = BinaryString.getDecoders(["utf-8", "sjis"]);
-	static extended = true;
 };
 
 export {
@@ -54,5 +50,5 @@ export {
 	ColxiMIDIEvent,
 	ColxiMIDITrack,
 	ColxiMIDIFile,
-	ColxiMIDIParserBase
+	UnifiedShimColxi
 };

@@ -39,6 +39,18 @@ import type {
 	UnifiedBinaryIntake
 } from "../micc/index.d.mts";
 
+/** Shared properties for all parser shims. */
+declare class UnifiedShimBase {
+	/** When `true`, this enables verbose debugging logs. This has been a hidden property in the original Colxi implementation. Defaults to `false`. */
+	static debug: boolean;
+	/** A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
+	static decoders?: Iterable<TextDecoder>;
+	/** When `true`, the parser will also include extensions not seen in regular MIDI files that MICC supports (e.g. XF, MUSEQ). Defaults to `true`.
+	*
+	* Not present in the original implementation. */
+	static extended: boolean;
+}
+
 // `colxi/midi-parser-js`
 
 /** A MIDI event in the `colxi/midi-parser-js` scheme. */
@@ -114,29 +126,21 @@ declare type ColxiMIDICustomInterpreter = (
 	/** Length of the meta event. Will only be present for 0xff events. */
 	metaLength?: number
 ) => any;
-/** Shared properties for both variants. */
-declare class ColxiMIDIParserBase {
-	/** When `true`, this enables verbose debugging logs. This is a hidden property in the original implementation. Defaults to `false`. */
-	static debug: boolean;
+/** Basis for both Colxi variants. */
+declare class UnifiedShimColxi extends UnifiedShimBase {
 	/** Defines custom interpreter behaviour. This should only be invoked by the parser.
 	*
 	* The returned value will populate the data property. Like the original implementation, you are not supposed to return `Promise`s.
 	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour, which does not exist in the original implementation.
 	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `int32`) will be assumed. */
 	static customInterpreter?: boolean|ColxiMIDICustomInterpreter;
-	/** A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
-	static decoders?: Iterable<TextDecoder>;
-	/** When `true`, the parser will also include extensions not seen in regular MIDI files that MICC supports (e.g. XF, MUSEQ). Defaults to `true`.
-	*
-	* Not present in the original implementation. */
-	static extended: boolean;
 }
 /** Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js` with minimal required code changes. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
 *
 * If the memory usage of `ColxiMIDIParser` isn't up to your taste, and you're willing to take the throughput penalty, this is offered as a memory-conserving alternative, This variant is mostly a wrapper around parsed MICC sequences to minimise resource usage during parsing, as such it is at most 6 times slower than the original implementation (~17% of the original throughput). `ColxiMIDIParser` can still be used as an alternative, that ignores resource constraint to prioritise throughput.
 *
 * For extensive additional benefits, we strongly recommend you to migrate to Octavia MICC instead, which can integrate strongly with the rest of the Octavia ecosystem. This compatibility layer only provides up-to-date SMF support (type 0, type 1, type 2; you also get free MUSEQ and XF extension support by migrating to this compatibility shim). */
-export class ColxiMIDIParserStreamed extends ColxiMIDIParserBase {
+export class ColxiMIDIParserStreamed extends UnifiedShimColxi {
 	/** Parses the input into a structured representation.
 	*
 	* Note that unlike the original, this method is asynchronous. If the synchronous callback is not used, this requires an `await` statement or other ways to handle `Promise`s. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.
@@ -151,7 +155,7 @@ export class ColxiMIDIParserStreamed extends ColxiMIDIParserBase {
 * If the speed of `ColxiMIDIParserStreamed` isn't up to your taste, and you are certain that memory is not a concern, this is offered as a speed-focused alternative to the mentioned implementation. This implementation bypasses `MICCSequence` entirely to directly operate with the MICC internals via fully buffered chunks, avoiding overhead introduced by the regulated reads necessary for limiting resource usage while still conducting all the safety checks, as such this is at most 1.5 times slower than the original implementation (~70% of the original throughput), and at least 3 times faster than the streamed variant. `ColxiMIDIParserStreamed` can still be used as an alternative, that trades throughput to minimise memory usage.
 *
 * For extensive additional benefits, we strongly recommend you to migrate to Octavia MICC instead, which can integrate strongly with the rest of the Octavia ecosystem. This compatibility layer only provides up-to-date SMF support (type 0, type 1, type 2; you also get free MUSEQ and XF extension support by migrating to this compatibility shim). */
-export class ColxiMIDIParser extends ColxiMIDIParserBase {
+export class ColxiMIDIParser extends UnifiedShimColxi {
 	/** Parses the input into a structured representation.
 	*
 	* Note that unlike the original, this method is asynchronous. If the synchronous callback is not used, this requires an `await` statement or other ways to handle `Promise`s. This is due to some of the supported input types require asynchronous handling, contaminating others.

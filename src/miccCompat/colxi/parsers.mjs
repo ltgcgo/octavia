@@ -17,14 +17,14 @@ import {
 import {
 	ColxiMIDITrack,
 	ColxiMIDIFile,
-	ColxiMIDIParserBase
+	UnifiedShimColxi
 } from "./classes.mjs";
 import ColxiMethods from "./methods.mjs";
 
 const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
 
 /** Streamed Colxi variant. */
-const ColxiMIDIParserStreamed = class ColxiMIDIParser extends ColxiMIDIParserBase {
+const ColxiMIDIParserStreamed = class ColxiMIDIParserStreamed extends UnifiedShimColxi {
 	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input 
 	* @param {(file: import("../index.d.mts").ColxiMIDIFile) => void} callback */
 	static async parse(input, callback) {
@@ -79,7 +79,7 @@ const ColxiMIDIParserStreamed = class ColxiMIDIParser extends ColxiMIDIParserBas
 	};
 };
 /** Buffered Colxi variant. */
-const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
+const ColxiMIDIParser = class ColxiMIDIParser extends UnifiedShimColxi {
 	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input 
 	* @param {(file: import("../index.d.mts").ColxiMIDIFile) => void} callback */
 	static async parse(input, callback) {
@@ -114,15 +114,8 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 				case "MTrk": {
 					if (iteratedTracks >= file.tracks && !upThis.extended) continue;
 					const colxiTrack = new ColxiMIDITrack(chunk.type);
-					/*for (const miccEvent of ColxiMethods.parseEventBulk(chunk.data)) {
+					for (const miccEvent of ColxiMethods.parseEventBulk(chunk.data)) {
 						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, miccEvent);
-						if (colxiEvent.type !== 0) {
-							colxiTrack.event.push(colxiEvent);
-						};
-					};*/
-					const parsedEvents = ColxiMethods.parseEntireTrack(chunk.data);
-					for (let i = 0; i < parsedEvents.length; i ++) {
-						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, parsedEvents[i]);
 						if (colxiEvent.type !== 0) {
 							colxiTrack.event.push(colxiEvent);
 						};
