@@ -114,6 +114,12 @@ const ColxiMIDIParser = class ColxiMIDIParser extends ColxiMIDIParserBase {
 				case "MTrk": {
 					if (iteratedTracks >= file.tracks && !upThis.extended) continue;
 					const colxiTrack = new ColxiMIDITrack(chunk.type);
+					/*for (const miccEvent of ColxiMethods.parseEventBulk(chunk.data)) {
+						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, miccEvent);
+						if (colxiEvent.type !== 0) {
+							colxiTrack.event.push(colxiEvent);
+						};
+					};*/
 					const parsedEvents = ColxiMethods.parseEntireTrack(chunk.data);
 					for (let i = 0; i < parsedEvents.length; i ++) {
 						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, parsedEvents[i]);

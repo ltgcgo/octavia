@@ -167,6 +167,26 @@ export default class ColxiMethods {
 		return colxiEvent;
 	};
 	/** @param {Uint8Array} buffer
+	* @returns {Generator<MIDINakedEvent, void, any>} */
+	static *parseEventBulk(buffer) {
+		/** @type {import("../../micc/index.mjs").MICCSMFMIAHandleOptions} */
+		const parserConfig = {
+			"hasDelta": true,
+			"isSmfWrapped": true,
+			"parserContext": {}
+		};
+		let ptr = 0;
+		while (ptr < buffer.length) {
+			const parsedEvent = MICCInternalsSMF.parseSingleEvent(buffer.subarray(ptr), parserConfig);
+			yield parsedEvent;
+			if (parsedEvent.byteSize > 0) {
+				ptr += parsedEvent.byteSize;
+			} else {
+				throw(new RangeError(`Encountered a MIDI event with invalid size: ${parsedEvent.byteSize}.`));
+			};
+		};
+	};
+	/** @param {Uint8Array} buffer
 	* @returns {MIDINakedEvent[]} */
 	static parseEntireTrack(buffer) {
 		/** @type {import("../../micc/index.mjs").MICCSMFMIAHandleOptions} */
