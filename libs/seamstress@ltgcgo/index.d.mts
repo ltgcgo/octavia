@@ -9,7 +9,7 @@ import type {
 	uint16,
 	uint32,
 	uint64
-} from "../nativeType/index.d.mts";
+} from "../../libs/rochelle@ltgcgo/nativeType.d.mts";
 
 /** A safe tag-length-value byte stream handler. Can be customized to handle SMF, IFF, RIFF and more, under the umbrella of SEAM (Simple Extensible Arbitrary Messaging).
 * @license LGPL-3.0-only

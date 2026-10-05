@@ -3,6 +3,12 @@
 
 "use strict";
 
+import {
+	MICCBaseElement
+} from "./fundamentals.mjs";
+
+const MICCHeaderInfo = class MICCHeaderInfo extends MICCBaseElement {};
+
 const MICCSequenceMetadata = class MICCSequenceMetadata {
 	clip = 0;
 	isSmpte = false;
@@ -24,6 +30,7 @@ const MICCTrackerMetadata = class MICCTrackerMetadata {
 };
 
 export {
+	MICCHeaderInfo,
 	MICCSequenceMetadata,
 	MICCTrackerMetadata
 };

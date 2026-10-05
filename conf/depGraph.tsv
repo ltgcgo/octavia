@@ -1,6 +1,6 @@
 from	to
-../libs/seamstress@ltgcgo/seamstress/index.d.mts	@ltgc/seamstress
-../libs/seamstress@ltgcgo/nativeType/index.d.mts	@ltgc/seamstress/nativeType
 ../libs/rochelle@ltgcgo/binaryString.d.mts	@ltgc/rochelle/binaryString
 ../libs/rochelle@ltgcgo/dsvParse.d.mts	@ltgc/rochelle/dsvParse
+../libs/rochelle@ltgcgo/nativeType.d.mts	@ltgc/rochelle/nativeType
 ../libs/rochelle@ltgcgo/textRead.d.mts	@ltgc/rochelle/textRead
+../libs/seamstress@ltgcgo/seamstress/index.d.mts	@ltgc/seamstress

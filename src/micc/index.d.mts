@@ -11,11 +11,11 @@ import type {
 	uint8,
 	uint16,
 	uint32
-} from "../../libs/seamstress@ltgcgo/nativeType/index.d.mts";
+} from "../../libs/rochelle@ltgcgo/nativeType.d.mts";
 import type {
 	SeamstressChunk,
 	SeamstressContext
-} from "../../libs/seamstress@ltgcgo/seamstress/index.d.mts";
+} from "../../libs/seamstress@ltgcgo/index.d.mts";
 import type {
 	BinaryString
 } from "../../libs/rochelle@ltgcgo/binaryString.d.mts";
@@ -175,6 +175,8 @@ export class MICCBaseElement {
 	group: string;
 	constructor(group: string);
 }
+/** Base type for information related to various file headers. */
+export class MICCHeaderInfo extends MICCBaseElement {}
 /** Base type for subtypes capable of populating tracks.
 *
 * The group specifier is `ltgc.micc.trackChild`. */
@@ -303,7 +305,14 @@ export class MICCInternalsSMF {
 	* @param buffer The input buffer.
 	* @param options Parser options. Only reuse the same options object for a single port in a single MIDI 1.0 session. */
 	static parseRawEvents(buffer: Uint8Array|Uint8ClampedArray, options?: MICCSMFMIAHandleOptions): Generator<MIDINakedEvent, void, any>;
-	/** Regulates the incoming _SMF_ stream. Set as `Seamstress.regulateStream()`. */
+	/** Iterates the incoming _SMF_ stream and populates the provided sequence object directly. Passed to `Seamstress.readIterated()`. Depends on `parseCleanEvents`.
+	* @param options Parser options. Only reuse the same options object for a single port in a single MIDI 1.0 session. */
+	static streamIterator(
+		offset: number,
+		subchunk: SeamstressChunk,
+		options: MICCSMFMIAHandleOptions
+	): number;
+	/** Regulates the incoming _SMF_ stream. Set as `Seamstress.regulateStream`. May be superceded by `streamIterator` to slash . */
 	static streamRegulator(offset: number, subchunk: SeamstressChunk): number;
 }
 /** A pointer to the actual clip tracks.

@@ -34,7 +34,7 @@ import type {
 	uint16,
 	uint32,
 	int16
-} from "../../libs/seamstress@ltgcgo/nativeType/index.d.mts";
+} from "../../libs/rochelle@ltgcgo/nativeType.d.mts";
 import type {
 	UnifiedBinaryIntake
 } from "../micc/index.d.mts";

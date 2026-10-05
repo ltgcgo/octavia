@@ -6,7 +6,7 @@ import {
 	uint8,
 	uint16,
 	uint32
-} from "../../libs/seamstress@ltgcgo/nativeType/index.d.mts";
+} from "../../libs/rochelle@ltgcgo/nativeType.d.mts";
 import type {
 	MIDIBaseEvent,
 	MIDIUMPEvent,

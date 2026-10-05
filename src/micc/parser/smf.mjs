@@ -24,6 +24,9 @@ import {
 	MIDINakedEvent
 } from "../classes/event.mjs";
 import {
+	MICCSequence
+} from "../classes/fundamentals.mjs";
+import {
 	MICCSequenceMetadata
 } from "../classes/metadata.mjs";
 
@@ -774,9 +777,26 @@ export default class MICCInternalsSMF {
 	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk
+	* @param {MICCSequence} sequence 
 	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
 	* @returns {Generator<MIDINakedEvent, number, any>} */
-	static *streamIterator(offset, subchunk, options) {};
+	static *streamIterator(offset, subchunk, sequence, options) {
+		let ptr = offset, readSize = 0;
+		switch (subchunk.type) {
+			case "MThd": {
+				// Always read whole.
+				if (subchunk.isBuffered) {
+					// Just read from start to finish.
+					return subchunk.data.length;
+				};
+				break;
+			};
+			default: {
+				console.warn(`Unhandled chunk #${subchunk.id} typed "${subchunk.type}", at offset 0x${subchunk.offsetData.toString(16).padStart(6, "0")}.`);
+				return subchunk.isBuffered ? readSize : 0;
+			};
+		};
+	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk
 	* @returns {number} */
@@ -1035,7 +1055,7 @@ export default class MICCInternalsSMF {
 				break;
 			};
 			default: {
-				console.warn(`Unhandled chunk #${subchunk.id} typed "${subchunk.type}".`);
+				console.warn(`Unhandled chunk #${subchunk.id} typed "${subchunk.type}", at offset 0x${subchunk.offsetData.toString(16).padStart(6, "0")}.`);
 				return 0;
 			};
 		};
