@@ -6,7 +6,7 @@
 import {
 	Seamstress,
 	SeamstressPresets
-} from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../../libs/seamstress@ltgcgo/index.mjs";
 import { MICCInternalsSMF } from "../../micc/index.mjs";
 import {
 	IntakeNormaliser,
@@ -25,7 +25,7 @@ const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
 
 /** Streamed Colxi variant. */
 const ColxiMIDIParserStreamed = class ColxiMIDIParserStreamed extends UnifiedShimColxi {
-	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input 
+	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input
 	* @param {(file: import("../index.d.mts").ColxiMIDIFile) => void} callback */
 	static async parse(input, callback) {
 		const upThis = this;
@@ -80,7 +80,7 @@ const ColxiMIDIParserStreamed = class ColxiMIDIParserStreamed extends UnifiedShi
 };
 /** Buffered Colxi variant. */
 const ColxiMIDIParser = class ColxiMIDIParser extends UnifiedShimColxi {
-	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input 
+	/** @param {import("../../micc/index.d.mts").UnifiedBinaryIntake} input
 	* @param {(file: import("../index.d.mts").ColxiMIDIFile) => void} callback */
 	static async parse(input, callback) {
 		const upThis = this;

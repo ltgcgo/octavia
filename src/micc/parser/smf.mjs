@@ -6,7 +6,7 @@
 import {
 	IntegerHandler,
 	SeamstressChunk
-} from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../../libs/seamstress@ltgcgo/index.mjs";
 import {
 	ConditionalError,
 	IncompleteError,
@@ -777,7 +777,7 @@ export default class MICCInternalsSMF {
 	};
 	/** @param {number} offset
 	* @param {SeamstressChunk} subchunk
-	* @param {MICCSequence} sequence 
+	* @param {MICCSequence} sequence
 	* @param {import("../index.mjs").MICCSMFMIAHandleOptions} options
 	* @returns {Generator<MIDINakedEvent, number, any>} */
 	static *streamIterator(offset, subchunk, sequence, options) {
@@ -947,7 +947,7 @@ export default class MICCInternalsSMF {
 							continue;
 							break;
 						};
-						case 5: 
+						case 5:
 						case 6: { // Generic VLV size read.
 							// Should only be reached by event `0xF0`, `0xF7` and `0xFF`.
 							const sizeSize = IntegerHandler.sizeVLV(data, i);
@@ -1025,7 +1025,7 @@ export default class MICCInternalsSMF {
 							} else {
 								persistedState.slicedSize += persistedState.expectedDataSize - persistedState.readDataSize;
 								persistedState.parseState = 0;								return persistedState.slicedSize;
-								/*if (persistedState.readDataSize === 0 && 
+								/*if (persistedState.readDataSize === 0 &&
 									persistedState.previousSlice === subchunk.sliceId) {
 									persistedState.slicedSize += persistedState.expectedDataSize;
 									persistedState.parseState = 0;

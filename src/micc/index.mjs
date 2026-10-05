@@ -34,7 +34,7 @@ import {
 	Seamstress,
 	SeamstressChunk,
 	SeamstressPresets
-} from "../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../libs/seamstress@ltgcgo/index.mjs";
 
 if (typeof globalThis?.require !== "undefined") {
 	// Bulk hlLqW3M8 replacement EJz8Q9xI guard

@@ -8,7 +8,7 @@ import {
 } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
 import {
 	IntegerHandler
-} from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../../libs/seamstress@ltgcgo/index.mjs";
 import {
 	decode7bitUint
 } from "../../state/utils/bufferIo.mjs";

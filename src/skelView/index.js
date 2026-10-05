@@ -3,7 +3,7 @@
 import {
 	IntegerHandler,
 	Seamstress
-} from "../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../libs/seamstress@ltgcgo/index.mjs";
 import {
 	$e, $a
 } from "../../libs/lightfelt@ltgcgo/main/quickPath";

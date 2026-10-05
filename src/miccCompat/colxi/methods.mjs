@@ -5,7 +5,7 @@
 
 import {
 	IntegerHandler
-} from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../../libs/seamstress@ltgcgo/index.mjs";
 import MICCInternalsFinalisers from "../../micc/classes/finalisers.mjs";
 import {
 	MICCConstants,
@@ -69,7 +69,7 @@ export default class ColxiMethods {
 		};
 	};
 	/** @param {MIDINakedEvent} miccEvent
-	* @param {typeof import("../index.d.mts").ColxiMIDIParserBase} upThis 
+	* @param {typeof import("../index.d.mts").ColxiMIDIParserBase} upThis
 	* @returns {ColxiMIDIEvent} */
 	static fromNakedEvent(upThis, miccEvent) {
 		const colxiEvent = new ColxiMIDIEvent(miccEvent.delta);

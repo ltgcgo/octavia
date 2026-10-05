@@ -6,7 +6,7 @@
 import {
 	IntegerHandler,
 	SeamstressChunk
-} from "../../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../../libs/seamstress@ltgcgo/index.mjs";
 import {
 	MIDINakedEvent
 } from "../classes/event.mjs";
