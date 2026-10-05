@@ -27,6 +27,9 @@ import {
 	MICCSequence
 } from "../classes/fundamentals.mjs";
 import {
+	MICCHeaderSMF
+} from "../classes/headerInfo.mjs";
+import {
 	MICCSequenceMetadata
 } from "../classes/metadata.mjs";
 
@@ -734,45 +737,12 @@ export default class MICCInternalsSMF {
 				};
 			};
 		};
-		const smfFormat = IntegerHandler.readUint16(buffer, false, 0);
-		const smfTracks = IntegerHandler.readUint16(buffer, false, 2);
-		const smfDivision = IntegerHandler.readInt16(buffer, false, 4);
-		switch (smfFormat) {
-			case 0: {
-				if (smfTracks > 1) {
-					console.info(`Type 0 expected ${smfTracks} tracks instead of 1. This is non-standard and may break other parsers.`);
-				};
-				// Fallthrough.
-			};
-			case 1:
-			case 2: {
-				metadata.type = smfFormat;
-				break;
-			};
-			default: {
-				throw(new RangeError(`Unknown SMF type ${smfFormat}.`));
-			};
-		};
-		metadata.track = smfTracks;
-		if (smfDivision < 0) {
-			metadata.isSmpte = true;
-			metadata.smpte = [256 - buffer[4], buffer[5]];
-			let frameConvBase = metadata.smpte[0];
-			switch (frameConvBase) {
-				case 29:
-				case 59:
-				case 89:
-				case 119: {
-					// Divide by 29.
-					frameConvBase += Math.round(frameConvBase * 0.0344827586);
-					break;
-				};
-			};
-			metadata.tpqn = (metadata.smpte[1] * frameConvBase) >> 1;
-			console.debug(`SMPTE-based time division is not fully supported yet. Offset maps may not function.`);
-		} else {
-			metadata.tpqn = smfDivision;
-		};
+		const headerInfo = new MICCHeaderSMF(buffer);
+		metadata.type = headerInfo.type;
+		metadata.isSmpte = headerInfo.isSmpte;
+		metadata.tpqn = headerInfo.tpqn;
+		metadata.smpte = headerInfo.smpte;
+		metadata.track = headerInfo.track;
 		//console.debug(metadata);
 	};
 	/** @param {number} offset

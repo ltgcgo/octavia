@@ -21,10 +21,12 @@ Octavia will never become a reality without help from the following people.
 - **GFHK-SDGM**
 - **JayB**
 - **JK150**
+- **JOELwindows7**
 - **MIDIMan**
 - **MJG0117**
 - **now_its_dark**
 - **PurpBatBoi**
+- **SilSinn9801**
 - **ValleyBell**
 - **VideoJames**
 

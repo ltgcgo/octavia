@@ -175,8 +175,27 @@ export class MICCBaseElement {
 	group: string;
 	constructor(group: string);
 }
-/** Base type for information related to various file headers. */
+/** Base type for information related to various file headers.
+*
+* The group specifier is `ltgc.micc.header`. */
 export class MICCHeaderInfo extends MICCBaseElement {}
+/** Parsed information from the SMF header chunk.
+*
+* The group specifier is `ltgc.micc.header:smf`. */
+export class MICCHeaderSMF extends MICCHeaderInfo {
+	/** SMF file type/format. */
+	type: 0 | 1 | 2;
+	/** When true, the native division value is in SMPTE instead.
+	*
+	* MICC does not yet fully support SMPTE-based time divisions. */
+	isSmpte: boolean;
+	/** MIDI time division in ticks per quarter note. */
+	tpqn?: uint16;
+	/** MIDI time division in SMPTE frames. Detailed information on interpretation should refer to Octavia documentation. */
+	smpte?: [uint8, uint8];
+	/** Amount of declared tracks. */
+	track?: uint16;
+}
 /** Base type for subtypes capable of populating tracks.
 *
 * The group specifier is `ltgc.micc.trackChild`. */
@@ -393,7 +412,7 @@ export class MICCSequenceMetadata extends MICCBaseMetadata {
 	format: string;
 	/** When true, the native division value is in SMPTE instead.
 	*
-	* MICC does not yet support SMPTE-based time divisions. */
+	* MICC does not yet fully support SMPTE-based time divisions. */
 	isSmpte: boolean;
 	/** MIDI time division in ticks per quarter note. `480` is the most common. If SMPTE frames division are provided instead, this will instead be the halved product of the apparent frame rate and frame ticks.
 	*
