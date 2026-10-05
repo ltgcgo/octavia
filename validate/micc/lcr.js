@@ -2,7 +2,7 @@
 
 import {
 	Seamstress
-} from "../../libs/seamstress@ltgcgo/seamstress/index.mjs";
+} from "../../libs/seamstress@ltgcgo/index.mjs";
 import {
 	MICC,
 	MICCInternalsSMF
