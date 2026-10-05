@@ -2481,8 +2481,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		let upThis = this;
 		// Full reset, except the loaded banks
 		upThis.#metaChannel = 0;
-		upThis.#subDb[modeMap.xg][1] = 0;
 		if (!upThis.modelEx.xg.mapPersist) {
+			upThis.#subDb[modeMap.xg][1] = 0;
 			upThis.modelEx.xg.map = 0;
 		};
 		upThis.dispatchEvent("banklevel", {
