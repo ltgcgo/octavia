@@ -6,7 +6,7 @@ import {
 } from "../../libs/seamstress@ltgcgo/index.mjs";
 import {
 	$e, $a
-} from "../../libs/lightfelt@ltgcgo/main/quickPath";
+} from "../../libs/lightfelt@ltgcgo/main/quickPath.js";
 import {
 	fileOpen
 } from "../../libs/browser-fs-access@GoogleChromeLabs/browser_fs_access.min.js";
