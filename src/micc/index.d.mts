@@ -184,7 +184,7 @@ export class MICCHeaderInfo extends MICCBaseElement {}
 * The group specifier is `ltgc.micc.header:smf`. */
 export class MICCHeaderSMF extends MICCHeaderInfo {
 	/** SMF file type/format. */
-	type: 0 | 1 | 2;
+	type: 0|1|2;
 	/** When true, the native division value is in SMPTE instead.
 	*
 	* MICC does not yet fully support SMPTE-based time divisions. */

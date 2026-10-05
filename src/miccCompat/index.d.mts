@@ -100,21 +100,36 @@ declare interface ColxiMIDIFile {
 	/** Actual tracks with events. */
 	track: ColxiMIDITrack[];
 }
-/** View into each Colxi MIDI event, supplied to `ColxiMIDIParser.customInterpreter`. Will only be supplied for 0xf0 events. */
+/** Restricted view into the underlying bytes of each Colxi MIDI event, supplied to `ColxiMIDIParser.customInterpreter`. Will only be supplied for 0xf0 events. */
 declare interface ColxiMIDIView {
-	/** The data of the event. Unlike the original implementatino, this only grants view of the current event. */
-	data: DataView;
-	/** The pointer of the current event. When invoked, for 0xf0 events, the pointer will sit on the SysEx length byte. */
-	pointer: number;
-	/** Move the apparent pointer. Unlike the original implementation, this method does not affect MIDI file parsing in any way, and is bound-checked.
+	/** The data of the event. Unlike the original implementatino, this only grants access to a copy of bytes from the current event to prevent modification. */
+	readonly data: DataView;
+	/** The pointer of the current event. When the custom interpreter is invoked...
+	* - For SysEx (new and resume) events, the pointer will be at the start of the SysEx length byte, which will be a negative integer. Calling `readIntVLV()` will get the declared length of the SysEx bytes, causing the pointer to advance to `0`.
+	* - For meta events, the pointer will be at the start of the payload byte, with the pointer at `0`. */
+	readonly pointer: number;
+	/** Move the apparent pointer within the boundaries of the event. Unlike the original implementation, this method does not affect MIDI file parsing in any way, and is bound-checked.
+	*
+	* While SysEx events may start with a negative value, this method only allows moving the pointer within [0, `data.byteLength`].
 	* @param offset The relative offset to move the pointer against. -1 moves the pointer to the previous byte, 0 has no effect, and 1 moves the pointer to the next byte.
 	* @returns The mutated pointer. */
 	movePointer(offset: number): number;
-	/** Read multi-byte integers. */
+	/** Read multi-byte integers from the current pointer position. Unlike the original implementation, `readSize` must be within [0, 6] ([0, 2⁴⁸-1]), or the method will throw. If the pointer is not within [0, `data.byteLength`), this will throw.
+	*
+	* This method will advance the pointer by the specified amount.
+	* @returns The result integer. */
 	readInt(readSize: number): number;
-	/** Read VLV-8 on the current pointer. */
+	/** Read VLV-8 integers from the current pointer. Unlike the original implementation, the actual attempted read length can be no more than `4` [0, 2²⁸-1], or the method will throw. If the pointer is negative, this returns the size of the current payload; if it's instead equal to or greater than `data.byteLength`, this will throw.
+	*
+	* This method will advance the pointer until the VLV read finishes.
+	* @returns The result integer. */
 	readIntVLV(): number;
-	/** Read a string. If the `decoders` property of the parser object can be accessed, it will attempt to decode string supplied by the decoders in the `decoders` property, advancing to the next one whenever the current decoder fails. The catch-all decoder is X-ASCII. */
+	/** Read the specified amount of bytes as string from the current pointer. The supplied size must be within [0, 2³²-1], or the method will throw. If the attempted read goes out of bounds, the method will instead transparently normalise.
+	*
+	* If the `decoders` property of the parser object can be accessed, it will attempt to decode string supplied by the decoders in the `decoders` property, advancing to the next one whenever the current decoder fails. The catch-all decoder is Latin 9.
+	*
+	* This method will advance the pointer.
+	* @returns The decoded string. */
 	readStr(readSize: number): string;
 }
 /** Custom interpreters in Colxi. */
@@ -123,14 +138,14 @@ declare type ColxiMIDICustomInterpreter = (
 	type: number,
 	/** A view into the MIDI data currently being parsed. */
 	view: ColxiMIDIView,
-	/** Length of the meta event. Will only be present for 0xff events. */
-	metaLength?: number
+	/** Length of the meta event. Will only be a number for meta events, and `false` for SysEx (new and resume) events. */
+	metaLength: number|false
 ) => any;
 /** Basis for both Colxi variants. */
 declare class UnifiedShimColxi extends UnifiedShimBase {
-	/** Defines custom interpreter behaviour. This should only be invoked by the parser.
+	/** Defines custom interpreter behaviour. This should only be invoked by the parser, and will only be invoked by meta (`0xff`) and SysEx (`0xf0`) (new and resume) events.
 	*
-	* The returned value will populate the data property. Like the original implementation, you are not supposed to return `Promise`s.
+	* The returned value will populate the data property. Like the original implementation, you are not supposed to return `Promise`s. Unlike the original implementation, events with no payload will not invoke the custom interpreter, and thrown errors from this method will only be logged and treated the same as returning `false`.
 	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour, which does not exist in the original implementation.
 	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `int32`) will be assumed. */
 	static customInterpreter?: boolean|ColxiMIDICustomInterpreter;
@@ -144,7 +159,7 @@ export class ColxiMIDIParserStreamed extends UnifiedShimColxi {
 	/** Parses the input into a structured representation.
 	*
 	* Note that unlike the original, this method is asynchronous. If the synchronous callback is not used, this requires an `await` statement or other ways to handle `Promise`s. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.
-	* 
+	*
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, or readable byte streams.
 	* @param callback The method to invoke when parsing is finished. */
@@ -159,7 +174,7 @@ export class ColxiMIDIParser extends UnifiedShimColxi {
 	/** Parses the input into a structured representation.
 	*
 	* Note that unlike the original, this method is asynchronous. If the synchronous callback is not used, this requires an `await` statement or other ways to handle `Promise`s. This is due to some of the supported input types require asynchronous handling, contaminating others.
-	* 
+	*
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be a Base64 string, one of the two `uint8` arrays, and a file input DOM object. This parser additionally supports an `ArrayBuffer`, a `File` object, or readable byte streams.
 	* @param callback The method to invoke when parsing is finished. */
@@ -274,7 +289,7 @@ export interface MJTMIDIFile {
 	/** The time division used by files. 480 is the most common value. */
 	division: uint16;
 	/** Actual tracks with events. */
-	tracks: MJTMIDIStatusEvent[][]|MJTMIDIMetaEvent[][];
+	tracks: (MJTMIDIStatusEvent|MJTMIDIMetaEvent)[][];
 }
 /** (WIP) Mostly a drop-in replacement for `midi-json-tools/midi-to-json` and `chrisguttandin/midi-json-parser` with minimal required code changes. Customised parser support has not been added yet.
 *
@@ -283,12 +298,12 @@ export class MidiJsonTools {
 	/** Parses the input into a structured representation. Entrypoint used by `midi-json-tools/midi-to-json`. Does not offer a Mojibake handler like the `ColxiMIDIParser` shim.
 	*
 	* Note that unlike the original, this method is asynchronous, requiring an `await` statement if callback is not used. This is due to the MICC internals prioritise the use of streams to minimise unnecessary resource usage.
-	* 
+	*
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, or readable byte streams. */
 	static midiToJson(input: UnifiedBinaryIntake): Promise<MJTMIDIFile>;
 	/** Parses the input into a structured representation. Entrypoint used by `chrisguttandin/midi-json-parser`. Does not offer a Mojibake handler like the `ColxiMIDIParser` shim.
-	* 
+	*
 	* Because the MICC internals for file parsing upholds correctness quite strictly, malformed MIDI data accepted by the original implementation may become rejected by this shim.
 	* @param input MIDI file data to be parsed. Like in the original implementation, this can be an `ArrayBuffer`. This parser additionally supports a Base64 string, one of the two `uint8` arrays, a file input DOM object, a `File` object, or readable byte streams. */
 	static parseArrayBuffer(input: UnifiedBinaryIntake): Promise<MJTMIDIFile>;
