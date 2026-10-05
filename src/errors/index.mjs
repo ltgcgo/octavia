@@ -25,7 +25,7 @@ const IncompleteMetaTypeError = class extends IncompleteError {
 	name = "IncompleteMetaTypeError";
 };
 const IncompleteStatusByteError = class extends IncompleteError {
-	name = "IncompleteRunningStatusError";
+	name = "IncompleteStatusByteError";
 };
 
 // State errors.
@@ -33,7 +33,7 @@ const MIDIStateError = class extends StateError {
 	name = "MIDIStateError";
 };
 const MIDIStateErrorSysEx = class extends MIDIStateError {
-	name = "MIDIStateError";
+	name = "MIDIStateErrorSysEx";
 };
 
 export {

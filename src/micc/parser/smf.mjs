@@ -508,15 +508,22 @@ export default class MICCInternalsSMF {
 			throw(new TypeError(`Provided offset "${offset} is invalid."`));
 		};
 		let ptr = offset, readSize = 0;
-		try {} catch (err) {};
-		while (ptr < buffer.length) {
-			const parsedEvent = this.parseSingleEvent(buffer.subarray(ptr), options);
-			yield parsedEvent;
-			if (parsedEvent.byteSize > 0) {
-				ptr += parsedEvent.byteSize;
-				readSize += parsedEvent.byteSize;
+		try {
+			while (ptr < buffer.length) {
+				const parsedEvent = this.parseSingleEvent(buffer.subarray(ptr), options);
+				yield parsedEvent;
+				if (parsedEvent.byteSize > 0) {
+					ptr += parsedEvent.byteSize;
+					readSize += parsedEvent.byteSize;
+				} else {
+					throw(new RangeError(`Encountered a MIDI event with invalid size: ${parsedEvent.byteSize}.`));
+				};
+			};
+		} catch (err) {
+			if (err instanceof IncompleteError) {
+				return readSize;
 			} else {
-				throw(new RangeError(`Encountered a MIDI event with invalid size: ${parsedEvent.byteSize}.`));
+				throw(err);
 			};
 		};
 		return readSize;
