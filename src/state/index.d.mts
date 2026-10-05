@@ -1,6 +1,12 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+import {
+	int32,
+	uint8,
+	uint16,
+	uint32
+} from "../../libs/seamstress@ltgcgo/nativeType/index.d.mts";
 import type {
 	MIDIBaseEvent,
 	MIDIUMPEvent,
@@ -19,9 +25,9 @@ declare interface OctaviaTimeProvider {
 
 /** Defines what's the range of clearing voice definitions. */
 declare interface OctaviaBankClearOptions {
-	msb?: number|number[];
-	prg?: number|number[];
-	lsb?: number|number[];
+	msb?: uint8|uint8[];
+	prg?: uint8|uint8[];
+	lsb?: uint8|uint8[];
 }
 
 /** The returned voice object. */
@@ -32,17 +38,17 @@ declare interface OctaviaVoiceObject {
 	/** Voice ID in 8-char Yamaha style. */
 	name: string;
 	/** Polyphony/element/oscillator count. */
-	poly?: number;
+	poly?: uint8;
 	/** Required support level within a standard/line-up. */
-	level?: number;
+	level?: uint16;
 	/** Start IDs. What was supplied in the MSB, PC & LSB tuple. */
-	sid: number[];
+	sid: uint8[];
 	/** Initial IDs. What was supplied to the voice retrieval process. */
-	iid: number[];
+	iid: uint8[];
 	/** End IDs. What ended up being used to retrieve the voice. */
-	eid: number[];
+	eid: uint8[];
 	/** The supplied hint. */
-	hint: number;
+	hint: int32;
 	/** The single-character "ending" value used to indicate the voice retrieval state.
 	* - ` `: Exact match.
 	* - `#`: Fallback.
@@ -76,7 +82,7 @@ export class VoiceBank {
 	/** When `true`, the voice retrieval algorithm will not attempt fallbacks. */
 	strictMode: boolean;
 	/** Retrieve the voice information with the specified MSB, PC and LSB tuple. */
-	get(msb?: number, prg?: number, lsb?: number, mode?: string, hint?: number): OctaviaVoiceObject;
+	get(msb?: uint8, prg?: uint8, lsb?: uint8, mode?: string, hint?: int32): OctaviaVoiceObject;
 	/** Clear the assigned voices in the specified range. */
 	clearRange(options: OctaviaBankClearOptions): void;
 	/** Initialize the voice banks. */
@@ -105,7 +111,8 @@ export class TimeMuxer {
 	constructor(clockSource?: HTMLMediaElement|OctaviaTimeProvider);
 }
 
-/** State of the clock. Will be replaced soon. */
+/** State of the clock. Will be replaced soon.
+* @deprecated */
 export interface OctaviaClockSink {
 	/** If the current clock is paused. Defaults to `true`. */
 	paused: boolean;
@@ -268,25 +275,29 @@ export class OctaviaDevice {
 	modelEx: {
 		/** States specific to Yamaha XG. */
 		"xg": {
-			/** Selected voice map.
+			/** Selected voice map. Defaults to `0` (MU Basic).
 			* - `0`: MU Basic (Native map for MU50, MU80, MU90, S-YXG50 and most other XG synths)
 			* - `1`: MU100 Native (Native map for MU100, MU128, MU500, MU1000, MU2000 and SW1000XG)
 			* - `2`: PSR/LE (Native map for S-YXG2006LE and PSR models)
 			* - `3`: QY100 (Native map for QY100 and PLG100-XG)
 			*/
-			"map": number;
+			"map": int32;
+			/** Should the selected voice map persist across XG resets. Defaults to `false`.
+			* - `false`: Follow the mode resets, prevents contamination across sequences. Best for properly programmed XG files targetting classic XG (MU Basic & MU100 Native).
+			* - `true`: Keep the XG level unchanged across resets, faithful to the original MU100+ units. Best for modern XG files that don't self-select the appropriate voice map. */
+			"mapPersist": boolean;
 			/** Currently activated YMCS Section Control ID. The exact meaning of this value varies between models (QY, PSR). */
-			"section": number;
-			/** If YMCS Section control has been activated. */
+			"section": uint8;
+			/** If YMCS Section control has been activated. Defaults to `false`. */
 			"sectSwitch": boolean;
-			/** Device ID for the selected style pattern in `uint16`. */
-			"styleDev": number;
-			/** Style pattern ID for the selected style pattern in `uint16`. */
-			"styleId": number;
+			/** Device ID for the selected style pattern in `uint16`. Defaults to `0` (none). */
+			"styleDev": uint16;
+			/** Style pattern ID for the selected style pattern in `uint16`. Defaults to `0` (none). */
+			"styleId": uint16;
 			/** Specified chords in the native chords form. */
-			"chords": number[];
-			/** When `true`, variation effect applies device-wide instead of only on a single part. */
-			"varSys": false;
+			"chords": uint16[];
+			/** When `true`, variation effect applies device-wide instead of only on a single part. Defaults to `false`. */
+			"varSys": boolean;
 			/** Which parts have insertion effects active. Slot 0 is for the variation effect; XG only allows 4 effects in total per device. */
 			"insPart": Uint8Array;
 		},

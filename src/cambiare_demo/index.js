@@ -441,6 +441,8 @@ self.gPixelC = async function (profile) {
 	Alpine.store("pixelProfile", profile);
 };
 self.gXgKeep = async function (enabled) {
+	if (!visualiser.device) return;
+	visualiser.device.modelEx.xg.mapPersist = enabled;
 	Alpine.store("xgLvlKeep", enabled);
 };
 self.gXgLvl = async function (level) {

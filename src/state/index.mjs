@@ -551,6 +551,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	modelEx = {
 		"xg": {
 			"map": 0, // MU Basic, MU100 Native, PSR/LE, QY100
+			"mapPersist": false,
 			"section": 8, // Defaults to 8, meaning varies between models
 			"sectSwitch": false,
 			"styleDev": 0, // u16
@@ -2480,10 +2481,10 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		let upThis = this;
 		// Full reset, except the loaded banks
 		upThis.#metaChannel = 0;
-		//if (upThis.modelEx.xg.map === 1) {
-			upThis.#subDb[modeMap.xg][1] = 0;
+		upThis.#subDb[modeMap.xg][1] = 0;
+		if (!upThis.modelEx.xg.mapPersist) {
 			upThis.modelEx.xg.map = 0;
-		//};
+		};
 		upThis.dispatchEvent("banklevel", {
 			"mode": "xg",
 			"data": upThis.modelEx.xg.map
