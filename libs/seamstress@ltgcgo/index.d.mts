@@ -2,6 +2,9 @@
 // Licensed under GNU LGPL 3.0
 
 import type {
+	TypedArraySegments
+} from "../../libs/rochelle@ltgcgo/bufferSegments.d.mts";
+import type {
 	int8,
 	int16,
 	int32,
@@ -119,8 +122,7 @@ export interface SeamstressContext {
 	seamstressParentUse?: string;
 }
 
-/** A subchunk of a Seamstress stream. Can be non-buffered, slightly buffered or fully buffered. */
-export class SeamstressChunk {
+declare class SeamstressChunkBase {
 	/** Index of the (streamed) chunk in u32, starts from 0 and increases by 1 only when a new chunk is progressed. This is to easily differentiate chunks. */
 	id: uint32;
 	/** Cumulative index of the current chunk in u32, starts from 0 and increases by 1 when a new chunk of the same type is progressed. */
@@ -151,8 +153,6 @@ export class SeamstressChunk {
 	isCollection: boolean;
 	/** The depth of the current (streamed) chunk. Starts at `0`. */
 	depth: number;
-	/** The (streamed) payload of the chunk as `Uint8Array`. For RIFF `LIST` chunks, this denotes the type of the `LIST` chunk as a string. */
-	data: Uint8Array|string;
 	/** The context properties passed from header. */
 	context?: SeamstressContext;
 	/** @param id Same as `SeamstressChunk.id`.
@@ -161,6 +161,16 @@ export class SeamstressChunk {
 	* @param offset Same as `SeamstressChunk.offset`.
 	* @param size Same as `SeamstressChunk.size`. */
 	constructor(id: uint32, chunkId: uint32, type: number|string, offset: number, size: number);
+}
+/** A subchunk of a Seamstress stream. Can be non-buffered, slightly buffered or fully buffered. */
+export class SeamstressChunk extends SeamstressChunkBase {
+	/** The (streamed) payload of the chunk as `Uint8Array`. For RIFF `LIST` chunks, this denotes the type of the `LIST` chunk as a string. */
+	data: Uint8Array|string;
+}
+/** A subchunk of an iterated Seamstress stream. Can be non-buffered, slightly buffered or fully buffered. */
+export class SeamstressChunkIterated extends SeamstressChunkBase {
+	/** The (streamed) payload of the chunk as `Uint8Array` or `TypedArraySegments`. For RIFF `LIST` chunks, this denotes the type of the `LIST` chunk as a string. */
+	data: Uint8Array|TypedArraySegments<Uint8Array, number>|string;
 }
 
 /** Strictly validated Seamstress binary stream serializer. */

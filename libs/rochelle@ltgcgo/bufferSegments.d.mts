@@ -7,13 +7,13 @@
 * @module cc.ltgc.rochelle.bufferSegments
 */
 
-import {
+import type {
 	int8, uint8,
 	int16, uint16,
 	int32, uint32,
 	int64, uint64,
 	float16, float32, float64
-} from "../../libs/seamstress@ltgcgo/nativeType/index.d.mts";
+} from "./nativeType.d.mts";
 
 /** Floating point typed arrays. */
 type FloatArray = Float16Array|Float32Array|Float64Array;
@@ -125,7 +125,7 @@ export class DataViewSegments extends BufferSegmentsView<DataView> {
 	setFloat64(offset: number, value: float64, isLittleEndian?: boolean): void;
 }
 /** Represents a unified `TypedArray` for all underlying buffer segments.
-* 
+*
 * `arrSegs[index] can also be used, however using `values()` is recommended instead if accessing logically continuous regions to minimise overhead. */
 export class TypedArraySegments<T extends TypedArray, U extends Numbers> extends BufferSegmentsView<T> implements ArrayLike<U> {
 	[n: number]: U;
