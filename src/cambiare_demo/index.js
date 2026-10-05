@@ -55,16 +55,16 @@ const createDropDown = function (mountedElement, opt = {}) {
 		dropdownId = mountedElement.id.substring(10);
 	};
 	// Define the overall structure
-	let dropdownTrigger = createElement("div", ["dropdown-trigger"]);
-	let dropdownMenu = createElement("div", ["dropdown-menu"]);
-	let dropdownButton = createElement("button");
-	let dropdownDisplay = createElement("div");
-	let dropdownIcon = createElement("div", ["iconset", "attach-right"]);
-	let dropdownIconCollapsed = createElement("div", ["iconcut", "size-24"]);
-	let dropdownIconExpanded = createElement("div", ["iconcut", "size-24"]);
-	let dropdownContent = createElement("div", ["dropdown-content"]);
-	let dropdownTemplate = createElement("template");
-	let dropdownOption = createElement("a", ["dropdown-item"]);
+	const dropdownTrigger = createElement("div", ["dropdown-trigger"]);
+	const dropdownMenu = createElement("div", ["dropdown-menu"]);
+	const dropdownButton = createElement("button");
+	const dropdownDisplay = createElement("div");
+	const dropdownIcon = createElement("div", ["iconset", "attach-right"]);
+	const dropdownIconCollapsed = createElement("div", ["iconcut", "size-24"]);
+	const dropdownIconExpanded = createElement("div", ["iconcut", "size-24"]);
+	const dropdownContent = createElement("div", ["dropdown-content"]);
+	const dropdownTemplate = createElement("template");
+	const dropdownOption = createElement("a", ["dropdown-item"]);
 	// Define attributes
 	if (typeof opt.minWidth === "string") {
 		dropdownTrigger.style.minWidth = opt.minWidth;
@@ -92,11 +92,14 @@ const createDropDown = function (mountedElement, opt = {}) {
 	};
 	dropdownIconCollapsed.setAttribute("x-show", `!active[${opt.activeSlot}]`);
 	dropdownIconExpanded.setAttribute("x-show", `active[${opt.activeSlot}]`);
-	if (typeof opt.optionText === "string") {
-		dropdownOption.setAttribute("x-text", opt.optionText);
-	};
 	if (typeof opt.optionDesc === "string") {
+		const dropdownOptDesc = createElement("abbr", ["dropdown-item-abbr"]);
+		dropdownOptDesc.setAttribute("x-text", opt.optionText);
+		dropdownOptDesc.setAttribute(":title", opt.optionDesc);
+		dropdownOption.append(dropdownOptDesc);
 		dropdownOption.setAttribute(":title", opt.optionDesc);
+	} else if (typeof opt.optionText === "string") {
+		dropdownOption.setAttribute("x-text", opt.optionText);
 	};
 	if (typeof opt.optionActive === "string") {
 		dropdownOption.setAttribute(":active", `${opt.optionActive}?'true':'false'`);
@@ -128,7 +131,6 @@ createDropDown($e("div#dropmount-pixelprofile"), {
 	"displayText": "profiles[$store.pixelProfile??'none']||'N/A'",
 	"eachExpr": "(name, id) in profiles",
 	"optionText": "name",
-	"optionDesc": "`Internal ID: (${id})`",
 	"optionActive": "($store.pixelProfile??'none')===id",
 	"optionClick": "gPixelC(id)"
 });
@@ -148,7 +150,6 @@ createDropDown($e("div#dropmount-ecmode"), {
 	"displayText": "ecModes[($store.useElementCount??true) ? 1 : 0][1]||'N/A'",
 	"eachExpr": "([id, name], idx) in ecModes",
 	"optionText": "name",
-	"optionDesc": "`Internal ID: (${id})`",
 	"optionActive": "($store.useElementCount??true)===id",
 	"optionClick": "gEcMode(id)"
 });
@@ -158,7 +159,6 @@ createDropDown($e("div#dropmount-tempo-source"), {
 	"displayText": "tempoSrc[($store.tempoSource??0)]||'N/A'",
 	"eachExpr": "(name, id) in tempoSrc",
 	"optionText": "name",
-	"optionDesc": "`Internal ID: (${id})`",
 	"optionActive": "($store.tempoSource??0)===id",
 	"optionClick": "gTempoSrc(id)"
 });
@@ -168,8 +168,7 @@ createDropDown($e("div#dropmount-levelXg"), {
 	"displayText": "xgLvls[$store.xgLvl??0][1]||'Invalid'",
 	"eachExpr": "xgLvl in xgLvls",
 	"optionText": "xgLvl[1]",
-	"optionDesc": "`Internal ID: (${xgLvl[0]})`",
-	"optionActive": "($store.xgLvl||4)===xgLvl[0]",
+	"optionActive": "($store.xgLvl||0)===xgLvl[0]",
 	"optionClick": "gXgLvl(xgLvl[0])"
 });
 createDropDown($e("div#dropmount-levelGs"), {
@@ -178,7 +177,6 @@ createDropDown($e("div#dropmount-levelGs"), {
 	"displayText": "gsLvls[($store.gsLvl??4)-1][1]||'Invalid'",
 	"eachExpr": "gsLvl in gsLvls",
 	"optionText": "gsLvl[1]",
-	"optionDesc": "`Internal ID: (${gsLvl[0]})`",
 	"optionActive": "($store.gsLvl||4)===gsLvl[0]",
 	"optionClick": "gGsLvl(gsLvl[0])"
 });
@@ -188,7 +186,6 @@ createDropDown($e("div#dropmount-levelSc"), {
 	"displayText": "scLvls[($store.scLvl??3)-2][1]||'Invalid'",
 	"eachExpr": "scLvl in scLvls",
 	"optionText": "scLvl[1]",
-	"optionDesc": "`Internal ID: (${scLvl[0]})`",
 	"optionActive": "($store.scLvl||3)===scLvl[0]",
 	"optionClick": "gScLvl(scLvl[0])"
 });
@@ -198,9 +195,18 @@ createDropDown($e("div#dropmount-levelX5"), {
 	"displayText": "x5Lvls[($store.x5Lvl??82)-81][1]||'Invalid'",
 	"eachExpr": "x5Lvl in x5Lvls",
 	"optionText": "x5Lvl[1]",
-	"optionDesc": "`Internal ID: (${x5Lvl[0]})`",
 	"optionActive": "($store.x5Lvl||82)===x5Lvl[0]",
 	"optionClick": "gX5Lvl(x5Lvl[0])"
+});
+createDropDown($e("div#dropmount-levelXgKeep"), {
+	"activeSlot": 4,
+	"minWidth": "7.5rem",
+	"displayText": "xgKeep[($store.xgLvlKeep??false) ? 1 : 0][1]||'Invalid'",
+	"eachExpr": "keep in xgKeep",
+	"optionText": "keep[1]",
+	"optionDesc": "keep[2]",
+	"optionActive": "($store.xgLvlKeep||false)===keep[0]",
+	"optionClick": "gXgKeep(keep[0])"
 });
 createDropDown($e("div#dropmount-notestyle"), {
 	"activeSlot": 0,
@@ -257,7 +263,6 @@ createDropDown($e("div#dropmount-colourscheme"), {
 	"displayText": "schemes[$store.scheme ?? 0]||'N/A'",
 	"eachExpr": "(name, id) in schemes",
 	"optionText": "name",
-	"optionDesc": "`Internal ID: (${id})`",
 	"optionActive": "($store.scheme ?? 0)===id",
 	"optionClick": "gSetScheme(id)"
 });
@@ -435,9 +440,13 @@ self.gPixelC = async function (profile) {
 	visualiser.setPixelProfile(profile);
 	Alpine.store("pixelProfile", profile);
 };
+self.gXgKeep = async function (enabled) {
+	Alpine.store("xgLvlKeep", enabled);
+};
 self.gXgLvl = async function (level) {
 	//visualiser.device.setGsTargets(false, level);
 	//Alpine.store("xgLvl", level);
+	gXgKeep([false, true, true, false][level]);
 	visualiser.sendCmd({
 		type: 15,
 		track: 0,

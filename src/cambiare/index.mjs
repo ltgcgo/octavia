@@ -159,6 +159,7 @@ piMulti.forEach((e, i, a) => {
 	a[i] = Math.PI * i / 12;
 });
 
+/** @returns {HTMLElement} */
 const createElement = function (tag, classes, details = {}) {
 	const target = document.createElement(tag);
 	classes?.forEach((e) => {
