@@ -7,6 +7,7 @@ on:
       - ".github/workflows/publish.yml"
       - 'deno.json'
       - 'sh/publish.sh'
+      - 'src/data/**'
       - 'src/*/index.d.mts'
   workflow_dispatch:
 

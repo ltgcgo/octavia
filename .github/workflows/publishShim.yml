@@ -8,6 +8,7 @@ on:
       - 'isolated/midi-parser-ecosystem/deno.json'
       - 'isolated/midi-parser-ecosystem/package.json'
       - 'sh/publishShim.sh'
+      - 'src/data/**'
       - 'src/micc/**.js'
       - 'src/micc/**.mjs'
       - 'src/miccCompat/**.js'
