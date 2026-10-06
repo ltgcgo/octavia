@@ -135,15 +135,6 @@ declare interface ColxiMIDIView {
 	* @returns The decoded string. */
 	readStr(readSize: number): string;
 }
-/** Custom interpreters in Colxi. */
-declare type ColxiMIDICustomInterpreter = (
-	/** For `ff` (meta) events, the meta type. For all other events, the event type. */
-	type: number,
-	/** A view into the MIDI data currently being parsed. */
-	view: ColxiMIDIView,
-	/** Length of the meta event. Will only be a number for meta events, and `false` for SysEx (new and resume) events. */
-	metaLength: number|false
-) => any;
 /** Basis for both Colxi variants. */
 declare class UnifiedShimColxi extends UnifiedShimBase {
 	/** Defines custom interpreter behaviour. This should only be invoked by the parser, and will only be invoked by meta (`0xff`) and SysEx (`0xf0`) (new and resume) events. For performance reasons, avoid using custom interpreters.
@@ -151,7 +142,14 @@ declare class UnifiedShimColxi extends UnifiedShimBase {
 	* The returned value will populate the data property. Like the original implementation, you are not supposed to return `Promise`s. Unlike the original implementation, events with no payload will not invoke the custom interpreter, and thrown errors from this method will only be logged and treated the same as returning `false`.
 	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour, which does not exist in the original implementation.
 	* - If this methods returns `false`, `null` or `undefined`, or if the property is set to the same values, the default safer Colxi behaviour (read the last four bytes as `int32`) will be assumed. */
-	static customInterpreter?: boolean|ColxiMIDICustomInterpreter;
+	static customInterpreter?: boolean|((
+		/** For `ff` (meta) events, the meta type. For all other events, the event type. */
+		type: number,
+		/** A view into the MIDI data currently being parsed. */
+		view: ColxiMIDIView,
+		/** Length of the meta event. Will only be a number for meta events, and `false` for SysEx (new and resume) events. */
+		metaLength: number|false
+	) => any);
 }
 /** Mostly a drop-in replacement for the unmaintained `colxi/midi-parser-js` with minimal required code changes. If some files are proven to be problematic for the original implementation (e.g. with running status omission, event byte overconsumption crash), migrating to Octavia's compatibility layer may help handle those files.
 *

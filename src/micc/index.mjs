@@ -4,6 +4,13 @@
 "use strict";
 
 import {
+	Seamstress,
+	SeamstressChunk,
+	SeamstressPresets
+} from "../../libs/seamstress@ltgcgo/index.mjs";
+import { BinaryString } from "../../libs/rochelle@ltgcgo/binaryString.mjs";
+
+import {
 	MICCInternalsTempo
 } from "./classes/conversions.mjs";
 import {
@@ -30,12 +37,6 @@ import {
 	toByteStream
 } from "./utils/ubi.mjs";
 
-import {
-	Seamstress,
-	SeamstressChunk,
-	SeamstressPresets
-} from "../../libs/seamstress@ltgcgo/index.mjs";
-
 if (typeof globalThis?.require !== "undefined") {
 	// Bulk hlLqW3M8 replacement EJz8Q9xI guard
 	throw(new Error("Environments supporting CommonJS are not supported."));
@@ -50,6 +51,7 @@ if (typeof globalThis?.require !== "undefined") {
 // Reusable instances.
 const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
 SeamstressInstanceSMF.regulateStream = MICCInternalsSMF.streamRegulator;
+const defaultDecoders = BinaryString.getDecoders(["utf-8", "l9", "sjis"]);;
 
 const MICCParserOptions = class MICCParserOptions {
 	/** @type {Iterable<TextDecoder>} */
@@ -81,6 +83,8 @@ const MICC = class MICC {
 			sequence.decoders = options.decoders;
 		} else if (this.decoders) {
 			sequence.decoders = this.decoders;
+		} else {
+			sequence.decoders = defaultDecoders;
 		};
 		(async () => {
 			let currentTrack = -1, currentTick = 0;

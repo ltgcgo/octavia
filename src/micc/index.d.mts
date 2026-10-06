@@ -271,7 +271,7 @@ declare interface MICCSMFMIAHandleOptions {
 	parserContext?: MICCSMFMIAParserContext;
 	/** Provides optional binary stream context for parsing. */
 	streamContext?: SeamstressContext;
-	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
+	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, Latin-9 will be used. */
 	//decoders: Iterable<TextDecoder>;
 	/** Setting this to true will include delta time parsing. Defaults to `false.` */
 	hasDelta?: boolean;
@@ -283,7 +283,7 @@ declare interface MICCSMFMIAHandleOptions {
 	preferReadable?: boolean;
 }
 declare class MICCParserOptions {
-	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
+	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, Latin-9 will be used. */
 	decoders?: Iterable<TextDecoder>;
 	/** Defines how deep should the finalisers go. Same as `MICCSequence.finaliserDepth`. */
 	finaliserDepth?: int8;
@@ -542,7 +542,7 @@ export class MICCSequence {
 	/** (WIP) Disassemble the file into MIA instructions. Will error out if the file type isn't one of `SMF_SINGLE`, `SMF_MULTIPLE` and `SMF_SEQUENTIAL`.
 	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
 	disassemble(stream: ReadableStream<Uint8Array>, useReadable?: boolean, context?: object): ReadableStream<string>;
-	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
+	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, Latin-9 will be used. */
 	decoders: Iterable<TextDecoder>;
 	/** The metadata of the current file. */
 	meta: MICCSequenceMetadata;
@@ -558,7 +558,9 @@ export class MICCSequence {
 /** Musical Instructions Compiler Collection. */
 export class MICC extends MICCConstants {
 	// Persisted settings.
-	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, X-ASCII will be used. */
+	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, Latin-9 will be used.
+	*
+	* Defaults to UTF-8 → Latin-9 → Shift JIS. */
 	static decoders: Iterable<TextDecoder>;
 	// Pure MIDI.
 	/** Parse the incoming Standard MIDI File byte stream. */

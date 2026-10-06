@@ -45,6 +45,6 @@ if [ -e "src/${1:-default}/index.mjs" ] ; then
 	format="esm"
 	ext="mjs"
 fi
-esbuild --log-level=$logLevel --log-limit=0 --bundle src/${1:-default}/index.${ext} $platform $prepend $append $inject $buildOpt --format=$format --charset=utf8 --keep-names --preserve-symlinks --loader:.htm=text --loader:.css=text --loader:.svg=text --loader:.wasm=binary --outfile=dist/${1:-default}.${ext} ${2:---minify-whitespace --minify-syntax --sourcemap --watch} $3
+esbuild --log-level=$logLevel --log-limit=0 --bundle src/${1:-default}/index.${ext} $platform $prepend $append $inject $buildOpt --format=$format --charset=utf8 --keep-names --preserve-symlinks --loader:.bin=binary --loader:.css=text --loader:.htm=text --loader:.svg=text --loader:.wasm=binary --outfile=dist/${1:-default}.${ext} ${2:---minify-whitespace --minify-syntax --sourcemap --watch} $3
 #cat proxy/${1:-default}.js
 exit

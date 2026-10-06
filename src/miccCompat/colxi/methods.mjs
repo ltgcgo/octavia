@@ -89,7 +89,7 @@ export default class ColxiMethods {
 		};
 	};
 	/** @param {MIDINakedEvent} miccEvent
-	* @param {typeof import("../index.d.mts").ColxiMIDIParserBase} upThis
+	* @param {typeof import("../index.d.mts").UnifiedShimColxi} upThis
 	* @param {BinaryString} decoders
 	* @returns {ColxiMIDIEvent} */
 	static fromNakedEvent(upThis, miccEvent, decoders) {
@@ -121,7 +121,12 @@ export default class ColxiMethods {
 			case MICCConstants.MIDI_META: {
 				colxiEvent.type = 255;
 				colxiEvent.metaType = miccEvent.meta;
-				MICCInternalsFinalisers.smfMetaFilter(upThis, miccEvent, true);
+				try {
+					MICCInternalsFinalisers.smfMetaFilter(upThis, miccEvent, true);
+				} catch (err) {
+					console.error(err);
+					console.error(`The finaliser has crashed for meta event type ${miccEvent.meta}, at offset 0x${miccEvent.offset.toString(16).padStart(6, "0")}.`);
+				};
 				switch (miccEvent.meta) {
 					// Strings.
 					case MICCConstants.META_VOICE_NAME:
