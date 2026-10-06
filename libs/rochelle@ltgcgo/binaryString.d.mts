@@ -33,4 +33,5 @@ export class BinaryString {
 	* @param text When this argument is supplied, the `text` property will be overridden with it.
 	* @param label When this argument is supplied, the `label` property will be overridden with it. */
 	encode(text?: string, label?: string): Uint8Array;
+	constructor(decoders?: Iterable<TextDecoder>);
 }

@@ -4,6 +4,9 @@
 "use strict";
 
 import {
+	BinaryString
+} from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+import {
 	IntegerHandler
 } from "../../../libs/seamstress@ltgcgo/index.mjs";
 import MICCInternalsFinalisers from "../../micc/classes/finalisers.mjs";
@@ -21,8 +24,9 @@ import {
 export default class ColxiMethods {
 	/** @param {typeof import("../index.d.mts").UnifiedShimColxi} upThis
 	* @param {MIDINakedEvent} miccEvent
-	* @param {number} colxiType */
-	static handleExtended(upThis, miccEvent, colxiType) {
+	* @param {number} colxiType
+	* @param {BinaryString} decoders */
+	static handleExtended(upThis, miccEvent, colxiType, decoders) {
 		switch (miccEvent.type) {
 			case MICCConstants.MIDI_SYSEX_NEW:
 			case MICCConstants.MIDI_SYSEX_RESUME: {
@@ -46,7 +50,7 @@ export default class ColxiMethods {
 				result = upThis.customInterpreter.call(
 					upThis,
 					miccEvent.type === MICCConstants.MIDI_META ? miccEvent.meta : colxiType,
-					new ColxiMIDIView(miccEvent),
+					new ColxiMIDIView(miccEvent, decoders),
 					miccEvent.type === MICCConstants.MIDI_META ? miccEvent.data.length : false
 				);
 			} catch (err) {
@@ -86,8 +90,9 @@ export default class ColxiMethods {
 	};
 	/** @param {MIDINakedEvent} miccEvent
 	* @param {typeof import("../index.d.mts").ColxiMIDIParserBase} upThis
+	* @param {BinaryString} decoders
 	* @returns {ColxiMIDIEvent} */
-	static fromNakedEvent(upThis, miccEvent) {
+	static fromNakedEvent(upThis, miccEvent, decoders) {
 		const colxiEvent = new ColxiMIDIEvent(miccEvent.delta);
 		switch (miccEvent.type) {
 			case MICCConstants.MIDI_PROGRAM:
@@ -110,7 +115,7 @@ export default class ColxiMethods {
 			case MICCConstants.MIDI_SYSEX_RESUME: // Don't blame me!
 			case MICCConstants.MIDI_SYSEX_NEW: {
 				colxiEvent.type = 15;
-				colxiEvent.data = this.handleExtended(upThis, miccEvent, colxiEvent.type);
+				colxiEvent.data = this.handleExtended(upThis, miccEvent, colxiEvent.type, decoders);
 				break;
 			};
 			case MICCConstants.MIDI_META: {
@@ -173,7 +178,7 @@ export default class ColxiMethods {
 					};
 				};
 				if (colxiEvent.data !== undefined) break;
-				colxiEvent.data = this.handleExtended(upThis, miccEvent, colxiEvent.type);
+				colxiEvent.data = this.handleExtended(upThis, miccEvent, colxiEvent.type, decoders);
 				break;
 			};
 			default: {

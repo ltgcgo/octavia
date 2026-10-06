@@ -4,6 +4,9 @@
 "use strict";
 
 import {
+	BinaryString
+} from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+import {
 	Seamstress,
 	SeamstressPresets
 } from "../../../libs/seamstress@ltgcgo/index.mjs";
@@ -43,6 +46,7 @@ const ColxiMIDIParserStreamed = class ColxiMIDIParserStreamed extends UnifiedShi
 			file.timeDivision = sequence.meta.tpqn;
 		};
 		let iteratedTracks = 0;
+		const binaryString = new BinaryString(upThis.decoders);
 		for (const miccTrack of sequence.tracks) {
 			switch (miccTrack.vendor) {
 				case "yamaha.XFIH":
@@ -57,7 +61,7 @@ const ColxiMIDIParserStreamed = class ColxiMIDIParserStreamed extends UnifiedShi
 					if (iteratedTracks >= file.tracks && !upThis.extended) continue;
 					const colxiTrack = new ColxiMIDITrack(miccTrack.type);
 					for (const e of miccTrack.data) {
-						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, e);
+						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, e, binaryString);
 						if (colxiEvent.type !== 0) {
 							colxiTrack.event.push(colxiEvent);
 						};

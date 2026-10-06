@@ -4,6 +4,9 @@
 "use strict";
 
 import {
+	BinaryString
+} from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
+import {
 	IntegerHandler
 } from "../../../libs/seamstress@ltgcgo/index.mjs";
 import {
@@ -20,6 +23,8 @@ const ColxiMIDIView = class ColxiMIDIView {
 	get data() {
 		return this.#data;
 	};
+	/** @type {BinaryString} */
+	#decoder;
 	#pointer = 0;
 	get pointer() {
 		return this.#pointer;
@@ -32,8 +37,9 @@ const ColxiMIDIView = class ColxiMIDIView {
 		};
 		throw(new RangeError("Provided value must be a safe integer."));
 	};
-	/** @param {MIDINakedEvent} miccEvent  */
-	constructor(miccEvent) {
+	/** @param {MIDINakedEvent} miccEvent
+	* @param {BinaryString} decoders */
+	constructor(miccEvent, decoders) {
 		const upThis = this;
 		upThis.#buffer = miccEvent.data.slice();
 		upThis.#data = new DataView(upThis.#buffer.buffer);
@@ -43,6 +49,11 @@ const ColxiMIDIView = class ColxiMIDIView {
 				upThis.#pointer = -IntegerHandler.lengthVLV(miccEvent.data.length);
 				break;
 			};
+		};
+		if (decoders instanceof BinaryString) {
+			upThis.#decoder = decoders;
+		} else {
+			throw(new Error(`Binary string multi-decoder is not supplied.`));
 		};
 	};
 	movePointer(offset = 0) {
@@ -112,8 +123,8 @@ const ColxiMIDIView = class ColxiMIDIView {
 	};
 	readStr(readSize = 0) {
 		const upThis = this, i = upThis.#pointer;
-		upThis.#typeCheckInt(readSize);
-		// WIP
+		const textBuffer = upThis.#buffer.subarray(i, upThis.movePointer(readSize));
+		return upThis.#decoder.decode(textBuffer);
 	};
 };
 const ColxiMIDIEvent = class ColxiMIDIEvent {
