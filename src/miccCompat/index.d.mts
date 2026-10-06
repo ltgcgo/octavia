@@ -146,7 +146,7 @@ declare type ColxiMIDICustomInterpreter = (
 ) => any;
 /** Basis for both Colxi variants. */
 declare class UnifiedShimColxi extends UnifiedShimBase {
-	/** Defines custom interpreter behaviour. This should only be invoked by the parser, and will only be invoked by meta (`0xff`) and SysEx (`0xf0`) (new and resume) events.
+	/** Defines custom interpreter behaviour. This should only be invoked by the parser, and will only be invoked by meta (`0xff`) and SysEx (`0xf0`) (new and resume) events. For performance reasons, avoid using custom interpreters.
 	*
 	* The returned value will populate the data property. Like the original implementation, you are not supposed to return `Promise`s. Unlike the original implementation, events with no payload will not invoke the custom interpreter, and thrown errors from this method will only be logged and treated the same as returning `false`.
 	* - If this method returns `true`, or if the property is set to `true`, the default MICC behaviour (`Uint8Array` passthrough) will be assumed. This is the default behaviour, which does not exist in the original implementation.
