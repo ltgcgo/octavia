@@ -36,7 +36,8 @@ import type {
 	int16
 } from "../../libs/rochelle@ltgcgo/nativeType.d.mts";
 import type {
-	UnifiedBinaryIntake
+	UnifiedBinaryIntake,
+	MIDINakedEvent
 } from "../micc/index.d.mts";
 
 /** Shared properties for all parser shims. */
@@ -59,8 +60,10 @@ declare interface ColxiMIDIEvent {
 	channel?: uint8;
 	/** MIDI delta time. */
 	deltaTime: uint32;
-	/** MIDI event type. Note that event type `240` (SysEx) from MICC will be converted to type `15` (`f`) instead to match behaviour. */
-	type: uint8;
+	/** MIDI event type.
+	*
+	* Note that event type `240` (`f0`, SysEx) and `247` (`f7`, SysEx continuation) from MICC will be converted to type `15` (`f`) instead to match behaviour. This also means that there's no way to distinguish between the two types of SysEx events. */
+	type: uint8; // Not able to distinguish between `f0` and `f7` CANNOT be forgiven.
 	/** If the event is a meta event (`ff` events), the meta event type. */
 	metaType?: uint8;
 	/** Actual data of the event.
@@ -114,7 +117,7 @@ declare interface ColxiMIDIView {
 	* @param offset The relative offset to move the pointer against. -1 moves the pointer to the previous byte, 0 has no effect, and 1 moves the pointer to the next byte.
 	* @returns The mutated pointer. */
 	movePointer(offset: number): number;
-	/** Read multi-byte integers from the current pointer position. Unlike the original implementation, `readSize` must be within [0, 6] ([0, 2⁴⁸-1]), or the method will throw. If the pointer is not within [0, `data.byteLength`), this will throw.
+	/** Read multi-byte integers from the current pointer position. Unlike the original implementation, `readSize` must be within [1, 6] ([0, 2⁴⁸-1]), or the method will throw. If the pointer is not within [0, `data.byteLength`), this will throw.
 	*
 	* This method will advance the pointer by the specified amount.
 	* @returns The result integer. */
@@ -134,7 +137,7 @@ declare interface ColxiMIDIView {
 }
 /** Custom interpreters in Colxi. */
 declare type ColxiMIDICustomInterpreter = (
-	/** The event type. */
+	/** For `ff` (meta) events, the meta type. For all other events, the event type. */
 	type: number,
 	/** A view into the MIDI data currently being parsed. */
 	view: ColxiMIDIView,

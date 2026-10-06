@@ -215,7 +215,7 @@ export class MICCTrackElement extends MICCBaseElement {
 export class MIDIBaseEvent extends MICCTrackElement {
 	/** Delta time. The time difference of the current event and the previous event. Defaults to `0`. */
 	delta: uint32;
-	/** MIDI event type. Type `8` to `14`, and `240` to `255` are all available. `0` means "unset". */
+	/** MIDI event type. Type `8` to `14`, and `239` to `255` are all available. `0` means "unset". */
 	type: uint8;
 	/** The desinated channel of the MIDI event. Valid values range from `0` to `255` for events without port defined, or `0` to `15` for events with port defined. Will be null by default for `0xf0`-`0xff` events, while some `0xff` events will have `ch` and `port` attached by the event funnel or the finaliser. Defaults to `null`. */
 	ch?: uint8;

@@ -44,7 +44,7 @@ export class IntegerHandler {
 	static writeVLVBigInt(buffer: Uint8Array|Uint8ClampedArray, value: bigint, offset?: number): void;
 	/** Writes a standard MIDI VLV-8 value to a `Uint8Array` or a `Uint8ClampedArray` from a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
 	static emitVLV(value: number): Uint8Array;
-	/** Writes a standard MIDI VLV-8 value to a `Uint8Array` or a `Uint8ClampedArray` from a standard JavaScript number. Will be clamped to 4 bytes, after which it will error out. */
+	/** Writes a standard MIDI VLV-8 value to a `Uint8Array` or a `Uint8ClampedArray` from a standard JavaScript number. Will be clamped to 16 bytes, after which it will error out. */
 	static emitVLVBigInt(value: bigint): Uint8Array;
 	/** Counts the size of a reversible VLV-8 value in bytes, up to `16`. Will return 0 when failed (expected size goes over `16`). */
 	static sizeRVLV(buffer: Uint8Array|Uint8ClampedArray, offset?: number): number;
@@ -128,7 +128,7 @@ declare class SeamstressChunkBase {
 	/** Cumulative index of the current chunk in u32, starts from 0 and increases by 1 when a new chunk of the same type is progressed. */
 	chunkId: uint32;
 	/** Cumulative index of the current subchunk in u32, starts from 0 for every new chunk and increases by 1 for every new subchunk in the same chunk.
-	* 
+	*
 	* This field is always `0` for fully buffered chunks. */
 	sliceId: uint32;
 	/** Type of the current chunk as either integers or Latin-9 strings. */

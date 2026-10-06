@@ -19,9 +19,10 @@ import {
 } from "./classes.mjs";
 
 export default class ColxiMethods {
-	/** @param {typeof import("../index.d.mts").ColxiMIDIParserBase} upThis
-	* @param {MIDINakedEvent} miccEvent */
-	static handleExtended(upThis, miccEvent) {
+	/** @param {typeof import("../index.d.mts").UnifiedShimColxi} upThis
+	* @param {MIDINakedEvent} miccEvent
+	* @param {number} colxiType */
+	static handleExtended(upThis, miccEvent, colxiType) {
 		switch (miccEvent.type) {
 			case MICCConstants.MIDI_SYSEX_NEW:
 			case MICCConstants.MIDI_SYSEX_RESUME: {
@@ -39,7 +40,22 @@ export default class ColxiMethods {
 				throw(new TypeError(`Unknown MICC event type ${miccEvent.type}.`));
 			};
 		};
-		const result = typeof upThis.customInterpreter === "function" ? upThis.customInterpreter.call(upThis) : upThis.customInterpreter;
+		let result = undefined;
+		if (typeof upThis.customInterpreter === "function") {
+			try {
+				result = upThis.customInterpreter.call(
+					upThis,
+					miccEvent.type === MICCConstants.MIDI_META ? miccEvent.meta : colxiType,
+					new ColxiMIDIView(miccEvent),
+					miccEvent.type === MICCConstants.MIDI_META ? miccEvent.data.length : false
+				);
+			} catch (err) {
+				console.error(err);
+				console.error(`Custom interpreter in MICC Colxi has thrown at offset 0x${miccEvent.offset.toString(16).padStart(6, "0")}.`);
+			};
+		} else {
+			result = upThis.customInterpreter;
+		};
 		switch (result) {
 			// Passthrough. (MICC)
 			case true: {
@@ -94,7 +110,7 @@ export default class ColxiMethods {
 			case MICCConstants.MIDI_SYSEX_RESUME: // Don't blame me!
 			case MICCConstants.MIDI_SYSEX_NEW: {
 				colxiEvent.type = 15;
-				colxiEvent.data = this.handleExtended(upThis, miccEvent);
+				colxiEvent.data = this.handleExtended(upThis, miccEvent, colxiEvent.type);
 				break;
 			};
 			case MICCConstants.MIDI_META: {
@@ -157,7 +173,7 @@ export default class ColxiMethods {
 					};
 				};
 				if (colxiEvent.data !== undefined) break;
-				colxiEvent.data = this.handleExtended(upThis, miccEvent);
+				colxiEvent.data = this.handleExtended(upThis, miccEvent, colxiEvent.type);
 				break;
 			};
 			default: {
