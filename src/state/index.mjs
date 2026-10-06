@@ -2995,7 +2995,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// Version without MIDI 1.0 high resolution velocity.
 			const strength = rawStrengths[part] * 129; // Back fill.
 			const scaledStrength = strength * upThis.getChCc(part, 7) * upThis.getChCc(part, 11);
-			upThis.#calcStrength[part] = Math.floor(scaledStrength * upThis.#master.volume * divisor);
+			upThis.#calcStrength[part] = Math.min(fullScale ? 32768 : 32767, Math.floor(scaledStrength * upThis.#master.volume * divisor));
 			/*if (part === 0) {
 				console.debug(divisor, scaledStrength, upThis.#calcStrength[part], scaledStrength * divisor);
 			};*/
@@ -3747,7 +3747,21 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		upThis.#seUr.add([4, 1], (msg, track, id) => {
 			// Master volume
 			upThis.invokeSysExIndicator();
-			upThis.#master.volume = ((msg[1] << 7) + msg[0]) / 16383 * 100;
+			if (msg.length < 2) {
+				switch (upThis.getMode()) {
+					case "gs": {
+						upThis.#master.volume = Math.SQRT2 * 100;
+						break;
+					};
+					default: {
+						// Ignored.
+						console.warn(`Received malformed GM master volume: `, msg);
+						return;
+					};
+				};
+			} else {
+				upThis.#master.volume = ((msg[1] << 7) + msg[0]) / 163.83;
+			};
 			upThis.dispatchEvent("mastervolume", upThis.#master.volume);
 		}).add([4, 3], (msg, track, id) => {
 			// Master fine tune
@@ -3834,7 +3848,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							writeTune, writeTune, writeTune, writeTune,
 							(e) => {
 								// XG master volume
-								this.#master.volume = e * 129 / 16383 * 100;
+								this.#master.volume = e * 129 / 163.83;
 								upThis.dispatchEvent("mastervolume", upThis.#master.volume);
 							},
 							(e) => {/* XG master attenuator */},
@@ -4956,7 +4970,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					writeTune,
 					writeTune,
 					() => {
-						this.#master.volume = e * 129 / 16383 * 100;
+						this.#master.volume = e * 129 / 163.83;
 						upThis.dispatchEvent("mastervolume", upThis.#master.volume);
 					},
 					() => {
@@ -5149,7 +5163,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 							writeTune, writeTune, writeTune, writeTune,
 							(e) => {
 								// XG master volume
-								this.#master.volume = e * 129 / 16383 * 100;
+								this.#master.volume = e * 129 / 163.83;
 								upThis.dispatchEvent("mastervolume", upThis.#master.volume);
 							},
 							(e) => {/* XG master coarse tune */},
@@ -6281,7 +6295,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						msg.subarray(1).forEach((e, i) => {
 							[writeTune, writeTune, writeTune, writeTune,
 							() => {
-								upThis.#master.volume = e * 129 / 16383 * 100;
+								upThis.#master.volume = e * 129 / 163.83;
 								upThis.dispatchEvent("mastervolume", upThis.#master.volume);
 							}, () => {
 								return (e - 64);
@@ -6941,7 +6955,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						case 4: {
 							// master volume
 							upThis.invokeSysExIndicator();
-							upThis.#master.volume = e * 129 / 16383 * 100;
+							upThis.#master.volume = e * 129 / 163.83;
 							upThis.dispatchEvent("mastervolume", upThis.#master.volume);
 							break;
 						};
