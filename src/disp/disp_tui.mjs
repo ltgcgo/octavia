@@ -31,7 +31,7 @@ const modeNames = {
 	"qy20": "Ymh.QY20",
 	"krs": "KorgKros",
 	"s90es": "YmhS90ES",
-	"motif": "YmhMotif"
+	"motifes": "YmhMotif"
 };
 
 // Velocity to brightness

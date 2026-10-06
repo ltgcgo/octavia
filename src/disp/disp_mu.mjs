@@ -54,7 +54,7 @@ const modeGroup = {
 	"x5d": 3,
 	"s90es": 0,
 	"krs": 3,
-	"motif": 0
+	"motifes": 0
 };
 const number7Seg = [
 	0b1011111,

@@ -7,12 +7,12 @@ const sgCrit = ["MSB", "PRG", "LSB", "NME", "ELC", "DRM", "LVL", "VXP"];
 const noVoxStdPool = {
 	"krs": "KR",
 	"s90es": "ES",
-	"motif": "ES"
+	"motifes": "ES"
 };
 const noVoxCatPool = {
 	"krs": "Kr",
 	"s90es": "SE",
-	"motif": "ME"
+	"motifes": "ME"
 };
 const allowedStandards = {
 	"g2": new Set("gm,GM,g2,G2".split(",")),
@@ -262,7 +262,7 @@ let VoiceBank = class {
 				break;
 			};
 			case "s90es":
-			case "motif":
+			case "motifes":
 			case "an1x":
 			case "cs2x":
 			case "cs6x": {
@@ -283,7 +283,7 @@ let VoiceBank = class {
 								};
 								break;
 							};
-							case "motif": {
+							case "motifes": {
 								if (lsb < 8) {
 									args[2] += 28;
 								} else if (lsb < 32) {
@@ -1060,7 +1060,7 @@ let VoiceBank = class {
 			switch (mode) {
 				case "krs":
 				case "s90es":
-				case "motif": {
+				case "motifes": {
 					bankName = "";
 					standard = noVoxStdPool[mode];
 					ending = "?";

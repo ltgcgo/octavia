@@ -47,7 +47,7 @@ let twoLetterMode = {
 	"k11": "kg",
 	"krs": "kr",
 	"s90es": "es",
-	"motif": "es",
+	"motifes": "es",
 	"trin": "tr"
 };
 

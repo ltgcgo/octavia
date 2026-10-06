@@ -85,7 +85,7 @@ let ScDisplay = class extends FocusedPartDisplay {
 					break;
 				};
 				default: {
-					upThis.#sysMsg = `Sys:${{"?":"Init","g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motif":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`;
+					upThis.#sysMsg = `Sys:${{"?":"Init","g2":"GM2","mt32":"MT-32","ag10":"AG-10","05rw":"05R/W","k11":"GMega","krs":"KROSS 2","s90es":"S90 ES","motifes":"Motif ES"}[ev.data]||ev.data.toUpperCase()}`;
 				};
 			};
 			upThis.#sysTime = upThis.clockSource.now() + 800;

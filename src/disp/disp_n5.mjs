@@ -56,7 +56,7 @@ let Ns5rDisplay = class extends FocusedPartDisplay {
 				"sg01": bgRed,
 				"sd": bgOrange,
 				"s90es": bgGreen,
-				"motif": bgGreen,
+				"motifes": bgGreen,
 				"doc": bgGreen,
 				"qy10": bgGreen,
 				"qy20": bgGreen

@@ -71,7 +71,7 @@ const modeIdx = [
 	"mt32", "doc", "qy10", "qy20",
 	"ns5r", "x5d", "05rw",
 	"k11", "sg", "sd", "pa", "rhc",
-	"krs", "s90es", "motif", "cs6x", "trin",
+	"krs", "s90es", "motifes", "cs6x", "trin",
 	"an1x", "cs2x"
 ],
 modeAdapt = {
@@ -85,7 +85,7 @@ modeAdapt = {
 	"x5dr": "x5d",
 	"gmega": "k11",
 	"kross 2": "krs",
-	"motif es": "motif",
+	"motif es": "motifes",
 	"s90 es": "s90es",
 	"trinity": "trin",
 	"tr-rack": "trin"
@@ -117,7 +117,7 @@ let modeDetailsData = { // subMsb, subLsb, drumMsb, defaultMsb, defaultLsb
 	"pa": [0, 0, 120, 121, 0],
 	"krs": [121, 0, 120, 0, 0],
 	"s90es": [0, 0, 127, 0, 0],
-	"motif": [0, 0, 127, 0, 0],
+	"motifes": [0, 0, 127, 0, 0],
 	"cs6x": [0, 0, 127, 0, 0],
 	"trin": [0, 0, 61, 0, 0],
 	"an1x": [36, 3, 127, 0, 0],
@@ -976,7 +976,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				(() => {
 					switch (upThis.#mode) {
 						case modeMap.s90es:
-						case modeMap.motif: {
+						case modeMap.motifes: {
 							if (ccNum === 0) {
 								([0, 63].indexOf(det.data[1]) > -1) && upThis.setChActive(part, 1);
 								break;
@@ -1393,7 +1393,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 									case modeMap.sc:
 									case modeMap.mt32:
 									case modeMap.s90es:
-									case modeMap.motif:
+									case modeMap.motifes:
 									case modeMap.cs2x:
 									case modeMap.cs6x: {
 										switch (upThis.getChCc(part, 100)) {
@@ -1425,7 +1425,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						};
 						switch (upThis.#mode) {
 							case modeMap.s90es:
-							case modeMap.motif: {
+							case modeMap.motifes: {
 								upThis.setChType(part, ([32, 40].indexOf(det.data[1]) > -1) ? upThis.CH_DRUMS : upThis.CH_MELODIC, upThis.#mode, true);
 								break;
 							};
@@ -1501,7 +1501,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// Program change
 			switch (upThis.#mode) {
 				case modeMap.s90es:
-				case modeMap.motif: {
+				case modeMap.motifes: {
 					det.data && upThis.setChActive(part, 1);
 					break;
 				};
@@ -2333,9 +2333,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				upThis.#detect.smotif = modeMap.s90es;
 				break;
 			};
-			case modeMap.motif: {
-				upThis.#detect.ds = modeMap.motif;
-				upThis.#detect.smotif = modeMap.motif;
+			case modeMap.motifes: {
+				upThis.#detect.ds = modeMap.motifes;
+				upThis.#detect.smotif = modeMap.motifes;
 				break;
 			};
 			case modeMap.sd: {
@@ -2923,7 +2923,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						efxDefault = [24, 16, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255];
 						break;
 					};
-					case modeMap.motif:
+					case modeMap.motifes:
 					case modeMap.s90es:
 					case modeMap.cs6x: {
 						efxDefault = [129, 0, 133, 0, 130, 0, 128, 0, 128, 0, 0, 255, 0, 255, 0, 255];
@@ -7024,7 +7024,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		// FIX THIS
 		this.#seXg.add([127, 0], (msg, track, id) => {
 			// Motif ES to S90 ES redirector
-			upThis.switchMode("motif", 1);
+			upThis.switchMode("motifes", 1);
 			let newMsg = new Uint8Array([127, 1, ...msg]);
 			upThis.#seXg.run(newMsg, track, id);
 		}).add([127, 1, 0, 0], (msg, track, id) => {
@@ -7047,6 +7047,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			let addrSet = [];
 			addrSet[95] = (msg, track, id) => {
 				console.debug(`${dPref}multi edit buffer: ${msg[1]}`);
+				upThis.setPortModeId(upThis.getTrackPort(track), 1, upThis.#detect.smotif);
 			};
 			(addrSet[msg[0]] || (() => {
 				console.info(`Unrecognized ${dPref}ID: ${msg[0]}.`);

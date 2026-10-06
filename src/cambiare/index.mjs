@@ -38,7 +38,7 @@ const modeNames = {
 	"s90es": "Yamaha S90 ES",
 	"cs6x": "Yamaha CS6x",
 	"cs2x": "Yamaha CS2x",
-	"motif": "Yamaha Motif ES",
+	"motifes": "Yamaha Motif ES",
 	"pa": "Korg PA"
 };
 const metaNames = {
@@ -131,7 +131,7 @@ const modeColourPool = {
 	"trin": ["9efaa0", "007f00"],
 	"k11": ["9efaa0", "007f00"],
 	"s90es": ["9efaa0", "007f00"],
-	"motif": ["9efaa0", "007f00"],
+	"motifes": ["9efaa0", "007f00"],
 	"cs6x": ["9efaa0", "007f00"],
 	"an1x": ["9efaa0", "007f00"],
 	"cs2x": ["9efaa0", "007f00"],
