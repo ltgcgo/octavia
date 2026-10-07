@@ -182,6 +182,10 @@ export default class ColxiMethods {
 						break;
 					};
 				};
+				if (colxiEvent.data === null) {
+					colxiEvent.data = undefined;
+					break;
+				};
 				if (colxiEvent.data !== undefined) break;
 				colxiEvent.data = this.handleExtended(upThis, miccEvent, colxiEvent.type, decoders);
 				break;

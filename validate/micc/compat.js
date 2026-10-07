@@ -114,8 +114,8 @@ const assertSeqColxiTrackEvent = function (seqA, seqB) {
 					switch (eventA.metaType) {
 						case 0x2F: {
 							assert(
-								eventA.data == null && eventB.data == null,
-								`Non-null end of track data ${dSuffix}.`
+								eventA.data === undefined && eventB.data === undefined,
+								`Non-null end of track data ${dSuffix}: ${eventA.data}, ${eventB.data}.`
 							);
 							break;
 						};
