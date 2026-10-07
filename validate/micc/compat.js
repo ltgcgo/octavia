@@ -4,6 +4,7 @@ import {
 	test
 } from "https://jsr.io/@cross/test/0.0.14/mod.ts";
 import {
+	assert,
 	assertEquals,
 	assertObjectMatch,
 	assertThrows
@@ -27,6 +28,7 @@ import optLogFile from "../common/optLogFile.json" with {"type": "json"};
 import FailRecord from "../common/failRecord.mjs";
 import OldColxiCustomInterpreter from "../common/colxiOldCI.mjs";
 import {
+	arrayCompare,
 	reducePrecision,
 	reducePrecisionText
 } from "../../src/state/utils.js";
@@ -40,6 +42,117 @@ if (ColxiMIDIParserOriginal) {
 	ColxiMIDIParserOriginal.customInterpreter = OldColxiCustomInterpreter;
 };
 
+/** @param {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} seqA
+* @param {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} seqB */
+const assertSeqColxiMeta = function (seqA, seqB) {
+	assertEquals(seqA.formatType, seqB.formatType, "Mismatched format type.");
+	assertEquals(seqA.timeDivision, seqB.timeDivision, "Mismatched format type.");
+	assertEquals(seqA.tracks, seqB.tracks, "Mismatched format type.");
+	assertEquals(seqA.track.length, seqB.track.length, "Mismatched format type.");
+};
+/** @param {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} seqA
+* @param {import("../../src/miccCompat/index.mjs").ColxiMIDIFile} seqB */
+const assertSeqColxiTrackEvent = function (seqA, seqB) {
+	for (let iTrack = 0; iTrack < seqA.track.length; iTrack ++) {
+		const trackA = seqA.track[iTrack].event;
+		const trackB = seqB.track[iTrack].event;
+		assertEquals(trackA.length, trackB.length, `Mismatched event count for track #${iTrack}.`);
+		for (let iEvent = 0; iEvent < trackA.length; iEvent ++) {
+			const dSuffix = `for event #${iEvent} on track #${iTrack}`;
+			const eventA = trackA[iEvent];
+			const eventB = trackB[iEvent];
+			assertEquals(eventA.deltaTime, eventB.deltaTime, `Mismatched delta time ${dSuffix}.`);
+			assertEquals(eventA.type, eventB.type, `Mismatched event type ${dSuffix}.`);
+			switch (eventA.type) {
+				case 12:
+				case 13: {
+					assertEquals(
+						eventA.channel,
+						eventB.channel,
+						`Mismatched event channel ${dSuffix}.`
+					);
+					assertEquals(
+						eventA.data,
+						eventB.data,
+						`Mismatched numeric event data ${dSuffix}.`
+					);
+					break;
+				};
+				case 8:
+				case 9:
+				case 10:
+				case 11:
+				case 14: {
+					assertEquals(
+						eventA.channel,
+						eventB.channel,
+						`Mismatched event channel ${dSuffix}.`
+					);
+					// Fallthrough.
+				};
+				case 15: {
+					assertEquals(
+						eventA.data.length,
+						eventB.data.length,
+						`Mismatched event data length ${dSuffix}.`
+					);
+					const arrCmpResult = arrayCompare(eventA.data, eventB.data);
+					assert(
+						arrCmpResult[0] === 0 && arrCmpResult[1] === 0,
+						`Mismatched event data content at index #${arrCmpResult[0]} ${dSuffix}.`
+					);
+					break;
+				};
+				case 255: {
+					assertEquals(
+						eventA.metaType,
+						eventB.metaType,
+						`Mismatched meta event type ${dSuffix}.`
+					);
+					const dPrefix = `Mismatched meta event ${eventA.metaType}`;
+					// No strict string comparison here due to decoder differences.
+					switch (eventA.metaType) {
+						case 0x2F: {
+							assert(
+								eventA.data == null && eventB.data == null,
+								`Non-null end of track data ${dSuffix}.`
+							);
+							break;
+						};
+						case 0x21:
+						case 0x51:
+						case 0x59: {
+							assertEquals(
+								eventA.data,
+								eventB.data,
+								`${dPrefix} numeric data ${dSuffix}.`
+							);
+							break;
+						};
+						case 0x54:
+						case 0x58: {
+							assertEquals(
+								eventA.data.length,
+								eventB.data.length,
+								`${dPrefix} buffer length ${dSuffix}.`
+							);
+							const arrCmpResult = arrayCompare(eventA.data, eventB.data);
+							assert(
+								arrCmpResult[0] === 0 && arrCmpResult[1] === 0,
+								`${dPrefix} buffer data at index #${arrCmpResult[0]} ${dSuffix}.`
+							);
+							break;
+						};
+					};
+					break;
+				};
+				default: {
+					throw(new RangeError(`Invalid event type "${eventA.type}" ${dSuffix}.`));
+				};
+			};
+		};
+	};
+};
 test("Validate Colxi against streamed and buffered", async () => {
 	//
 	/** @type {FailRecord[]} */
@@ -160,7 +273,12 @@ test("Validate Colxi against streamed and buffered", async () => {
 					console.debug(`[\x1b[1;33mWARN\x1b[0m] The original Colxi parser has failed!\n`);
 				};
 				if (colxiPassed) {
-					// Metadata comparison
+					// Event data comparison
+					// File meta
+					assertSeqColxiMeta(sequenceColxi, sequenceMICCMatchedStreamed);
+					assertSeqColxiMeta(sequenceColxi, sequenceMICCMatchedBuffered);
+					assertSeqColxiTrackEvent(sequenceColxi, sequenceMICCMatchedStreamed);
+					assertSeqColxiTrackEvent(sequenceColxi, sequenceMICCMatchedBuffered);
 				};
 			} catch (err) {
 				passed = false;

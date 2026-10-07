@@ -4,7 +4,7 @@ import {
 	BinaryStreamCodecs
 } from "./utils/codec.mjs";
 
-let arrayCompare = (arr1, arr2) => {
+const arrayCompare = (arr1, arr2) => {
 	let minLength = Math.min(arr1.length, arr2.length);
 	let result = 0;
 	for (let i = 0; i < minLength; i ++) {
