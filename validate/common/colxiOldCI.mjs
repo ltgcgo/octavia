@@ -1,5 +1,8 @@
 "use strict";
 
+/** @param {number} type
+* @param {import("../../src/miccCompat/index.d.mts").ColxiMIDIView} file
+* @param {number|false} rawMtLen  */
 export default function OldColxiCustomInterpreter (type, file, rawMtLen) {
 	let u8Data = [];
 	let metaLength = rawMtLen == false ? file.readIntVLV() : rawMtLen;
@@ -17,8 +20,7 @@ export default function OldColxiCustomInterpreter (type, file, rawMtLen) {
 			// Start of a new event
 			console.debug(`Early termination: ${u8Data}`);
 			u8Data.pop();
-			file.backOne();
-			file.backOne();
+			file.movePointer(-2);
 			return new Uint8Array(u8Data);
 		};
 	};
