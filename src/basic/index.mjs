@@ -26,7 +26,7 @@ import BlobHandler from "./fileHandler.js";
 
 import {getDebugState} from "../state/utils.js";
 
-MidiParser.customInterpreter = customInterpreter;
+//MidiParser.customInterpreter = customInterpreter;
 
 const eventPassThru = (source, sink, type) => {
 	source.addEventListener(type, (ev) => {

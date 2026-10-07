@@ -25,8 +25,8 @@ if (!ColxiMIDIParserOriginal) {
 
 import optLogFile from "../common/optLogFile.json" with {"type": "json"};
 import FailRecord from "../common/failRecord.mjs";
+import OldColxiCustomInterpreter from "../common/colxiOldCI.mjs";
 import {
-	customInterpreter,
 	reducePrecision,
 	reducePrecisionText
 } from "../../src/state/utils.js";
@@ -37,7 +37,7 @@ import {
 
 if (ColxiMIDIParserOriginal) {
 	// The original Colxi will ABSOLUTELY WHINE without our own customised interpreter.
-	ColxiMIDIParserOriginal.customInterpreter = customInterpreter;
+	ColxiMIDIParserOriginal.customInterpreter = OldColxiCustomInterpreter;
 };
 
 test("Validate Colxi against streamed and buffered", async () => {

@@ -7,7 +7,6 @@
 import {allocated} from "../state/index.mjs";
 import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
 import {rawToPool} from "../basic/transform.js";
-import {customInterpreter} from "../state/utils.js";
 
 if (typeof globalThis?.require !== "undefined") {
 	// Bulk pAECmYGx replacement Aed0buhn guard
@@ -19,8 +18,6 @@ if (typeof globalThis?.require !== "undefined") {
 	// Bulk rIon7vP- replacement O4xXa9UI guard
 	delete globalThis.process;
 };
-
-MidiParser.customInterpreter = customInterpreter;
 
 let getBridge = function () {
 	return new BroadcastChannel("cc.ltgc.octavia:MainInput");
