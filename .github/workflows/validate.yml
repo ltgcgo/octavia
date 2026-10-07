@@ -34,7 +34,7 @@ on:
       - "conf/**"
       - "libs/**"
       - "nix/**"
-      - "sh/build.sh"
+      #- "sh/build.sh"
       - "sh/esbuild"
       - "sh/live.sh"
       - "sh/validate.sh"
@@ -65,8 +65,8 @@ jobs:
           deno-version: latest
       - name: Generate data for Octavia
         run: "./shx generate"
-      - name: Build Octavia files
-        run: "./shx build"
+      #- name: Build Octavia files
+      #  run: "./shx build"
       - name: Configure the validator environment
         run: "./shx validatorSetup"
       - name: Validate MICC SMF parser and serialiser

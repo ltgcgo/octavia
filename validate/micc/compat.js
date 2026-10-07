@@ -151,7 +151,7 @@ const assertSeqColxiTrackEvent = function (seqA, seqB) {
 						case 0x06:
 						case 0x07: {
 							assert(
-								eventA.data.length > 0 && eventB.data.length > 0,
+								eventA.data?.length > 0 && eventB.data?.length > 0,
 								`${dPrefix} string null status ${dSuffix}.`
 							);
 							break;
