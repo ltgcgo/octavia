@@ -1,7 +1,7 @@
 {
 	"name": "@ltgc/midi-parser-ecosystem",
 	"type": "module",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"license": "LGPL-3.0-only",
 	"author": {
 		"name": "Lightingale Community",
@@ -18,7 +18,8 @@
 	},
 	"keywords": [
 		"deno", "denoland", "bun js",
-		"midi", "midi parser", "octavia", "micc"
+		"midi", "midi parser", "octavia", "micc",
+		"colxi", "midi parser js"
 	],
 	"engines": {
 		"node": ">=18.0.0"

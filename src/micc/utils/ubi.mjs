@@ -7,7 +7,7 @@ import {
 	bufferFrom
 } from "../../state/utils/bufferIo.mjs";
 
-/** @typedef {string|ArrayBuffer|ArrayBufferView|Blob|File|HTMLInputElement|FileList|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>} UnifiedBinaryIntake */
+/** @typedef {string|ArrayBuffer|ArrayBufferView|Blob|File|Response|HTMLInputElement|FileList|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>} UnifiedBinaryIntake */
 
 //const testHex = /^[0-9a-fA-F]+$/;
 const testBase64Normal = /^[0-9A-Za-z+/=]+$/;
@@ -36,6 +36,8 @@ const toByteStream = function (intake) {
 		throw(new TypeError("Invalid blank input type."));
 	} else if (typeof intake[Symbol.asyncIterator] === "function") {
 		return intake;
+	} else if (typeof intake.body[Symbol.asyncIterator] === "function") {
+		return intake.body;
 	};
 	switch (typeof intake) {
 		case "bigint":
@@ -78,6 +80,9 @@ const toByteStream = function (intake) {
 		};
 		case globalThis?.ReadableStream ?? 3: {
 			return intake;
+		};
+		case globalThis?.Response ?? 4: {
+			return intake.body;
 		};
 		default: {
 			if (
@@ -124,6 +129,8 @@ const toBytes = async function (intake) {
 		throw(new TypeError("Invalid blank input type."));
 	} else if (typeof intake[Symbol.asyncIterator] === "function") {
 		return await (new Response(intake)).bytes();
+	} else if (typeof intake.body[Symbol.asyncIterator] === "function") {
+		return await intake.bytes();
 	};
 	switch (typeof intake) {
 		case "bigint":
@@ -170,6 +177,9 @@ const toBytes = async function (intake) {
 		};
 		case globalThis?.ReadableStream ?? 3: {
 			return await (new Response(intake)).bytes();
+		};
+		case globalThis?.Response ?? 4: {
+			return await intake.bytes();
 		};
 	};
 	throw(new TypeError("Unknown input type."));

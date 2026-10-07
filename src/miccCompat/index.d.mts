@@ -4,14 +4,14 @@
 /** Robust compatibility shims for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project. The shims do not incorporate any code from the original implementations, only attempting to mimic their shapes and behaviour via blackbox experiments.
 *
 * Shims for the following packages are available.
-* | Family | Implementation | Status | Validated |
-* | ------ | -------------- | ------ | --------- |
-* | Colxi | `colxi/midi-parser-js` | Finished | Yes |
-* | MJT | `chrisguttandin/midi-json-parser` | WIP | No |
-* | MJT | `midi-json-tools/midi-to-json` | WIP | No |
-* | jasmid | `gasman/jasmid/midifile.js` | WIP | No |
-* | jasmid | `carter-thaxton/midi-file` | WIP | No |
-* | jasmid | `ryohey/midifile-ts` | WIP | No |
+* | Family | Implementation | Status | Validated | ATD |
+* | ------ | -------------- | ------ | --------- | --- |
+* | Colxi | `colxi/midi-parser-js` | Finished | Yes | No |
+* | MJT | `chrisguttandin/midi-json-parser` | WIP | No | No |
+* | MJT | `midi-json-tools/midi-to-json` | WIP | No | No |
+* | jasmid | `gasman/jasmid/midifile.js` | WIP | No | No |
+* | jasmid | `carter-thaxton/midi-file` | WIP | No | No |
+* | jasmid | `ryohey/midifile-ts` | WIP | No | No |
 *
 * For details on migrating projects depending on the original implementions, read the migration notes ([Codeberg](https://codeberg.org/ltgc/octavia/src/branch/main/isolated/midi-parser-ecosystem/README.md#migration-notes), [GitHub](https://github.com/ltgcgo/octavia/blob/main/isolated/midi-parser-ecosystem/README.md#migration-notes)).
 *
