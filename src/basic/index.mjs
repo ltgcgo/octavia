@@ -5,7 +5,7 @@
 
 import {CustomEventSource} from "../../libs/lightfelt@ltgcgo/ext/customEvents.js";
 import {dnToPos, allocated, overrides, effectSlots} from "../state/index.mjs";
-import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
+import { ColxiMIDIParser as MidiParser } from "../miccCompat/index.mjs";
 import {rawToPool} from "./transform.js";
 import {
 	BitmapMatrix,
@@ -115,7 +115,7 @@ const RootDisplay = class extends CustomEventSource {
 		this.#midiPool = undefined;
 	};
 	async loadFile(blob) {
-		this.#midiPool = rawToPool(MidiParser.parse(new Uint8Array(await blob.arrayBuffer())));
+		this.#midiPool = rawToPool(await MidiParser.parse(blob));
 	};
 	async loadMap(text, overwrite, priority, name = "(internal)") {
 		// Load the voice ID to voice name map

@@ -8,6 +8,8 @@ import {
 	ColxiMIDIParserStreamed
 } from "./colxi/funnels.mjs";
 
+console.debug(`You are running compatibility shims from Octavia MICC!`);
+
 export {
 	ColxiMIDIParser,
 	ColxiMIDIParserStreamed

@@ -70,7 +70,7 @@ Octavia will now dynamically load additional demos if available. [See the credit
 - [`browser-fs-access`](https://github.com/GoogleChromeLabs/browser-fs-access) (Apache 2.0 License)
 - [Bulma](https://bulma.io) (MIT License)
 - Lightfelt (GNU LGPL v3.0)
-- [`midi-parser`](https://github.com/ltgcgo/midi-parser-js) (GNU GPL v3.0) (will be swapped out with a custom solution)
+- ~~[`midi-parser`](https://github.com/ltgcgo/midi-parser-js) (GNU GPL v3.0)~~ (removed on 7th Oct. 2026 due to licensing issues)
 - [Rochelle](https://github.com/ltgcgo/rochelle) (GNU LGPL v3.0)
 - [Seamstress](https://github.com/ltgcgo/seamstress) (GNU LGPL v3.0)
 - [Snowy](https://github.com/ltgcgo/snowy) (GNU LGPL v3.0)

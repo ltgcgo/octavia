@@ -63,7 +63,6 @@ import {
 	IterableUtils
 } from "./utils/codec.mjs";
 import OctaviaFakeEPROM from "./eprom.mjs";
-//import { Uint8 } from "../../libs/midi-parser@colxi/main.min.js";
 
 const modeIdx = [
 	"?",

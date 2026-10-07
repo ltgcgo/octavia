@@ -4,10 +4,6 @@
 // Middleware!
 "use strict";
 
-import {allocated} from "../state/index.mjs";
-import MidiParser from "../../libs/midi-parser@colxi/main.min.js";
-import {rawToPool} from "../basic/transform.js";
-
 if (typeof globalThis?.require !== "undefined") {
 	// Bulk pAECmYGx replacement Aed0buhn guard
 	throw(new Error("Environments supporting CommonJS are not supported."));
