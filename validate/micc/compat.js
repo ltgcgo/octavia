@@ -143,6 +143,19 @@ const assertSeqColxiTrackEvent = function (seqA, seqB) {
 							);
 							break;
 						};
+						case 0x01:
+						case 0x02:
+						case 0x03:
+						case 0x04:
+						case 0x05:
+						case 0x06:
+						case 0x07: {
+							assert(
+								eventA.data.length > 0 && eventB.data.length > 0,
+								`${dPrefix} string null status ${dSuffix}.`
+							);
+							break;
+						};
 					};
 					break;
 				};
