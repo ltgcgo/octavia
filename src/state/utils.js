@@ -197,7 +197,9 @@ const reducePrecision = function (value, base10Precision = 0) {
 	const base10Factor = Math.pow(10, base10Precision);
 	return Math.round(value * base10Factor) / base10Factor;
 };
-const reducePrecisionText = function (value, base10Precision = 0) {
+const reducePrecisionText = typeof Number.prototype.toFixed === "function" ? function (value, base10Precision = 0) {
+	return value.toFixed(base10Precision);
+} : function (value, base10Precision = 0) {
 	const base10Factor = Math.pow(10, base10Precision);
 	const amplified = Math.round(value * base10Factor).toString().padStart(base10Precision + 1, "0");
 	if (base10Precision > 0) {
