@@ -90,9 +90,9 @@ cpSafe "../download/vendor/roland/sc-8820/dance.mid.br" "./SC8820.dance.mid.br"
 cpSafe "../download/vendor/roland/sc-8820/fusion.mid.br" "./SC8820.fusion.mid.br"
 cpSafe "../download/vendor/roland/sc-8820/sfx.mid.br" "./SC8820.sfx.mid.br"
 # SD-20 demo songs
-cpSafe "../download/vendor/roland/sd-20/Demo01.mid.br" "./SD20_D1.mid"
-cpSafe "../download/vendor/roland/sd-20/Demo04.mid.br" "./SD20_D4.mid"
-cpSafe "../download/vendor/roland/sd-20/Demo05.mid.br" "./SD20_D5.mid"
+#cpSafe "../download/vendor/roland/sd-20/Demo01.mid.br" "./SD20_D1.mid"
+#cpSafe "../download/vendor/roland/sd-20/Demo04.mid.br" "./SD20_D4.mid"
+#cpSafe "../download/vendor/roland/sd-20/Demo05.mid.br" "./SD20_D5.mid"
 # SD-90 demo songs
 cpSafe "../download/vendor/roland/sd-90/01Piano.mid.br" .
 cpSafe "../download/vendor/roland/sd-90/04NylonG.mid.br" .
