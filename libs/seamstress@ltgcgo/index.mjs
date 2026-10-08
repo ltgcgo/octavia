@@ -549,7 +549,7 @@ let IntegerHandler = class IntegerHandler {
 	};
 };
 
-let SeamstressChunk = class SeamstressChunk {
+const SeamstressChunk = class SeamstressChunk {
 	id = 0;
 	chunkId = 0;
 	sliceId = 0;
@@ -1473,6 +1473,7 @@ export {
 	IntegerHandler,
 	Seamstress,
 	SeamstressChunk,
+	SeamstressChunk as SeamstressChunkIterated,
 	SeamstressStrictWriter,
 	SeamstressPresets
 }

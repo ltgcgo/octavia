@@ -143,7 +143,7 @@ declare class SeamstressChunkBase {
 	offsetStream: number;
 	/** The offset of the current data (sub)chunk compared to the rest of the full binary stream instance, like the offset within a file. */
 	offsetData: number;
-	/** The full size of the current chunk. */
+	/** The declared full size of the current chunk. */
 	size: number;
 	/** When `true`, the current (streamed) chunk is the last subchunk of the full chunk. Fully buffered chunks always has this value set to `true`. List chunks themselves are never fully buffered. */
 	isFinal: boolean;

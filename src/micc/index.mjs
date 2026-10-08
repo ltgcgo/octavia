@@ -95,8 +95,13 @@ const MICC = class MICC {
 				"parserContext": {}
 			};
 			try {
-				for await (const subchunk of SeamstressInstanceSMF.readRegulated(fileStream)) {
+				let desiredPtr = 0, finalPtr = 0;
+				for await (const subchunk of SeamstressInstanceSMF.readRegulated(fileStream, true)) {
 					//console.info(subchunk);
+					if (subchunk.offset === 0) {
+						desiredPtr = subchunk.size;
+					};
+					finalPtr = subchunk.offset + subchunk.data.length;
 					switch (subchunk.type) {
 						case "MThd": {
 							sequence.meta.format = "mma.smf";
@@ -133,6 +138,9 @@ const MICC = class MICC {
 							console.debug(`Unknown SMF chunk type "${subchunk.type}".`);
 						};
 					};
+				};
+				if (desiredPtr !== finalPtr) {
+					throw(new Error(`The final chunk was not complete. Expected ${desiredPtr} B, received ${finalPtr} B.`));
 				};
 			} catch (err) {
 				sequence.reject(err);

@@ -93,7 +93,10 @@ const ColxiMIDIParser = class ColxiMIDIParser extends UnifiedShimColxi {
 		const file = new ColxiMIDIFile();
 		let iteratedTracks = 0;
 		const binaryString = new BinaryString(upThis.decoders);
-		for await (const chunk of SeamstressInstanceSMF.readChunks(IntakeNormaliser.toByteStream(input))) {
+		for await (const chunk of SeamstressInstanceSMF.readChunks(IntakeNormaliser.toByteStream(input), true)) {
+			if (chunk.size !== chunk.data.length) {
+				throw(new Error(`Received a chunk with mismatched sizes.`));
+			};
 			switch (chunk.type) {
 				// Header
 				case "MThd": {
