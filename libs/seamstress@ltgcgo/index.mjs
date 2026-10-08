@@ -761,7 +761,7 @@ const Seamstress = class Seamstress {
 	};
 	useCollection = false;
 	/** @returns {ReadableStream<SeamstressChunk>} */
-	#readStreamInternal(stream, dropData = false) {
+	#readStreamInternal(stream, noThrow = false, dropData = false) {
 		const upThis = this;
 		let skipLength = upThis.headerSize,
 		chunkStart = 0, chunkId = 0,
@@ -1120,7 +1120,7 @@ const Seamstress = class Seamstress {
 								};
 								console.debug(`[Seamstress CHLD] Started a new child stream for chunk "${chunkType}" at depth ${upThis.meta.seamstressDepth}.`);
 								(async () => {
-									for await (let childChunk of childStreamRead.#readStreamInternal(childStreamHost.readable)) {
+									for await (let childChunk of childStreamRead.#readStreamInternal(childStreamHost.readable, true)) {
 										console.debug(`[Seamstress WAIT] Waiting for the next chunk from depth ${upThis.meta.seamstressDepth + 1} at depth ${upThis.meta.seamstressDepth}.`);
 										await streamHost.enqueue(childChunk);
 										let childReadBytes = childChunk.offsetStream + childChunk.data.length;
@@ -1214,7 +1214,12 @@ const Seamstress = class Seamstress {
 				chunkId ++;
 			};
 			if (skipLength > 0) {
-				console.warn(`Incoming stream at depth ${upThis.meta.seamstressDepth} may have ended early, with ${skipLength} B still expected.${isHeaderRead ? "" : " The header still hasn't been read."}`);
+				const errorContent = `Incoming stream at depth ${upThis.meta.seamstressDepth} may have ended early, with ${skipLength} B still expected.${isHeaderRead ? "" : " The header still hasn't been read."}`;
+				if (noThrow) {
+					console.warn(errorContent);
+				} else {
+					throw(new Error(errorContent));
+				};
 			};
 			if (childStreamHost?.closed === false) {
 				//upThis.debugMode && console.debug(`${dPrefixWait} Waiting for child stream to close. The parent stream is going to be closed.`);
@@ -1228,8 +1233,8 @@ const Seamstress = class Seamstress {
 		});
 		return streamHost.readable;
 	};
-	readStream(stream) {
-		return this.#readStreamInternal(stream);
+	readStream(stream, noThrow = false) {
+		return this.#readStreamInternal(stream, noThrow);
 	};
 	regulateStream;
 	readRegulated(stream, flushAll = false) {
@@ -1238,7 +1243,7 @@ const Seamstress = class Seamstress {
 			throw(new TypeError("The stream regulator must be a defined function."));
 		};
 		let streamHost = new StreamQueue();
-		let unbuffered = upThis.#readStreamInternal(stream);
+		let unbuffered = upThis.#readStreamInternal(stream, flushAll);
 		let buffer = []; // Maybe a linked list will fit better here? Dynamic arrays could be expensive.
 		let id, chunkId, type, size, context;
 		const seamSliceMap = new Map();
@@ -1316,7 +1321,7 @@ const Seamstress = class Seamstress {
 					bufferedChunk.context = context;
 					await streamHost.enqueue(bufferedChunk);
 				} else {
-					console.warn(`Incoming stream at depth ${upThis.meta.seamstressDepth} may have ended early, with ${upThis.#countBuffer(buffer)} B still unflushed.`);
+					throw(new Error(`Incoming stream at depth ${upThis.meta.seamstressDepth} have ended early, with ${upThis.#countBuffer(buffer)} B still unflushed.`));
 				};
 			};
 			streamHost.close();
@@ -1328,7 +1333,7 @@ const Seamstress = class Seamstress {
 	readChunks(stream, flushAll = false) {
 		const upThis = this;
 		let streamHost = new StreamQueue();
-		let unbuffered = upThis.#readStreamInternal(stream); // What was the original `true` as the 2nd argument for?
+		let unbuffered = upThis.#readStreamInternal(stream, true); // What was the original `true` as the 2nd argument for?
 		let buffer = []; // Maybe a linked list will fit better here? Dynamic arrays could be expensive.
 		let inProgress = false;
 		let id, chunkId, type, size, context, offsetData, offsetStream;
@@ -1396,7 +1401,7 @@ const Seamstress = class Seamstress {
 					bufferedChunk.context = context;
 					await streamHost.enqueue(bufferedChunk);
 				} else {
-					console.warn(`Incoming stream at depth ${upThis.meta.seamstressDepth} may have ended early, with ${upThis.#countBuffer(buffer)} B still unflushed.`);
+					throw(new Error(`Incoming stream at depth ${upThis.meta.seamstressDepth} have ended early, with ${upThis.#countBuffer(buffer)} B still unflushed.`));
 				};
 			};
 			streamHost.close();
@@ -1410,7 +1415,7 @@ const Seamstress = class Seamstress {
 	async getMapFromStream(stream) {
 		const upThis = this;
 		let map = new Map();
-		for await (const chunk of upThis.#readStreamInternal(stream, true)) {
+		for await (const chunk of upThis.#readStreamInternal(stream, true, true)) {
 			if (chunk.offset > 0) {
 				continue;
 			};

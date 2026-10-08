@@ -318,13 +318,14 @@ export class Seamstress {
 	* @param startOffset The intended read start offset of the provided buffer.
 	* @param chunkInfo The unmodified info of the current (sub)chunk. */
 	regulateStream?(startOffset: number, chunkInfo: SeamstressChunk): number;
-	/** Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered. */
-	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>): ReadableStream<SeamstressChunk>;
+	/** Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered.
+	* @param noThrow When `true`, incomplete streams will emit warnings instead of throwing errors. */
+	readStream(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, noThrow?: boolean): ReadableStream<SeamstressChunk>;
 	/** Reads the incoming stream, and emits a stream of chunks. The returned stream will not guarantee each chunk to be fully buffered, however when the regulator is present, it can be used to ensure that the partial structure of each (in)complete subchunk will be intact. The stream chunk regulation method will be called on each incomplete chunk to regulate the sizes. If there is no regulator, this method will error out immediately.
-	* @param flushAll When true, unfinished chunks will also be flushed instead of discarded. */
+	* @param flushAll When `true`, unfinished chunks will also be flushed instead of causing data incomplete errors to be thrown. */
 	readRegulated(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, flushAll?: boolean): ReadableStream<SeamstressChunk>;
 	/** Reads the incoming stream, and emits a stream of fully buffered chunks.
-	* @param flushAll When true, unfinished chunks will also be flushed instead of discarded. */
+	* @param flushAll When `true`, unfinished chunks will also be flushed instead of causing data incomplete errors to be thrown. */
 	readChunks(stream: ReadableStream<Uint8Array|Uint8ClampedArray>, flushAll?: boolean): ReadableStream<SeamstressChunk>;
 	/** (WIP) Writes chunks with strict checks. When header's expected, providing a serializer with a 0-sized header or not providing a serializer will both result in an error.
 	*

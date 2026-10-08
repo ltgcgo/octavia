@@ -73,8 +73,8 @@ const ColxiMIDIParserStreamed = class ColxiMIDIParserStreamed extends UnifiedShi
 					upThis.debug ?? console.debug(`Skipped unknown track "${miccTrack.type}" (${miccTrack.vendor}).`);
 					continue;
 				};
-				iteratedTracks ++;
 			};
+			iteratedTracks ++;
 		};
 		if (typeof callback === "function") {
 			callback.call(upThis, file);
@@ -93,10 +93,7 @@ const ColxiMIDIParser = class ColxiMIDIParser extends UnifiedShimColxi {
 		const file = new ColxiMIDIFile();
 		let iteratedTracks = 0;
 		const binaryString = new BinaryString(upThis.decoders);
-		for await (const chunk of SeamstressInstanceSMF.readChunks(IntakeNormaliser.toByteStream(input), true)) {
-			if (chunk.size !== chunk.data.length) {
-				throw(new Error(`Received a chunk with mismatched sizes.`));
-			};
+		for await (const chunk of SeamstressInstanceSMF.readChunks(IntakeNormaliser.toByteStream(input))) {
 			switch (chunk.type) {
 				// Header
 				case "MThd": {
