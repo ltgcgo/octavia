@@ -276,11 +276,11 @@ div.cambiare-canvas > div.sect-meta div.meta-line > span {
 	font-size: 20px;
 }
 div.cambiare-canvas > div.sect-meta span.meta-type {
-	width: 88px;
+	width: 100px;
 	text-align: right;
 }
 div.cambiare-canvas > div.sect-meta span.meta-data {
-	left: 94px;
+	left: 106px;
 	white-space: pre;
 	font-family: var(--meta-font), var(--ui-font);
 }

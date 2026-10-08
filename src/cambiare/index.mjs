@@ -57,31 +57,31 @@ const metaNames = {
 	"KarTitle": "Kar. Title",
 	"MidStamp": "MIDI Stamp",
 	"OSysMeta": "Octavia Sys.",
-	"SGLyrics": "SG Lyrics",
+	"SGPhneme": "SG Phoneme",
 	"TrkTitle": "Title",
 	"XfSngDte": "XF Date",
 	"XfSngRgn": "XF Region",
 	"XfSngCat": "XF Category",
 	"XfSongBt": "XF Beat",
-	"XfSngIns": "XF Instr.",
+	"XfSngIns": "XF Instrum.",
 	"XfSngVoc": "XF Vocalist",
-	"XfSngCmp": "XF Compose",
+	"XfSngCmp": "XF Composer",
 	"XfSngLrc": "XF Lyricist",
 	"XfSngArr": "XF Arranger",
-	"XfSngPer": "XF Perform.",
+	"XfSngPer": "XF Performer",
 	"XfSngPrg": "XF Program.",
 	"XfSngTag": "XF Tags",
-	"XfKarLng": "XF Lang.",
+	"XfKarLng": "XF Language",
 	"XfKarNme": "XF Name",
-	"XfKarCmp": "XK Compo.",
+	"XfKarCmp": "XK Composer",
 	"XfKarLrc": "XK Lyricist",
 	"XfKarArr": "XK Arranger",
-	"XfKarPer": "XK Perform.",
-	"XfKarPrg": "XK Progr.",
+	"XfKarPer": "XK Performer",
+	"XfKarPrg": "XK Program.",
 	"XfScneNo": "XF Scene #",
 	"XfMeloCh": "XF Melody",
 	"XfLyrOff": "XL Offset",
-	"XfLyrEnc": "XL Lang.",
+	"XfLyrEnc": "XL Language",
 	"XfSngPrt": "XL Part",
 	"YMCSSect": "Section Ctrl.",
 	"YStyleId": "Active Style"
@@ -1669,7 +1669,7 @@ const Cambiare = class extends RootDisplay {
 				switch (meta.type) {
 					case "C.Lyrics":
 					case "KarLyric":
-					case "SGLyrics": {
+					case "SGPhneme": {
 						mountElement(upThis.#metaLastLine, [
 							createElement("span", ["meta-slice"], {i: meta.data})
 						]);
@@ -1690,7 +1690,7 @@ const Cambiare = class extends RootDisplay {
 				switch (meta.type) {
 					case "C.Lyrics":
 					case "KarLyric":
-					case "SGLyrics": {
+					case "SGPhneme": {
 						upThis.#metaLastLine = createElement("span", ["field", "meta-data"]);
 						mountElement(upThis.#metaLastLine, [
 							createElement("span", ["meta-slice"], {i: meta.data})

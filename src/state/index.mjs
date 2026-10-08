@@ -4528,7 +4528,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					sgConf.runLineLen >= sgConf.maxLineLen
 				) {
 					upThis.dispatchEvent("metacommit", {
-						"type": "SGLyrics",
+						"type": "SGPhneme",
 						"data": "",
 						"amend": false
 					});
@@ -4537,7 +4537,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					sgConf.runLineLen = 0;
 				};
 				upThis.dispatchEvent("metacommit", {
-					"type": "SGLyrics",
+					"type": "SGPhneme",
 					"data": `${getSgKana(vocal)}`,
 					"amend": true,
 					"mask": sgConf.splitMask
