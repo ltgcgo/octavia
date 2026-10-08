@@ -22,7 +22,8 @@
 * @example
 * ```js
 * // Colxi MIDI Parser
-* import {ColxiMIDIParser} from "path_to_js_file";
+* import {ColxiMIDIParser} from "path_to_js_file"; // Buffered variant
+* import {ColxiMIDIParserStreamed as ColxiMIDIParser} from "path_to_js_file"; // Streamed variant
 * const midiFile = await ColxiMIDIParser.parse(input);
 * // MIDI JSON Tools Parser or C. Guttandin MIDI JSON Parser
 * import {MidiJsonTools} from "path_to_js_file";

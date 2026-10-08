@@ -128,7 +128,7 @@ const ColxiMIDIParser = class ColxiMIDIParser extends UnifiedShimColxi {
 					break;
 				};
 				default: {
-					upThis.debug ?? console.debug(`Skipped unknown track "${miccTrack.type}" (${miccTrack.vendor}).`);
+					upThis.debug ?? console.debug(`Skipped unknown track "${chunk.type}".`);
 					continue;
 				};
 			};
