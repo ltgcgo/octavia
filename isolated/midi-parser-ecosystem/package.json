@@ -11,7 +11,7 @@
 	"bugs": {
 		"url": "https://github.com/ltgcgo/octavia/issues"
 	},
-	"description": "💪 Robust compatibility layers for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project.",
+	"description": "💪 Robust standards-aware compatibility layers for existing SMF and MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project.",
 	"repository": {
 		"type": "url",
 		"url": "git+https://github.com/ltgcgo/octavia.git"

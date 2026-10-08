@@ -31,7 +31,7 @@ _Documentation available: [buffered](https://jsr.io/@ltgc/midi-parser-ecosystem/
 ```js
 import {ColxiMIDIParser as MidiParser} from "path_to_js_file"; // Buffered variant, speed first
 import {ColxiMIDIParserStreamed as MidiParser} from "path_to_js_file"; // Streamed variant, resource first
-const midiFile = await ColxiMIDIParser.parse(input);
+const midiFile = await MidiParser.parse(input);
 ```
 
 ## Migration notes

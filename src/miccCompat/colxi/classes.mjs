@@ -110,7 +110,7 @@ const ColxiMIDIView = class ColxiMIDIView {
 			upThis.#pointer = 0;
 			return upThis.#buffer.length;
 		} else if (upThis.#pointer < upThis.#buffer.length) {
-			const readSize = IntegerHandler.sizeVLV(upThis.#buffer);
+			const readSize = IntegerHandler.sizeVLV(upThis.#buffer, upThis.#pointer);
 			if (readSize > 0 && readSize <= 4) {
 				const readResult = IntegerHandler.readVLV(upThis.#buffer, upThis.#pointer);
 				upThis.movePointer(readSize);

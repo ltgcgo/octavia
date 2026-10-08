@@ -92,6 +92,7 @@ const ColxiMIDIParser = class ColxiMIDIParser extends UnifiedShimColxi {
 		const metaSink = {};
 		const file = new ColxiMIDIFile();
 		let iteratedTracks = 0;
+		const binaryString = new BinaryString(upThis.decoders);
 		for await (const chunk of SeamstressInstanceSMF.readChunks(IntakeNormaliser.toByteStream(input))) {
 			switch (chunk.type) {
 				// Header
@@ -119,7 +120,7 @@ const ColxiMIDIParser = class ColxiMIDIParser extends UnifiedShimColxi {
 					if (iteratedTracks >= file.tracks && !upThis.extended) continue;
 					const colxiTrack = new ColxiMIDITrack(chunk.type);
 					for (const miccEvent of ColxiMethods.parseEventBulk(chunk.data)) {
-						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, miccEvent);
+						const colxiEvent = ColxiMethods.fromNakedEvent(upThis, miccEvent, binaryString);
 						if (colxiEvent.type !== 0) {
 							colxiTrack.event.push(colxiEvent);
 						};

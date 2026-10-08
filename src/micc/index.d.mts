@@ -1,7 +1,7 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
-/** Musical Instructions Compiler Collection. Handles MIDI-adjacent file parsing and serialization.
+/** Musical Instructions Compiler Collection. Standards-aware. Handles MIDI-adjacent and tracker file parsing and serialisation.
 * @license LGPL-3.0-only
 * @module cc.ltgc.octavia.micc
 */
