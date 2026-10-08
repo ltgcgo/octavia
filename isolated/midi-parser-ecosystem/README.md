@@ -6,7 +6,7 @@
 >
 > Due to NPM's negligence towards privacy/pseudo-anonimity by rejecting TOTP and forcing biometrics-based or hardware-based 2FA, if the remaining route of circumventing such restrictions for package publishing is closed down, without NPM offering a privacy-friendly alternative like TOTP, **we are not going to comply, and the NPM version will be left to either rot or deliberately be kept out-of-date**.
 
-💪 Robust compatibility layers for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project, **licensed under GNU LGPL v3**. The shims do not incorporate any code from the original implementations, only attempting to mimic their shapes and behaviour via experiments.
+💪 Robust compatibility layers for existing SMF and MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project, **licensed under GNU LGPL v3**. The shims do not incorporate any code from the original implementations, only attempting to mimic their shapes and behaviour via experiments.
 
 Shims for the following packages are available.
 

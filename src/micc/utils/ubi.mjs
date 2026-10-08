@@ -36,7 +36,7 @@ const toByteStream = function (intake) {
 		throw(new TypeError("Invalid blank input type."));
 	} else if (typeof intake[Symbol.asyncIterator] === "function") {
 		return intake;
-	} else if (typeof intake.body[Symbol.asyncIterator] === "function") {
+	} else if (intake.body && typeof intake.body[Symbol.asyncIterator] === "function") {
 		return intake.body;
 	};
 	switch (typeof intake) {
@@ -129,7 +129,7 @@ const toBytes = async function (intake) {
 		throw(new TypeError("Invalid blank input type."));
 	} else if (typeof intake[Symbol.asyncIterator] === "function") {
 		return await (new Response(intake)).bytes();
-	} else if (typeof intake.body[Symbol.asyncIterator] === "function") {
+	} else if (intake.body && typeof intake.body[Symbol.asyncIterator] === "function") {
 		return await intake.bytes();
 	};
 	switch (typeof intake) {
@@ -190,7 +190,7 @@ const toBytes = async function (intake) {
 const toBuffer = async function (intake) {
 	if (intake == null) {
 		throw(new TypeError("Invalid blank input type."));
-	} else if (typeof intake[Symbol.asyncIterator] === "function") {
+	} else if (intake.body && typeof intake[Symbol.asyncIterator] === "function") {
 		return await (new Response(intake)).arrayBuffer();
 	};
 	switch (typeof intake) {

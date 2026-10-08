@@ -1,7 +1,7 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
-/** 💪 Robust compatibility layers for existing MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project, **licensed under GNU LGPL v3**. The shims do not incorporate any code from the original implementations, only attempting to mimic their shapes and behaviour via experiments.
+/** 💪 Robust compatibility layers for existing SMF and MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project, **licensed under GNU LGPL v3**. The shims do not incorporate any code from the original implementations, only attempting to mimic their shapes and behaviour via experiments.
 *
 * Shims for the following packages are available.
 * | Family | Implementation | Status | Validated | ATD |
