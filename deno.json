@@ -32,6 +32,8 @@
 			"dist/*.mts",
 			"libs/libs",
 			"libs/**/*.d.mts",
+			"libs/**/LICENSE*",
+			"LICENSE",
 			"README.md"
 		]
 	},

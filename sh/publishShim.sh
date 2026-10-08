@@ -13,6 +13,7 @@ fi
 echo "Constructing isolates..."
 ln -s ../../dist isolated/midi-parser-ecosystem/dist
 ln -s ../../libs isolated/midi-parser-ecosystem/libs
+cp LICENSE isolated/midi-parser-ecosystem/
 cp dist/miccCompat.mjs isolated/midi-parser-ecosystem/
 cp dist/miccCompat.d.mts isolated/midi-parser-ecosystem/
 echo "Applying dependency graphs..."

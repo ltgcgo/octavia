@@ -23,6 +23,7 @@
 			"dist/miccCompat.d.mts",
 			"libs/libs",
 			"libs/**/*.d.mts",
+			"LICENSE",
 			"README.md"
 		]
 	},

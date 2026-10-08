@@ -29,7 +29,9 @@
 	"files": [
 		"**.md",
 		"**.mjs",
-		"**.d.mts"
+		"**.d.mts",
+		"LICENSE",
+		"**/LICENSE*"
 	],
 	"exports": {
 		".": {

@@ -69,6 +69,7 @@ Octavia will now dynamically load additional demos if available. [See the credit
   - [`rust-brotli`](https://crates.io/crates/brotli) (MIT License)
 - [`browser-fs-access`](https://github.com/GoogleChromeLabs/browser-fs-access) (Apache 2.0 License)
 - [Bulma](https://bulma.io) (MIT License)
+- [`fzstd`](https://github.com/101arrowz/fzstd) (MIT License)
 - Lightfelt (GNU LGPL v3.0)
 - ~~[`midi-parser`](https://github.com/ltgcgo/midi-parser-js) (GNU GPL v3.0)~~ (removed on 7th Oct. 2026 due to licensing issues)
 - [Rochelle](https://github.com/ltgcgo/rochelle) (GNU LGPL v3.0)
@@ -78,6 +79,8 @@ Octavia will now dynamically load additional demos if available. [See the credit
 - [`water.css`](https://watercss.kognise.dev) (MIT License)
 
 ### Fonts
+- [Datatype](https://franktisellano.github.io/datatype) (SIL OFL v1.1)
+- [Iosevka Charon Mono](https://github.com/be5invis/Iosevka) (SIL OFL v1.1)
 - [Jost](https://indestructibletype.com/Jost.html) (SIL OFL v1.1)
 - [Nunito Sans](https://github.com/googlefonts/NunitoSans) (SIL OFL v1.1)
 - [PT Sans Narrow](https://www.paratype.com/fonts/pt/pt-sans?tab=description) (SIL OFL v1.1)
