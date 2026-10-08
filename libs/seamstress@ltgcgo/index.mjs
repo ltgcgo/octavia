@@ -204,11 +204,16 @@ let IntegerHandler = class IntegerHandler {
 	};
 	static sizeVLV(buffer, offset = 0) {
 		this.#ensureU8(buffer);
-		let breakCrit = Math.min(buffer.length, 16);
-		for (let i = 0; i < breakCrit; i ++) {
-			let e = buffer[i + offset];
+		if (
+			!Number.isSafeInteger(offset) ||
+			offset < 0 ||
+			offset >= buffer.length
+		) return 0;
+		let breakCrit = Math.min(buffer.length - offset, 16) + offset;
+		for (let i = offset; i < breakCrit; i ++) {
+			let e = buffer[i];
 			if ((e & this.MASK_VLV) === 0) {
-				return i + 1;
+				return i - offset + 1;
 			};
 		};
 		return 0; // Failure.
