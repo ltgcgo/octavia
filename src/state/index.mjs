@@ -7276,19 +7276,30 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		}).add([100, 76, 112], (msg, track, id) => {
 			upThis.switchMode("cs6x");
 			// CS6x (Modular Synthesis) voice plugin extra
-			let part = 0;
-			let offset = msg[0];
+			const part = 0;
+			const offset = msg[0];
+			let cvnWritten = false;
 			msg.subarray(1).forEach((e, i) => {
 				let ri = i + offset;
 				if (ri < 10) {
 					upThis.setChCvnRegister(part, i, e & 127);
 					upThis.#bnCustom[part] = 1;
+					cvnWritten = true;
 				} else if (ri < 12) {
 					// Reserved
 				} else if (ri < 13) {
 					console.debug(`Plugin voice type: ${e}`);
 				};
 			});
+			if (cvnWritten) {
+				upThis.dispatchEvent("metacommit", {
+					"type": "OSysMeta",
+					"msg": "part.rename",
+					"data": {
+						part
+					}
+				});
+			};
 			upThis.pushChPrimitives(part);
 		}).add([100, 76, 0], (msg, track, id) => {
 			upThis.switchMode("cs6x");
@@ -7423,13 +7434,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						break;
 					};
 				};
-				upThis.dispatchEvent("metacommit", {
-					"type": "OSysMeta",
-					"msg": "part.rename",
-					"data": {
-						part
-					}
-				});
 			};
 		}).add([100, 76, 32], (msg, track, id) => {
 			upThis.switchMode("cs6x");
@@ -7922,15 +7926,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					cvnWritten = true;
 					upThis.#bnCustom[perfCh] = 1;
 					upThis.setChCvnRegister(perfCh, ri, e);
-					if (ri === 7) {
-						upThis.dispatchEvent("metacommit", {
-							"type": "OSysMeta",
-							"msg": "part.rename",
-							"data": {
-								part: perfCh
-							}
-						});
-					};
 				} else if (ri < 48) {
 					// cs2x common
 					([false, () => {
@@ -7962,6 +7957,13 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				};
 			});
 			if (cvnWritten) {
+				upThis.dispatchEvent("metacommit", {
+					"type": "OSysMeta",
+					"msg": "part.rename",
+					"data": {
+						part: perfCh
+					}
+				});
 				upThis.setChActive(perfCh, 1);
 				upThis.pushChPrimitives(perfCh);
 			};
