@@ -270,7 +270,7 @@ div.cambiare-canvas > div.sect-meta div.meta-line {
 }
 div.cambiare-canvas > div.sect-meta > div.boundary {
 	width: 100%;
-	transition: transform 0.1s;
+	transition: transform 0.2s;
 }
 div.cambiare-canvas > div.sect-meta div.meta-line > span {
 	font-size: 20px;
