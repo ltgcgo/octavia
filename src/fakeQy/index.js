@@ -156,7 +156,7 @@ visualiser.addEventListener("reset", function (e) {
 });
 (async () => {
 	visualiser.styles = new StylePool();
-	visualiser.styles.load((await fetch("./data/misc/yStyle.tsv")).body);
+	visualiser.styles.load((await fetch("../../midi-db/misc/yStyle.tsv")).body);
 })();
 
 // Listen to mode switches
