@@ -610,6 +610,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	#selectPort = 0;
 	#receiveRS = true; // Receive remote switch
 	#modeKaraoke = 0;
+	#rxLyric = false;
 	#rxPhoneme = false;
 	#receiveTree;
 	#maskNewLyric = false;
@@ -3371,45 +3372,51 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				default: {
 					switch (upThis.#modeKaraoke) {
 						case upThis.KARAOKE_TEXT: {
-							switch (data[0]) {
-								case "\\": {
-									// New section
-									upThis.dispatchEvent("metacommit", {
-										"type": "KarLyric",
-										"data": "",
-										"amend": false
-									});
-									upThis.dispatchEvent("metacommit", {
-										"type": "KarLyric",
-										"data": data.substring(1),
-										"amend": true
-									});
-									break;
-								};
-								case "/": {
-									// New line
-									upThis.dispatchEvent("metacommit", {
-										"type": "KarLyric",
-										"data": "",
-										"mask": true,
-										"amend": false
-									});
-									upThis.dispatchEvent("metacommit", {
-										"type": "KarLyric",
-										"data": data.substring(1),
-										"mask": true,
-										"amend": true
-									});
-									break;
-								};
-								default: {
-									// Normal append
-									//this.#metaTexts[0] += data;
-									upThis.dispatchEvent("metacommit", {
-										"type": "KarLyric",
-										"data": data,
-										"amend": true
-									});
+							upThis.#rxLyric = true;
+							if (
+								upThis.#preferPhonemes &&
+								upThis.#rxPhoneme
+							) {} else {
+								switch (data[0]) {
+									case "\\": {
+										// New section
+										upThis.dispatchEvent("metacommit", {
+											"type": "KarLyric",
+											"data": "",
+											"amend": false
+										});
+										upThis.dispatchEvent("metacommit", {
+											"type": "KarLyric",
+											"data": data.substring(1),
+											"amend": true
+										});
+										break;
+									};
+									case "/": {
+										// New line
+										upThis.dispatchEvent("metacommit", {
+											"type": "KarLyric",
+											"data": "",
+											"mask": true,
+											"amend": false
+										});
+										upThis.dispatchEvent("metacommit", {
+											"type": "KarLyric",
+											"data": data.substring(1),
+											"mask": true,
+											"amend": true
+										});
+										break;
+									};
+									default: {
+										// Normal append
+										//this.#metaTexts[0] += data;
+										upThis.dispatchEvent("metacommit", {
+											"type": "KarLyric",
+											"data": data,
+											"amend": true
+										});
+									};
 								};
 							};
 							break;
@@ -3453,6 +3460,8 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			});
 		};
 		upThis.#metaRun[5] = function (data) {
+			upThis.#rxLyric = true;
+			if (upThis.#preferPhonemes && upThis.#rxPhoneme) return;
 			switch (upThis.#modeKaraoke) {
 				case upThis.KARAOKE_XF: {
 					// Stateful XF lyrics parser
@@ -4587,37 +4596,44 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				let vocal = "",
 				length = 0;
 				msg.subarray(2).forEach((e, i) => {
-					if (i % 2 === 0) {
+					if ((i & 1) === 0) {
 						vocal += xgSgVocals[e] || e.toString().padStart("0");
 					} else {
 						length += e * 13; // 7.5ms
 					};
 				});
+				upThis.#rxPhoneme = true;
 				if (
 					timeNow >= sgConf.convLastSyll ||
 					sgConf.runLineLen >= sgConf.maxLineLen
 				) {
-					upThis.dispatchEvent("metacommit", {
-						"type": "SGPhneme",
-						"data": "",
-						"amend": false
-					});
+					if (upThis.#preferPhonemes || !upThis.#rxLyric) {
+						upThis.dispatchEvent("metacommit", {
+							"type": "SGPhneme",
+							"data": "",
+							"amend": false
+						});
+					};
 					//console.debug(`Splitted at length: ${sgConf.runLineLen}`);
 					sgConf.splitMask = timeNow < sgConf.convLastSyll;
 					sgConf.runLineLen = 0;
 				};
-				upThis.dispatchEvent("metacommit", {
-					"type": "SGPhneme",
-					"data": `${getSgKana(vocal)}`,
-					"amend": true,
-					"mask": sgConf.splitMask
-				});
+				const data = getSgKana(vocal);
+				if (upThis.#preferPhonemes || !upThis.#rxLyric) {
+					upThis.dispatchEvent("metacommit", {
+						"type": "SGPhneme",
+						"data": data,
+						"amend": true,
+						"mask": sgConf.splitMask
+					});
+				};
+
 				sgConf.runLineLen ++;
 				sgConf.splitMask = false;
 				//console.debug(`Running length: ${sgConf.runLineLen}`);
 				sgConf.convLastSyll = timeNow + Math.ceil(length / 2) + upThis.#noteLength;
 				if (getDebugState()) {
-					console.debug(`${dPref}vocals: ${vocal}`);
+					console.debug(`${dPref}vocals: [${data}] ${vocal}`);
 				};
 			} else {
 				console.warn(`Unknown PLG-SG data: ${msg}`);
