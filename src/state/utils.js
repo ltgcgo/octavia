@@ -114,7 +114,7 @@ let ascii64Dec = function (text) {
 	return result;
 };
 
-const bufferToDHex = function (msg, maxLength = 12) {
+const bufferToDHex = function (msg, maxLength = 24) {
 	let hexaText = "";
 	for (let i = 0; i < maxLength && i < msg.length; i ++) {
 		if (i > 0) {

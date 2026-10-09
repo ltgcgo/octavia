@@ -4503,7 +4503,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					break;
 				};
 				default: {
-					console.info(`Unknown ${dPref}address: ${msg[0]}`);
+					console.info(`Unknown ${dPref}address: ${msg[0]}.\n`, msg);
 				};
 			};
 		}).add([87, 16], (msg, track) => {
