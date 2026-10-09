@@ -470,9 +470,9 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	CH_ACTIVE = 1;
 	CH_DISABLED = 2;
 	KARAOKE_NONE = 0;
-	KARAOKE_PHONEME = 0; // Decoded phonemes from parameters
+	//KARAOKE_PHONEME = 0; // Decoded phonemes from parameters
 	KARAOKE_TEXT = 2; // Repurposed text events as karaoke lyrics
-	KARAOKE_LYRICS = 3; // MMA standard lyrics event
+	//KARAOKE_LYRICS = 3; // MMA standard lyrics event
 	KARAOKE_XF = 4; // Yamaha XF karaoke lyrics
 	// Values
 	#mode = 0;
@@ -610,6 +610,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	#selectPort = 0;
 	#receiveRS = true; // Receive remote switch
 	#modeKaraoke = 0;
+	#rxPhoneme = false;
 	#receiveTree;
 	#maskNewLyric = false;
 	#lastSysExSize = 0;
@@ -629,7 +630,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	initOnReset = false;
 	maxKeepMetaCount = 96;
 	polyIndexShrink = true;
-	preferPhonemes = false;
+	#preferPhonemes = false;
+	get preferPhonemes() {
+		return this.#preferPhonemes;
+	};
+	set preferPhonemes(bool) {
+		this.#preferPhonemes = bool;
+		this.#rxPhoneme = false
+	};
 	chRedir(part, track, noConquer) {
 		let upThis = this;
 		if (upThis.#trkAsReq[track]) {
@@ -2373,6 +2381,29 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		};
 		this.#conf.dumpLimit = limit;
 	};
+	setLyricsMode(mode, forced = false) {
+		const upThis = this;
+		if (upThis.#modeKaraoke === upThis.KARAOKE_NONE || forced) {
+			switch (mode) {
+				case upThis.KARAOKE_NONE:
+				//case upThis.KARAOKE_PHONEME:
+				case upThis.KARAOKE_TEXT:
+				case upThis.KARAOKE_LYRICS:
+				case upThis.KARAOKE_XF: {
+					upThis.#modeKaraoke = mode;
+					upThis.#rxPhoneme = false;
+					break;
+				};
+				default: {
+					throw(new RangeError(`Invalid lyrics reception mode "${mode}".`));
+				};
+			};
+		};
+	};
+	resetLyricsMode() {
+		this.#modeKaraoke = this.KARAOKE_NONE;
+		this.#rxPhoneme = false;
+	};
 	assignChAce(part = 0, cc) {
 		// Allocate active custom effect
 		// Off, cc1~cc95, CAT, velo, PB
@@ -2523,7 +2554,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 		for (let i = 0; i < upThis.#bitmapStore.length; i ++) {
 			upThis.#bitmap.fill(0);
 		};
-		upThis.#modeKaraoke = upThis.KARAOKE_NONE;
+		upThis.resetLyricsMode();
 		upThis.#selectPort = 0;
 		upThis.#receiveRS = true;
 		upThis.#maskNewLyric = false;
@@ -3227,7 +3258,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			// Normal text
 			switch (data.substring(0, 2)) {
 				case "@I": {
-					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
+					upThis.setLyricsMode(upThis.KARAOKE_TEXT, false);
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Info",
 						"data": data.substring(2)?.trimStart()
@@ -3235,7 +3266,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					break;
 				};
 				case "@K": {
-					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
+					upThis.setLyricsMode(upThis.KARAOKE_TEXT, true);
 					let textBuffer = data.substring(2);
 					if (textBuffer !== "MIDI KARAOKE FILE") {
 						upThis.dispatchEvent("metacommit", {
@@ -3247,7 +3278,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					break;
 				};
 				case "@L": {
-					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
+					upThis.setLyricsMode(upThis.KARAOKE_TEXT, true);
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Lang",
 						"data": data.substring(2)?.trimStart()
@@ -3255,7 +3286,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					break;
 				};
 				case "@T": {
-					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
+					upThis.setLyricsMode(upThis.KARAOKE_TEXT, false);
 					upThis.dispatchEvent("metacommit", {
 						"type": "KarTitle",
 						"data": data.substring(2)?.trimStart()
@@ -3263,7 +3294,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					break;
 				};
 				case "@V": {
-					upThis.#modeKaraoke = upThis.KARAOKE_TEXT;
+					upThis.setLyricsMode(upThis.KARAOKE_TEXT, false);
 					upThis.dispatchEvent("metacommit", {
 						"type": "Kar.Ver.",
 						"data": data.substring(2)?.trimStart()
@@ -3583,7 +3614,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				case "$": {
 					if (data.substring(1, 5) === "Lyrc") {
 						// XF karaoke lyrics trigger & config
-						upThis.#modeKaraoke = upThis.KARAOKE_XF;
+						upThis.setLyricsMode(upThis.KARAOKE_XF, true);
 						let xfKarLConf = data.substring(6).split(":");
 						let xfMelodyCh = xfKarLConf[0].replaceAll(" ", "").split(",");
 						xfMelodyCh.forEach((e, i, a) => {

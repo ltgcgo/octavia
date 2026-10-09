@@ -262,11 +262,11 @@ export class OctaviaDevice {
 	/** The dedicated karaoke reception mode is not activated. */
 	readonly KARAOKE_NONE: number;
 	/** The dedicated karaoke reception mode is activated for decoded phoneme parameters (e.g. PLG-SG phonemes). */
-	readonly KARAOKE_PHONEME: number;
+	//readonly KARAOKE_PHONEME: number;
 	/** The dedicated karaoke reception mode is activated for [Text Event Substitution](https://kb.ltgc.cc/octavia/impl/ext.html#text-event-substitution). */
 	readonly KARAOKE_TEXT: number;
 	/** The dedicated karaoke reception mode is activated for [MMA standard lyrics](https://kb.ltgc.cc/octavia/impl/ext.html#standard-lyrics). */
-	readonly KARAOKE_LYRICS: number;
+	//readonly KARAOKE_LYRICS: number;
 	/** The dedicated karaoke reception mode is activated for [Yamaha XF](https://kb.ltgc.cc/octavia/impl/ext.html#xf-lyrics). */
 	readonly KARAOKE_XF: number;
 	/** The supposed LCD contrast level. `0` indicates 0% contrast, `16` indicates 100% contrast. */
@@ -482,6 +482,11 @@ export class OctaviaDevice {
 	* @param delay How long until the current letter display expires.
 	*/
 	setLetterText(data: string, source?: string, delay?: number): void;
+	/** Set the lyrics reception mode. Read `OctaviaDevice.KARAOKE_*` for details.
+	* @param forced When `true`, force reception mode change. */
+	setLyricsMode(mode: number, forced: boolean): void;
+	/** Reset the lyrics reception mode to "none". Read `OctaviaDevice.KARAOKE_*` for details. */
+	resetLyricsMode(): void;
 	/** Get the global device mode. */
 	getMode(): string;
 	// Should also introduce per-device mode here on top of per-port mode.
