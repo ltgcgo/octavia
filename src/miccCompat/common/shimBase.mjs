@@ -9,6 +9,6 @@ import { BinaryString } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
 export default class UnifiedShimBase {
 	static debug = false;
 	/** @type {Iterable<TextDecoder>?} */
-	static decoders = BinaryString.getDecoders(["utf-8", "sjis"]);
+	static decoders = BinaryString.getDecoders(["utf-8", "l9", "sjis"]);
 	static extended = true;
 };

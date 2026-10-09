@@ -50,7 +50,9 @@ import type {
 declare class UnifiedShimBase {
 	/** When `true`, this enables verbose debugging logs. This has been a hidden property in the original Colxi implementation. Defaults to `false`. */
 	static debug: boolean;
-	/** A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake. */
+	/** A list of text decoders to be used. Not present in the original implementation, this is added to allow correct decoding of MIDI files having multiple text encodings, a practical defense against Mojibake.
+	*
+	* Default to UTF-8 → Latin-9 → Shift JIS. */
 	static decoders?: Iterable<TextDecoder>;
 	/** When `true`, the parser will also include extensions not seen in regular MIDI files that MICC supports (e.g. XF, MUSEQ). Defaults to `true`.
 	*
