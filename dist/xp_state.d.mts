@@ -1,11 +1,19 @@
 // 2022-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
+import {
+	int32,
+	uint8,
+	uint16,
+	uint32
+} from "../libs/rochelle@ltgcgo/nativeType.d.mts";
 import type {
-	NakedMIDIEvent
+	MIDIBaseEvent,
+	MIDIUMPEvent,
+	MIDINakedEvent
 } from "./micc.d.mts";
 
-/** The core MIDI processing engine with an absurd coverage.
+/** The core MIDI processing engine with absurd coverage.
 * @license LGPL-3.0-only
 * @module cc.ltgc.octavia.state
 */
@@ -17,9 +25,9 @@ declare interface OctaviaTimeProvider {
 
 /** Defines what's the range of clearing voice definitions. */
 declare interface OctaviaBankClearOptions {
-	msb?: number | number[];
-	prg?: number | number[];
-	lsb?: number | number[];
+	msb?: uint8|uint8[];
+	prg?: uint8|uint8[];
+	lsb?: uint8|uint8[];
 }
 
 /** The returned voice object. */
@@ -30,17 +38,17 @@ declare interface OctaviaVoiceObject {
 	/** Voice ID in 8-char Yamaha style. */
 	name: string;
 	/** Polyphony/element/oscillator count. */
-	poly?: number;
+	poly?: uint8;
 	/** Required support level within a standard/line-up. */
-	level?: number;
+	level?: uint16;
 	/** Start IDs. What was supplied in the MSB, PC & LSB tuple. */
-	sid: number[];
+	sid: uint8[];
 	/** Initial IDs. What was supplied to the voice retrieval process. */
-	iid: number[];
+	iid: uint8[];
 	/** End IDs. What ended up being used to retrieve the voice. */
-	eid: number[];
+	eid: uint8[];
 	/** The supplied hint. */
-	hint: number;
+	hint: int32;
 	/** The single-character "ending" value used to indicate the voice retrieval state.
 	* - ` `: Exact match.
 	* - `#`: Fallback.
@@ -74,7 +82,7 @@ export class VoiceBank {
 	/** When `true`, the voice retrieval algorithm will not attempt fallbacks. */
 	strictMode: boolean;
 	/** Retrieve the voice information with the specified MSB, PC and LSB tuple. */
-	get(msb?: number, prg?: number, lsb?: number, mode?: string, hint?: number): OctaviaVoiceObject;
+	get(msb?: uint8, prg?: uint8, lsb?: uint8, mode?: string, hint?: int32): OctaviaVoiceObject;
 	/** Clear the assigned voices in the specified range. */
 	clearRange(options: OctaviaBankClearOptions): void;
 	/** Initialize the voice banks. */
@@ -89,7 +97,7 @@ export class VoiceBank {
 /** Time multiplexer. */
 export class TimeMuxer {
 	/** Attach a source to the time multiplexer. */
-	attach(source: HTMLMediaElement | OctaviaTimeProvider): void;
+	attach(source: HTMLMediaElement|OctaviaTimeProvider): void;
 	/** Detach the existing source from this time multiplexer. */
 	detach(): void;
 	/** Returns the current real time in milliseconds. */
@@ -100,7 +108,18 @@ export class TimeMuxer {
 	readonly currentTime: number;
 	/** Returns the current multiplexed time in milliseconds, but rounded down. */
 	now(): number;
-	constructor(clockSource?: HTMLMediaElement | OctaviaTimeProvider);
+	constructor(clockSource?: HTMLMediaElement|OctaviaTimeProvider);
+}
+
+/** State of the clock. Will be replaced soon.
+* @deprecated */
+export interface OctaviaClockSink {
+	/** If the current clock is paused. Defaults to `true`. */
+	paused: boolean;
+	/** If the resume status is pending for a MIDI clock tick to fulfill. */
+	willPlay: boolean;
+	/** Timestamp of the last received MIDI clock tick. Defaults to `0`. */
+	lastTick: number;
 }
 
 /** When `true`, the code should be in a debugging state. */
@@ -148,6 +167,8 @@ export declare const allocated: {
 	readonly vxPrim: number;
 	/** Value of the invalid part. */
 	readonly invalidCh: number;
+	/** Sentinel value for randomised panning. */
+	readonly randomPan: number;
 	/** What does this do? I forgot ;P */
 	readonly redir: number;
 }
@@ -156,6 +177,16 @@ export declare const allocated: {
 export declare const overrides: {
 	/** The value taken to signify bank 0. */
 	readonly bank0: number;
+}
+
+/** A fake EPROM for data storage and retrieval only. */
+export class OctaviaFakeEPROM {
+	/** The offset of where the read/write pointer should begin. Defaults to and should be reset to `0`. */
+	offset: number;
+	/** Data buffer target of the fake EPROM. */
+	data: Uint8Array;
+	/** @param size Size of the fake EPROM in bytes. */
+	constructor(size: number);
 }
 
 /** The state processing engine of Octavia as a virtual device. */
@@ -230,37 +261,47 @@ export class OctaviaDevice {
 	readonly CH_DISABLED: number;
 	/** The dedicated karaoke reception mode is not activated. */
 	readonly KARAOKE_NONE: number;
+	/** The dedicated karaoke reception mode is activated for decoded phoneme parameters (e.g. PLG-SG phonemes). */
+	//readonly KARAOKE_PHONEME: number;
 	/** The dedicated karaoke reception mode is activated for [Text Event Substitution](https://kb.ltgc.cc/octavia/impl/ext.html#text-event-substitution). */
 	readonly KARAOKE_TEXT: number;
+	/** The dedicated karaoke reception mode is activated for [MMA standard lyrics](https://kb.ltgc.cc/octavia/impl/ext.html#standard-lyrics). */
+	//readonly KARAOKE_LYRICS: number;
 	/** The dedicated karaoke reception mode is activated for [Yamaha XF](https://kb.ltgc.cc/octavia/impl/ext.html#xf-lyrics). */
 	readonly KARAOKE_XF: number;
 	/** The supposed LCD contrast level. `0` indicates 0% contrast, `16` indicates 100% contrast. */
 	lcdContrast: number;
 	/** The linked clock source. */
 	clockSource: TimeMuxer;
+	/** The link clock tick state. */
+	clockTicker: OctaviaClockSink;
 	/** Model-exclusive states. */
 	modelEx: {
 		/** States specific to Yamaha XG. */
 		"xg": {
-			/** Selected voice map.
+			/** Selected voice map. Defaults to `0` (MU Basic).
 			* - `0`: MU Basic (Native map for MU50, MU80, MU90, S-YXG50 and most other XG synths)
 			* - `1`: MU100 Native (Native map for MU100, MU128, MU500, MU1000, MU2000 and SW1000XG)
 			* - `2`: PSR/LE (Native map for S-YXG2006LE and PSR models)
 			* - `3`: QY100 (Native map for QY100 and PLG100-XG)
 			*/
-			"map": number;
+			"map": int32;
+			/** Should the selected voice map persist across XG resets. Defaults to `false`.
+			* - `false`: Follow the mode resets, prevents contamination across sequences. Best for properly programmed XG files targetting classic XG (MU Basic & MU100 Native).
+			* - `true`: Keep the XG level unchanged across resets, faithful to the original MU100+ units. Best for modern XG files that don't self-select the appropriate voice map. */
+			"mapPersist": boolean;
 			/** Currently activated YMCS Section Control ID. The exact meaning of this value varies between models (QY, PSR). */
-			"section": number;
-			/** If YMCS Section control has been activated. */
+			"section": uint8;
+			/** If YMCS Section control has been activated. Defaults to `false`. */
 			"sectSwitch": boolean;
-			/** Device ID for the selected style pattern in `uint16`. */
-			"styleDev": number;
-			/** Style pattern ID for the selected style pattern in `uint16`. */
-			"styleId": number;
+			/** Device ID for the selected style pattern in `uint16`. Defaults to `0` (none). */
+			"styleDev": uint16;
+			/** Style pattern ID for the selected style pattern in `uint16`. Defaults to `0` (none). */
+			"styleId": uint16;
 			/** Specified chords in the native chords form. */
-			"chords": number[];
-			/** When `true`, variation effect applies device-wide instead of only on a single part. */
-			"varSys": false;
+			"chords": uint16[];
+			/** When `true`, variation effect applies device-wide instead of only on a single part. Defaults to `false`. */
+			"varSys": boolean;
 			/** Which parts have insertion effects active. Slot 0 is for the variation effect; XG only allows 4 effects in total per device. */
 			"insPart": Uint8Array;
 		},
@@ -337,18 +378,24 @@ export class OctaviaDevice {
 	readonly baseBank: VoiceBank;
 	/** The user voice bank intended for editable voices/instruments in RAM. */
 	readonly userBank: VoiceBank;
-	/** When `true`, Octavia will be re-initialized on every mode switch. */
-	initOnReset: boolean;
+	/** The attached fake EPROM object. */
+	eprom?: OctaviaFakeEPROM;
 	/** Specifies the customized EFX name from KORG AI² synths. */
 	readonly aiEfxName: string;
-	/** When `true`, the polyphony tracker's last index pointer will shrink. Defaults to `true` for speeding up note recovery. */
-	polyIndexShrink: boolean;
 	/** Specifies the latest polyphony tracker index being accessed. */
 	readonly polyIndexLatest: number;
 	/** Specifies the last polyphony tracker index. */
 	readonly polyIndexLast: number;
 	/** When `true`, the visualiser should hide voice bank information. Typically seen in Yamaha MU demo songs. */
 	hideVoiceDetails: boolean;
+	/** When `true`, Octavia will be re-initialized on every mode switch. */
+	initOnReset: boolean;
+	/** Specify the maximum retained amount of meta events. Defaults to `96`. */
+	maxKeepMetaCount: number;
+	/** When `true`, the polyphony tracker's last index pointer will shrink. Defaults to `true` for speeding up note recovery. */
+	polyIndexShrink: boolean;
+	/** When `true`, decoded phonemes (e.g. from PLG-SG) will be preferred over actual lyrics. Default to `false`. */
+	preferPhonemes: boolean;
 	/** Retrieve the actual assigned part from designated part and its track.
 	* @param noConquer When `true`, automatic channel allocation is not triggered.
 	*/
@@ -363,6 +410,8 @@ export class OctaviaDevice {
 	buildRccMap(): void;
 	/** Trigger an event showing SysEx indicators on visualisers. */
 	invokeSysExIndicator(): void;
+	/** Throws errors out if part number validity check does not pass. */
+	checkChValidity(part: number): void;
 	/** Deprecated. Retrieve the internal array indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
 	getActive(): Uint8Array;
 	/** Returns a number indicating if a part is active or not. Refer to `OctaviaDevice.prototype.CH_*` for details. */
@@ -426,13 +475,18 @@ export class OctaviaDevice {
 	* @param offset How many spaces should preceed the text.
 	* @param delay How long until the current letter display expires.
 	*/
-	setLetter(data: Uint8Array | Uint8ClampedArray, source?: string, offset?: number, delay?: number): void;
+	setLetter(data: Uint8Array|Uint8ClampedArray, source?: string, offset?: number, delay?: number): void;
 	/** Set the current letter display.
 	* @param data The source buffer of the letter display text.
 	* @param source The call source of this method. Used for debugging.
 	* @param delay How long until the current letter display expires.
 	*/
 	setLetterText(data: string, source?: string, delay?: number): void;
+	/** Set the lyrics reception mode. Read `OctaviaDevice.KARAOKE_*` for details.
+	* @param forced When `true`, force reception mode change. */
+	setLyricsMode(mode: number, forced: boolean): void;
+	/** Reset the lyrics reception mode to "none". Read `OctaviaDevice.KARAOKE_*` for details. */
+	resetLyricsMode(): void;
 	/** Get the global device mode. */
 	getMode(): string;
 	// Should also introduce per-device mode here on top of per-port mode.
@@ -540,23 +594,23 @@ export class OctaviaDevice {
 	/** Retrieve the numerical mode identifier of a part. */
 	getChModeId(part: number, noFallback?: boolean): number;
 	/** Sets the mode of a part with a numerical identifier. */
-	setChModeId(part: number, modeId?: boolean): string;
+	setChModeId(part: number, modeId?: number): void;
 	/** Retrieve the string mode identifier of a port. */
-	getPortMode(part: number, noFallback?: boolean): string;
+	getPortMode(port: number, noFallback?: boolean): string;
 	/** Retrieve the numerical mode identifier of a port. */
-	getPortModeId(part: number, noFallback?: boolean): number;
+	getPortModeId(port: number, noFallback?: boolean): number;
 	/** Set the mode of a port with a numerical identifier. */
-	setPortModeId(part: number, modeId?: boolean): string;
+	setPortModeId(port: number, modeId?: number): void;
 	/** Copy the setup of a part from another part. Needs rethinking and reworking. */
 	copyChSetup(sourcePart: number, targetPart: number, failWhenActive?: boolean): void;
 	/** Get the first write part for a drum slot. */
-	getDrumFirstWrite(part: number): number;
+	getDrumFirstWrite(drumSet: number): number|null;
 	/** Set the first write part for a drum slot. Part setup copying will happen on subsequent parts of the same slot.
 	* @param disable When `true`, the first write status of the part will be reset.
 	*/
 	setDrumFirstWrite(part: number, disable?: boolean): void;
 	/** Get the first write part for a part's drum slot. */
-	getChDrumFirstWrite(part: number): number;
+	getChDrumFirstWrite(part: number): number|null;
 	/** Switch the global mode.
 	* - `0`: Change only when without a defined mode. No reset.
 	* - `1`: Change. Reset when without a defined mode.
@@ -567,19 +621,21 @@ export class OctaviaDevice {
 	*/
 	switchMode(mode: string, forced?: number, setTarget?: boolean): void;
 	/** (WIP) Retrieve the raw strength of all parts, values range between 0 and 16383. */
-	getRawStrengths(): Uint8Array;
+	getRawStrengths(): Uint16Array;
 	/** Retrieve the strength of all parts, values are all within [0, 32767], affected by cc7 and cc11.
 	* @param fullScale When `true`, the range will become [0, 32768] instead.
 	*/
-	getStrengths(fullScale?: boolean): Uint8Array;
+	getStrengths(fullScale?: boolean): Uint16Array;
 	/** Wipe the raw strength buffer clean for the next round. */
 	clearStrength(): void;
-	/** The older MIDI event object executor. */
+	/** The legacy MIDI event object executor. @deprecated */
 	runJson(json: Object): void;
-	/** (WIP) Execute a decoded MIDI event. */
-	runEvent(event: NakedMIDIEvent): void;
-	/** (WIP) Directly execute an undecoded MIDI event on a port. */
-	runRaw(eventBuffer: Uint8Array | Uint8ClampedArray, port?: number): void;
+	/** Execute a decoded MIDI event. */
+	runEvent(event: MIDINakedEvent | MIDIUMPEvent): void;
+	/** (WIP) Directly execute an undecoded MIDI event on a port.
+	* @param port The port number. `255` means "unset".
+	*/
+	runRaw(eventBuffer: Uint8Array|Uint8ClampedArray, port?: number): void;
 	/** Load custom user voices from files in supported formats.
 	*
 	* Supported formats:
@@ -597,5 +653,5 @@ export class OctaviaDevice {
 	* @param format The format specifier.
 	* @param blob The `ReadableStream` instance of the file.
 	*/
-	streamBank(format: string, blob: ReadableStream<Uint8Array | Uint8ClampedArray>): Promise<void>;
+	streamBank(format: string, blob: ReadableStream<Uint8Array|Uint8ClampedArray>): Promise<void>;
 }

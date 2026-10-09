@@ -13,11 +13,13 @@ case "$1" in
 			git config --unset gpg.format
 			git config --unset user.signingkey
 			git config commit.gpgsign false
+			git config tag.gpgsign false
 			echo "Future commits will no longer be signed."
 		else
 			git config --unset gpg.format
 			git config user.signingkey "$keyId"
 			git config commit.gpgsign true
+			git config tag.gpgsign true
 			echo "Future commits will be signed with ${keyId}."
 		fi
 		;;

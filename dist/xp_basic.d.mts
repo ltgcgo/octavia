@@ -146,15 +146,15 @@ declare interface OctaviaSessionProvider extends OctaviaTimeProvider {
 	*
 	* `timeupdate` is not used.
 	*/
-	addEventListener?(type: string, listener: Function, opt?: boolean | EventListenerOptions): void;
+	addEventListener?(type: string, listener: Function, opt?: boolean|EventListenerOptions): void;
 	/** When this method exists along with `removeEventListener`, change synchronisation will become largely reactive, instead of relying on periodic polling. */
-	removeEventListener?(type: string, listener: Function, opt?: boolean | EventListenerOptions): void;
+	removeEventListener?(type: string, listener: Function, opt?: boolean|EventListenerOptions): void;
 }
 
 /** A utility class for binding media sessions with a media element or a time provider, as well as dynamically handling metadata display. */
 export class MediaSessionBinder {
 	/** Binds the media session with a source, so changes from the source directly influence the media session representation state. Will clear all existing sources if nothing is provided. */
-	setSource(source?: HTMLMediaElement | OctaviaSessionProvider): void;
+	setSource(source?: HTMLMediaElement|OctaviaSessionProvider): void;
 	/** The metadata to be shown when the bound source is active. The shown metadata will be cleared when the source is no longer active. */
 	metadata?: MediaMetadata;
 	/** The metadata to be shown when the bound source is neither inactive nor playing. */
@@ -179,7 +179,7 @@ export class BitmapMatrix {
 	/** Length of the underlying buffer. */
 	readonly length: number;
 	/** Assigned ID. */
-	id?: number | string;
+	id?: number|string;
 	/** Get the view of the underlying buffer for a frame. */
 	getFrame(frameId?: number): Uint8Array;
 	/** Execute a receiver function on all covered pixels. */
