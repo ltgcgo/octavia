@@ -261,8 +261,12 @@ export class OctaviaDevice {
 	readonly CH_DISABLED: number;
 	/** The dedicated karaoke reception mode is not activated. */
 	readonly KARAOKE_NONE: number;
+	/** The dedicated karaoke reception mode is activated for decoded phoneme parameters (e.g. PLG-SG phonemes). */
+	readonly KARAOKE_PHONEME: number;
 	/** The dedicated karaoke reception mode is activated for [Text Event Substitution](https://kb.ltgc.cc/octavia/impl/ext.html#text-event-substitution). */
 	readonly KARAOKE_TEXT: number;
+	/** The dedicated karaoke reception mode is activated for [MMA standard lyrics](https://kb.ltgc.cc/octavia/impl/ext.html#standard-lyrics). */
+	readonly KARAOKE_LYRICS: number;
 	/** The dedicated karaoke reception mode is activated for [Yamaha XF](https://kb.ltgc.cc/octavia/impl/ext.html#xf-lyrics). */
 	readonly KARAOKE_XF: number;
 	/** The supposed LCD contrast level. `0` indicates 0% contrast, `16` indicates 100% contrast. */

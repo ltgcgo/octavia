@@ -470,8 +470,10 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	CH_ACTIVE = 1;
 	CH_DISABLED = 2;
 	KARAOKE_NONE = 0;
-	KARAOKE_TEXT = 1; // Repurposed text events as karaoke lyrics
-	KARAOKE_XF = 2; // Yamaha XF karaoke lyrics
+	KARAOKE_PHONEME = 0; // Decoded phonemes from parameters
+	KARAOKE_TEXT = 2; // Repurposed text events as karaoke lyrics
+	KARAOKE_LYRICS = 3; // MMA standard lyrics event
+	KARAOKE_XF = 4; // Yamaha XF karaoke lyrics
 	// Values
 	#mode = 0;
 	#bitmapPage = 0;
