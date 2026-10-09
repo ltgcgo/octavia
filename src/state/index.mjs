@@ -4491,7 +4491,7 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 			getDebugState() && console.debug(`MU1000 native channel switch: `, msg);*/
 		}).add([87, 0, 0], (msg, track) => {
 			// VL70-m sound module
-			let dPref = `VL70-m sound module `;
+			const dPref = `VL70-m sound module `;
 			switch (msg[0]) {
 				case 126: {
 					console.info(`${dPref}mode set to: ${["VL-XG", "VL70-m voice"][msg[1]] ?? `invalid (${msg[1]})`}`);
@@ -4505,6 +4505,43 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				default: {
 					console.info(`Unknown ${dPref}address: ${msg[0]}`);
 				};
+			};
+		}).add([87, 16], (msg, track) => {
+			// VL70-m current voice param
+			const slotId = msg[0];
+			if (slotId >= upThis.modelEx.yPlg[0].length) {
+				console.warn(`Ignored writes to VL voice slot #${slotId}.`);
+				return;
+			};
+			const slotCh = upThis.modelEx.yPlg[0][slotId];
+			const dPref = `VL70-m/PLG-VL voice slot #${slotId} `;
+			const offset = msg[1];
+			let cvnWritten = false;
+			msg.subarray(2).forEach((e, i) => {
+				const ri = offset + i;
+				if (ri < 8) {
+					upThis.#bnCustom[slotCh] = 1;
+					upThis.setChCvnRegister(slotCh, ri, e);
+					cvnWritten = true;
+				} else {
+					// Unsupported
+					/*([() => {
+
+					}][ri] || (() => {
+						console.debug(`${dPref}unknown address: ${ri}`);
+					}))();*/
+				}
+			});
+			if (cvnWritten) {
+				upThis.dispatchEvent("metacommit", {
+					"type": "OSysMeta",
+					"msg": "part.rename",
+					"data": {
+						part: slotCh
+					}
+				});
+				upThis.setChActive(slotCh, 1);
+				upThis.pushChPrimitives(slotCh);
 			};
 		}).add([93, 3], (msg, track) => {
 			// PLG-SG singing voice
