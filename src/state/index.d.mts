@@ -376,20 +376,22 @@ export class OctaviaDevice {
 	readonly userBank: VoiceBank;
 	/** The attached fake EPROM object. */
 	eprom?: OctaviaFakeEPROM;
-	/** When `true`, Octavia will be re-initialized on every mode switch. */
-	initOnReset: boolean;
 	/** Specifies the customized EFX name from KORG AI² synths. */
 	readonly aiEfxName: string;
-	/** When `true`, the polyphony tracker's last index pointer will shrink. Defaults to `true` for speeding up note recovery. */
-	polyIndexShrink: boolean;
 	/** Specifies the latest polyphony tracker index being accessed. */
 	readonly polyIndexLatest: number;
 	/** Specifies the last polyphony tracker index. */
 	readonly polyIndexLast: number;
 	/** When `true`, the visualiser should hide voice bank information. Typically seen in Yamaha MU demo songs. */
 	hideVoiceDetails: boolean;
+	/** When `true`, Octavia will be re-initialized on every mode switch. */
+	initOnReset: boolean;
 	/** Specify the maximum retained amount of meta events. Defaults to `96`. */
 	maxKeepMetaCount: number;
+	/** When `true`, the polyphony tracker's last index pointer will shrink. Defaults to `true` for speeding up note recovery. */
+	polyIndexShrink: boolean;
+	/** When `true`, decoded phonemes (e.g. from PLG-SG) will be preferred over actual lyrics. Default to `false`. */
+	preferPhonemes: boolean;
 	/** Retrieve the actual assigned part from designated part and its track.
 	* @param noConquer When `true`, automatic channel allocation is not triggered.
 	*/

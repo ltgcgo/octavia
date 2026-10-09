@@ -620,13 +620,14 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 	baseBank = new VoiceBank("gm2", "ns5r", "xg", "gs", "sd", "gmega", "plg-vl", "plg-pf", "plg-dx", "plg-an", "plg-dr", "plg-sg", "kross", "s90es", "cs2x", "pa", "ymh", "gm-extra"); // Load all possible voice banks
 	userBank = new VoiceBank("gm2"); // User-defined bank for MT-32, X5DR and NS5R
 	eprom = new OctaviaFakeEPROM(4194304);
-	initOnReset = false; // If this is true, Octavia will re-init upon mode switches
 	aiEfxName = "";
-	polyIndexShrink = true;
 	polyIndexLatest = 0;
 	polyIndexLast = 0;
 	hideVoiceDetails = false;
+	initOnReset = false;
 	maxKeepMetaCount = 96;
+	polyIndexShrink = true;
+	preferPhonemes = false;
 	chRedir(part, track, noConquer) {
 		let upThis = this;
 		if (upThis.#trkAsReq[track]) {
@@ -4526,7 +4527,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 				} else {
 					// Unsupported
 					/*([() => {
-
 					}][ri] || (() => {
 						console.debug(`${dPref}unknown address: ${ri}`);
 					}))();*/
