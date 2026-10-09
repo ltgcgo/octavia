@@ -7922,6 +7922,15 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 					cvnWritten = true;
 					upThis.#bnCustom[perfCh] = 1;
 					upThis.setChCvnRegister(perfCh, ri, e);
+					if (ri === 7) {
+						upThis.dispatchEvent("metacommit", {
+							"type": "OSysMeta",
+							"msg": "part.rename",
+							"data": {
+								part: perfCh
+							}
+						});
+					};
 				} else if (ri < 48) {
 					// cs2x common
 					([false, () => {
