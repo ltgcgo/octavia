@@ -276,7 +276,7 @@ const Cambiare = class extends RootDisplay {
 	#metaAmend = false;
 	#metaType = "";
 	#metaLastLine;
-	#metaLastWheel = 0;
+	#metaLastWheel = -2147483648;
 	#metaMoveX = 0;
 	#metaMoveY = 0;
 	#maxPoly = 0;
@@ -470,6 +470,7 @@ const Cambiare = class extends RootDisplay {
 	};
 	#scrollMeta(resetTime) {
 		const upThis = this;
+		console.debug(upThis.#metaLastWheel);
 		if (upThis.clockSource.now() - upThis.#metaLastWheel > 4000) {
 			upThis.#metaMoveX = 0;
 			upThis.#metaMoveY = 142 - upThis.#sectMeta.view.clientHeight;

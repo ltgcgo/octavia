@@ -4627,7 +4627,6 @@ let OctaviaDevice = class OctaviaDevice extends CustomEventSource {
 						"mask": sgConf.splitMask
 					});
 				};
-
 				sgConf.runLineLen ++;
 				sgConf.splitMask = false;
 				//console.debug(`Running length: ${sgConf.runLineLen}`);
