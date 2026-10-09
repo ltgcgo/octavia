@@ -1703,7 +1703,12 @@ const Cambiare = class extends RootDisplay {
 						switch (meta?.msg) {
 							case "part.rename": {
 								const chVoiceId = upThis.device?.getVoice(... upThis.getCachedChVoice(data.part).sid, upThis.device?.getChMode(0)).name;
-								text = `CH${data.part + 1} was renamed from "${upThis.getMapped(chVoiceId)}" (${chVoiceId}) to "${upThis.device?.getChCvnString(0)}".`;
+								let destText = upThis.device?.getChCvnString(0);
+								const mapQuery = upThis.getMapped(destText);
+								if (mapQuery?.length > 0 && mapQuery !== destText) {
+									destText = mapQuery;
+								};
+								text = `CH${data.part + 1} was renamed from "${upThis.getMapped(chVoiceId)}" (${chVoiceId}) to "${destText}".`;
 								break;
 							};
 							default: {
