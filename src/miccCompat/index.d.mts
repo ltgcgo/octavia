@@ -4,14 +4,15 @@
 /** 💪 Robust standards-aware compatibility layers for existing SMF and MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project, **licensed under GNU LGPL v3**. The shims do not incorporate any code from the original implementations, only attempting to mimic their shapes and behaviour via experiments.
 *
 * Shims for the following packages are available.
-* | Family | Implementation | Status | Validated | ATD |
-* | ------ | -------------- | ------ | --------- | --- |
-* | Colxi | `colxi/midi-parser-js` | Finished | Yes | No |
-* | MJT | `chrisguttandin/midi-json-parser` | WIP | No | No |
-* | MJT | `midi-json-tools/midi-to-json` | WIP | No | No |
-* | jasmid | `gasman/jasmid/midifile.js` | WIP | No | No |
-* | jasmid | `carter-thaxton/midi-file` | WIP | No | No |
-* | jasmid | `ryohey/midifile-ts` | WIP | No | No |
+* | Family | Implementation | Status | Validated | ATD | SPA |
+* | ------ | -------------- | ------ | --------- | --- | --- |
+* | Colxi | `colxi/midi-parser-js` | Finished | Yes | No | No |
+* | FMP | `edhille/func-midi-parser` | Planned | No | No | No |
+* | MJT | `chrisguttandin/midi-json-parser` | WIP | No | No | No |
+* | MJT | `midi-json-tools/midi-to-json` | WIP | No | No | No |
+* | jasmid | `gasman/jasmid/midifile.js` | Planned | No | No | No |
+* | jasmid | `carter-thaxton/midi-file` | Planned | No | No | No |
+* | jasmid | `ryohey/midifile-ts` | Planned | No | No | No |
 *
 * For details on migrating projects depending on the original implementions, read the migration notes ([Codeberg](https://codeberg.org/ltgc/octavia/src/branch/main/isolated/midi-parser-ecosystem/README.md#migration-notes), [GitHub](https://github.com/ltgcgo/octavia/blob/main/isolated/midi-parser-ecosystem/README.md#migration-notes)).
 *
@@ -63,6 +64,10 @@ declare class UnifiedShimBase {
 declare interface ColxiMIDIEvent {
 	/** MIDI channel. */
 	channel?: uint8;
+	/** (WIP) MIDI port. Used to route events to correct ports, preventing conflicts in multi-port compositions.
+	*
+	* Not present in the original implementation. Can be turned off by disabling extended parsing. */
+	port?: uint8;
 	/** MIDI delta time. */
 	deltaTime: uint32;
 	/** MIDI event type.
@@ -79,7 +84,7 @@ declare interface ColxiMIDIEvent {
 	* ## Meta events
 	* For `ff` (meta) events, the value type depends on the meta event type in the following order.
 	* - For `2f` (track end), this is undefined.
-	* - For `21` (track port), this is always `uint8`.
+	* - For `21` (track port), this is always `uint8`. Note that this is _not_ the only way to specify ports, with details [available here](https://kb.ltgc.cc/octavia/impl/ext.html#port-assign), thus use the `port` property if SPA is available.
 	* - For `59` (key signature), this is always `uint16`.
 	* - For `51` (tempo), this is always `uint32`.
 	* - For `54` (SMPTE offset) and `58` (time signature), this is always `Uint8Array` from the raw event bytes.
@@ -213,6 +218,10 @@ declare interface MJTNotePressureEventDetails extends MJTPressureEventDetails {
 export interface MJTMIDIBaseEvent {
 	/** MIDI delta time. */
 	delta: uint32;
+	/** (WIP) MIDI port. Used to route events to correct ports, preventing conflicts in multi-port compositions.
+	*
+	* Not present in the original implementation. Can be turned off by disabling extended parsing. */
+	port?: uint8;
 }
 export interface MJTMIDIStatusEvent extends MJTMIDIBaseEvent {
 	/** MIDI channel. */
@@ -276,7 +285,9 @@ export interface MJTMIDIMetaEvent extends MJTMIDIBaseEvent {
 	marker?: string;
 	/** Meta event type of unknown "text" events. */
 	metaTypeByte?: string; // Why is not this a number??? Why does the original implementation specified by the documentation do this???
-	/** Track port events. */
+	/** Track port events.
+	*
+	* Note that this is _not_ the only way to specify ports, with details [available here](https://kb.ltgc.cc/octavia/impl/ext.html#port-assign), thus use the `port` property if SPA is available. */
 	midiPort?: uint8;
 	/** Voice name events. */
 	programName?: string;

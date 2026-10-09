@@ -10,14 +10,15 @@
 
 Shims for the following packages are available.
 
-| Family | Implementation | Status | Validated | ATD |
-| ------ | -------------- | ------ | --------- | --- |
-| Colxi | `colxi/midi-parser-js` | Finished | Yes | No |
-| MJT | `chrisguttandin/midi-json-parser` | WIP | No | No |
-| MJT | `midi-json-tools/midi-to-json` | WIP | No | No |
-| jasmid | `gasman/jasmid/midifile.js` | WIP | No | No |
-| jasmid | `carter-thaxton/midi-file` | WIP | No | No |
-| jasmid | `ryohey/midifile-ts` | WIP | No | No |
+| Family | Implementation | Status | Validated | ATD | SPA |
+| ------ | -------------- | ------ | --------- | --- | --- |
+| Colxi | `colxi/midi-parser-js` | Finished | Yes | No | No |
+| FMP | `edhille/func-midi-parser` | Planned | No | No | No |
+| MJT | `chrisguttandin/midi-json-parser` | WIP | No | No | No |
+| MJT | `midi-json-tools/midi-to-json` | WIP | No | No | No |
+| jasmid | `gasman/jasmid/midifile.js` | Planned | No | No | No |
+| jasmid | `carter-thaxton/midi-file` | Planned | No | No | No |
+| jasmid | `ryohey/midifile-ts` | Planned | No | No | No |
 
 For additional benefits, such as [extensive file import and export support](https://kb.ltgc.cc/octavia/impl/format.html) and MIDI 2.0 wire format support, provided by the MICC subsystem, or such as synth behaviour emulation, and extended standard compliance, provided by the Octavia state engine, we strongly recommend you to migrate to Octavia MICC ([Codeberg](https://codeberg.org/ltgc/octavia/), [GitHub](https://github.com/ltgcgo/octavia/), [JSR](https://jsr.io/@ltgc/octavia/doc/micc/)) instead, which can integrate strongly with the rest of the Octavia ecosystem, and uses standard web-compliant runtime-agnostic ESM like this shim.
 
@@ -27,7 +28,7 @@ This module is also released standalone as `@ltgc/midi-parser-ecosystem` on vari
 Are you looking to migrate from older implementations? If yes, [please read the migration notes](#migration-notes).
 
 ### `@colxi/midi-parser-js`
-_Documentation available: [buffered](https://jsr.io/@ltgc/midi-parser-ecosystem/doc/~/ColxiMIDIParser), [streamed](https://jsr.io/@ltgc/midi-parser-ecosystem/doc/~/ColxiMIDIParserStreamed)_.
+_Documentation available: [buffered](https://jsr.io/@ltgc/midi-parser-ecosystem/doc/~/ColxiMIDIParser), [streamed](https://jsr.io/@ltgc/midi-parser-ecosystem/doc/~/ColxiMIDIParserStreamed). Specific migration notes in sections below._
 ```js
 import {ColxiMIDIParser as MidiParser} from "path_to_js_file"; // Buffered variant, speed first
 import {ColxiMIDIParserStreamed as MidiParser} from "path_to_js_file"; // Streamed variant, resource first
@@ -38,8 +39,13 @@ const midiFile = await MidiParser.parse(input);
 While the shims attempt to minimise the required code changes, a scant few are nonetheless needed. Read below for specifics.
 
 ### General notes
+#### Abbreviations
+- **ATD**: Adaptive Text Decoding. Read the "General notes - additions" section and the relevant MICC documentation for details.
+- **SPA**: Smart Port Allocation. Read the "General notes - additions" section and the relevant MICC documentation for details.
+
 #### Changes
-- As the shims reuse the MICC parsing machinery, they also inherit the much stricter validation that came with MICC. As such, corrupt files silently accepted by the original implementations may longer be permitted.
+- Do not use shims marked as "WIP", even ones with documentation. This is due to the relevant documentation always being finished before actual implementation, to ensure the original codebases never leaking into the shims, thus ensuring zero additional restrictions beyond what GNU LGPL v3 already impose. Only use ones marked as "RC", "Ready" or "Finished".
+- As the shims reuse the MICC parsing machinery, they also inherit much stricter validation that came with MICC. As such, corrupt files silently accepted by the original implementations may longer be permitted.
 
 #### Additions
 - Input type adapters are no longer needed, as all parsers have expanded input types. For a list of supported input types, [read here](https://jsr.io/@ltgc/octavia/doc/micc/~/UnifiedBinaryIntake).
@@ -48,9 +54,10 @@ While the shims attempt to minimise the required code changes, a scant few are n
 - Some parser shims, like the Colxi-family shim, have buffered and streamed variants catering different needs. If speed is prioritised over memory constraint, choose the buffered variant, otherwise use the streamed variant. Actual throughput figures are available in the documentation.
   - For Colxi: [buffered](https://jsr.io/@ltgc/midi-parser-ecosystem/doc/~/ColxiMIDIParser), [streamed](https://jsr.io/@ltgc/midi-parser-ecosystem/doc/~/ColxiMIDIParserStreamed).
 - Mojibake (garbled text due to text encoding mismatch) handling is now built-in. All shims use the UTF-8 → Latin-9 → Shift JIS decoding ladder by default, however you can swap them out via the `decoders` property.
-  - Some MIDI files may use text encoding indicators to request changes mid-parse, like MMA text encoding tags, Soft Karaoke language tags, and XF region/language fields. Check the "ATD" (adaptive text decoding) field for the state of current support, which none of the original implementations actually implement.
+  - Some MIDI files may use text encoding indicators to request changes mid-parse, like MMA text encoding tags, Soft Karaoke language tags, and XF region/language fields. Check the "**ATD**" (adaptive text decoding) field for the state of current support, which none of the original implementations actually implement.
 - If capable of being represented fully within the constraint of the original classes, all shims now gain free SMF extension supports, like Yamaha XF and MUSEQ. This can be disabled by setting the `extended` property on parser shims to `false`, which usually will match the output of the original implementation.
   - If `Uint8Array` passthrough is not desired, the Colxi shim has an additional `MidiParser.customInterpreter = false;` toggle to produce integers instead. This is also noted in its "changes" section.
+- Some MIDI files, notably certain type 1 official demo songs from Roland SC-88 and Roland SD-90, lack explicit port assignments. Some vendors like Yamaha use [custom extensions](https://kb.ltgc.cc/octavia/impl/ext.html#port-assign) to assign ports instead of the standardised MMA conventions. SPA is thus designed to deterministically handle all these multi-port files. Check the "**SPA**" (smart port allocation) field for the state of current support, which none of the original implementations actually implement.
 
 ### `@colxi/midi-parser-js`
 #### Incompatibilities
