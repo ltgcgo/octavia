@@ -375,7 +375,7 @@ const bitFieldUnpack = (sourceBuffer, targetBuffer, options = {
 * @param {number} threshold*/
 const runLengthSubtract = (size, threshold) => {
 	if (size > threshold) {
-		return size - threshold - 1; // 
+		return size - threshold - 1; //
 	} else if (size === threshold) {
 		return -1;
 	} else {
