@@ -140,7 +140,11 @@ const MICC = class MICC {
 				};
 			} catch (err) {
 				if (this.debug) {
-					console.warn(`The error was thrown when parsing the following chunk ("${lastSubchunk.type}" #${lastSubchunk.chunkId + 1}) at offset 0x${lastSubchunk?.offsetData?.toString(16).padStart(6, "0")}:\n`, lastSubchunk);
+					if (lastSubchunk) {
+						console.warn(`The error was thrown when parsing the following chunk ("${lastSubchunk?.type}" #${(lastSubchunk?.chunkId ?? 0) + 1}) at offset 0x${lastSubchunk?.offsetData?.toString(16).padStart(6, "0")}:\n`, lastSubchunk);
+					} else {
+						console.warn(`The error was thrown before a chunk was read.`);
+					};
 				};
 				sequence.reject(err);
 			};
