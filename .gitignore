@@ -6,6 +6,7 @@ deno.lock
 dist/*.js
 dist/*.gz
 dist/*.br
+dist/*.zip
 dist/**/*.js
 dist/**/*.gz
 dist/**/*.br
