@@ -57,9 +57,9 @@ code {background:#222 !important;}
 		<div id="info-renderer" class="text-renderer content has-radius-normal px-5 py-4" style="background:#7f7f7f22;" x-data="{}">
 			<div id="info-title-standby" class="text-functional" x-show="$store.appState===0">Open a file to begin. Polak is cute.</div>
 			<div id="info-title-standby" class="text-functional has-text-info" x-show="$store.appState===1">Loading file data...</div>
-			<div id="info-title-success" class="text-functional has-text-success" x-show="$store.appState===2">Showing the parsed result of binary stream "<span>nom.mid</span>" (<span>114514</span> B).</div>
+			<div id="info-title-success" class="text-functional has-text-success" x-show="($store.appState>>1)===1">Showing the parsed result of binary stream "<span>nom.mid</span>" (<span>114514</span> B).</div>
 			<div id="info-title-failure" class="text-functional text-verbose has-text-danger" x-show="$store.appState===3">Uncaught UnnommedDeerError: The deer has not been nommed.</div>
-			<div id="info-meta-seq" class="py-2" x-show="$store.appState===2">
+			<div id="info-meta-seq" class="py-2" x-show="($store.appState>>1)===1">
 				<h3>Sequence metadata</h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
@@ -78,7 +78,7 @@ code {background:#222 !important;}
 					</tbody>
 				</table>
 			</div>
-			<div id="info-meta-mod" class="py-2" x-show="$store.appState===2">
+			<div id="info-meta-mod" class="py-2" x-show="($store.appState>>1)===1">
 				<h3>Tracker metadata</h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
@@ -97,7 +97,7 @@ code {background:#222 !important;}
 					</tbody>
 				</table>
 			</div>
-			<div id="info-meta-trk" class="py-2" x-show="$store.appState===2">
+			<div id="info-meta-trk" class="py-2" x-show="($store.appState>>1)===1">
 				<h3>Tracks</h3>
 				<table class="table is-striped is-hoverable">
 					<thead>
@@ -120,7 +120,7 @@ code {background:#222 !important;}
 					</tbody>
 				</table>
 			</div>
-			<div id="info-meta-clp" class="py-2" x-show="$store.appState===2">
+			<div id="info-meta-clp" class="py-2" x-show="($store.appState>>1)===1">
 				<h3>Pool resources</h3>
 				<table class="table is-striped is-hoverable">
 					<thead>

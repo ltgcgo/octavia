@@ -558,6 +558,8 @@ export class MICCSequence {
 /** Musical Instructions Compiler Collection. */
 export class MICC extends MICCConstants {
 	// Persisted settings.
+	/** When `true`, prints out more debug messages. Defaults to `false`. */
+	static debug: boolean;
 	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, Latin-9 will be used.
 	*
 	* Defaults to UTF-8 → Latin-9 → Shift JIS. */

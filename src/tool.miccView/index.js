@@ -261,6 +261,7 @@ self.gParseFile = async () => {
 			errorText += err.stack.split("\n").join("\n\t");
 			dispCrashError.innerText = errorText;
 			Alpine.store("appState", 3);
+			await populateViewer();
 		};
 	};
 };
@@ -271,3 +272,5 @@ self.gParseFile = async () => {
 	Alpine.store("metaTracker", []);
 	Alpine.start();
 })();
+MICC.debug = true;
+self.MICC = MICC;

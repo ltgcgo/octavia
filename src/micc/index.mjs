@@ -67,6 +67,7 @@ const IntakeNormaliser = class IntakeNormaliser {
 };
 
 const MICC = class MICC {
+	static debug = false;
 	/** @type {Iterable<TextDecoder>} */
 	static decoders;
 	/** @param {ReadableStream<Uint8Array>} stream
@@ -94,8 +95,11 @@ const MICC = class MICC {
 				"isSmfWrapped": true,
 				"parserContext": {}
 			};
+			/** @type {SeamstressChunk} */
+			let lastSubchunk;
 			try {
 				for await (const subchunk of SeamstressInstanceSMF.readRegulated(fileStream)) {
+					lastSubchunk = subchunk;
 					//console.info(subchunk);
 					switch (subchunk.type) {
 						case "MThd": {
@@ -135,6 +139,9 @@ const MICC = class MICC {
 					};
 				};
 			} catch (err) {
+				if (this.debug) {
+					console.warn(`The error was thrown when parsing the following chunk ("${lastSubchunk.type}" #${lastSubchunk.chunkId + 1}) at offset 0x${lastSubchunk?.offsetData?.toString(16).padStart(6, "0")}:\n`, lastSubchunk);
+				};
 				sequence.reject(err);
 			};
 			sequence.markReady();
