@@ -26,18 +26,26 @@ The current MIDI landscape is a dumpster fire, at least in the FOSS world. Only 
 
 With Octavia, no longer will you worry about either standard compliance or non-standard environment extensions. Just focus on building what's important, be it visualizers, state browsers, event routers or even realtime event translators, Octavia's got your back. Feel free to test Octavia's capabilities with all available demos.
 
-## Why Octavia over others?
+## Why Octavia?
+## Features
 - Free, libre and open-source, licensed under GNU LGPL v3.0.
-- Beyond a capable runtime, standard ECMAScript, and Web-compliance, it assumes nothing about the environment.
-- Keep your focus on building what matters, as Octavia behaves like a real MIDI module, taking over the heavy-lifting for you.
-- Built-in support for multiple plug-in cards and tons of other devices.
-- Wide support of bank mapping and bitmaps via [Octavia Scroll](https://github.com/ltgcgo/midi-db).
-- Stringent compliance of existing established standards.
-- Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
-- Available in Web-compliant JS (standard ESM; browser and Deno).
-- Developed with Firefox and open Web in mind, not just bootlicking Chromium and V8. Independent browsers like Servo and Ladybird are irregularly tested as well.
-- No modification required to run in hardened forks of browsers, like Tor Browser, Cromite and LibreWolf. Web MIDI API however may not be present in these hardened forks.
+- Available as _web-compliant JS_ (standard ESM; browser and Deno) with TypeScript declarations.
+- Beyond a capable runtime, standard ECMAScript, and web-compliance, _assumes nothing about the environment_.
+- Comparatively stringent compliance of existing established standards.
+- Developed with Firefox and open Web in mind, _not just bootlicking Chromium and V8_. Independent browsers like Servo and Ladybird are irregularly tested as well.
+- _No modification required_ to run in hardened forks of browsers, like Tor Browser, Cromite and LibreWolf.
+
+### Octavia Lyre
 - Supports 16 ports, 256 channels, 768-voice polyphony maximum. More than you'll ever need.
+- Keep your focus on building what matters, as Lyre behaves like a real MIDI module, taking over the heavy-lifting for you.
+- Built-in support for multiple plug-in cards, various established standards, and tons of other devices, with instrument data backed by [Octavia Scroll]((https://github.com/ltgcgo/midi-db)).
+- Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
+
+### Octavia MICC
+- Either keep close to the metal or get abstracted. Unlike most other MIDI parser libraries, it's your choice, you deserve to have it.
+- (WIP) Relatively hands-off text decoding and port allocation. No need to bother with headaches like this when you don't want to.
+- (WIP) Don't get restricted by synchronous buffers, MIDI 1.0, Standard MIDI Files, or even MIDI. The world is vast, your project's coverage should be too without much headache.
+- (WIP) Don't stop at merely parsing, get serialisation and conversion as well, mostly for free!
 
 ## Supported targets
 Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](https://kb.ltgc.cc/octavia/support/target.html) for more information.

@@ -9,6 +9,9 @@
 .text-functional {
 	font-family: monospace;
 }
+.text-bound {
+	white-space: pre;
+}
 .text-renderer {
 	font-size: 1rem;
 }
