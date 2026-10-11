@@ -27,7 +27,6 @@ The current MIDI landscape is a dumpster fire, at least in the FOSS world. Only 
 With Octavia, no longer will you worry about either standard compliance or non-standard environment extensions. Just focus on building what's important, be it visualizers, state browsers, event routers or even realtime event translators, Octavia's got your back. Feel free to test Octavia's capabilities with all available demos.
 
 ## Why Octavia?
-## Features
 - Free, libre and open-source, licensed under GNU LGPL v3.0.
 - Available as _web-compliant JS_ (standard ESM; browser and Deno) with TypeScript declarations.
 - Beyond a capable runtime, standard ECMAScript, and web-compliance, _assumes nothing about the environment_.
@@ -38,7 +37,7 @@ With Octavia, no longer will you worry about either standard compliance or non-s
 ### Octavia Lyre
 - Supports 16 ports, 256 channels, 768-voice polyphony maximum. More than you'll ever need.
 - Keep your focus on building what matters, as Lyre behaves like a real MIDI module, taking over the heavy-lifting for you.
-- Built-in support for multiple plug-in cards, various established standards, and tons of other devices, with instrument data backed by [Octavia Scroll]((https://github.com/ltgcgo/midi-db)).
+- Built-in support for multiple plug-in cards, various established standards, and tons of other devices, with instrument data backed by [Octavia Scroll](https://github.com/ltgcgo/midi-db).
 - Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
 
 ### Octavia MICC
