@@ -1,8 +1,7 @@
 // 2024-2026 © Lightingale Community
 // Licensed under GNU LGPL 3.0
 
-/**
-* Minimise the Mojibake (文字化け) risk with reusable safe multi-encoding text decoders.
+/** Minimise the Mojibake (文字化け) risk with reusable safe multi-encoding text decoders.
 * @license LGPL-3.0-only
 * @module cc.ltgc.rochelle.binaryString
 */

@@ -1,6 +1,6 @@
 # Octavia
 > **Warning**
-> 
+>
 > While using AI to help understand the codebase is allowed, using AI to contribute without knowledge is strictly forbidden for this project. People using AI models to contribute without understanding will be banned. Read [AGENT.md](AGENT.md) for further details.
 
 🎻 Event-driven multi-standard MIDI tool chain. State tracking, parsing, serializing.
@@ -41,11 +41,11 @@ With Octavia, no longer will you worry about either standard compliance or non-s
 - Emits warnings when MIDI programming errors are spotted, reducing chances of faulty programming.
 
 ### Octavia MICC
-- Your parser and serialiser should not fight against you or hide information from you, assist and leave you alone whenever needed. We endured the pain for years before, now you shouldn't have to.
-- It's your choice to either keep close to the metal or get the abstraction you need. Unlike most MIDI parser libraries, you deserve to have your choice.
+- Your parser and serialiser should not fight against or omit information from you, while assisting and leaving you alone whenever needed. We endured the pain for years before, now you shouldn't have to.
+- You choose to either keep close to the metal or get the abstraction you need. Unlike most MIDI parser libraries, this library doesn't alienate either.
 - (WIP) Relatively hands-off text decoding and port allocation. No need to bother with headaches like this when you don't want to, unlike most MIDI parser libraries.
 - (WIP) Unlike most music-related parser libraries, don't get restricted by synchronous buffers, MIDI 1.0, Standard MIDI Files, or even MIDI. The world is vast, your project's coverage should be too without much headache.
-- (WIP) Don't stop at merely parsing, get serialisation and conversion as well, mostly for free, unlike most MIDI libraries!
+- (WIP) Don't stop at merely parsing, get serialisation and conversion as well, mostly for free!
 
 ## Supported targets
 Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](https://kb.ltgc.cc/octavia/support/target.html) for more information.

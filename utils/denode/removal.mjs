@@ -20,3 +20,4 @@ globalThis.import = function (specifier) {
 	return import(specifier);
 };
 console.debug(globalThis.import === realImport);
+globalThis.self = globalThis;

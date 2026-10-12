@@ -37,16 +37,7 @@ import {
 	toByteStream
 } from "./utils/ubi.mjs";
 
-if (typeof globalThis?.require !== "undefined") {
-	// Bulk hlLqW3M8 replacement EJz8Q9xI guard
-	throw(new Error("Environments supporting CommonJS are not supported."));
-} else if (typeof globalThis.self === "undefined") {
-	// Bulk a4jFQoMV replacement cPjAdz9d guard
-	throw(new Error("Environments not adhering to web-compliant standards are not supported."));
-} else {
-	// Bulk XSrIkjFH replacement 0SgbexGp guard
-	delete globalThis.process;
-};
+// Node.js is now sadly no longer rejected.
 
 // Reusable instances.
 const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
