@@ -12,13 +12,14 @@ Shims for the following packages are available. All of these shims use battle-te
 
 | Family | Implementation | Status | Validated | ATD | SPA |
 | ------ | -------------- | ------ | --------- | --- | --- |
-| Colxi | `colxi/midi-parser-js` | Finished | Yes | No | No |
+| Colxi | `colxi/midi-parser-js` | Ready | Yes | No | No |
 | FMP | `edhille/func-midi-parser` | Planned | No | No | No |
 | MJT | `chrisguttandin/midi-json-parser` | WIP | No | No | No |
 | MJT | `midi-json-tools/midi-to-json` | WIP | No | No | No |
 | jasmid | `gasman/jasmid/midifile.js` | Planned | No | No | No |
 | jasmid | `carter-thaxton/midi-file` | Planned | No | No | No |
 | jasmid | `ryohey/midifile-ts` | Planned | No | No | No |
+| JZZ | `jazz-soft/JZZ-midi-SMF` | Planned | No | No | No |
 
 For additional benefits, such as [extensive file import and export support](https://kb.ltgc.cc/octavia/impl/format.html) and MIDI 2.0 wire format support, provided by the MICC subsystem, or such as synth behaviour emulation, and extended standard compliance, provided by the Octavia state engine, we strongly recommend you to migrate to Octavia MICC ([Codeberg](https://codeberg.org/ltgc/octavia/), [GitHub](https://github.com/ltgcgo/octavia/), [JSR](https://jsr.io/@ltgc/octavia/doc/micc/)) instead, which can integrate strongly with the rest of the Octavia ecosystem, and uses standard web-compliant runtime-agnostic ESM like this shim.
 

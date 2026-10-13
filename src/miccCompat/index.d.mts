@@ -6,13 +6,14 @@
 * Shims for the following packages are available. All of these shims use battle-tested parser internals from MICC, and are all tested against a real adversial corpus that made at least one of the original implementations fail.
 * | Family | Implementation | Status | Validated | ATD | SPA |
 * | ------ | -------------- | ------ | --------- | --- | --- |
-* | Colxi | `colxi/midi-parser-js` | Finished | Yes | No | No |
+* | Colxi | `colxi/midi-parser-js` | Ready | Yes | No | No |
 * | FMP | `edhille/func-midi-parser` | Planned | No | No | No |
 * | MJT | `chrisguttandin/midi-json-parser` | WIP | No | No | No |
 * | MJT | `midi-json-tools/midi-to-json` | WIP | No | No | No |
 * | jasmid | `gasman/jasmid/midifile.js` | Planned | No | No | No |
 * | jasmid | `carter-thaxton/midi-file` | Planned | No | No | No |
 * | jasmid | `ryohey/midifile-ts` | Planned | No | No | No |
+* | JZZ | `jazz-soft/JZZ-midi-SMF` | Planned | No | No | No |
 *
 * For details on migrating projects depending on the original implementions, read the migration notes ([Codeberg](https://codeberg.org/ltgc/octavia/src/branch/main/isolated/midi-parser-ecosystem/README.md#migration-notes), [GitHub](https://github.com/ltgcgo/octavia/blob/main/isolated/midi-parser-ecosystem/README.md#migration-notes)).
 *
