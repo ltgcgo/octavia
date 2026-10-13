@@ -11,15 +11,15 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 
 > **Warning**
 >
-> Due to a critical bug affecting the SysEx processing flow (#55), Octavia is planned to have a major rewrite. The rewrite may happen at any time once version 0.5.2 is fully released.
+> Due to a critical bug affecting the SysEx interpretation flow (#55), Octavia Lyre is planned to have a major rewrite. The rewrite may happen at any time once version 0.5.2 is fully released.
 >
 > **If you're accessing the online version, it is advised to [use the stable branch instead](https://gh.ltgc.cc/octavia-stable/) in case of a massive break.** If you can see the address bar already at `/octavia-stable/` or you're running a local development build, ignore the warning.
 
 > **Warning**
 >
-> Octavia may work on Node.js, but support for it is never intended. Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. Except for the included compatibility layers, there is no plan to ever support runtimes that offers non-ES compliance with Node.js ecosystem, like Node.js or Bun, and issues raised from those runtimes will be ignored, unless reproducible from other runtimes as well.
+> Octavia may work on Node.js, but support for it is never first-class, since we _do not bootlick_ any single runtime. As this module is web-compliant standard ESM, to use on Node.js, a minimal web-compliant shim is required. Please check for the minimal import script from _Fly Leaf_, or the "de-Node" experiment in Octavia. Except via compatibility layers, there is no plan to ever put runtimes that offers non-ES compliance on first-class support.
 >
-> Octavia is only ever published to [Deno Deploy](https://deno.land/x/octavia_deno) and [JSR](https://jsr.io/@ltgc/octavia), with only its compatibility layers published to NPM to help transition off Node.js ecosystems. If you see Octavia fully published to other registries, report those fake packages immediately as they may contain malware.
+> Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. Octavia is only ever published to [JSR](https://jsr.io/@ltgc/octavia), with only its compatibility layers published to NPMJS to help transition off Node.js ecosystems. If you see Octavia fully published to other registries, report those fake packages immediately as they may contain malware.
 
 ## What is Octavia?
 The current MIDI landscape is a dumpster fire, at least in the FOSS world. Only proprietary software solutions respect existing MIDI standards, while the FOSS ecosystem largely ignores or even violates the conventions, with TiMidity as the single exception. Octavia, born out of being fed up by the existing antics exhibited by existing FOSS solutions, aims to reach full compliance with existing MIDI standards (MT-32, GM, XG, GS, GM2 and etc.), while exposing simple yet powerful interfaces for developers to build upon.
