@@ -3,7 +3,7 @@
 
 /** 💪 Robust standards-aware compatibility layers for existing SMF and MIDI parsers/converters, powered by the Musical Instructions Compiler Collection from the Octavia project, **licensed under GNU LGPL v3**. The shims do not incorporate any code from the original implementations, only attempting to mimic their shapes and behaviour via experiments.
 *
-* Shims for the following packages are available.
+* Shims for the following packages are available. All of these shims use battle-tested parser internals from MICC, and are all tested against a real adversial corpus that made at least one of the original implementations fail.
 * | Family | Implementation | Status | Validated | ATD | SPA |
 * | ------ | -------------- | ------ | --------- | --- | --- |
 * | Colxi | `colxi/midi-parser-js` | Finished | Yes | No | No |
