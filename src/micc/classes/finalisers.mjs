@@ -6,9 +6,7 @@
 import {
 	BinaryString
 } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
-import {
-	IntegerHandler
-} from "../../../libs/seamstress@ltgcgo/index.mjs";
+import IntegerHandler from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
 import {
 	decode7bitUint
 } from "../../state/utils/bufferIo.mjs";

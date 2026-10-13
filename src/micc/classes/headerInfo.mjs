@@ -3,9 +3,7 @@
 
 "use strict";
 
-import {
-	IntegerHandler
-} from "../../../libs/seamstress@ltgcgo/index.mjs";
+import IntegerHandler from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
 
 import {
 	MICCBaseElement

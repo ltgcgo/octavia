@@ -4,9 +4,9 @@
 "use strict";
 
 import {
-	IntegerHandler,
 	SeamstressChunk
 } from "../../../libs/seamstress@ltgcgo/index.mjs";
+import IntegerHandler from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
 import {
 	ConditionalError,
 	IncompleteError,

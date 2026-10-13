@@ -3,6 +3,7 @@
 
 "use strict";
 
+import IntegerHandler from "../../libs/rochelle@ltgcgo/integerHandler.mjs";
 import {
 	StreamQueue
 } from "../../libs/rochelle@ltgcgo/splicer.mjs";
