@@ -24,13 +24,18 @@ import {
 
 const fileProps = JSON.parse('{"extensions":[],"startIn":"pictures","id":"binOpener","description":"Open a file in a tag-length-value structure."}');
 const fileTypes = {
-	"mid": "smf",
 	"kar": "smf",
+	"kyc": "kyc",
 	"mia": "mia",
-	"xws": "xws",
-	"rmi": "smf",
+	"mii": "mia",
+	"mid": "smf",
+	"midi2": "smf2",
+	"rmi": "rmi",
+	"tjn": "tjn",
 	"wrk": "wrk",
+	"xws": "xws",
 	"it": "it",
+	"mod": "mod",
 	"mptm": "mptm",
 	"s3m": "s3m",
 	"xm": "xm"
