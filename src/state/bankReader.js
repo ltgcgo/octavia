@@ -987,7 +987,23 @@ let VoiceBank = class {
 				break;
 			};
 			case 127: {
-				standard = args[2] === 127 ? "MT" : (prg === 0 ? "GM" : "XG");
+				switch (args[2]) {
+					case 126: {
+						standard = "XG";
+						break;
+					};
+					case 127: {
+						standard = "MT";
+						break;
+					};
+					case 152: {
+						standard = prg === 0 ? "GM" : "YP";
+						break;
+					};
+					default: {
+						standard = prg === 0 ? "GM" : "XG";
+					};
+				};
 				break;
 			};
 			default: {
