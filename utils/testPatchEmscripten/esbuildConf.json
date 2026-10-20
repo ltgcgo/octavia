@@ -1,0 +1,9 @@
+{
+	"loader": "js",
+	"platform": "neutral",
+	"treeShaking": true,
+	"keepNames": true,
+	"minifyIdentifiers": true,
+	"minifySyntax": true,
+	"minifyWhitespace": true
+}
