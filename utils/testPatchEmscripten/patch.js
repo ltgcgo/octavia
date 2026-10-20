@@ -9,18 +9,19 @@ import {
 	transform
 } from "../../deno/artifact/esbuild.js";
 
-const obfuscationTableFilter = /function \w+\(\w+\)\{([0-9A-Za-z_]+=(Module\["[0-9A-Za-z_]+"\]=|wasmMemory=|wasmTable=)?wasmExports\["[0-9A-Za-z_$]+"\];?)+\}/m;
-const obfuscationEntryFilter = /[0-9A-Za-z_]+=(Module\["[0-9A-Za-z_]+"\]=|wasmMemory=|wasmTable=)?wasmExports\["[0-9A-Za-z_$]+"\];?/gm;
+const obfuscationTableFilter = /function\s*\w+\s*\(\s*\w+\s*\)\s*\{(\s*[0-9A-Za-z_]+\s*=\s*(Module\["[0-9A-Za-z_]+"\]\s*=|wasmMemory\s*=|wasmTable\s*=)?\s*wasmExports\["[0-9A-Za-z_$]+"\];?)+\s*\}/m; // Both minified and prettified.
+const obfuscationEntryFilter = /[0-9A-Za-z_]+\s*=\s*(Module\["[0-9A-Za-z_]+"\]\s*=|wasmMemory\s*=|wasmTable\s*=)?\s*wasmExports\["[0-9A-Za-z_$]+"\];?/gm; // Same as above.
+const obfuscationExtractor = /(?<nameDeobfs>[A-Za-z0-9_]+)\s*=.*=?\s*wasmExports\["(?<nameObfs>[A-Za-z0-9_$]+)"\]/m;
 const getDeObfsSymbolTable = (input = "") => {
 	const rawPos = input.search(obfuscationTableFilter);
 	if (!(rawPos > -1)) {
 		console.debug(`No de-obfuscation table found.`);
-		return {};
+		return [{}, {}];
 	};
 	const rawObfsAssigns = input.match(obfuscationTableFilter)[0];
 	if (!rawObfsAssigns?.length > 0) {
 		console.debug(`No de-obfuscation content found.`);
-		return {};
+		return [{}, {}];
 	};
 	const mapStoreD = new Map(), mapKeysD = [];
 	const mapStoreO = new Map(), mapKeysO = [];
@@ -28,18 +29,28 @@ const getDeObfsSymbolTable = (input = "") => {
 		if (entry[entry.length - 1] === ";") {
 			entry = entry.substring(0, entry.length - 1);
 		};
-		const splitEntry = entry.split("=");
-		const nameDeobfs = splitEntry[0];
-		let nameObfs = splitEntry[splitEntry.length - 1];
-		if (nameObfs.indexOf("wasmExports") < 0) {
-			console.debug(new Error(`Unknown export line:\n${entry}`));
+		const parsedGroups = obfuscationExtractor.exec(entry)?.groups;
+		if (parsedGroups == null) {
+			console.debug(entry);
 			continue;
 		};
-		nameObfs = nameObfs.substring(13);
-		nameObfs = nameObfs.substring(0, nameObfs.length - 2);
+		const {nameDeobfs, nameObfs} = parsedGroups;
 		if (nameObfs === nameDeobfs) continue;
 		mapStoreD.set(nameObfs, nameDeobfs);
-		mapStoreO.set(nameDeobfs, nameObfs);
+		let obfsKv = mapStoreO.get(nameDeobfs);
+		if (obfsKv?.length > 0) {
+			if (obfsKv !== nameObfs) {
+				if (typeof obfsKv === "string") {
+					obfsKv = [obfsKv];
+				};
+				if (obfsKv.indexOf(nameObfs) < 0) {
+					obfsKv.push(nameObfs);
+					mapStoreO.set(nameDeobfs, obfsKv);
+				};
+			};
+		} else {
+			mapStoreO.set(nameDeobfs, nameObfs);
+		};
 		mapKeysD.push(nameObfs);
 		mapKeysO.push(nameDeobfs);
 	};
