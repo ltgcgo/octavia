@@ -22,7 +22,8 @@ const getDeObfsSymbolTable = (input = "") => {
 		console.debug(`No de-obfuscation content found.`);
 		return {};
 	};
-	const mapStore = new Map(), mapKeys = [];
+	const mapStoreD = new Map(), mapKeysD = [];
+	const mapStoreO = new Map(), mapKeysO = [];
 	for (let entry of rawObfsAssigns.match(obfuscationEntryFilter)) {
 		if (entry[entry.length - 1] === ";") {
 			entry = entry.substring(0, entry.length - 1);
@@ -36,14 +37,20 @@ const getDeObfsSymbolTable = (input = "") => {
 		};
 		nameObfs = nameObfs.substring(13);
 		nameObfs = nameObfs.substring(0, nameObfs.length - 2);
-		mapStore.set(nameObfs, nameDeobfs);
-		mapKeys.push(nameObfs);
+		if (nameObfs === nameDeobfs) continue;
+		mapStoreD.set(nameObfs, nameDeobfs);
+		mapStoreO.set(nameDeobfs, nameObfs);
+		mapKeysD.push(nameObfs);
+		mapKeysO.push(nameDeobfs);
 	};
-	const result = {};
-	for (const key of mapKeys.sort()) {
-		result[key] = mapStore.get(key);
+	const resultD = {}, resultO = {};
+	for (const key of mapKeysD.sort()) {
+		resultD[key] = mapStoreD.get(key);
 	};
-	return result;
+	for (const key of mapKeysO.sort()) {
+		resultO[key] = mapStoreO.get(key);
+	};
+	return [resultD, resultO];
 };
 
 const patchGluePass1 = (input = "") => {
