@@ -18,24 +18,30 @@
 </head>
 <body>
 	<h2>Warning</h2>
-	<p>Due to a discovered optimization potential in the SysEx processing flow (<a target="_blank" href="https://github.com/ltgcgo/octavia/issues/55">#55</a>), Octavia is planned to have a major rewrite. The rewrite may happen at any time once version 0.5.2 is fully released.</p>
+	<p>Due to a discovered optimization potential in the SysEx processing flow (<a target="_blank" href="https://github.com/ltgcgo/octavia/issues/55">#55</a>) as well as upcoming design requirements of MICC and Mist Veil, Octavia Lyre will be rewritten fully to produce the generation 3 interpreting state tracker. The rewrite will happen before the 0.5.3 or 0.6 release.</p>
 	<p><b style="color: #f00">If you're accessing the online version, it is advised to <a href="../../octavia-stable/test/">use the stable branch instead</a> in case of a massive break.</b> If you can see the address bar already at <code>/octavia-stable/</code> or you're running a local development build, ignore the warning.</p>
 	<h2>Disclaimer</h2>
 	<p>See the <a href="../">main page</a>.</p>
+	<!--I know this page is ugly, but bear with me for a moment before I can make the system used by `dist-pages` more generic.-->
 	<h2>List of Octavia demos</h2>
-	<p>Demos of Octavia (not Octavia itself) are all under CC BY-NC-SA 4.0 license. Credits are advised when Octavia demos are used for recording videos. Demo MIDI files came along with Octavia demos are all <a target="_blank" href="https://github.com/ltgcgo/octavia/blob/main/CREDITS.md">credited here.</a></p>
-	<p>Some demos may require loading additional SysEx sound sets, and can either be included in the demos themselves, or be downloaded elsewhere. Demo 7 require JayB's X5D(R) sound set and NS5R sound set to be loaded, which can be downloaded from <a target="_blank" href="https://jaybmusic.net/sounds.php">jaybmusic.net</a>.</p>
-	<p>Octavia does not embed MIDI synthesizers currently, so please prepare your own pre-rendered audio files if you wish to see Octavia in action. If you wish to experience full MIDI bitmap animation experience, please watch them in demo screens with pixel blurs.</p>
-	<p>Octavia also offers <a href="./tools/">a series of tools</a> for convenience.</p>
+	<p>Read the <a href="#usage-notice">usage notice</a> first. <a target="_blank" href="https://kb.ltgc.cc/octavia/components.html">Additional documentations</a> are available.</p>
+	<p>Octavia also offers <a href="./tools/">a series of tools</a> for convenience, as well as <a href="winxp.htm">demos for legacy systems</a> (Firefox 52 ESR and Chrome 59).</p>
+	<h3>Routers</h3>
 	<ul>
 		<li>
-			<a href="winxp.htm">Demos for legacy systems</a> (Firefox 52 ESR and Chrome 59)
+			<a href="coloratura.htm">Coloratura</a> (<b>WIP</b>; full player and routing suite; <a target="_blank" href="https://kb.ltgc.cc/octavia/components.html#coloratura">learn more</a>)
 		</li>
 		<li>
-			<a href="dirigere.htm">Dirigere</a> (player, router, translator)
+			<a href="splash.htm"><b><u>Splash</u></b></a> (lightweight routing and debugging instrument; <a target="_blank" href="https://kb.ltgc.cc/octavia/components.html#splash">learn more</a>)
 		</li>
 		<li>
-			<a href="cambiare.htm">Cambiare</a> (visualiser; lazy pixel blur)
+			<a href="mw_old.htm">Middleware (old)</a> (router; bug fixes only)
+		</li>
+	</ul>
+	<h3>Visualisers</h3>
+	<ul>
+		<li>
+			<a href="cambiare.htm"><b><u>Cambiare</u></b></a> (visualiser and debugging instrument, lazy pixel blur; <a target="_blank" href="https://kb.ltgc.cc/octavia/components.html#cambiare">learn more</a>)
 		</li>
 		<li>
 			<a href="fakeMu.htm">Emulated YAMAHA MU screen</a> (full pixel blur) (<a onclick='open("./fakeMu.htm?minimal","","popup,width=856,height=264")'>minimal</a>)
@@ -55,11 +61,29 @@
 		<li>
 			<a href="fakeSc8850.htm">Emulated Roland SC-8850 screen</a> (lazy pixel blur by default)
 		</li>
+	</ul>
+	<h3>Additional Applications</h3>
+	<ul>
+		<li>
+			<a href="candy.htm">Candy</a> (<b>WIP</b>; universal synth editor; <a target="_blank" href="https://kb.ltgc.cc/octavia/components.html#candy">learn more</a>)
+		</li>
+		<li>
+			<a href="dawn.htm">Dawn</a> (<b>WIP</b>; macro-level file manipulator; <a target="_blank" href="https://kb.ltgc.cc/octavia/components.html#dawn">learn more</a>)
+		</li>
+		<li>
+			<a href="simulacris.htm">Simulacris</a> (<b>WIP</b>; bitmap SysEx editor; <a target="_blank" href="https://kb.ltgc.cc/octavia/components.html#simulacris">learn more</a>)
+		</li>
+	</ul>
+	<h3>Abandoned</h3>
+	<ul>
 		<li>
 			<s>Text UI</s> (deprecated due to security vulnerabilities)
 		</li>
-		<li>
-			<a href="mw_old.htm">Middleware</a> (no longer developed)
-		</li>
 	</ul>
+	<h3 id="usage-notice">Usage notice</h3>
+	<blockquote>
+		<p>Demos of Octavia (not Octavia itself) are all under CC BY-NC-SA 4.0 license. Credits are advised when Octavia demos are used for recording videos. Demo MIDI files came along with Octavia demos are all <a target="_blank" href="https://github.com/ltgcgo/octavia/blob/main/CREDITS.md">credited here.</a></p>
+		<p>Some demos may require loading additional SysEx sound sets, and can either be included in the demos themselves, or be downloaded elsewhere. Demo 7 require JayB's X5D(R) sound set and NS5R sound set to be loaded, which can be downloaded from <a target="_blank" href="https://jaybmusic.net/sounds.php">jaybmusic.net</a>.</p>
+		<p>Octavia does <b>not</b> embed MIDI synthesizers currently, so please prepare your own pre-rendered audio files if you wish to see Octavia in action. If you wish to experience full MIDI bitmap animation experience, please watch them in demo screens with pixel blurs.</p>
+	</blockquote>
 </body>

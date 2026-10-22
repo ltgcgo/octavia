@@ -11,7 +11,7 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 
 > **Warning**
 >
-> Due to a critical bug affecting the SysEx interpretation flow (#55), Octavia Lyre is planned to have a major rewrite. The rewrite may happen at any time once version 0.5.2 is fully released.
+> Due to a critical bug affecting the SysEx interpretation flow (#55) as well as upcoming design requirements of MICC and Mist Veil, Octavia Lyre will be rewritten fully to produce the generation 3 interpreting state tracker. The rewrite will happen before the 0.5.3 or 0.6 release.
 >
 > **If you're accessing the online version, it is advised to [use the stable branch instead](https://gh.ltgc.cc/octavia-stable/) in case of a massive break.** If you can see the address bar already at `/octavia-stable/` or you're running a local development build, ignore the warning.
 

@@ -144,8 +144,6 @@ midiInSel.forEach((e, i) => {
 
 (async function () {
 	self.midiAccess = await navigator.requestMIDIAccess({"sysex": true, "software": true});
-	self.fromJson = fromJson;
-	self.toJson = toJson;
 	midiAccess.addEventListener("statechange", (ev) => {
 		console.debug(ev.port);
 	});
