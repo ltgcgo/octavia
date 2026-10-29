@@ -1,6 +1,10 @@
 # Fly Leaf
 > _Grief is the price we may pay. With flying leaves, sparks, thorns and ember, we may not have to._
 
+> **Warning**
+>
+> _Fly Leaf_ is not yet ready for prime time. Once its completion reaches a certain milestone, it will become an independent project just like _Rochelle_ and _Seamstress_. Check relevant information before proceeding to incorporate.
+
 🦕 Continuing Deno's web-first APIs without requiring Deno.
 
 This is a best-effort compatibility layer making the global Deno APIs available on multiple runtimes, as well as enforcing a subset of commonly expected web conventions (W3C, WHATWG, WinterTC) onto runtimes that may not conform to such. As the successor of _WingBlade_, even if Deno and all of its successors vanish, this library can make Deno's legacy far outliving originals.
@@ -19,7 +23,7 @@ If you're sure a crashing component is intended for a web-compliant environment 
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/cleanUp.mjs ...`
 
 ### Deno globals
-If a crashing component expect Deno globals, you can use the Fly Leaf loader.
+If a crashing component expect Deno globals, you can use the Fly Leaf loader. If provided, you can use the `bell ...` (Belladonna) helper instead.
 
 - Node.js: `node --import ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
@@ -36,6 +40,7 @@ import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 - **Bun**: Planned.
 - **Deno**: No-op for the loader.
 - **Ende**: A single property assignment for the loader.
+- **Javy**: Investigating.
 - **Node.js**: Planned.
 - **Porffor**: Investigating. Blocked by a lack of documentation.
 - **Txiki.js**: Investigating.

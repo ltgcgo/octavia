@@ -17,7 +17,7 @@ Made with ❤️ by Lightingale Community. Repository available on [Codeberg](ht
 
 > **Warning**
 >
-> Octavia may work on Node.js, but support for it is never first-class, since we _do not bootlick_ any single runtime. As this module is web-compliant standard ESM, to use on Node.js, a minimal web-compliant shim is required. Please check for the minimal import script from _Fly Leaf_, or the "de-Node" experiment in Octavia. Except via compatibility layers, there is no plan to ever put runtimes that offers non-ES compliance on first-class support.
+> Octavia may work on Node.js, but support for it is never first-class, since we _do not bootlick_ any single runtime. As this module is web-compliant standard ESM, to use on Node.js, a minimal web-compliant shim is required. Please check for the clean-up script from _Fly Leaf_. Except via compatibility layers, there is no plan to ever put runtimes that offers non-ES compliance on first-class support.
 >
 > Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. Octavia is only ever published to [JSR](https://jsr.io/@ltgc/octavia), with only its compatibility layers published to NPMJS to help transition off Node.js ecosystems. If you see Octavia fully published to other registries, report those fake packages immediately as they may contain malware.
 
@@ -46,6 +46,35 @@ With Octavia, no longer will you worry about either standard compliance or non-s
 - (WIP) Relatively hands-off text decoding and port allocation. No need to bother with headaches like this when you don't want to, unlike most MIDI parser libraries.
 - (WIP) Unlike most music-related parser libraries, don't get restricted by synchronous buffers, MIDI 1.0, Standard MIDI Files, or even MIDI. The world is vast, your project's coverage should be too without much headache.
 - (WIP) Don't stop at merely parsing, get serialisation and conversion as well, mostly for free!
+
+## Environment tests
+Don't believe our claims regarding environment neutrality? Hope this section changes your mind!
+
+### Browsers
+> This section is updated manually and irregularly. Automated full coverage test is not yet fully possible, especially for Epiphany and Ladybird.
+
+| Browser | Engines | Status | Version |
+| ------- | --------- | ------ | ------- |
+| Chromium | V8 (Blink) | Supported | 154 |
+| Epiphany | JavaScriptCore (WebKitGTK) | Supported | 48.5 |
+| Firefox | SpiderMonkey (Gecko) | Supported | 153 ESR |
+| Ladybird | LibJS (LibWeb) | Supported | Pre-alpha 20260922 |
+| Servo | SpiderMonkey (Servo) | Supported | 0.5.0 |
+
+### Runtimes
+> This section will be replaced by CI badges once automated validation is complete. Some components have not yet been validated.
+
+> While Node.js is pinned to the latest LTS version shipped by Debian stable, and Deno pinned to release 2.9.7, tests for all other JS runtimes are run on their respective latest stable release.
+
+All supported runtimes listed below have their output verified to be identical to each other, without requiring compatibility layers for APIs of a specific runtime. Node.js requires at least the Fly Leaf clean-up script to function, check _Fly Leaf_ for details.
+
+| Component | Deno | Bun | Node.js 20 LTS |
+| --------- | ---- | --- | -------------- |
+| `chord.mjs` | ✓ | ✓ | ✓ |
+| Lyre v2 | ✓ | ✓ | ✓ |
+| MICC | ✓ | ✓ | ✓ |
+
+1. Lyre v2 will be retired before Octavia 0.6, which will be replaced by Lyre v3.
 
 ## Supported targets
 Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](https://kb.ltgc.cc/octavia/support/target.html) for more information.
