@@ -14,7 +14,7 @@ Fly Leaf makes all runtimes report as `Deno 2.9.7`, which is the current compati
 Like the project and want to support it? Learn how in the parent project Octavia ([Codeberg](https://codeberg.org/ltgc/octavia/), [GitHub](https://github.com/ltgcgo/octavia/))!
 
 ## Quick Start
-All examples below assume the library is available under `./libs/fly-leaf@ltgcgo/`.
+Vendoring is the current recommended approach for loading Fly Leaf that sidesteps runtime feature support altogether. All examples below assume the library is vendored under `./libs/fly-leaf@ltgcgo/`.
 
 ### Conformance without shims
 If you're sure a crashing component is intended for a web-compliant environment without requiring any Deno API, then you can choose to use a simple clean-up script.
@@ -29,7 +29,7 @@ If a crashing component expect Deno globals, you can use the Fly Leaf loader. If
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 
 ### Force import
-To make sure Fly Leaf remains available regardless of runtime, likely for debug reasons, you can import Fly Leaf as a whole in your project, or to import the required APIs granularly. You can import via direct HTTP(S) imports, import maps, or JSR, whichever is available and convenient.
+To make sure Fly Leaf remains available regardless of runtime, likely for debug reasons, you can import Fly Leaf as a whole in your project, or import the required APIs granularly. Apart from vendoring, you can import via direct HTTP(S) imports, import maps, or JSR, whichever is available and convenient.
 
 ```js
 import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
@@ -45,7 +45,8 @@ import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 - **Porffor**: Investigating. Blocked by a lack of documentation.
 - **Txiki.js**: Investigating.
 
-### Dropped features
+### Out-of-scope features
 - **Bundling** (`Deno.bundle`). Use an external bundler like ESBuild, tdewolff Minify or SWC, some of which can be directly used on runtimes supporting WebAssembly.
+- **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like Fly Leaf, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or mirroring.
 - **KV Store** (`Deno.openKv`). Use the storage APIs or external databases.
 - **Node.js-API Native Addon**. Use FFI instead.

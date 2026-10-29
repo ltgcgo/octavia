@@ -10,6 +10,7 @@ dist/*.zip
 dist/**/*.js
 dist/**/*.gz
 dist/**/*.br
+ende.lock
 test/caches
 test/js/*.js
 test/js/*.map
