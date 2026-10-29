@@ -23,6 +23,7 @@ on:
       - "sh/srcMap.sh"
       - "src/**"
       - "!src/*/index.d.mts"
+      - "!src/flyLeaf/**"
       - "test/**"
       - "index.htm"
       #- "./data/**"
