@@ -7,9 +7,10 @@ import {
 	gaussSum
 } from "../utils/arithmetic.mjs";
 
-// Deterministic mapping between tracker and MIDI, from 0-64 ticks per row to the fixed mapped 64 MIDI ticks.
-const TrackerTickMapping = new Array(65),
-tickMappingsBuffer = new Uint8Array(2080); // (1+64)×(64÷2)
+// Deterministic mapping between tracker and MIDI, from 0-96 ticks per row to the fixed mapped 96 MIDI ticks.
+const trackerTicks = 96,
+TrackerTickMapping = new Array(trackerTicks + 1),
+tickMappingsBuffer = new Uint8Array(gaussSum(1, 1, trackerTicks));
 
 {
 	for (let i = 0; i < TrackerTickMapping.length; i ++) {

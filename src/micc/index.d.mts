@@ -441,26 +441,26 @@ export class MICCSequenceMetadata extends MICCBaseMetadata {
 	clip?: uint32;
 	/** For files utilising styles, amount of expected styles. Currently unused. Always check the actual style count! */
 	style?: uint32;
-	/** For formats directly specifying names. Pure Standard MIDI Files and XWS files don't have this field, but formats like tracker music modules and KORG SNG have it. */
-	title?: string;
+	/** For formats directly specifying names. Pure Standard MIDI Files and XWS files don't have this field, but formats like tracker music modules and KORG SNG have it.
+	*
+	* Impulse Tracker restricts this to 25 bytes. */
+	title?: BinaryString;
 }
 /** (WIP) A single edit record. */
 export class MICCEditRecord {}
 /** (WIP) A single MIDI macro. */
 export class MICCMacroMIDI {}
-/** The contained additional metadata of the current file, only makes sense for trackers. Aims at 100% compatibility with [Impulse Tracker](https://breezewiki.com/fileformats/wiki/Impulse_tracker).
+/** The contained additional metadata of the current file, only makes sense for trackers. Aims to achieve 100% compatibility with [Impulse Tracker](https://kb.ltgc.cc/octavia/impl/format/it.html). Further documentation available at [tracker](https://kb.ltgc.cc/octavia/spec/tmod/#meta-fields).
 *
 * The group specifier is `ltgc.micc.meta.tracker`. */
 export class MICCTrackerMetadata extends MICCBaseMetadata {
 	/** If the file is a tracker. */
 	isTracker: boolean;
-	/** If true, G effect will be linked with E and F. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
-	*
-	* This field should be superceded with a field more capable of defining effect flows. */
-	linkEffects: boolean;
-	/** The "created" field. */
+	/** If true, G control (portamento to) will be linked with E (portamento down) and F (portamento up) controls. Defaults to `false` for MIDI compatibility, while Impulse/ModPlug modules will always cause this field to be set accordingly. */
+	linkPortamento: boolean;
+	/** The "created" field. [256, 768) denotes two-byte Impulse Tracker versions. */
 	created?: number;
-	/** The "compatible" field. */
+	/** The "compatible" field. [256, 768) denotes two-byte Impulse Tracker versions. */
 	compatible?: number;
 	/** The amount of expected audio channels. Default value is `2`. */
 	channels: number;

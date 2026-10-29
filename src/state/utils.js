@@ -34,7 +34,7 @@ let gsChecksum = function (sequence) {
 	return (~checksum + 1) & 127;
 };
 
-// Why KORG adds a byte every seven bytes is a mistery to me.
+// Why KORG adds a byte every seven bytes is a mystery to me.
 // That's because it's an 8-on-7 scheme!
 /** @deprecated */
 let korgFilter = function (korgArr, iterator) {
