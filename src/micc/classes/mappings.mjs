@@ -38,9 +38,10 @@ const PaulaPeriodTable = new Uint16Array(6 << 4);
 	PaulaPeriodTable[64] --;
 	PaulaPeriodTable[72] --;
 	PaulaPeriodTable[80] --;
-	console.debug(PaulaPeriodTable);
+	//console.debug(PaulaPeriodTable);
 };
 
 export {
+	PaulaPeriodTable,
 	TrackerTickMapping
 };
