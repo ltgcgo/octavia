@@ -12,7 +12,10 @@ const trackerTicks = 96,
 TrackerTickMapping = new Array(trackerTicks + 1),
 tickMappingsBuffer = new Uint8Array(gaussSum(1, 1, trackerTicks));
 
+const PaulaPeriodTable = new Uint16Array(6 << 4);
+
 {
+	// Tracker/MIDI tick mappings.
 	for (let i = 0; i < TrackerTickMapping.length; i ++) {
 		const targetValueTPR = i > 0 ? i : 1;
 		const bufferEndPos = gaussSum(1, 1, targetValueTPR);
@@ -24,6 +27,18 @@ tickMappingsBuffer = new Uint8Array(gaussSum(1, 1, trackerTicks));
 		//console.debug(currentTable);
 		TrackerTickMapping[i] = currentTable;
 	};
+	for (let i = 0; i < PaulaPeriodTable.length; i ++) {
+		PaulaPeriodTable[i] = Math.round(906.88 * Math.pow(2, -i / 96));
+	};
+	PaulaPeriodTable[24] --;
+	PaulaPeriodTable[40] --;
+	PaulaPeriodTable[48] --;
+	PaulaPeriodTable[49] --;
+	PaulaPeriodTable[56] --;
+	PaulaPeriodTable[64] --;
+	PaulaPeriodTable[72] --;
+	PaulaPeriodTable[80] --;
+	console.debug(PaulaPeriodTable);
 };
 
 export {

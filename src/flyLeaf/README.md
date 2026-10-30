@@ -47,6 +47,6 @@ import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 
 ### Out-of-scope features
 - **Bundling** (`Deno.bundle`). Use an external bundler like ESBuild, tdewolff Minify or SWC, some of which can be directly used on runtimes supporting WebAssembly.
-- **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like Fly Leaf, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or mirroring.
+- **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like Fly Leaf, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.
 - **KV Store** (`Deno.openKv`). Use the storage APIs or external databases.
 - **Node.js-API Native Addon**. Use FFI instead.
