@@ -7,6 +7,8 @@
 
 Made with ❤️ by Lightingale Community. Repository available on [Codeberg](https://codeberg.org/ltgc/octavia/) and [GitHub](https://github.com/ltgcgo/octavia/).
 
+Not sure how to explain to people what Octavia is? Here is our [marketing pitch](./PITCH.md) ready to be copied and pasted!
+
 [![Maintainability](https://api.codeclimate.com/v1/badges/fa5aeaf4ba4c9b2d50e2/maintainability)](https://codeclimate.com/github/ltgcgo/octavia/maintainability).
 
 > **Warning**
