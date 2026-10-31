@@ -57,7 +57,9 @@ declare class UnifiedShimBase {
 	static decoders?: Iterable<TextDecoder>;
 	/** When `true`, the parser will also include extensions not seen in regular MIDI files that MICC supports (e.g. XF, MUSEQ). Defaults to `true`.
 	*
-	* Not present in the original implementation. */
+	* Not present in the original implementation.
+	* - MUSEQ: Yamaha MU Sequence, an SMF type 1 extension with consolidated tracks, XF events and XGworks extensions.
+	* - XF: Yamaha XF, an SMF extension defining two custom chunks and various custom MIDI events. Official pure XF restricts to SMF type 0, which MICC does not impose. */
 	static extended: boolean;
 }
 
