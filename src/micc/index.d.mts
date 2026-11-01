@@ -35,7 +35,7 @@ export class IntakeNormaliser {
 
 // Native implementations
 /** Utility constants for MICC. */
-declare class MICCConstants {
+export class MICCConstants {
 	/** Note off events. */
 	static readonly MIDI_NOTE_OFF: uint8;
 	/** Note on events. */
@@ -284,8 +284,12 @@ declare interface MICCSMFMIAHandleOptions {
 	preferReadable?: boolean;
 }
 declare class MICCParserOptions {
-	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, Latin-9 will be used. */
+	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, Latin-9 will be used.
+	*
+	* Defaults to UTF-8 → Latin-9 → Shift JIS. */
 	decoders?: Iterable<TextDecoder>;
+	/** When `true`, prints out more debug messages. Defaults to `false`. */
+	debug: boolean;
 	/** Defines how deep should the finalisers go. Same as `MICCSequence.finaliserDepth`. */
 	finaliserDepth?: int8;
 }
@@ -484,6 +488,10 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	* - For XM, this is always `false`.
 	* - For IT and MPTM, this is always set accordingly by the "has time signature hint" flag. */
 	hintTimeSignature: boolean;
+	/** How many MICC ticks an actual tracker tick expand to. Defaults to `96`.
+	*
+	* Used by both parsers and serialisers, and may affect which events are treated as real instead of interpolated. Avoid modifying this value directly, unless you know what you're doing. */
+	interpolateTicks: uint16;
 	/** For IT and MPTM. If true, `G` control (portamento to) will be linked with `E` (portamento down) and `F` (portamento up) controls. Defaults to `false` for MIDI compatibility, while Impulse/ModPlug modules will always cause this field to be set accordingly. */
 	linkPortamento: boolean;
 	/** For XM. The "ID text" or file magic string in Latin-9. Defaults to an empty string.
@@ -675,32 +683,46 @@ export class MICCSequence {
 	/** The offset map for the track mapping time to ticks and time signature changes. */
 	offset: Object;
 }
-/** Musical Instructions Compiler Collection. */
-export class MICC extends MICCConstants {
-	// Persisted settings.
-	/** When `true`, prints out more debug messages. Defaults to `false`. */
-	static debug: boolean;
-	/** A set of text decoders to use. Starting from the first, if the current decoder fails, the next decoder will be used. If all specified decoders fail, or this property is empty, Latin-9 will be used.
+
+// Pure MIDI.
+/** Parse the incoming Standard MIDI File byte stream. */
+export function MICC_parseSmf(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+/** Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of Standard MIDI Files) stream. */
+export function MICC_parseMia(stream: ReadableStream<Uint8Array>, label?: string): MICCSequence;
+
+// SMF assembly and disassembly.
+/** Directly assemble MIA into SMF without going through a sequence object. */
+export function MICC_asmMia(data: ReadableStream<string>, options?: MICCParserOptions): ReadableStream<Uint8Array>;
+/** Directly disassemble SMF into MIA without going through a sequence object.
+* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
+export function MICC_dasmMia(stream: ReadableStream<Uint8Array>, useReadable?: boolean, options?: MICCParserOptions): ReadableStream<string>;
+
+// MIDI sequencer project files.
+/** (WIP) Parse the incoming Cakewalk Normal byte stream. */
+export function MICC_parseWrk(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+/** (WIP) Parse the incoming XGworks Project byte stream. */
+export function MICC_parseXws(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+
+// Tracker files.
+/** (WIP) Parse the incoming Fast Tracker II byte stream. */
+export function MICC_parseXm(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+/** (WIP) Parse the incoming Impulse Tracker/ModPlug Tracker byte stream. */
+export function MICC_parseIt(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+
+// Container with various possible formats.
+/** Unified RIFF parsers. */
+export class MICCParserRIFF extends MICCConstants {
+	/** Map the advertised RIFF FourCC magic to specifiers. */
+	associate(fourCC: string, specifier: string): void;
+	/** Register the FourCC chunk type to a handler. */
+	handleChunk(fourCC: string, handler: unknown): void; // The handler is likely going to be a new Seamstress method type, reserved here.
+	/** (WIP) Parse the incoming RIFF byte stream, which may contain RMI, DLS, BUN and more.
 	*
-	* Defaults to UTF-8 → Latin-9 → Shift JIS. */
-	static decoders: Iterable<TextDecoder>;
-	// Pure MIDI.
-	/** Parse the incoming Standard MIDI File byte stream. */
-	static parseSmf(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
-	/** Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of Standard MIDI Files) stream. */
-	static parseMia(stream: ReadableStream<Uint8Array>, label?: string): MICCSequence;
-	/** (WIP) Parse the incoming RMI byte stream. Contained Standard MIDI Files will be flattened. */
-	static parseRmi(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
-	// MIDI-containing project files.
-	/** (WIP) Parse the incoming XWS byte stream. */
-	static parseXws(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
-	// Tracker files.
-	/** (WIP) Parse the incoming Impulse Tracker byte stream. */
-	static parseIt(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
-	// Assembly and disassembly.
-	/** Directly assemble MIA into SMF without going through a sequence object. */
-	static assemble(data: ReadableStream<string>, options?: MICCParserOptions): ReadableStream<Uint8Array>;
-	/** Directly disassemble SMF into MIA without going through a sequence object.
-	* @param useReadable When true, the emitted MIA instructions will use human-readable equivalents whenever available. */
-	static disassemble(stream: ReadableStream<Uint8Array>, useReadable?: boolean, options?: MICCParserOptions): ReadableStream<string>;
+	* To handle related formats, register the chunk handlers first. */
+	parse(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence[];
 }
+
+/** Registers BUN handlers to an RIFF parser. */
+export function MICC_handleBun(parserInstance: MICCParserRIFF): void;
+/** Registers DLS and RMI handlers to an RIFF parser. */
+export function MICC_handleRmi(parserInstance: MICCParserRIFF): void;
