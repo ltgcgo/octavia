@@ -10,7 +10,8 @@ import type {
 	int8,
 	uint8,
 	uint16,
-	uint32
+	uint32,
+	float64
 } from "../../libs/rochelle@ltgcgo/nativeType.d.mts";
 import type {
 	SeamstressChunk,
@@ -441,9 +442,12 @@ export class MICCSequenceMetadata extends MICCBaseMetadata {
 	clip?: uint32;
 	/** For files utilising styles, amount of expected styles. Currently unused. Always check the actual style count! */
 	style?: uint32;
-	/** For formats directly specifying names. Pure Standard MIDI Files and XWS files don't have this field, but formats like tracker music modules and KORG SNG have it.
+	/** For formats directly specifying names. Pure Standard MIDI Files and XWS files don't have this field natively, but formats like tracker music modules and KORG SNG have it.
 	*
-	* Impulse Tracker restricts this to 25 bytes. */
+	* For tracker modules, trailing spaces are passed through, while trailing nulls are trimmed. If nulls exist before non-nulls and before the final null byte, they are passed through instead.
+	* - SMF parsing may populate this field, but SMF serialisation does not use this field.
+	* - XM restricts this to 20 bytes. CP437 is enforced upon serialisation.
+	* - IT restricts this to 25 bytes with a null at the 26th byte, with the final null bytes always trimmed. CP437 is enforced upon serialisation. */
 	title?: BinaryString;
 }
 /** (WIP) A single edit record. */
@@ -456,57 +460,80 @@ export class MICCMacroMIDI {}
 export class MICCTrackerMetadata extends MICCBaseMetadata {
 	/** If the file is a tracker. */
 	isTracker: boolean;
-	/** If true, G control (portamento to) will be linked with E (portamento down) and F (portamento up) controls. Defaults to `false` for MIDI compatibility, while Impulse/ModPlug modules will always cause this field to be set accordingly. */
+	/** For IT and MPTM. If true, G control (portamento to) will be linked with E (portamento down) and F (portamento up) controls. Defaults to `false` for MIDI compatibility, while Impulse/ModPlug modules will always cause this field to be set accordingly. */
 	linkPortamento: boolean;
-	/** The "created" field. [256, 768) denotes two-byte Impulse Tracker versions. */
-	created?: number;
-	/** The "compatible" field. [256, 768) denotes two-byte Impulse Tracker versions. */
-	compatible?: number;
-	/** The amount of expected audio channels. Default value is `2`. */
-	channels: number;
-	/** Initial ticking speed.  Defaults to `1` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
-	initSpeed: number;
-	/** Initial tempo. Should *not* treat the defined tempo values as the real tempo. Defaults to `120` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
-	initTempo: number;
-	/** Panpot separation. Valid values are integers in [0, 128]. */
-	panSplit?: number;
-	/** Pitch bend sensitivity. Valid values are [-24, 24].  Defaults to `2` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
-	pitchDepth: number;
-	/** Rows per beat. Defaults to `24` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
-	rowBeat: number;
-	/** Rows per measure. Defaults to `96` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.. */
-	rowMeasure: number;
-	/** Global volume. `uint16`, with `32768` denoting the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
-	volumeGlobal: number;
-	/** Mixing volume. `uint16`, with `32768` denoting the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
-	volumeMix: number;
-	/** If true, the sliders are all linear. Some trackers for older systems may set this field to `false` to use hardware-accelerated sliders (e.g. Amiga). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	/** For IT and MPTM. The "created" field. [256, 768) denotes two-byte Impulse Tracker versions. */
+	created?: uint16;
+	/** For IT and MPTM. The "compatible" field. [256, 768) denotes two-byte Impulse Tracker versions. */
+	compatible?: uint16;
+	/** For XM, IT and MPTM. The amount of expected audio channels. Default value is `2`. */
+	channels: uint8;
+	/** For XM, IT and MPTM. The full raw header data, used selectively to pass data through losslessly within the same format. */
+	headerData: Uint8Array;
+	/** For XM, IT and MPTM. Initial ticking speed. Defaults to `1` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	*
+	* This is rounded to the nearest integer and bound to [0, 255]. */
+	initSpeed: float64;
+	/** For XM, IT and MPTM. Initial tempo. Should *not* treat the defined tempo values as the real tempo.
+	*
+	* Defaults to `120` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	* - For XM, valid values include intergers in [0, 960].
+	* - For IT and MPTM, valid values include intergers in [0, 255]. */
+	initTempo: float64;
+	/** For XM. The index of the pattern in the pattern order table to jump back to a sequence finishes. This is always `0` for other formats. */
+	restartIndex: uint16;
+	/** For XM, used by players. The MICC tick value resolved from `restartIndex`, thus always unused by serialisers. This is always `0` for other formats. */
+	readonly restartTick: uint32;
+	/** For IT and MPTM. Panpot separation. Valid values are integers in [0, 32768].
+	* - IT and MPTM map the value to [0, 128]. */
+	panSplit?: uint32;
+	/** For XM, IT and MPTM. Pattern order table, which is used to populate the actual track. `0xFFFE` is "skip", and `0xFFFF` is "terminate".
+	* - For IT, valid values include [0, 200). ModPlug extends this to [0, 240).
+	* - For MPTM, valid values include [0, 240). */
+	patternOrder: Uint16Array;
+	/** For IT and MPTM. Pitch bend sensitivity. Valid values are [-24, 24].  Defaults to `2` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	pitchDepth: int8;
+	/** For IT and MPTM. Rows per beat. Defaults to `24` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	rowBeat: uint8;
+	/** For IT and MPTM. Rows per measure. Defaults to `96` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.. */
+	rowMeasure: uint8;
+	/** For IT and MPTM. Global volume. `32768` denotes the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	* - For IT and MPTM, this is always mapped to [0, 128]. */
+	volumeGlobal: uint16;
+	/** For IT and MPTM. Mixing volume. `32768` denotes the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	* - For IT and MPTM, this is always mapped to [0, 128]. */
+	volumeMix: uint16;
+	/** For XM, IT and MPTM. If true, the frequency sliders are all linear. Some trackers for older systems may set this field to `false` to use hardware-accelerated sliders (e.g. Amiga). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	isLinear: boolean;
-	/** If true, edit history is attached. Defaults to `false`. */
+	/** For IT and MPTM. If true, edit history is attached. Defaults to `false`. */
 	useEditHistory: boolean;
-	/** If true, highlights are embedded. Defaults to `false`. */
+	/** For IT and MPTM. If true, highlights are embedded. Defaults to `false`. */
 	useHighlights: boolean;
-	/** If true, indicates that MIDI macros are used. Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	/** For IT and MPTM. If true, indicates that MIDI macros are used. Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
 	useMidiMacros: boolean;
-	/** If true, use legacy effects. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.*/
+	/** For IT and MPTM. If true, use legacy effects. Defaults to `false` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.*/
 	useOldEfx: boolean;
-	/** If true, song messages are attached. Defaults to `false`. */
+	/** For IT and MPTM. If true, song messages are attached. Defaults to `false`. */
 	useSongMessages: boolean;
-	/** If true, the file uses instruments/voices instead of raw oscillators (e.g. samples, FM oscillators). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly. */
+	/** For IT and MPTM. If true, the file uses instruments/voices instead of raw oscillators (e.g. samples, FM oscillators). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	* - For XM, this is always true. */
 	useVoices: boolean;
-	/** Initial channel panpot. Unlike MIDI, it's an integer in the range of [0, 128]. 0 is full left, 128 is full right. Initialises to `64` for MIDI compatibility. */
-	initTrackPan?: number[];
-	/** Initial channel volume. Initialises to `100` for MIDI compatibility. */
-	initTrackVol?: number[];
-	/** (WIP) List of MIDI macros. */
+	/** For IT and MPTM. Initial channel panpot. Unlike MIDI, it's an integer in the range of [0, 128]. 0 is full left, 128 is full right. Initialises to `64` for MIDI compatibility.
+	* - For XM, the values are always centre. */
+	initTrackPan?: uint8[];
+	/** For IT and MPTM. Initial channel volume. Initialises to `32768` for MIDI compatibility.
+	* - For XM, the values are always maximum.
+	* - For IT and MPTM, this is always mapped to [0, 64]. */
+	initTrackVol?: uint16[];
+	/** For IT and MPTM. (WIP) List of MIDI macros. */
 	macros?: MICCMacroMIDI[];
-	/** The attached message in the tracker. */
+	/** For IT and MPTM. The attached message in the tracker. */
 	message?: BinaryString;
-	/** List of oscillators used. */
+	/** For XM, IT and MPTM. List of oscillators used. */
 	oscillators?: MICCOscillator[];
-	/** (WIP) List of edit records. */
+	/** (WIP) For IT and MPTM. List of edit records. */
 	records?: MICCEditRecord[];
-	/** List of instruments used. */
+	/** For XM, IT and MPTM. List of instruments used. */
 	voices?: MICCInstrument[];
 }
 /**
