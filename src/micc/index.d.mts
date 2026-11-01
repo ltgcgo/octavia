@@ -575,7 +575,7 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	* - For IT and MPTM, this is always set to the default value. */
 	xmCompatible: uint16;
 	/** For XM. When `true`, the indent byte will be `0x00` to signal a stripped XM, instead of `0x1A` in standard XM.
-	* - For XM, this is always set accordingly.
+	* - For XM, this is always set accordingly. Setting this flag will override all other XM strip flags, so write cautiously.
 	* - For IT and MPTM, this is always `false`. */
 	xmStripDeclare: boolean;
 	/** For XM. When `true`, the serialiser will attempt stripping the pattern table instead of emitting 256 bytes.
@@ -586,13 +586,6 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	* - For XM, this is always set accordingly.
 	* - For IT and MPTM, this is always `false`. */
 	xmStripVersion: boolean;
-	/** For IT and MPTM. Initial slot panpot. Unlike MIDI, it's an integer in the range of [0, 128]. 0 is full left, 128 is full right. Initialises to `64` for MIDI compatibility.
-	* - For XM, the values are always centre. */
-	slotPan: uint8[];
-	/** For IT and MPTM. Initial slot loudness. Initialises to `32768` for MIDI compatibility.
-	* - For XM, the values are always maximum.
-	* - For IT and MPTM, this is always mapped to [0, 64]. */
-	slotVol: uint16[];
 	/** (WIP) For IT and MPTM. List of MIDI macros.
 	* - For XM, this is always absent.
 	* - For IT and MPTM, this always exist if "request MIDI macros" is `true`, even if the size is 0. Following the de-facto Impulse Tracker implementation, the "has MIDI macro" field is ignored during parsing, and set to the same value as "request MIDI macros" upon serialisation. */
@@ -606,6 +599,10 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	* - For XM, this is always `0`.
 	* - For IT and MPTM, this is always set accordingly. */
 	messageOffset: uint32;
+	/** For IT and MPTM. Initial slot loudness. Initialises to `32768` for MIDI compatibility.
+	* - For XM, the values are always maximum.
+	* - For IT and MPTM, this is always mapped to [0, 64]. */
+	loudness: uint16[];
 	/** For XM, IT and MPTM. List of oscillators used. The serialiser will throw if this is empty. */
 	oscillators: MICCOscillator[];
 	/** For XM, IT and MPTM. Pattern order table, which is used to populate the actual track. Tracker serialisation uses this field instead of the tracks.
@@ -620,6 +617,9 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	* - For IT, valid values include [0, 200). ModPlug extends this to [0, 240). Must have (0, 256) elements.
 	* - For MPTM, valid values include [0, 240). */
 	patterns: MICCTrackElement[]; // The pattern data hasn't been designed at all.
+	/** For IT and MPTM. Initial slot panpot. Unlike MIDI, it's an integer in the range of [0, 128]. 0 is full left, 128 is full right. Initialises to `64` for MIDI compatibility.
+	* - For XM, the values are always centre. */
+	panpots: uint8[];
 	/** (WIP) For IT and MPTM. List of edit records.
 	* - For XM, this is always absent.
 	* - For IT and MPTM, this always exist if "has edit history" is `true`. */
