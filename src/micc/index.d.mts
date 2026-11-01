@@ -684,9 +684,14 @@ export class MICCSequence {
 	offset: Object;
 }
 
+type MICCIngestBinaryCommon = [
+	stream: ReadableStream<Uint8Array>,
+	options?: MICCParserOptions
+];
+
 // Pure MIDI.
 /** Parse the incoming Standard MIDI File byte stream. */
-export function MICC_parseSmf(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+export function MICC_parseSmf(... args: MICCIngestBinaryCommon): MICCSequence;
 /** Parse the incoming Musical Instructions Assembly (Octavia's 1:1 assembly representation of Standard MIDI Files) stream. */
 export function MICC_parseMia(stream: ReadableStream<Uint8Array>, label?: string): MICCSequence;
 
@@ -699,15 +704,15 @@ export function MICC_dasmMia(stream: ReadableStream<Uint8Array>, useReadable?: b
 
 // MIDI sequencer project files.
 /** (WIP) Parse the incoming Cakewalk Normal byte stream. */
-export function MICC_parseWrk(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+export function MICC_parseWrk(... args: MICCIngestBinaryCommon): MICCSequence;
 /** (WIP) Parse the incoming XGworks Project byte stream. */
-export function MICC_parseXws(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+export function MICC_parseXws(... args: MICCIngestBinaryCommon): MICCSequence;
 
 // Tracker files.
 /** (WIP) Parse the incoming Fast Tracker II byte stream. */
-export function MICC_parseXm(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+export function MICC_parseXm(... args: MICCIngestBinaryCommon): MICCSequence;
 /** (WIP) Parse the incoming Impulse Tracker/ModPlug Tracker byte stream. */
-export function MICC_parseIt(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence;
+export function MICC_parseIt(... args: MICCIngestBinaryCommon): MICCSequence;
 
 // Container with various possible formats.
 /** Unified RIFF parsers. */
@@ -715,11 +720,11 @@ export class MICCParserRIFF extends MICCConstants {
 	/** Map the advertised RIFF FourCC magic to specifiers. */
 	associate(fourCC: string, specifier: string): void;
 	/** Register the FourCC chunk type to a handler. */
-	handleChunk(fourCC: string, handler: unknown): void; // The handler is likely going to be a new Seamstress method type, reserved here.
+	handle(fourCC: string, handler: unknown): void; // The handler is likely going to be a new Seamstress method type, reserved here.
 	/** (WIP) Parse the incoming RIFF byte stream, which may contain RMI, DLS, BUN and more.
 	*
 	* To handle related formats, register the chunk handlers first. */
-	parse(stream: ReadableStream<Uint8Array>, options?: MICCParserOptions): MICCSequence[];
+	parse(... args: MICCIngestBinaryCommon): MICCSequence[];
 }
 
 /** Registers BUN handlers to an RIFF parser. */
