@@ -460,6 +460,10 @@ export class MICCMacroMIDI {}
 export class MICCTrackerMetadata extends MICCBaseMetadata {
 	/** If the file is a tracker. */
 	isTracker: boolean;
+	/** For XM. The "tracker name" or branding string in Latin-9. Defaults to an empty string.
+	* - For XM, this defaults to `Octavia MICC (minor Octavia version)`, e.g. `Octavia MICC 0.6    `.
+	* - For IT and MPTM, this is always set to the default value. */
+	branding: string;
 	/** For IT and MPTM. The amount of expected audio channels. Default value is `2`.
 	* - For XM, this is always set to the default value.
 	* - For IT and MPTM, this is always set to either `1` or `2` by the "use stereo" field. */
@@ -480,36 +484,21 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	* - For XM, this is always `false`.
 	* - For IT and MPTM, this is always set accordingly by the "has time signature hint" flag. */
 	hintTimeSignature: boolean;
-	/** For IT and MPTM. The "created" field. [256, 768) denotes two-byte Impulse Tracker versions. Defaults to `0xD64C` (LÖ, Lightingale Octavia).
-	* - For XM, this is always set to the default value.
-	* - For IT and MPTM, this is always set accordingly. */
-	impulseCreated?: uint16;
-	/** For IT and MPTM. The "compatible" field. [256, 768) denotes two-byte Impulse Tracker versions. Defaults to `0x0214`.
-	* - For XM, this is always set to the default value.
-	* - For IT and MPTM, this is always set accordingly. */
-	impulseCompatible?: uint16;
-	/** (WIP) For IT and MPTM. When `true`, the controls use the Scream 3 convention. Defaults to `false`.
-	* - For XM, this is always set to `false`.
-	* - For IT and MPTM, this is always set accordingly. */
-	impulseIsScream: boolean;
-	/** (WIP) For IT and MPTM. The 4-byte reserved field. Defaults to `4D 49 43 43`. */
-	impulseReservedField: Uint8Array;
 	/** For IT and MPTM. If true, `G` control (portamento to) will be linked with `E` (portamento down) and `F` (portamento up) controls. Defaults to `false` for MIDI compatibility, while Impulse/ModPlug modules will always cause this field to be set accordingly. */
 	linkPortamento: boolean;
+	/** For XM. The "ID text" or file magic string in Latin-9. Defaults to an empty string.
+	* - For XM, this defaults to `Extended Module: `.
+	* - For IT and MPTM, this is always set to the default value. */
+	magic: string;
 	/** For IT and MPTM. Panpot separation. Valid values are integers in [0, 32768].
 	* - For XM, this is always set to `32768`.
 	* - IT and MPTM map the value to [0, 128]. */
 	panSplit?: uint16;
-	/** For XM, IT and MPTM. Pattern order table, which is used to populate the actual track. `0xFFFE` is "skip", and `0xFFFF` is "terminate".
-	* - For XM, valid values include [0, 256). `0xFFFE` and `0xFFFF` are omitted.
-	* - For IT, valid values include [0, 200). ModPlug extends this to [0, 240).
-	* - For MPTM, valid values include [0, 240). */
-	patternOrder: Uint16Array;
 	/** For IT and MPTM. MIDI pitch bend sensitivity. Valid values are [-24, 24].  Defaults to `2` for MIDI compatibility.
 	* - For XM, this is always set to `2`.
 	* - For IT and MPTM, this is always set accordingly. */
 	pitchDepth: int8;
-	/** For XM. The index of the pattern in the pattern order table to jump back to a sequence finishes. This is always `0` for other formats. */
+	/** For XM. The index of the pattern in the pattern order table to jump back to a sequence finishes. This is always `0` for other formats, and is treated as `0` if the index is out of bound. */
 	restartIndex: uint16;
 	/** For XM, used by players. The MICC tick value resolved from `restartIndex`, thus always unused by serialisers. This is always `0` for other formats. */
 	readonly restartTick: uint32;
@@ -525,6 +514,11 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	*
 	* Purely for data fidelity, as this field has long been deprecated. */
 	silentMix: boolean;
+	/** For XM. Contains the declare number of slots (tracker channels). Defaults to `0`.
+	* - For XM, this is always set by the "slot count" field and validated by the finaliser. Valid values include intergers in (0, 128].
+	* - For IT, this is set by the finaliser due to the field's absence. Valid values include intergers in (0, 64].
+	* - For MPTM, this is set by the extended ModPlug metadata and validated by the finaliser. Valid values include intergers in (0, 128). */
+	slots: uint16;
 	/** For XM, IT and MPTM. Initial ticking speed. Defaults to `1` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
 	*
 	* This is rounded to the nearest integer and bound to [0, 255]. */
@@ -532,17 +526,12 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	/** For XM, IT and MPTM. Initial declared tempo in BPM. Should *not* treat the declared tempo values as the real tempo.
 	*
 	* Defaults to `120` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
-	* - For XM, valid values include intergers in [0, 960].
+	* - For MOD, this is always `125`.
+	* - For XM, valid values include intergers in [32, 960].
+	* - For S3M, valid values include intergers in [33, 255].
 	* - For IT, valid values include intergers in [32, 255].
-	* - For MPTM, valid values include intergers in [0, 1000]. */
+	* - For MPTM, valid values include intergers in [32, 1000]. */
 	tempo: float64;
-	/** For IT and MPTM. Master volume. `32768` denotes the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
-	* - For XM, this is always set to `32768`.
-	* - For IT and MPTM, this is always mapped to [0, 128]. */
-	volumeMaster: uint16;
-	/** For IT and MPTM. Oscillator volume. `32768` denotes the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
-	* - For IT and MPTM, this is always mapped to [0, 128]. */
-	volumeOscillator: uint16;
 	/** For IT and MPTM. If true, edit history is attached. Defaults to `false`. */
 	useEditHistory: boolean;
 	/** For IT and MPTM. If true, highlights are embedded. Defaults to `false`. */
@@ -557,9 +546,46 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	useOldEfx: boolean;
 	/** For IT and MPTM. If true, song messages are attached. Defaults to `false`. */
 	useSongMessages: boolean;
-	/** For IT and MPTM. If true, the file uses instruments/voices instead of raw oscillators (e.g. samples, FM oscillators). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
-	* - For XM, this is always true. */
-	useVoices: boolean;
+	/** For IT and MPTM. If true, the file uses instruments instead of raw oscillators (e.g. samples, FM oscillators). Defaults to `true` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	* - For XM, this is always `true`. */
+	useInstruments: boolean;
+	/** For IT and MPTM. Master volume. `32768` denotes the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	* - For XM, this is always set to `32768`.
+	* - For IT and MPTM, this is always mapped to [0, 128]. */
+	volumeMaster: uint16;
+	/** For IT and MPTM. Oscillator volume. `32768` denotes the maximum possible value. Defaults to `32768` for MIDI compatibility, while tracker files will always cause this field to be set accordingly.
+	* - For IT and MPTM, this is always mapped to [0, 128]. */
+	volumeOscillator: uint16;
+	/** For IT and MPTM. The "created" field. [256, 768) denotes two-byte Impulse Tracker versions. Defaults to `0xD64C` (LÖ, Lightingale Octavia).
+	* - For XM, this is always set to the default value.
+	* - For IT and MPTM, this is always set accordingly. */
+	itCreated: uint16;
+	/** For IT and MPTM. The "compatible" field. [256, 768) denotes two-byte Impulse Tracker versions. Defaults to `0x0214`.
+	* - For XM, this is always set to the default value.
+	* - For IT and MPTM, this is always set accordingly. */
+	itCompatible: uint16;
+	/** (WIP) For IT and MPTM. When `true`, the controls use the Scream 3 convention. Defaults to `false`.
+	* - For XM, this is always set to `false`.
+	* - For IT and MPTM, this is always set accordingly. */
+	itIsScream: boolean;
+	/** (WIP) For IT and MPTM. The 4-byte reserved field. Defaults to `4D 49 43 43`. */
+	itReservedField: Uint8Array;
+	/** For XM. The "version number" field. Defaults to `0x0104`.
+	* - For XM, this is always set accordingly.
+	* - For IT and MPTM, this is always set to the default value. */
+	xmCompatible: uint16;
+	/** For XM. When `true`, the indent byte will be `0x00` to signal a stripped XM, instead of `0x1A` in standard XM.
+	* - For XM, this is always set accordingly.
+	* - For IT and MPTM, this is always `false`. */
+	xmStripDeclare: boolean;
+	/** For XM. When `true`, the serialiser will attempt stripping the pattern table instead of emitting 256 bytes.
+	* - For XM, this is always set accordingly.
+	* - For IT and MPTM, this is always `false`. */
+	xmStripPatterns: boolean;
+	/** For XM. When `true`, the serialiser will zero out the compatible version number.
+	* - For XM, this is always set accordingly.
+	* - For IT and MPTM, this is always `false`. */
+	xmStripVersion: boolean;
 	/** For IT and MPTM. Initial slot panpot. Unlike MIDI, it's an integer in the range of [0, 128]. 0 is full left, 128 is full right. Initialises to `64` for MIDI compatibility.
 	* - For XM, the values are always centre. */
 	slotPan: uint8[];
@@ -580,15 +606,27 @@ export class MICCTrackerMetadata extends MICCBaseMetadata {
 	* - For XM, this is always `0`.
 	* - For IT and MPTM, this is always set accordingly. */
 	messageOffset: uint32;
-	/** For XM, IT and MPTM. List of oscillators used. */
+	/** For XM, IT and MPTM. List of oscillators used. The serialiser will throw if this is empty. */
 	oscillators: MICCOscillator[];
+	/** For XM, IT and MPTM. Pattern order table, which is used to populate the actual track. Tracker serialisation uses this field instead of the tracks.
+	*
+	* Values in the [0, 32767] range point to 0-indexed patterns. `0xFFFE` is "skip", and `0xFFFF` is "terminate".
+	* - For XM, valid values include [0, 256). `0xFFFE` and `0xFFFF` are omitted. Must have (0, 256] elements.
+	* - For IT, valid values include [0, 200). ModPlug extends this to [0, 240). Must have (0, 256) elements.
+	* - For MPTM, valid values include [0, 240). */
+	patternOrder: uint16[];
+	/** For XM, IT and MPTM. Actual pattern data. The same table is kept under `MICCSequence.pool`.
+	* - For XM, valid values include [0, 256). `0xFFFE` and `0xFFFF` are omitted. Must have (0, 256] elements.
+	* - For IT, valid values include [0, 200). ModPlug extends this to [0, 240). Must have (0, 256) elements.
+	* - For MPTM, valid values include [0, 240). */
+	patterns: MICCTrackElement[]; // The pattern data hasn't been designed at all.
 	/** (WIP) For IT and MPTM. List of edit records.
 	* - For XM, this is always absent.
 	* - For IT and MPTM, this always exist if "has edit history" is `true`. */
 	records?: MICCEditRecord[];
 	/** For XM, IT and MPTM. List of instruments used.
-	* - For XM, this is always populated.
-	* - For IT and MPTM, this field is only present if "voice type" is set to "instrument". */
+	* - For XM, this is always populated, and must have [0, 128] elements.
+	* - For IT and MPTM, this field is only present if "voice type" is set to "instrument", and must have [1, 256) elements. */
 	instruments?: MICCInstrument[];
 }
 /**
