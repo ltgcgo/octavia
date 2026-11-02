@@ -46,7 +46,7 @@ concurrency:
 
 
 jobs:
-  setup:
+  compare:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -81,3 +81,22 @@ jobs:
       #  run: "./shx build"
       - name: Configure the validator environment
         run: "./shx validatorSetup"
+      - name: Create cache directory
+        run: |
+          mkdir -p ./cache/validate/MICC.MICC_parseSmf/deno
+          mkdir -p ./cache/validate/MICC.MICC_parseSmf/ende
+          mkdir -p ./cache/validate/MICC.MICC_parseSmf/bun
+          mkdir -p ./cache/validate/MICC.MICC_parseSmf/node
+      - name: Generate Deno proof
+        run: "deno run --allow-read --allow-write ./validate/runtimes/emit.deno.mjs"
+      - name: Generate Ende proof
+        run: "ende run --allow-read --allow-write ./validate/runtimes/emit.ende.mjs"
+      - name: Move the proof
+        run: "mv -v ./cache/validate ./proof"
+      - name: Generate summary
+        run: "bash ./validate/runtimes/summary.sh"
+      - name: Upload generated proof
+        uses: actions/upload-artifact@v7
+        with:
+          name: validator-proof
+          path: ./proof/**
