@@ -9,7 +9,7 @@
 
 This is a best-effort compatibility layer making the global Deno APIs available on multiple runtimes, as well as enforcing a subset of commonly expected web conventions (W3C, WHATWG, WinterTC) onto runtimes that may not conform to such. As the successor of _WingBlade_, even if Deno and all of its successors vanish, this library can make Deno's legacy far outliving originals.
 
-Fly Leaf makes all runtimes report as `Deno 2.9.7`, which is the current compatibility target. If relevant runtime features are provided, unstable Deno features will also be provided without a need for the `--unstable` flag, as that approach isn't feasible on alternative runtimes at all. API documentation **not** yet available on [JSR](https://jsr.io/@ltgc/fly-leaf).
+Fly Leaf makes all runtimes report as `Deno 2.9.8`, which is the current compatibility target. If relevant runtime features are provided, unstable Deno features will also be provided without a need for the `--unstable` flag, as that approach isn't feasible on alternative runtimes at all. API documentation **not** yet available on [JSR](https://jsr.io/@ltgc/fly-leaf).
 
 Like the project and want to support it? Learn how in the parent project Octavia ([Codeberg](https://codeberg.org/ltgc/octavia/), [GitHub](https://github.com/ltgcgo/octavia/))!
 
@@ -26,7 +26,13 @@ If you're sure a crashing component is intended for a web-compliant environment 
 If a crashing component expect Deno globals, you can use the Fly Leaf loader. If provided, you can use the `bell ...` (Belladonna) helper instead.
 
 - Node.js: `node --import ./libs/fly-leaf@ltgcgo/loader.mjs ...`
+- Deno: `deno run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
+- Ende: `ende run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
+
+All supported runtimes sets `Deno.version.backend`. Current valid values include `Bun`, `Deno`, `Ende`, and `Node`.
+
+Runtimes may not actually execute the loader in the context of REPL, so debug with caution.
 
 ### Force import
 To make sure Fly Leaf remains available regardless of runtime, likely for debug reasons, you can import Fly Leaf as a whole in your project, or import the required APIs granularly. Apart from vendoring, you can import via direct HTTP(S) imports, import maps, or JSR, whichever is available and convenient.
@@ -38,8 +44,11 @@ import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ## Support
 ### Runtimes
 - **Bun**: Planned.
-- **Deno**: No-op for the loader.
-- **Ende**: A single property assignment for the loader.
+- **Deno**
+  - `Deno.version.backend` set to `Deno`.
+- **Ende**
+  - `Deno.version.backend` set to `Ende`.
+  - `Deno.version.deno` set to the Deno version targeted by Fly Leaf.
 - **Javy**: Investigating.
 - **Node.js**: Planned.
 - **Porffor**: Investigating. Blocked by a lack of documentation.
