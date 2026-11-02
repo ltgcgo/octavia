@@ -18,7 +18,7 @@ await (async function emit() {
 			await Deno.writeTextFile(
 				`./cache/validate/MICC.MICC_parseSmf/deno/${dirEntry.name}.json`,
 				JSON.stringify(
-					await test_parseSmf(fileObject),
+					await test_parseSmf(fileObject.readable),
 					jsonPrettifier,
 					"\t"
 				)

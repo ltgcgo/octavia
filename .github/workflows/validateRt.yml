@@ -91,6 +91,8 @@ jobs:
         run: "deno run --allow-read --allow-write ./validate/runtimes/emit.deno.mjs"
       - name: Generate Ende proof
         run: "ende run --allow-read --allow-write ./validate/runtimes/emit.ende.mjs"
+      - name: Generate Node proof (eugh, disgusting)
+        run: "node --import ./src/flyLeaf/cleanUp.mjs ./validate/runtimes/emit.node.mjs"
       - name: Move the proof
         run: "mv -v ./cache/validate ./proof"
       - name: Generate summary

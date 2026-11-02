@@ -18,7 +18,7 @@ await (async function emit() {
 			await Ende.writeTextFile(
 				`./cache/validate/MICC.MICC_parseSmf/ende/${dirEntry.name}.json`,
 				JSON.stringify(
-					await test_parseSmf(fileObject),
+					await test_parseSmf(fileObject.readable),
 					jsonPrettifier,
 					"\t"
 				)
