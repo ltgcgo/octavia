@@ -3,8 +3,11 @@
 // Licensed under GNU LGPL v3.0 license.
 
 export enum LeafSeekMode {
+	/**  */
 	Start = 0,
+	/**  */
 	Current = 1,
+	/**  */
 	End = 2
 }
 

@@ -109,5 +109,5 @@ export class LeafVersion extends DenoVersion {
 	/** The runtime-native versions object. */
 	versions: Record<string, string> | DenoVersion | NodeVersion;
 }
-/** The extended  */
+/** The extended Deno version object. */
 export const version: LeafVersion;

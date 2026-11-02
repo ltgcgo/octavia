@@ -7,3 +7,4 @@
 import versionObject from "./env/version.mjs";
 
 export const version = versionObject;
+export * from "./fs/class.mjs";

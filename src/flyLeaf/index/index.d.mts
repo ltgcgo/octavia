@@ -2,25 +2,9 @@
 // 2026-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0 license.
 
-import {
-	version,
-	LeafVersion
-} from "./index/env.d.mts";
-import type {
-	LeafDirEntry,
-	LeafFileInfo,
-	LeafFsEvent
-} from "./index/fs.d.mts";
 
-export {
-	version,
-
-	LeafDirEntry,
-	LeafFileInfo,
-	LeafFsEvent
-}
-
-/** Globals from Fly Leaf. It's recommended to use separate imports instead for runtime-agnostic interfacing. */
-export default class FlyLeafGlobals {
-	static version: LeafVersion
-}
+export type * from "./index/env.d.mts";
+export * from "./index/env.d.mts";
+export type * from "./index/fs.d.mts";
+export * from "./index/fs.d.mts";
+export type * from "./index/io.d.mts";
