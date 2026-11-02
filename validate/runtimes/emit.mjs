@@ -5,7 +5,7 @@ import jsonPrettifier from "../common/jsonPrettifier.mjs";
 
 import {
 	test_parseSmf
-} from "./emit.method.mjs";
+} from "./method.mjs";
 
 const runtimeSmall = Deno.version.backend.toLowerCase();
 
@@ -18,7 +18,6 @@ await (async function emit() {
 		if (!dirEntry.isFile) continue;
 		console.info(`Generating the export of "${dirEntry.name}"...`);
 		const fileObject = await Deno.open(`./cache/source/${dirEntry.name}`);
-		console.debug(fileObject);
 		try {
 			await Deno.writeTextFile(
 				`./cache/validate/MICC.MICC_parseSmf/${runtimeSmall}/${dirEntry.name}.json`,

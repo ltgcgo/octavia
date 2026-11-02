@@ -13,6 +13,7 @@ on:
       - "sh/validatorSetup.sh"
       - "src/chord/**"
       - "src/data/**"
+      - "src/flyLeaf/**"
       - "src/micc/**"
       - "!src/*/index.d.mts"
       - "validate/runtimes/**"
@@ -33,6 +34,7 @@ on:
       - "sh/validatorSetup.sh"
       - "src/chord/**"
       - "src/data/**"
+      - "src/flyLeaf/**"
       - "src/micc/**"
       - "!src/*/index.d.mts"
       - "validate/runtimes/**"
@@ -88,11 +90,11 @@ jobs:
           mkdir -p ./cache/validate/MICC.MICC_parseSmf/bun
           mkdir -p ./cache/validate/MICC.MICC_parseSmf/node
       - name: Generate Deno proof
-        run: "deno run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.runtime.mjs"
+        run: "deno run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.mjs"
       - name: Generate Ende proof
-        run: "ende run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.runtime.mjs"
+        run: "ende run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.mjs"
       - name: Generate Node proof (eugh, disgusting)
-        run: "node --import ./src/flyLeaf/cleanUp/index.mjs ./validate/runtimes/emit.node.mjs"
+        run: "node --import ./src/flyLeaf/loader/index.mjs ./validate/runtimes/emit.mjs"
       - name: Move the proof
         run: "mv -v ./cache/validate ./proof"
       - name: Generate summary
