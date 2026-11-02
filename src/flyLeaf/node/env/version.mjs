@@ -4,8 +4,6 @@
 
 "use strict";
 
-import "../../common/init.mjs";
-
 import LeafVersion from "../../common/class/version.mjs";
 
 const versionObject = new LeafVersion(self.process?.versions);

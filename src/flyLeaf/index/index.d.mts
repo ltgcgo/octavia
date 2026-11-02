@@ -6,9 +6,18 @@ import {
 	version,
 	LeafVersion
 } from "./index/env.d.mts";
+import type {
+	LeafDirEntry,
+	LeafFileInfo,
+	LeafFsEvent
+} from "./index/fs.d.mts";
 
 export {
-	version
+	version,
+
+	LeafDirEntry,
+	LeafFileInfo,
+	LeafFsEvent
 }
 
 /** Globals from Fly Leaf. It's recommended to use separate imports instead for runtime-agnostic interfacing. */
