@@ -90,7 +90,7 @@ jobs:
       - name: Generate Deno proof
         run: "deno run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.runtime.mjs"
       - name: Generate Ende proof
-        run: "ende run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.ende.mjs"
+        run: "ende run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.runtime.mjs"
       - name: Generate Node proof (eugh, disgusting)
         run: "node --import ./src/flyLeaf/cleanUp/index.mjs ./validate/runtimes/emit.node.mjs"
       - name: Move the proof
