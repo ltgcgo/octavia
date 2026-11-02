@@ -20,7 +20,7 @@ export async function writeFile(path, data, options = {}) {
 		});
 		return;
 	} else if (data?.constructor === ReadableStream) {
-		await NodeAsyncFs.writeFile(path, (function *() {
+		await NodeAsyncFs.writeFile(path, (async function *() {
 			for await (const chunk of data) {
 				if (chunk?.constructor === Uint8Array) {
 					yield chunk;
@@ -59,7 +59,7 @@ export async function writeTextFile(path, data, options = {}) {
 		});
 		return;
 	} else if (data?.constructor === ReadableStream) {
-		await NodeAsyncFs.writeFile(path, (function *() {
+		await NodeAsyncFs.writeFile(path, (async function *() {
 			for await (const chunk of data) {
 				if (typeof chunk === "string") {
 					yield chunk;
