@@ -19,6 +19,7 @@ import {
 	MIDIUMPEvent
 } from "./classes/event.mjs";
 import {
+	MICCParserOptions,
 	MICCBaseElement,
 	MICCSequence,
 	MICCTrackElement,
@@ -42,14 +43,7 @@ import {
 // Reusable instances.
 const SeamstressInstanceSMF = new Seamstress(SeamstressPresets.SMF);
 SeamstressInstanceSMF.regulateStream = MICCInternalsSMF.streamRegulator;
-const defaultDecoders = BinaryString.getDecoders(["utf-8", "l9", "sjis"]);;
-
-const MICCParserOptions = class MICCParserOptions {
-	/** @type {Iterable<TextDecoder>} */
-	decoders;
-	/** @type {number?} */
-	finaliserDepth;
-};
+const defaultDecoders = BinaryString.getDecoders(["utf-8", "l9", "sjis"]);
 
 const IntakeNormaliser = class IntakeNormaliser {
 	static toBuffer = toBuffer;
@@ -57,97 +51,92 @@ const IntakeNormaliser = class IntakeNormaliser {
 	static toByteStream = toByteStream;
 };
 
-const MICC = class MICC {
-	static debug = false;
-	/** @type {Iterable<TextDecoder>} */
-	static decoders;
-	/** @param {ReadableStream<Uint8Array>} stream
-	* @param {MICCParserOptions?} options  */
-	static parseSmf(fileStream, options) {
-		if (fileStream.constructor !== ReadableStream) {
-			throw(new TypeError(`Input must be a valid stream.`));
-		};
-		const sequence = new MICCSequence();
-		if (typeof options?.finaliserDepth === "number") {
-			sequence.finaliserDepth = options.finaliserDepth;
-		};
-		if (options?.decoders) {
-			sequence.decoders = options.decoders;
-		} else if (this.decoders) {
-			sequence.decoders = this.decoders;
-		} else {
-			sequence.decoders = defaultDecoders;
-		};
-		(async () => {
-			let currentTrack = -1, currentTick = 0;
-			/** @type {import("./index.d.mts").MICCSMFMIAHandleOptions} */
-			const parserConfig = {
-				"hasDelta": true,
-				"isSmfWrapped": true,
-				"parserContext": {}
-			};
-			/** @type {SeamstressChunk} */
-			let lastSubchunk;
-			try {
-				for await (const subchunk of SeamstressInstanceSMF.readRegulated(fileStream)) {
-					lastSubchunk = subchunk;
-					//console.info(subchunk);
-					switch (subchunk.type) {
-						case "MThd": {
-							sequence.meta.format = "mma.smf";
-							MICCInternalsSMF.parseHeaderChunk(subchunk, sequence.meta);
-							break;
-						};
-						case "MTrk":
-						case "XFIH":
-						case "XFKM": {
-							let selectedTrack;
-							if (subchunk.sliceId === 0) {
-								selectedTrack = new MICCTrack(subchunk.type);
-								selectedTrack.offset = subchunk.offsetData;
-								sequence.tracks.push(selectedTrack);
-								currentTrack ++;
-								selectedTrack.id = currentTrack;
-								if (sequence.meta.type < MICCConstants.FILE_SMF_SEQUENTIAL) {
-									currentTick = 0;
-								};
-							} else if (currentTrack >= 0) {
-								selectedTrack = sequence.tracks[currentTrack];
-							} else {
-								console.info(currentTrack);
-								throw(new Error(`Invalid stream parser state.`));
-							};
-							const parsedEvent = MICCInternalsSMF.parseSingleEvent(subchunk, parserConfig);
-							currentTick += parsedEvent.delta;
-							parsedEvent.tick = currentTick;
-							parsedEvent.track = currentTrack;
-							selectedTrack.data.push(parsedEvent);
-							break;
-						};
-						default: {
-							console.debug(`Unknown SMF chunk type "${subchunk.type}".`);
-						};
-					};
-				};
-			} catch (err) {
-				if (this.debug) {
-					if (lastSubchunk) {
-						console.warn(`The error was thrown when parsing the following chunk ("${lastSubchunk?.type}" #${(lastSubchunk?.chunkId ?? 0) + 1}) at offset 0x${lastSubchunk?.offsetData?.toString(16).padStart(6, "0")}:\n`, lastSubchunk);
-					} else {
-						console.warn(`The error was thrown before a chunk was read.`);
-					};
-				};
-				sequence.reject(err);
-			};
-			sequence.markReady();
-			if (sequence.finaliserDepth > 0) sequence.finalise(MICCConstants.AS_MIDI);
-			sequence.markFinalised();
-		})();
-		return sequence;
+/** @param {ReadableStream<Uint8Array>} stream
+* @param {MICCParserOptions?} options */
+const MICC_parseSmf = function (fileStream, options = {}) {
+	if (fileStream.constructor !== ReadableStream) {
+		throw(new TypeError(`Input must be a valid stream.`));
 	};
+	const sequence = new MICCSequence();
+	if (typeof options?.finaliserDepth === "number") {
+		sequence.finaliserDepth = options.finaliserDepth;
+	};
+	if (options?.decoders) {
+		sequence.decoders = options.decoders;
+	} else {
+		sequence.decoders = defaultDecoders;
+	};
+	(async () => {
+		let currentTrack = -1, currentTick = 0;
+		/** @type {import("./index.d.mts").MICCSMFMIAHandleOptions} */
+		const parserConfig = {
+			"hasDelta": true,
+			"isSmfWrapped": true,
+			"parserContext": {}
+		};
+		/** @type {SeamstressChunk} */
+		let lastSubchunk;
+		try {
+			for await (const subchunk of SeamstressInstanceSMF.readRegulated(fileStream)) {
+				lastSubchunk = subchunk;
+				//console.info(subchunk);
+				switch (subchunk.type) {
+					case "MThd": {
+						sequence.meta.format = "mma.smf";
+						MICCInternalsSMF.parseHeaderChunk(subchunk, sequence.meta);
+						break;
+					};
+					case "MTrk":
+					case "XFIH":
+					case "XFKM": {
+						let selectedTrack;
+						if (subchunk.sliceId === 0) {
+							selectedTrack = new MICCTrack(subchunk.type);
+							selectedTrack.offset = subchunk.offsetData;
+							sequence.tracks.push(selectedTrack);
+							currentTrack ++;
+							selectedTrack.id = currentTrack;
+							if (sequence.meta.type < MICCConstants.FILE_SMF_SEQUENTIAL) {
+								currentTick = 0;
+							};
+						} else if (currentTrack >= 0) {
+							selectedTrack = sequence.tracks[currentTrack];
+						} else {
+							console.info(currentTrack);
+							throw(new Error(`Invalid stream parser state.`));
+						};
+						const parsedEvent = MICCInternalsSMF.parseSingleEvent(subchunk, parserConfig);
+						currentTick += parsedEvent.delta;
+						parsedEvent.tick = currentTick;
+						parsedEvent.track = currentTrack;
+						selectedTrack.data.push(parsedEvent);
+						break;
+					};
+					default: {
+						console.debug(`Unknown SMF chunk type "${subchunk.type}".`);
+					};
+				};
+			};
+		} catch (err) {
+			if (options.debug) {
+				if (lastSubchunk) {
+					console.warn(`The error was thrown when parsing the following chunk ("${lastSubchunk?.type}" #${(lastSubchunk?.chunkId ?? 0) + 1}) at offset 0x${lastSubchunk?.offsetData?.toString(16).padStart(6, "0")}:\n`, lastSubchunk);
+				} else {
+					console.warn(`The error was thrown before a chunk was read.`);
+				};
+			};
+			sequence.reject(err);
+		};
+		sequence.markReady();
+		if (sequence.finaliserDepth > 0) sequence.finalise(MICCConstants.AS_MIDI);
+		sequence.markFinalised();
+	})();
+	return sequence;
 };
 
 export {
+	IntakeNormaliser,
+
 	MICCBaseElement,
 	MICCConstants,
 	MICCSequence,
@@ -161,6 +150,6 @@ export {
 	MIDIBaseEvent,
 	MIDINakedEvent,
 	MIDIUMPEvent,
-	MICC,
-	IntakeNormaliser
+
+	MICC_parseSmf
 };

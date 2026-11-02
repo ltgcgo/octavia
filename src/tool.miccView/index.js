@@ -1,7 +1,7 @@
 "use strict";
 
 import {
-	MICC,
+	MICC_parseSmf,
 	MICCConstants,
     MICCSequence
 } from "../micc/index.mjs";
@@ -66,6 +66,7 @@ const dispCrashError = $e("div#info-title-failure");
 
 /** @type {MICCSequence?} */
 let sequence;
+let MICC_debug = true;
 
 const populateViewer = async () => {
 	{
@@ -217,7 +218,9 @@ self.gShowTrack = async (trackId) => {
 self.gParseUrl = async () => {
 	Alpine.store("appState", 1);
 	try {
-		sequence = MICC.parseSmf((await fetch(inputUrl.value)).body);
+		sequence = MICC_parseSmf((await fetch(inputUrl.value)).body, {
+			"debug": MICC_debug
+		});
 		await sequence.finalised;
 		Alpine.store("appState", 2);
 		dispFileName.innerText = "<stream>";
@@ -251,7 +254,9 @@ self.gParseFile = async () => {
 		try {
 			switch (intendedMode) {
 				case "smf": {
-					sequence = MICC.parseSmf(file.stream());
+					sequence = MICC_parseSmf(file.stream(), {
+						"debug": MICC_debug
+					});
 					break;
 				};
 				default: {
@@ -278,5 +283,4 @@ self.gParseFile = async () => {
 	Alpine.store("metaTracker", []);
 	Alpine.start();
 })();
-MICC.debug = true;
-self.MICC = MICC;
+self.MICC_debug = MICC_debug;

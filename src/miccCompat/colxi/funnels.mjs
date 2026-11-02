@@ -14,7 +14,7 @@ import { MICCInternalsSMF } from "../../micc/index.mjs";
 import {
 	IntakeNormaliser,
 	MICCSequenceMetadata,
-	MICC
+	MICC_parseSmf
 } from "../../micc/index.mjs";
 
 import {
@@ -32,7 +32,7 @@ const ColxiMIDIParserStreamed = class ColxiMIDIParserStreamed extends UnifiedShi
 	* @param {(file: import("../index.d.mts").ColxiMIDIFile) => void} callback */
 	static async parse(input, callback) {
 		const upThis = this;
-		const sequence = MICC.parseSmf(IntakeNormaliser.toByteStream(input), {
+		const sequence = MICC_parseSmf(IntakeNormaliser.toByteStream(input), {
 			"decoders": upThis.decoders,
 			"finaliserDepth": 0
 		});

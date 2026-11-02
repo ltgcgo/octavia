@@ -12,6 +12,14 @@ import {
 import trackVendorData from "../../data/generated/trackVendors.json" with {type: "json"};
 import MICCInternalsFinalisers from "./finalisers.mjs";
 
+const MICCParserOptions = class MICCParserOptions {
+	/** @type {Iterable<TextDecoder>} */
+	decoders;
+	debug = false;
+	/** @type {number?} */
+	finaliserDepth;
+};
+
 const MICCBaseElement = class MICCBaseElement {
 	group = "ltgc.micc.unknown";
 	constructor(group) {
@@ -145,6 +153,7 @@ const MICCSequence = class MICCSequence {
 };
 
 export {
+	MICCParserOptions,
 	MICCBaseElement,
 	MICCTrackElement,
 	MICCTrack,

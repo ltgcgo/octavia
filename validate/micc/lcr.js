@@ -4,7 +4,7 @@ import {
 	Seamstress
 } from "../../libs/seamstress@ltgcgo/index.mjs";
 import {
-	MICC,
+	MICC_parseSmf,
 	MICCInternalsSMF
 } from "../../src/micc/index.mjs";
 import {
@@ -87,7 +87,7 @@ test("Validate stream roundtripping of files", async () => {
 			let passed = true, processedCount = 0;
 			let countStartTime = startTimeParse, countEndTime = startTimeParse;
 			try {
-				const sequence = MICC.parseSmf(fileObject.readable);
+				const sequence = MICC_parseSmf(fileObject.readable);
 				await sequence.finalised;
 				countStartTime = performance.now();
 				for (const track of sequence.tracks) {
