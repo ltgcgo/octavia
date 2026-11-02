@@ -5,7 +5,7 @@ import jsonPrettifier from "../common/jsonPrettifier.mjs";
 
 import {
 	test_parseSmf
-} from "./emit.mjs";
+} from "./emit.method.mjs";
 
 // Eugh!
 import {Readable as NodeReadable} from "node:stream";

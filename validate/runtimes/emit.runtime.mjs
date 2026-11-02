@@ -5,9 +5,13 @@ import jsonPrettifier from "../common/jsonPrettifier.mjs";
 
 import {
 	test_parseSmf
-} from "./emit.mjs";
+} from "./emit.method.mjs";
+
+const runtimeSmall = Deno.version.backend.toLowerCase();
 
 await (async function emit() {
+	/** @type {import("../../src/flyLeaf/index/index.d.mts")} */
+	const Deno = self.Deno;
 	/** @type {FailRecord[]} */
 	const errorHistory = [];
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
@@ -16,7 +20,7 @@ await (async function emit() {
 		const fileObject = await Deno.open(`./cache/source/${dirEntry.name}`);
 		try {
 			await Deno.writeTextFile(
-				`./cache/validate/MICC.MICC_parseSmf/deno/${dirEntry.name}.json`,
+				`./cache/validate/MICC.MICC_parseSmf/${runtimeSmall}/${dirEntry.name}.json`,
 				JSON.stringify(
 					await test_parseSmf(fileObject.readable),
 					jsonPrettifier,
