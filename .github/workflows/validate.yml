@@ -51,8 +51,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

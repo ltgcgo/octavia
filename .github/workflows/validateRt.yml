@@ -1,0 +1,83 @@
+name: Build and validate multiple runtimes
+
+on:
+  # Runs on pushes targeting the working branches
+  push:
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/validateRt.yml"
+      - "libs/**"
+      - "sh/build.sh"
+      - "sh/validate.sh"
+      - "sh/validatorSetup.sh"
+      - "src/chord/**"
+      - "src/data/**"
+      - "src/micc/**"
+      - "!src/*/index.d.mts"
+      - "validate/runtimes/**"
+  # Runs on pull requests targeting the working branches
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - review_requested
+    branches:
+      - "main"
+    paths:
+      - ".github/workflows/validateRt.yml"
+      - "libs/**"
+      #- "sh/build.sh"
+      - "sh/validate.sh"
+      - "sh/validatorSetup.sh"
+      - "src/chord/**"
+      - "src/data/**"
+      - "src/micc/**"
+      - "!src/*/index.d.mts"
+      - "validate/runtimes/**"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: "validator.runtime"
+  cancel-in-progress: true
+
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: latest
+      - name: Show Deno version
+        run: "deno --version"
+      - name: Setup Ende
+        run: "./shx setup/ende"
+      - name: Show Ende version
+        run: "ende --version"
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Show Bun version
+        run: "bun --version"
+      - name: Setup Node.js (eugh, disgusting)
+        uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+      - name: Show Node.js version (eugh, disgusting)
+        run: "node --version"
+      - name: Generate data for Octavia
+        run: "./shx generate"
+      #- name: Build Octavia files
+      #  run: "./shx build"
+      - name: Configure the validator environment
+        run: "./shx validatorSetup"
