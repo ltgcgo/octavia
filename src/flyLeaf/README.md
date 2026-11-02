@@ -38,7 +38,10 @@ Runtimes may not actually execute the loader in the context of REPL, so debug wi
 To make sure Fly Leaf remains available regardless of runtime, likely for debug reasons, you can import Fly Leaf as a whole in your project, or import the required APIs granularly. Apart from vendoring, you can import via direct HTTP(S) imports, import maps, or JSR, whichever is available and convenient.
 
 ```js
+// Glob import...
 import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
+// Or default import.
+import as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ```
 
 ## Support

@@ -45,7 +45,7 @@ export class LeafFsFile {
 		this.#closeFd();
 		this.#closed = true;
 	};
-	/** @param {string} path
+	/** @param {string|URL} path
 	* @param {import("../../index/index.d.mts").LeafOpenOptions} flags  */
 	constructor(path, flags = {}) {
 		this.#path = path;
