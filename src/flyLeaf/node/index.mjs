@@ -4,12 +4,6 @@
 
 "use strict";
 
-import "../common/init.mjs";
-
-import LeafVersion from "../common/class/version.mjs";
-
-const versionObject = new LeafVersion(self.process?.versions);
-versionObject.backend = "Node";
-versionObject.engine = "V8";
+import versionObject from "./env/version.mjs";
 
 export const version = versionObject;
