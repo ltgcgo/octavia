@@ -9,16 +9,33 @@ const NodeAsyncFs = NodeFs.promises;
 
 import { linuxOpenFlags } from "./translate.mjs";
 
-/** @param {import("../../index/index.d.mts").LeafWriteFileOptions} options */
+/** @param {Uint8Array|ReadableStream<Uint8Array>} data
+* @param {import("../../index/index.d.mts").LeafWriteFileOptions} options */
 export async function writeFile(path, data, options = {}) {
-	if (data?.constructor !== Uint8Array) {
-		throw(new TypeError(`Data must be Uint8Array.`));
+	if (data?.constructor === Uint8Array) {
+		await NodeAsyncFs.writeFile(path, data, {
+			"flush": true,
+			"mode": options.mode,
+			"flag": linuxOpenFlags(options)
+		});
+		return;
+	} else if (data?.constructor === ReadableStream) {
+		await NodeAsyncFs.writeFile(path, (function *() {
+			for await (const chunk of data) {
+				if (chunk?.constructor === Uint8Array) {
+					yield chunk;
+				} else {
+					throw(new TypeError(`Data in the stream must be Uint8Array.`));
+				};
+			};
+		})(), {
+			"flush": true,
+			"mode": options.mode,
+			"flag": linuxOpenFlags(options)
+		});
+		return;
 	};
-	await NodeAsyncFs.writeFile(path, data, {
-		"flush": true,
-		"mode": options.mode,
-		"flag": linuxOpenFlags(options)
-	});
+	throw(new TypeError(`Data must be Uint8Array.`));
 };
 /** @param {import("../../index/index.d.mts").LeafWriteFileOptions} options */
 export function writeFileSync(path, data, options = {}) {
@@ -31,16 +48,33 @@ export function writeFileSync(path, data, options = {}) {
 		"flag": linuxOpenFlags(options)
 	});
 };
-/** @param {import("../../index/index.d.mts").LeafWriteFileOptions} options */
+/** @param {string|ReadableStream<string>} data
+* @param {import("../../index/index.d.mts").LeafWriteFileOptions} options */
 export async function writeTextFile(path, data, options = {}) {
-	if (typeof data !== "string") {
-		throw(new TypeError(`Data must be string.`));
+	if (typeof data === "string") {
+		await NodeAsyncFs.writeFile(path, data, {
+			"flush": true,
+			"mode": options.mode,
+			"flag": linuxOpenFlags(options)
+		});
+		return;
+	} else if (data?.constructor === ReadableStream) {
+		await NodeAsyncFs.writeFile(path, (function *() {
+			for await (const chunk of data) {
+				if (typeof chunk === "string") {
+					yield chunk;
+				} else {
+					throw(new TypeError(`Data in the stream must be string.`));
+				};
+			};
+		})(), {
+			"flush": true,
+			"mode": options.mode,
+			"flag": linuxOpenFlags(options)
+		});
+		return;
 	};
-	await NodeAsyncFs.writeFile(path, data, {
-		"flush": true,
-		"mode": options.mode,
-		"flag": linuxOpenFlags(options)
-	});
+	throw(new TypeError(`Data must be string.`));
 };
 /** @param {import("../../index/index.d.mts").LeafWriteFileOptions} options */
 export function writeTextFileSync(path, data, options = {}) {

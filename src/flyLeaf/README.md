@@ -41,7 +41,7 @@ To make sure Fly Leaf remains available regardless of runtime, likely for debug 
 // Glob import...
 import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 // Or default import.
-import as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
+import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ```
 
 ## Support

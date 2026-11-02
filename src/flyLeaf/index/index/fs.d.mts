@@ -293,11 +293,11 @@ export function utime(path: string|URL, atime: number|Date, mtime: number|Date):
 export function utimeSync(path: string|URL, atime: number|Date, mtime: number|Date): void;
 /**  */
 export function watchFs(path: string|URL, options?: LeafWatchOptions): LeafFsWatcher;
-/**  */
+/** Write binary data to the specified path. */
 export function writeFile(path: string|URL, data: Uint8Array|ReadableStream<Uint8Array>, options?: LeafWriteFileOptions): Promise<void>;
-/**  */
+/** The synchronous variant of `writeFile`. */
 export function writeFileSync(path: string|URL, data: Uint8Array, options?: LeafWriteFileOptions): void;
-/**  */
+/** Write text data to the specified path. */
 export function writeTextFile(path: string|URL, data: string|ReadableStream<string>, options?: LeafWriteFileOptions): Promise<void>;
-/**  */
+/** The synchronous variant of `writeFile`. */
 export function writeTextFileSync(path: string|URL, data: string, options?: LeafWriteFileOptions): void;
