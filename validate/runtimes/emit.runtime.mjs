@@ -15,10 +15,10 @@ await (async function emit() {
 	/** @type {FailRecord[]} */
 	const errorHistory = [];
 	for await (const dirEntry of Deno.readDir("./cache/source")) {
-		console.debug(dirEntry);
 		if (!dirEntry.isFile) continue;
 		console.info(`Generating the export of "${dirEntry.name}"...`);
 		const fileObject = await Deno.open(`./cache/source/${dirEntry.name}`);
+		console.debug(fileObject);
 		try {
 			await Deno.writeTextFile(
 				`./cache/validate/MICC.MICC_parseSmf/${runtimeSmall}/${dirEntry.name}.json`,

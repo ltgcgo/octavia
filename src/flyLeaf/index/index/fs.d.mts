@@ -79,11 +79,11 @@ export interface LeafFsEvent {
 export interface LeafFsWatcher extends AsyncIterable<LeafFsEvent>, DisposableObject {}
 
 export class LeafFsFile implements DisposableObject {
-	/**  */
+	/** The binary file content present in a WHATWG readable stream. */
 	readable: ReadableStream<Uint8Array>;
 	/**  */
 	writable: WritableStream<Uint8Array>;
-	/**  */
+	/** Close the file. */
 	close(): void;
 	/**  */
 	isTerminal(): boolean;
@@ -134,6 +134,7 @@ export class LeafFsFile implements DisposableObject {
 	/**  */
 	writeSync(buffer: Uint8Array): number;
 }
+export type FsFile = typeof LeafFsFile;
 
 export interface LeafMakeTempOptions {
 	/**  */
@@ -240,13 +241,13 @@ export function makeTempFileSync(options?: LeafMakeTempOptions): string;
 export function mkdir(path: string|URL, options?: LeafMkdirOptions): Promise<void>;
 /**  */
 export function mkdirSync(path: string|URL, options?: LeafMkdirOptions): void;
-/**  */
+/** Open a file and get a handle. */
 export function open(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFile>;
-/**  */
+/** The synchronous variant of `open`. */
 export function openSync(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFile>;
-/**  */
+/** Iterate through all children within a directory. */
 export function readDir(path: string|URL): AsyncGenerator<LeafDirEntry, void, void>;
-/**  */
+/** The synchronous variant of `readDir`. */
 export function readDirSync(path: string|URL): Generator<LeafDirEntry, void, void>;
 /**  */
 export function readFile(path: string|URL, options?: LeafReadFileOptions): Promise<Uint8Array>;

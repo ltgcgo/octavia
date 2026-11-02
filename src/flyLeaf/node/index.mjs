@@ -9,4 +9,5 @@ import versionObject from "./env/version.mjs";
 
 export const version = versionObject;
 
+export * from "./fs/handle.mjs";
 export * from "./fs/meta.mjs";

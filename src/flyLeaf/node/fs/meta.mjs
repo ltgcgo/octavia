@@ -5,19 +5,26 @@
 "use strict";
 
 import {Readable as NodeReadable} from "node:stream";
-import {promises as NodeAsyncFs} from "node:fs";
-import * as NodeSyncFs from "node:fs";
+import * as NodeFs from "node:fs";
+const NodeAsyncFs = NodeFs.promises;
 
-import {
-	fileUrlToPath
-} from "../../common/method/normaliser.mjs";
 import {
 	LeafDirEntry
 } from "./translate.mjs";
+import { LeafFsFile } from "./handle.mjs";
+
+/** @param {import("../../index/index.d.mts").LeafOpenOptions} options  */
+export async function open(path, options) {
+	return new LeafFsFile(path, options);
+};
+/** @param {import("../../index/index.d.mts").LeafOpenOptions} options  */
+export function openSync(path, options) {
+	return new LeafFsFile(path, options);
+};
 
 export async function *readDir(path) {
 	for (const entry of await NodeAsyncFs.readdir(
-		fileUrlToPath(path), {
+		path, {
 			"withFileTypes": true
 		}
 	)) {
@@ -25,8 +32,8 @@ export async function *readDir(path) {
 	};
 };
 export function *readDirSync(path) {
-	for (const entry of NodeSyncFs.readdirSync(
-		fileUrlToPath(path), {
+	for (const entry of NodeFs.readdirSync(
+		path, {
 			"withFileTypes": true
 		}
 	)) {
