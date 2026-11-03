@@ -23,6 +23,8 @@ const removeProperties = (target, keys = []) => {
 removeProperties(
 	globalThis,
 	[
+		"__dirname",
+		"__filename",
 		"Buffer",
 		"async_hooks",
 		"buffer",

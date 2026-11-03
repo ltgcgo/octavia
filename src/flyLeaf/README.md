@@ -20,6 +20,7 @@ Vendoring is the current recommended approach for loading Fly Leaf that sidestep
 If you're sure a crashing component is intended for a web-compliant environment without requiring any Deno API, then you can choose to use the conformance script.
 
 - Node.js: `node --import ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
+- Ant: `ant --preload ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
 
 ### Deno globals
