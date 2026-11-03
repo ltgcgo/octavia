@@ -124,8 +124,8 @@ export class LeafVersion extends DenoVersion {
 	engine: "Ant Silver" | "JavaScriptCore" | "LibJS" | "Porffor" | "QuickJS" | "SpiderMonkey" | "V8";
 	/** The version of Fly Leaf being run. */
 	flyLeaf: string;
-	/** When `true`, synchronous versions of the methods are also available on top of asynchronous versions. */
-	sync: boolean;
+	/** When `true`, synchronous versions of the methods are not available, only asynchronous versions are. */
+	asyncOnly: boolean;
 	/** The runtime-native versions object. */
 	versions: Record<string, string> | DenoVersion | NodeVersion;
 }

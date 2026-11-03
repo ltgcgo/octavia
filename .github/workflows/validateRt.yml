@@ -95,6 +95,8 @@ jobs:
         run: "deno run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.mjs"
       - name: Generate Ende proof
         run: "ende run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.mjs"
+      - name: Generate Bun proof
+        run: "bun run --preload ./src/flyLeaf/loader/index.mjs ./validate/runtimes/emit.mjs"
       - name: Generate Node proof (eugh, disgusting)
         run: "node --import ./src/flyLeaf/loader/index.mjs ./validate/runtimes/emit.mjs"
       - name: Move the proof
