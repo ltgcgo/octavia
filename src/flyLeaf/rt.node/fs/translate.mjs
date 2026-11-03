@@ -15,7 +15,7 @@ import {
 export function linuxOpenFlags(flags) {
 	let result = 0;
 	let rwIntermediate = 0;
-	if (!flags.read) {
+	if (flags.read !== false) {
 		rwIntermediate |= 1;
 	};
 	if (flags.write || flags.append) {

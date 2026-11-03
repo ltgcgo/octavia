@@ -28,6 +28,7 @@ If a crashing component expect Deno globals, you can use the Fly Leaf loader. If
 - Node.js: `node --import ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Deno: `deno run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Ende: `ende run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
+- Ant: `ant --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 
 All supported runtimes set `Deno.version.backend` and `Deno.version.engine`. For a list of valid values, see the [runtimes](#runtimes) section below.

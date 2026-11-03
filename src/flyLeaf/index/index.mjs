@@ -12,19 +12,19 @@ const debugMsg = false;
 let flyLeafGlobals;
 if (self.Ende) {
 	debugMsg && console.debug(`Selected backend: Ende.`);
-	flyLeafGlobals = await import("../ende/index.mjs");
+	flyLeafGlobals = await import("../rt.ende/index.mjs");
 } else if (self.Deno) {
 	debugMsg && console.debug(`Selected backend: Deno.`);
-	flyLeafGlobals = await import("../deno/index.mjs");
+	flyLeafGlobals = await import("../rt.deno/index.mjs");
 } else if (self.Ant) {
 	debugMsg && console.debug(`Selected backend: Ant.`);
-	flyLeafGlobals = await import("../ant/index.mjs");
+	flyLeafGlobals = await import("../rt.ant/index.mjs");
 } else if (self.Bun) {
 	debugMsg && console.debug(`Selected backend: Bun.`);
-	flyLeafGlobals = await import("../bun/index.mjs");
+	flyLeafGlobals = await import("../rt.bun/index.mjs");
 } else if (self.process || self.require) {
 	debugMsg && console.debug(`Selected backend: Node.`);
-	flyLeafGlobals = await import("../node/index.mjs");
+	flyLeafGlobals = await import("../rt.node/index.mjs");
 };
 
 const {
