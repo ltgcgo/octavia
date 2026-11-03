@@ -54,6 +54,23 @@ export function linuxOpenFlags(flags) {
 	return result;
 };
 
+/** @param {import("../../index/index.d.mts").LeafWriteFileOptions} flags */
+export function linuxWriteFlags(flags) {
+	let result = NodeFsConstant.O_WRONLY;
+	if (flags.append) result |= NodeFsConstant.O_APPEND;
+	if (!flags.createNew && flags.truncate) {
+		result |= NodeFsConstant.O_TRUNC;
+	};
+	if (!flags.createNew && flags.create !== false) {
+		result |= NodeFsConstant.O_CREAT;
+	};
+	if (flags.createNew) {
+		if (!flags.write && !flags.append) {throw new Error(`Enforced create requires permission to write or append.`)};
+		result |= NodeFsConstant.O_CREAT | NodeFsConstant.O_EXCL
+	};
+	return result;
+};
+
 export class LeafDirEntry extends CommonDirEntry {
 	/** @type {import("node:fs").Dirent} */
 	#dirent;

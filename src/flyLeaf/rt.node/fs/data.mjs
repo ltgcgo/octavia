@@ -7,7 +7,9 @@
 import * as NodeFs from "node:fs";
 const NodeAsyncFs = NodeFs.promises;
 
-import { linuxOpenFlags } from "./translate.mjs";
+import {
+	linuxWriteFlags
+} from "./translate.mjs";
 
 /** @param {Uint8Array|ReadableStream<Uint8Array>} data
 * @param {import("../../index/index.d.mts").LeafWriteFileOptions} options */
@@ -16,7 +18,7 @@ export async function writeFile(path, data, options = {}) {
 		await NodeAsyncFs.writeFile(path, data, {
 			"flush": true,
 			"mode": options.mode,
-			"flag": linuxOpenFlags(options)
+			"flag": linuxWriteFlags(options)
 		});
 		return;
 	} else if (data?.constructor === ReadableStream) {
@@ -31,7 +33,7 @@ export async function writeFile(path, data, options = {}) {
 		})(), {
 			"flush": true,
 			"mode": options.mode,
-			"flag": linuxOpenFlags(options)
+			"flag": linuxWriteFlags(options)
 		});
 		return;
 	};
@@ -45,7 +47,7 @@ export function writeFileSync(path, data, options = {}) {
 	NodeFs.writeFileSync(path, data, {
 		"flush": true,
 		"mode": options.mode,
-		"flag": linuxOpenFlags(options)
+		"flag": linuxWriteFlags(options)
 	});
 };
 /** @param {string|ReadableStream<string>} data
@@ -55,7 +57,7 @@ export async function writeTextFile(path, data, options = {}) {
 		await NodeAsyncFs.writeFile(path, data, {
 			"flush": true,
 			"mode": options.mode,
-			"flag": linuxOpenFlags(options)
+			"flag": linuxWriteFlags(options)
 		});
 		return;
 	} else if (data?.constructor === ReadableStream) {
@@ -70,7 +72,7 @@ export async function writeTextFile(path, data, options = {}) {
 		})(), {
 			"flush": true,
 			"mode": options.mode,
-			"flag": linuxOpenFlags(options)
+			"flag": linuxWriteFlags(options)
 		});
 		return;
 	};
@@ -84,6 +86,6 @@ export function writeTextFileSync(path, data, options = {}) {
 	NodeFs.writeFileSync(path, data, {
 		"flush": true,
 		"mode": options.mode,
-		"flag": linuxOpenFlags(options)
+		"flag": linuxWriteFlags(options)
 	});
 };
