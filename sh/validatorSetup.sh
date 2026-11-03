@@ -152,7 +152,7 @@ cpSafe "../download/vendor/yamaha/plg_sg/sg_koi.mid.br" .
 cpSafe "../download/vendor/yamaha/plg_sg/sg_mura.mid.br" .
 cpSafe "../download/vendor/yamaha/plg_sg/sg_yuki.mid.br" .
 # PLG1X0-VL demo songs
-cpSafe "../download/vendor/yamaha/plg_vl/Clouds.mid.br" .
+cpSafe "../download/vendor/yamaha/plg_vl/Clouds.mid.br" "./CloudsVL.mid.br"
 cpSafe "../download/vendor/yamaha/plg_vl/CoolJiva.mid.br" .
 cpSafe "../download/vendor/yamaha/plg_vl/DinoJung.mid.br" .
 cpSafe "../download/vendor/yamaha/plg_vl/DoGrooVA.mid.br" .

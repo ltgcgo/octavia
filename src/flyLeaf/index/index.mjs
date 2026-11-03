@@ -27,6 +27,8 @@ if (self.Ende) {
 	flyLeafGlobals = await import("../rt.node/index.mjs");
 };
 
+flyLeafGlobals.version.sync = true;
+
 const {
 	LeafFsFile,
 

@@ -81,7 +81,8 @@ removeProperties(
 
 if (globalThis.Bun) {
 	globalThis.process = getProcess(NodeProcess, [
+		"_exiting",
 		"availableMemory",
 		"nextTick"
-	], true);
+	], false);
 };

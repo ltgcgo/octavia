@@ -17,6 +17,8 @@ export default class LeafVersion {
 	engine;
 	/** @type {string} */
 	flyLeaf = "0.0.1";
+	/** @type {boolean} */
+	sync;
 	/** @type {string?} */
 	typescript;
 	/** @type {string} */

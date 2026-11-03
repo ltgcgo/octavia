@@ -4,7 +4,38 @@
 
 "use strict";
 
+const skipCheck = false;
+const inspectTrace = false;
+const lineLocationMatcher = /\((?<location>([ -_/.,:;@$#()]|\w|\d)+)\)/m;
+const internalPathTester = /^(internal|native|node):/m;
+
 const RestrictedProcess = class RestrictedProcess {};
+
+export function isInternal() {
+	if (skipCheck) return true;
+	let stackMsg = (new Error()).stack;
+	//console.debug(stackMsg);
+	let loop = true;
+	while (loop) {
+		const nextLine = stackMsg.indexOf("\n") + 1;
+		if (nextLine > 0) {
+			stackMsg = stackMsg.substring(nextLine);
+		} else {
+			loop = false;
+		};
+		if (stackMsg?.length <= 0) {
+			break;
+		};
+		const matchResult = lineLocationMatcher.exec(stackMsg)?.groups;
+		if (!matchResult) continue;
+		const {location} = matchResult;
+		//console.debug(location);
+		if (internalPathTester.test(location)) {
+			return true;
+		};
+	};
+	return false;
+};
 
 export function wrapProxies(victim, tree) {
 	if (victim == null) {
@@ -35,11 +66,15 @@ export function wrapProxies(victim, tree) {
 		"get": (target, key) => {
 			const newKeyTree = tree.slice();
 			newKeyTree.push(key);
-			console.info(newKeyTree.join("."));
-			return wrapProxies(target[key], newKeyTree);
+			inspectTrace && console.info(newKeyTree.join("."));
+			if (isInternal()) {
+				return wrapProxies(target[key], newKeyTree);
+			} else {
+				return undefined;
+			};
 		},
 		"apply": (target, thisArg, args) => {
-			console.info(`${tree.join(".")}()`);
+			inspectTrace && console.info(`${tree.join(".")}()`);
 			const newKeyTree = tree.slice();
 			newKeyTree.push("[[Call]]");
 			return wrapProxies(
@@ -58,11 +93,12 @@ export function getProcess(processObject, reservedFeatures, passThrough = false)
 	};
 	const exposedProcess = new RestrictedProcess();
 	if (!reservedFeatures) return exposedProcess;
-	if (reservedFeatures.constructor !== Set) {
+	/*if (reservedFeatures.constructor !== Set) {
 		reservedFeatures = new Set(reservedFeatures);
-	};
-	for (const key in processObject) {
-		if (reservedFeatures.has(key)) {
+	};*/
+	for (const key of reservedFeatures) {
+		if (processObject[key] != null) {
+			//console.debug(key);
 			exposedProcess[key] = processObject[key];
 		};
 	};
