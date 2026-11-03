@@ -3,7 +3,7 @@
 // Licensed under GNU LGPL v3.0 license.
 
 "use strict";
-import "../common/init.mjs";
+import "../vergilius/init.mjs";
 
 import versionObject from "./env/version.mjs";
 import {LeafFsFile} from "./fs/handle.mjs";

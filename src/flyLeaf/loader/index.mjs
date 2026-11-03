@@ -22,4 +22,4 @@ if (self.Deno) {
 };
 
 // Final clean-up.
-await import("../cleanUp/index.mjs");
+await import("../vergilius/cleanUp.mjs");

@@ -4,11 +4,7 @@
 
 "use strict";
 
-// The final step to clean Node.js up. Do not run during API initialisation!
-
-if (!globalThis.self) globalThis.self = globalThis;
-
-await import("../common/init.mjs");
+// The very last step to clean runtimes up. Do not run during API initialisation!
 
 const removeProperties = (target, keys = []) => {
 	for (const key of keys) {
@@ -25,7 +21,7 @@ const removeProperties = (target, keys = []) => {
 };
 
 removeProperties(
-	self,
+	globalThis,
 	[
 		"Buffer",
 		"async_hooks",
@@ -39,6 +35,7 @@ removeProperties(
 		"dns",
 		"domain",
 		"events",
+		"exports",
 		"fs",
 		"global",
 		"http",

@@ -68,7 +68,7 @@ Don't believe our claims regarding environment neutrality? Hope this section cha
 
 > While Node.js is pinned to the latest LTS version shipped by Debian stable, and Deno pinned to release 2.9.7, tests for all other JS runtimes are run on their respective latest stable release.
 
-All supported runtimes listed below have their output verified to be identical to each other, without requiring compatibility layers for APIs of a specific runtime. Node.js requires at least the Fly Leaf clean-up script (`cleanUp.mjs`) to function, check _Fly Leaf_ for details.
+All supported runtimes listed below have their output verified to be identical to each other, without requiring compatibility layers for APIs of a specific runtime. Node.js requires at least the Fly Leaf conformance script (`vergilius.mjs`) to function, check _Fly Leaf_ for details.
 
 | Component | Deno | Bun | Node.js 20 LTS |
 | --------- | ---- | --- | -------------- |

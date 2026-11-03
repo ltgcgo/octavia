@@ -17,10 +17,10 @@ Like the project and want to support it? Learn how in the parent project Octavia
 Vendoring is the current recommended approach for loading Fly Leaf that sidesteps runtime feature support altogether. All examples below assume the library is vendored under `./libs/fly-leaf@ltgcgo/`.
 
 ### Conformance without shims
-If you're sure a crashing component is intended for a web-compliant environment without requiring any Deno API, then you can choose to use a simple clean-up script.
+If you're sure a crashing component is intended for a web-compliant environment without requiring any Deno API, then you can choose to use the conformance script.
 
-- Node.js: `node --import ./libs/fly-leaf@ltgcgo/cleanUp.mjs ...`
-- Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/cleanUp.mjs ...`
+- Node.js: `node --import ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
+- Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
 
 ### Deno globals
 If a crashing component expect Deno globals, you can use the Fly Leaf loader. If provided, you can use the `bell ...` (Belladonna) helper instead.
@@ -71,6 +71,7 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ### Out-of-scope features
 - **Bundling** (`Deno.bundle`). Use an external bundler like ESBuild, tdewolff Minify or SWC, some of which can be directly used on runtimes supporting WebAssembly.
 - **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like Fly Leaf, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.
+  - This also means that Fly Leaf is unable to block runtime-native imports like `node:` and `npm:`. If you want to be absolutely certain your codebase does not rely on Node.js, please use Ende with or without Fly Leaf.
 - **KV Store** (`Deno.openKv`). Use the storage APIs or external databases.
 - **Node.js-API Native Addon**. Use FFI instead.
 
