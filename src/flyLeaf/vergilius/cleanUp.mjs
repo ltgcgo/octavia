@@ -4,6 +4,8 @@
 
 "use strict";
 
+import { getProcess } from "./restrict.mjs";
+
 // The very last step to clean runtimes up. Do not run during API initialisation!
 
 const removeProperties = (target, keys = []) => {
@@ -20,55 +22,66 @@ const removeProperties = (target, keys = []) => {
 	};
 };
 
+const NodeProcess = globalThis.process;
+
+const removalTargets = new Set([
+	"__dirname",
+	"__filename",
+	"Buffer",
+	"async_hooks",
+	"buffer",
+	"child_process",
+	"clearImmediate",
+	"cluster",
+	"constants",
+	"dgram",
+	"diagnostics_channel",
+	"dns",
+	"domain",
+	"events",
+	"exports",
+	"fs",
+	"global",
+	"http",
+	"http2",
+	"https",
+	"inspector",
+	"module",
+	"net",
+	"os",
+	"path",
+	"perf_hooks",
+	"process",
+	"punycode",
+	"querystring",
+	"readline",
+	"repl",
+	"require",
+	"setImmediate",
+	"stream",
+	"string_decoder",
+	"sys",
+	"timers",
+	"tls",
+	"trace_events",
+	"tty",
+	"url",
+	"util",
+	"v8",
+	"vm",
+	"wasi",
+	"worker_threads",
+	"zlib"
+]);
+
 removeProperties(
 	globalThis,
-	[
-		"__dirname",
-		"__filename",
-		"Buffer",
-		"async_hooks",
-		"buffer",
-		"child_process",
-		"clearImmediate",
-		"cluster",
-		"constants",
-		"dgram",
-		"diagnostics_channel",
-		"dns",
-		"domain",
-		"events",
-		"exports",
-		"fs",
-		"global",
-		"http",
-		"http2",
-		"https",
-		"inspector",
-		"module",
-		"net",
-		"os",
-		"path",
-		"perf_hooks",
-		"process",
-		"punycode",
-		"querystring",
-		"readline",
-		"repl",
-		"require",
-		"setImmediate",
-		"stream",
-		"string_decoder",
-		"sys",
-		"timers",
-		"tls",
-		"trace_events",
-		"tty",
-		"url",
-		"util",
-		"v8",
-		"vm",
-		"wasi",
-		"worker_threads",
-		"zlib"
-	]
+	removalTargets
 );
+
+if (globalThis.Bun) {
+	globalThis.process = getProcess(NodeProcess, [
+		"availableMemory",
+		"nextTick"
+	], true);
+};
