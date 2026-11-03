@@ -25,10 +25,33 @@ if (self.Ende) {
 };
 
 const {
-	version
+	LeafFsFile,
+
+	version,
+
+	open,
+	openSync,
+	readDir,
+	readDirSync,
+	writeFile,
+	writeFileSync,
+	writeTextFile,
+	writeTextFileSync
 } = flyLeafGlobals;
 
 export {
-	version
+	LeafFsFile as FsFile,
+	LeafFsFile,
+
+	version,
+
+	open,
+	openSync,
+	readDir,
+	readDirSync,
+	writeFile,
+	writeFileSync,
+	writeTextFile,
+	writeTextFileSync
 };
 export default flyLeafGlobals;

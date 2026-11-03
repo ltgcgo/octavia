@@ -30,7 +30,7 @@ If a crashing component expect Deno globals, you can use the Fly Leaf loader. If
 - Ende: `ende run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 
-All supported runtimes set `Deno.version.backend`. Current valid values include `Bun`, `Deno`, `Ende`, and `Node`.
+All supported runtimes set `Deno.version.backend` and `Deno.version.engine`. For a list of valid values, see the [runtimes](#runtimes) section below.
 
 Runtimes may not actually execute the loader in the context of REPL, so debug with caution.
 
@@ -47,19 +47,15 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ## Support
 ### Runtimes
 - [**Ant**](https://antjs.org/): Investigating.
-- [**a-Shell `JSC`**](https://github.com/holzschu/a-shell/blob/master/man/man1/jsc.1)**: Investigating.
+- [**a-Shell `JSC`**](https://github.com/holzschu/a-shell/blob/master/man/man1/jsc.1)**: Out of scope. Basic FS access, insufficient platform APIs.
 - [**Boa**](https://github.com/boa-dev/boa): Investigating.
 - [**Bun**](https://bun.sh/): WIP.
-  - `Deno.version.backend` set to `Bun`.
-- [**Deno**](https://deno.land/)
-  - `Deno.version.backend` set to `Deno`.
-- [**Ende**](https://ende.sh/)
-  - `Deno.version.backend` set to `Ende`.
+- [**Deno**](https://deno.land/): Supported.
+- [**Ende**](https://ende.sh/): Supported.
   - `Deno.version.deno` set to the Deno version targeted by Fly Leaf.
 - **Javy**: Out of scope. Insufficient platform APIs.
 - [**Kiesel**](https://kiesel.dev/): Investigating.
 - [**Node.js**]: WIP.
-  - `Deno.version.backend` set to `Node`.
 - [**Porffor**](https://porffor.dev/): Investigating. Blocked by a lack of documentation.
 - [**Txiki.js**](https://txikijs.org/): Investigating.
 
