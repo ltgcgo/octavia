@@ -15,7 +15,7 @@ import {
 export function linuxOpenFlags(flags) {
 	let result = 0;
 	let rwIntermediate = 0;
-	if (flags.read == null || flags.read) {
+	if (!flags.read) {
 		rwIntermediate |= 1;
 	};
 	if (flags.write || flags.append) {
@@ -64,7 +64,7 @@ export class LeafDirEntry extends CommonDirEntry {
 		return this.#dirent.isFile();
 	};
 	get isSymlink() {
-		return this.#dirent.isSymlink();
+		return this.#dirent.isSymbolicLink();
 	};
 	/** @param {import("node:fs").Dirent} dirent */
 	constructor(dirent) {

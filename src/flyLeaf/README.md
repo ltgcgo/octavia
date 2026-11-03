@@ -46,7 +46,8 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 
 ## Support
 ### Runtimes
-- [**Ant**](https://antjs.org/): Investigating.
+- [**Ant**](https://antjs.org/): WIP.
+  - Requires a `TextDecoder` polyfill/ponyfill.
 - [**a-Shell `JSC`**](https://github.com/holzschu/a-shell/blob/master/man/man1/jsc.1)**: Out of scope. Basic FS access, insufficient platform APIs.
 - [**Boa**](https://github.com/boa-dev/boa): Investigating.
 - [**Bun**](https://bun.sh/): WIP.
@@ -71,3 +72,9 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 - **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like Fly Leaf, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.
 - **KV Store** (`Deno.openKv`). Use the storage APIs or external databases.
 - **Node.js-API Native Addon**. Use FFI instead.
+
+### Target features
+- [ ] `TextDecoder` polyfill
+- [ ] `TextEncoder` polyfill
+- [ ] `Uint8Array.fromBase64` polyfill
+- [ ] `Uint8Array.fromHex` polyfill

@@ -21,9 +21,11 @@ declare class NodeVersion {
 	acorn?: string;
 	/** Node.js-native module version. */
 	ada?: string;
+	/** Ant-native module version. */
+	ant?: string;
 	/** Node.js-compatible module version. */
 	ares: string;
-	/** Bun-native module version. */
+	/** Node.js-foreign module version. */
 	boringssl?: string;
 	/** Bun-native module version. */
 	bun?: string;
@@ -43,8 +45,12 @@ declare class NodeVersion {
 	libarchive?: string;
 	/** Bun-native module version. */
 	libdeflate?: string;
+	/** Ant-native module version. */
+	libffi?: string;
 	/** Node.js-compatible module version. */
 	llhttp?: string;
+	/** Ant-native module version. */
+	lmdb?: string;
 	/** Bun-native module version. */
 	lolhtml?: string;
 	/** Bun-native module version. */
@@ -67,8 +73,16 @@ declare class NodeVersion {
 	openssl: string;
 	/** Bun-native module version. */
 	picohttpparser?: string;
+	/** Ant-native module version. */
+	pcre2?: string;
+	/** Ant-native module version. */
+	skim?: string;
+	/** Ant-native module version. */
+	silver?: string;
 	/** Node.js-native module version. */
 	simdutf?: string;
+	/** Ant-native module version. */
+	simdjson?: string;
 	/** Node.js-compatible module version. */
 	sqlite?: string;
 	/** Bun-native module version. */
@@ -81,6 +95,8 @@ declare class NodeVersion {
 	unicode?: string;
 	/** Bun-native module version. */
 	usockets?: string;
+	/** Ant-native module version. */
+	utf8proc?: string;
 	/** Node.js-compatible module version. */
 	uv: string;
 	/** Bun-native module version. */
@@ -89,6 +105,8 @@ declare class NodeVersion {
 	uvwasi?: string;
 	/** Node.js-compatible module version. */
 	v8: string;
+	/** Ant-native module version. */
+	wamr?: string;
 	/** Bun-native module version. */
 	webkit?: string;
 	/** Bun-native module version. */
