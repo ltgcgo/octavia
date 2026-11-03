@@ -68,7 +68,7 @@ Don't believe our claims regarding environment neutrality? Hope this section cha
 
 > While Node.js is pinned to the latest LTS version shipped by Debian stable, and Deno pinned to release 2.9.7, tests for all other JS runtimes are run on their respective latest stable release.
 
-All supported runtimes listed below have their output verified to be identical to each other, without requiring compatibility layers for APIs of a specific runtime. Node.js requires at least the Fly Leaf clean-up script to function, check _Fly Leaf_ for details.
+All supported runtimes listed below have their output verified to be identical to each other, without requiring compatibility layers for APIs of a specific runtime. Node.js requires at least the Fly Leaf clean-up script (`cleanUp.mjs`) to function, check _Fly Leaf_ for details.
 
 | Component | Deno | Bun | Node.js 20 LTS |
 | --------- | ---- | --- | -------------- |
@@ -76,7 +76,9 @@ All supported runtimes listed below have their output verified to be identical t
 | Lyre v2 | ✓ | ✓ | ✓ |
 | MICC | ✓ | ✓ | ✓ |
 
-1. Lyre v2 will be retired before Octavia 0.6, which will be replaced by Lyre v3.
+- Certain runtimes do not implement standard web features, as such they require the _Fly Leaf_ initialiser, the _Fly Leaf_ loader, or web API polyfills to function.
+  - Ant.js lacks decoding support for various legacy text encodings, causing MICC to crash upon load.
+- Lyre v2 will be retired before Octavia 0.6, which will be replaced by Lyre v3.
 
 ## Supported targets
 Octavia offers support to a wide range of targets, most of them being either GM-compliant or having strong historical importance. Read the [support page](https://kb.ltgc.cc/octavia/support/target.html) for more information.
