@@ -30,7 +30,7 @@ If a crashing component expect Deno globals, you can use the Fly Leaf loader. If
 - Ende: `ende run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 
-All supported runtimes sets `Deno.version.backend`. Current valid values include `Bun`, `Deno`, `Ende`, and `Node`.
+All supported runtimes set `Deno.version.backend`. Current valid values include `Bun`, `Deno`, `Ende`, and `Node`.
 
 Runtimes may not actually execute the loader in the context of REPL, so debug with caution.
 
@@ -46,16 +46,29 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 
 ## Support
 ### Runtimes
-- **Bun**: Planned.
-- **Deno**
+- [**Ant**](https://antjs.org/): Investigating.
+- [**a-Shell `JSC`**](https://github.com/holzschu/a-shell/blob/master/man/man1/jsc.1)**: Investigating.
+- [**Boa**](https://github.com/boa-dev/boa): Investigating.
+- [**Bun**](https://bun.sh/): WIP.
+  - `Deno.version.backend` set to `Bun`.
+- [**Deno**](https://deno.land/)
   - `Deno.version.backend` set to `Deno`.
-- **Ende**
+- [**Ende**](https://ende.sh/)
   - `Deno.version.backend` set to `Ende`.
   - `Deno.version.deno` set to the Deno version targeted by Fly Leaf.
-- **Javy**: Investigating.
-- **Node.js**: Planned.
-- **Porffor**: Investigating. Blocked by a lack of documentation.
-- **Txiki.js**: Investigating.
+- **Javy**: Out of scope. Insufficient platform APIs.
+- [**Kiesel**](https://kiesel.dev/): Investigating.
+- [**Node.js**]: WIP.
+  - `Deno.version.backend` set to `Node`.
+- [**Porffor**](https://porffor.dev/): Investigating. Blocked by a lack of documentation.
+- [**Txiki.js**](https://txikijs.org/): Investigating.
+
+| Runtime | `backend` | `engine` |
+| ------- | --------- | -------- |
+| Bun | `Bun` | `JavaScriptCore` |
+| Deno | `Deno` | `V8` |
+| Ende | `Ende` | `V8` |
+| Node.js | `Node` | `V8` |
 
 ### Out-of-scope features
 - **Bundling** (`Deno.bundle`). Use an external bundler like ESBuild, tdewolff Minify or SWC, some of which can be directly used on runtimes supporting WebAssembly.

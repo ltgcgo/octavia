@@ -101,9 +101,9 @@ declare class NodeVersion {
 /** The Deno version object extended by Fly Leaf. */
 export class LeafVersion extends DenoVersion {
 	/** The actual backend behind Fly Leaf. */
-	backend: "Bun" | "Deno" | "Ende" | "Node" | "Porffor" | "Txiki";
+	backend: "Ant" | "Bun" | "Deno" | "Ende" | "Node" | "Porffor" | "Txiki";
 	/** The actual JS engine behind the runtime. */
-	engine: "JavaScriptCore" | "LibJS" | "Porffor" | "QuickJS" | "SpiderMonkey" | "V8";
+	engine: "Ant Silver" | "JavaScriptCore" | "LibJS" | "Porffor" | "QuickJS" | "SpiderMonkey" | "V8";
 	/** The version of Fly Leaf being run. */
 	flyLeaf: string;
 	/** The runtime-native versions object. */
