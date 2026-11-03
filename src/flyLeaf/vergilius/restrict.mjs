@@ -64,23 +64,32 @@ export function wrapProxies(victim, tree) {
 	};
 	return new Proxy(victim, {
 		"get": (target, key) => {
-			const newKeyTree = tree.slice();
-			newKeyTree.push(key);
-			inspectTrace && console.info(newKeyTree.join("."));
 			if (isInternal()) {
-				return wrapProxies(target[key], newKeyTree);
+				if (inspectTrace) {
+					const newKeyTree = tree.slice();
+					newKeyTree.push(key);
+					inspectTrace && console.info(newKeyTree.join("."));
+					return wrapProxies(target[key], newKeyTree);
+				} else {
+					return target[key];
+				};
 			} else {
 				return undefined;
 			};
 		},
 		"apply": (target, thisArg, args) => {
 			inspectTrace && console.info(`${tree.join(".")}()`);
-			const newKeyTree = tree.slice();
-			newKeyTree.push("[[Call]]");
-			return wrapProxies(
-				target.apply(thisArg, args),
-				newKeyTree
-			);
+			const response = target.apply(thisArg, args);
+			if (inspectTrace) {
+				const newKeyTree = tree.slice();
+				newKeyTree.push("[[Call]]");
+				return wrapProxies(
+					response,
+					newKeyTree
+				);
+			} else {
+				return response;
+			};
 		}
 	});
 };
