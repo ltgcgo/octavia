@@ -5,11 +5,15 @@
 "use strict";
 
 import LeafBuildInfo from "../common/class/buildInfo.mjs";
+import { TargetExtractLLVM } from "../common/class/matchers.mjs";
 
-import NodeProcess from "node:process";
-
+const antBuild = TargetExtractLLVM.exec(Ant.target ?? "")?.groups;
 export const build = new LeafBuildInfo(
-	Ant.host,
-	NodeProcess.arch,
+	antBuild?.os ?? Ant.host,
+	antBuild?.arch ?? (await import("node:process")).arch,
+	antBuild?.vendor,
 	Ant.target
 );
+if (antBuild?.env) {
+	build.env = antBuild.env;
+};
