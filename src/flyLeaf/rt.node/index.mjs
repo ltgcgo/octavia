@@ -6,11 +6,7 @@
 import "../vergilius/init.mjs";
 
 import versionObject from "./env/version.mjs";
-import {LeafFsFile} from "./fs/handle.mjs";
-
-export const FsFile = LeafFsFile;
 export const version = versionObject;
 
-export * from "./fs/handle.mjs";
-export * from "./fs/meta.mjs";
-export * from "./fs/data.mjs";
+export * from "../common/constant/index.mjs";
+export * from "./fs/index.mjs";

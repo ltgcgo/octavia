@@ -9,5 +9,6 @@ import {LeafFsFile} from "./fs/class.mjs";
 
 export const FsFile = LeafFsFile;
 export const version = versionObject;
-export * from "./fs/class.mjs";
-export * from "./fs/method.mjs";
+
+export * from "./constant/index.mjs";
+export * from "./fs/index.mjs";

@@ -21,7 +21,7 @@ Not sure how to explain to people what Octavia is? Here is our [marketing pitch]
 >
 > Octavia may work on Node.js, but support for it is never first-class, since we _do not bootlick_ any single runtime. As this module is web-compliant standard ESM, to use on Node.js, a minimal web-compliant shim is required. Please check for the clean-up script from _Fly Leaf_.
 >
-> Except via compatibility layers, there is no plan to ever put runtimes that offers non-ES compliance on first-class support. This means that only capable browsers, [Deno](https://deno.land/) and its direct descedants sharing the same web-first vision are the first-class support targets. To check
+> Except via compatibility layers, there is no plan to ever put runtimes that offers non-ES compliance on first-class support. This means that only capable browsers, [Deno](https://deno.land/) and its direct descedants sharing the same web-first vision are the first-class support targets. Read more in the [runtimes](#runtimes) section.
 >
 > Octavia is only ever published to [JSR](https://jsr.io/@ltgc/octavia), with only its compatibility layers published to NPMJS to help transition off Node.js ecosystems. If you see Octavia fully published to other registries, report those fake packages immediately as they may contain malware.
 

@@ -65,3 +65,5 @@ export class LeafFsFile {
 		return NodeStream.Readable.toWeb(stream);
 	};
 };
+
+export const FsFile = LeafFsFile;

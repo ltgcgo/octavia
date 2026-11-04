@@ -115,7 +115,7 @@ export function getProcess(processObject, reservedFeatures, passThrough = false)
 			//console.debug(key);
 			let assigned = processObject[key];
 			if (preventObtainThenAccessAtBoundary) {
-				assigned = wrapProxies(exposedProcess, tree)
+				assigned = wrapProxies(assigned, tree);
 			};
 			// Mimics actual Node.js `process` properties.
 			Object.defineProperty(

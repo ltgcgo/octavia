@@ -135,6 +135,7 @@ export class LeafFsFile implements DisposableObject {
 	writeSync(buffer: Uint8Array): number;
 }
 export type FsFile = typeof LeafFsFile;
+export const FsFile: LeafFsFile;
 
 export interface LeafMakeTempOptions {
 	/**  */

@@ -31,6 +31,9 @@ flyLeafGlobals.version.asyncOnly = false;
 
 const {
 	LeafFsFile,
+	FsFile,
+	LeafSeekMode,
+	SeekMode,
 
 	version,
 
@@ -45,8 +48,10 @@ const {
 } = flyLeafGlobals;
 
 export {
-	LeafFsFile as FsFile,
 	LeafFsFile,
+	FsFile,
+	LeafSeekMode,
+	SeekMode,
 
 	version,
 

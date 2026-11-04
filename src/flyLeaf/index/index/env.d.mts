@@ -3,7 +3,7 @@
 // Licensed under GNU LGPL v3.0 license.
 
 /** The vanilla Deno version object. */
-declare class DenoVersion {
+declare interface DenoVersion {
 	/** The version of Deno Fly Leaf is posing as. */
 	deno: string;
 	/** If running on Ende, the version of Ende. */
@@ -16,7 +16,7 @@ declare class DenoVersion {
 	v8?: string;
 }
 /** The Node.js-compatible version object. */
-declare class NodeVersion {
+declare interface NodeVersion {
 	/** Node.js-native module version. */
 	acorn?: string;
 	/** Node.js-native module version. */
@@ -117,7 +117,7 @@ declare class NodeVersion {
 	zstd?: string;
 }
 /** The Deno version object extended by Fly Leaf. */
-export class LeafVersion extends DenoVersion {
+declare interface LeafVersion extends DenoVersion {
 	/** The actual backend behind Fly Leaf. */
 	backend: "Ant" | "Bun" | "Deno" | "Ende" | "Node" | "Porffor" | "Txiki";
 	/** The actual JS engine behind the runtime. */

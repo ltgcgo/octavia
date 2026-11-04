@@ -10,6 +10,7 @@ export enum LeafSeekMode {
 	/**  */
 	End = 2
 }
+export const SeekMode: LeafSeekMode;
 
 export interface LeafSetRawOptions {
 	/**  */

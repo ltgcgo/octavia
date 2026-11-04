@@ -8,3 +8,4 @@ export * from "./index/env.d.mts";
 export type * from "./index/fs.d.mts";
 export * from "./index/fs.d.mts";
 export type * from "./index/io.d.mts";
+export * from "./index/io.d.mts";
