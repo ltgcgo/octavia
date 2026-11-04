@@ -19,9 +19,11 @@ Not sure how to explain to people what Octavia is? Here is our [marketing pitch]
 
 > **Warning**
 >
-> Octavia may work on Node.js, but support for it is never first-class, since we _do not bootlick_ any single runtime. As this module is web-compliant standard ESM, to use on Node.js, a minimal web-compliant shim is required. Please check for the clean-up script from _Fly Leaf_. Except via compatibility layers, there is no plan to ever put runtimes that offers non-ES compliance on first-class support.
+> Octavia may work on Node.js, but support for it is never first-class, since we _do not bootlick_ any single runtime. As this module is web-compliant standard ESM, to use on Node.js, a minimal web-compliant shim is required. Please check for the clean-up script from _Fly Leaf_.
 >
-> Apart from browsers, only [Deno](https://deno.land/) is supported, while support for [Javy](https://github.com/bytecodealliance/javy) and [Txiki.js](https://github.com/saghul/txiki.js) are planned. Octavia is only ever published to [JSR](https://jsr.io/@ltgc/octavia), with only its compatibility layers published to NPMJS to help transition off Node.js ecosystems. If you see Octavia fully published to other registries, report those fake packages immediately as they may contain malware.
+> Except via compatibility layers, there is no plan to ever put runtimes that offers non-ES compliance on first-class support. This means that only capable browsers, [Deno](https://deno.land/) and its direct descedants sharing the same web-first vision are the first-class support targets. To check
+>
+> Octavia is only ever published to [JSR](https://jsr.io/@ltgc/octavia), with only its compatibility layers published to NPMJS to help transition off Node.js ecosystems. If you see Octavia fully published to other registries, report those fake packages immediately as they may contain malware.
 
 ## What is Octavia?
 The current MIDI landscape is a dumpster fire, at least in the FOSS world. Only proprietary software solutions respect existing MIDI standards, while the FOSS ecosystem largely ignores or even violates the conventions, with TiMidity as the single exception. Octavia, born out of being fed up by the existing antics exhibited by existing FOSS solutions, aims to reach full compliance with existing MIDI standards (MT-32, GM, XG, GS, GM2 and etc.), while exposing simple yet powerful interfaces for developers to build upon.
@@ -64,20 +66,20 @@ Don't believe our claims regarding environment neutrality? Hope this section cha
 | Servo | SpiderMonkey (Servo) | Supported | 0.5.0 |
 
 ### Runtimes
-> This section will be replaced by CI badges once automated validation is complete. Some components have not yet been validated.
+> While Node.js is pinned to the latest LTS version shipped by Debian stable, and Deno pinned to the latest stable release on version 2, tests for all other JS runtimes are run on their respective latest stable release.
 
-> While Node.js is pinned to the latest LTS version shipped by Debian stable, and Deno pinned to release 2.9.7, tests for all other JS runtimes are run on their respective latest stable release.
+[![Validate multiple runtimes](https://github.com/ltgcgo/octavia/actions/workflows/validateRt.yml/badge.svg)](https://github.com/ltgcgo/octavia/actions/workflows/validateRt.yml)
 
 All supported runtimes listed below have their output verified to be identical to each other, without requiring compatibility layers for APIs of a specific runtime. Node.js requires at least the Fly Leaf conformance script (`vergilius.mjs`) to function, check _Fly Leaf_ for details.
 
-| Component | Deno | Bun | Node.js 20 LTS |
-| --------- | ---- | --- | -------------- |
-| `chord.mjs` | ✓ | ✓ | ✓ |
-| Lyre v2 | ✓ | ✓ | ✓ |
-| MICC | ✓ | ✓ | ✓ |
+| Component | Deno | Ende | Bun | Node.js 20 LTS |
+| --------- | ---- | ---- | --- | -------------- |
+| `chord.mjs` | ✓ | ✓ | ✓ | ✓ |
+| Lyre v2 | ✓ | ✓ | ✓ | ✓ |
+| MICC | ✓ | ✓ | ✓ | ✓ |
 
 - Certain runtimes do not implement standard web features, as such they require the _Fly Leaf_ initialiser, the _Fly Leaf_ loader, or web API polyfills to function.
-  - Ant.js lacks decoding support for various legacy text encodings, causing MICC to crash upon load.
+  - Ant.js currently lacks decoding support for various legacy text encodings, causing MICC to crash upon load.
 - Lyre v2 will be retired before Octavia 0.6, which will be replaced by Lyre v3.
 
 ## Supported targets

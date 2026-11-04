@@ -1,4 +1,4 @@
-name: Build and validate multiple runtimes
+name: Validate multiple runtimes
 
 on:
   # Runs on pushes targeting the working branches

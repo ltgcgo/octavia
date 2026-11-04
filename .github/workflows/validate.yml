@@ -1,4 +1,4 @@
-name: Build and validate components
+name: Validate components
 
 on:
   # Runs on pushes targeting the working branches

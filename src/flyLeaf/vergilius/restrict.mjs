@@ -6,6 +6,7 @@
 
 const skipCheck = false;
 const inspectTrace = false;
+const preventObtainThenAccessAtBoundary = false;
 const lineLocationMatcher = /\((?<location>([ -_/.,:;@$#()]|\w|\d)+)\)/m;
 const internalPathTester = /^(internal|native|node):/m;
 
@@ -79,16 +80,20 @@ export function wrapProxies(victim, tree) {
 		},
 		"apply": (target, thisArg, args) => {
 			inspectTrace && console.info(`${tree.join(".")}()`);
-			const response = target.apply(thisArg, args);
-			if (inspectTrace) {
-				const newKeyTree = tree.slice();
-				newKeyTree.push("[[Call]]");
-				return wrapProxies(
-					response,
-					newKeyTree
-				);
+			if (isInternal()) {
+				const response = target.apply(thisArg, args);
+				if (inspectTrace) {
+					const newKeyTree = tree.slice();
+					newKeyTree.push("[[Call]]");
+					return wrapProxies(
+						response,
+						newKeyTree
+					);
+				} else {
+					return response;
+				};
 			} else {
-				return response;
+				return undefined;
 			};
 		}
 	});
@@ -98,7 +103,7 @@ export function wrapProxies(victim, tree) {
 * @param {Set<string>|Iterable<string>} reservedFeatures */
 export function getProcess(processObject, reservedFeatures, passThrough = false) {
 	if (passThrough) {
-		return wrapProxies(processObject);
+		return wrapProxies(processObject, ["process"]);
 	};
 	const exposedProcess = new RestrictedProcess();
 	if (!reservedFeatures) return exposedProcess;
@@ -108,8 +113,21 @@ export function getProcess(processObject, reservedFeatures, passThrough = false)
 	for (const key of reservedFeatures) {
 		if (processObject[key] != null) {
 			//console.debug(key);
-			exposedProcess[key] = processObject[key];
+			let assigned = processObject[key];
+			if (preventObtainThenAccessAtBoundary) {
+				assigned = wrapProxies(exposedProcess, tree)
+			};
+			// Mimics actual Node.js `process` properties.
+			Object.defineProperty(
+				exposedProcess,
+				key, {
+					"value": assigned,
+					"configurable": true,
+					"enumerable": true,
+					"writable": false,
+				}
+			);
 		};
 	};
-	return wrapProxies(exposedProcess);
+	return wrapProxies(exposedProcess, ["process"]);
 };
