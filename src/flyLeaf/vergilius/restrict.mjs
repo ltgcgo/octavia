@@ -15,7 +15,7 @@ const externalPathImmediate = /^(node:(repl)):/m;
 
 const blacklistedProperties = new Set(["prototype"]);
 
-const RestrictedProcess = class RestrictedProcess {};
+const RestrictedView = class RestrictedView {};
 
 export function isInternal() {
 	if (skipCheck) return true;
@@ -25,6 +25,12 @@ export function isInternal() {
 	let loop = true;
 	while (loop) {
 		const nextLine = stackMsg.indexOf("\n") + 1;
+		if (nextLine > 0) {
+			stackMsg = stackMsg.substring(nextLine);
+			depth ++;
+		} else {
+			loop = false;
+		};
 		//console.debug(`---------\nStack: ${stackMsg}\n---------`);
 		if (stackMsg?.length <= 0) {
 			break;
@@ -32,28 +38,22 @@ export function isInternal() {
 		const matchResult = lineLocationMatcher.exec(stackMsg)?.groups;
 		if (!matchResult) continue;
 		const {location} = matchResult;
-		inspectInternal && console.debug(`Inspect: ${location}`);
+		inspectInternal && console.debug(`Inspect (${depth}): ${location}`);
 		if (externalPathImmediate.test(location)) {
-			inspectInternal && console.debug(`Verdict: depth ${depth}, type spotted external.`);
+			inspectInternal && console.debug(`Verdict (${depth}):, type spotted external.`);
 			return false;
 		};
 		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
-			inspectInternal && console.debug(`Verdict: depth ${depth}, type spotted internal.`);
+			inspectInternal && console.debug(`Verdict (${depth}):, type spotted internal.`);
 			return true;
-		};
-		if (nextLine > 0) {
-			stackMsg = stackMsg.substring(nextLine);
-			depth ++;
-		} else {
-			loop = false;
 		};
 	};
 	if (depth <= 2) {
-		inspectInternal && console.debug(`Verdict: depth ${depth}, type inferred internal.`);
+		inspectInternal && console.debug(`Verdict (${depth}):, type inferred internal.`);
 		return true;
 	} else {
-		inspectInternal && console.debug(`Verdict: depth ${depth}, type inferred external.`);
+		inspectInternal && console.debug(`Verdict (${depth}):, type inferred external.`);
 		return false;
 	};
 };
@@ -136,11 +136,11 @@ export function setInternalOnlyProperty(target, key, value) {
 * @param {T} processObject
 * @param {Set<string>|Iterable<string>} reservedFeatures
 * @returns {T} */
-export function getRestrictedCopy(processObject, reservedFeatures, passThrough = false) {
+export function getRestrictedView(processObject, reservedFeatures, passThrough = false) {
 	if (passThrough) {
 		return wrapProxies(processObject, ["process"]);
 	};
-	const exposedProcess = new RestrictedProcess();
+	const exposedProcess = new RestrictedView();
 	if (!reservedFeatures) return exposedProcess;
 	/*if (reservedFeatures.constructor !== Set) {
 		reservedFeatures = new Set(reservedFeatures);
