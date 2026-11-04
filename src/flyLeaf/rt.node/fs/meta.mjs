@@ -11,15 +11,15 @@ const NodeAsyncFs = NodeFs.promises;
 import {
 	LeafDirEntry
 } from "./translate.mjs";
-import { LeafFsFile } from "./handle.mjs";
+import { FsFile } from "./handle.mjs";
 
 /** @param {import("../../index/index.d.mts").LeafOpenOptions} options  */
 export async function open(path, options) {
-	return new LeafFsFile(path, options);
+	return new FsFile(path, options);
 };
 /** @param {import("../../index/index.d.mts").LeafOpenOptions} options  */
 export function openSync(path, options) {
-	return new LeafFsFile(path, options);
+	return new FsFile(path, options);
 };
 
 export async function *readDir(path) {

@@ -6,7 +6,7 @@
 
 import * as LeafEnum from "../util/enum.mjs";
 
-export const LeafSeekMode = LeafEnum.finalise(LeafEnum.linear(
+const LeafSeekMode = LeafEnum.finalise(LeafEnum.linear(
 	["Start", "Current", "End"]
 ));
 export const SeekMode = LeafSeekMode;

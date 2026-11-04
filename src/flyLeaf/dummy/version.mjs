@@ -4,7 +4,6 @@
 	// Oh hey, Deno autocomplete without Deno!
 	/** @type {import("../index/index.d.mts")} */
 	const Deno = self.Deno;
-	console.debug(`Ran as: "${Deno?.args?.join("\" \"")}"`);
 	console.debug(`--- Deno version ---`);
 	console.debug(`API version: ${Deno?.version?.deno ?? "Not supplied"}`);
 	console.debug(`Fly Leaf: ${Deno?.version?.flyLeaf ?? "Not loaded"}`);
@@ -15,4 +14,7 @@
 	console.debug(`OS: ${Deno?.build?.os ?? "Not supplied"}`);
 	console.debug(`Vendor: ${Deno?.build?.vendor ?? "Not supplied"}`);
 	console.debug(`LLVM target: ${Deno?.build?.target ?? "Not supplied"}`);
+	console.debug(`--- Execution context ---`);
+	console.debug(`Script location: ${Deno?.mainModule ?? "Not supplied"}`);
+	console.debug(`Arguments: "${Deno?.args?.join("\" \"") ?? "Not supplied"}"`);
 };

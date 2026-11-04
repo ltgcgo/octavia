@@ -6,5 +6,4 @@
 
 const Deno = self.Deno ?? self.Ende;
 
-export const LeafSeekMode = Deno.SeekMode;
-export const SeekMode = LeafSeekMode;
+export const SeekMode = Deno.SeekMode;

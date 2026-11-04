@@ -11,7 +11,7 @@ import {
 	linuxOpenFlags
 } from "./translate.mjs";
 
-export class LeafFsFile {
+const LeafFsFile = class LeafFsFile {
 	/** @type {boolean} */
 	#closed = false;
 	/** @type {boolean} */
