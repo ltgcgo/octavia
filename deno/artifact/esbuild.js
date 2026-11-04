@@ -1,3 +1,6 @@
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+
 // https://deno.land/x/denoflate@1.2.1/pkg/denoflate.js
 var wasm;
 var cachedTextDecoder = new TextDecoder("utf-8", { ignoreBOM: true, fatal: true });
@@ -9,9 +12,11 @@ function getUint8Memory0() {
   }
   return cachegetUint8Memory0;
 }
+__name(getUint8Memory0, "getUint8Memory0");
 function getStringFromWasm0(ptr, len) {
   return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
+__name(getStringFromWasm0, "getStringFromWasm0");
 var heap = new Array(32).fill(void 0);
 heap.push(void 0, null, true, false);
 var heap_next = heap.length;
@@ -22,19 +27,23 @@ function addHeapObject(obj) {
   heap[idx] = obj;
   return idx;
 }
+__name(addHeapObject, "addHeapObject");
 function getObject(idx) {
   return heap[idx];
 }
+__name(getObject, "getObject");
 function dropObject(idx) {
   if (idx < 36) return;
   heap[idx] = heap_next;
   heap_next = idx;
 }
+__name(dropObject, "dropObject");
 function takeObject(idx) {
   const ret = getObject(idx);
   dropObject(idx);
   return ret;
 }
+__name(takeObject, "takeObject");
 var WASM_VECTOR_LEN = 0;
 function passArray8ToWasm0(arg, malloc) {
   const ptr = malloc(arg.length * 1);
@@ -42,6 +51,7 @@ function passArray8ToWasm0(arg, malloc) {
   WASM_VECTOR_LEN = arg.length;
   return ptr;
 }
+__name(passArray8ToWasm0, "passArray8ToWasm0");
 var cachegetInt32Memory0 = null;
 function getInt32Memory0() {
   if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
@@ -49,9 +59,11 @@ function getInt32Memory0() {
   }
   return cachegetInt32Memory0;
 }
+__name(getInt32Memory0, "getInt32Memory0");
 function getArrayU8FromWasm0(ptr, len) {
   return getUint8Memory0().subarray(ptr / 1, ptr / 1 + len);
 }
+__name(getArrayU8FromWasm0, "getArrayU8FromWasm0");
 function gunzip(input) {
   try {
     const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
@@ -67,6 +79,7 @@ function gunzip(input) {
     wasm.__wbindgen_add_to_stack_pointer(16);
   }
 }
+__name(gunzip, "gunzip");
 async function load(module, imports) {
   if (typeof Response === "function" && module instanceof Response) {
     if (typeof WebAssembly.instantiateStreaming === "function") {
@@ -91,6 +104,7 @@ async function load(module, imports) {
     }
   }
 }
+__name(load, "load");
 async function init(input) {
   if (typeof input === "undefined") {
     input = new URL("denoflate_bg.wasm", import.meta.url);
@@ -112,6 +126,7 @@ async function init(input) {
   init.__wbindgen_wasm_module = module;
   return wasm;
 }
+__name(init, "init");
 var denoflate_default = init;
 
 // https://deno.land/x/denoflate@1.2.1/pkg/denoflate_bg.wasm.js
@@ -120,29 +135,54 @@ var wasm2 = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 142, 1, 21, 96, 2, 1
 // https://deno.land/x/denoflate@1.2.1/mod.ts
 await denoflate_default(wasm2);
 
-// https://deno.land/x/esbuild@v0.27.3/mod.js
-var __defProp = Object.defineProperty;
-var __export = (target, all) => {
+// https://deno.land/x/esbuild@v0.28.1/mod.js
+var __defProp2 = Object.defineProperty;
+var __export = /* @__PURE__ */ __name((target, all) => {
   for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
+    __defProp2(target, name, { get: all[name], enumerable: true });
+}, "__export");
 var mod_exports2 = {};
 __export(mod_exports2, {
-  analyzeMetafile: () => analyzeMetafile,
-  analyzeMetafileSync: () => analyzeMetafileSync,
-  build: () => build,
-  buildSync: () => buildSync,
-  context: () => context,
-  formatMessages: () => formatMessages,
-  formatMessagesSync: () => formatMessagesSync,
-  initialize: () => initialize,
-  stop: () => stop,
-  transform: () => transform,
-  transformSync: () => transformSync,
-  version: () => version
+  analyzeMetafile: /* @__PURE__ */ __name(() => analyzeMetafile, "analyzeMetafile"),
+  analyzeMetafileSync: /* @__PURE__ */ __name(() => analyzeMetafileSync, "analyzeMetafileSync"),
+  build: /* @__PURE__ */ __name(() => build, "build"),
+  buildSync: /* @__PURE__ */ __name(() => buildSync, "buildSync"),
+  context: /* @__PURE__ */ __name(() => context, "context"),
+  formatMessages: /* @__PURE__ */ __name(() => formatMessages, "formatMessages"),
+  formatMessagesSync: /* @__PURE__ */ __name(() => formatMessagesSync, "formatMessagesSync"),
+  initialize: /* @__PURE__ */ __name(() => initialize, "initialize"),
+  stop: /* @__PURE__ */ __name(() => stop, "stop"),
+  transform: /* @__PURE__ */ __name(() => transform, "transform"),
+  transformSync: /* @__PURE__ */ __name(() => transformSync, "transformSync"),
+  version: /* @__PURE__ */ __name(() => version, "version")
 });
+var define_ESBUILD_BINARY_HASHES_default = {
+  "@esbuild/aix-ppc64/bin/esbuild": "0dd860154344f94b7a9367e64ffc2bc5b89a4313b4a399e5127cdc4ff5000303",
+  "@esbuild/android-arm64/bin/esbuild": "087671da02d323e7915fafc13567c0929192633ed544bd8adee9bc020fddf5b4",
+  "@esbuild/darwin-arm64/bin/esbuild": "e2dc9a52440a2a34f09434a2f4843cb1e30f84e40dcf238976ec61ef8cd7f36a",
+  "@esbuild/darwin-x64/bin/esbuild": "dd53ccf32f9b5b3ab30d41388ef1fc8f81c44ca57ee7a32a7364a1753308d009",
+  "@esbuild/freebsd-arm64/bin/esbuild": "5fef5a5ef24d9660d7711b756be5ddeba1fb3ca8dd62d703682ebb9fab3b68b0",
+  "@esbuild/freebsd-x64/bin/esbuild": "4427a8cbfa0661943ccfef2606a65b35f3411ac73e447e86f7732aace61e4609",
+  "@esbuild/linux-arm/bin/esbuild": "a2d93f7a8b1c9f91d47beec987888b4765c890501b6274f4bdff4061a5e0d9fd",
+  "@esbuild/linux-arm64/bin/esbuild": "51e829ba36f36be6d9aea6e329ddc4f9350302339b16aaca96a3cb97f64a8ebb",
+  "@esbuild/linux-ia32/bin/esbuild": "9cd7515a75d6f96b0aa055861cf987498315428088cd6d18de5082f904ae5794",
+  "@esbuild/linux-loong64/bin/esbuild": "73fa76af9b13f7a27fdb20673b8c2af927fe1511d14e51edeb4b7b71f7f03d0e",
+  "@esbuild/linux-mips64el/bin/esbuild": "d734787abc3c99d95242805047fe32da85a5822f04bf33d766a966bf5fd85488",
+  "@esbuild/linux-ppc64/bin/esbuild": "90709144617c2adf8f6c14937f03b114c259de0b9309666e3a9d89a1fb266d04",
+  "@esbuild/linux-riscv64/bin/esbuild": "86df35a46bedde8b756edb6565a1df7b5a832ad74dd0e179608cbf6509a2582a",
+  "@esbuild/linux-s390x/bin/esbuild": "f8cad0db35132e5ac3065c4345c36e7ffe18fdc98417a61bcf5a95a6c694e57c",
+  "@esbuild/linux-x64/bin/esbuild": "0c6588b092a2c291a72bab90659f3c9e0e25e0fe59c9ac12b4dae4d945e5548c",
+  "@esbuild/netbsd-arm64/bin/esbuild": "490cfdac2d96d5608d91cf55bdf4052bbde7013dafe87ec7adc7784778ad4d4c",
+  "@esbuild/netbsd-x64/bin/esbuild": "c61e0e4c553a4986fd0e9d63a0425e93be831ff7b13bfb8a564368fb7590f85d",
+  "@esbuild/openbsd-arm64/bin/esbuild": "f9d814698e26c09c3f90d4c103cbdf3832c9f2c841d64a93889d63d23da9b8cf",
+  "@esbuild/openbsd-x64/bin/esbuild": "2e30dce11f7236aa362c1c57212cc696f51472169aa417f30e9b641f3b7dcade",
+  "@esbuild/sunos-x64/bin/esbuild": "770e0d2bc930b1a1d19d3f43243ff8f393efddb599e7f5843160feacd253267d",
+  "@esbuild/win32-arm64/esbuild.exe": "bfb8798ab678f1ce4a723739f4a3eabab3244d7a04eeb12be2eb9f58095c13ef",
+  "@esbuild/win32-ia32/esbuild.exe": "8fa99b6e0945830fce8d7e208fdb21763aa4aea875751f4a0eec7f6e262af1dd",
+  "@esbuild/win32-x64/esbuild.exe": "ec02ee9b14ab332416fedd10614dfb80eed5304d94f67745067c011934a8c3c3"
+};
 function encodePacket(packet) {
-  let visit = (value) => {
+  let visit = /* @__PURE__ */ __name((value) => {
     if (value === null) {
       bb.write8(0);
     } else if (typeof value === "boolean") {
@@ -172,7 +212,7 @@ function encodePacket(packet) {
         visit(value[key]);
       }
     }
-  };
+  }, "visit");
   let bb = new ByteBuffer();
   bb.write32(0);
   bb.write32(packet.id << 1 | +!packet.isRequest);
@@ -180,8 +220,9 @@ function encodePacket(packet) {
   writeUInt32LE(bb.buf, bb.len - 4, 0);
   return bb.buf.subarray(0, bb.len);
 }
+__name(encodePacket, "encodePacket");
 function decodePacket(bytes) {
-  let visit = () => {
+  let visit = /* @__PURE__ */ __name(() => {
     switch (bb.read8()) {
       case 0:
         return null;
@@ -212,7 +253,7 @@ function decodePacket(bytes) {
       default:
         throw new Error("Invalid packet");
     }
-  };
+  }, "visit");
   let bb = new ByteBuffer(bytes);
   let id = bb.read32();
   let isRequest = (id & 1) === 0;
@@ -223,7 +264,11 @@ function decodePacket(bytes) {
   }
   return { id, isRequest, value };
 }
+__name(decodePacket, "decodePacket");
 var ByteBuffer = class {
+  static {
+    __name(this, "ByteBuffer");
+  }
   constructor(buf = new Uint8Array(1024)) {
     this.buf = buf;
     this.len = 0;
@@ -278,15 +323,15 @@ var encodeInvariant;
 if (typeof TextEncoder !== "undefined" && typeof TextDecoder !== "undefined") {
   let encoder = new TextEncoder();
   let decoder = new TextDecoder();
-  encodeUTF8 = (text) => encoder.encode(text);
-  decodeUTF8 = (bytes) => decoder.decode(bytes);
+  encodeUTF8 = /* @__PURE__ */ __name((text) => encoder.encode(text), "encodeUTF8");
+  decodeUTF8 = /* @__PURE__ */ __name((bytes) => decoder.decode(bytes), "decodeUTF8");
   encodeInvariant = 'new TextEncoder().encode("")';
 } else if (typeof Buffer !== "undefined") {
-  encodeUTF8 = (text) => Buffer.from(text);
-  decodeUTF8 = (bytes) => {
+  encodeUTF8 = /* @__PURE__ */ __name((text) => Buffer.from(text), "encodeUTF8");
+  decodeUTF8 = /* @__PURE__ */ __name((bytes) => {
     let { buffer, byteOffset, byteLength } = bytes;
     return Buffer.from(buffer, byteOffset, byteLength).toString();
-  };
+  }, "decodeUTF8");
   encodeInvariant = 'Buffer.from("")';
 } else {
   throw new Error("No UTF-8 codec found");
@@ -299,14 +344,297 @@ esbuild in this environment because esbuild relies on this invariant. This
 is not a problem with esbuild. You need to fix your environment instead.
 `);
 function readUInt32LE(buffer, offset) {
-  return buffer[offset++] | buffer[offset++] << 8 | buffer[offset++] << 16 | buffer[offset++] << 24;
+  return (buffer[offset++] | buffer[offset++] << 8 | buffer[offset++] << 16 | buffer[offset++] << 24) >>> 0;
 }
+__name(readUInt32LE, "readUInt32LE");
 function writeUInt32LE(buffer, value, offset) {
   buffer[offset++] = value;
   buffer[offset++] = value >> 8;
   buffer[offset++] = value >> 16;
   buffer[offset++] = value >> 24;
 }
+__name(writeUInt32LE, "writeUInt32LE");
+var fromCharCode = String.fromCharCode;
+function throwSyntaxError(bytes, index, message) {
+  const c = bytes[index];
+  let line = 1;
+  let column = 0;
+  for (let i = 0; i < index; i++) {
+    if (bytes[i] === 10) {
+      line++;
+      column = 0;
+    } else {
+      column++;
+    }
+  }
+  throw new SyntaxError(
+    message ? message : index === bytes.length ? "Unexpected end of input while parsing JSON" : c >= 32 && c <= 126 ? `Unexpected character ${fromCharCode(c)} in JSON at position ${index} (line ${line}, column ${column})` : `Unexpected byte 0x${c.toString(16)} in JSON at position ${index} (line ${line}, column ${column})`
+  );
+}
+__name(throwSyntaxError, "throwSyntaxError");
+function JSON_parse(bytes) {
+  if (!(bytes instanceof Uint8Array)) {
+    throw new Error(`JSON input must be a Uint8Array`);
+  }
+  const propertyStack = [];
+  const objectStack = [];
+  const stateStack = [];
+  const length = bytes.length;
+  let property = null;
+  let state = 0;
+  let object;
+  let i = 0;
+  while (i < length) {
+    let c = bytes[i++];
+    if (c <= 32) {
+      continue;
+    }
+    let value;
+    if (state === 2 && property === null && c !== 34 && c !== 125) {
+      throwSyntaxError(bytes, --i);
+    }
+    switch (c) {
+      // True
+      case 116: {
+        if (bytes[i++] !== 114 || bytes[i++] !== 117 || bytes[i++] !== 101) {
+          throwSyntaxError(bytes, --i);
+        }
+        value = true;
+        break;
+      }
+      // False
+      case 102: {
+        if (bytes[i++] !== 97 || bytes[i++] !== 108 || bytes[i++] !== 115 || bytes[i++] !== 101) {
+          throwSyntaxError(bytes, --i);
+        }
+        value = false;
+        break;
+      }
+      // Null
+      case 110: {
+        if (bytes[i++] !== 117 || bytes[i++] !== 108 || bytes[i++] !== 108) {
+          throwSyntaxError(bytes, --i);
+        }
+        value = null;
+        break;
+      }
+      // Number begin
+      case 45:
+      case 46:
+      case 48:
+      case 49:
+      case 50:
+      case 51:
+      case 52:
+      case 53:
+      case 54:
+      case 55:
+      case 56:
+      case 57: {
+        let index = i;
+        value = fromCharCode(c);
+        c = bytes[i];
+        while (true) {
+          switch (c) {
+            case 43:
+            case 45:
+            case 46:
+            case 48:
+            case 49:
+            case 50:
+            case 51:
+            case 52:
+            case 53:
+            case 54:
+            case 55:
+            case 56:
+            case 57:
+            case 101:
+            case 69: {
+              value += fromCharCode(c);
+              c = bytes[++i];
+              continue;
+            }
+          }
+          break;
+        }
+        value = +value;
+        if (isNaN(value)) {
+          throwSyntaxError(bytes, --index, "Invalid number");
+        }
+        break;
+      }
+      // String begin
+      case 34: {
+        value = "";
+        while (true) {
+          if (i >= length) {
+            throwSyntaxError(bytes, length);
+          }
+          c = bytes[i++];
+          if (c === 34) {
+            break;
+          } else if (c === 92) {
+            switch (bytes[i++]) {
+              // Normal escape sequence
+              case 34:
+                value += '"';
+                break;
+              case 47:
+                value += "/";
+                break;
+              case 92:
+                value += "\\";
+                break;
+              case 98:
+                value += "\b";
+                break;
+              case 102:
+                value += "\f";
+                break;
+              case 110:
+                value += "\n";
+                break;
+              case 114:
+                value += "\r";
+                break;
+              case 116:
+                value += "	";
+                break;
+              // Unicode escape sequence
+              case 117: {
+                let code = 0;
+                for (let j = 0; j < 4; j++) {
+                  c = bytes[i++];
+                  code <<= 4;
+                  if (c >= 48 && c <= 57) code |= c - 48;
+                  else if (c >= 97 && c <= 102) code |= c + (10 - 97);
+                  else if (c >= 65 && c <= 70) code |= c + (10 - 65);
+                  else throwSyntaxError(bytes, --i);
+                }
+                value += fromCharCode(code);
+                break;
+              }
+              // Invalid escape sequence
+              default:
+                throwSyntaxError(bytes, --i);
+                break;
+            }
+          } else if (c <= 127) {
+            value += fromCharCode(c);
+          } else if ((c & 224) === 192) {
+            value += fromCharCode((c & 31) << 6 | bytes[i++] & 63);
+          } else if ((c & 240) === 224) {
+            value += fromCharCode((c & 15) << 12 | (bytes[i++] & 63) << 6 | bytes[i++] & 63);
+          } else if ((c & 248) == 240) {
+            let codePoint = (c & 7) << 18 | (bytes[i++] & 63) << 12 | (bytes[i++] & 63) << 6 | bytes[i++] & 63;
+            if (codePoint > 65535) {
+              codePoint -= 65536;
+              value += fromCharCode(codePoint >> 10 & 1023 | 55296);
+              codePoint = 56320 | codePoint & 1023;
+            }
+            value += fromCharCode(codePoint);
+          }
+        }
+        value[0];
+        break;
+      }
+      // Array begin
+      case 91: {
+        value = [];
+        propertyStack.push(property);
+        objectStack.push(object);
+        stateStack.push(state);
+        property = null;
+        object = value;
+        state = 1;
+        continue;
+      }
+      // Object begin
+      case 123: {
+        value = {};
+        propertyStack.push(property);
+        objectStack.push(object);
+        stateStack.push(state);
+        property = null;
+        object = value;
+        state = 2;
+        continue;
+      }
+      // Array end
+      case 93: {
+        if (state !== 1) {
+          throwSyntaxError(bytes, --i);
+        }
+        value = object;
+        property = propertyStack.pop();
+        object = objectStack.pop();
+        state = stateStack.pop();
+        break;
+      }
+      // Object end
+      case 125: {
+        if (state !== 2) {
+          throwSyntaxError(bytes, --i);
+        }
+        value = object;
+        property = propertyStack.pop();
+        object = objectStack.pop();
+        state = stateStack.pop();
+        break;
+      }
+      default: {
+        throwSyntaxError(bytes, --i);
+      }
+    }
+    c = bytes[i];
+    while (c <= 32) {
+      c = bytes[++i];
+    }
+    switch (state) {
+      case 0: {
+        if (i === length) {
+          return value;
+        }
+        break;
+      }
+      case 1: {
+        object.push(value);
+        if (c === 44) {
+          i++;
+          continue;
+        }
+        if (c === 93) {
+          continue;
+        }
+        break;
+      }
+      case 2: {
+        if (property === null) {
+          property = value;
+          if (c === 58) {
+            i++;
+            continue;
+          }
+        } else {
+          object[property] = value;
+          property = null;
+          if (c === 44) {
+            i++;
+            continue;
+          }
+          if (c === 125) {
+            continue;
+          }
+        }
+        break;
+      }
+    }
+    break;
+  }
+  throwSyntaxError(bytes, i);
+}
+__name(JSON_parse, "JSON_parse");
 var quote = JSON.stringify;
 var buildLogLevelDefault = "warning";
 var transformLogLevelDefault = "silent";
@@ -319,24 +647,25 @@ function validateAndJoinStringArray(values, what) {
   }
   return toJoin.join(",");
 }
-var canBeAnything = () => null;
-var mustBeBoolean = (value) => typeof value === "boolean" ? null : "a boolean";
-var mustBeString = (value) => typeof value === "string" ? null : "a string";
-var mustBeRegExp = (value) => value instanceof RegExp ? null : "a RegExp object";
-var mustBeInteger = (value) => typeof value === "number" && value === (value | 0) ? null : "an integer";
-var mustBeValidPortNumber = (value) => typeof value === "number" && value === (value | 0) && value >= 0 && value <= 65535 ? null : "a valid port number";
-var mustBeFunction = (value) => typeof value === "function" ? null : "a function";
-var mustBeArray = (value) => Array.isArray(value) ? null : "an array";
-var mustBeArrayOfStrings = (value) => Array.isArray(value) && value.every((x) => typeof x === "string") ? null : "an array of strings";
-var mustBeObject = (value) => typeof value === "object" && value !== null && !Array.isArray(value) ? null : "an object";
-var mustBeEntryPoints = (value) => typeof value === "object" && value !== null ? null : "an array or an object";
-var mustBeWebAssemblyModule = (value) => value instanceof WebAssembly.Module ? null : "a WebAssembly.Module";
-var mustBeObjectOrNull = (value) => typeof value === "object" && !Array.isArray(value) ? null : "an object or null";
-var mustBeStringOrBoolean = (value) => typeof value === "string" || typeof value === "boolean" ? null : "a string or a boolean";
-var mustBeStringOrObject = (value) => typeof value === "string" || typeof value === "object" && value !== null && !Array.isArray(value) ? null : "a string or an object";
-var mustBeStringOrArrayOfStrings = (value) => typeof value === "string" || Array.isArray(value) && value.every((x) => typeof x === "string") ? null : "a string or an array of strings";
-var mustBeStringOrUint8Array = (value) => typeof value === "string" || value instanceof Uint8Array ? null : "a string or a Uint8Array";
-var mustBeStringOrURL = (value) => typeof value === "string" || value instanceof URL ? null : "a string or a URL";
+__name(validateAndJoinStringArray, "validateAndJoinStringArray");
+var canBeAnything = /* @__PURE__ */ __name(() => null, "canBeAnything");
+var mustBeBoolean = /* @__PURE__ */ __name((value) => typeof value === "boolean" ? null : "a boolean", "mustBeBoolean");
+var mustBeString = /* @__PURE__ */ __name((value) => typeof value === "string" ? null : "a string", "mustBeString");
+var mustBeRegExp = /* @__PURE__ */ __name((value) => value instanceof RegExp ? null : "a RegExp object", "mustBeRegExp");
+var mustBeInteger = /* @__PURE__ */ __name((value) => typeof value === "number" && value === (value | 0) ? null : "an integer", "mustBeInteger");
+var mustBeValidPortNumber = /* @__PURE__ */ __name((value) => typeof value === "number" && value === (value | 0) && value >= 0 && value <= 65535 ? null : "a valid port number", "mustBeValidPortNumber");
+var mustBeFunction = /* @__PURE__ */ __name((value) => typeof value === "function" ? null : "a function", "mustBeFunction");
+var mustBeArray = /* @__PURE__ */ __name((value) => Array.isArray(value) ? null : "an array", "mustBeArray");
+var mustBeArrayOfStrings = /* @__PURE__ */ __name((value) => Array.isArray(value) && value.every((x) => typeof x === "string") ? null : "an array of strings", "mustBeArrayOfStrings");
+var mustBeObject = /* @__PURE__ */ __name((value) => typeof value === "object" && value !== null && !Array.isArray(value) ? null : "an object", "mustBeObject");
+var mustBeEntryPoints = /* @__PURE__ */ __name((value) => typeof value === "object" && value !== null ? null : "an array or an object", "mustBeEntryPoints");
+var mustBeWebAssemblyModule = /* @__PURE__ */ __name((value) => value instanceof WebAssembly.Module ? null : "a WebAssembly.Module", "mustBeWebAssemblyModule");
+var mustBeObjectOrNull = /* @__PURE__ */ __name((value) => typeof value === "object" && !Array.isArray(value) ? null : "an object or null", "mustBeObjectOrNull");
+var mustBeStringOrBoolean = /* @__PURE__ */ __name((value) => typeof value === "string" || typeof value === "boolean" ? null : "a string or a boolean", "mustBeStringOrBoolean");
+var mustBeStringOrObject = /* @__PURE__ */ __name((value) => typeof value === "string" || typeof value === "object" && value !== null && !Array.isArray(value) ? null : "a string or an object", "mustBeStringOrObject");
+var mustBeStringOrArrayOfStrings = /* @__PURE__ */ __name((value) => typeof value === "string" || Array.isArray(value) && value.every((x) => typeof x === "string") ? null : "a string or an array of strings", "mustBeStringOrArrayOfStrings");
+var mustBeStringOrUint8Array = /* @__PURE__ */ __name((value) => typeof value === "string" || value instanceof Uint8Array ? null : "a string or a Uint8Array", "mustBeStringOrUint8Array");
+var mustBeStringOrURL = /* @__PURE__ */ __name((value) => typeof value === "string" || value instanceof URL ? null : "a string or a URL", "mustBeStringOrURL");
 function getFlag(object, keys, key, mustBeFn) {
   let value = object[key];
   keys[key + ""] = true;
@@ -345,6 +674,7 @@ function getFlag(object, keys, key, mustBeFn) {
   if (mustBe !== null) throw new Error(`${quote(key)} must be ${mustBe}`);
   return value;
 }
+__name(getFlag, "getFlag");
 function checkForInvalidFlags(object, keys, where) {
   for (let key in object) {
     if (!(key in keys)) {
@@ -352,6 +682,7 @@ function checkForInvalidFlags(object, keys, where) {
     }
   }
 }
+__name(checkForInvalidFlags, "checkForInvalidFlags");
 function validateInitializeOptions(options) {
   let keys = /* @__PURE__ */ Object.create(null);
   let wasmURL = getFlag(options, keys, "wasmURL", mustBeStringOrURL);
@@ -364,6 +695,7 @@ function validateInitializeOptions(options) {
     worker
   };
 }
+__name(validateInitializeOptions, "validateInitializeOptions");
 function validateMangleCache(mangleCache) {
   let validated;
   if (mangleCache !== void 0) {
@@ -379,6 +711,7 @@ function validateMangleCache(mangleCache) {
   }
   return validated;
 }
+__name(validateMangleCache, "validateMangleCache");
 function pushLogFlags(flags, options, keys, isTTY, logLevelDefault) {
   let color = getFlag(options, keys, "color", mustBeBoolean);
   let logLevel = getFlag(options, keys, "logLevel", mustBeString);
@@ -388,12 +721,14 @@ function pushLogFlags(flags, options, keys, isTTY, logLevelDefault) {
   flags.push(`--log-level=${logLevel || logLevelDefault}`);
   flags.push(`--log-limit=${logLimit || 0}`);
 }
+__name(pushLogFlags, "pushLogFlags");
 function validateStringValue(value, what, key) {
   if (typeof value !== "string") {
     throw new Error(`Expected value for ${what}${key !== void 0 ? " " + quote(key) : ""} to be a string, got ${typeof value} instead`);
   }
   return value;
 }
+__name(validateStringValue, "validateStringValue");
 function pushCommonFlags(flags, options, keys) {
   let legalComments = getFlag(options, keys, "legalComments", mustBeString);
   let sourceRoot = getFlag(options, keys, "sourceRoot", mustBeString);
@@ -479,6 +814,7 @@ function pushCommonFlags(flags, options, keys) {
   if (pure) for (let fn of pure) flags.push(`--pure:${validateStringValue(fn, "pure")}`);
   if (keepNames) flags.push(`--keep-names`);
 }
+__name(pushCommonFlags, "pushCommonFlags");
 function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDefault) {
   let flags = [];
   let entries = [];
@@ -623,6 +959,7 @@ function flagsForBuildOptions(callName, options, isTTY, logLevelDefault, writeDe
     mangleCache: validateMangleCache(mangleCache)
   };
 }
+__name(flagsForBuildOptions, "flagsForBuildOptions");
 function flagsForTransformOptions(callName, options, isTTY, logLevelDefault) {
   let flags = [];
   let keys = /* @__PURE__ */ Object.create(null);
@@ -645,6 +982,7 @@ function flagsForTransformOptions(callName, options, isTTY, logLevelDefault) {
     mangleCache: validateMangleCache(mangleCache)
   };
 }
+__name(flagsForTransformOptions, "flagsForTransformOptions");
 function createChannel(streamIn) {
   const requestCallbacksByKey = {};
   const closeData = { didClose: false, reason: "" };
@@ -653,7 +991,7 @@ function createChannel(streamIn) {
   let nextBuildKey = 0;
   let stdout = new Uint8Array(16 * 1024);
   let stdoutUsed = 0;
-  let readFromStdout = (chunk) => {
+  let readFromStdout = /* @__PURE__ */ __name((chunk) => {
     let limit = stdoutUsed + chunk.length;
     if (limit > stdout.length) {
       let swap = new Uint8Array(limit * 2);
@@ -676,8 +1014,8 @@ function createChannel(streamIn) {
       stdout.copyWithin(0, offset, stdoutUsed);
       stdoutUsed -= offset;
     }
-  };
-  let afterClose = (error) => {
+  }, "readFromStdout");
+  let afterClose = /* @__PURE__ */ __name((error) => {
     closeData.didClose = true;
     if (error) closeData.reason = ": " + (error.message || error);
     const text = "The service was stopped" + closeData.reason;
@@ -685,8 +1023,8 @@ function createChannel(streamIn) {
       responseCallbacks[id](text, null);
     }
     responseCallbacks = {};
-  };
-  let sendRequest = (refs, value, callback) => {
+  }, "afterClose");
+  let sendRequest = /* @__PURE__ */ __name((refs, value, callback) => {
     if (closeData.didClose) return callback("The service is no longer running" + closeData.reason, null);
     let id = nextRequestID++;
     responseCallbacks[id] = (error, response) => {
@@ -698,12 +1036,12 @@ function createChannel(streamIn) {
     };
     if (refs) refs.ref();
     streamIn.writeToStdin(encodePacket({ id, isRequest: true, value }));
-  };
-  let sendResponse = (id, value) => {
+  }, "sendRequest");
+  let sendResponse = /* @__PURE__ */ __name((id, value) => {
     if (closeData.didClose) throw new Error("The service is no longer running" + closeData.reason);
     streamIn.writeToStdin(encodePacket({ id, isRequest: false, value }));
-  };
-  let handleRequest = async (id, request) => {
+  }, "sendResponse");
+  let handleRequest = /* @__PURE__ */ __name(async (id, request) => {
     try {
       if (request.command === "ping") {
         sendResponse(id, {});
@@ -728,14 +1066,14 @@ function createChannel(streamIn) {
       } catch {
       }
     }
-  };
+  }, "handleRequest");
   let isFirstPacket = true;
-  let handleIncomingPacket = (bytes) => {
+  let handleIncomingPacket = /* @__PURE__ */ __name((bytes) => {
     if (isFirstPacket) {
       isFirstPacket = false;
       let binaryVersion = String.fromCharCode(...bytes);
-      if (binaryVersion !== "0.27.3") {
-        throw new Error(`Cannot start service: Host version "${"0.27.3"}" does not match binary version ${quote(binaryVersion)}`);
+      if (binaryVersion !== "0.28.1") {
+        throw new Error(`Cannot start service: Host version "${"0.28.1"}" does not match binary version ${quote(binaryVersion)}`);
       }
       return;
     }
@@ -748,8 +1086,8 @@ function createChannel(streamIn) {
       if (packet.value.error) callback(packet.value.error, {});
       else callback(null, packet.value);
     }
-  };
-  let buildOrContext = ({ callName, refs, options, isTTY, defaultWD: defaultWD2, callback }) => {
+  }, "handleIncomingPacket");
+  let buildOrContext = /* @__PURE__ */ __name(({ callName, refs, options, isTTY, defaultWD: defaultWD2, callback }) => {
     let refCount = 0;
     const buildKey = nextBuildKey++;
     const requestCallbacks = {};
@@ -787,10 +1125,10 @@ function createChannel(streamIn) {
         }
       }
     );
-  };
-  let transform2 = ({ callName, refs, input, options, isTTY, fs, callback }) => {
+  }, "buildOrContext");
+  let transform2 = /* @__PURE__ */ __name(({ callName, refs, input, options, isTTY, fs, callback }) => {
     const details = createObjectStash();
-    let start = (inputPath) => {
+    let start = /* @__PURE__ */ __name((inputPath) => {
       try {
         if (typeof input !== "string" && !(input instanceof Uint8Array))
           throw new Error('The input to "transform" must be a string or a Uint8Array');
@@ -810,7 +1148,7 @@ function createChannel(streamIn) {
           let errors = replaceDetailsInMessages(response.errors, details);
           let warnings = replaceDetailsInMessages(response.warnings, details);
           let outstanding = 1;
-          let next = () => {
+          let next = /* @__PURE__ */ __name(() => {
             if (--outstanding === 0) {
               let result = {
                 warnings,
@@ -823,7 +1161,7 @@ function createChannel(streamIn) {
               if (response.mangleCache) result.mangleCache = response == null ? void 0 : response.mangleCache;
               callback(null, result);
             }
-          };
+          }, "next");
           if (errors.length > 0) return callback(failureErrorWithLog("Transform failed", errors, warnings), null);
           if (response.codeFS) {
             outstanding++;
@@ -861,14 +1199,14 @@ function createChannel(streamIn) {
           callback(failureErrorWithLog("Transform failed", [error], []), null);
         });
       }
-    };
+    }, "start");
     if ((typeof input === "string" || input instanceof Uint8Array) && input.length > 1024 * 1024) {
       let next = start;
-      start = () => fs.writeFile(input, next);
+      start = /* @__PURE__ */ __name(() => fs.writeFile(input, next), "start");
     }
     start(null);
-  };
-  let formatMessages2 = ({ callName, refs, messages, options, callback }) => {
+  }, "transform2");
+  let formatMessages2 = /* @__PURE__ */ __name(({ callName, refs, messages, options, callback }) => {
     if (!options) throw new Error(`Missing second argument in ${callName}() call`);
     let keys = {};
     let kind = getFlag(options, keys, "kind", mustBeString);
@@ -888,8 +1226,8 @@ function createChannel(streamIn) {
       if (error) return callback(new Error(error), null);
       callback(null, response.messages);
     });
-  };
-  let analyzeMetafile2 = ({ callName, refs, metafile, options, callback }) => {
+  }, "formatMessages2");
+  let analyzeMetafile2 = /* @__PURE__ */ __name(({ callName, refs, metafile, options, callback }) => {
     if (options === void 0) options = {};
     let keys = {};
     let color = getFlag(options, keys, "color", mustBeBoolean);
@@ -905,7 +1243,7 @@ function createChannel(streamIn) {
       if (error) return callback(new Error(error), null);
       callback(null, response.result);
     });
-  };
+  }, "analyzeMetafile2");
   return {
     readFromStdout,
     afterClose,
@@ -917,10 +1255,11 @@ function createChannel(streamIn) {
     }
   };
 }
+__name(createChannel, "createChannel");
 function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs, streamIn, requestCallbacks, options, isTTY, defaultWD2, callback) {
   const details = createObjectStash();
   const isContext = callName === "context";
-  const handleError = (e, pluginName) => {
+  const handleError = /* @__PURE__ */ __name((e, pluginName) => {
     const flags = [];
     try {
       pushLogFlags(flags, options, {}, isTTY, buildLogLevelDefault);
@@ -931,7 +1270,7 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
       message.detail = details.load(message.detail);
       callback(failureErrorWithLog(isContext ? "Context failed" : "Build failed", [message], []), null);
     });
-  };
+  }, "handleError");
   let plugins;
   if (typeof options === "object") {
     const value = options.plugins;
@@ -998,7 +1337,7 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
     };
     if (requestPlugins) request.plugins = requestPlugins;
     if (mangleCache) request.mangleCache = mangleCache;
-    const buildResponseToResult = (response, callback2) => {
+    const buildResponseToResult = /* @__PURE__ */ __name((response, callback2) => {
       const result = {
         errors: replaceDetailsInMessages(response.errors, details),
         warnings: replaceDetailsInMessages(response.warnings, details),
@@ -1009,7 +1348,7 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
       const originalErrors = result.errors.slice();
       const originalWarnings = result.warnings.slice();
       if (response.outputFiles) result.outputFiles = response.outputFiles.map(convertOutputFiles);
-      if (response.metafile) result.metafile = JSON.parse(response.metafile);
+      if (response.metafile && response.metafile.length) result.metafile = parseJSON(response.metafile);
       if (response.mangleCache) result.mangleCache = response.mangleCache;
       if (response.writeToStdout !== void 0) console.log(decodeUTF8(response.writeToStdout).replace(/\n$/, ""));
       runOnEndCallbacks(result, (onEndErrors, onEndWarnings) => {
@@ -1019,7 +1358,7 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
         }
         callback2(null, result, onEndErrors, onEndWarnings);
       });
-    };
+    }, "buildResponseToResult");
     let latestResultPromise;
     let provideLatestResult;
     if (isContext)
@@ -1049,13 +1388,13 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
       }
       let didDispose = false;
       const result = {
-        rebuild: () => {
+        rebuild: /* @__PURE__ */ __name(() => {
           if (!latestResultPromise) latestResultPromise = new Promise((resolve, reject) => {
             let settlePromise;
-            provideLatestResult = (err, result2) => {
-              if (!settlePromise) settlePromise = () => err ? reject(err) : resolve(result2);
-            };
-            const triggerAnotherBuild = () => {
+            provideLatestResult = /* @__PURE__ */ __name((err, result2) => {
+              if (!settlePromise) settlePromise = /* @__PURE__ */ __name(() => err ? reject(err) : resolve(result2), "settlePromise");
+            }, "provideLatestResult");
+            const triggerAnotherBuild = /* @__PURE__ */ __name(() => {
               const request2 = {
                 command: "rebuild",
                 key: buildKey
@@ -1069,12 +1408,12 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
                   triggerAnotherBuild();
                 }
               });
-            };
+            }, "triggerAnotherBuild");
             triggerAnotherBuild();
           });
           return latestResultPromise;
-        },
-        watch: (options2 = {}) => new Promise((resolve, reject) => {
+        }, "rebuild"),
+        watch: /* @__PURE__ */ __name((options2 = {}) => new Promise((resolve, reject) => {
           if (!streamIn.hasFS) throw new Error(`Cannot use the "watch" API in this environment`);
           const keys = {};
           const delay = getFlag(options2, keys, "delay", mustBeInteger);
@@ -1088,8 +1427,8 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
             if (error2) reject(new Error(error2));
             else resolve(void 0);
           });
-        }),
-        serve: (options2 = {}) => new Promise((resolve, reject) => {
+        }), "watch"),
+        serve: /* @__PURE__ */ __name((options2 = {}) => new Promise((resolve, reject) => {
           if (!streamIn.hasFS) throw new Error(`Cannot use the "serve" API in this environment`);
           const keys = {};
           const port = getFlag(options2, keys, "port", mustBeValidPortNumber);
@@ -1129,8 +1468,8 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
             }
             resolve(response2);
           });
-        }),
-        cancel: () => new Promise((resolve) => {
+        }), "serve"),
+        cancel: /* @__PURE__ */ __name(() => new Promise((resolve) => {
           if (didDispose) return resolve();
           const request2 = {
             command: "cancel",
@@ -1139,8 +1478,8 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
           sendRequest(refs, request2, () => {
             resolve();
           });
-        }),
-        dispose: () => new Promise((resolve) => {
+        }), "cancel"),
+        dispose: /* @__PURE__ */ __name(() => new Promise((resolve) => {
           if (didDispose) return resolve();
           didDispose = true;
           const request2 = {
@@ -1152,14 +1491,16 @@ function buildOrContextImpl(callName, buildKey, sendRequest, sendResponse, refs,
             scheduleOnDisposeCallbacks();
             refs.unref();
           });
-        })
+        }), "dispose")
       };
       refs.ref();
       callback(null, result);
     });
   }
+  __name(buildOrContextContinue, "buildOrContextContinue");
 }
-var handlePlugins = async (buildKey, sendRequest, sendResponse, refs, streamIn, requestCallbacks, initialOptions, plugins, details) => {
+__name(buildOrContextImpl, "buildOrContextImpl");
+var handlePlugins = /* @__PURE__ */ __name(async (buildKey, sendRequest, sendResponse, refs, streamIn, requestCallbacks, initialOptions, plugins, details) => {
   let onStartCallbacks = [];
   let onEndCallbacks = [];
   let onResolveCallbacks = {};
@@ -1187,7 +1528,7 @@ var handlePlugins = async (buildKey, sendRequest, sendResponse, refs, streamIn, 
         onLoad: []
       };
       i++;
-      let resolve = (path, options = {}) => {
+      let resolve = /* @__PURE__ */ __name((path, options = {}) => {
         if (!isSetupDone) throw new Error('Cannot call "resolve" before plugin setup has completed');
         if (typeof path !== "string") throw new Error(`The path to resolve must be a string`);
         let keys2 = /* @__PURE__ */ Object.create(null);
@@ -1228,7 +1569,7 @@ var handlePlugins = async (buildKey, sendRequest, sendResponse, refs, streamIn, 
             });
           });
         });
-      };
+      }, "resolve");
       let promise = setup({
         initialOptions,
         resolve,
@@ -1395,9 +1736,9 @@ var handlePlugins = async (buildKey, sendRequest, sendResponse, refs, streamIn, 
     }
     sendResponse(id, response);
   };
-  let runOnEndCallbacks = (result, done) => done([], []);
+  let runOnEndCallbacks = /* @__PURE__ */ __name((result, done) => done([], []), "runOnEndCallbacks");
   if (onEndCallbacks.length > 0) {
-    runOnEndCallbacks = (result, done) => {
+    runOnEndCallbacks = /* @__PURE__ */ __name((result, done) => {
       (async () => {
         const onEndErrors = [];
         const onEndWarnings = [];
@@ -1435,13 +1776,13 @@ var handlePlugins = async (buildKey, sendRequest, sendResponse, refs, streamIn, 
         }
         done(onEndErrors, onEndWarnings);
       })();
-    };
+    }, "runOnEndCallbacks");
   }
-  let scheduleOnDisposeCallbacks = () => {
+  let scheduleOnDisposeCallbacks = /* @__PURE__ */ __name(() => {
     for (const cb of onDisposeCallbacks) {
       setTimeout(() => cb(), 0);
     }
-  };
+  }, "scheduleOnDisposeCallbacks");
   isSetupDone = true;
   return {
     ok: true,
@@ -1449,7 +1790,7 @@ var handlePlugins = async (buildKey, sendRequest, sendResponse, refs, streamIn, 
     runOnEndCallbacks,
     scheduleOnDisposeCallbacks
   };
-};
+}, "handlePlugins");
 function createObjectStash() {
   const map = /* @__PURE__ */ new Map();
   let nextID = 0;
@@ -1468,6 +1809,7 @@ function createObjectStash() {
     }
   };
 }
+__name(createObjectStash, "createObjectStash");
 function extractCallerV8(e, streamIn, ident) {
   let note;
   let tried = false;
@@ -1486,6 +1828,7 @@ function extractCallerV8(e, streamIn, ident) {
     }
   };
 }
+__name(extractCallerV8, "extractCallerV8");
 function extractErrorMessageV8(e, streamIn, stash, note, pluginName) {
   let text = "Internal error";
   let location = null;
@@ -1499,6 +1842,7 @@ function extractErrorMessageV8(e, streamIn, stash, note, pluginName) {
   }
   return { id: "", pluginName, text, location, notes: note ? [note] : [], detail: stash ? stash.store(e) : -1 };
 }
+__name(extractErrorMessageV8, "extractErrorMessageV8");
 function parseStackLinesV8(streamIn, lines, ident) {
   let at = "    at ";
   if (streamIn.readFileSync && !lines[0].startsWith(at) && lines[1].startsWith(at)) {
@@ -1544,6 +1888,7 @@ function parseStackLinesV8(streamIn, lines, ident) {
   }
   return null;
 }
+__name(parseStackLinesV8, "parseStackLinesV8");
 function failureErrorWithLog(text, errors, warnings) {
   let limit = 5;
   text += errors.length < 1 ? "" : ` with ${errors.length} error${errors.length < 2 ? "" : "s"}:` + errors.slice(0, limit + 1).map((e, i) => {
@@ -1560,22 +1905,24 @@ ${file}:${line}:${column}: ERROR: ${pluginText}${e.text}`;
     Object.defineProperty(error, key, {
       configurable: true,
       enumerable: true,
-      get: () => value,
-      set: (value2) => Object.defineProperty(error, key, {
+      get: /* @__PURE__ */ __name(() => value, "get"),
+      set: /* @__PURE__ */ __name((value2) => Object.defineProperty(error, key, {
         configurable: true,
         enumerable: true,
         value: value2
-      })
+      }), "set")
     });
   }
   return error;
 }
+__name(failureErrorWithLog, "failureErrorWithLog");
 function replaceDetailsInMessages(messages, stash) {
   for (const message of messages) {
     message.detail = stash.load(message.detail);
   }
   return messages;
 }
+__name(replaceDetailsInMessages, "replaceDetailsInMessages");
 function sanitizeLocation(location, where, terminalWidth) {
   if (location == null) return null;
   let keys = {};
@@ -1606,6 +1953,7 @@ function sanitizeLocation(location, where, terminalWidth) {
     suggestion: suggestion || ""
   };
 }
+__name(sanitizeLocation, "sanitizeLocation");
 function sanitizeMessages(messages, property, stash, fallbackPluginName, terminalWidth) {
   let messagesClone = [];
   let index = 0;
@@ -1644,6 +1992,7 @@ function sanitizeMessages(messages, property, stash, fallbackPluginName, termina
   }
   return messagesClone;
 }
+__name(sanitizeMessages, "sanitizeMessages");
 function sanitizeStringArray(values, property) {
   const result = [];
   for (const value of values) {
@@ -1652,6 +2001,7 @@ function sanitizeStringArray(values, property) {
   }
   return result;
 }
+__name(sanitizeStringArray, "sanitizeStringArray");
 function sanitizeStringMap(map, property) {
   const result = /* @__PURE__ */ Object.create(null);
   for (const key in map) {
@@ -1661,6 +2011,7 @@ function sanitizeStringMap(map, property) {
   }
   return result;
 }
+__name(sanitizeStringMap, "sanitizeStringMap");
 function convertOutputFiles({ path, contents, hash }) {
   let text = null;
   return {
@@ -1677,34 +2028,46 @@ function convertOutputFiles({ path, contents, hash }) {
     }
   };
 }
+__name(convertOutputFiles, "convertOutputFiles");
 function jsRegExpToGoRegExp(regexp) {
   let result = regexp.source;
   if (regexp.flags) result = `(?${regexp.flags})${result}`;
   return result;
 }
-var version = "0.27.3";
-var build = (options) => ensureServiceIsRunning().then((service) => service.build(options));
-var context = (options) => ensureServiceIsRunning().then((service) => service.context(options));
-var transform = (input, options) => ensureServiceIsRunning().then((service) => service.transform(input, options));
-var formatMessages = (messages, options) => ensureServiceIsRunning().then((service) => service.formatMessages(messages, options));
-var analyzeMetafile = (metafile, options) => ensureServiceIsRunning().then((service) => service.analyzeMetafile(metafile, options));
-var buildSync = () => {
+__name(jsRegExpToGoRegExp, "jsRegExpToGoRegExp");
+function parseJSON(bytes) {
+  let text;
+  try {
+    text = decodeUTF8(bytes);
+  } catch {
+    return JSON_parse(bytes);
+  }
+  return JSON.parse(text);
+}
+__name(parseJSON, "parseJSON");
+var version = "0.28.1";
+var build = /* @__PURE__ */ __name((options) => ensureServiceIsRunning().then((service) => service.build(options)), "build");
+var context = /* @__PURE__ */ __name((options) => ensureServiceIsRunning().then((service) => service.context(options)), "context");
+var transform = /* @__PURE__ */ __name((input, options) => ensureServiceIsRunning().then((service) => service.transform(input, options)), "transform");
+var formatMessages = /* @__PURE__ */ __name((messages, options) => ensureServiceIsRunning().then((service) => service.formatMessages(messages, options)), "formatMessages");
+var analyzeMetafile = /* @__PURE__ */ __name((metafile, options) => ensureServiceIsRunning().then((service) => service.analyzeMetafile(metafile, options)), "analyzeMetafile");
+var buildSync = /* @__PURE__ */ __name(() => {
   throw new Error(`The "buildSync" API does not work in Deno`);
-};
-var transformSync = () => {
+}, "buildSync");
+var transformSync = /* @__PURE__ */ __name(() => {
   throw new Error(`The "transformSync" API does not work in Deno`);
-};
-var formatMessagesSync = () => {
+}, "transformSync");
+var formatMessagesSync = /* @__PURE__ */ __name(() => {
   throw new Error(`The "formatMessagesSync" API does not work in Deno`);
-};
-var analyzeMetafileSync = () => {
+}, "formatMessagesSync");
+var analyzeMetafileSync = /* @__PURE__ */ __name(() => {
   throw new Error(`The "analyzeMetafileSync" API does not work in Deno`);
-};
-var stop = async () => {
+}, "analyzeMetafileSync");
+var stop = /* @__PURE__ */ __name(async () => {
   if (stopService) await stopService();
-};
+}, "stop");
 var initializeWasCalled = false;
-var initialize = async (options) => {
+var initialize = /* @__PURE__ */ __name(async (options) => {
   options = validateInitializeOptions(options || {});
   if (options.wasmURL) throw new Error(`The "wasmURL" option only works in the browser`);
   if (options.wasmModule) throw new Error(`The "wasmModule" option only works in the browser`);
@@ -1712,7 +2075,16 @@ var initialize = async (options) => {
   if (initializeWasCalled) throw new Error('Cannot call "initialize" more than once');
   await ensureServiceIsRunning();
   initializeWasCalled = true;
-};
+}, "initialize");
+async function binaryIntegrityCheck(pkg, subpath, bytes) {
+  const hashBuffer = await crypto.subtle.digest("SHA-256", bytes);
+  const hash = Array.from(new Uint8Array(hashBuffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  const key = `${pkg}/${subpath}`;
+  const expected = define_ESBUILD_BINARY_HASHES_default[key];
+  if (!expected) throw new Error(`Missing hash for "${key}"`);
+  if (hash !== expected) throw new Error(`"${hash.slice(0, 8)}..." doesn't match "${expected.slice(0, 8)}..." for "${pkg}"`);
+}
+__name(binaryIntegrityCheck, "binaryIntegrityCheck");
 async function installFromNPM(name, subpath) {
   const { finalPath, finalDir } = getCachePath(name);
   try {
@@ -1724,6 +2096,7 @@ async function installFromNPM(name, subpath) {
   const url = `${npmRegistry}/${name}/-/${name.replace("@esbuild/", "")}-${version}.tgz`;
   const buffer = await fetch(url).then((r) => r.arrayBuffer());
   const executable = extractFileFromTarGzip(new Uint8Array(buffer), subpath);
+  await binaryIntegrityCheck(name, subpath, executable);
   await Deno.mkdir(finalDir, {
     recursive: true,
     mode: 448
@@ -1732,6 +2105,7 @@ async function installFromNPM(name, subpath) {
   await Deno.writeFile(finalPath, executable, { mode: 493 });
   return finalPath;
 }
+__name(installFromNPM, "installFromNPM");
 function getCachePath(name) {
   let baseDir;
   switch (Deno.build.os) {
@@ -1761,26 +2135,28 @@ function getCachePath(name) {
   const finalPath = finalDir + `/${name.replace("/", "-")}@${version}`;
   return { finalPath, finalDir };
 }
+__name(getCachePath, "getCachePath");
 function extractFileFromTarGzip(buffer, file) {
   try {
     buffer = gunzip(buffer);
   } catch (err) {
     throw new Error(`Invalid gzip data in archive: ${err && err.message || err}`);
   }
-  let str = (i, n) => String.fromCharCode(...buffer.subarray(i, i + n)).replace(/\0.*$/, "");
+  let str = /* @__PURE__ */ __name((i, n) => String.fromCharCode(...buffer.subarray(i, i + n)).replace(/\0.*$/, ""), "str");
   let offset = 0;
   file = `package/${file}`;
   while (offset < buffer.length) {
     let name = str(offset, 100);
     let size = parseInt(str(offset + 124, 12), 8);
     offset += 512;
-    if (!isNaN(size)) {
+    if (!isNaN(size) && size >= 0) {
       if (name === file) return buffer.subarray(offset, offset + size);
       offset += size + 511 & ~511;
     }
   }
   throw new Error(`Could not find ${JSON.stringify(file)} in archive`);
 }
+__name(extractFileFromTarGzip, "extractFileFromTarGzip");
 async function install() {
   const overridePath = Deno.env.get("ESBUILD_BINARY_PATH");
   if (overridePath) return overridePath;
@@ -1807,10 +2183,11 @@ async function install() {
     throw new Error(`Unsupported platform: ${platformKey}`);
   }
 }
+__name(install, "install");
 var defaultWD = Deno.cwd();
 var longLivedService;
 var stopService;
-var spawnNew = (cmd, { args, stdin, stdout, stderr }) => {
+var spawnNew = /* @__PURE__ */ __name((cmd, { args, stdin, stdout, stderr }) => {
   const child = new Deno.Command(cmd, {
     args,
     cwd: defaultWD,
@@ -1823,15 +2200,15 @@ var spawnNew = (cmd, { args, stdin, stdout, stderr }) => {
   return {
     write: writer ? (bytes) => writer.write(bytes) : () => Promise.resolve(),
     read: reader ? () => reader.read().then((x) => x.value || null) : () => Promise.resolve(null),
-    close: async () => {
+    close: /* @__PURE__ */ __name(async () => {
       if (writer) await writer.close();
       if (reader) await reader.cancel();
       await child.status;
-    },
-    status: () => child.status
+    }, "close"),
+    status: /* @__PURE__ */ __name(() => child.status, "status")
   };
-};
-var spawnOld = (cmd, { args, stdin, stdout, stderr }) => {
+}, "spawnNew");
+var spawnOld = /* @__PURE__ */ __name((cmd, { args, stdin, stdout, stderr }) => {
   const child = Deno.run({
     cmd: [cmd].concat(args),
     cwd: defaultWD,
@@ -1842,7 +2219,7 @@ var spawnOld = (cmd, { args, stdin, stdout, stderr }) => {
   const stdoutBuffer = new Uint8Array(4 * 1024 * 1024);
   let writeQueue = [];
   let isQueueLocked = false;
-  const startWriteFromQueueWorker = () => {
+  const startWriteFromQueueWorker = /* @__PURE__ */ __name(() => {
     if (isQueueLocked || writeQueue.length === 0) return;
     isQueueLocked = true;
     child.stdin.write(writeQueue[0]).then((bytesWritten) => {
@@ -1851,23 +2228,23 @@ var spawnOld = (cmd, { args, stdin, stdout, stderr }) => {
       else writeQueue[0] = writeQueue[0].subarray(bytesWritten);
       startWriteFromQueueWorker();
     });
-  };
+  }, "startWriteFromQueueWorker");
   return {
-    write: (bytes) => {
+    write: /* @__PURE__ */ __name((bytes) => {
       writeQueue.push(bytes);
       startWriteFromQueueWorker();
-    },
-    read: () => child.stdout.read(stdoutBuffer).then((n) => n === null ? null : stdoutBuffer.subarray(0, n)),
-    close: () => {
+    }, "write"),
+    read: /* @__PURE__ */ __name(() => child.stdout.read(stdoutBuffer).then((n) => n === null ? null : stdoutBuffer.subarray(0, n)), "read"),
+    close: /* @__PURE__ */ __name(() => {
       child.stdin.close();
       child.stdout.close();
       child.close();
-    },
-    status: () => child.status()
+    }, "close"),
+    status: /* @__PURE__ */ __name(() => child.status(), "status")
   };
-};
+}, "spawnOld");
 var spawn = Deno.Command ? spawnNew : spawnOld;
-var ensureServiceIsRunning = () => {
+var ensureServiceIsRunning = /* @__PURE__ */ __name(() => {
   if (!longLivedService) {
     longLivedService = (async () => {
       const binPath = await install();
@@ -1878,12 +2255,12 @@ var ensureServiceIsRunning = () => {
         stdout: "piped",
         stderr: "inherit"
       });
-      stopService = async () => {
+      stopService = /* @__PURE__ */ __name(async () => {
         await child.close();
         initializeWasCalled = false;
         longLivedService = void 0;
         stopService = void 0;
-      };
+      }, "stopService");
       const { readFromStdout, afterClose, service } = createChannel({
         writeToStdin(bytes) {
           child.write(bytes);
@@ -1892,7 +2269,7 @@ var ensureServiceIsRunning = () => {
         hasFS: true,
         esbuild: mod_exports2
       });
-      const readMoreStdout = () => child.read().then((buffer) => {
+      const readMoreStdout = /* @__PURE__ */ __name(() => child.read().then((buffer) => {
         if (buffer === null) {
           afterClose(null);
         } else {
@@ -1905,28 +2282,28 @@ var ensureServiceIsRunning = () => {
         } else {
           throw e;
         }
-      });
+      }), "readMoreStdout");
       readMoreStdout();
       return {
-        build: (options) => new Promise((resolve, reject) => {
+        build: /* @__PURE__ */ __name((options) => new Promise((resolve, reject) => {
           service.buildOrContext({
             callName: "build",
             refs: null,
             options,
             isTTY,
             defaultWD,
-            callback: (err, res) => err ? reject(err) : resolve(res)
+            callback: /* @__PURE__ */ __name((err, res) => err ? reject(err) : resolve(res), "callback")
           });
-        }),
-        context: (options) => new Promise((resolve, reject) => service.buildOrContext({
+        }), "build"),
+        context: /* @__PURE__ */ __name((options) => new Promise((resolve, reject) => service.buildOrContext({
           callName: "context",
           refs: null,
           options,
           isTTY,
           defaultWD,
-          callback: (err, res) => err ? reject(err) : resolve(res)
-        })),
-        transform: (input, options) => new Promise((resolve, reject) => service.transform({
+          callback: /* @__PURE__ */ __name((err, res) => err ? reject(err) : resolve(res), "callback")
+        })), "context"),
+        transform: /* @__PURE__ */ __name((input, options) => new Promise((resolve, reject) => service.transform({
           callName: "transform",
           refs: null,
           input,
@@ -1956,27 +2333,27 @@ var ensureServiceIsRunning = () => {
               );
             }
           },
-          callback: (err, res) => err ? reject(err) : resolve(res)
-        })),
-        formatMessages: (messages, options) => new Promise((resolve, reject) => service.formatMessages({
+          callback: /* @__PURE__ */ __name((err, res) => err ? reject(err) : resolve(res), "callback")
+        })), "transform"),
+        formatMessages: /* @__PURE__ */ __name((messages, options) => new Promise((resolve, reject) => service.formatMessages({
           callName: "formatMessages",
           refs: null,
           messages,
           options,
-          callback: (err, res) => err ? reject(err) : resolve(res)
-        })),
-        analyzeMetafile: (metafile, options) => new Promise((resolve, reject) => service.analyzeMetafile({
+          callback: /* @__PURE__ */ __name((err, res) => err ? reject(err) : resolve(res), "callback")
+        })), "formatMessages"),
+        analyzeMetafile: /* @__PURE__ */ __name((metafile, options) => new Promise((resolve, reject) => service.analyzeMetafile({
           callName: "analyzeMetafile",
           refs: null,
           metafile: typeof metafile === "string" ? metafile : JSON.stringify(metafile),
           options,
-          callback: (err, res) => err ? reject(err) : resolve(res)
-        }))
+          callback: /* @__PURE__ */ __name((err, res) => err ? reject(err) : resolve(res), "callback")
+        })), "analyzeMetafile")
       };
     })();
   }
   return longLivedService;
-};
+}, "ensureServiceIsRunning");
 if (import.meta.main) {
   spawn(await install(), {
     args: Deno.args,

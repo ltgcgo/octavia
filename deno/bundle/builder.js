@@ -19,7 +19,10 @@ for await (let entry of DSVParser.parseObjects(0, TextReader.line((await Deno.op
 		"plugins": [...denoPlugins()],
 		"outfile": `./deno/artifact/${entry.name}.js`,
 		"bundle": true,
+		"keepNames": true,
 		"format": "esm",
+		"platform": "neutral",
+		"external": ["node:*"],
 		"entryPoints": [entry.url]
 	});
 	console.debug(result.outputFiles);
