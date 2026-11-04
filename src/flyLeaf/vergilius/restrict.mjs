@@ -13,7 +13,11 @@ const internalPathTester = /^(internal|native|node):/m;
 const externalPathPostponed = /^(node:(vm)):/m;
 const externalPathImmediate = /^(node:(repl)):/m;
 
-const blacklistedProperties = new Set(["prototype"]);
+const blacklistedProperties = new Set([
+	"prototype",
+	Symbol.species
+]);
+const unwrappedObjects = new WeakMap();
 
 const RestrictedView = class RestrictedView {};
 
@@ -87,13 +91,19 @@ export function wrapProxies(victim, tree) {
 			};
 		};
 	};
-	return new Proxy(victim, {
+	const newProxy = new Proxy(victim, {
 		"get": (target, key) => {
-			if (isInternal()) {
-				if (blacklistedProperties.has(key)) return target[key];
-				const newKeyTree = tree.slice();
+			const newKeyTree = tree.slice();
+			if (typeof key === "symbol") {
 				newKeyTree.push(key.toString());
-				inspectTrace && console.info(newKeyTree.join("."));
+			} else if (typeof key === "number" || Number.isSafeInteger(parseInt(key))) {
+				newKeyTree.push(`${newKeyTree.pop()}[${key}]`);
+			} else {
+				newKeyTree.push(key);
+			};
+			inspectTrace && console.info(newKeyTree.join("."));
+			if (isInternal()) {
+				if (blacklistedProperties.has(key)) return unwrappedObjects.get(target[key]) ?? target[key];
 				return wrapProxies(target[key], newKeyTree);
 			} else {
 				return undefined;
@@ -102,10 +112,10 @@ export function wrapProxies(victim, tree) {
 		"apply": (target, thisArg, args) => {
 			inspectTrace && console.info(`${tree.join(".")}()`);
 			if (isInternal()) {
-				const response = target.apply(thisArg, args);
+				const response = target.apply(unwrappedObjects.get(thisArg) ?? thisArg, args);
 				if (inspectTrace) {
 					const newKeyTree = tree.slice();
-					newKeyTree.push("[[Call]]");
+					newKeyTree.push(`${newKeyTree.pop()}()`);
 					return wrapProxies(
 						response,
 						newKeyTree
@@ -117,8 +127,29 @@ export function wrapProxies(victim, tree) {
 				throw(new Error(`Invalid non-internal invocation.`));
 				return undefined;
 			};
+		},
+		"construct": (target, args) => {
+			inspectTrace && console.info(`new ${tree.join(".")}()`);
+			if (isInternal()) {
+				if (inspectTrace) {
+					const newKeyTree = tree.slice();
+					newKeyTree.push(`${newKeyTree.pop()}())`);
+					newKeyTree.unshift(`(new ${newKeyTree.shift()}`);
+					return wrapProxies(
+						Reflect.construct(target, args),
+						newKeyTree
+					);
+				} else {
+					return Reflect.construct(target, args);
+				};
+			} else {
+				throw(new Error(`Invalid non-internal construction.`));
+				return undefined;
+			};
 		}
 	});
+	unwrappedObjects.set(newProxy, victim);
+	return newProxy;
 };
 
 /** @template {T}
@@ -128,7 +159,7 @@ export function wrapProxies(victim, tree) {
 * @returns {T} */
 export function setInternalOnlyProperty(target, key, value) {
 	//console.debug(target, key);
-	target[key] = wrapProxies(value);
+	target[key] = wrapProxies(value, [key]);
 	return target;
 };
 
@@ -136,9 +167,9 @@ export function setInternalOnlyProperty(target, key, value) {
 * @param {T} processObject
 * @param {Set<string>|Iterable<string>} reservedFeatures
 * @returns {T} */
-export function getRestrictedView(processObject, reservedFeatures, passThrough = false) {
+export function getRestrictedView(processObject, reservedFeatures, rootName = "<anonymous>", passThrough = false) {
 	if (passThrough) {
-		return wrapProxies(processObject, ["process"]);
+		return wrapProxies(processObject, [rootName]);
 	};
 	const exposedProcess = new RestrictedView();
 	if (!reservedFeatures) return exposedProcess;
@@ -164,5 +195,5 @@ export function getRestrictedView(processObject, reservedFeatures, passThrough =
 			);
 		};
 	};
-	return wrapProxies(exposedProcess, ["process"]);
+	return wrapProxies(exposedProcess, [rootName]);
 };

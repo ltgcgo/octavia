@@ -99,12 +99,12 @@ if (
 		"_exiting",
 		"availableMemory",
 		"nextTick"
-	], false);
+	], "process", false);
 } else if (NodeProcess) {
 	// Node.js
 	setInternalOnlyProperty(globalThis, "Buffer", NodeClassBuffer);
 	setInternalOnlyProperty(globalThis, "clearImmediate", NodeClearImmediate);
 	globalThis.global = getRestrictedView(globalThis, [
 		"FinalizationRegistry"
-	], false);
+	], "global", false);
 };
