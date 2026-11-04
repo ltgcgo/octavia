@@ -4,6 +4,8 @@
 
 "use strict";
 
+import { _leaf_yield_, _leaf_apply_ } from "../common/util/overlay.mjs";
+
 if (!globalThis.self) globalThis.self = globalThis;
 
 const debugMsg = false;
@@ -30,13 +32,21 @@ if (self.Ende) {
 flyLeafGlobals.version.asyncOnly = false;
 
 const {
-	LeafFsFile,
+	_leaf_overlay_,
+
+	// Classes and enums
 	FsFile,
-	LeafSeekMode,
 	SeekMode,
 
+	// Runtime
+	args,
+	build,
+	exit,
+	mainModule,
+	noColor,
 	version,
 
+	// File system
 	open,
 	openSync,
 	readDir,
@@ -48,11 +58,18 @@ const {
 } = flyLeafGlobals;
 
 export {
-	LeafFsFile,
+	_leaf_overlay_,
+	_leaf_yield_,
+	_leaf_apply_,
+
 	FsFile,
-	LeafSeekMode,
 	SeekMode,
 
+	args,
+	build,
+	exit,
+	mainModule,
+	noColor,
 	version,
 
 	open,
@@ -64,4 +81,4 @@ export {
 	writeTextFile,
 	writeTextFileSync
 };
-export default flyLeafGlobals;
+export default _leaf_yield_(flyLeafGlobals, _leaf_overlay_);

@@ -5,6 +5,8 @@
 "use strict";
 
 import Leaf from "../index/index.mjs";
+import { _leaf_copyTo_ } from "../common/util/overlay.mjs";
+import * as LeafPolyfills from "../vergilius/ponyfill/leaf.mjs";
 
 if (!globalThis.self) globalThis.self = globalThis;
 
@@ -21,6 +23,9 @@ if (self.Deno) {
 } else {
 	self.Deno = Leaf;
 };
+
+// Apply web polyfills requiring the Deno global.
+_leaf_copyTo_(self, LeafPolyfills);
 
 // Final clean-up.
 await import("../vergilius/cleanUp.mjs");

@@ -16,3 +16,5 @@ export const build = new LeafBuildInfo(
 );
 
 export const args = Deno.args;
+export const exit = Deno.exit;
+export const noColor = Deno.noColor;

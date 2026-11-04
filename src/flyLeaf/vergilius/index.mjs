@@ -4,7 +4,8 @@
 
 "use strict";
 
-// Basic web conformance via polyfill.
+// Basic web conformance.
 
 await import("./init.mjs");
+await import("./polyfill.mjs");
 await import("./cleanUp.mjs");

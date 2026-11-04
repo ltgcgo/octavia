@@ -15,6 +15,7 @@
 	console.debug(`Vendor: ${Deno?.build?.vendor ?? "Not supplied"}`);
 	console.debug(`LLVM target: ${Deno?.build?.target ?? "Not supplied"}`);
 	console.debug(`--- Execution context ---`);
+	console.debug(`Has colour: ${Deno.noColor ? "No" : "Yes"}`);
 	console.debug(`Script location: ${Deno?.mainModule ?? "Not supplied"}`);
 	console.debug(`Arguments: "${Deno?.args?.join("\" \"") ?? "Not supplied"}"`);
 };

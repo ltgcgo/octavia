@@ -161,5 +161,17 @@ declare interface LeafBuildInfo extends DenoBuildInfo {
 /** The Deno build information object extended by Fly Leaf. */
 export const build: LeafBuildInfo;
 
-/** The command line arguments passed to the runtime. */
+/** Command line arguments passed to the runtime. */
 export const args: string[];
+/** Quit the runtime. If `exitCode` is specified, the exit code will be set to the value.
+*
+* Unlike what's claimed by the official documentation, when `exitCode` is not supplied, the actual implementation will use `Deno.exitCode` instead. */
+export function exit(exitCode?: number): never;
+/** The exit code of the runtime.
+*
+* Due to fundamental limitations, this does **not** work with glob imports without applying the overlay, or with granular imports at all. Use `Deno.exit()` instead if not using the runtime global, the default export, or the overlay-applied global. */
+export let exitCode: number;
+/** URL to the entrypoint. */
+export const mainModule: string;
+/** Reflects [`NO_COLOR`](https://no-color.org/). When `true`, the environment should not use ANSI colours. */
+export const noColor: boolean;
