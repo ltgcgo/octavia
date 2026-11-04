@@ -4,6 +4,8 @@
 
 "use strict";
 
+const Deno = self.Deno ?? self.Ende;
+
 export const chmod = Deno.chmod;
 export const chmodSync = Deno.chmodSync;
 export const chown = Deno.chown;

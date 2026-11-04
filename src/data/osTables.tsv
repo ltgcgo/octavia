@@ -1,0 +1,8 @@
+to	from
+android	android
+darwin	darwin,ios,macos
+freebsd	freebsd
+linux	linux
+netbsd	netbsd
+openbsd	openbsd
+windows	windows,win32,win64

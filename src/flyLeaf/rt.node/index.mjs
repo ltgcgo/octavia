@@ -5,8 +5,8 @@
 "use strict";
 import "../vergilius/init.mjs";
 
-import versionObject from "./env/version.mjs";
-export const version = versionObject;
-
 export * from "../common/constant/index.mjs";
+export * from "./version.mjs";
+export * from "./buildInfo.mjs";
+export * from "./env/index.mjs";
 export * from "./fs/index.mjs";

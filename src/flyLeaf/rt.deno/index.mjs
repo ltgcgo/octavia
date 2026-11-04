@@ -4,11 +4,7 @@
 
 "use strict";
 
-import versionObject from "./env/version.mjs";
-import {LeafFsFile} from "./fs/class.mjs";
-
-export const FsFile = LeafFsFile;
-export const version = versionObject;
-
 export * from "./constant/index.mjs";
+export * from "./version.mjs";
+export * from "./env/index.mjs";
 export * from "./fs/index.mjs";

@@ -69,17 +69,19 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 | Ende | `Ende` | `V8` |
 | Node.js | `Node` | `V8` |
 
-### Out-of-scope features
-- **Bundling** (`Deno.bundle`). Use an external bundler like _ESBuild_, _tdewolff Minify_ or _SWC_, some of which can be directly used on runtimes supporting WebAssembly.
-- **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like _Fly Leaf_, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.
-  - This also means that _Fly Leaf_ is unable to block runtime-native imports like `node:` and `npm:`. If you want to be absolutely certain your codebase does not rely on Node.js, please use _Ende_ with or without _Fly Leaf_.
-- **KV Store** (`Deno.openKv`). Use the storage APIs or external databases.
-- **Node.js-API Native Addon**. Use FFI instead.
-- **Permissions**. Without native runtime enforcement, permissions checks are likely bypassed easily, as such _Fly Leaf_ does not attempt to perform permission gating.
-- **Sandbox**. _Fly Leaf_ is not and should not be used as a sandbox out-of-the-box. On runtimes like Ende where runtime-native globals can be fully replaced, _Fly Leaf_ can allow _Minuette_-like safer interception **after modification**.
-
-### Target features
+### Additional features
 - [ ] `TextDecoder` polyfill
 - [ ] `TextEncoder` polyfill
 - [ ] `Uint8Array.fromBase64` polyfill
 - [ ] `Uint8Array.fromHex` polyfill
+
+## Out-of-scope features
+### From Deno
+- **Bundling** (`Deno.bundle`). Use an external bundler like _ESBuild_, _tdewolff Minify_ or _SWC_, some of which can be directly used on runtimes supporting WebAssembly.
+- **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like _Fly Leaf_, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.
+  - This also means that _Fly Leaf_ is unable to block runtime-native imports like `node:` and `npm:`. If you want to be absolutely certain your codebase does not rely on Node.js, please use _Ende_ with or without _Fly Leaf_.
+- **KV Store** (`Deno.openKv`). Use the storage APIs or external databases.
+- **Linter** (`Deno.lint`). Use external language servers like _Deno_, _Ende_, `typescript-language-server`, `vstls` or ESLint.
+- **Node.js-API Native Addon**. Use FFI instead.
+- **Permissions**. Without native runtime enforcement, permissions checks are likely bypassed easily, as such _Fly Leaf_ does not attempt to perform permission gating.
+- **Sandbox**. _Fly Leaf_ is not and should not be used as a sandbox out-of-the-box. On runtimes like Ende where runtime-native globals can be fully replaced, _Fly Leaf_ can allow _Minuette_-like safer interception **after modification**.

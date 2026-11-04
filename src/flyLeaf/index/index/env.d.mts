@@ -119,15 +119,47 @@ declare interface NodeVersion {
 /** The Deno version object extended by Fly Leaf. */
 declare interface LeafVersion extends DenoVersion {
 	/** The actual backend behind Fly Leaf. */
-	backend: "Ant" | "Bun" | "Deno" | "Ende" | "Node" | "Porffor" | "Txiki";
+	backend: "Ant"|"Bun"|"Deno"|"Ende"|"Node"|"Porffor"|"Txiki";
 	/** The actual JS engine behind the runtime. */
-	engine: "Ant Silver" | "JavaScriptCore" | "LibJS" | "Porffor" | "QuickJS" | "SpiderMonkey" | "V8";
+	engine: "Ant Silver"|"JavaScriptCore"|"LibJS"|"Porffor"|"QuickJS"|"SpiderMonkey"|"V8";
 	/** The version of Fly Leaf being run. */
 	flyLeaf: string;
 	/** When `true`, synchronous versions of the methods are not available, only asynchronous versions are. */
 	asyncOnly: boolean;
 	/** The runtime-native versions object. */
-	versions: Record<string, string> | DenoVersion | NodeVersion;
+	versions: Record<string, string>|DenoVersion|NodeVersion;
 }
-/** The extended Deno version object. */
+/** The Deno version object extended by Fly Leaf. */
 export const version: LeafVersion;
+
+/** The Deno build information object. */
+declare interface DenoBuildInfo {
+	/** Processor architecture of the current machine in the LLVM format. */
+	arch: "arm"|"armeb"|"aarch64"|"aarch64_be"|"loongarch64"|"mips"|"mipsel"|"mips64"|"mips64el"|"ppc"|"ppcle"|"ppc64"|"ppc64le"|"riscv32"|"riscv32be"|"riscv64"|"riscv64be"|"systemz"|"wasm32"|"x86"|"x86_64";
+	/** Operating system ID of the current machine. */
+	os: "aix"|"android"|"darwin"|"freebsd"|"linux"|"netbsd"|"openbsd"|"windows";
+	/** Unknown attribute that's always false. */
+	standalone: false;
+	/** Compile target specifier in the LLVM format.
+	* - For `darwin`, valid configurations include `aarch64-apple-darwin` and `x86_64-apple-darwin`.
+	* - For `windows`, valid configurations include `aarch64-pc-windows` and `x86_64-pc-windows`.
+	* - Compiled executables on other operating systems may use their own conventions. */
+	target: string;
+	/** Target device vendor of the current runtime.
+	- `apple`: Exclusive to `darwin`.
+	- `linux`: Exclusive to `android` (Termux). Not guaranteed.
+	- `pc`: Exclusive to `windows`. */
+	vendor: "apple"|"linux"|"pc"|"unknown";
+	/** Additional build information that may or may not be present. Some runtimes like Deno may report `gnu` here, but do not treat it as guaranteed. */
+	env?: string;
+}
+/** The Deno build information object extended by Fly Leaf. */
+declare interface LeafBuildInfo extends DenoBuildInfo {
+	/** The processor architecture of the current machine in LTGC format. */
+	archNormal: "arm32"|"arm32be"|"arm64"|"arm64be"|"loong64"|"mips"|"mipsle"|"mips64"|"mips64le"|"ppc"|"ppcle"|"ppc64"|"ppc64le"|"riscv32"|"riscv32be"|"riscv64"|"riscv64be"|"s390"|"s390x"|"wasm32"|"x86"|"amd64";
+}
+/** The Deno build information object extended by Fly Leaf. */
+export const build: LeafBuildInfo;
+
+/** The command line arguments passed to the runtime. */
+export const args: string[];

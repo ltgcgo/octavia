@@ -1,0 +1,23 @@
+ltgc	llvm	gcc	go	node	alias
+arm32	arm	arm	arm32	arm	armv6,armv7
+arm32be	armeb		arm32be		
+arm64	aarch64	aarch64	arm64	arm64	armv8,armv9
+arm64be	aarch64_be		arm64be		
+loong64	loongarch64	loongarch64	loong64	loong64	
+mips	mips	mips	mips	mips	
+mipsle	mipsel	mipsel	mipsle	mipsel	
+mips64	mips64	mips64	mips64		
+mips64le	mips64el	mips64el	mips64le		
+ppc	ppc	powerpc			
+ppcle	ppcle	powerpcle	ppcle		
+ppc64	ppc64	powerpc64	ppc64	ppc64	
+ppc64le	ppc64le	powerpc64le	ppc64le		
+riscv32	riscv32	riscv32			
+riscv32be	riscv32be		riscv32be		
+riscv64	riscv64	riscv64	riscv64	riscv64	
+riscv64be	riscv64be		riscv64be		
+s390		s390	s390	s390	
+s390x	systemz	s390x	s390x	s390x	
+wasm32	wasm32		wasm		
+x86	x86	i686	386	ia32	x32,32
+amd64	x86_64	x86_64	amd64	x64	64

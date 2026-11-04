@@ -4,5 +4,7 @@
 
 "use strict";
 
+const Deno = self.Deno ?? self.Ende;
+
 export const LeafSeekMode = Deno.SeekMode;
 export const SeekMode = LeafSeekMode;

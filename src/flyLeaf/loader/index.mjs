@@ -17,6 +17,7 @@ if (self.Deno) {
 	/** @type {typeof Leaf} */
 	const denoGlobals = self.Deno;
 	denoGlobals.version = Leaf.version;
+	denoGlobals.build = Leaf.build;
 } else {
 	self.Deno = Leaf;
 };
