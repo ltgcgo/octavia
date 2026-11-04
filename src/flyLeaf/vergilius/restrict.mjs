@@ -8,7 +8,7 @@ const skipCheck = false;
 const inspectTrace = false;
 const inspectInternal = false;
 const preventObtainThenAccessAtBoundary = false;
-const lineLocationMatcher = /\((?<location>([ -_/.,:;@$#()]|\w|\d)+)\)/m;
+const lineLocationMatcher = /^\s+at\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
 const internalPathTester = /^(internal|native|node):/m;
 const externalPathPostponed = /^(node:(vm)):/m;
 const externalPathImmediate = /^(node:(repl)):/m;
@@ -24,35 +24,36 @@ export function isInternal() {
 	let depth = 0;
 	let loop = true;
 	while (loop) {
-		depth ++;
 		const nextLine = stackMsg.indexOf("\n") + 1;
-		if (nextLine > 0) {
-			stackMsg = stackMsg.substring(nextLine);
-		} else {
-			loop = false;
-		};
+		//console.debug(`---------\nStack: ${stackMsg}\n---------`);
 		if (stackMsg?.length <= 0) {
 			break;
 		};
 		const matchResult = lineLocationMatcher.exec(stackMsg)?.groups;
 		if (!matchResult) continue;
 		const {location} = matchResult;
-		inspectInternal && console.debug(location);
+		inspectInternal && console.debug(`Inspect: ${location}`);
 		if (externalPathImmediate.test(location)) {
-			inspectInternal && console.debug(`Depth ${depth}, type spotted external.`);
+			inspectInternal && console.debug(`Verdict: depth ${depth}, type spotted external.`);
 			return false;
 		};
 		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
-			inspectInternal && console.debug(`Depth ${depth}, type spotted internal.`);
+			inspectInternal && console.debug(`Verdict: depth ${depth}, type spotted internal.`);
 			return true;
+		};
+		if (nextLine > 0) {
+			stackMsg = stackMsg.substring(nextLine);
+			depth ++;
+		} else {
+			loop = false;
 		};
 	};
 	if (depth <= 2) {
-		inspectInternal && console.debug(`Depth ${depth}, type inferred internal.`);
+		inspectInternal && console.debug(`Verdict: depth ${depth}, type inferred internal.`);
 		return true;
 	} else {
-		inspectInternal && console.debug(`Depth ${depth}, type inferred external.`);
+		inspectInternal && console.debug(`Verdict: depth ${depth}, type inferred external.`);
 		return false;
 	};
 };
