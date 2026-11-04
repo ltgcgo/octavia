@@ -14,12 +14,9 @@ import {
 	bufferFrom
 } from "../../src/state/utils/bufferIo.mjs";
 import {
-	test
-} from "https://jsr.io/@cross/test/0.0.14/mod.ts";
-import {
 	assertEquals,
 	assertThrows
-} from "https://jsr.io/@std/assert/1.0.19/mod.ts";
+} from "../../deno/artifact/@std.assert.js";
 
 /** @type {import("../../src/micc/index.mjs").MICCSMFMIAHandleOptions} */
 const parseTypeDelta = {
@@ -34,7 +31,7 @@ const parseTypeInSMF = {
 };
 
 // Parser
-test("Input types validation", () => {
+Deno.test("Input types validation", () => {
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(true)});
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(1)});
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(1n)});
@@ -51,7 +48,7 @@ test("Input types validation", () => {
 	dummyChunk.offsetData = 8;
 	assertEquals(MICCInternalsSMF.parseSingleEvent(dummyChunk).offset, 8);
 });
-test("Delta time validation", () => {
+Deno.test("Delta time validation", () => {
 	assertEquals(MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F8")).delta, 0);
 	assertEquals(MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "00F8"), parseTypeDelta).delta, 0);
 	assertEquals(MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "7FF8"), parseTypeDelta).delta, 127);
@@ -66,7 +63,7 @@ test("Delta time validation", () => {
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "80808000F8"), parseTypeDelta)}, undefined, undefined, "Allowed non-canonical VLV.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FFFFFFFF7FF8"), parseTypeDelta)}, undefined, undefined, "Allowed out-of-range VLV.");
 });
-test("Reset and meta event parsing with delta", () => {
+Deno.test("Reset and meta event parsing with delta", () => {
 	const metaEvent1NoDelta = bufferFrom("hex", "FF01023032");
 	const metaEvent1HasDelta = bufferFrom("hex", "FF7FFF01023032");
 	{
@@ -74,7 +71,7 @@ test("Reset and meta event parsing with delta", () => {
 		assertThrows(() => {MICCInternalsSMF.parseSingleEvent(metaEvent1NoDelta, parseTypeInSMF)}, undefined, undefined, "Allowed an incomplete event.");
 	};
 });
-test("Single fixed-length event errors", () => {
+Deno.test("Single fixed-length event errors", () => {
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "80"))}, undefined, undefined, "Allowed an incomplete event.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "813C"))}, undefined, undefined, "Allowed an incomplete event.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "823CE6"))}, undefined, undefined, "Allowed invalid data.");
@@ -122,7 +119,7 @@ test("Single fixed-length event errors", () => {
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FD"))}, undefined, undefined, "Allowed an invalid live MIDI status.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FE"), parseTypeWrapped)}, undefined, undefined, "Allowed live-only system events in SMF.");
 });
-test("Single SysEx event errors", () => {
+Deno.test("Single SysEx event errors", () => {
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F0"))}, undefined, undefined, "Allowed an incomplete SysEx event.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F080F7"))}, undefined, undefined, "Allowed an invalid SysEx event.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "F0"), parseTypeWrapped)}, undefined, undefined, "Allowed an incomplete SysEx event.");
@@ -137,12 +134,12 @@ test("Single SysEx event errors", () => {
 	MICCInternalsSMF.parseSingleEvent(bufferFrom("base64", "8H1BQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQYD3"), dummyState); // Should pass normally.
 	assertEquals(dummyState.parserContext.lastSysExHung, false);
 });
-test("Single meta event errors", () => {
+Deno.test("Single meta event errors", () => {
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF"), parseTypeWrapped)}, undefined, undefined, "Allowed an incomplete meta event.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF01"), parseTypeWrapped)}, undefined, undefined, "Allowed an incomplete meta event.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "FF0101"), parseTypeWrapped)}, undefined, undefined, "Allowed an incomplete meta event.");
 });
-test("Continuous event errors", () => {
+Deno.test("Continuous event errors", () => {
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "4A7F"))}, undefined, undefined, "Allowed invalid running status.");
 	assertThrows(() => {MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "4A7F"), {
 		"parserContext": {
@@ -162,7 +159,7 @@ test("Continuous event errors", () => {
 		}
 	})}, undefined, undefined, "Allowed nested SysEx.");
 });
-test("Single event validation", () => {
+Deno.test("Single event validation", () => {
 	{
 		const dummyState = {
 			"parserContext": {}
@@ -599,7 +596,7 @@ test("Single event validation", () => {
 		assertEquals(dummyState.parserContext.lastStatus, 0x9f);
 	};
 });
-test("Continuous event validation", () => {
+Deno.test("Continuous event validation", () => {
 	{
 		const e = MICCInternalsSMF.parseSingleEvent(bufferFrom("hex", "4A7F"), {
 			"parserContext": {
@@ -769,7 +766,7 @@ test("Continuous event validation", () => {
 		assertEquals(e.data.length, 2);
 	};
 });
-test("Complex continuous event validation", () => {
+Deno.test("Complex continuous event validation", () => {
 	// Real-time bytes fed from Web MIDI API are hoisted out by `parseRawEvents`. They are not the concern of this test file.
 	// Read the long-finished existing documentation first for any confusion.
 	{
@@ -856,7 +853,7 @@ test("Complex continuous event validation", () => {
 // Serialiser
 
 // Round-trip
-test("Event roundtrip validation", () => {
+Deno.test("Event roundtrip validation", () => {
 	const eventBundles = [{
 		"setup": {
 			"isSmfWrapped": false,

@@ -1,14 +1,11 @@
 "use strict";
 
 import {
-	test
-} from "https://jsr.io/@cross/test/0.0.14/mod.ts";
-import {
 	assert,
 	assertEquals,
 	assertObjectMatch,
 	assertThrows
-} from "https://jsr.io/@std/assert/1.0.19/mod.ts";
+} from "../../deno/artifact/@std.assert.js";
 let ColxiMIDIParserOriginal;
 try {
 	ColxiMIDIParserOriginal = (await import("https://ltgcgo.github.io/midi-parser-js/dist/bundle.mjs")).MidiParser;
@@ -166,7 +163,7 @@ const assertSeqColxiTrackEvent = function (seqA, seqB) {
 		};
 	};
 };
-test("Validate Colxi against streamed and buffered", async () => {
+Deno.test("Validate Colxi against streamed and buffered", async () => {
 	//
 	/** @type {FailRecord[]} */
 	const errorHistory = [];

@@ -12,14 +12,11 @@ import {
 import {
 	reducePrecision
 } from "../../src/state/utils.js";
-import {
-	test
-} from "https://jsr.io/@cross/test/0.0.14/mod.ts";
 
 import FailRecord from "../common/failRecord.mjs";
 
 // Screw it, Deno APIs can be easily shimmed anyway.
-test("Validate stream parsing of single events", async () => {
+Deno.test("Validate stream parsing of single events", async () => {
 	const skeletalSmfParser = new Seamstress(Seamstress.TYPE_4CC | Seamstress.ENDIAN_B | Seamstress.LENGTH_U32);
 	skeletalSmfParser.headerSize = 0;
 	skeletalSmfParser.regulateStream = MICCInternalsSMF.streamRegulator;
@@ -74,7 +71,7 @@ test("Validate stream parsing of single events", async () => {
 	};
 	console.debug(`\nParsed ${cumulativeEvents} event(s) in ${cumulativeDuration}ms. Average ${reducePrecision(cumulativeEvents / cumulativeDuration * 1000, 3)}/s`);
 });
-test("Validate stream roundtripping of files", async () => {
+Deno.test("Validate stream roundtripping of files", async () => {
 	/** @type {FailRecord[]} */
 	const errorHistory = [];
 	let testedFile = 0, cumulativeDuration = 0, cumulativeEvents = 0;
