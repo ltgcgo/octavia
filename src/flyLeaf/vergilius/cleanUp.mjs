@@ -5,7 +5,7 @@
 "use strict";
 
 import {
-	getProcess,
+	getRestrictedCopy,
 	setInternalOnlyProperty
 } from "./restrict.mjs";
 
@@ -95,7 +95,7 @@ if (
 } else if (globalThis.Ant) {
 } else if (globalThis.Bun) {
 	// Bun
-	globalThis.process = getProcess(NodeProcess, [
+	globalThis.process = getRestrictedCopy(NodeProcess, [
 		"_exiting",
 		"availableMemory",
 		"nextTick"
@@ -104,7 +104,7 @@ if (
 	// Node.js
 	setInternalOnlyProperty(globalThis, "Buffer", NodeClassBuffer);
 	setInternalOnlyProperty(globalThis, "clearImmediate", NodeClearImmediate);
-	globalThis.global = getProcess(globalThis, [
+	globalThis.global = getRestrictedCopy(globalThis, [
 		"FinalizationRegistry"
 	], false);
 };

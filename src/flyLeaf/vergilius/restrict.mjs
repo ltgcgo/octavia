@@ -6,6 +6,7 @@
 
 const skipCheck = false;
 const inspectTrace = false;
+const inspectInternal = false;
 const preventObtainThenAccessAtBoundary = false;
 const lineLocationMatcher = /\((?<location>([ -_/.,:;@$#()]|\w|\d)+)\)/m;
 const internalPathTester = /^(internal|native|node):/m;
@@ -20,8 +21,10 @@ export function isInternal() {
 	if (skipCheck) return true;
 	let stackMsg = (new Error()).stack;
 	//console.debug(stackMsg);
+	let depth = 0;
 	let loop = true;
 	while (loop) {
+		depth ++;
 		const nextLine = stackMsg.indexOf("\n") + 1;
 		if (nextLine > 0) {
 			stackMsg = stackMsg.substring(nextLine);
@@ -34,19 +37,24 @@ export function isInternal() {
 		const matchResult = lineLocationMatcher.exec(stackMsg)?.groups;
 		if (!matchResult) continue;
 		const {location} = matchResult;
-		//console.debug(location);
+		inspectInternal && console.debug(location);
 		if (externalPathImmediate.test(location)) {
-			//console.debug("External immediately!");
+			inspectInternal && console.debug(`Depth ${depth}, type spotted external.`);
 			return false;
 		};
 		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
-			//console.debug("Internal!");
+			inspectInternal && console.debug(`Depth ${depth}, type spotted internal.`);
 			return true;
 		};
 	};
-	//console.debug("External!");
-	return false;
+	if (depth <= 2) {
+		inspectInternal && console.debug(`Depth ${depth}, type inferred internal.`);
+		return true;
+	} else {
+		inspectInternal && console.debug(`Depth ${depth}, type inferred external.`);
+		return false;
+	};
 };
 
 /** @template {T}
@@ -127,7 +135,7 @@ export function setInternalOnlyProperty(target, key, value) {
 * @param {T} processObject
 * @param {Set<string>|Iterable<string>} reservedFeatures
 * @returns {T} */
-export function getProcess(processObject, reservedFeatures, passThrough = false) {
+export function getRestrictedCopy(processObject, reservedFeatures, passThrough = false) {
 	if (passThrough) {
 		return wrapProxies(processObject, ["process"]);
 	};
