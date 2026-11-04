@@ -4,7 +4,10 @@
 
 "use strict";
 
-import { getProcess } from "./restrict.mjs";
+import {
+	getProcess,
+	setInternalOnlyProperty
+} from "./restrict.mjs";
 
 // The very last step to clean runtimes up. Do not run during API initialisation!
 
@@ -23,6 +26,8 @@ const removeProperties = (target, keys = []) => {
 };
 
 const NodeProcess = globalThis.process;
+const NodeClassBuffer = globalThis.Buffer;
+const NodeClearImmediate = globalThis.clearImmediate;
 
 const removalTargets = new Set([
 	"__dirname",
@@ -79,10 +84,27 @@ removeProperties(
 	removalTargets
 );
 
-if (globalThis.Bun) {
+/** @type {import("../index/index.d.mts")} */
+const denoCompatible = globalThis.Ende ?? globalThis.Deno;
+if (
+	denoCompatible?.version.versions?.deno?.length ||
+	denoCompatible?.version.backend === "Deno" ||
+	denoCompatible?.version.backend === "Ende"
+) {
+	// Deno/Ende
+} else if (globalThis.Ant) {
+} else if (globalThis.Bun) {
+	// Bun
 	globalThis.process = getProcess(NodeProcess, [
 		"_exiting",
 		"availableMemory",
 		"nextTick"
+	], false);
+} else if (NodeProcess) {
+	// Node.js
+	setInternalOnlyProperty(globalThis, "Buffer", NodeClassBuffer);
+	setInternalOnlyProperty(globalThis, "clearImmediate", NodeClearImmediate);
+	globalThis.global = getProcess(globalThis, [
+		"FinalizationRegistry"
 	], false);
 };

@@ -9,6 +9,10 @@ const inspectTrace = false;
 const preventObtainThenAccessAtBoundary = false;
 const lineLocationMatcher = /\((?<location>([ -_/.,:;@$#()]|\w|\d)+)\)/m;
 const internalPathTester = /^(internal|native|node):/m;
+const externalPathPostponed = /^(node:(vm)):/m;
+const externalPathImmediate = /^(node:(repl)):/m;
+
+const blacklistedProperties = new Set(["prototype"]);
 
 const RestrictedProcess = class RestrictedProcess {};
 
@@ -31,13 +35,24 @@ export function isInternal() {
 		if (!matchResult) continue;
 		const {location} = matchResult;
 		//console.debug(location);
+		if (externalPathImmediate.test(location)) {
+			//console.debug("External immediately!");
+			return false;
+		};
+		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
+			//console.debug("Internal!");
 			return true;
 		};
 	};
+	//console.debug("External!");
 	return false;
 };
 
+/** @template {T}
+* @param {T} victim
+* @param {string[]} tree
+* @returns {T} */
 export function wrapProxies(victim, tree) {
 	if (victim == null) {
 		return victim;
@@ -66,14 +81,11 @@ export function wrapProxies(victim, tree) {
 	return new Proxy(victim, {
 		"get": (target, key) => {
 			if (isInternal()) {
-				if (inspectTrace) {
-					const newKeyTree = tree.slice();
-					newKeyTree.push(key);
-					inspectTrace && console.info(newKeyTree.join("."));
-					return wrapProxies(target[key], newKeyTree);
-				} else {
-					return target[key];
-				};
+				if (blacklistedProperties.has(key)) return target[key];
+				const newKeyTree = tree.slice();
+				newKeyTree.push(key.toString());
+				inspectTrace && console.info(newKeyTree.join("."));
+				return wrapProxies(target[key], newKeyTree);
 			} else {
 				return undefined;
 			};
@@ -93,14 +105,28 @@ export function wrapProxies(victim, tree) {
 					return response;
 				};
 			} else {
+				throw(new Error(`Invalid non-internal invocation.`));
 				return undefined;
 			};
 		}
 	});
 };
 
-/** @param {NodeJS.Process} processObject
-* @param {Set<string>|Iterable<string>} reservedFeatures */
+/** @template {T}
+* @param {T} target
+* @param {string} key
+* @param {object|Function} value
+* @returns {T} */
+export function setInternalOnlyProperty(target, key, value) {
+	//console.debug(target, key);
+	target[key] = wrapProxies(value);
+	return target;
+};
+
+/** @template {T}
+* @param {T} processObject
+* @param {Set<string>|Iterable<string>} reservedFeatures
+* @returns {T} */
 export function getProcess(processObject, reservedFeatures, passThrough = false) {
 	if (passThrough) {
 		return wrapProxies(processObject, ["process"]);

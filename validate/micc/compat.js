@@ -1,14 +1,16 @@
 "use strict";
 
+import { safeImport } from "../common/safeImport.mjs";
 import {
 	assert,
 	assertEquals,
 	assertObjectMatch,
 	assertThrows
 } from "../../deno/artifact/@std.assert.js";
+
 let ColxiMIDIParserOriginal;
 try {
-	ColxiMIDIParserOriginal = (await import("https://ltgcgo.github.io/midi-parser-js/dist/bundle.mjs")).MidiParser;
+	ColxiMIDIParserOriginal = (await safeImport("https://ltgcgo.github.io/midi-parser-js/dist/bundle.mjs")).MidiParser;
 	//ColxiMIDIParserOriginal = (await import("../../../midi-parser-js/dist/bundle.mjs")).MidiParser;
 	console.debug(`Used the patched version for Colxi.`);
 	//console.debug(ColxiMIDIParserOriginal);
