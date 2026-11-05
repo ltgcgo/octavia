@@ -17,4 +17,7 @@ export const build = new LeafBuildInfo(
 
 export const args = Deno.args;
 export const exit = Deno.exit;
+export const mainModule = Deno.mainModule;
 export const noColor = Deno.noColor;
+export const pid = Deno.pid;
+export const ppid = Deno.ppid;

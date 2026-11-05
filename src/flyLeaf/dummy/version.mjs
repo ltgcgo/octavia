@@ -15,6 +15,8 @@
 	console.debug(`Vendor: ${Deno?.build?.vendor ?? "Not supplied"}`);
 	console.debug(`LLVM target: ${Deno?.build?.target ?? "Not supplied"}`);
 	console.debug(`--- Execution context ---`);
+	console.debug(`Parent process ID: ${Deno?.pid}`);
+	console.debug(`Process ID: ${Deno?.ppid}`);
 	console.debug(`Has colour: ${Deno.noColor ? "No" : "Yes"}`);
 	console.debug(`Arguments: ${Deno.args.length > 0 ? "\"" + Deno?.args?.join("\" \"") + "\"" : "Not supplied"}`);
 	console.debug(`Script location: ${Deno?.mainModule ?? "Not supplied"}`);

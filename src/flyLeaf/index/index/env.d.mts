@@ -175,3 +175,7 @@ export let exitCode: number;
 export const mainModule: string;
 /** Reflects [`NO_COLOR`](https://no-color.org/). When `true`, the environment should not use ANSI colours. */
 export const noColor: boolean;
+/** Process ID of the current runtime instance. */
+export const pid: number;
+/** Parent process ID of the current runtime instance. */
+export const ppid: number;

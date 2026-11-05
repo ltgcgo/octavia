@@ -56,6 +56,8 @@ const {
 	exit,
 	mainModule,
 	noColor,
+	pid,
+	ppid,
 	version,
 
 	// File system
@@ -82,6 +84,8 @@ export {
 	exit,
 	mainModule,
 	noColor,
+	pid,
+	ppid,
 	version,
 
 	open,
