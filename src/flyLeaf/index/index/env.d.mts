@@ -198,6 +198,10 @@ export function exit(exitCode?: number): never;
 export let exitCode: number;
 /** Get the group ID of the current running executable. Certain OSes like Windows return `null` instead. */
 export function gid(): string;
+/** Get the hostname of the current device. */
+export function hostname(): string;
+/** Get the averaged system load factor of the past minute, past 5 minutes and past 15 minutes. */
+export function loadavg(): [number, number, number];
 /** URL to the entrypoint. */
 export const mainModule: string;
 /** Summarise a snapshot of the memory usage of the current running instance. */
@@ -207,7 +211,7 @@ export const noColor: boolean;
 /** Get the OS release version string. Equivalent to `uname -r` on POSIX. */
 export function osRelease(): string;
 /** Get the total system uptime in seconds. */
-export function osUptime(): string;
+export function osUptime(): number;
 /** Process ID of the current running instance. */
 export const pid: number;
 /** Parent process ID of the current running instance. */
