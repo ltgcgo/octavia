@@ -1,6 +1,6 @@
 "use strict";
 
-import IntegerHandler from "../../libs/rochelle@ltgcgo/integerHandler.mjs";
+import * as IntegerHandler from "../../libs/rochelle@ltgcgo/integerHandler.mjs";
 import {
 	Seamstress
 } from "../../libs/seamstress@ltgcgo/index.mjs";

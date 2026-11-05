@@ -1,8 +1,7 @@
 // 2024-2026 © Lightingale Community
 // Licensed under GNU LGPL 3.0
 
-/**
-* Read and write multiple typed array segments, as if they are a single one.
+/** Read and write multiple typed array segments, as if they are a single one.
 * @license LGPL-3.0-only
 * @module cc.ltgc.rochelle.bufferSegments
 */
@@ -12,51 +11,49 @@ import type {
 	int16, uint16,
 	int32, uint32,
 	int64, uint64,
-	float16, float32, float64
+	float16, float32, float64,
+	BigIntArray,
+	TypedArray,
+	TypedArrayConstructors
 } from "./nativeType.d.mts";
 
-/** Floating point typed arrays. */
-type FloatArray = Float16Array|Float32Array|Float64Array;
-/** Signed integer typed arrays. */
-type IntArray = Int8Array|Int16Array|Int32Array;
-/** Unsigned integer typed arrays. */
-type UintArray = Uint8Array|Uint8ClampedArray|Uint16Array|Uint32Array;
-/** BigInt typed arrays. */
-type BigIntArray = BigInt64Array|BigUint64Array;
-/** All typed arrays. */
-type TypedArray = IntArray|UintArray|BigIntArray|FloatArray;
-type TypedArrayConstructors<T extends TypedArray> = new (...args: any[]) => T;
-
+/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 declare type ArrayComparator<T> = (
 	a: T,
 	b: T
 ) => number;
+/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 declare type ArrayForEach<U, T extends ArrayLike<U>|TypedArray> = (
 	element: U,
 	index: number,
 	array: T
 ) => void;
+/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 declare type ArrayPredicate<U, T extends ArrayLike<U>|TypedArray> = (
 	element: U,
 	index: number,
 	array: T
 ) => boolean;
+/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 declare type ArrayReducer<U, T extends ArrayLike<U>|TypedArray, V> = (
 	reduced: V,
 	element: U,
 	index: number,
 	array: T
 ) => V;
+/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 declare type ArrayTransformer<U, T extends ArrayLike<U>|TypedArray> = (
 	element: U,
 	index: number,
 	array: T
 ) => U;
+/** Details about array buffer regions. */
 declare type ArrayRegions = [
 	childIndex: number,
 	childStart: number,
 	childEnd: number
 ];
+/** Valid numeric types. */
 declare type Numbers = number|bigint;
 
 /** Represents a `ArrayBuffer`-like container for all actual buffers. */
@@ -67,8 +64,11 @@ declare class SegmentContainer<T extends ArrayBufferView> {
 	readonly buffer: T[];
 	/** The total size of all contained visible buffer segments in bytes. If no segment is added, this is always `0`. */
 	readonly byteLength: number;
+	/** Segment containers can never be detached. */
 	readonly detached: false;
+	/** An alias to `byteLength`. */
 	readonly maxByteLength: number;
+	/** Segment containers can never be resized directly, as directly manipulating buffer segments is required. */
 	readonly resizable: false;
 	/** The amount of contained buffer segments. If no segment is added, this is always `0`. */
 	readonly size: number;
@@ -101,27 +101,49 @@ declare class BufferSegmentsView<T extends ArrayBufferView> {
 export class DataViewSegments extends BufferSegmentsView<DataView> {
 	/** The allowed type of the children enforced at runtime. */
 	readonly type: DataViewConstructor;
+	/** Retrieves the target value of the target type. */
 	getInt8(offset: number, isLittleEndian?: boolean): int8;
+	/** Writes the target value of the target type. */
 	setInt8(offset: number, value: int8, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getUint8(offset: number, isLittleEndian?: boolean): uint8;
+	/** Writes the target value of the target type. */
 	setUint8(offset: number, value: uint8, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getInt16(offset: number, isLittleEndian?: boolean): int16;
+	/** Writes the target value of the target type. */
 	setInt16(offset: number, value: int16, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getUint16(offset: number, isLittleEndian?: boolean): uint16;
+	/** Writes the target value of the target type. */
 	setUint16(offset: number, value: uint16, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getInt32(offset: number, isLittleEndian?: boolean): int32;
+	/** Writes the target value of the target type. */
 	setInt32(offset: number, value: int32, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getUint32(offset: number, isLittleEndian?: boolean): uint32;
+	/** Writes the target value of the target type. */
 	setUint32(offset: number, value: uint32, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getBigInt64(offset: number, isLittleEndian?: boolean): int64;
+	/** Writes the target value of the target type. */
 	setBigInt64(offset: number, value: int64, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getBigUint64(offset: number, isLittleEndian?: boolean): uint64;
+	/** Writes the target value of the target type. */
 	setBigUint64(offset: number, value: uint64, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getFloat16(offset: number, isLittleEndian?: boolean): float16;
+	/** Writes the target value of the target type. */
 	setFloat16(offset: number, value: float16, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getFloat32(offset: number, isLittleEndian?: boolean): float32;
+	/** Writes the target value of the target type. */
 	setFloat32(offset: number, value: float32, isLittleEndian?: boolean): void;
+	/** Retrieves the target value of the target type. */
 	getFloat64(offset: number, isLittleEndian?: boolean): float64;
+	/** Writes the target value of the target type. */
 	setFloat64(offset: number, value: float64, isLittleEndian?: boolean): void;
 }
 /** Represents a unified `TypedArray` for all underlying buffer segments.
@@ -172,16 +194,24 @@ export class TypedArraySegments<T extends TypedArray, U extends Numbers> extends
 	findLast(predicate: ArrayPredicate<U, this>, thisArg?: this): U|undefined;
 	/** Returns the index of the lfast element satisfying the supplied tester. */
 	findLastIndex(predicate: ArrayPredicate<U, this>, thisArg?: this): number;
+	/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 	forEach(forEach: ArrayForEach<U, T>, thisArg?: this): void;
+	/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 	includes(value: U, fromIndex?: number): boolean;
+	/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 	indexOf(value: U, fromIndex?: number): number;
+	/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 	join(separator?: string): string;
+	/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 	keys(): ArrayIterator<U>;
 	lastIndexOf(value: U, fromIndex?: number): number;
 	/** Creates a new non-segmented typed array populated with elements modified by the filter. */
 	map(forEach: ArrayTransformer<U, T>, thisArg?: this): T;
+	/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 	reduce<V>(reducer: ArrayReducer<U, T, V>, initValue?: V): V;
+	/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 	reduceRight<V>(reducer: ArrayReducer<U, T, V>, initValue?: V): V;
+	/** Same as `TypedArray`. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) for details. */
 	reverse(): void;
 	/** Stores values supplied by the iterable object to the specified starting position.
 	*

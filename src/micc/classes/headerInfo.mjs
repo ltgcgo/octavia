@@ -3,7 +3,9 @@
 
 "use strict";
 
-import IntegerHandler from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
+import {
+	NativeHandler
+} from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
 
 import {
 	MICCBaseElement
@@ -30,9 +32,9 @@ const MICCHeaderSMF = class extends MICCHeaderInfo {
 	constructor(buffer) {
 		super("smf");
 		const metadata = this;
-		const smfFormat = IntegerHandler.readUint16(buffer, false, 0);
-		const smfTracks = IntegerHandler.readUint16(buffer, false, 2);
-		const smfDivision = IntegerHandler.readInt16(buffer, false, 4);
+		const smfFormat = NativeHandler.readUint16(buffer, false, 0);
+		const smfTracks = NativeHandler.readUint16(buffer, false, 2);
+		const smfDivision = NativeHandler.readInt16(buffer, false, 4);
 		switch (smfFormat) {
 			case 0: {
 				if (smfTracks > 1) {

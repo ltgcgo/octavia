@@ -1,19 +1,18 @@
-// Copyright 2024 (C) Lightingale Community
+// 2024-2026 © Lightingale Community
 // Licensed under GNU LGPL 3.0
 
-/**
-* Read text from raw byte streams. Filling in for the gaping hole of JavaScript, where reading text by lines is present everywhere else.
-* @module
+/** Read text from raw byte streams. Filling in for the gaping hole of JavaScript, where reading text by lines is present everywhere else.
+* @license LGPL-3.0-only
+* @module cc.ltgc.rochelle.textRead
 */
 
-/**
- * A class exposing static methods to read text streams on a line-by-line basis.
- * ```js
- * for await (let line of TextReader.line(someReadableStream)) {
- * 	console.log(line);
- * };
- * ```
- */
+/** A class exposing static methods to read text streams on a line-by-line basis.
+* ```js
+* for await (let line of TextReader.line(someReadableStream)) {
+* 	console.log(line);
+* };
+* ```
+*/
 export default class TextReader {
 	/**
 	* Read each line as raw bytes.

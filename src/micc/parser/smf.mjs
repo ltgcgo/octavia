@@ -6,7 +6,10 @@
 import {
 	SeamstressChunk
 } from "../../../libs/seamstress@ltgcgo/index.mjs";
-import IntegerHandler from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
+import {
+	NativeHandler,
+	VLVHandler
+} from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
 import {
 	ConditionalError,
 	IncompleteError,
@@ -61,14 +64,14 @@ export default class MICCInternalsSMF {
 			if (buffer.length < 1) {
 				throw(new IncompleteDeltaTimeError(`Delta time expects at least a single byte.`));
 			};
-			deltaSize = IntegerHandler.sizeVLV(buffer);
+			deltaSize = VLVHandler.size(buffer);
 			if (deltaSize === 0) {
 				throw(new IncompleteDeltaTimeError(`Delta time is not complete.`));
 			} else if (deltaSize > 4 || deltaSize < 0) {
 				throw(new RangeError(`Invalid delta time.`));
 			};
 		};
-		const deltaTime = deltaSize > 0 ? IntegerHandler.readVLV(buffer) : 0;
+		const deltaTime = deltaSize > 0 ? VLVHandler.read(buffer) : 0;
 		options.parserContext = options.parserContext ?? {};
 		// Status byte
 		if (buffer.length < (1 + deltaSize)) {
@@ -148,14 +151,14 @@ export default class MICCInternalsSMF {
 			case MICCConstants.MIDI_SYSEX_NEW: {
 				if (options.isSmfWrapped) {
 					// SMF allows 0xF7 to appear in a subsequent 0xF7 event.
-					const dataSizeLength = IntegerHandler.sizeVLV(buffer, dataEndPointer);
+					const dataSizeLength = VLVHandler.size(buffer, dataEndPointer);
 					if (dataSizeLength === 0) {
 						throw(new IncompleteDataSizeError(`Data size is not complete.`));
 					} else if (dataSizeLength < 0 || dataSizeLength > 4) {
 						throw(new RangeError(`Invalid data size.`));
 					};
 					dataStartPointer += dataSizeLength;
-					dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
+					dataEndPointer += dataSizeLength + VLVHandler.read(buffer, dataEndPointer);
 					//options.parserContext.lastSysExHung = dataSizeLength > 0 ? buffer[dataEndPointer - 1] !== 0xf7 : false;
 				} else {
 					// A lack of 0xF7 here is corruption.
@@ -172,14 +175,14 @@ export default class MICCInternalsSMF {
 				if (!options.isSmfWrapped) {
 					throw(new ConditionalError(`0xF7 event can only exist in SMF.`));
 				};
-				const dataSizeLength = IntegerHandler.sizeVLV(buffer, dataEndPointer);
+				const dataSizeLength = VLVHandler.size(buffer, dataEndPointer);
 				if (dataSizeLength === 0) {
 					throw(new IncompleteDataSizeError(`Data size is not complete.`));
 				} else if (dataSizeLength < 0 || dataSizeLength > 4) {
 					throw(new RangeError(`Invalid data size.`));
 				};
 				dataStartPointer += dataSizeLength;
-				dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
+				dataEndPointer += dataSizeLength + VLVHandler.read(buffer, dataEndPointer);
 				//options.parserContext.lastSysExHung = dataSizeLength > 0 ? buffer[dataEndPointer - 1] !== 0xf7 : false;
 				break;
 			};
@@ -197,14 +200,14 @@ export default class MICCInternalsSMF {
 				if (buffer.length <= dataEndPointer) {
 					throw(new IncompleteDataSizeError(`Incomplete meta event: size does not exist.`))
 				};
-				const dataSizeLength = IntegerHandler.sizeVLV(buffer, dataEndPointer);
+				const dataSizeLength = VLVHandler.size(buffer, dataEndPointer);
 				if (dataSizeLength === 0) {
 					throw(new IncompleteDataSizeError(`Data size is not complete.`));
 				} else if (dataSizeLength < 0 || dataSizeLength > 4) {
 					throw(new RangeError(`Invalid data size.`));
 				};
 				dataStartPointer += dataSizeLength + 1;
-				dataEndPointer += dataSizeLength + IntegerHandler.readVLV(buffer, dataEndPointer);
+				dataEndPointer += dataSizeLength + VLVHandler.read(buffer, dataEndPointer);
 				break;
 			};
 			case MICCConstants.MIDI_TUNE_REQUEST:
@@ -332,7 +335,7 @@ export default class MICCInternalsSMF {
 		// Delta time size
 		if (options.hasDelta) {
 			deltaPtr = 0;
-			finalSize += IntegerHandler.lengthVLV(event.delta);
+			finalSize += VLVHandler.estimate(event.delta);
 		};
 		statusPtr = finalSize;
 		// Status byte size
@@ -386,7 +389,7 @@ export default class MICCInternalsSMF {
 			};
 			case MICCConstants.MIDI_SYSEX_NEW: {
 				if (options.isSmfWrapped) {
-					finalSize += IntegerHandler.lengthVLV(event.data.length);
+					finalSize += VLVHandler.estimate(event.data.length);
 					dataStartPtr = finalSize;
 				} else if (event.data[event.data.length - 1] !== 0xf7) {
 					throw(new Error(`Incomplete new SysEx: termination byte not found.`));
@@ -400,7 +403,7 @@ export default class MICCInternalsSMF {
 				};
 				if (Number.isSafeInteger(event.meta) && event.meta >= 0 && event.meta <= 0xff) {
 					//finalSize += 1; // Meta type.
-					finalSize += 1 + IntegerHandler.lengthVLV(event.data.length);
+					finalSize += 1 + VLVHandler.estimate(event.data.length);
 					dataStartPtr = finalSize;
 					finalSize += event.data.length;
 				} else {
@@ -447,7 +450,7 @@ export default class MICCInternalsSMF {
 		// Assemble the final bytes. Validity checks for system messages are not the responsibility of this method.
 		const buffer = new Uint8Array(finalSize);
 		if (deltaPtr >= 0) {
-			IntegerHandler.writeVLV(buffer, event.delta, deltaPtr);
+			VLVHandler.write(buffer, event.delta, deltaPtr);
 		};
 		if (statusPtr < 0) {
 			throw(new Error(`Status byte slot unrecognised.`));
@@ -482,13 +485,13 @@ export default class MICCInternalsSMF {
 			case MICCConstants.MIDI_SYSEX_RESUME:
 			case MICCConstants.MIDI_SYSEX_NEW: {
 				if (options.isSmfWrapped) {
-					IntegerHandler.writeVLV(buffer, event.data.length, dataPtr);
+					VLVHandler.write(buffer, event.data.length, dataPtr);
 				};
 				break;
 			};
 			case MICCConstants.MIDI_META: {
 				buffer[dataPtr] = event.meta;
-				IntegerHandler.writeVLV(buffer, event.data.length, dataPtr + 1);
+				VLVHandler.write(buffer, event.data.length, dataPtr + 1);
 				break;
 			};
 			default: {
@@ -814,7 +817,7 @@ export default class MICCInternalsSMF {
 							// Fallthrough.
 						};
 						case 1: { // Waiting for delta time termination.
-							const deltaSize = IntegerHandler.sizeVLV(data, i);
+							const deltaSize = VLVHandler.size(data, i);
 							if (deltaSize > 4) {
 								throw(new RangeError(`Invalid unbuffered delta time: size too large, ${deltaSize} B > 4 B.`));
 								continue;
@@ -920,7 +923,7 @@ export default class MICCInternalsSMF {
 						case 5:
 						case 6: { // Generic VLV size read.
 							// Should only be reached by event `0xF0`, `0xF7` and `0xFF`.
-							const sizeSize = IntegerHandler.sizeVLV(data, i);
+							const sizeSize = VLVHandler.size(data, i);
 							if (sizeSize > 4) {
 								throw(new RangeError(`Invalid unbuffered data size field: size too large, ${sizeSize} B > 4 B.`));
 							} else if (sizeSize > 0) {
@@ -931,9 +934,9 @@ export default class MICCInternalsSMF {
 								persistedState.slicedSize += cumulativeDataSize;
 								if (persistedState.parseState === 6) {
 									persistedState.readDataSizeBuffer.set(data.subarray(i, i + sizeSize), persistedState.readDataSizeSize);
-									persistedState.expectedDataSize = IntegerHandler.readVLV(persistedState.readDataSizeBuffer);
+									persistedState.expectedDataSize = VLVHandler.read(persistedState.readDataSizeBuffer);
 								} else {
-									persistedState.expectedDataSize = IntegerHandler.readVLV(data, i);
+									persistedState.expectedDataSize = VLVHandler.read(data, i);
 								};
 								/*if (persistedState.expectedDataSize > 0) {
 									console.debug(`Size field expects ${persistedState.expectedDataSize} B.`);

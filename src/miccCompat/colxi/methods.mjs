@@ -6,7 +6,9 @@
 import {
 	BinaryString
 } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
-import IntegerHandler from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
+import {
+	NativeHandler
+} from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
 import MICCInternalsFinalisers from "../../micc/classes/finalisers.mjs";
 import {
 	MICCConstants,
@@ -160,12 +162,12 @@ export default class ColxiMethods {
 					};
 					// `uint16`.
 					case MICCConstants.META_SET_KEY_SIG: {
-						colxiEvent.data = IntegerHandler.readUint16(miccEvent.data);
+						colxiEvent.data = NativeHandler.readUint16(miccEvent.data);
 						break;
 					};
 					// `uint24`.
 					case MICCConstants.META_SET_TEMPO: {
-						colxiEvent.data = IntegerHandler.readUint24(miccEvent.data);
+						colxiEvent.data = NativeHandler.readUint24(miccEvent.data);
 						break;
 					};
 					// Nothing.

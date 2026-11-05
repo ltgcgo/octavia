@@ -6,7 +6,10 @@
 import {
 	BinaryString
 } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
-import IntegerHandler from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
+import {
+	NativeHandler,
+	VLVReader
+} from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
 import {
 	MICCConstants,
 	MIDINakedEvent
@@ -44,7 +47,7 @@ const ColxiMIDIView = class ColxiMIDIView {
 		switch (miccEvent.type) {
 			case MICCConstants.MIDI_SYSEX_NEW:
 			case MICCConstants.MIDI_SYSEX_RESUME: {
-				upThis.#pointer = -IntegerHandler.lengthVLV(miccEvent.data.length);
+				upThis.#pointer = -VLVReader.estimate(miccEvent.data.length);
 				break;
 			};
 		};
@@ -78,7 +81,7 @@ const ColxiMIDIView = class ColxiMIDIView {
 				break;
 			};
 			case 3: {
-				readResult = IntegerHandler.readUint24(upThis.#buffer, false, i);
+				readResult = NativeHandler.readUint24(upThis.#buffer, false, i);
 				break;
 			};
 			case 4: {
@@ -108,9 +111,9 @@ const ColxiMIDIView = class ColxiMIDIView {
 			upThis.#pointer = 0;
 			return upThis.#buffer.length;
 		} else if (upThis.#pointer < upThis.#buffer.length) {
-			const readSize = IntegerHandler.sizeVLV(upThis.#buffer, upThis.#pointer);
+			const readSize = VLVReader.size(upThis.#buffer, upThis.#pointer);
 			if (readSize > 0 && readSize <= 4) {
-				const readResult = IntegerHandler.readVLV(upThis.#buffer, upThis.#pointer);
+				const readResult = VLVReader.read(upThis.#buffer, upThis.#pointer);
 				upThis.movePointer(readSize);
 				return readResult;
 			};

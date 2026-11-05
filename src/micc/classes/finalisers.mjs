@@ -6,7 +6,9 @@
 import {
 	BinaryString
 } from "../../../libs/rochelle@ltgcgo/binaryString.mjs";
-import IntegerHandler from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
+import {
+	NativeHandler
+} from "../../../libs/rochelle@ltgcgo/integerHandler.mjs";
 import {
 	decode7bitUint
 } from "../../state/utils/bufferIo.mjs";
@@ -57,7 +59,7 @@ export default class MICCInternalsFinalisers {
 				break;
 			};
 			case MICCConstants.META_SET_TEMPO: {
-				const mpqn = IntegerHandler.readUint24(event.data);
+				const mpqn = NativeHandler.readUint24(event.data);
 				//console.debug(`${mpqn} ${mpqn.toString(16)}`);
 				event.parsed = MICCInternalsTempo.fromMPQN(mpqn);
 				break;
