@@ -16,6 +16,6 @@
 	console.debug(`LLVM target: ${Deno?.build?.target ?? "Not supplied"}`);
 	console.debug(`--- Execution context ---`);
 	console.debug(`Has colour: ${Deno.noColor ? "No" : "Yes"}`);
+	console.debug(`Arguments: ${Deno.args.length > 0 ? "\"" + Deno?.args?.join("\" \"") + "\"" : "Not supplied"}`);
 	console.debug(`Script location: ${Deno?.mainModule ?? "Not supplied"}`);
-	console.debug(`Arguments: "${Deno?.args?.join("\" \"") ?? "Not supplied"}"`);
 };

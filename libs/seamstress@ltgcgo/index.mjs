@@ -530,7 +530,7 @@ const Seamstress = class Seamstress {
 								if ((upThis.#type & upThis.MASK_ENDIAN) === upThis.ENDIAN_L) {
 									chunkType = RVLVReader.read(typeBuffer);
 								} else {
-									chunkType = RVLVReader.read(typeBuffer);
+									chunkType = VLVHandler.read(typeBuffer);
 								};
 								break;
 							};
