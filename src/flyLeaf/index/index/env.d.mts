@@ -161,21 +161,54 @@ declare interface LeafBuildInfo extends DenoBuildInfo {
 /** The Deno build information object extended by Fly Leaf. */
 export const build: LeafBuildInfo;
 
-/** Command line arguments passed to the runtime. */
+/** Memory usage summary snapshot. */
+declare interface LeafMemoryUsage {
+	/** Memory in bytes used to store JS objects by the running instance. */
+	external: number;
+	/** Total heap size of the running instance in bytes. */
+	heapTotal: number;
+	/** Used heap size of the running instance in bytes. */
+	heapUsed: number;
+	/** Resident set size in bytes. Amount of memory actually used by the running instance. */
+	rss: number;
+}
+
+/** Valid system signals. Windows does not support signals, as such only a subset of the emulated signals will be available. */
+declare type LeafSystemSignal = "SIGABRT"|"SIGALRM"|"SIGBREAK"|"SIGBUS"|"SIGCHLD"|"SIGCONT"|"SIGEMT"|"SIGFPE"|"SIGHUP"|"SIGILL"|"SIGINFO"|"SIGINT"|"SIGIO"|"SIGKILL"|"SIGPIPE"|"SIGPOLL"|"SIGPROF"|"SIGPWR"|"SIGQUIT"|"SIGSEGV"|"SIGSTKFLT"|"SIGSTOP"|"SIGSYS"|"SIGTERM"|"SIGTRAP"|"SIGTSTP"|"SIGTTIN"|"SIGTTOU"|"SIGUNUSED"|"SIGURG"|"SIGUSR1"|"SIGUSR2"|"SIGVTALRM"|"SIGWINCH"|"SIGXCPU"|"SIGXFSZ";
+
+/** Replace the system signal receiver with the given one. Certain OSes only implement a subset of these signals, and certain OSes like Windows rely on emulation.
+*
+* Be cautious about replacing certain signal receivers. Like `SIGTERM`, as just like on Node.js, the runtime may not be able to quit the normal way. */
+export function addSignalListener(signal: LeafSystemSignal, receiver: () => void): void;
+/** Command line arguments passed to the running instance. */
 export const args: string[];
-/** Quit the runtime. If `exitCode` is specified, the exit code will be set to the value.
+/** Change the current working directory. */
+export function chdir(folder: string|URL): void;
+/** Get the current working directory. */
+export function cwd(): string;
+/** Get the path to the current running executable. */
+export function execPath(): string;
+/** Quit the running instance. If `exitCode` is specified, the exit code will be set to the value.
 *
 * Unlike what's claimed by the official documentation, when `exitCode` is not supplied, the actual implementation will use `Deno.exitCode` instead. */
 export function exit(exitCode?: number): never;
-/** The exit code of the runtime.
+/** The exit code of the running instance.
 *
 * Due to fundamental limitations, this does **not** work with glob imports without applying the overlay, or with granular imports at all. Use `Deno.exit()` instead if not using the runtime global, the default export, or the overlay-applied global. */
 export let exitCode: number;
+/** Get the group ID of the current running executable. Certain OSes like Windows return `null` instead. */
+export function gid(): string;
 /** URL to the entrypoint. */
 export const mainModule: string;
+/** Summarise a snapshot of the memory usage of the current running instance. */
+export function memoryUsage(): LeafMemoryUsage;
 /** Reflects [`NO_COLOR`](https://no-color.org/). When `true`, the environment should not use ANSI colours. */
 export const noColor: boolean;
-/** Process ID of the current runtime instance. */
+/** Get the OS release version string. Equivalent to `uname -r` on POSIX. */
+export function osRelease(): string;
+/** Get the total system uptime in seconds. */
+export function osUptime(): string;
+/** Process ID of the current running instance. */
 export const pid: number;
-/** Parent process ID of the current runtime instance. */
+/** Parent process ID of the current running instance. */
 export const ppid: number;

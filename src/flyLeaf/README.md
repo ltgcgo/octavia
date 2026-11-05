@@ -49,8 +49,9 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ## Support
 ### Runtimes
 - [**Ant**](https://antjs.org/): WIP.
-  - Requires a `TextDecoder` polyfill/ponyfill. Will largely be unneeded after Ant 17.
-  - Avoid running preloaded script via importing, use the demonstrated proper `--preload` feature instead.
+  - Requires a `TextDecoder` polyfill/ponyfill. Will largely be unneeded after Ant 17, when this line will get removed.
+  - Avoid running preloaded script via importing due to race conditions, use the demonstrated proper `--preload` feature instead.
+  - Ant does not support test running. Use other supported runtimes instead.
 - [~~a-Shell `JSC`~~](https://github.com/holzschu/a-shell/blob/master/man/man1/jsc.1)**: Out of scope. Basic FS access, insufficient platform APIs.
 - [**Boa**](https://github.com/boa-dev/boa): Investigating.
 - [**Bun**](https://bun.sh/): WIP.
@@ -61,6 +62,7 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 - [**Kiesel**](https://kiesel.dev/): Investigating.
 - [**Node.js**]: WIP.
 - [**Porffor**](https://porffor.dev/): WIP.
+  - Porffor does not support test running. Use other supported runtimes instead.
 - [**Txiki.js**](https://txikijs.org/): Investigating.
 
 | Runtime | `backend` | `engine` |

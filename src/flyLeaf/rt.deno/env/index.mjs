@@ -15,9 +15,19 @@ export const build = new LeafBuildInfo(
 	Deno.build.target
 );
 
+export const addSignalListener = Deno.addSignalListener;
 export const args = Deno.args;
+export const chdir = Deno.chdir;
+export const cwd = Deno.cwd;
+export const execPath = Deno.execPath;
 export const exit = Deno.exit;
+export const gid = Deno.gid;
+export const hostname = Deno.hostname;
+export const loadavg = Deno.loadavg;
 export const mainModule = Deno.mainModule;
+export const memoryUsage = Deno.memoryUsage;
 export const noColor = Deno.noColor;
+export const osRelease = Deno.osRelease;
+export const osUptime = Deno.osUptime;
 export const pid = Deno.pid;
 export const ppid = Deno.ppid;
