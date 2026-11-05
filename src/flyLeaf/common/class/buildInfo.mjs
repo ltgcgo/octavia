@@ -49,6 +49,6 @@ export default class LeafBuildInfo {
 				this.vendor = vendor ?? "unknown";
 			};
 		};
-		this.target = target ?? `${this.os}-${this.arch}-${this.vendor}`;
+		this.target = target ?? `${this.arch}-${this.vendor}-${this.os}`;
 	};
 };
