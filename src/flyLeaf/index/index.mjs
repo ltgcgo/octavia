@@ -5,29 +5,41 @@
 "use strict";
 
 import { _leaf_yield_, _leaf_apply_ } from "../common/util/overlay.mjs";
+import { parseUaName } from "../common/util/uaParse.mjs";
 
 if (!globalThis.self) globalThis.self = globalThis;
 
 const debugMsg = false;
 
 /** @type {typeof import("./index.d.mts")} */
-let flyLeafGlobals;
+let flyLeafGlobals, selectedBackend;
 if (self.Ende) {
-	debugMsg && console.debug(`Selected backend: Ende.`);
+	selectedBackend = "Ende";
 	flyLeafGlobals = await import("../rt.ende/index.mjs");
 } else if (self.Deno) {
-	debugMsg && console.debug(`Selected backend: Deno.`);
+	selectedBackend = "Deno";
 	flyLeafGlobals = await import("../rt.deno/index.mjs");
 } else if (self.Ant) {
-	debugMsg && console.debug(`Selected backend: Ant.`);
+	selectedBackend = "Ant";
 	flyLeafGlobals = await import("../rt.ant/index.mjs");
 } else if (self.Bun) {
-	debugMsg && console.debug(`Selected backend: Bun.`);
+	selectedBackend = "Bun";
 	flyLeafGlobals = await import("../rt.bun/index.mjs");
 } else if (self.process || self.require) {
-	debugMsg && console.debug(`Selected backend: Node.`);
-	flyLeafGlobals = await import("../rt.node/index.mjs");
+	switch (parseUaName(globalThis.navigator?.userAgent)?.toLowerCase()) {
+		case "porffor": {
+			selectedBackend = "Porffor";
+			flyLeafGlobals = await import("../rt.porffor/index.mjs");
+			break;
+		};
+		case "node.js":
+		default: {
+			selectedBackend = "Node";
+			flyLeafGlobals = await import("../rt.node/index.mjs");
+		};
+	};
 };
+debugMsg && console.debug(`Selected backend: ${selectedBackend ?? "(none)"}.`);
 
 flyLeafGlobals.version.asyncOnly = false;
 

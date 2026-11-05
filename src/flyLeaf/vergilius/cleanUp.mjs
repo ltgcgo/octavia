@@ -4,6 +4,7 @@
 
 "use strict";
 
+import { parseUaName } from "../common/util/uaParse.mjs";
 import {
 	getRestrictedView,
 	setInternalOnlyProperty
@@ -101,10 +102,18 @@ if (
 		"nextTick"
 	], "process", false);
 } else if (NodeProcess) {
-	// Node.js
-	setInternalOnlyProperty(globalThis, "Buffer", NodeClassBuffer);
-	setInternalOnlyProperty(globalThis, "clearImmediate", NodeClearImmediate);
-	globalThis.global = getRestrictedView(globalThis, [
-		"FinalizationRegistry"
-	], "global", false);
+	switch (parseUaName(globalThis.navigator?.userAgent)?.toLowerCase()) {
+		case "porffor": {
+			break;
+		};
+		case "node.js":
+		default: {
+			// Node.js
+			setInternalOnlyProperty(globalThis, "Buffer", NodeClassBuffer);
+			setInternalOnlyProperty(globalThis, "clearImmediate", NodeClearImmediate);
+			globalThis.global = getRestrictedView(globalThis, [
+				"FinalizationRegistry"
+			], "global", false);
+		};
+	};
 };

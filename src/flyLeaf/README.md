@@ -59,15 +59,17 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 - [~~Javy~~](https://github.com/bytecodealliance/javy): Out of scope. Insufficient platform APIs.
 - [**Kiesel**](https://kiesel.dev/): Investigating.
 - [**Node.js**]: WIP.
-- [**Porffor**](https://porffor.dev/): Investigating. Blocked by a lack of documentation.
+- [**Porffor**](https://porffor.dev/): WIP.
 - [**Txiki.js**](https://txikijs.org/): Investigating.
 
 | Runtime | `backend` | `engine` |
 | ------- | --------- | -------- |
+| Ant | `Ant` | `Ant Silver` |
 | Bun | `Bun` | `JavaScriptCore` |
 | Deno | `Deno` | `V8` |
 | Ende | `Ende` | `V8` |
 | Node.js | `Node` | `V8` |
+| Porffor | `Porffor` | `Porffor` |
 
 ### Additional features
 - [ ] `TextDecoder` polyfill

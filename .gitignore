@@ -20,6 +20,7 @@ ghp/sitemap.xml
 jsr/deno.json
 dist/deno.json
 .docker_name
+.repl_history
 .zcompdump
 .zsh_history
 src/data/generated/**
