@@ -11,19 +11,19 @@ import {
 } from "../util/ambient.mjs";
 
 export default class LeafBuildInfo {
-	standalone = false;
-	/** @type {string?} */
-	env;
+	/** @type {string} */
+	target;
 	/** @type {string} */
 	arch;
-	/** @type {string} */
-	archNormal;
 	/** @type {string} */
 	os;
 	/** @type {string} */
 	vendor; // The most pointless property.
+	/** @type {string?} */
+	env;
+	standalone = false;
 	/** @type {string} */
-	target;
+	archNormal;
 	/** @param {string} os
 	* @param {string} arch
 	* @param {string?} vendor

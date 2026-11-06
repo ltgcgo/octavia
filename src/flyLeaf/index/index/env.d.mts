@@ -161,6 +161,22 @@ declare interface LeafBuildInfo extends DenoBuildInfo {
 /** The Deno build information object extended by Fly Leaf. */
 export const build: LeafBuildInfo;
 
+/** A snapshot of the environment variables. */
+declare interface LeafEnvSnapshot extends Record<string, string> {}
+/** Environment variables. */
+declare interface LeafEnv {
+	/** Remove an environment variable. */
+	delete(key: string): void;
+	/** Get the value of an environment variable. */
+	get(key: string): string|undefined;
+	/** Test if an environment variable exists. */
+	has(key: string): boolean;
+	/** Set the value of an environment variable. */
+	set(key: string, value: string): void;
+	/** Take a snapshot of the current environment variables. */
+	toObject(): LeafEnvSnapshot;
+}
+
 /** Memory usage summary snapshot. */
 declare interface LeafMemoryUsage {
 	/** Memory in bytes used to store JS objects by the running instance. */
@@ -186,6 +202,8 @@ export const args: string[];
 export function chdir(folder: string|URL): void;
 /** Get the current working directory. */
 export function cwd(): string;
+/** Interact with environment variables. */
+export const env: LeafEnv;
 /** Get the path to the current running executable. */
 export function execPath(): string;
 /** Quit the running instance. If `exitCode` is specified, the exit code will be set to the value.

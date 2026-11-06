@@ -8,7 +8,24 @@ import LeafBuildInfo from "../common/class/buildInfo.mjs";
 
 import NodeProcess from "node:process";
 
-export const build = new LeafBuildInfo(
+const instanceReport = NodeProcess.report.getReport();
+
+const build = new LeafBuildInfo(
 	NodeProcess.platform,
 	NodeProcess.arch
 );
+const buildEnvComponents = [];
+if (
+	typeof instanceReport?.header?.glibcVersionRuntime === "string" ||
+	typeof instanceReport?.header?.glibcVersionCompiler === "string"
+) {
+	buildEnvComponents.push("gnu");
+};
+if (buildEnvComponents.length > 0) {
+	build.env = buildEnvComponents.join("-");
+	build.target = `${build.arch}-${build.vendor}-${build.os}-${build.env}`;
+};
+
+export {
+	build
+};

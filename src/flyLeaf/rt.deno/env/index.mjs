@@ -19,6 +19,7 @@ export const addSignalListener = Deno.addSignalListener;
 export const args = Deno.args;
 export const chdir = Deno.chdir;
 export const cwd = Deno.cwd;
+export const env = Deno.env;
 export const execPath = Deno.execPath;
 export const exit = Deno.exit;
 export const gid = Deno.gid;

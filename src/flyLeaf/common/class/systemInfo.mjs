@@ -4,6 +4,23 @@
 
 "use strict";
 
+/** @extends {Record<string, string>} */
+export class LeafEnvSnapshot {
+	/** @param {Iterable<[string, string]>|Record<string, string>} source */
+	constructor(source) {
+		if (source) {
+			if (typeof source[Symbol.iterator] === "function") {
+				for (const [key, value] of source) {
+					this[key] = value;
+				};
+			} else {
+				for (const key in source) {
+					this[key] = source[key];
+				};
+			};
+		};
+	};
+};
 export class LeafMemoryUsage {
 	/** @type {number} */
 	external;

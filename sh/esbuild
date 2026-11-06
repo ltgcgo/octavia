@@ -1,4 +1,39 @@
 #!/bin/bash
 args=( "$@" )
-deno run --allow-env --allow-net --allow-read --allow-write --allow-run deno/artifact/esbuild.js ${args[@]}
+if [ "${PREFER_RUNTIME}" == "" ]; then
+	if [ "$(command -v deno 2>/dev/null)" != "" ]; then
+		export selectedRuntime="deno"
+	elif [ "$(command -v ende 2>/dev/null)" != "" ]; then
+		export selectedRuntime="ende"
+	elif [ "$(command -v bun 2>/dev/null)" != "" ]; then
+		export selectedRuntime="bun"
+	elif [ "$(command -v ant 2>/dev/null)" != "" ]; then
+		export selectedRuntime="ant"
+	elif [ "$(command -v node 2>/dev/null)" != "" ]; then
+		export selectedRuntime="node"
+	fi
+else
+	export selectedRuntime="${PREFER_RUNTIME}"
+fi
+case "$selectedRuntime" in
+	"ant")
+		ant --preload "./src/flyLeaf/loader/index.mjs" "./deno/artifact/esbuild.js" ${args[@]}
+		;;
+	"bun")
+		bun --preload "./src/flyLeaf/loader/index.mjs" "./deno/artifact/esbuild.js" ${args[@]}
+		;;
+	"deno")
+		deno run --allow-env --allow-net --allow-read --allow-write --allow-run "./deno/artifact/esbuild.js" ${args[@]}
+		;;
+	"ende")
+		ende run --allow-env --allow-net --allow-read --allow-write --allow-run "./deno/artifact/esbuild.js" ${args[@]}
+		;;
+	"node")
+		node --import "./src/flyLeaf/loader/index.mjs" "./deno/artifact/esbuild.js" ${args[@]}
+		;;
+	*)
+		echo "No supported JS runtime is found."
+		exit 1
+		;;
+esac
 exit
