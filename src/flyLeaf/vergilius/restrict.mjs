@@ -259,7 +259,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 					const arg = deepUnwrap(args[i]);
 					if ((typeof arg === "function" || typeof arg?.apply === "function") && !blacklistedConstructors.has(arg)) {
 						const newKeyTree = tree.slice();
-						newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>{${i}}()`);
+						newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>{${i}}`);
 						copiedArgs.push(wrapProxies(arg, newKeyTree, sniffOnly, disablePrint));
 					} else {
 						copiedArgs.push(arg);
@@ -268,17 +268,22 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				args = copiedArgs;
 			};
 			if (sniffOnly || isInternal()) {
-				const response = target.apply(deepUnwrap(thisArg), args);
-				if (disablePrint) {
-				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;32mDONE\x1b[0m] ${tree.join(".")}<${invokeId}>() => ${visualiseValue(response)}`);
-				};
-				if (!blacklistedConstructors.has(response?.constructor) && (sniffOnly || inspectTrace > 1)) {
-					const newKeyTree = tree.slice();
-					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>()`);
-					return wrapProxies(response, newKeyTree, sniffOnly, disablePrint);
-				} else {
-					return response;
+				try {
+					const response = target.apply(deepUnwrap(thisArg), args);
+					if (disablePrint) {
+					} else if (inspectTrace > 1) {
+						console.info(`[\x1b[1;32mDONE\x1b[0m] ${tree.join(".")}<${invokeId}>() => ${visualiseValue(response)}`);
+					};
+					if (!blacklistedConstructors.has(response?.constructor) && (sniffOnly || inspectTrace > 1)) {
+						const newKeyTree = tree.slice();
+						newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>()`);
+						return wrapProxies(response, newKeyTree, sniffOnly, disablePrint);
+					} else {
+						return response;
+					};
+				} catch (err) {
+					console.info(`[\x1b[1;31mFAIL\x1b[0m] ${tree.join(".")}<${invokeId}>() <= ${err.name ?? "<unknownError>"}${err.message.length > 0 ? ": " : ""}${err.message}`);
+					throw(err);
 				};
 			} else {
 				throw(new Error(`Invalid non-internal invocation.`));
