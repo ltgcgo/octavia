@@ -23,10 +23,10 @@ case "$selectedRuntime" in
 		bun --preload "./src/flyLeaf/loader/index.mjs" "./deno/artifact/esbuild.js" ${args[@]}
 		;;
 	"deno")
-		deno run --allow-env --allow-net --allow-read --allow-write --allow-run "./deno/artifact/esbuild.js" ${args[@]}
+		deno run --preload "./src/flyLeaf/loader/index.mjs" --allow-env --allow-net --allow-read --allow-write --allow-run "./deno/artifact/esbuild.js" ${args[@]}
 		;;
 	"ende")
-		ende run --allow-env --allow-net --allow-read --allow-write --allow-run "./deno/artifact/esbuild.js" ${args[@]}
+		ende run --preload "./src/flyLeaf/loader/index.mjs" --allow-env --allow-net --allow-read --allow-write --allow-run "./deno/artifact/esbuild.js" ${args[@]}
 		;;
 	"node")
 		node --import "./src/flyLeaf/loader/index.mjs" "./deno/artifact/esbuild.js" ${args[@]}
