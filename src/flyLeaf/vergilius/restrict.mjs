@@ -223,36 +223,100 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 			} else {
 				newKeyTree.push(key);
 			};
-			if (disablePrint) {
-			} else if (inspectTrace > 2) {
-				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
-			} else if (inspectTrace > 1) {
-				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
-			};
 			if (sniffOnly || isInternal()) {
+				if (disablePrint) {
+				} else if (inspectTrace > 2) {
+					console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
+				} else if (inspectTrace > 1) {
+					console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
+				};
 				const value = target[key];
+				const unwrappedKey = deepUnwrap(key);
 				const unwrappedValue = deepUnwrap(value);
 				if (
 					blacklistedProperties.has(key) ||
+					blacklistedProperties.has(unwrappedKey) ||
 					blacklistedConstructors.has(value?.constructor) ||
-					blacklistedExact.has(value) ||
 					blacklistedConstructors.has(deepUnwrap(unwrappedValue?.constructor)) ||
+					blacklistedExact.has(value) ||
 					blacklistedExact.has(unwrappedValue)
 				) return deepUnwrap(value);
 				const mutedChild = silentProperties.has(key) || disablePrint;
 				return wrapProxies(value, newKeyTree, sniffOnly, mutedChild);
 			} else {
+				if (disablePrint) {
+				} else if (inspectTrace > 2) {
+					console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(target[key])}`);
+				} else if (inspectTrace > 1) {
+					console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
+				};
 				return undefined;
+			};
+		},
+		"set": (target, key, value) => {
+			const newKeyTree = tree.slice();
+			if (typeof key === "symbol") {
+				newKeyTree.push(key.toString());
+			} else if (typeof key === "number" || Number.isSafeInteger(parseInt(key))) {
+				newKeyTree.push(`${newKeyTree.pop()}[${key}]`);
+			} else {
+				newKeyTree.push(key);
+			};
+			if (sniffOnly || isInternal()) {
+				const invokeId = getRandomID();
+				const unwrappedTarget = deepUnwrap(target);
+				const unwrappedKey = deepUnwrap(key);
+				const unwrappedValue = deepUnwrap(value);
+				let writeFailed = true, sourceReadOnly, caughtError;
+				try {
+					if (
+						blacklistedProperties.has(key) ||
+						blacklistedProperties.has(unwrappedKey) ||
+						blacklistedConstructors.has(target?.constructor) ||
+						blacklistedConstructors.has(deepUnwrap(unwrappedTarget?.constructor)) ||
+						blacklistedExact.has(value) ||
+						blacklistedExact.has(unwrappedValue)
+					) {
+						const oldValue = unwrappedTarget[key];
+						Reflect.set(unwrappedTarget, key, unwrappedValue);
+						writeFailed = unwrappedTarget[key] !== unwrappedValue;
+						sourceReadOnly = unwrappedTarget[key] === oldValue;
+					} else {
+						const oldValue = unwrappedTarget[key];
+						const wrappedValue = unwrappedValue === value ? wrapProxies(unwrappedValue, newKeyTree, sniffOnly, disablePrint) : value;
+						Reflect.set(unwrappedTarget, key, wrappedValue);
+						writeFailed = unwrappedTarget[key] !== wrappedValue;
+						sourceReadOnly = unwrappedTarget[key] === oldValue;
+					};
+				} catch (err) {
+					writeFailed = true;
+					caughtError = err;
+				};
+				let trailingText = "";
+				if (writeFailed) {
+					trailingText = `(\x1b[1;31m${
+						caughtError ? "thrown" : (
+							sourceReadOnly ? "readonly" : "failure"
+						)
+					}\x1b[0m) `;
+				};
+				if (disablePrint) {
+				} else if (inspectTrace > 2) {
+					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}> = ${trailingText}${visualiseValue(value)}`);
+				} else if (inspectTrace > 1) {
+					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}>${trailingText}${trailingText}`);
+				};
+			} else {
+				if (disablePrint) {
+				} else if (inspectTrace > 2) {
+					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(value)}`);
+				} else if (inspectTrace > 1) {
+					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
+				};
 			};
 		},
 		"apply": (target, thisArg, args) => {
 			const invokeId = getRandomID();
-			if (disablePrint) {
-			} else if (inspectTrace > 2) {
-				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(${visualiseArguments(args)}): <${invokeId}>`);
-			} else if (inspectTrace > 1) {
-				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): <${invokeId}>`);
-			};
 			if (sniffOnly || inspectTrace > 1) {
 				const copiedArgs = [];
 				for (let i = 0; i < args.length; i ++) {
@@ -268,6 +332,12 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				args = copiedArgs;
 			};
 			if (sniffOnly || isInternal()) {
+				if (disablePrint) {
+				} else if (inspectTrace > 2) {
+					console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(${visualiseArguments(args)}): <${invokeId}>`);
+				} else if (inspectTrace > 1) {
+					console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): <${invokeId}>`);
+				};
 				try {
 					const response = target.apply(deepUnwrap(thisArg), args);
 					if (disablePrint) {
@@ -286,19 +356,23 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 					throw(err);
 				};
 			} else {
+				if (disablePrint) {
+				} else if (inspectTrace > 1) {
+					console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): (\x1b[1;31mbanned\x1b[0m)`);
+				};
 				throw(new Error(`Invalid non-internal invocation.`));
 				return undefined;
 			};
 		},
 		"construct": (target, args) => {
 			const invokeId = getRandomID();
-			if (disablePrint) {
-			} else if (inspectTrace > 2) {
-				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(${visualiseArguments(args)})`);
-			} else if (inspectTrace > 1) {
-				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>()`);
-			};
 			if (!blacklistedConstructors.has(target) && (sniffOnly || isInternal())) {
+				if (disablePrint) {
+				} else if (inspectTrace > 2) {
+					console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(${visualiseArguments(args)})`);
+				} else if (inspectTrace > 1) {
+					console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>()`);
+				};
 				if (sniffOnly || inspectTrace > 0) {
 					const newKeyTree = tree.slice();
 					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>())`);
@@ -311,6 +385,10 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 					return Reflect.construct(target, args);
 				};
 			} else {
+				if (disablePrint) {
+				} else if (inspectTrace > 1) {
+					console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(): (\x1b[1;31mbanned\x1b[0m)`);
+				};
 				throw(new Error(`Invalid non-internal construction.`));
 				return undefined;
 			};
