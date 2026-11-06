@@ -23,8 +23,33 @@ const externalPathImmediate = /^(node:(repl)):/m;
 
 const blacklistedProperties = new Set([
 	"prototype",
-	Symbol.species
+	Symbol.species // Fixes zlib panics.
 ]);
+const silentProperties = new Set([
+	Symbol.iterator // Node.js `internal:undici` SPAMS this!
+]);
+const blacklistedConstructors = new Set([
+	// Node.js buffers will get proxied
+	DataView,
+	SharedArrayBuffer,
+	ArrayBuffer,
+	Uint8ClampedArray,
+	Uint8Array,
+	Int8Array,
+	Uint16Array,
+	Int16Array,
+	Uint32Array,
+	Int32Array,
+	Float32Array,
+	BigUint64Array,
+	BigInt64Array,
+	Float64Array
+]);
+const blacklistedExact = new Set([]);
+if (globalThis.Buffer) {
+	blacklistedExact.add(Buffer.concat);
+};
+
 const unwrappedObjects = new WeakMap();
 
 const RestrictedView = class RestrictedView {};
@@ -84,6 +109,14 @@ export function isInternal() {
 		inspectInternal && console.debug(`Verdict (${depth}):, type inferred external.`);
 		return false;
 	};
+};
+
+export function deepUnwrap(wrapped) {
+	let unwrapped;
+	while ((unwrapped = unwrappedObjects.get(wrapped)) != null) {
+		wrapped = unwrapped;
+	};
+	return wrapped;
 };
 
 const visualiseValue = function (value) {
@@ -151,11 +184,12 @@ const visualiseArguments = function (args) {
 * @param {T} victim
 * @param {string[]} tree
 * @returns {T} */
-export function wrapProxies(victim, tree, sniffOnly = false) {
-	if (victim == null) {
+export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = false) {
+	let unwrappedVictim = deepUnwrap(victim);
+	if (unwrappedVictim == null) {
 		return victim;
 	};
-	switch (typeof victim) {
+	switch (typeof unwrappedVictim) {
 		case "bigint":
 		case "boolean":
 		case "number":
@@ -165,8 +199,11 @@ export function wrapProxies(victim, tree, sniffOnly = false) {
 			break;
 		};
 	};
+	if (blacklistedConstructors.has(deepUnwrap(unwrappedVictim?.constructor))) {
+		return victim;
+	};
 	if (!tree) {
-		switch (typeof victim) {
+		switch (typeof unwrappedVictim) {
 			case "function": {
 				tree = [victim.name ?? "<anonymous>"];
 				break;
@@ -186,33 +223,44 @@ export function wrapProxies(victim, tree, sniffOnly = false) {
 			} else {
 				newKeyTree.push(key);
 			};
-			if (inspectTrace > 2) {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
 			};
 			if (sniffOnly || isInternal()) {
-				if (blacklistedProperties.has(key)) return unwrappedObjects.get(target[key]) ?? target[key];
-				return wrapProxies(target[key], newKeyTree, sniffOnly);
+				const value = target[key];
+				const unwrappedValue = deepUnwrap(value);
+				if (
+					blacklistedProperties.has(key) ||
+					blacklistedConstructors.has(value?.constructor) ||
+					blacklistedExact.has(value) ||
+					blacklistedConstructors.has(deepUnwrap(unwrappedValue?.constructor)) ||
+					blacklistedExact.has(unwrappedValue)
+				) return deepUnwrap(value);
+				const mutedChild = silentProperties.has(key) || disablePrint;
+				return wrapProxies(value, newKeyTree, sniffOnly, mutedChild);
 			} else {
 				return undefined;
 			};
 		},
 		"apply": (target, thisArg, args) => {
 			const invokeId = getRandomID();
-			if (inspectTrace > 2) {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
 				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(${visualiseArguments(args)}): <${invokeId}>`);
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): <${invokeId}>`);
 			};
-			if (sniffOnly || inspectTrace) {
+			if (sniffOnly || inspectTrace > 1) {
 				const copiedArgs = [];
 				for (let i = 0; i < args.length; i ++) {
-					const arg = args[i];
-					if (typeof arg === "function" || typeof arg?.apply === "function") {
+					const arg = deepUnwrap(args[i]);
+					if ((typeof arg === "function" || typeof arg?.apply === "function") && !blacklistedConstructors.has(arg)) {
 						const newKeyTree = tree.slice();
 						newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>{${i}}()`);
-						copiedArgs.push(wrapProxies(arg, tree, sniffOnly));
+						copiedArgs.push(wrapProxies(arg, tree, sniffOnly, disablePrint));
 					} else {
 						copiedArgs.push(arg);
 					};
@@ -220,14 +268,15 @@ export function wrapProxies(victim, tree, sniffOnly = false) {
 				args = copiedArgs;
 			};
 			if (sniffOnly || isInternal()) {
-				const response = target.apply(unwrappedObjects.get(thisArg) ?? thisArg, args);
-				if (inspectTrace > 1) {
+				const response = target.apply(deepUnwrap(thisArg), args);
+				if (disablePrint) {
+				} else if (inspectTrace > 1) {
 					console.info(`[\x1b[1;32mDONE\x1b[0m] ${tree.join(".")}<${invokeId}>() => ${visualiseValue(response)}`);
 				};
-				if (sniffOnly || inspectTrace) {
+				if (!blacklistedConstructors.has(response?.constructor) && (sniffOnly || inspectTrace > 1)) {
 					const newKeyTree = tree.slice();
 					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>()`);
-					return wrapProxies(response, newKeyTree, sniffOnly);
+					return wrapProxies(response, newKeyTree, sniffOnly, disablePrint);
 				} else {
 					return response;
 				};
@@ -238,19 +287,20 @@ export function wrapProxies(victim, tree, sniffOnly = false) {
 		},
 		"construct": (target, args) => {
 			const invokeId = getRandomID();
-			if (inspectTrace > 2) {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
 				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(${visualiseArguments(args)})`);
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>()`);
 			};
-			if (sniffOnly || isInternal()) {
-				if (sniffOnly || inspectTrace) {
+			if (!blacklistedConstructors.has(target) && (sniffOnly || isInternal())) {
+				if (sniffOnly || inspectTrace > 0) {
 					const newKeyTree = tree.slice();
 					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>())`);
 					newKeyTree.unshift(`(new ${newKeyTree.shift()}`);
 					return wrapProxies(
 						Reflect.construct(target, args),
-						newKeyTree, sniffOnly
+						newKeyTree, sniffOnly, disablePrint
 					);
 				} else {
 					return Reflect.construct(target, args);
