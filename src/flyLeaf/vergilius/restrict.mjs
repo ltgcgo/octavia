@@ -29,6 +29,22 @@ const unwrappedObjects = new WeakMap();
 
 const RestrictedView = class RestrictedView {};
 
+const b64Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-";
+const dummyU8 = new Uint8Array(8);
+const dummyU8B64 = dummyU8.subarray(0, (dummyU8.length * 3) >>> 2);
+const getRandomID = function () {
+	crypto.getRandomValues(dummyU8);
+	if (typeof dummyU8B64.toBase64 === "function") {
+		return dummyU8B64.toBase64({"alphabet": "base64url"});
+	} else {
+		let result = "";
+		for (const e of dummyU8) {
+			result += b64Alphabet[e & 63];
+		};
+		return result;
+	};
+};
+
 export function isInternal() {
 	if (skipCheck) return true;
 	let stackMsg = (new Error()).stack;
@@ -170,7 +186,11 @@ export function wrapProxies(victim, tree, sniffOnly = false) {
 			} else {
 				newKeyTree.push(key);
 			};
-			inspectTrace && console.info(newKeyTree.join("."));
+			if (inspectTrace > 2) {
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
+			};
 			if (sniffOnly || isInternal()) {
 				if (blacklistedProperties.has(key)) return unwrappedObjects.get(target[key]) ?? target[key];
 				return wrapProxies(target[key], newKeyTree, sniffOnly);
@@ -179,12 +199,34 @@ export function wrapProxies(victim, tree, sniffOnly = false) {
 			};
 		},
 		"apply": (target, thisArg, args) => {
-			inspectTrace && console.info(`${tree.join(".")}(${visualiseArguments(args)})`);
+			const invokeId = getRandomID();
+			if (inspectTrace > 2) {
+				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(${visualiseArguments(args)}): <${invokeId}>`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): <${invokeId}>`);
+			};
+			if (sniffOnly || inspectTrace) {
+				const copiedArgs = [];
+				for (let i = 0; i < args.length; i ++) {
+					const arg = args[i];
+					if (typeof arg === "function" || typeof arg?.apply === "function") {
+						const newKeyTree = tree.slice();
+						newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>{${i}}()`);
+						copiedArgs.push(wrapProxies(arg, tree, sniffOnly));
+					} else {
+						copiedArgs.push(arg);
+					};
+				};
+				args = copiedArgs;
+			};
 			if (sniffOnly || isInternal()) {
 				const response = target.apply(unwrappedObjects.get(thisArg) ?? thisArg, args);
+				if (inspectTrace > 1) {
+					console.info(`[\x1b[1;32mDONE\x1b[0m] ${tree.join(".")}<${invokeId}>() => ${visualiseValue(response)}`);
+				};
 				if (sniffOnly || inspectTrace) {
 					const newKeyTree = tree.slice();
-					newKeyTree.push(`${newKeyTree.pop()}()`);
+					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>()`);
 					return wrapProxies(response, newKeyTree, sniffOnly);
 				} else {
 					return response;
@@ -195,11 +237,16 @@ export function wrapProxies(victim, tree, sniffOnly = false) {
 			};
 		},
 		"construct": (target, args) => {
-			inspectTrace && console.info(`new ${tree.join(".")}()`);
+			const invokeId = getRandomID();
+			if (inspectTrace > 2) {
+				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(${visualiseArguments(args)})`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>()`);
+			};
 			if (sniffOnly || isInternal()) {
 				if (sniffOnly || inspectTrace) {
 					const newKeyTree = tree.slice();
-					newKeyTree.push(`${newKeyTree.pop()}())`);
+					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>())`);
 					newKeyTree.unshift(`(new ${newKeyTree.shift()}`);
 					return wrapProxies(
 						Reflect.construct(target, args),

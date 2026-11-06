@@ -16,7 +16,33 @@ export function getSkipCheck() {
 };
 export function getPrintTrace() {
 	requestDeno();
-	return denoEnvApi?.get("VERGILIUS_PRINT_TRACE")?.length > 0 ?? false;
+	const traceConfig = denoEnvApi?.get("VERGILIUS_PRINT_TRACE");
+	if (traceConfig?.length > 0) {
+		switch (traceConfig.toLowerCase()) {
+			case "common":
+			case "medium":
+			case "middle":
+			case "normal": {
+				return 2;
+			};
+			case "debug":
+			case "deep":
+			case "high":
+			case "verbose": {
+				return 3;
+			};
+			default: {
+				const parseResult = parseInt(traceConfig);
+				if (Number.isSafeInteger(parseResult)) {
+					return parseResult
+				} else {
+					return 0;
+				};
+			};
+		};
+	} else {
+		return 0;
+	};
 };
 export function getPrintInternal() {
 	requestDeno();
