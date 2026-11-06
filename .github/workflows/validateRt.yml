@@ -92,9 +92,9 @@ jobs:
           mkdir -p ./cache/validate/MICC.MICC_parseSmf/bun
           mkdir -p ./cache/validate/MICC.MICC_parseSmf/node
       - name: Generate Deno proof
-        run: "deno run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.mjs"
+        run: "deno run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write --allow-env ./validate/runtimes/emit.mjs"
       - name: Generate Ende proof
-        run: "ende run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write ./validate/runtimes/emit.mjs"
+        run: "ende run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write --allow-env ./validate/runtimes/emit.mjs"
       - name: Generate Bun proof
         run: "bun run --preload ./src/flyLeaf/loader/index.mjs ./validate/runtimes/emit.mjs"
       - name: Generate Node proof (eugh, disgusting)

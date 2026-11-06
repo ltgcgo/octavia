@@ -1,13 +1,20 @@
 // 2023 © Lightingale Community, WingBlade Author(s)
 // 2026-2026 © Lightingale Community
-// Licensed under GNU LGPL v3.0 license.
+// Licensed under GNU LGPL v3.0+ license.
 
 "use strict";
 
-const skipCheck = false;
-const inspectTrace = false;
-const inspectInternal = false;
-const preventObtainThenAccessAtBoundary = false;
+import {
+	getPrintInternal,
+	getPrintTrace,
+	getPrisonWarden,
+	getSkipCheck
+} from "./config.mjs";
+
+const skipCheck = getSkipCheck();
+const inspectTrace = getPrintTrace();
+const inspectInternal = getPrintInternal();
+const preventObtainThenAccessAtBoundary = getPrisonWarden();
 const lineLocationMatcher = /^\s+at\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
 const internalPathTester = /^(internal|native|node):/m;
 const externalPathPostponed = /^(node:(vm)):/m;
@@ -62,11 +69,72 @@ export function isInternal() {
 	};
 };
 
+const visualiseValue = function (value) {
+	if (value === null) {
+		return "null";
+	};
+	switch (typeof value) {
+		case "undefined": {
+			return "undefined";
+			break;
+		};
+		case "bigint": {
+			return `${value}n`;
+			break;
+		};
+		case "function": {
+			return value?.name ? `${value?.name}() {}` : "() => {}";
+			break;
+		};
+		case "symbol":  {
+			return value.toString();
+			break;
+		};
+		case "boolean":
+		case "number":
+		case "string":  {
+			return JSON.stringify(value);
+			break;
+		};
+		case "object": {
+			switch (value.constructor) {
+				case Promise: {
+					return `Promise<unknown>`;
+					break;
+				};
+				default: {
+					if (value instanceof Array) {
+						return value.length < 2 ? `[(${value.length} element)]` : `[(${value.length} elements)]`;
+					};
+					return value.constructor?.name ? `${value.constructor?.name} {}` : "{}";
+				};
+			};
+			break;
+		};
+		default: {
+			throw(new RangeError(`Something shouldn't happen has happened.`));
+		};
+	};
+};
+const visualiseArguments = function (args) {
+	if (args.length > 1) {
+		let result = visualiseValue(args[0]);
+		for (let i = 1; i < args.length; i ++) {
+			result += `, ${visualiseValue(args[i])}`;
+		};
+		return result;
+	} else if (args.length > 0) {
+		return args[0] === undefined ? "" : visualiseValue(args[0]);
+	} else {
+		return "";
+	};
+};
+
 /** @template {T}
 * @param {T} victim
 * @param {string[]} tree
 * @returns {T} */
-export function wrapProxies(victim, tree) {
+export function wrapProxies(victim, tree, sniffOnly = false) {
 	if (victim == null) {
 		return victim;
 	};
@@ -102,24 +170,21 @@ export function wrapProxies(victim, tree) {
 				newKeyTree.push(key);
 			};
 			inspectTrace && console.info(newKeyTree.join("."));
-			if (isInternal()) {
+			if (sniffOnly || isInternal()) {
 				if (blacklistedProperties.has(key)) return unwrappedObjects.get(target[key]) ?? target[key];
-				return wrapProxies(target[key], newKeyTree);
+				return wrapProxies(target[key], newKeyTree, sniffOnly);
 			} else {
 				return undefined;
 			};
 		},
 		"apply": (target, thisArg, args) => {
-			inspectTrace && console.info(`${tree.join(".")}()`);
-			if (isInternal()) {
+			inspectTrace && console.info(`${tree.join(".")}(${visualiseArguments(args)})`);
+			if (sniffOnly || isInternal()) {
 				const response = target.apply(unwrappedObjects.get(thisArg) ?? thisArg, args);
-				if (inspectTrace) {
+				if (sniffOnly || inspectTrace) {
 					const newKeyTree = tree.slice();
 					newKeyTree.push(`${newKeyTree.pop()}()`);
-					return wrapProxies(
-						response,
-						newKeyTree
-					);
+					return wrapProxies(response, newKeyTree, sniffOnly);
 				} else {
 					return response;
 				};
@@ -130,14 +195,14 @@ export function wrapProxies(victim, tree) {
 		},
 		"construct": (target, args) => {
 			inspectTrace && console.info(`new ${tree.join(".")}()`);
-			if (isInternal()) {
-				if (inspectTrace) {
+			if (sniffOnly || isInternal()) {
+				if (sniffOnly || inspectTrace) {
 					const newKeyTree = tree.slice();
 					newKeyTree.push(`${newKeyTree.pop()}())`);
 					newKeyTree.unshift(`(new ${newKeyTree.shift()}`);
 					return wrapProxies(
 						Reflect.construct(target, args),
-						newKeyTree
+						newKeyTree, sniffOnly
 					);
 				} else {
 					return Reflect.construct(target, args);
