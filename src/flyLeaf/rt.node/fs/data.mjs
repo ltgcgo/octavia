@@ -18,7 +18,8 @@ export async function writeFile(path, data, options = {}) {
 		await NodeAsyncFs.writeFile(path, data, {
 			"flush": true,
 			"mode": options.mode,
-			"flag": linuxWriteFlags(options)
+			"flag": linuxWriteFlags(options),
+			"signal": options?.signal
 		});
 		return;
 	} else if (data?.constructor === ReadableStream) {
@@ -33,7 +34,8 @@ export async function writeFile(path, data, options = {}) {
 		})(), {
 			"flush": true,
 			"mode": options.mode,
-			"flag": linuxWriteFlags(options)
+			"flag": linuxWriteFlags(options),
+			"signal": options?.signal
 		});
 		return;
 	};

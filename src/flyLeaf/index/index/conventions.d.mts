@@ -6,6 +6,8 @@ export interface DisposableObject {
 	close(): void;
 }
 export interface WrappedAbortSignal {
-	/** An abort signal to cancel the operation. */
+	/** An abort signal to cancel the operation. Depending on the backend runtime, abort signals may not always be supported.
+	*
+	* - On Node.js, synchronous method variants tend to ignore abort signals. */
 	signal: AbortSignal;
 }

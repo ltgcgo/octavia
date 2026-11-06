@@ -58,9 +58,6 @@ export function linuxOpenFlags(flags) {
 export function linuxWriteFlags(flags) {
 	let result = NodeFsConstant.O_WRONLY;
 	if (flags.append) result |= NodeFsConstant.O_APPEND;
-	if (!flags.createNew && flags.truncate) {
-		result |= NodeFsConstant.O_TRUNC;
-	};
 	if (!flags.createNew && flags.create !== false) {
 		result |= NodeFsConstant.O_CREAT;
 	};

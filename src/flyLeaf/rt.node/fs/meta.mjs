@@ -13,11 +13,20 @@ import {
 } from "./translate.mjs";
 import { FsFile } from "./handle.mjs";
 
-/** @param {import("../../index/index.d.mts").LeafOpenOptions} options  */
+/** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
+export async function mkdir(path, options) {
+	await NodeAsyncFs.mkdir(path, options);
+};
+/** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
+export function mkdirSync(path, options) {
+	NodeFs.mkdirSync(path, options);
+};
+
+/** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
 export async function open(path, options) {
 	return new FsFile(path, options);
 };
-/** @param {import("../../index/index.d.mts").LeafOpenOptions} options  */
+/** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
 export function openSync(path, options) {
 	return new FsFile(path, options);
 };

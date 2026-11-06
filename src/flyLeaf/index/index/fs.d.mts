@@ -147,26 +147,26 @@ export interface LeafMakeTempOptions {
 }
 
 export interface LeafMkdirOptions {
-	/**  */
+	/** The permissions (e.g. `0o777`) associated with the target. */
 	mode?: number;
-	/**  */
+	/** Attempt to create directories recursively, akin to `mkdir -p` on POSIX. */
 	recursive?: boolean;
 }
 
 export interface LeafOpenOptions {
-	/**  */
+	/** When true, imply `write: true` and append data to the end of a file. */
 	append?: boolean;
-	/**  */
+	/** When true, create the file if it doesn't already exist. Requires write permissions. */
 	create?: boolean;
-	/**  */
+	/** When true, no existing file at the path is allowed before a new one is created. Requires write or append permissions, causes `create` and `truncate` to be ignored. */
 	createNew?: boolean;
-	/**  */
+	/** The permissions (e.g. `0o777`) associated with the target. */
 	mode?: number;
-	/**  */
+	/** When true, request read permissions. */
 	read?: boolean;
-	/**  */
+	/** When true, the target file will have its data purged and size set to 0. Requires write permissions. */
 	truncate?: boolean;
-	/**  */
+	/** When true, request write permissions. */
 	write?: boolean;
 }
 
@@ -190,20 +190,14 @@ export interface LeafWatchOptions {
 }
 
 export interface LeafWriteFileOptions extends WrappedAbortSignal {
-	/**  */
+	/** When true, imply `write: true` and append data to the end of a file. */
 	append?: boolean;
-	/**  */
+	/** When true, create the file if it doesn't already exist. Requires write permissions. */
 	create?: boolean;
-	/**  */
+	/** When true, no existing file at the path is allowed before a new one is created. Requires write or append permissions, causes `create` and `truncate` to be ignored. */
 	createNew?: boolean;
-	/**  */
+	/** The permissions (e.g. `0o777`) associated with the target. */
 	mode?: number;
-	/**  */
-	read?: boolean;
-	/**  */
-	truncate?: boolean;
-	/**  */
-	write?: boolean;
 }
 
 /**  */
@@ -238,9 +232,9 @@ export function makeTempDirSync(options?: LeafMakeTempOptions): string;
 export function makeTempFile(options?: LeafMakeTempOptions): Promise<string>;
 /**  */
 export function makeTempFileSync(options?: LeafMakeTempOptions): string;
-/**  */
+/** Create a new folder at the specified path. */
 export function mkdir(path: string|URL, options?: LeafMkdirOptions): Promise<void>;
-/**  */
+/** The synchronous variant of `mkdir`. */
 export function mkdirSync(path: string|URL, options?: LeafMkdirOptions): void;
 /** Open a file and get a handle. */
 export function open(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFile>;
