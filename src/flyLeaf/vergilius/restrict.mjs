@@ -260,7 +260,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 					if ((typeof arg === "function" || typeof arg?.apply === "function") && !blacklistedConstructors.has(arg)) {
 						const newKeyTree = tree.slice();
 						newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>{${i}}()`);
-						copiedArgs.push(wrapProxies(arg, tree, sniffOnly, disablePrint));
+						copiedArgs.push(wrapProxies(arg, newKeyTree, sniffOnly, disablePrint));
 					} else {
 						copiedArgs.push(arg);
 					};

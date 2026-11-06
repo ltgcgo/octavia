@@ -15,11 +15,16 @@ const build = new LeafBuildInfo(
 	NodeProcess.arch
 );
 const buildEnvComponents = [];
-if (
-	typeof instanceReport?.header?.glibcVersionRuntime === "string" ||
-	typeof instanceReport?.header?.glibcVersionCompiler === "string"
-) {
-	buildEnvComponents.push("gnu");
+switch (build.os) {
+	case "linux": {
+		if (
+			typeof instanceReport?.header?.glibcVersionRuntime === "string" ||
+			typeof instanceReport?.header?.glibcVersionCompiler === "string"
+		) {
+			buildEnvComponents.push("gnu");
+		};
+		break;
+	};
 };
 if (buildEnvComponents.length > 0) {
 	build.env = buildEnvComponents.join("-");

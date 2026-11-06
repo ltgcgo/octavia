@@ -56,10 +56,8 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 - [**Boa**](https://github.com/boa-dev/boa): Investigating.
 - [**Bun**](https://bun.sh/): WIP.
 - [**Deno**](https://deno.land/): Supported.
-  - Re-introduces the deprecated [`Deno.run()`](https://web.archive.org/web/20220629065958/https://doc.deno.land/deno/stable/~/Deno.RunOptions) if not present.
 - [**Ende**](https://ende.sh/): Supported.
   - `Deno.version.deno` set to the Deno version targeted by _Fly Leaf_.
-  - Re-introduces the deprecated [`Deno.run()`](https://web.archive.org/web/20220629065958/https://doc.deno.land/deno/stable/~/Deno.RunOptions) if not present.
 - [~~Javy~~](https://github.com/bytecodealliance/javy): Out of scope. Insufficient platform APIs.
 - [**Kiesel**](https://kiesel.dev/): Investigating.
 - [**Node.js**]: WIP.
@@ -77,6 +75,11 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 | Porffor | `Porffor` | `Porffor` |
 
 ### Additional features
+#### Deno
+These are features deprecated by the Deno runtime. Fly Leaf re-implements all of the ones listed below, with the remaining deprecated APIs completely absent.
+- [`Deno.run()`](https://web.archive.org/web/20220629065958/https://doc.deno.land/deno/stable/~/Deno.RunOptions)
+
+#### Web
 - [ ] `TextDecoder` polyfill
 - [ ] `TextEncoder` polyfill
 - [ ] `Uint8Array.fromBase64` polyfill
