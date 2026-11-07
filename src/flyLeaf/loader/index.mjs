@@ -42,5 +42,5 @@ _leaf_copyTo_(self, LeafPolyfills);
 await import("../vergilius/cleanUp.mjs");
 
 if (getPrintTrace()) {
-	console.debug(`[Fly Leaf] Activated version ${Deno.version.flyLeaf}, Deno API target ${Deno.version.deno}.`);
+	console.debug(`[Fly Leaf] Activated. Version ${Deno.version.flyLeaf}, backend ${Deno.version.backend}, Deno API target ${Deno.version.deno}.`);
 };

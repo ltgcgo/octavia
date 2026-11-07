@@ -16,6 +16,8 @@ const skipCheck = getSkipCheck();
 const inspectTrace = getPrintTrace();
 const inspectInternal = getPrintInternal();
 const preventObtainThenAccessAtBoundary = getPrisonWarden();
+const hasStackTraceLimit = typeof Error.stackTraceLimit === "number";
+const oldPrepareStackTrace = Error.prepareStackTrace;
 const lineLocationMatcher = /^\s+at(\s(?<async>async))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
 const internalPathTester = /^(internal|native|node):/m;
 const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(event_target|timers|process\/task_queues|modules\/esm\/(module_job|loader)))):/m;
@@ -74,10 +76,25 @@ const getRandomID = function () {
 const isInternal = function () {
 	// External methods all seem to not match internal tests at depth 3.
 	if (skipCheck) return true;
+	if (hasStackTraceLimit) {
+		if (Error.stackTraceLimit < 6) {
+			inspectInternal && console.debug(`Verdict (${depth}): type inferred external, stack trace limit too low.`);
+			return false;
+		};
+	};
+	let restorePrepareStackTrace;
+	if (
+		typeof oldPrepareStackTrace === "function" &&
+		Error.prepareStackTrace !== oldPrepareStackTrace
+	) {
+		restorePrepareStackTrace = Error.prepareStackTrace;
+		Error.prepareStackTrace = oldPrepareStackTrace;
+	};
 	let stackMsg = (new Error()).stack;
 	//console.debug(stackMsg);
 	let depth = 0;
 	let loop = true;
+	let verdict = undefined;
 	while (loop) {
 		const nextLine = stackMsg.indexOf("\n") + 1;
 		if (nextLine > 0) {
@@ -97,21 +114,29 @@ const isInternal = function () {
 		inspectInternal && console.debug(`Inspect (${depth}): ${location} "${matchResult?.method ?? "<empty>"}" ${matchResult?.async}`);
 		if (externalPathImmediate.test(location)) {
 			inspectInternal && console.debug(`Verdict (${depth}): type spotted external.`);
-			return false;
+			verdict = false;
+			break;
 		};
 		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
 			inspectInternal && console.debug(`Verdict (${depth}): type spotted internal.`);
-			return true;
+			verdict = true;
+			break;
 		};
 	};
-	if (depth <= 2) {
-		inspectInternal && console.debug(`Verdict (${depth}): type inferred internal.`);
-		return true;
-	} else {
-		inspectInternal && console.debug(`Verdict (${depth}): type inferred external.`);
-		return false;
+	if (verdict == null) {
+		if (depth <= 2) {
+			inspectInternal && console.debug(`Verdict (${depth}): type inferred internal.`);
+			verdict = true;
+		} else {
+			inspectInternal && console.debug(`Verdict (${depth}): type inferred external.`);
+			verdict = false;
+		};
 	};
+	if (typeof restorePrepareStackTrace === "function") {
+		Error.prepareStackTrace = restorePrepareStackTrace;
+	};
+	return verdict;
 };
 export function isCallSiteInternal() {
 	return isInternal();
