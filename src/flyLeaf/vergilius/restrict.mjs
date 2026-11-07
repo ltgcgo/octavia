@@ -19,7 +19,7 @@ const preventObtainThenAccessAtBoundary = getPrisonWarden();
 const hasStackTraceLimit = Error.stackTraceLimit;
 const oldCaptureStackTrace = Error.captureStackTrace;
 const oldPrepareStackTrace = Error.prepareStackTrace;
-const lineLocationMatcher = /^\s+at(\s(?<async>async))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
+const lineLocationMatcher = /^\s+at(\s(?<async>async))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>(\w+:)?([ -_/.,;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/gm;
 const internalPathTester = /^(internal|node):/m;
 const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(event_target|timers|process\/task_queues|modules\/esm\/(module_job|loader)))):/m;
 const externalPathImmediate = /^(REPL\d+|\[repl\]|(node:(repl|internal\/(modules\/run_main)):))/m;
@@ -74,8 +74,10 @@ const RestrictedView = class RestrictedView {};
 const unwrappedObjects = new WeakMap();
 const internalStackCache = new WeakMap();
 
+/** @type {Error} */
 const errorStackReceiver = {};
-const isInternal = function () {
+/** @param {Function} root */
+const isInternal = function (root) {
 	// Error.prepareStackTrace is non-standard and shouldn't be used. SpiderMonkey and JavaScriptCore don't have it.
 	// Function.prototype.caller is banned for strict mode parsing, and Fly Leaf has strict mode enabled for the entire project. Ouch.
 	// I'm stealing kneecaps if anything is said about call site capturing in Node.js, it is non-standard.
@@ -98,7 +100,7 @@ const isInternal = function () {
 		restorePrepareStackTrace = Error.prepareStackTrace;
 		Error.prepareStackTrace = oldPrepareStackTrace;
 	};
-	oldCaptureStackTrace(errorStackReceiver);
+	oldCaptureStackTrace(errorStackReceiver, root);
 	const verdictCache = internalStackCache.get(errorStackReceiver.stack);
 	if (typeof verdictCache === "boolean") {
 		return verdictCache;
@@ -106,39 +108,30 @@ const isInternal = function () {
 	let stackMsg = errorStackReceiver.stack;
 	//console.debug(stackMsg);
 	let depth = 0;
-	let loop = true;
 	let verdict = undefined;
-	while (loop) {
-		const nextLine = stackMsg.indexOf("\n") + 1;
-		if (nextLine > 0) {
-			stackMsg = stackMsg.substring(nextLine);
-			depth ++;
-		} else {
-			loop = false;
-		};
-		//console.debug(`---------\nStack: ${stackMsg}\n---------`);
-		if (stackMsg?.length <= 0) {
-			break;
-		};
-		if (depth <= 2) continue;
-		const matchResult = lineLocationMatcher.exec(stackMsg)?.groups;
-		if (!matchResult) continue;
-		const {location} = matchResult;
-		inspectInternal && console.debug(`Inspect (${depth}): ${location} "${matchResult?.method ?? "<empty>"}" ${matchResult?.async ?? ""}`);
+	for (const line of stackMsg.slice().matchAll(lineLocationMatcher)) {
+		depth ++;
+		const report = line?.groups;
+		if (
+			report == null ||
+			typeof report.location !== "string"
+		) continue;
+		const {location} = report;
+		inspectInternal && console.debug(`*Inspect (${depth}): ${location} "${report?.method ?? "<empty>"}" ${report?.async ?? ""}`);
 		if (externalPathImmediate.test(location)) {
-			inspectInternal && console.debug(`Verdict (${depth}): type spotted external.`);
+			inspectInternal && console.debug(`*Verdict (${depth}): type spotted external.`);
 			verdict = false;
 			break;
 		};
 		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
-			inspectInternal && console.debug(`Verdict (${depth}): type spotted internal.`);
+			inspectInternal && console.debug(`*Verdict (${depth}): type spotted internal.`);
 			verdict = true;
 			break;
 		};
 	};
 	if (verdict == null) {
-		if (depth <= 2) {
+		if (depth <= 0) {
 			inspectInternal && console.debug(`Verdict (${depth}): type inferred internal.`);
 			verdict = true;
 		} else {
@@ -155,7 +148,7 @@ const isInternal = function () {
 	return verdict;
 };
 export function isCallSiteInternal() {
-	return isInternal();
+	return isInternal(isCallSiteInternal);
 };
 
 export function deepUnwrap(wrapped) {
@@ -260,186 +253,190 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 			};
 		};
 	};
-	const newProxy = new Proxy(victim, {
-		"get": (target, key) => {
-			const newKeyTree = tree.slice();
-			if (typeof key === "symbol") {
-				newKeyTree.push(key.toString());
-			} else if (typeof key === "number" || Number.isSafeInteger(parseInt(key))) {
-				newKeyTree.push(`${newKeyTree.pop()}[${key}]`);
-			} else {
-				newKeyTree.push(key);
+	const handlerGet = (target, key) => {
+		const newKeyTree = tree.slice();
+		if (typeof key === "symbol") {
+			newKeyTree.push(key.toString());
+		} else if (typeof key === "number" || Number.isSafeInteger(parseInt(key))) {
+			newKeyTree.push(`${newKeyTree.pop()}[${key}]`);
+		} else {
+			newKeyTree.push(key);
+		};
+		if (sniffOnly || isInternal(handlerGet)) {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
 			};
-			if (sniffOnly || isInternal()) {
-				if (disablePrint) {
-				} else if (inspectTrace > 2) {
-					console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
-				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
-				};
-				const value = target[key];
-				const unwrappedKey = deepUnwrap(key);
-				const unwrappedValue = deepUnwrap(value);
+			const value = target[key];
+			const unwrappedKey = deepUnwrap(key);
+			const unwrappedValue = deepUnwrap(value);
+			if (
+				blacklistedProperties.has(key) ||
+				blacklistedProperties.has(unwrappedKey) ||
+				blacklistedConstructors.has(value?.constructor) ||
+				blacklistedConstructors.has(deepUnwrap(unwrappedValue?.constructor)) ||
+				blacklistedExact.has(value) ||
+				blacklistedExact.has(unwrappedValue)
+			) return deepUnwrap(value);
+			const mutedChild = silentProperties.has(key) || disablePrint;
+			return wrapProxies(value, newKeyTree, sniffOnly, mutedChild);
+		} else {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(target[key])}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
+			};
+			return undefined;
+		};
+	};
+	const handlerSet = (target, key, value) => {
+		const newKeyTree = tree.slice();
+		if (typeof key === "symbol") {
+			newKeyTree.push(key.toString());
+		} else if (typeof key === "number" || Number.isSafeInteger(parseInt(key))) {
+			newKeyTree.push(`${newKeyTree.pop()}[${key}]`);
+		} else {
+			newKeyTree.push(key);
+		};
+		if (sniffOnly || isInternal(handlerSet)) {
+			const invokeId = getRandomID();
+			const unwrappedTarget = deepUnwrap(target);
+			const unwrappedKey = deepUnwrap(key);
+			const unwrappedValue = deepUnwrap(value);
+			let writeFailed = true, sourceReadOnly, caughtError;
+			try {
 				if (
 					blacklistedProperties.has(key) ||
 					blacklistedProperties.has(unwrappedKey) ||
-					blacklistedConstructors.has(value?.constructor) ||
-					blacklistedConstructors.has(deepUnwrap(unwrappedValue?.constructor)) ||
+					blacklistedConstructors.has(target?.constructor) ||
+					blacklistedConstructors.has(deepUnwrap(unwrappedTarget?.constructor)) ||
 					blacklistedExact.has(value) ||
 					blacklistedExact.has(unwrappedValue)
-				) return deepUnwrap(value);
-				const mutedChild = silentProperties.has(key) || disablePrint;
-				return wrapProxies(value, newKeyTree, sniffOnly, mutedChild);
-			} else {
-				if (disablePrint) {
-				} else if (inspectTrace > 2) {
-					console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(target[key])}`);
-				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
-				};
-				return undefined;
-			};
-		},
-		"set": (target, key, value) => {
-			const newKeyTree = tree.slice();
-			if (typeof key === "symbol") {
-				newKeyTree.push(key.toString());
-			} else if (typeof key === "number" || Number.isSafeInteger(parseInt(key))) {
-				newKeyTree.push(`${newKeyTree.pop()}[${key}]`);
-			} else {
-				newKeyTree.push(key);
-			};
-			if (sniffOnly || isInternal()) {
-				const invokeId = getRandomID();
-				const unwrappedTarget = deepUnwrap(target);
-				const unwrappedKey = deepUnwrap(key);
-				const unwrappedValue = deepUnwrap(value);
-				let writeFailed = true, sourceReadOnly, caughtError;
-				try {
-					if (
-						blacklistedProperties.has(key) ||
-						blacklistedProperties.has(unwrappedKey) ||
-						blacklistedConstructors.has(target?.constructor) ||
-						blacklistedConstructors.has(deepUnwrap(unwrappedTarget?.constructor)) ||
-						blacklistedExact.has(value) ||
-						blacklistedExact.has(unwrappedValue)
-					) {
-						const oldValue = unwrappedTarget[key];
-						Reflect.set(unwrappedTarget, key, unwrappedValue);
-						writeFailed = unwrappedTarget[key] !== unwrappedValue;
-						sourceReadOnly = unwrappedTarget[key] === oldValue;
-					} else {
-						const oldValue = unwrappedTarget[key];
-						const wrappedValue = unwrappedValue === value ? wrapProxies(unwrappedValue, newKeyTree, sniffOnly, disablePrint) : value;
-						Reflect.set(unwrappedTarget, key, wrappedValue);
-						writeFailed = unwrappedTarget[key] !== wrappedValue;
-						sourceReadOnly = unwrappedTarget[key] === oldValue;
-					};
-				} catch (err) {
-					writeFailed = true;
-					caughtError = err;
-				};
-				let trailingText = "";
-				if (writeFailed) {
-					trailingText = `(\x1b[1;31m${
-						caughtError ? "thrown" : (
-							sourceReadOnly ? "readonly" : "failure"
-						)
-					}\x1b[0m) `;
-				};
-				if (disablePrint) {
-				} else if (inspectTrace > 2) {
-					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}> = ${trailingText}${visualiseValue(value)}`);
-				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}>${trailingText}`);
-				};
-			} else {
-				if (disablePrint) {
-				} else if (inspectTrace > 2) {
-					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(value)}`);
-				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
-				};
-			};
-		},
-		"apply": (target, thisArg, args) => {
-			const invokeId = getRandomID();
-			if (sniffOnly || inspectTrace > 1) {
-				const copiedArgs = [];
-				for (let i = 0; i < args.length; i ++) {
-					const arg = deepUnwrap(args[i]);
-					if ((typeof arg === "function" || typeof arg?.apply === "function") && !blacklistedConstructors.has(arg)) {
-						const newKeyTree = tree.slice();
-						newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>{${i}}`);
-						copiedArgs.push(wrapProxies(arg, newKeyTree, sniffOnly, disablePrint));
-					} else {
-						copiedArgs.push(arg);
-					};
-				};
-				args = copiedArgs;
-			};
-			if (sniffOnly || isInternal()) {
-				if (disablePrint) {
-				} else if (inspectTrace > 2) {
-					console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(${visualiseArguments(args)}): <${invokeId}>`);
-				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): <${invokeId}>`);
-				};
-				try {
-					const response = target.apply(deepUnwrap(thisArg), args);
-					if (disablePrint) {
-					} else if (inspectTrace > 1) {
-						console.info(`[\x1b[1;32mDONE\x1b[0m] ${tree.join(".")}<${invokeId}>() => ${visualiseValue(response)}`);
-					};
-					if (!blacklistedConstructors.has(response?.constructor) && (sniffOnly || inspectTrace > 1)) {
-						const newKeyTree = tree.slice();
-						newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>()`);
-						return wrapProxies(response, newKeyTree, sniffOnly, disablePrint);
-					} else {
-						return response;
-					};
-				} catch (err) {
-					console.info(`[\x1b[1;31mFAIL\x1b[0m] ${tree.join(".")}<${invokeId}>() <= ${err.name ?? "<unknownError>"}${err.message.length > 0 ? ": " : ""}${err.message}`);
-					throw(err);
-				};
-			} else {
-				if (disablePrint) {
-				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): (\x1b[1;31mbanned\x1b[0m)`);
-				};
-				throw(new Error(`Invalid non-internal invocation.`));
-				return undefined;
-			};
-		},
-		"construct": (target, args) => {
-			const invokeId = getRandomID();
-			if (!blacklistedConstructors.has(target) && (sniffOnly || isInternal())) {
-				if (disablePrint) {
-				} else if (inspectTrace > 2) {
-					console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(${visualiseArguments(args)})`);
-				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>()`);
-				};
-				if (sniffOnly || inspectTrace > 0) {
-					const newKeyTree = tree.slice();
-					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>())`);
-					newKeyTree.unshift(`(new ${newKeyTree.shift()}`);
-					return wrapProxies(
-						Reflect.construct(target, args),
-						newKeyTree, sniffOnly, disablePrint
-					);
+				) {
+					const oldValue = unwrappedTarget[key];
+					Reflect.set(unwrappedTarget, key, unwrappedValue);
+					writeFailed = unwrappedTarget[key] !== unwrappedValue;
+					sourceReadOnly = unwrappedTarget[key] === oldValue;
 				} else {
-					return Reflect.construct(target, args);
+					const oldValue = unwrappedTarget[key];
+					const wrappedValue = unwrappedValue === value ? wrapProxies(unwrappedValue, newKeyTree, sniffOnly, disablePrint) : value;
+					Reflect.set(unwrappedTarget, key, wrappedValue);
+					writeFailed = unwrappedTarget[key] !== wrappedValue;
+					sourceReadOnly = unwrappedTarget[key] === oldValue;
 				};
-			} else {
+			} catch (err) {
+				writeFailed = true;
+				caughtError = err;
+			};
+			let trailingText = "";
+			if (writeFailed) {
+				trailingText = `(\x1b[1;31m${
+					caughtError ? "thrown" : (
+						sourceReadOnly ? "readonly" : "failure"
+					)
+				}\x1b[0m) `;
+			};
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}> = ${trailingText}${visualiseValue(value)}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}>${trailingText}`);
+			};
+		} else {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(value)}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
+			};
+		};
+	};
+	const handlerCall = (target, thisArg, args) => {
+		const invokeId = getRandomID();
+		if (sniffOnly || inspectTrace > 1) {
+			const copiedArgs = [];
+			for (let i = 0; i < args.length; i ++) {
+				const arg = deepUnwrap(args[i]);
+				if ((typeof arg === "function" || typeof arg?.apply === "function") && !blacklistedConstructors.has(arg)) {
+					const newKeyTree = tree.slice();
+					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>{${i}}`);
+					copiedArgs.push(wrapProxies(arg, newKeyTree, sniffOnly, disablePrint));
+				} else {
+					copiedArgs.push(arg);
+				};
+			};
+			args = copiedArgs;
+		};
+		if (sniffOnly || isInternal(handlerCall)) {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(${visualiseArguments(args)}): <${invokeId}>`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): <${invokeId}>`);
+			};
+			try {
+				const response = target.apply(deepUnwrap(thisArg), args);
 				if (disablePrint) {
 				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(): (\x1b[1;31mbanned\x1b[0m)`);
+					console.info(`[\x1b[1;32mDONE\x1b[0m] ${tree.join(".")}<${invokeId}>() => ${visualiseValue(response)}`);
 				};
-				throw(new Error(`Invalid non-internal construction.`));
-				return undefined;
+				if (!blacklistedConstructors.has(response?.constructor) && (sniffOnly || inspectTrace > 1)) {
+					const newKeyTree = tree.slice();
+					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>()`);
+					return wrapProxies(response, newKeyTree, sniffOnly, disablePrint);
+				} else {
+					return response;
+				};
+			} catch (err) {
+				console.info(`[\x1b[1;31mFAIL\x1b[0m] ${tree.join(".")}<${invokeId}>() <= ${err.name ?? "<unknownError>"}${err.message.length > 0 ? ": " : ""}${err.message}`);
+				throw(err);
 			};
-		}
+		} else {
+			if (disablePrint) {
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;33mCALL\x1b[0m] ${tree.join(".")}(): (\x1b[1;31mbanned\x1b[0m)`);
+			};
+			throw(new Error(`Invalid non-internal invocation.`));
+			return undefined;
+		};
+	};
+	const handlerNew = (target, args) => {
+		const invokeId = getRandomID();
+		if (!blacklistedConstructors.has(target) && (sniffOnly || isInternal(handlerNew))) {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(${visualiseArguments(args)})`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>()`);
+			};
+			if (sniffOnly || inspectTrace > 0) {
+				const newKeyTree = tree.slice();
+				newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>())`);
+				newKeyTree.unshift(`(new ${newKeyTree.shift()}`);
+				return wrapProxies(
+					Reflect.construct(target, args),
+					newKeyTree, sniffOnly, disablePrint
+				);
+			} else {
+				return Reflect.construct(target, args);
+			};
+		} else {
+			if (disablePrint) {
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;35mNEW \x1b[0m] new ${tree.join(".")}<${invokeId}>(): (\x1b[1;31mbanned\x1b[0m)`);
+			};
+			throw(new Error(`Invalid non-internal construction.`));
+			return undefined;
+		};
+	};
+	const newProxy = new Proxy(victim, {
+		"get": handlerGet,
+		"set": handlerSet,
+		"apply": handlerCall,
+		"construct": handlerNew
 	});
 	unwrappedObjects.set(newProxy, victim);
 	return newProxy;
