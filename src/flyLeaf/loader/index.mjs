@@ -10,6 +10,7 @@ import * as LeafPolyfills from "../vergilius/ponyfill/leaf.mjs";
 import { getPrintInternal, getPrintTrace } from "../vergilius/config.mjs";
 
 if (!globalThis.self) globalThis.self = globalThis;
+if (!self.window) self.window = self;
 
 if (self.Ende) {
 	if (!self.Deno) {
@@ -34,6 +35,11 @@ if (printTrace > 0 || getPrintInternal()) {
 	const oldDeno = self.Deno;
 	delete self.Deno;
 	self.Deno = wrapProxies(oldDeno, ["Deno"], true);
+	if (printTrace > 3) {
+		self.globalThis = wrapProxies(globalThis, ["globalThis"], true);
+		self.window = wrapProxies(window, ["window"], true);
+		self.self = wrapProxies(self, ["self"], true);
+	};
 };
 
 // Apply web polyfills requiring the Deno global.

@@ -20,7 +20,7 @@ const hasStackTraceLimit = Error.stackTraceLimit;
 const oldCaptureStackTrace = Error.captureStackTrace;
 const oldPrepareStackTrace = Error.prepareStackTrace;
 const useNuclear = false; // Nuclear option.
-const lineLocationMatcher = /^\s+at(\s(?<async>async))?(\s(?<new>new))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\[(?<alias>(\w|\d|[ _.@$#])+)\]\s)?\(?((?<location>(\w+:)?([ _.,/@$#]|\w|\d)+):\d+:\d+|\<(\w|\d)+\>)\)?$/gm;
+const lineLocationMatcher = /^\s+at(\s(?<async>async))?(\s(?<new>new))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\[(?<alias>(\w|\d|[ _.@$#])+)\]\s)?\(?((?<location>(\w+:)?([ _\-+.,/\\@$#]|\w|\d)+):\d+:\d+|\<(\w|\d)+\>)\)?$/gm;
 const internalPathTester = /^(internal|node):/m;
 const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(console\/constructor|event_target|modules\/esm\/(module_job|loader)|perf\/observe|process\/task_queues|timers|util\/inspect|webstreams\/(readablestream|transformstream|util|writablestream))))$|^node:internal\/per_context\//m;
 const externalPathImmediate = /^(REPL\d+|\[repl\]|(node:(repl|internal\/(modules\/run_main))))/m;
@@ -270,7 +270,8 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
 			};
-			const value = target[key];
+			const valueDesc = Object.getOwnPropertyDescriptor(target, key);
+			const value = valueDesc?.value ?? Reflect.get(target, key);
 			const unwrappedKey = deepUnwrap(key);
 			const unwrappedValue = deepUnwrap(value);
 			if (
@@ -279,8 +280,16 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				blacklistedConstructors.has(value?.constructor) ||
 				blacklistedConstructors.has(deepUnwrap(unwrappedValue?.constructor)) ||
 				blacklistedExact.has(value) ||
-				blacklistedExact.has(unwrappedValue)
-			) return deepUnwrap(value);
+				blacklistedExact.has(unwrappedValue) ||
+				!(
+					valueDesc?.configurable ||
+					valueDesc?.writable
+				)
+			) return unwrappedValue;
+			if (unwrappedValue !== value) {
+				// Do not wrap the same value again and again.
+				return value;
+			};
 			const mutedChild = silentProperties.has(key) || disablePrint;
 			return wrapProxies(value, newKeyTree, sniffOnly, mutedChild);
 		} else {
@@ -294,6 +303,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 		};
 	};
 	const handlerSet = (target, key, value) => {
+		let returnValue = true;
 		const newKeyTree = tree.slice();
 		if (typeof key === "symbol") {
 			newKeyTree.push(key.toString());
@@ -331,6 +341,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 			} catch (err) {
 				writeFailed = true;
 				caughtError = err;
+				returnValue = false;
 			};
 			let trailingText = "";
 			if (writeFailed) {
@@ -353,7 +364,9 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
 			};
+			returnValue = false;
 		};
+		return returnValue;
 	};
 	const handlerCall = (target, thisArg, args) => {
 		const invokeId = getRandomID();

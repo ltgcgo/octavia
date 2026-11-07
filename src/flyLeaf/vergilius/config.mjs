@@ -10,6 +10,10 @@ const requestDeno = function () {
 	denoEnvApi = denoEnvApi ?? globalThis.Deno?.env;
 };
 
+export function getAllowOldWeb() {
+	requestDeno();
+	return denoEnvApi?.get("VERGILIUS_ALLOW_OLD_WEB")?.length > 0 ?? false;
+};
 export function getSkipCheck() {
 	requestDeno();
 	return denoEnvApi?.get("VERGILIUS_SKIP_CHECK")?.length > 0 ?? false;
@@ -19,6 +23,11 @@ export function getPrintTrace() {
 	const traceConfig = denoEnvApi?.get("VERGILIUS_PRINT_TRACE");
 	if (traceConfig?.length > 0) {
 		switch (traceConfig.toLowerCase()) {
+			case "light":
+			case "lite":
+			case "superficial": {
+				return 1;
+			};
 			case "common":
 			case "medium":
 			case "middle":
@@ -27,9 +36,19 @@ export function getPrintTrace() {
 			};
 			case "debug":
 			case "deep":
+			case "extra":
 			case "high":
+			case "premium":
+			case "pro":
+			case "super":
 			case "verbose": {
 				return 3;
+			};
+			case "horni":
+			case "iceberg":
+			case "insane":
+			case "unhinged": {
+				return 4;
 			};
 			default: {
 				const parseResult = parseInt(traceConfig);

@@ -9,9 +9,10 @@ import {
 	getRestrictedView,
 	setInternalOnlyProperty
 } from "./restrict.mjs";
+import { getAllowOldWeb } from "./config.mjs";
 
 // The very last step to clean runtimes up. Do not run during API initialisation!
-
+/** @param {Iterable<string>} keys */
 const removeProperties = (target, keys = []) => {
 	for (const key of keys) {
 		try {
@@ -30,10 +31,11 @@ const NodeProcess = globalThis.process;
 const NodeClassBuffer = globalThis.Buffer;
 const NodeClearImmediate = globalThis.clearImmediate;
 
-const removalTargets = new Set([
+removeProperties(globalThis, [
 	"__dirname",
 	"__filename",
 	"Buffer",
+	"HTMLRewriter", // Bun-specific.
 	"async_hooks",
 	"buffer",
 	"child_process",
@@ -52,6 +54,7 @@ const removalTargets = new Set([
 	"http2",
 	"https",
 	"inspector",
+	"jsc", // Bun-specific.
 	"module",
 	"net",
 	"os",
@@ -79,11 +82,36 @@ const removalTargets = new Set([
 	"worker_threads",
 	"zlib"
 ]);
-
-removeProperties(
-	globalThis,
-	removalTargets
-);
+if (!getAllowOldWeb()) {
+	// Remove certain deprecated web features
+	removeProperties(globalThis, [
+		"escape",
+		"eval",
+		"unescape"
+	]);
+	removeProperties(Date.prototype, [
+		"getYear",
+		"setYear",
+		"toGMTString"
+	]);
+	removeProperties(String.prototype, [
+		"anchor",
+		"big",
+		"blink",
+		"bold",
+		"fixed",
+		"fontcolor",
+		"fontsize",
+		"italics",
+		"link",
+		"small",
+		"strike",
+		"sub",
+		"sup",
+		"trimLeft",
+		"trimRight"
+	]);
+};
 
 /** @type {import("../index/index.d.mts")} */
 const denoCompatible = globalThis.Ende ?? globalThis.Deno;
