@@ -16,7 +16,7 @@ const skipCheck = getSkipCheck();
 const inspectTrace = getPrintTrace();
 const inspectInternal = getPrintInternal();
 const preventObtainThenAccessAtBoundary = getPrisonWarden();
-const hasStackTraceLimit = typeof Error.stackTraceLimit === "number";
+const hasStackTraceLimit = Error.stackTraceLimit;
 const oldPrepareStackTrace = Error.prepareStackTrace;
 const lineLocationMatcher = /^\s+at(\s(?<async>async))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
 const internalPathTester = /^(internal|native|node):/m;
@@ -76,11 +76,13 @@ const getRandomID = function () {
 const isInternal = function () {
 	// External methods all seem to not match internal tests at depth 3.
 	if (skipCheck) return true;
-	if (hasStackTraceLimit) {
-		if (Error.stackTraceLimit < 6) {
-			inspectInternal && console.debug(`Verdict (${depth}): type inferred external, stack trace limit too low.`);
-			return false;
-		};
+	let restoreStackTraceLimit;
+	if (
+		typeof hasStackTraceLimit === "number" &&
+		Error.stackTraceLimit < 10
+	) {
+		restoreStackTraceLimit = Error.stackTraceLimit;
+		Error.stackTraceLimit = 10; // Browsers are on 128. Default in Deno, Ende, Bun, Node, Ant.
 	};
 	let restorePrepareStackTrace;
 	if (
@@ -135,6 +137,9 @@ const isInternal = function () {
 	};
 	if (typeof restorePrepareStackTrace === "function") {
 		Error.prepareStackTrace = restorePrepareStackTrace;
+	};
+	if (typeof restoreStackTraceLimit === "number") {
+		Error.stackTraceLimit = restoreStackTraceLimit;
 	};
 	return verdict;
 };
