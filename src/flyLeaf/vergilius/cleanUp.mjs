@@ -139,7 +139,7 @@ export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTar
 				// Node.js
 				setInternalOnlyProperty(thisTarget, "Buffer", NodeClassBuffer);
 				setInternalOnlyProperty(thisTarget, "clearImmediate", NodeClearImmediate);
-				thisTarget.global = getRestrictedView(globalThis, [
+				thisTarget.global = getRestrictedView(thisTarget, [
 					"FinalizationRegistry"
 				], "global", false);
 			};
