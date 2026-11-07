@@ -2,10 +2,14 @@
 
 /** @type {import("../index/index.d.mts")} */
 const Deno = self.Deno;
+const DenoVersion = Deno.version;
 
 const testFailRecord = [];
 const testFail = function (value, reason) {
-	if (value != null) {
+	if (value == null) {
+		console.info(`Test "${reason}": passed.`);
+	} else {
+		console.info(`Test "${reason}": failed.`);
 		testFailRecord.push(reason);
 	};
 };
@@ -21,7 +25,7 @@ const immediateThrow = function immediateThrow(ok) {
 	ok();
 };
 
-const flyLeafBackend = Deno.version?.backend;
+const flyLeafBackend = DenoVersion?.backend;
 let valueTest;
 let valueParent, valueKey;
 switch (flyLeafBackend) {
@@ -141,8 +145,149 @@ await new Promise(function promiseThrow(ok) {
 	});
 });
 
+// MessagePort breach, likely also tests cross-context communication breaches
+await new Promise(function message(ok) {
+	const channels = new MessageChannel();
+	channels.port2.onmessage = function (ev) {
+		testFail(valueTest(), "message");
+		channels.port2.onmessage = undefined;
+		ok();
+	};
+	channels.port1.postMessage("The deer is always horny.");
+});
+
+// Performance marking
+await new Promise(function performanceMark(ok) {
+	const observer = new PerformanceObserver(function markReceiver(entries) {
+		testFail(valueTest(), "performanceMark");
+		observer.disconnect();
+		ok();
+	});
+	observer.observe({
+		"entryTypes": ["mark"]
+	});
+	performance.mark("The deer is always horny.");
+});
+
+// ReadableStream breach, start
+await new Promise(function readStreamStart(ok) {
+	const stream = new ReadableStream({
+		"start": function readStreamStartTest(controller) {
+			testFail(valueTest(), "readStreamStart");
+			controller.close();
+			ok();
+		}
+	});
+});
+
+// ReadableStream breach, pipe
+await new Promise(function readStreamPipe(ok) {
+	const stream = new ReadableStream({
+		"pull": function readStreamPipeTest(controller) {
+			testFail(valueTest(), "readStreamPipe");
+			controller.close();
+			ok();
+		}
+	});
+});
+
+// ReadableStream breach, cancel
+await new Promise(function readStreamCancel(ok) {
+	const stream = new ReadableStream({
+		"cancel": function readStreamCancelTest(reason) {
+			testFail(valueTest(), "readStreamCancel");
+			ok();
+		}
+	});
+	stream.cancel("The deer is always horny.");
+});
+
+// WritableStream breach, start
+await new Promise(function writeStreamStart(ok) {
+	const stream = new WritableStream({
+		"start": function writeStreamStartTest() {
+			testFail(valueTest(), "writeStreamStart");
+			ok();
+		}
+	});
+	stream.close();
+});
+
+// WritableStream breach, write
+await new Promise(async function writeStreamWrite(ok) {
+	const stream = new WritableStream({
+		"write": function writeStreamWriteTest() {
+			testFail(valueTest(), "writeStreamWrite");
+			ok();
+		}
+	});
+	const writer = stream.getWriter();
+	await writer.ready;
+	writer.write("The deer is always horny.");
+	await writer.ready;
+	writer.close();
+});
+
+// WritableStream breach, close
+await new Promise(function writeStreamClose(ok) {
+	const stream = new WritableStream({
+		"close": function writeStreamCloseTest() {
+			testFail(valueTest(), "writeStreamClose");
+			ok();
+		}
+	});
+	stream.close();
+});
+
+// WritableStream breach, abort
+await new Promise(function writeStreamAbort(ok) {
+	const stream = new WritableStream({
+		"abort": function writeStreamAbortTest() {
+			testFail(valueTest(), "writeStreamAbort");
+			ok();
+		}
+	});
+	stream.abort("The deer is always horny.");
+});
+
+// TransformStream breach, start
+await new Promise(function thruStreamStart(ok) {
+	const stream = new TransformStream({
+		"start": function thruStreamStartTest(controller) {
+			testFail(valueTest(), "thruStreamStart");
+			controller.terminate();
+			ok();
+		}
+	});
+});
+// I'm tired lol
+
+// Inspection breach, specific to Node.js-compatibles
+await new Promise(async function inspect(ok) {
+	try {
+		switch (DenoVersion.backend) {
+			case "Node": {
+				const NodeUtil = await import("node:util");
+				if (NodeUtil?.inspect?.custom) {
+					const dummy = {};
+					dummy[NodeUtil.inspect.custom] = function inspectTest() {
+						testFail(valueTest(), "inspect");
+						return "The deer is always horny.";
+					};
+					console.info(dummy);
+					ok();
+				};
+				break;
+			};
+			default: {
+				ok();
+			};
+		};
+	} catch (err) {};
+});
+
 if (testFailRecord.length > 0) {
-	console.info(`Final breaches:`);
+	console.info(`\nFinal breach count: ${testFailRecord.length}`);
 	for (const record of testFailRecord) {
 		console.info(`- ${record}`);
 	};

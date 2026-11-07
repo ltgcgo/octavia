@@ -19,11 +19,12 @@ const preventObtainThenAccessAtBoundary = getPrisonWarden();
 const hasStackTraceLimit = Error.stackTraceLimit;
 const oldCaptureStackTrace = Error.captureStackTrace;
 const oldPrepareStackTrace = Error.prepareStackTrace;
-const lineLocationMatcher = /^\s+at(\s(?<async>async))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>(\w+:)?([ -_/.,;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/gm;
+const useNuclear = false; // Nuclear option.
+const lineLocationMatcher = /^\s+at(\s(?<async>async))?(\s(?<new>new))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\[(?<alias>(\w|\d|[ _.@$#])+)\]\s)?\(?((?<location>(\w+:)?([ _.,/@$#]|\w|\d)+):\d+:\d+|\<(\w|\d)+\>)\)?$/gm;
 const internalPathTester = /^(internal|node):/m;
-const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(event_target|timers|process\/task_queues|modules\/esm\/(module_job|loader)))):/m;
-const externalPathImmediate = /^(REPL\d+|\[repl\]|(node:(repl|internal\/(modules\/run_main)):))/m;
-const externalStrictImmediate = /^(file|https?):/m; // Nuclear option, not sure if this needs to be enabled.
+const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(console\/constructor|event_target|modules\/esm\/(module_job|loader)|perf\/observe|process\/task_queues|timers|util\/inspect|webstreams\/(readablestream|transformstream|util|writablestream))))$|^node:internal\/per_context\//m;
+const externalPathImmediate = /^(REPL\d+|\[repl\]|(node:(repl|internal\/(modules\/run_main))))/m;
+const externalStrictImmediate = /^((npm|file|https?|[A-Z]):|\/)/m; // Nuclear option, not sure if this needs to be enabled. Likely lots of false negatives.
 
 const blacklistedProperties = new Set([
 	"prototype",
@@ -104,7 +105,7 @@ const isInternal = function (root) {
 	//console.debug(stackMsg);
 	let depth = 0;
 	let verdict = undefined;
-	for (const line of stackMsg.slice().matchAll(lineLocationMatcher)) {
+	for (const line of stackMsg.matchAll(lineLocationMatcher)) {
 		depth ++;
 		const report = line?.groups;
 		if (
@@ -112,25 +113,30 @@ const isInternal = function (root) {
 			typeof report.location !== "string"
 		) continue;
 		const {location} = report;
-		inspectInternal && console.debug(`*Inspect (${depth}): ${location} "${report?.method ?? "<empty>"}" ${report?.async ?? ""}`);
+		inspectInternal && console.debug(`Inspect (${depth}): ${location} ${report?.async ? "async " : ""}${report?.new ? "new " : ""}"${report?.method ?? "<empty>"}"${report?.alias ? ` ${report.alias}` : ""}`);
+		if (useNuclear && externalStrictImmediate.test(location)) {
+			inspectInternal && console.debug(`Verdict (${depth}): type spotted nuclear external.`);
+			verdict = false;
+			break;
+		};
 		if (externalPathImmediate.test(location)) {
-			inspectInternal && console.debug(`*Verdict (${depth}): type spotted external.`);
+			inspectInternal && console.debug(`Verdict (${depth}): spotted, type external.`);
 			verdict = false;
 			break;
 		};
 		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
-			inspectInternal && console.debug(`*Verdict (${depth}): type spotted internal.`);
+			inspectInternal && console.debug(`Verdict (${depth}): spotted, type internal.`);
 			verdict = true;
 			break;
 		};
 	};
 	if (verdict == null) {
 		if (depth <= 0) {
-			inspectInternal && console.debug(`Verdict (${depth}): type inferred internal.`);
+			inspectInternal && console.debug(`Verdict (${depth}): inferred, type internal.`);
 			verdict = true;
 		} else {
-			inspectInternal && console.debug(`Verdict (${depth}): type inferred external.`);
+			inspectInternal && console.debug(`Verdict (${depth}): inferred, type external.`);
 			verdict = false;
 		};
 	};
