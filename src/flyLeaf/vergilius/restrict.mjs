@@ -270,7 +270,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
 			};
-			const value = Reflect.get(target, key);
+			const value = Reflect.get(unwrappedVictim, key);
 			const unwrappedKey = deepUnwrap(key);
 			const unwrappedValue = deepUnwrap(value);
 			const valueDesc = Object.getOwnPropertyDescriptor(unwrappedVictim, key);
@@ -314,7 +314,6 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 		};
 		if (sniffOnly || isInternal(handlerSet)) {
 			const invokeId = getRandomID();
-			const unwrappedTarget = deepUnwrap(target);
 			const unwrappedKey = deepUnwrap(key);
 			const unwrappedValue = deepUnwrap(value);
 			let writeFailed = true, sourceReadOnly, caughtError;
@@ -323,20 +322,20 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 					blacklistedProperties.has(key) ||
 					blacklistedProperties.has(unwrappedKey) ||
 					blacklistedConstructors.has(target?.constructor) ||
-					blacklistedConstructors.has(deepUnwrap(unwrappedTarget?.constructor)) ||
+					blacklistedConstructors.has(deepUnwrap(unwrappedVictim?.constructor)) ||
 					blacklistedExact.has(value) ||
 					blacklistedExact.has(unwrappedValue)
 				) {
-					const oldValue = unwrappedTarget[key];
-					Reflect.set(unwrappedTarget, key, unwrappedValue);
-					writeFailed = unwrappedTarget[key] !== unwrappedValue;
-					sourceReadOnly = unwrappedTarget[key] === oldValue;
+					const oldValue = unwrappedVictim[key];
+					Reflect.set(unwrappedVictim, key, unwrappedValue);
+					writeFailed = unwrappedVictim[key] !== unwrappedValue;
+					sourceReadOnly = unwrappedVictim[key] === oldValue;
 				} else {
-					const oldValue = unwrappedTarget[key];
+					const oldValue = unwrappedVictim[key];
 					const wrappedValue = unwrappedValue === value ? wrapProxies(unwrappedValue, newKeyTree, sniffOnly, disablePrint) : value;
-					Reflect.set(unwrappedTarget, key, wrappedValue);
-					writeFailed = unwrappedTarget[key] !== wrappedValue;
-					sourceReadOnly = unwrappedTarget[key] === oldValue;
+					Reflect.set(unwrappedVictim, key, wrappedValue);
+					writeFailed = unwrappedVictim[key] !== wrappedValue;
+					sourceReadOnly = unwrappedVictim[key] === oldValue;
 				};
 			} catch (err) {
 				writeFailed = true;

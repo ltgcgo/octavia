@@ -25,7 +25,14 @@ if (self.Deno) {
 } else {
 	self.Deno = Leaf;
 };
+
+// Final clean-up.
+const {
+	executeCleanUp
+} = await import("../vergilius/cleanUp.mjs");
+
 const printTrace = getPrintTrace();
+const oldGlobal = globalThis;
 if (printTrace > 0 || getPrintInternal()) {
 	if (printTrace > 0) {
 		console.debug(`[Fly Leaf] Adjusting globals...`);
@@ -36,19 +43,27 @@ if (printTrace > 0 || getPrintInternal()) {
 	delete self.Deno;
 	self.Deno = wrapProxies(oldDeno, ["Deno"], true);
 	if (printTrace > 3) {
-		const accessThis = self;
-		self.globalThis = wrapProxies(accessThis, ["globalThis"], true);
-		self.window = wrapProxies(accessThis, ["window"], true);
-		self.self = wrapProxies(accessThis, ["self"], true);
+		const accessThis = wrapProxies(oldGlobal, ["self"], true);
+		oldGlobal.globalThis = accessThis;
+		oldGlobal.window = accessThis;
+		oldGlobal.self = accessThis;
 	};
 };
 
 // Apply web polyfills requiring the Deno global.
-_leaf_copyTo_(self, LeafPolyfills);
-
-// Final clean-up.
-await import("../vergilius/cleanUp.mjs");
+_leaf_copyTo_(oldGlobal, LeafPolyfills);
 
 if (printTrace > 0) {
 	console.debug(`[Fly Leaf] Activated. Version ${Deno.version.flyLeaf}, backend ${Deno.version.backend}, Deno API target ${Deno.version.deno}.`);
 };
+
+setTimeout(async () => {
+	switch (Leaf.version.backend) {
+		case "Node": {
+			if (oldGlobal.process) {
+				executeCleanUp(oldGlobal, Leaf);
+			};
+			break;
+		};
+	};
+}, 0);

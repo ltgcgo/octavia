@@ -31,117 +31,119 @@ const NodeProcess = globalThis.process;
 const NodeClassBuffer = globalThis.Buffer;
 const NodeClearImmediate = globalThis.clearImmediate;
 
-removeProperties(globalThis, [
-	"__dirname",
-	"__filename",
-	"Buffer",
-	"HTMLRewriter", // Bun-specific.
-	"async_hooks",
-	"buffer",
-	"child_process",
-	"clearImmediate",
-	"cluster",
-	"constants",
-	"dgram",
-	"diagnostics_channel",
-	"dns",
-	"domain",
-	"events",
-	"exports",
-	"fs",
-	"global",
-	"http",
-	"http2",
-	"https",
-	"inspector",
-	"jsc", // Bun-specific.
-	"module",
-	"net",
-	"os",
-	"path",
-	"perf_hooks",
-	"process",
-	"punycode",
-	"querystring",
-	"readline",
-	"repl",
-	"require",
-	"setImmediate",
-	"stream",
-	"string_decoder",
-	"sys",
-	"timers",
-	"tls",
-	"trace_events",
-	"tty",
-	"url",
-	"util",
-	"v8",
-	"vm",
-	"wasi",
-	"worker_threads",
-	"zlib"
-]);
-if (!getAllowOldWeb()) {
-	// Remove certain deprecated web features
-	removeProperties(globalThis, [
-		"escape",
-		"eval",
-		"unescape"
+/** @param {import("../index/index.d.mts")} denoCompatible */
+export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTarget.Ende ?? thisTarget.Deno) {
+	removeProperties(thisTarget, [
+		"__dirname",
+		"__filename",
+		"Buffer",
+		"HTMLRewriter", // Bun-specific.
+		"async_hooks",
+		"buffer",
+		"child_process",
+		"clearImmediate",
+		"cluster",
+		"constants",
+		"dgram",
+		"diagnostics_channel",
+		"dns",
+		"domain",
+		"events",
+		"exports",
+		"fs",
+		"global",
+		"http",
+		"http2",
+		"https",
+		"inspector",
+		"jsc", // Bun-specific.
+		"module",
+		"net",
+		"os",
+		"path",
+		"perf_hooks",
+		"process",
+		"punycode",
+		"querystring",
+		"readline",
+		"repl",
+		"require",
+		"setImmediate",
+		"stream",
+		"string_decoder",
+		"sys",
+		"timers",
+		"tls",
+		"trace_events",
+		"tty",
+		"url",
+		"util",
+		"v8",
+		"vm",
+		"wasi",
+		"worker_threads",
+		"zlib"
 	]);
-	removeProperties(Date.prototype, [
-		"getYear",
-		"setYear",
-		"toGMTString"
-	]);
-	removeProperties(String.prototype, [
-		"anchor",
-		"big",
-		"blink",
-		"bold",
-		"fixed",
-		"fontcolor",
-		"fontsize",
-		"italics",
-		"link",
-		"small",
-		"strike",
-		"sub",
-		"sup",
-		"trimLeft",
-		"trimRight"
-	]);
-};
+	if (!getAllowOldWeb()) {
+		// Remove certain deprecated web features
+		removeProperties(thisTarget, [
+			"escape",
+			"eval",
+			"unescape"
+		]);
+		removeProperties(thisTarget.Date.prototype, [
+			"getYear",
+			"setYear",
+			"toGMTString"
+		]);
+		removeProperties(thisTarget.String.prototype, [
+			"anchor",
+			"big",
+			"blink",
+			"bold",
+			"fixed",
+			"fontcolor",
+			"fontsize",
+			"italics",
+			"link",
+			"small",
+			"strike",
+			"sub",
+			"sup",
+			"trimLeft",
+			"trimRight"
+		]);
+	};
 
-/** @type {import("../index/index.d.mts")} */
-const denoCompatible = globalThis.Ende ?? globalThis.Deno;
-if (
-	denoCompatible?.version.versions?.deno?.length ||
-	denoCompatible?.version.backend === "Deno" ||
-	denoCompatible?.version.backend === "Ende"
-) {
-	// Deno/Ende
-} else if (globalThis.Ant) {
-} else if (globalThis.Bun) {
-	// Bun
-	globalThis.process = getRestrictedView(NodeProcess, [
-		"_exiting",
-		"availableMemory",
-		"nextTick"
-	], "process", false);
-} else if (NodeProcess) {
-	switch (parseUaName(globalThis.navigator?.userAgent)?.toLowerCase()) {
-		case "porffor": {
-			break;
-		};
-		case "node.js":
-		default: {
-			// Node.js
-			setInternalOnlyProperty(globalThis, "Buffer", NodeClassBuffer);
-			setInternalOnlyProperty(globalThis, "clearImmediate", NodeClearImmediate);
-			globalThis.global = getRestrictedView(globalThis, [
-				"FinalizationRegistry"
-			], "global", false);
+	if (
+		denoCompatible?.version.versions?.deno?.length ||
+		denoCompatible?.version.backend === "Deno" ||
+		denoCompatible?.version.backend === "Ende"
+	) {
+		// Deno/Ende
+	} else if (thisTarget.Ant) {
+	} else if (thisTarget.Bun) {
+		// Bun
+		thisTarget.process = getRestrictedView(NodeProcess, [
+			"_exiting",
+			"availableMemory",
+			"nextTick"
+		], "process", false);
+	} else if (NodeProcess) {
+		switch (parseUaName(thisTarget.navigator?.userAgent)?.toLowerCase()) {
+			case "porffor": {
+				break;
+			};
+			case "node.js":
+			default: {
+				// Node.js
+				setInternalOnlyProperty(thisTarget, "Buffer", NodeClassBuffer);
+				setInternalOnlyProperty(thisTarget, "clearImmediate", NodeClearImmediate);
+				thisTarget.global = getRestrictedView(globalThis, [
+					"FinalizationRegistry"
+				], "global", false);
+			};
 		};
 	};
 };
+executeCleanUp();
