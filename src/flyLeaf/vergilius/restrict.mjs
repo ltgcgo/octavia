@@ -17,6 +17,7 @@ const inspectTrace = getPrintTrace();
 const inspectInternal = getPrintInternal();
 const preventObtainThenAccessAtBoundary = getPrisonWarden();
 const hasStackTraceLimit = Error.stackTraceLimit;
+const oldCaptureStackTrace = Error.captureStackTrace;
 const oldPrepareStackTrace = Error.prepareStackTrace;
 const lineLocationMatcher = /^\s+at(\s(?<async>async))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
 const internalPathTester = /^(internal|node):/m;
@@ -53,10 +54,6 @@ if (globalThis.Buffer) {
 	blacklistedExact.add(Buffer.concat);
 };
 
-const unwrappedObjects = new WeakMap();
-
-const RestrictedView = class RestrictedView {};
-
 const b64Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-";
 const dummyU8 = new Uint8Array(8);
 const dummyU8B64 = dummyU8.subarray(0, (dummyU8.length * 3) >>> 2);
@@ -73,8 +70,17 @@ const getRandomID = function () {
 	};
 };
 
+const RestrictedView = class RestrictedView {};
+const unwrappedObjects = new WeakMap();
+const internalStackCache = new WeakMap();
+
+const errorStackReceiver = {};
 const isInternal = function () {
-	// External methods all seem to not match internal tests at depth 3.
+	// Error.prepareStackTrace is non-standard and shouldn't be used. SpiderMonkey and JavaScriptCore don't have it.
+	// Function.prototype.caller is banned for strict mode parsing, and Fly Leaf has strict mode enabled for the entire project. Ouch.
+	// I'm stealing kneecaps if anything is said about call site capturing in Node.js, it is non-standard.
+	// Porffor doesn't need to, and shouldn't use this function.
+	// External methods all seem to not match internal tests at depth 3, but this isn't a guarantee.
 	if (skipCheck) return true;
 	let restoreStackTraceLimit;
 	if (
@@ -82,7 +88,7 @@ const isInternal = function () {
 		Error.stackTraceLimit < 10
 	) {
 		restoreStackTraceLimit = Error.stackTraceLimit;
-		Error.stackTraceLimit = 10; // Browsers are on 128. Default in Deno, Ende, Bun, Node, Ant.
+		Error.stackTraceLimit = 10; // Browsers are on 128. 10 is the default in Deno, Ende, Bun, Node, Ant.
 	};
 	let restorePrepareStackTrace;
 	if (
@@ -92,7 +98,12 @@ const isInternal = function () {
 		restorePrepareStackTrace = Error.prepareStackTrace;
 		Error.prepareStackTrace = oldPrepareStackTrace;
 	};
-	let stackMsg = (new Error()).stack;
+	oldCaptureStackTrace(errorStackReceiver);
+	const verdictCache = internalStackCache.get(errorStackReceiver.stack);
+	if (typeof verdictCache === "boolean") {
+		return verdictCache;
+	};
+	let stackMsg = errorStackReceiver.stack;
 	//console.debug(stackMsg);
 	let depth = 0;
 	let loop = true;
