@@ -281,9 +281,9 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				blacklistedConstructors.has(deepUnwrap(unwrappedValue?.constructor)) ||
 				blacklistedExact.has(value) ||
 				blacklistedExact.has(unwrappedValue) ||
-				!(
-					valueDesc?.configurable ||
-					valueDesc?.writable
+				(
+					valueDesc?.configurable === false &&
+					valueDesc?.writable === false
 				)
 			) return unwrappedValue;
 			if (unwrappedValue !== value) {
