@@ -1,8 +1,13 @@
-*.map
-*.swp
-.~lock.*
+**/*.map
+**/*.swp
+**/.~lock.*
+**/deno.lock
+**/ende.lock
+**/.docker_name
+**/.repl_history
+**/.zcompdump
+**/.zsh_history
 cache/**
-deno.lock
 dist/*.js
 dist/*.gz
 dist/*.br
@@ -10,7 +15,6 @@ dist/*.zip
 dist/**/*.js
 dist/**/*.gz
 dist/**/*.br
-ende.lock
 test/caches
 test/js/*.js
 test/js/*.map
@@ -19,10 +23,6 @@ test/js/*.mjs
 ghp/sitemap.xml
 jsr/deno.json
 dist/deno.json
-.docker_name
-.repl_history
-.zcompdump
-.zsh_history
 src/data/generated/**
 src/identity/identity.bin
 src/identity/identity.txt
