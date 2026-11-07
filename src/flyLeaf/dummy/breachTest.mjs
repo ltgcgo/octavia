@@ -1,5 +1,8 @@
 "use strict";
 
+/** @type {import("../index/index.d.mts")} */
+const Deno = self.Deno;
+
 const testFailRecord = [];
 const testFail = function (value, reason) {
 	if (value != null) {
@@ -18,21 +21,43 @@ const immediateThrow = function immediateThrow(ok) {
 	ok();
 };
 
+const flyLeafBackend = Deno.version?.backend;
+let valueTest;
+switch (flyLeafBackend) {
+	case "Node": {
+		valueTest = function () {
+			return Buffer.length;
+		};
+		break;
+	};
+	case "Bun": {
+		valueTest = function () {
+			return process.availableMemory;
+		};
+		break;
+	};
+	default: {
+		valueTest = function () {
+			throw(new RangeError(`Test specific to runtime "${flyLeafBackend}" has not been registered.`));
+		};
+	};
+};
+
 // Top-level
 (function topLevel() {
-	testFail(Buffer.length, "topLevel");
+	testFail(valueTest(), "topLevel");
 })();
 
 // Top-level await
 await (async function topLevelAwait() {
-	testFail(Buffer.length, "topLevelAwait");
+	testFail(valueTest(), "topLevelAwait");
 })();
 
 // Timeout
 await new Promise(function timeoutAsync(ok) {
 	const timerId = setTimeout(function timeoutTest() {
 		clearTimeout(timerId);
-		testFail(Buffer.length, "timeout");
+		testFail(valueTest(), "timeout");
 		ok();
 	}, 1);
 });
@@ -41,7 +66,7 @@ await new Promise(function timeoutAsync(ok) {
 await new Promise(function timeoutAsyncDouble(ok) {
 	const timerId = setTimeout(async function timeoutTestAsync() {
 		clearTimeout(timerId);
-		testFail(Buffer.length, "timeoutAsync");
+		testFail(valueTest(), "timeoutAsync");
 		ok();
 	}, 1);
 });
@@ -50,7 +75,7 @@ await new Promise(function timeoutAsyncDouble(ok) {
 await new Promise(function intervalAsync(ok) {
 	const timerId = setInterval(function intervalTest() {
 		clearInterval(timerId);
-		testFail(Buffer.length, "interval");
+		testFail(valueTest(), "interval");
 		ok();
 	}, 1);
 });
@@ -59,7 +84,7 @@ await new Promise(function intervalAsync(ok) {
 await new Promise(function intervalAsyncDouble(ok) {
 	const timerId = setInterval(async function intervalTestAsync() {
 		clearInterval(timerId);
-		testFail(Buffer.length, "intervalAsync");
+		testFail(valueTest(), "intervalAsync");
 		ok();
 	}, 1);
 });
@@ -68,7 +93,7 @@ await new Promise(function intervalAsyncDouble(ok) {
 await new Promise(function eventTarget(ok) {
 	const dummy = new EventTarget();
 	dummy.addEventListener("hornydeer", function eventTargetTest() {
-		testFail(Buffer.length, "eventTarget");
+		testFail(valueTest(), "eventTarget");
 		ok();
 	});
 	dummy.dispatchEvent(new Event("hornydeer"));
@@ -77,7 +102,7 @@ await new Promise(function eventTarget(ok) {
 // Microtask queue
 await new Promise(function microtaskQueue(ok) {
 	queueMicrotask(function microtaskQueueTest() {
-		testFail(Buffer.length, "microtaskQueue");
+		testFail(valueTest(), "microtaskQueue");
 		ok();
 	});
 });
@@ -85,7 +110,7 @@ await new Promise(function microtaskQueue(ok) {
 // Promise resolution chain
 await new Promise(function promiseResolve(ok) {
 	(new Promise(immediateResolve)).then(function promiseResolveTest() {
-		testFail(Buffer.length, "promiseResolve");
+		testFail(valueTest(), "promiseResolve");
 		ok();
 	});
 });
@@ -93,7 +118,7 @@ await new Promise(function promiseResolve(ok) {
 // Promise rejection chain
 await new Promise(function promiseReject(ok) {
 	(new Promise(immediateReject)).then(() => {}, function promiseRejectTest() {
-		testFail(Buffer.length, "promiseReject");
+		testFail(valueTest(), "promiseReject");
 		ok();
 	});
 });
@@ -101,7 +126,7 @@ await new Promise(function promiseReject(ok) {
 // Promise throw chain
 await new Promise(function promiseThrow(ok) {
 	(new Promise(immediateThrow)).catch(function promiseThrowTest() {
-		testFail(Buffer.length, "promiseThrow");
+		testFail(valueTest(), "promiseThrow");
 		ok();
 	});
 });

@@ -25,6 +25,9 @@ if (self.Deno) {
 	self.Deno = Leaf;
 };
 if (getPrintTrace() || getPrintInternal()) {
+	if (getPrintTrace()) {
+		console.debug(`[Fly Leaf] Adjusting globals...`);
+	};
 	const {wrapProxies} = await import("../vergilius/restrict.mjs");
 	// So Deno/Ende makes the global "Deno" property read-only huh... Not anymore!
 	const oldDeno = self.Deno;
@@ -37,3 +40,7 @@ _leaf_copyTo_(self, LeafPolyfills);
 
 // Final clean-up.
 await import("../vergilius/cleanUp.mjs");
+
+if (getPrintTrace()) {
+	console.debug(`[Fly Leaf] Activated version ${Deno.version.flyLeaf}, Deno API target ${Deno.version.deno}.`);
+};

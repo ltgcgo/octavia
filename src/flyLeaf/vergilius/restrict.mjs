@@ -310,7 +310,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				} else if (inspectTrace > 2) {
 					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}> = ${trailingText}${visualiseValue(value)}`);
 				} else if (inspectTrace > 1) {
-					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}>${trailingText}${trailingText}`);
+					console.info(`[\x1b[1;37mSET \x1b[0m] ${newKeyTree.join(".")} <${invokeId}>${trailingText}`);
 				};
 			} else {
 				if (disablePrint) {
