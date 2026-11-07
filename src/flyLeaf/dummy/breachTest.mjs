@@ -23,17 +23,22 @@ const immediateThrow = function immediateThrow(ok) {
 
 const flyLeafBackend = Deno.version?.backend;
 let valueTest;
+let valueParent, valueKey;
 switch (flyLeafBackend) {
 	case "Node": {
 		valueTest = function () {
 			return Buffer.length;
 		};
+		valueParent = globalThis.global;
+		valueKey = "FinalizationRegistry";
 		break;
 	};
 	case "Bun": {
 		valueTest = function () {
 			return process.availableMemory;
 		};
+		valueParent = globalThis.process;
+		valueKey = "availableMemory";
 		break;
 	};
 	default: {
@@ -51,6 +56,11 @@ switch (flyLeafBackend) {
 // Top-level await
 await (async function topLevelAwait() {
 	testFail(valueTest(), "topLevelAwait");
+})();
+
+// Reflect get
+(function reflectorGet() {
+	testFail(Reflect.get(valueParent, valueKey), "reflectorGet");
 })();
 
 // Timeout

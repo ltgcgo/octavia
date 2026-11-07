@@ -19,9 +19,9 @@ const preventObtainThenAccessAtBoundary = getPrisonWarden();
 const hasStackTraceLimit = Error.stackTraceLimit;
 const oldPrepareStackTrace = Error.prepareStackTrace;
 const lineLocationMatcher = /^\s+at(\s(?<async>async))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
-const internalPathTester = /^(internal|native|node):/m;
+const internalPathTester = /^(internal|node):/m;
 const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(event_target|timers|process\/task_queues|modules\/esm\/(module_job|loader)))):/m;
-const externalPathImmediate = /^(REPL\d+|(node:(repl|internal\/(modules\/run_main)):))/m;
+const externalPathImmediate = /^(REPL\d+|\[repl\]|(node:(repl|internal\/(modules\/run_main)):))/m;
 const externalStrictImmediate = /^(file|https?):/m; // Nuclear option, not sure if this needs to be enabled.
 
 const blacklistedProperties = new Set([
@@ -113,7 +113,7 @@ const isInternal = function () {
 		const matchResult = lineLocationMatcher.exec(stackMsg)?.groups;
 		if (!matchResult) continue;
 		const {location} = matchResult;
-		inspectInternal && console.debug(`Inspect (${depth}): ${location} "${matchResult?.method ?? "<empty>"}" ${matchResult?.async}`);
+		inspectInternal && console.debug(`Inspect (${depth}): ${location} "${matchResult?.method ?? "<empty>"}" ${matchResult?.async ?? ""}`);
 		if (externalPathImmediate.test(location)) {
 			inspectInternal && console.debug(`Verdict (${depth}): type spotted external.`);
 			verdict = false;
