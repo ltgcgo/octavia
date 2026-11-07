@@ -24,8 +24,9 @@ if (self.Deno) {
 } else {
 	self.Deno = Leaf;
 };
-if (getPrintTrace() || getPrintInternal()) {
-	if (getPrintTrace()) {
+const printTrace = getPrintTrace();
+if (printTrace > 0 || getPrintInternal()) {
+	if (printTrace > 0) {
 		console.debug(`[Fly Leaf] Adjusting globals...`);
 	};
 	const {wrapProxies} = await import("../vergilius/restrict.mjs");
@@ -41,6 +42,6 @@ _leaf_copyTo_(self, LeafPolyfills);
 // Final clean-up.
 await import("../vergilius/cleanUp.mjs");
 
-if (getPrintTrace()) {
+if (printTrace > 0) {
 	console.debug(`[Fly Leaf] Activated. Version ${Deno.version.flyLeaf}, backend ${Deno.version.backend}, Deno API target ${Deno.version.deno}.`);
 };

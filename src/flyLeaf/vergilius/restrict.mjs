@@ -72,7 +72,6 @@ const getRandomID = function () {
 
 const RestrictedView = class RestrictedView {};
 const unwrappedObjects = new WeakMap();
-const internalStackCache = new WeakMap();
 
 /** @type {Error} */
 const errorStackReceiver = {};
@@ -101,10 +100,6 @@ const isInternal = function (root) {
 		Error.prepareStackTrace = oldPrepareStackTrace;
 	};
 	oldCaptureStackTrace(errorStackReceiver, root);
-	const verdictCache = internalStackCache.get(errorStackReceiver.stack);
-	if (typeof verdictCache === "boolean") {
-		return verdictCache;
-	};
 	let stackMsg = errorStackReceiver.stack;
 	//console.debug(stackMsg);
 	let depth = 0;
