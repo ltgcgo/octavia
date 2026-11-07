@@ -36,9 +36,10 @@ if (printTrace > 0 || getPrintInternal()) {
 	delete self.Deno;
 	self.Deno = wrapProxies(oldDeno, ["Deno"], true);
 	if (printTrace > 3) {
-		self.globalThis = wrapProxies(globalThis, ["globalThis"], true);
-		self.window = wrapProxies(window, ["window"], true);
-		self.self = wrapProxies(self, ["self"], true);
+		const accessThis = self;
+		self.globalThis = wrapProxies(accessThis, ["globalThis"], true);
+		self.window = wrapProxies(accessThis, ["window"], true);
+		self.self = wrapProxies(accessThis, ["self"], true);
 	};
 };
 

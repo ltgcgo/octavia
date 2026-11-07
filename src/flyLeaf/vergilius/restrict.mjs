@@ -270,10 +270,10 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
 			};
-			const valueDesc = Object.getOwnPropertyDescriptor(target, key);
-			const value = valueDesc?.value ?? Reflect.get(target, key);
+			const value = Reflect.get(target, key);
 			const unwrappedKey = deepUnwrap(key);
 			const unwrappedValue = deepUnwrap(value);
+			const valueDesc = Object.getOwnPropertyDescriptor(unwrappedVictim, key);
 			if (
 				blacklistedProperties.has(key) ||
 				blacklistedProperties.has(unwrappedKey) ||
