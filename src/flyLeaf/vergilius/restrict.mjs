@@ -16,10 +16,11 @@ const skipCheck = getSkipCheck();
 const inspectTrace = getPrintTrace();
 const inspectInternal = getPrintInternal();
 const preventObtainThenAccessAtBoundary = getPrisonWarden();
-const lineLocationMatcher = /^\s+at\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
+const lineLocationMatcher = /^\s+at(\s(?<async>async))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\()?(?<location>([ -_/.,:;@$#()]|\w|\d)+):\d+(:\d+)?\)?$/m;
 const internalPathTester = /^(internal|native|node):/m;
-const externalPathPostponed = /^(node:(vm)):/m;
-const externalPathImmediate = /^(node:(repl)):/m;
+const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(event_target|timers|process\/task_queues|modules\/esm\/(module_job|loader)))):/m;
+const externalPathImmediate = /^(REPL\d+|(node:(repl|internal\/(modules\/run_main)):))/m;
+const externalStrictImmediate = /^(file|https?):/m; // Nuclear option, not sure if this needs to be enabled.
 
 const blacklistedProperties = new Set([
 	"prototype",
@@ -70,7 +71,8 @@ const getRandomID = function () {
 	};
 };
 
-export function isInternal() {
+const isInternal = function () {
+	// External methods all seem to not match internal tests at depth 3.
 	if (skipCheck) return true;
 	let stackMsg = (new Error()).stack;
 	//console.debug(stackMsg);
@@ -88,27 +90,31 @@ export function isInternal() {
 		if (stackMsg?.length <= 0) {
 			break;
 		};
+		if (depth <= 2) continue;
 		const matchResult = lineLocationMatcher.exec(stackMsg)?.groups;
 		if (!matchResult) continue;
 		const {location} = matchResult;
-		inspectInternal && console.debug(`Inspect (${depth}): ${location}`);
+		inspectInternal && console.debug(`Inspect (${depth}): ${location} "${matchResult?.method ?? "<empty>"}" ${matchResult?.async}`);
 		if (externalPathImmediate.test(location)) {
-			inspectInternal && console.debug(`Verdict (${depth}):, type spotted external.`);
+			inspectInternal && console.debug(`Verdict (${depth}): type spotted external.`);
 			return false;
 		};
 		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
-			inspectInternal && console.debug(`Verdict (${depth}):, type spotted internal.`);
+			inspectInternal && console.debug(`Verdict (${depth}): type spotted internal.`);
 			return true;
 		};
 	};
 	if (depth <= 2) {
-		inspectInternal && console.debug(`Verdict (${depth}):, type inferred internal.`);
+		inspectInternal && console.debug(`Verdict (${depth}): type inferred internal.`);
 		return true;
 	} else {
-		inspectInternal && console.debug(`Verdict (${depth}):, type inferred external.`);
+		inspectInternal && console.debug(`Verdict (${depth}): type inferred external.`);
 		return false;
 	};
+};
+export function isCallSiteInternal() {
+	return isInternal();
 };
 
 export function deepUnwrap(wrapped) {
