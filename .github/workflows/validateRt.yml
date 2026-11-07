@@ -76,7 +76,7 @@ jobs:
       - name: Setup Node.js (eugh, disgusting)
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Show Node.js version (eugh, disgusting)
         run: "node --version"
       - name: Generate data for Octavia

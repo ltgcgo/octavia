@@ -65,14 +65,14 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
   - Porffor does not support test running. Use other supported runtimes instead.
 - [**Txiki.js**](https://txikijs.org/): Investigating.
 
-| Runtime | `backend` | `engine` |
-| ------- | --------- | -------- |
-| Ant | `Ant` | `Ant Silver` |
-| Bun | `Bun` | `JavaScriptCore` |
-| Deno | `Deno` | `V8` |
-| Ende | `Ende` | `V8` |
-| Node.js | `Node` | `V8` |
-| Porffor | `Porffor` | `Porffor` |
+| Runtime | `backend` | `engine` | IMM |
+| ------- | --------- | -------- | --- |
+| Ant | `Ant` | `Ant Silver` | 15.1+ |
+| Bun | `Bun` | `JavaScriptCore` | 0.6+ |
+| Deno | `Deno` | `V8` | 1.0+ |
+| Ende | `Ende` | `V8` | 20261014+ |
+| Node.js | `Node` | `V8` | 22.18+, 24.2+ |
+| Porffor | `Porffor` | `Porffor` | alpha 20+ |
 
 ### Additional features
 #### Deno
@@ -91,6 +91,8 @@ These are features deprecated by the Deno runtime. Fly Leaf re-implements all of
 - **Cloud hosting**. _Fly Leaf_ is a compatibility layer, not a hosting provider.
 - **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like _Fly Leaf_, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.
   - This also means that _Fly Leaf_ is unable to block runtime-native imports like `node:` and `npm:`. If you want to be absolutely certain your codebase does not rely on Node.js, please use _Ende_ with or without _Fly Leaf_.
+- `import.meta` polyfilling. `import.meta` need native runtime support, as _Fly Leaf_ is purely unable to modify the entire `import.meta` object.
+  - `import.meta.main`: Check the `IMM` column in the runtime table. Any older version will cause projects relying on its value being truthy break (e.g. ESBuild Deno CLI).
 - **Jupyter Notebook**, for now. Until the separate module is ready, please use dedicated Jupyter integration frameworks/libraries.
 - **KV Store** (`Deno.openKv`). Use the storage APIs or external databases.
 - **Linter** (`Deno.lint`). Use external language servers like _Deno_, _Ende_, `typescript-language-server`, `vstls` or ESLint.
