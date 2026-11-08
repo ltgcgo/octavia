@@ -132,13 +132,13 @@ const isInternal = function (root) {
 		};
 	};
 	if (verdict == null) {
-		if (depth <= 0) {
+		/*if (depth <= 0) {
 			inspectInternal && console.debug(`Verdict (${depth}): inferred, type internal.`);
 			verdict = true;
-		} else {
+		} else {*/
 			inspectInternal && console.debug(`Verdict (${depth}): inferred, type external.`);
 			verdict = false;
-		};
+		//};
 	};
 	if (typeof restorePrepareStackTrace === "function") {
 		Error.prepareStackTrace = restorePrepareStackTrace;
@@ -474,8 +474,8 @@ export function getRestrictedView(processObject, reservedFeatures, rootName = "<
 	if (passThrough) {
 		return wrapProxies(processObject, [rootName]);
 	};
-	const exposedProcess = new RestrictedView();
-	if (!reservedFeatures) return exposedProcess;
+	const publicView = new RestrictedView();
+	if (!reservedFeatures) return publicView;
 	/*if (reservedFeatures.constructor !== Set) {
 		reservedFeatures = new Set(reservedFeatures);
 	};*/
@@ -488,7 +488,7 @@ export function getRestrictedView(processObject, reservedFeatures, rootName = "<
 			};
 			// Mimics actual Node.js `process` properties.
 			Object.defineProperty(
-				exposedProcess,
+				publicView,
 				key, {
 					"value": assigned,
 					"configurable": true,
@@ -498,5 +498,5 @@ export function getRestrictedView(processObject, reservedFeatures, rootName = "<
 			);
 		};
 	};
-	return wrapProxies(exposedProcess, [rootName]);
+	return wrapProxies(publicView, [rootName]);
 };

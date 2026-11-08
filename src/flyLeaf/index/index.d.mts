@@ -16,9 +16,19 @@ export function _leaf_apply_<T>(ingest: T, overlays: PropertyDescriptorMap, over
 * ``` */
 export function _leaf_yield_<T>(ingest: T, overlays: PropertyDescriptorMap, overwrite?: boolean): T;
 
-export type * from "./index/env.d.mts";
+import * as env from "./index/env.d.mts";
+import * as fs from "./index/fs.d.mts";
+import * as io from "./index/io.d.mts";
+import * as process from "./index/process.d.mts";
+
+declare const _LeafExport_:
+	typeof env &
+	typeof fs &
+	typeof io &
+	typeof process;
+export default _LeafExport_;
+
 export * from "./index/env.d.mts";
-export type * from "./index/fs.d.mts";
 export * from "./index/fs.d.mts";
-export type * from "./index/io.d.mts";
 export * from "./index/io.d.mts";
+export * from "./index/process.d.mts";

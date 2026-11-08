@@ -4,8 +4,12 @@
 
 "use strict";
 
+/** @template T
+* @extends {T} */
+const LeafCopiedView = class LeafCopiedView {};
+
 /** Copy the properties from the source to the target in-place.
-* @template {T}
+* @template T
 * @param {T} target
 * @param {Record<string, any>} source
 * @returns {T} */
@@ -20,7 +24,7 @@ export function _leaf_copyTo_(target, source, overwrite = false) {
 };
 
 /** Apply the overlays to the object in-place.
-* @template {T}
+* @template T
 * @param {T} ingest
 * @param {PropertyDescriptorMap} overlays
 * @returns {T} */
@@ -36,12 +40,12 @@ export function _leaf_apply_(ingest, overlays = {}, overwrite = false) {
 };
 
 /** Copy the properties and apply the overlays to a new object.
-* @template {T}
+* @template T
 * @param {T} ingest
 * @param {PropertyDescriptorMap} overlays
 * @returns {T} */
 export function _leaf_yield_(ingest, overlays = {}, overwrite = false) {
-	const newObject = {};
+	const newObject = new LeafCopiedView();
 	for (const key in ingest) {
 		const value = ingest[key];
 		if (value === overlays) continue;

@@ -119,4 +119,8 @@ export {
 	writeTextFile,
 	writeTextFileSync
 };
-export default _leaf_yield_(flyLeafGlobals, _leaf_overlay_);
+const defaultGlobals = _leaf_yield_(flyLeafGlobals, _leaf_overlay_);
+if (Symbol.toStringTag) {
+	defaultGlobals[Symbol.toStringTag] = "Leaf";
+};
+export default defaultGlobals;
