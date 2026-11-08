@@ -90,16 +90,16 @@ Any deprecated feature that relies on resource IDs will not be re-implemented.
 
 ## Out-of-scope features
 ### From Deno
-- **Bundling** (`Deno.bundle`). Use an external bundler like _ESBuild_, _tdewolff Minify_ or _SWC_, some of which can be directly used on runtimes supporting WebAssembly. May be reversed in the future with optional ESBuild interfacing.
+- **Bundling** (`Deno.bundle`), for now. Use an external bundler like _ESBuild_, _tdewolff Minify_ or _SWC_, some of which can be directly used on runtimes supporting WebAssembly. May be reversed in the future with optional ESBuild interfacing.
 - **Cloud hosting**. _Fly Leaf_ is a compatibility layer, not a hosting provider.
 - **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like _Fly Leaf_, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.
   - This also means that _Fly Leaf_ is unable to block runtime-native imports like `node:` and `npm:`. If you want to be absolutely certain your codebase does not rely on Node.js, please use _Ende_ with or without _Fly Leaf_.
 - `import.meta` polyfilling. `import.meta` need native runtime support, as _Fly Leaf_ is purely unable to modify the entire `import.meta` object.
   - `import.meta.main`: Check the `IMM` column in the runtime table. Any older version will cause projects relying on its value being truthy break (e.g. ESBuild Deno CLI).
 - **Jupyter Notebook**, for now. Until the separate module is ready, please use dedicated Jupyter integration frameworks/libraries.
-- **KV Store** (`Deno.openKv`). Use the storage APIs or external databases. May be reversed in the future.
+- **KV Store** (`Deno.openKv`), for now. Use the storage APIs or external databases. May be reversed in the future.
 - **Linter** (`Deno.lint`). Use external language servers like _Deno_, _Ende_, `typescript-language-server`, `vstls` or ESLint.
-- **Node.js-API Native Addon**. Use FFI instead.
+- **Node.js-API Native Addon**. Use FFI or WASM instead.
 - **Permissions**. Without native runtime enforcement, permissions checks are likely bypassed easily, as such _Fly Leaf_ does not attempt to perform permission gating and report everything as green-lit instead. If the non-Deno-compatible runtime does offer permission gating, _Fly Leaf_ will bridge it.
-- **Sandbox**. _Fly Leaf_ is not and should not be used as a sandbox out-of-the-box. On runtimes like Ende where runtime-native globals can be fully replaced, _Fly Leaf_ can allow _Minuette_-like safer interception **after modification**.
+- **Sandbox**. Use proper sandboxes, like containers on `runsc`, Sysbox and Bubblewrap instead. _Fly Leaf_ is not and should not be used as a sandbox out-of-the-box. On runtimes like Ende where runtime-native globals can be fully replaced, _Fly Leaf_ can allow _Minuette_-like safer interception **after modification**.
 - **Telemetry**. Deno relied on Node.js compatibility to interact with OpenTelemetry via `npm:@opentelemetry`, and its own documentation telemetry APIs are incomplete.
