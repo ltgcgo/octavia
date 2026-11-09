@@ -217,9 +217,9 @@ export function create(path: string|URL): Promise<LeafFsFile>;
 /**  */
 export function createSync(path: string|URL): LeafFsFile;
 /**  */
-export function link(sourcePath: string|URL, targetPath: string|URL): Promise<void>;
+export function link(sourcePath: string, targetPath: string): Promise<void>;
 /**  */
-export function linkSync(sourcePath: string|URL, targetPath: string|URL): void;
+export function linkSync(sourcePath: string, targetPath: string): void;
 /**  */
 export function lstat(path: string|URL): Promise<LeafFileInfo>;
 /**  */

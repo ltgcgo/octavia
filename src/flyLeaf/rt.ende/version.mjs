@@ -11,3 +11,4 @@ const Deno = self.Deno ?? self.Ende;
 export const version = new LeafVersion(self.process?.versions, Deno.version);
 version.backend = "Ende";
 version.engine = "V8";
+version.release = Deno.version.ende;

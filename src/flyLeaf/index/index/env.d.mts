@@ -118,28 +118,44 @@ declare interface NodeVersion {
 }
 /** The Deno version object extended by Fly Leaf. */
 declare interface LeafVersion extends DenoVersion {
-	/** The actual backend behind Fly Leaf. */
-	backend: "Ant"|"Bun"|"Deno"|"Ende"|"Node"|"Porffor"|"Txiki";
-	/** The actual JS engine behind the runtime. */
-	engine: "Ant Silver"|"JavaScriptCore"|"LibJS"|"Porffor"|"QuickJS"|"SpiderMonkey"|"V8";
-	/** The version of Fly Leaf being run. */
-	flyLeaf: string;
-	/** When `true`, synchronous versions of the methods are not available, only asynchronous versions are. */
-	asyncOnly: boolean;
+	/** The actual backend behind Fly Leaf.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	backend?: "Ant"|"Bun"|"Deno"|"Ende"|"Node"|"Porffor"|"Txiki";
+	/** The actual JS engine behind the runtime.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	engine?: "Ant Silver"|"JavaScriptCore"|"LibJS"|"Porffor"|"QuickJS"|"SpiderMonkey"|"V8";
+	/** The version of the actual backend behind Fly Leaf.
+	*
+	* This field is always provided whenever possible, but made optional to satisfy type checks from the real Deno counterpart. */
+	release?: string;
+	/** The version of Fly Leaf being run.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	flyLeaf?: string;
+	/** When `true`, synchronous versions of the methods are not available, only asynchronous versions are.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	asyncOnly?: boolean;
 	/** The runtime-native versions object. */
-	versions: Record<string, string>|DenoVersion|NodeVersion;
+	versions?: Record<string, string>|DenoVersion|NodeVersion;
 }
 /** The Deno version object extended by Fly Leaf. */
 export const version: LeafVersion;
 
 /** The Deno build information object. */
 declare interface DenoBuildInfo {
-	/** Processor architecture of the current machine in the LLVM format. */
+	/** Processor architecture of the current machine in the LLVM format.
+	*
+	* Fly Leaf permits way more than the original runtime, because it allows Deno code to be run on not just `aarch64` and `x86_64`. */
 	arch: "arm"|"armeb"|"aarch64"|"aarch64_be"|"loongarch64"|"mips"|"mipsel"|"mips64"|"mips64el"|"ppc"|"ppcle"|"ppc64"|"ppc64le"|"riscv32"|"riscv32be"|"riscv64"|"riscv64be"|"systemz"|"wasm32"|"x86"|"x86_64";
-	/** Operating system ID of the current machine. */
+	/** Operating system ID of the current machine.
+	*
+	* Fly Leaf permits way more than the original runtime, because it allows Deno code to be run on not just `darwin`, `linnux` and `windows`. */
 	os: "aix"|"android"|"darwin"|"freebsd"|"linux"|"netbsd"|"openbsd"|"windows";
-	/** Unknown attribute that's always false. */
-	standalone: false;
+	/** Unknown attribute that's always false. Set to `boolean` here in case this does not satisfy the real Deno build object. */
+	standalone: boolean;
 	/** Compile target specifier in the LLVM format.
 	* - For `darwin`, valid configurations include `aarch64-apple-darwin` and `x86_64-apple-darwin`.
 	* - For `windows`, valid configurations include `aarch64-pc-windows` and `x86_64-pc-windows`.
@@ -156,7 +172,7 @@ declare interface DenoBuildInfo {
 /** The Deno build information object extended by Fly Leaf. */
 declare interface LeafBuildInfo extends DenoBuildInfo {
 	/** The processor architecture of the current machine in LTGC format. */
-	archNormal: "arm32"|"arm32be"|"arm64"|"arm64be"|"loong64"|"mips"|"mipsle"|"mips64"|"mips64le"|"ppc"|"ppcle"|"ppc64"|"ppc64le"|"riscv32"|"riscv32be"|"riscv64"|"riscv64be"|"s390"|"s390x"|"wasm32"|"x86"|"amd64";
+	archNormal?: "arm32"|"arm32be"|"arm64"|"arm64be"|"loong64"|"mips"|"mipsle"|"mips64"|"mips64le"|"ppc"|"ppcle"|"ppc64"|"ppc64le"|"riscv32"|"riscv32be"|"riscv64"|"riscv64be"|"s390"|"s390x"|"wasm32"|"x86"|"amd64";
 }
 /** The Deno build information object extended by Fly Leaf. */
 export const build: LeafBuildInfo;
@@ -215,7 +231,7 @@ export function exit(exitCode?: number): never;
 * Due to fundamental limitations, this does **not** work with glob imports without applying the overlay, or with granular imports at all. Use `Deno.exit()` instead if not using the runtime global, the default export, or the overlay-applied global. */
 export let exitCode: number;
 /** Get the group ID of the current running executable. Certain OSes like Windows return `null` instead. */
-export function gid(): string;
+export function gid(): number|null;
 /** Get the hostname of the current device. */
 export function hostname(): string;
 /** Get the averaged system load factor of the past minute, past 5 minutes and past 15 minutes. */
@@ -234,3 +250,10 @@ export function osUptime(): number;
 export const pid: number;
 /** Parent process ID of the current running instance. */
 export const ppid: number;
+/** Ensure the given schedule ID returned by `setInterval` or `setTimeout` block the event loop from finishing. */
+export function refTimer(scheduleId: number);
+export function removeSignalListener();
+/** Get the user ID of the current running executable. Certain OSes like Windows return `null` instead. */
+export function uid(): number|null;
+/** Ensure the given schedule ID returned by `setInterval` or `setTimeout` does not the event loop from finishing. */
+export function unrefTimer(scheduleId: number);

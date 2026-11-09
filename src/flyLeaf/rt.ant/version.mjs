@@ -9,3 +9,4 @@ import LeafVersion from "../common/class/version.mjs";
 export const version = new LeafVersion(self.process?.versions);
 version.backend = "Ant";
 version.engine = "Ant Silver";
+version.release = self.Ant?.version;

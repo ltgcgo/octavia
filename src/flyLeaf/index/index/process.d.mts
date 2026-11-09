@@ -5,6 +5,7 @@
 import {
 	DisposableObject,
 	ExtendedReadableByteStream,
+	Throws,
 	WrappedAbortSignal
 } from "./conventions.d.mts";
 import { LeafSystemSignal } from "./env.d.mts";
@@ -45,7 +46,7 @@ export interface LeafCommandDetailsCommon {
 /** Properties used by the deprecated `Deno.run`. */
 export interface LeafChildRunOptions extends LeafCommandDetailsCommon {
 	/** The command to be run. The first argument is the path to the executable, and is always required. */
-	cmd: string[]|[URL, ... string[]]
+	cmd: [string|URL, ... string[]];
 }
 /** Properties used by the modern Deno methods. */
 export interface LeafCommandOptions extends LeafCommandDetailsCommon, WrappedAbortSignal {
@@ -97,15 +98,15 @@ declare type LeafChildRunStatusModern = LeafChildRunPassStatusModern|LeafChildRu
 declare interface LeafCommandOutputCommon<execType extends LeafRunTypes, T extends LeafCommandDetailsCommon> {
 	/** The buffered standard error. */
 	stderr: execType extends "output" ? (
-		T["stderr"] extends "piped"|undefined ? Uint8Array : null
+		T["stderr"] extends "piped"|undefined ? Uint8Array : Throws<TypeError>
 	) : (
-		T["stderr"] extends "piped" ? Uint8Array : null
+		T["stderr"] extends "piped" ? Uint8Array : Throws<TypeError>
 	);
 	/** The buffered standard output. */
 	stdout: execType extends "output" ? (
-		T["stdout"] extends "piped"|undefined ? Uint8Array : null
+		T["stdout"] extends "piped"|undefined ? Uint8Array : Throws<TypeError>
 	) : (
-		T["stdout"] extends "piped" ? Uint8Array : null
+		T["stdout"] extends "piped" ? Uint8Array : Throws<TypeError>
 	);
 }
 /** The output of a passed child process. */
@@ -122,19 +123,18 @@ declare class LeafChildDetailsCommon implements AsyncDisposable {
 	/** No documentation from Deno. Supposedly send `SIGTERM` to the child according to [Node.js](https://nodejs.org/api/child_process.html#subprocesssymboldispose), then wait until the process finishes execution. */
 	[Symbol.asyncDispose](): Promise<void>;
 	/** Send a signal to the process, akin to `kill` on POSIX. */
-	kill(signal: LeafSystemSignal|number): void;
+	kill(signal?: LeafSystemSignal|number): void;
 }
 /** The child process instance. Deprecated by Deno. */
 declare class LeafChildRunInstance<T extends LeafCommandDetailsCommon> extends LeafChildDetailsCommon implements DisposableObject {
-	/** The Deno-internal resource ID of the child. Accessing this field will cause `TypeError`s to be thrown.
-	* @throws {TypeError} */
-	readonly rid: number;
+	/** The Deno-internal resource ID of the child. Accessing this field will cause `TypeError`s to be thrown. */
+	readonly rid: Throws<TypeError>;
 	/** The standard error. Cannot be used with `LeafChildRunInstance.stderrOutput`. */
-	readonly stderr: T["stderr"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : null;
+	readonly stderr: T["stderr"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError>;
 	/** The standard input. */
-	readonly stdin: T["stdin"] extends "piped" ? LeafLegacyWrappedWriter<Uint8Array> : null;
+	readonly stdin: T["stdin"] extends "piped" ? LeafLegacyWrappedWriter<Uint8Array> : Throws<TypeError>;
 	/** The standard output. Cannot be used with `LeafChildRunInstance.output`. */
-	readonly stdout: T["stdout"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : null;
+	readonly stdout: T["stdout"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError>;
 	/** No documentation from Deno. Supposedly send `SIGTERM` to the child according to [Node.js](https://nodejs.org/api/child_process.html#subprocesssymboldispose). */
 	close(): void;
 	/** Wait until the child has quit, then collect its quit status and potential signal.
@@ -142,9 +142,9 @@ declare class LeafChildRunInstance<T extends LeafCommandDetailsCommon> extends L
 	* This promise can never reject. Unlike the modern alternative, to retain backwards compatibility while removing resource IDs, calling this method prevents the running instance from quitting as long as the child runs. */
 	status(): Promise<LeafChildRunStatusLegacy>;
 	/** Buffer the standard output, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildRunInstance.stdout`. */
-	output(): T["stdout"] extends "piped" ? Promise<Uint8Array> : null;
+	output(): T["stdout"] extends "piped" ? Promise<Uint8Array> : Throws<TypeError>;
 	/** Buffer the standard error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildRunInstance.stderr`. */
-	stderrOutput(): T["stderr"] extends "piped" ? Promise<Uint8Array> : null;
+	stderrOutput(): T["stderr"] extends "piped" ? Promise<Uint8Array> : Throws<TypeError>;
 }
 declare class LeafChildProcess<T extends LeafCommandDetailsCommon> extends LeafChildDetailsCommon {
 	/** Wait until the child has quit, then collect its quit status and potential signal.
@@ -152,11 +152,11 @@ declare class LeafChildProcess<T extends LeafCommandDetailsCommon> extends LeafC
 	* This promise can never reject. Accessing this property does not prevent the running instance from quitting, `LeafChildProcess.ref` is required. */
 	status: Promise<LeafChildRunStatusModern>;
 	/** The standard error. Cannot be used with `LeafChildProcess.output`. */
-	stderr: T["stderr"] extends "piped" ? ExtendedReadableByteStream : null;
+	stderr: T["stderr"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError>;
 	/** The standard input. */
-	stdin: T["stdin"] extends "piped" ? WritableStream<Uint8Array> : null;
+	stdin: T["stdin"] extends "piped" ? WritableStream<Uint8Array> : Throws<TypeError>;
 	/** The standard output. Cannot be used with `LeafChildProcess.output`. */
-	stdout: T["stdout"] extends "piped" ? ExtendedReadableByteStream : null;
+	stdout: T["stdout"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError>;
 	/** Buffer the standard output and error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildProcess.stderr` or `LeafChildProcess.stdout`. */
 	output(): Promise<LeafCommandOutput<"spawn", T>>;
 	/** Ensures that the status of the child blocks the runtime instance from quitting. */

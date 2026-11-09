@@ -22,6 +22,9 @@ if (self.Deno) {
 	const denoGlobals = self.Deno;
 	denoGlobals.version = Leaf.version;
 	denoGlobals.build = Leaf.build;
+	if (typeof denoGlobals.run !== "function") {
+		denoGlobals.run = Leaf.run;
+	};
 } else {
 	self.Deno = Leaf;
 };
@@ -54,7 +57,8 @@ if (printTrace > 0 || getPrintInternal()) {
 _leaf_copyTo_(oldGlobal, LeafPolyfills);
 
 if (printTrace > 0) {
-	console.debug(`[Fly Leaf] Activated. Version ${Deno.version.flyLeaf}, backend ${Deno.version.backend}, Deno API target ${Deno.version.deno}.`);
+	const leafVersion = Leaf.version;
+	console.debug(`[Fly Leaf] Activated v${leafVersion.flyLeaf}, backend ${leafVersion.backend} v${leafVersion.release ?? "<unknown>"}, Deno v${leafVersion.deno}.`);
 };
 
 setTimeout(async () => {

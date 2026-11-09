@@ -13,3 +13,6 @@ export const kill = Deno.kill;
 export const spawn = Deno.spawn;
 export const spawnAndWait = Deno.spawnAndWait;
 export const spawnAndWaitSync = Deno.spawnAndWaitSync;
+
+// Polyfill not yet implemented.
+export const run = Deno.run ?? function run() {};

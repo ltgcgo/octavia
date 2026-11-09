@@ -86,11 +86,11 @@ export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTar
 	]);
 	if (!getAllowOldWeb()) {
 		// Remove certain deprecated web features
-		removeProperties(thisTarget, [
+		/* removeProperties(thisTarget, [
 			"escape",
 			"eval",
 			"unescape"
-		]);
+		]); */ // Eval may need an interceptor.
 		removeProperties(thisTarget.Date.prototype, [
 			"getYear",
 			"setYear",

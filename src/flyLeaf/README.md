@@ -47,6 +47,13 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ```
 
 ## Support
+#### Variants
+Fly Leaf offers two separate variants of the same Deno API. Unless absolutely needed, it's generally recommended to use the async-only variant.
+
+- [ ] Async-only: When both the synchronous and the asynchronous versions of the same API exist, subject to runtime feature availability, this Fly Leaf variant implements only the asynchronous versions. This allows Fly Leaf to support more runtimes and use more runtime-native features.
+  - [ ] Bun: `BunFile` for files, `Bun.serve` for HTTP servers, and `Bun.spawn` for processes.
+- [x] Full: This version offers the entire collection of in-scope Deno APIs, subject to runtime feature availability.
+
 ### Runtimes
 - [**Ant**](https://antjs.org/): WIP.
   - Requires a `TextDecoder` polyfill/ponyfill. Will largely be unneeded after Ant 17, when this line will get removed.
@@ -58,6 +65,8 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 - [**Deno**](https://deno.land/): Supported.
 - [**Ende**](https://ende.sh/): Supported.
   - `Deno.version.deno` set to the Deno version targeted by _Fly Leaf_.
+- Generic browser: Async-only. Blocked by various fundamentally missing APIs, subject to runtime feature availability.
+- Generic WinterTC: Async-only. Blocked by various fundamentally missing APIs, subject to runtime feature availability.
 - [~~Javy~~](https://github.com/bytecodealliance/javy): Out of scope. Insufficient platform APIs.
 - [Kiesel](https://kiesel.dev/): Investigating.
 - [**Node.js**]: WIP.
@@ -66,14 +75,14 @@ import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 - [~~Steve's Den~~](https://github.com/stevefan1999-personal/den): Out of scope. Insufficient documentation, and the `den:*` import scheme is the exact thing Fly Leaf avoids, despite being older than _Ende_.
 - [Txiki.js](https://txikijs.org/): Investigating.
 
-| Runtime | `backend` | `engine` | IMM |
-| ------- | --------- | -------- | --- |
-| Ant | `Ant` | `Ant Silver` | 15.1+ |
-| Bun | `Bun` | `JavaScriptCore` | 0.6+ |
-| Deno | `Deno` | `V8` | 1.0+ |
-| Ende | `Ende` | `V8` | 20261014+ |
-| Node.js | `Node` | `V8` | 22.18+, 24.2+ |
-| Porffor | `Porffor` | `Porffor` | alpha 20+ |
+| S | A | Runtime | `backend` | `engine` | IMM |
+| - | - | ------- | --------- | -------- | --- |
+| ✓ | ✓ | Ant | `Ant` | `Ant Silver` | 15.1+ |
+| ✓ | ✓ | Bun | `Bun` | `JavaScriptCore` | 0.6+ |
+| ✓ | ✓ | Deno | `Deno` | `V8` | 1.0+ |
+| ✓ | ✓ | Ende | `Ende` | `V8` | 20261014+ |
+| ✓ | ✓ | Node.js | `Node` | `V8` | 22.18+, 24.2+ |
+| ✓ | ✓ | Porffor | `Porffor` | `Porffor` | alpha 20+ |
 
 ### Additional features
 #### Deno
@@ -85,11 +94,13 @@ Any deprecated feature that relies on resource IDs will not be re-implemented.
 #### Web
 - [ ] `TextDecoder` polyfill
 - [ ] `TextEncoder` polyfill
-- [ ] `Uint8Array.fromBase64` polyfill
-- [ ] `Uint8Array.fromHex` polyfill
+- [ ] `Uint8Array.fromBase64` polyfill (provided via Rochelle)
+- [ ] `Uint8Array.fromHex` polyfill (provided via Rochelle)
+- [ ] `Uint8Array.prototype.toBase64` polyfill (provided via Rochelle)
+- [ ] `Uint8Array.prototype.toHex` polyfill (provided via Rochelle)
 
-## Out-of-scope features
-### From Deno
+## Out-of-scope
+### Deno features
 - **Bundling** (`Deno.bundle`), for now. Use an external bundler like _ESBuild_, _tdewolff Minify_ or _SWC_, some of which can be directly used on runtimes supporting WebAssembly. May be reversed in the future with optional ESBuild interfacing.
 - **Cloud hosting**. _Fly Leaf_ is a compatibility layer, not a hosting provider.
 - **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like _Fly Leaf_, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.

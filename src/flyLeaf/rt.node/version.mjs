@@ -9,3 +9,4 @@ import LeafVersion from "../common/class/version.mjs";
 export const version = new LeafVersion(self.process?.versions);
 version.backend = "Node";
 version.engine = "V8";
+version.release = self.process?.versions?.node;

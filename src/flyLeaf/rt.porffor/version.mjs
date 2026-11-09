@@ -4,8 +4,10 @@
 
 "use strict";
 
+import { NavigatorExtract } from "../common/class/matchers.mjs";
 import LeafVersion from "../common/class/version.mjs";
 
 export const version = new LeafVersion(self.process?.versions);
 version.backend = "Porffor";
 version.engine = "Porffor";
+version.release = NavigatorExtract.exec(self.navigator?.userAgent);

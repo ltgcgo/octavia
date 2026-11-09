@@ -18,6 +18,14 @@ export function getSkipCheck() {
 	requestDeno();
 	return denoEnvApi?.get("VERGILIUS_SKIP_CHECK")?.length > 0 ?? false;
 };
+export function getPrintInternal() {
+	requestDeno();
+	return denoEnvApi?.get("VERGILIUS_PRINT_STACK")?.length > 0 ?? false;
+};
+export function getPrintProxy() {
+	requestDeno();
+	return denoEnvApi?.get("VERGILIUS_PRINT_PROXY")?.length > 0 ?? false;
+};
 export function getPrintTrace() {
 	requestDeno();
 	const traceConfig = denoEnvApi?.get("VERGILIUS_PRINT_TRACE");
@@ -62,10 +70,6 @@ export function getPrintTrace() {
 	} else {
 		return 0;
 	};
-};
-export function getPrintInternal() {
-	requestDeno();
-	return denoEnvApi?.get("VERGILIUS_PRINT_STACK")?.length > 0 ?? false;
 };
 export function getPrisonWarden() {
 	requestDeno();

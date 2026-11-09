@@ -5,24 +5,30 @@
 "use strict";
 
 export default class LeafVersion {
+	// Native Deno, in the actual Deno order.
+	/** @type {string} */
+	deno = "2.9.8";
+	/** @type {string} */
+	v8;
+	/** @type {string?} */
+	typescript;
+	// Direct Deno-derivatives.
+	/** @type {string?} */
+	ende;
+	// Fly Leaf extensions.
 	/** Set by runtime loaders.
 	* @type {string} */
 	backend;
-	/** @type {string} */
-	deno = "2.9.8";
-	/** @type {string?} */
-	ende;
 	/** Set by runtime loaders.
 	* @type {string} */
 	engine;
+	/** Set by runtime loaders.
+	* @type {string} */
+	release;
 	/** @type {string} */
 	flyLeaf = "0.0.1";
 	/** @type {boolean} */
 	asyncOnly;
-	/** @type {string?} */
-	typescript;
-	/** @type {string} */
-	v8;
 	/** @type {import("../../index/index/env.d.mts").DenoVersion|import("../../index/index/env.d.mts").NodeVersion} */
 	versions;
 	/** @param {import("../../index/index/env.d.mts").NodeVersion|undefined} nodeVersions
