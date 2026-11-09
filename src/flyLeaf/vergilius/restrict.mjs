@@ -13,6 +13,7 @@ import {
 	getSkipCheck
 } from "./config.mjs";
 
+const maxStringLength = 96;
 const skipCheck = getSkipCheck();
 const inspectTrace = getPrintTrace();
 const inspectInternal = getPrintInternal();
@@ -212,9 +213,13 @@ const visualiseValue = function (value) {
 			break;
 		};
 		case "boolean":
-		case "number":
-		case "string":  {
+		case "number": {
 			return JSON.stringify(value);
+			break;
+		};
+		case "string": {
+			if (value.length <= maxStringLength) return JSON.stringify(value);
+			return JSON.stringify(`${value.substring(0, maxStringLength - (maxStringLength >> 2))} ... ${value.substring(value.length - (maxStringLength >> 2))}`);
 			break;
 		};
 		case "object": {

@@ -66,13 +66,15 @@ Don't believe our claims regarding environment neutrality? Hope this section cha
 | Servo | SpiderMonkey (Servo) | Supported | 0.5.0 |
 
 ### Runtimes
-> While Node.js is pinned to the latest LTS version shipped by Debian stable, and Deno pinned to the latest stable release on version 2, tests for all other JS runtimes are run on their respective latest stable release.
+> - Node.js is pinned to the newer version between the latest LTS shipped by Debian stable and the latest version supporting `import.meta.main.
+> - Deno is pinned to the latest stable release on version 2.
+> - Tests for all other JS runtimes are run on their respective latest stable release.
 
 [![Validate multiple runtimes](https://github.com/ltgcgo/octavia/actions/workflows/validateRt.yml/badge.svg)](https://github.com/ltgcgo/octavia/actions/workflows/validateRt.yml)
 
 All supported runtimes listed below have their output verified to be identical to each other, without requiring compatibility layers for APIs of a specific runtime. Node.js requires at least the Fly Leaf conformance script (`vergilius.mjs`) to function, check _Fly Leaf_ for details.
 
-| Component | Deno | Ende | Bun | Node.js 20 LTS |
+| Component | Deno | Ende | Bun | Node.js 22 LTS |
 | --------- | ---- | ---- | --- | -------------- |
 | `chord.mjs` | ✓ | ✓ | ✓ | ✓ |
 | Lyre v2 | ✓ | ✓ | ✓ | ✓ |
