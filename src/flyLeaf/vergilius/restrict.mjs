@@ -17,7 +17,7 @@ const skipCheck = getSkipCheck();
 const inspectTrace = getPrintTrace();
 const inspectInternal = getPrintInternal();
 const inspectProxy = getPrintProxy();
-const preventObtainThenAccessAtBoundary = getPrisonWarden();
+//const preventObtainThenAccessAtBoundary = getPrisonWarden();
 const hasStackTraceLimit = Error.stackTraceLimit;
 const oldCaptureStackTrace = Error.captureStackTrace;
 const oldPrepareStackTrace = Error.prepareStackTrace;
@@ -54,7 +54,14 @@ const blacklistedConstructors = new Set([
 ]);
 const blacklistedExact = new Set([]);
 if (globalThis.Buffer) {
+	// Hot loop calls from Node.js (`internal:undici`).
+	blacklistedExact.add(Buffer.alloc);
+	blacklistedExact.add(Buffer.allocUnsafe);
 	blacklistedExact.add(Buffer.concat);
+	blacklistedExact.add(Buffer.from);
+};
+if (globalThis.process) {
+	blacklistedExact.add(process.nextTick); // Hot loop calls from Bun internals.
 };
 
 const b64Alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-";
@@ -82,18 +89,17 @@ const wrappedObjectCache = new WeakMap();
 /** @type {Error} */
 const errorStackReceiver = {};
 /** @type {(startAfter?: Function) => string|undefined} */
-let getStackTrace, stackTraceStart = 0;
+let getStackTrace = function (startAfter) {
+	oldCaptureStackTrace(errorStackReceiver, startAfter);
+	return errorStackReceiver.stack;
+}, stackTraceStart = 0, stackTraceSplit = 0;
 if (globalThis.Bun) {
-	stackTraceStart = 2;
+	/*stackTraceStart = 2;
 	getStackTrace = function () {
 		oldCaptureStackTrace(errorStackReceiver);
 		return errorStackReceiver.stack;
-	};
-} else {
-	getStackTrace = function (startAfter) {
-		oldCaptureStackTrace(errorStackReceiver, startAfter);
-		return errorStackReceiver.stack;
-	};
+	};*/
+	stackTraceSplit = 1; // Bun requires 1 stack beneath the origin, anything beyond is external.
 };
 /** @param {Function} root */
 const isInternal = function (root) {
@@ -151,7 +157,7 @@ const isInternal = function (root) {
 		};
 	};
 	if (verdict == null) {
-		if (depth <= 0) {
+		if (depth <= stackTraceSplit) {
 			inspectInternal && console.debug(`Verdict (${depth}): inferred, type internal.`);
 			verdict = true;
 		} else {
@@ -513,9 +519,9 @@ export function getRestrictedView(processObject, reservedFeatures, rootName = "<
 		if (processObject[key] != null) {
 			//console.debug(key);
 			let assigned = processObject[key];
-			if (preventObtainThenAccessAtBoundary) {
+			/*if (preventObtainThenAccessAtBoundary) {
 				assigned = wrapProxies(assigned, tree);
-			};
+			};*/
 			// Mimics actual Node.js `process` properties.
 			Object.defineProperty(
 				publicView,
