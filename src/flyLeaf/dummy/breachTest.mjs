@@ -4,11 +4,14 @@
 const Deno = self.Deno;
 const DenoVersion = Deno.version;
 
+const testPassRecord = [];
 const testFailRecord = [];
+self.testPassRecord = testPassRecord;
 self.testFailRecord = testFailRecord;
 const testFail = function (value, reason) {
 	if (value == null) {
 		console.info(`Test "${reason}": passed.`);
+		testPassRecord.push(reason);
 	} else {
 		console.info(`Test "${reason}": failed.`);
 		testFailRecord.push(reason);
@@ -297,6 +300,83 @@ await new Promise(function abortSignal(ok) {
 	controller.abort();
 });
 
+// Blob
+await new Promise(function blob(ok) {
+	const attack = {
+		"toString": function blobTest() {
+			testFail(valueTest(), "blob");
+			ok();
+			return `The deer is always horny.`;
+		}
+	};
+	new Blob([attack]);
+});
+
+// Native string Base64 encoding
+await new Promise(function b64StrEncode(ok) {
+	const attack = {
+		"toString": function b64StrEncodeTest() {
+			testFail(valueTest(), "b64StrEncode");
+			ok();
+			return `The deer is always horny.`;
+		}
+	};
+	btoa(attack);
+});
+
+// Native string Base64 decoding
+await new Promise(function b64StrDecode(ok) {
+	const attack = {
+		"toString": function b64StrDecodeTest() {
+			testFail(valueTest(), "b64StrDecode");
+			ok();
+			return `VGhlIGRlZXIgaXMgYWx3YXlzIGhvcm55`;
+		}
+	};
+	atob(attack);
+});
+
+// HTTP request headers & request initialisation
+await new Promise(function httpReqHeader(ok) {
+	const attack = {
+		"toString": function httpReqHeaderTest() {
+			testFail(valueTest(), "httpReqHeader");
+			ok();
+			return `The deer is always horny.`;
+		}
+	};
+	new Request("https://the.deer.is/always-horny.html", {
+		"headers": {
+			"Authorization": attack
+		}
+	});
+});
+
+// HTTP response body
+await new Promise(function httpResp(ok) {
+	const attack = {
+		"toString": function httpRespTest() {
+			testFail(valueTest(), "httpResp");
+			ok();
+			return `The deer is always horny.`;
+		}
+	};
+	new Response(attack);
+});
+
+// HTTP form data
+await new Promise(function formData(ok) {
+	const attack = {
+		"toString": function httpRespTest() {
+			testFail(valueTest(), "formData");
+			ok();
+			return `The deer is always horny.`;
+		}
+	};
+	const form = new FormData();
+	form.append("key", attack);
+});
+
 // URL toString
 await new Promise(function urlString(ok) {
 	const attack = {
@@ -306,25 +386,54 @@ await new Promise(function urlString(ok) {
 			return `https://the.deer.is/always-horny.html`;
 		}
 	};
-	return new URL(attack);
+	new URL(attack);
+});
+
+// URL canParse
+await new Promise(function urlCanParse(ok) {
+	const attack = {
+		"toString": function urlCanParseTest() {
+			testFail(valueTest(), "urlCanParse");
+			ok();
+			return `https://the.deer.is/always-horny.html`;
+		}
+	};
+	URL.canParse(attack);
+});
+
+// URLSearchParams
+await new Promise(function urlSearchParams(ok) {
+	const attack = {
+		"toString": function urlSearchParamsTest() {
+			testFail(valueTest(), "urlSearchParams");
+			ok();
+			return `the-deer-is-always-horny`;
+		}
+	};
+	new URLSearchParams([["data", attack]]);
 });
 
 // Source fraud via evaluated functions
-eval(`(function evalBreach() {
-	(${testFail.toString()})((${valueTest.toString()})(), "eval");
+eval(`(function evalMasquerade() {
+	(${testFail.toString()})((${valueTest.toString()})(), "evalMasquerade");
 })() //# sourceURL=node:the_deer/is/always_horny`);
 
 // Source fraud via constructed functions
 (new Function(`(
-	(${testFail.toString()})((${valueTest.toString()})(), "function")
+	(${testFail.toString()})((${valueTest.toString()})(), "functionMasquerade")
 ) //# sourceURL=node:the_deer/is/always_horny`))();
 
+console.debug(`\nFinal report:`);
+for (const record of testPassRecord) {
+	console.info(`- \x1b[1;32mPASS\x1b[0m ${record}`);
+};
+for (const record of testFailRecord) {
+	console.info(`- \x1b[1;31mFAIL\x1b[0m ${record}`);
+};
 if (testFailRecord.length > 0) {
-	console.info(`\nFinal breach count: ${testFailRecord.length}`);
-	for (const record of testFailRecord) {
-		console.info(`- ${record}`);
-	};
 	console.info(`Breach test failed.`);
+	Deno.exit(1);
 } else {
 	console.info(`Breach test passed.`);
+	Deno.exit(0);
 };

@@ -25,7 +25,8 @@ const useNuclear = false; // Nuclear option.
 const lineLocationMatcher = /^\s+at(\s(?<async>async))?(\s(?<new>new))?\s((?<method>[\w\d/\\_.<>]+)\s)?(\[(?<alias>[\w\d _.@$#]+)\]\s)?\(?((?<location>(\w+:)?[ _\-+.,/\\@$#~%?&=;!\w\d]+):\d+:\d+|\<[\w\d]+\>)\)?$/gm;
 const internalPathTester = /^(internal|node):[ _\-+.,/\\@$#~%?&=;!\w\d]*$/m;
 const scriptInternalSourceTester = /\/\/(?<prefix>[#@]\s*)sourceURL=(?<url>(:|[ _\-+.,/\\@$#~%?&=;!\w\d])*)(?<suffix>[ \t]*)$/gm;
-const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(abort_controller|console\/constructor|event_target|modules\/esm\/(module_job|loader)|perf\/observe|process\/task_queues|timers|url|util\/inspect|webstreams\/(readablestream|transformstream|util|writablestream))))$|^node:internal\/per_context\//m;
+const externalPathPostponed = /^(node:(async_hooks|buffer|vm|internal\/(abort_controller|blob|console\/constructor|event_target|modules\/esm\/(module_job|loader)|perf\/observe|process\/task_queues|timers|url|util\/inspect|webstreams\/(readablestream|transformstream|util|writablestream))))$|^node:internal\/per_context\//m;
+const externalNamePostponed = /new "(Request|Response)"|"(_FormData\.append|Object\.RequestInit|webidl\.converters\.(BodyInit|ByteString|DOMString|HeadersInit|XMLHttpRequestBodyInit))"|("Object\.toUSVString" as USVString)/m; // Thinking of using whitelists instead...
 const externalPathImmediate = /^(REPL\d+|\[repl\]|(node:(repl|internal\/(modules\/run_main))))/m;
 const externalStrictImmediate = /^((npm|file|https?|[A-Z]):|\/)/m; // Nuclear option, not sure if this needs to be enabled. Likely lots of false negatives.
 
@@ -60,6 +61,7 @@ if (globalThis.Buffer) {
 	blacklistedExact.add(Buffer.allocUnsafe);
 	blacklistedExact.add(Buffer.concat);
 	blacklistedExact.add(Buffer.from);
+	blacklistedExact.add(Buffer.isBuffer);
 };
 if (globalThis.process) {
 	blacklistedExact.add(process.nextTick); // Hot loop calls from Bun internals.
@@ -139,7 +141,8 @@ const isInternal = function (root) {
 			typeof report.location !== "string"
 		) continue;
 		const {location} = report;
-		inspectInternal && console.debug(`Inspect (${depth}): ${location} ${report?.async ? "async " : ""}${report?.new ? "new " : ""}"${report?.method ?? "<empty>"}"${report?.alias ? ` ${report.alias}` : ""}`);
+		const signature = `${report?.async ? "async " : ""}${report?.new ? "new " : ""}"${report?.method ?? "<empty>"}"${report?.alias ? ` ${report.alias}` : ""}`;
+		inspectInternal && console.debug(`Inspect (${depth}): ${location} ${signature}`);
 		if (useNuclear && externalStrictImmediate.test(location)) {
 			inspectInternal && console.debug(`Verdict (${depth}): type spotted nuclear external.`);
 			verdict = false;
@@ -152,6 +155,7 @@ const isInternal = function (root) {
 		};
 		if (externalPathPostponed.test(location)) continue;
 		if (internalPathTester.test(location)) {
+			if (externalNamePostponed.test(signature)) continue;
 			inspectInternal && console.debug(`Verdict (${depth}): spotted, type internal.`);
 			verdict = true;
 			break;
@@ -222,6 +226,8 @@ const visualiseValue = function (value) {
 				default: {
 					if (value instanceof Array) {
 						return value.length < 2 ? `[(${value.length} element)]` : `[(${value.length} elements)]`;
+					} else if (value instanceof Error) {
+						return `${value.name ?? "<unknownError>"}${value.message.length > 0 ? ": " : ""}${value.message}`;
 					};
 					return value.constructor?.name ? `${value.constructor?.name} {}` : "{}";
 				};
@@ -293,12 +299,12 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 	let wrapCacheHit = wrappedObjectCache.get(unwrappedVictim);
 	if (wrapCacheHit != null) {
 		if (inspectProxy) {
-			console.info(`[\x1b[1;35m PR=\x1b[0m] ${tree.join(".")}: ${visualiseValue(victim)}`);
+			console.info(`[\x1b[1;35mPR =\x1b[0m] ${tree.join(".")}: ${visualiseValue(victim)}`);
 		};
 		return wrapCacheHit;
 	};
 	if (inspectProxy) {
-		console.info(`[\x1b[1;33m PR+\x1b[0m] ${tree.join(".")}: ${visualiseValue(victim)}`);
+		console.info(`[\x1b[1;33mPR +\x1b[0m] ${tree.join(".")}: ${visualiseValue(victim)}`);
 	};
 	if (!tree) {
 		switch (typeof unwrappedVictim) {
@@ -310,6 +316,16 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				tree = [victim[Symbol.toStringTag] ?? (victim.constructor && victim.constructor[Symbol.toStringTag])];
 			};
 		};
+	};
+	if (unwrappedVictim.constructor === Promise) {
+		unwrappedVictim.catch((err) => {
+			console.info(`[\x1b[1;31mA NO\x1b[0m] ${tree.join(".")} <= ${visualiseValue(err)}`);
+		});
+		unwrappedVictim.then((result) => {
+			console.info(`[\x1b[1;32mA OK\x1b[0m] ${tree.join(".")} => ${visualiseValue(result)}`);
+		}, (reason) => {
+			console.info(`[\x1b[1;31mA RJ\x1b[0m] ${tree.join(".")} <= ${visualiseValue(reason)}`);
+		});
 	};
 	const handlerGet = (target, key) => {
 		const newKeyTree = tree.slice();
@@ -323,7 +339,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 		if (sniffOnly || isInternal(handlerGet)) {
 			if (disablePrint) {
 			} else if (inspectTrace > 2) {
-				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}: ${visualiseValue(target[key])}`);
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
 			};
@@ -352,9 +368,9 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 		} else {
 			if (disablePrint) {
 			} else if (inspectTrace > 2) {
-				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(target[key])}`);
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}: (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(target[key])}`);
 			} else if (inspectTrace > 1) {
-				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}: (\x1b[1;31mbanned\x1b[0m)`);
 			};
 			return undefined;
 		};
@@ -461,7 +477,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 					return response;
 				};
 			} catch (err) {
-				console.info(`[\x1b[1;31mFAIL\x1b[0m] ${tree.join(".")}<${invokeId}>() <= ${err.name ?? "<unknownError>"}${err.message.length > 0 ? ": " : ""}${err.message}`);
+				console.info(`[\x1b[1;31mFAIL\x1b[0m] ${tree.join(".")}<${invokeId}>() <= ${visualiseValue(err)}`);
 				throw(err);
 			};
 		} else {
@@ -525,12 +541,12 @@ export function setInternalOnlyProperty(target, key, value) {
 };
 
 /** @template {T}
-* @param {T} processObject
+* @param {T} source
 * @param {Set<string>|Iterable<string>} reservedFeatures
 * @returns {T} */
-export function getRestrictedView(processObject, reservedFeatures, rootName = "<anonymous>", passThrough = false) {
+export function getRestrictedView(source, reservedFeatures, rootName = "<anonymous>", passThrough = false) {
 	if (passThrough) {
-		return wrapProxies(processObject, [rootName]);
+		return wrapProxies(source, [rootName]);
 	};
 	const publicView = new RestrictedView();
 	if (!reservedFeatures) return publicView;
@@ -538,22 +554,27 @@ export function getRestrictedView(processObject, reservedFeatures, rootName = "<
 		reservedFeatures = new Set(reservedFeatures);
 	};*/
 	for (const key of reservedFeatures) {
-		if (processObject[key] != null) {
-			//console.debug(key);
-			let assigned = processObject[key];
-			/*if (preventObtainThenAccessAtBoundary) {
-				assigned = wrapProxies(assigned, tree);
-			};*/
-			// Mimics actual Node.js `process` properties.
-			Object.defineProperty(
-				publicView,
-				key, {
-					"value": assigned,
-					"configurable": true,
-					"enumerable": true,
-					"writable": false,
-				}
-			);
+		const descriptor = Object.getOwnPropertyDescriptor(source, key);
+		if (descriptor == null) {
+			if (source[key] != null) {
+				//console.debug(key);
+				let assigned = source[key];
+				/*if (preventObtainThenAccessAtBoundary) {
+					assigned = wrapProxies(assigned, tree);
+				};*/
+				// Mimics actual Node.js `process` properties.
+				Object.defineProperty(
+					publicView,
+					key, {
+						"value": assigned,
+						"configurable": true,
+						"enumerable": true,
+						"writable": false,
+					}
+				);
+			};
+		} else {
+			Object.defineProperty(publicView, key, descriptor);
 		};
 	};
 	return wrapProxies(publicView, [rootName]);
