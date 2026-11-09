@@ -96,8 +96,16 @@ jobs:
       - name: Generate Ende proof
         run: "ende run --preload ./src/flyLeaf/loader/index.mjs --allow-read --allow-write --allow-env ./validate/runtimes/emit.mjs"
       - name: Generate Bun proof
+        env:
+          VERGILIUS_PRINT_TRACE: 3
+          VERGILIUS_PRINT_PROXY: 1
+          VERGILIUS_PRINT_STACK: 1
         run: "bun run --preload ./src/flyLeaf/loader/index.mjs ./validate/runtimes/emit.mjs"
       - name: Generate Node proof (eugh, disgusting)
+        env:
+          VERGILIUS_PRINT_TRACE: 3
+          VERGILIUS_PRINT_PROXY: 1
+          VERGILIUS_PRINT_STACK: 1
         run: "node --import ./src/flyLeaf/loader/index.mjs ./validate/runtimes/emit.mjs"
       - name: Move the proof
         run: "mv -v ./cache/validate ./proof"
