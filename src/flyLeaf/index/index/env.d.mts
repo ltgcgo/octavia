@@ -209,11 +209,32 @@ declare interface LeafMemoryUsage {
 }
 export type MemoryUsage = LeafMemoryUsage;
 
+/** System memory statistics summary snapshot. */
+declare interface LeafSystemMemoryInfo {
+	/** An estimation in bytes of how much RAM capacity is available for new processes without swapping.
+	*
+	* Unlike `cached` or `free`, this field also considers page cache, and the fact that not all reclaimable RAM will be reclaimed. */
+	available: number;
+	/** Memory capacity occupied by kernel buffers in bytes. */
+	buffers: number;
+	/** Memory capacity occupied by page cache and slabs in bytes. */
+	cached: number;
+	/** Vacant RAM capacity in bytes. */
+	free: number;
+	/** Total RAM capacity in bytes. */
+	total: number;
+	/** Vacant swap capacity in bytes. */
+	swapFree: number;
+	/** Total swap capacity in bytes. */
+	swapTotal: number;
+}
+export type SystemMemoryInfo = LeafSystemMemoryInfo;
+
 /** Valid system signals. Windows does not support signals, as such only a subset of the emulated signals will be available. */
 declare type LeafSystemSignal = "SIGABRT"|"SIGALRM"|"SIGBREAK"|"SIGBUS"|"SIGCHLD"|"SIGCONT"|"SIGEMT"|"SIGFPE"|"SIGHUP"|"SIGILL"|"SIGINFO"|"SIGINT"|"SIGIO"|"SIGKILL"|"SIGPIPE"|"SIGPOLL"|"SIGPROF"|"SIGPWR"|"SIGQUIT"|"SIGSEGV"|"SIGSTKFLT"|"SIGSTOP"|"SIGSYS"|"SIGTERM"|"SIGTRAP"|"SIGTSTP"|"SIGTTIN"|"SIGTTOU"|"SIGUNUSED"|"SIGURG"|"SIGUSR1"|"SIGUSR2"|"SIGVTALRM"|"SIGWINCH"|"SIGXCPU"|"SIGXFSZ";
 export type Signal = LeafSystemSignal;
 
-/** Replace the system signal receiver with the given one. Certain OSes only implement a subset of these signals, and certain OSes like Windows rely on emulation.
+/** Register the system signal receiver with the given one. Certain OSes only implement a subset of these signals, and certain OSes like Windows rely on emulation.
 *
 * Be cautious about replacing certain signal receivers. Like `SIGTERM`, as just like on Node.js, the runtime may not be able to quit the normal way. */
 export function addSignalListener(signal: LeafSystemSignal, receiver: () => void): void;
@@ -256,9 +277,12 @@ export const pid: number;
 /** Parent process ID of the current running instance. */
 export const ppid: number;
 /** Ensure the given schedule ID returned by `setInterval` or `setTimeout` block the event loop from finishing. */
-export function refTimer(scheduleId: number);
-export function removeSignalListener();
+export function refTimer(scheduleId: number): void;
+/** Unregister the system signal receiver with the given one. Certain OSes only implement a subset of these signals, and certain OSes like Windows rely on emulation. */
+export function removeSignalListener(signal: LeafSystemSignal, receiver: () => void): void;
+/** Summarise a snapshot of the memory usage statistics of the OS. */
+export function systemMemoryInfo(): LeafSystemMemoryInfo;
 /** Get the user ID of the current running executable. Certain OSes like Windows return `null` instead. */
 export function uid(): number|null;
 /** Ensure the given schedule ID returned by `setInterval` or `setTimeout` does not the event loop from finishing. */
-export function unrefTimer(scheduleId: number);
+export function unrefTimer(scheduleId: number): void;

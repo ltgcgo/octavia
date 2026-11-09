@@ -8,4 +8,6 @@
 
 await import("./init.mjs");
 await import("./polyfill.mjs");
-await import("./cleanUp.mjs");
+const {executeCleanUp} = await import("./cleanUp.mjs");
+
+executeCleanUp(self);

@@ -116,7 +116,7 @@ declare interface LeafCommandPassedOutput<execType extends LeafRunTypes, T exten
 declare interface LeafCommandFailedOutput<execType extends LeafRunTypes, T extends LeafCommandDetailsCommon> extends LeafChildRunFailStatusModern, LeafCommandOutputCommon<execType, T> {}
 /** The output of a child process. */
 declare type LeafCommandOutput<execType extends LeafRunTypes, T extends LeafCommandDetailsCommon> = LeafCommandPassedOutput<execType, T>|LeafCommandFailedOutput<execType, T>;
-/** Please rewrite your types to actually gain benefit from stricter types.
+/** Please rewrite your types to actually gain benefit from the stricter types.
 * @deprecated */
 export type CommandOutput = LeafCommandOutput<"output", {
 	"stderr": "piped",
@@ -171,7 +171,7 @@ declare class LeafChildProcess<T extends LeafCommandDetailsCommon> extends LeafC
 	/** Ensures that the status of the child does not block the runtime instance from quitting. */
 	unref(): void;
 }
-/** Please rewrite your types to actually gain benefit from stricter types.
+/** Please rewrite your types to actually gain benefit from the stricter types.
 * @deprecated */
 export type ChildProcess = typeof LeafChildProcess<{
 	"stderr": "piped",

@@ -7,6 +7,7 @@
 
 import {
 	getPrintInternal,
+	getPrintProxy,
 	getPrintTrace,
 	getPrisonWarden,
 	getSkipCheck
@@ -15,6 +16,7 @@ import {
 const skipCheck = getSkipCheck();
 const inspectTrace = getPrintTrace();
 const inspectInternal = getPrintInternal();
+const inspectProxy = getPrintProxy();
 const preventObtainThenAccessAtBoundary = getPrisonWarden();
 const hasStackTraceLimit = Error.stackTraceLimit;
 const oldCaptureStackTrace = Error.captureStackTrace;
@@ -72,10 +74,27 @@ const getRandomID = function () {
 };
 
 const RestrictedView = class RestrictedView {};
+/** @type {WeakMap<object|Function, object|Function>} */
 const unwrappedObjects = new WeakMap();
+/** @type {WeakMap<object|Function, object|Function} */
+const wrappedObjectCache = new WeakMap();
 
 /** @type {Error} */
 const errorStackReceiver = {};
+/** @type {(startAfter?: Function) => string|undefined} */
+let getStackTrace, stackTraceStart = 0;
+if (globalThis.Bun) {
+	stackTraceStart = 2;
+	getStackTrace = function () {
+		oldCaptureStackTrace(errorStackReceiver);
+		return errorStackReceiver.stack;
+	};
+} else {
+	getStackTrace = function (startAfter) {
+		oldCaptureStackTrace(errorStackReceiver, startAfter);
+		return errorStackReceiver.stack;
+	};
+};
 /** @param {Function} root */
 const isInternal = function (root) {
 	// Error.prepareStackTrace is non-standard and shouldn't be used. SpiderMonkey and JavaScriptCore don't have it.
@@ -100,13 +119,13 @@ const isInternal = function (root) {
 		restorePrepareStackTrace = Error.prepareStackTrace;
 		Error.prepareStackTrace = oldPrepareStackTrace;
 	};
-	oldCaptureStackTrace(errorStackReceiver, root);
-	let stackMsg = errorStackReceiver.stack;
+	let stackMsg = getStackTrace(root);
 	//console.debug(stackMsg);
 	let depth = 0;
 	let verdict = undefined;
 	for (const line of stackMsg.matchAll(lineLocationMatcher)) {
 		depth ++;
+		if (depth <= stackTraceStart) continue;
 		const report = line?.groups;
 		if (
 			report == null ||
@@ -132,13 +151,13 @@ const isInternal = function (root) {
 		};
 	};
 	if (verdict == null) {
-		/*if (depth <= 0) {
+		if (depth <= 0) {
 			inspectInternal && console.debug(`Verdict (${depth}): inferred, type internal.`);
 			verdict = true;
-		} else {*/
+		} else {
 			inspectInternal && console.debug(`Verdict (${depth}): inferred, type external.`);
 			verdict = false;
-		//};
+		};
 	};
 	if (typeof restorePrepareStackTrace === "function") {
 		Error.prepareStackTrace = restorePrepareStackTrace;
@@ -242,6 +261,16 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 	};
 	if (blacklistedConstructors.has(deepUnwrap(unwrappedVictim?.constructor))) {
 		return victim;
+	};
+	let wrapCacheHit = wrappedObjectCache.get(unwrappedVictim);
+	if (wrapCacheHit != null) {
+		if (inspectProxy) {
+			console.info(`[\x1b[1;35m PR=\x1b[0m] ${tree.join(".")}: ${visualiseValue(victim)}`);
+		};
+		return wrapCacheHit;
+	};
+	if (inspectProxy) {
+		console.info(`[\x1b[1;33m PR+\x1b[0m] ${tree.join(".")}: ${visualiseValue(victim)}`);
 	};
 	if (!tree) {
 		switch (typeof unwrappedVictim) {
@@ -452,6 +481,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 		"construct": handlerNew
 	});
 	unwrappedObjects.set(newProxy, victim);
+	wrappedObjectCache.set(victim, newProxy);
 	return newProxy;
 };
 

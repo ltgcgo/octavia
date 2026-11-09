@@ -83,6 +83,7 @@ export interface LeafFsWatcher extends AsyncIterable<LeafFsEvent>, DisposableObj
 export type FsWatcher = LeafFsWatcher;
 
 export class LeafFsFile implements DisposableObject, Disposable {
+	[Symbol.dispose](): void;
 	/** The binary file content present in a WHATWG readable stream. */
 	readable: ReadableStream<Uint8Array>;
 	/**  */

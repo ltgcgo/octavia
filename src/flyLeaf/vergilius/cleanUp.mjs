@@ -146,4 +146,3 @@ export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTar
 		};
 	};
 };
-executeCleanUp();

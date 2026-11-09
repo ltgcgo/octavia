@@ -27,7 +27,7 @@ declare const _LeafExport_:
 	typeof io &
 	typeof process;
 export default _LeafExport_;
-export const Deno = _LeafExport_;
+export const Deno: typeof _LeafExport_;
 
 export * from "./index/env.d.mts";
 export * from "./index/fs.d.mts";
