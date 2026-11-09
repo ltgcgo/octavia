@@ -15,4 +15,6 @@ export const spawnAndWait = Deno.spawnAndWait;
 export const spawnAndWaitSync = Deno.spawnAndWaitSync;
 
 // Polyfill not yet implemented.
-export const run = Deno.run ?? function run() {};
+export const run = Deno.run ?? function run() {
+	throw(new Error(`Not yet implemented.`));
+};

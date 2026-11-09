@@ -1,8 +1,10 @@
 to	from
+aix	aix
 android	android
 darwin	darwin,ios,macos
 freebsd	freebsd
 linux	linux
 netbsd	netbsd
 openbsd	openbsd
+solaris	solaris,sunos
 windows	windows,win32,win64

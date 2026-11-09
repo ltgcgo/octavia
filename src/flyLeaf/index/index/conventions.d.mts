@@ -17,9 +17,13 @@ export interface ExtendedReadableByteStream extends ReadableStream<Uint8Array> {
 	/** Consumes the stream, and return its content as a buffered text. */
 	text(): Promise<string>;
 }
-/** Do not use this interface in your code. This interface does not actually exist. Its entire use is to signal errors, and potentially prevent invalid code from building in the first place. */
-export interface Throws<T extends Error> {
-	error: T;
+/** Do not use this interface in your code. This interface does not actually exist. Its entire use is to signal errors, and potentially prevent invalid code from building in the first place.
+* @deprecated */
+export interface Throws<errorType extends Error, targetType> {
+	/** The actual error being thrown. */
+	error: errorType;
+	/** The supposed target type. */
+	value: targetType;
 }
 export interface WrappedAbortSignal {
 	/** An abort signal to cancel the operation. Depending on the backend runtime, abort signals may not always be supported.

@@ -21,6 +21,7 @@ export interface LeafDirEntry {
 	/**  */
 	isSymlink: boolean;
 }
+export type DirEntry = LeafDirEntry;
 
 export interface LeafFileInfo {
 	/**  */
@@ -66,6 +67,7 @@ export interface LeafFileInfo {
 	/**  */
 	uid?: number;
 }
+export type FileInfo = LeafFileInfo;
 
 export interface LeafFsEvent {
 	/**  */
@@ -75,10 +77,12 @@ export interface LeafFsEvent {
 	/**  */
 	path: string[];
 }
+export type FsEvent = LeafFsEvent;
 
 export interface LeafFsWatcher extends AsyncIterable<LeafFsEvent>, DisposableObject {}
+export type FsWatcher = LeafFsWatcher;
 
-export class LeafFsFile implements DisposableObject {
+export class LeafFsFile implements DisposableObject, Disposable {
 	/** The binary file content present in a WHATWG readable stream. */
 	readable: ReadableStream<Uint8Array>;
 	/**  */
@@ -145,6 +149,7 @@ export interface LeafMakeTempOptions {
 	/**  */
 	suffix?: string;
 }
+export type MakeTempOptions = LeafMakeTempOptions;
 
 export interface LeafMkdirOptions {
 	/** The permissions (e.g. `0o777`) associated with the target. */
@@ -152,6 +157,7 @@ export interface LeafMkdirOptions {
 	/** Attempt to create directories recursively, akin to `mkdir -p` on POSIX. */
 	recursive?: boolean;
 }
+export type MkdirOptions = LeafMkdirOptions;
 
 export interface LeafOpenOptions {
 	/** When true, imply `write: true` and append data to the end of a file. */
@@ -169,18 +175,22 @@ export interface LeafOpenOptions {
 	/** When true, request write permissions. */
 	write?: boolean;
 }
+export type OpenOptions = LeafOpenOptions;
 
 declare type LeafReadFileOptions = WrappedAbortSignal;
+export type ReadFileOptions = WrappedAbortSignal;
 
 export interface LeafRemoveOptions {
 	/**  */
 	recursive?: boolean;
 }
+export type RemoveOptions = LeafRemoveOptions;
 
 export interface LeafSymlinkOptions {
 	/**  */
 	type: "file"|"dir"|"junction";
 }
+export type SymlinkOptions = LeafSymlinkOptions;
 
 export interface LeafWatchOptions {
 	/**  */
@@ -188,6 +198,7 @@ export interface LeafWatchOptions {
 	/**  */
 	ignore?: string|string[];
 }
+export type WatchOptions = LeafWatchOptions;
 
 export interface LeafWriteFileOptions extends WrappedAbortSignal {
 	/** When true, imply `write: true` and append data to the end of a file. */
@@ -199,6 +210,7 @@ export interface LeafWriteFileOptions extends WrappedAbortSignal {
 	/** The permissions (e.g. `0o777`) associated with the target. */
 	mode?: number;
 }
+export type WriteFileOptions = LeafWriteFileOptions;
 
 /**  */
 export function chmod(path: string|URL, mode: number): Promise<void>;

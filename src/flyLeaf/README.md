@@ -37,20 +37,23 @@ All supported runtimes set `Deno.version.backend` and `Deno.version.engine`. For
 Runtimes may not actually execute the loader in the context of REPL, so debug with caution.
 
 ### Force import
-To make sure _Fly Leaf_ remains available regardless of runtime, likely for debug reasons, you can import _Fly Leaf_ as a whole in your project, or import the required APIs granularly. Apart from vendoring, you can import via direct HTTP(S) imports, import maps, or JSR, whichever is available and convenient.
+To make sure _Fly Leaf_ remains available regardless of runtime, you can import _Fly Leaf_ as a whole in your project, or import the required APIs granularly. Apart from vendoring, you can import via direct HTTP(S) imports, import maps, or JSR, whichever is available and convenient.
+
+If Fly Leaf is going to be included in a pre-compiled bundle intended for a single runtime, use the separate `rt.*.mjs` versions instead.
 
 ```js
-// Glob import...
-import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
-// Or default import. (recommended)
+// Default import. (recommended)
 import Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
+// Or glob import.
+import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ```
 
 ## Support
 #### Variants
 Fly Leaf offers two separate variants of the same Deno API. Unless absolutely needed, it's generally recommended to use the async-only variant.
 
-- [ ] Async-only: When both the synchronous and the asynchronous versions of the same API exist, subject to runtime feature availability, this Fly Leaf variant implements only the asynchronous versions. This allows Fly Leaf to support more runtimes and use more runtime-native features.
+- [ ] Async-only: When both the synchronous and the asynchronous versions of the same API exist, subject to runtime feature availability, this Fly Leaf variant implements only the asynchronous subset of the full variant. This allows Fly Leaf to support more runtimes and use more runtime-native features.
+  - [ ] Ant: `Ant.serve` for HTTP servers.
   - [ ] Bun: `BunFile` for files, `Bun.serve` for HTTP servers, and `Bun.spawn` for processes.
 - [x] Full: This version offers the entire collection of in-scope Deno APIs, subject to runtime feature availability.
 

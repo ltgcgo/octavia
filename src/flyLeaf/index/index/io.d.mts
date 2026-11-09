@@ -24,7 +24,9 @@ export interface LeafLegacyWrappedReader<T> extends DisposableObject, WrappedRea
 export interface LeafLegacyWrappedWriter<T> extends DisposableObject, WrappedWriteStream<T> {
 	write: undefined;
 }
+
 export interface LeafSetRawOptions {
 	/**  */
 	cbreak: boolean;
 }
+export type SetRawOptions = LeafSetRawOptions;

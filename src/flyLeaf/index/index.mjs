@@ -119,8 +119,11 @@ export {
 	writeTextFile,
 	writeTextFileSync
 };
+
+// This section should be in each runtime implementation itself to support runtime-specific imports.
 const defaultGlobals = _leaf_yield_(flyLeafGlobals, _leaf_overlay_);
 if (Symbol.toStringTag) {
 	defaultGlobals[Symbol.toStringTag] = "Leaf";
 };
 export default defaultGlobals;
+export { defaultGlobals as Deno };

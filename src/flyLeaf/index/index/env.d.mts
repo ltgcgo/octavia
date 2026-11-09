@@ -142,6 +142,8 @@ declare interface LeafVersion extends DenoVersion {
 	versions?: Record<string, string>|DenoVersion|NodeVersion;
 }
 /** The Deno version object extended by Fly Leaf. */
+export type Version = LeafVersion;
+/** The Deno version object extended by Fly Leaf. */
 export const version: LeafVersion;
 
 /** The Deno build information object. */
@@ -150,10 +152,8 @@ declare interface DenoBuildInfo {
 	*
 	* Fly Leaf permits way more than the original runtime, because it allows Deno code to be run on not just `aarch64` and `x86_64`. */
 	arch: "arm"|"armeb"|"aarch64"|"aarch64_be"|"loongarch64"|"mips"|"mipsel"|"mips64"|"mips64el"|"ppc"|"ppcle"|"ppc64"|"ppc64le"|"riscv32"|"riscv32be"|"riscv64"|"riscv64be"|"systemz"|"wasm32"|"x86"|"x86_64";
-	/** Operating system ID of the current machine.
-	*
-	* Fly Leaf permits way more than the original runtime, because it allows Deno code to be run on not just `darwin`, `linnux` and `windows`. */
-	os: "aix"|"android"|"darwin"|"freebsd"|"linux"|"netbsd"|"openbsd"|"windows";
+	/** Operating system ID of the current machine. */
+	os: "aix"|"android"|"darwin"|"freebsd"|"illumos"|"linux"|"netbsd"|"openbsd"|"solaris"|"windows";
 	/** Unknown attribute that's always false. Set to `boolean` here in case this does not satisfy the real Deno build object. */
 	standalone: boolean;
 	/** Compile target specifier in the LLVM format.
@@ -175,6 +175,8 @@ declare interface LeafBuildInfo extends DenoBuildInfo {
 	archNormal?: "arm32"|"arm32be"|"arm64"|"arm64be"|"loong64"|"mips"|"mipsle"|"mips64"|"mips64le"|"ppc"|"ppcle"|"ppc64"|"ppc64le"|"riscv32"|"riscv32be"|"riscv64"|"riscv64be"|"s390"|"s390x"|"wasm32"|"x86"|"amd64";
 }
 /** The Deno build information object extended by Fly Leaf. */
+export type BuildInfo = LeafBuildInfo;
+/** The Deno build information object extended by Fly Leaf. */
 export const build: LeafBuildInfo;
 
 /** A snapshot of the environment variables. */
@@ -192,6 +194,7 @@ declare interface LeafEnv {
 	/** Take a snapshot of the current environment variables. */
 	toObject(): LeafEnvSnapshot;
 }
+export type Env = LeafEnv;
 
 /** Memory usage summary snapshot. */
 declare interface LeafMemoryUsage {
@@ -204,9 +207,11 @@ declare interface LeafMemoryUsage {
 	/** Resident set size in bytes. Amount of memory actually used by the running instance. */
 	rss: number;
 }
+export type MemoryUsage = LeafMemoryUsage;
 
 /** Valid system signals. Windows does not support signals, as such only a subset of the emulated signals will be available. */
 declare type LeafSystemSignal = "SIGABRT"|"SIGALRM"|"SIGBREAK"|"SIGBUS"|"SIGCHLD"|"SIGCONT"|"SIGEMT"|"SIGFPE"|"SIGHUP"|"SIGILL"|"SIGINFO"|"SIGINT"|"SIGIO"|"SIGKILL"|"SIGPIPE"|"SIGPOLL"|"SIGPROF"|"SIGPWR"|"SIGQUIT"|"SIGSEGV"|"SIGSTKFLT"|"SIGSTOP"|"SIGSYS"|"SIGTERM"|"SIGTRAP"|"SIGTSTP"|"SIGTTIN"|"SIGTTOU"|"SIGUNUSED"|"SIGURG"|"SIGUSR1"|"SIGUSR2"|"SIGVTALRM"|"SIGWINCH"|"SIGXCPU"|"SIGXFSZ";
+export type Signal = LeafSystemSignal;
 
 /** Replace the system signal receiver with the given one. Certain OSes only implement a subset of these signals, and certain OSes like Windows rely on emulation.
 *
