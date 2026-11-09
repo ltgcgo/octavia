@@ -22,9 +22,10 @@ const hasStackTraceLimit = Error.stackTraceLimit;
 const oldCaptureStackTrace = Error.captureStackTrace;
 const oldPrepareStackTrace = Error.prepareStackTrace;
 const useNuclear = false; // Nuclear option.
-const lineLocationMatcher = /^\s+at(\s(?<async>async))?(\s(?<new>new))?\s((?<method>(\w|\d|[/\\_.<>])+)\s)?(\[(?<alias>(\w|\d|[ _.@$#])+)\]\s)?\(?((?<location>(\w+:)?([ _\-+.,/\\@$#]|\w|\d)+):\d+:\d+|\<(\w|\d)+\>)\)?$/gm;
-const internalPathTester = /^(internal|node):/m;
-const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(console\/constructor|event_target|modules\/esm\/(module_job|loader)|perf\/observe|process\/task_queues|timers|util\/inspect|webstreams\/(readablestream|transformstream|util|writablestream))))$|^node:internal\/per_context\//m;
+const lineLocationMatcher = /^\s+at(\s(?<async>async))?(\s(?<new>new))?\s((?<method>[\w\d/\\_.<>]+)\s)?(\[(?<alias>[\w\d _.@$#]+)\]\s)?\(?((?<location>(\w+:)?[ _\-+.,/\\@$#~%?&=;!\w\d]+):\d+:\d+|\<[\w\d]+\>)\)?$/gm;
+const internalPathTester = /^(internal|node):[ _\-+.,/\\@$#~%?&=;!\w\d]*$/m;
+const scriptInternalSourceTester = /\/\/(?<prefix>[#@]\s*)sourceURL=(?<url>(:|[ _\-+.,/\\@$#~%?&=;!\w\d])*)(?<suffix>[ \t]*)$/gm;
+const externalPathPostponed = /^(node:(async_hooks|vm|internal\/(abort_controller|console\/constructor|event_target|modules\/esm\/(module_job|loader)|perf\/observe|process\/task_queues|timers|url|util\/inspect|webstreams\/(readablestream|transformstream|util|writablestream))))$|^node:internal\/per_context\//m;
 const externalPathImmediate = /^(REPL\d+|\[repl\]|(node:(repl|internal\/(modules\/run_main))))/m;
 const externalStrictImmediate = /^((npm|file|https?|[A-Z]):|\/)/m; // Nuclear option, not sure if this needs to be enabled. Likely lots of false negatives.
 
@@ -244,6 +245,27 @@ const visualiseArguments = function (args) {
 	} else {
 		return "";
 	};
+};
+
+/** @param {string} script */
+export function stripScriptSourceUrl(script) {
+	const matches = [];
+	for (const e of script.matchAll(scriptInternalSourceTester)) {
+		const groups = e?.groups;
+		if (!groups) continue;
+		matches.push(`//${groups.prefix ?? ""}sourceURL=file:///isolated/${encodeURIComponent(groups.url ?? "").replaceAll(/%(2[Ff]|5[Cc])/g, "/")}${groups.suffix ?? ""}`);
+	};
+	const tmpSeparator = `_SEP:${getRandomID()}:SEP_`;
+	const surround = script.replaceAll(scriptInternalSourceTester, tmpSeparator).split(tmpSeparator);
+	let constructed = "";
+	for (let i = 0; i < surround.length; i ++) {
+		constructed += surround[i];
+		const matchEntry = matches[i];
+		if (matchEntry) {
+			constructed += matchEntry;
+		};
+	};
+	return constructed;
 };
 
 /** @template {T}

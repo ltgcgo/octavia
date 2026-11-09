@@ -27,6 +27,7 @@ declare const _LeafExport_:
 	typeof io &
 	typeof process;
 export default _LeafExport_;
+/** Only use it as a namespace, do not import this directly as this does not exist. */
 export const Deno: typeof _LeafExport_;
 
 export * from "./index/env.d.mts";

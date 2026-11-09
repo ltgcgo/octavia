@@ -7,7 +7,9 @@
 import { parseUaName } from "../common/util/uaParse.mjs";
 import {
 	getRestrictedView,
-	setInternalOnlyProperty
+	setInternalOnlyProperty,
+	stripScriptSourceUrl,
+    wrapProxies
 } from "./restrict.mjs";
 import { getAllowOldWeb } from "./config.mjs";
 
@@ -27,9 +29,91 @@ const removeProperties = (target, keys = []) => {
 	};
 };
 
+const RealEval = globalThis.eval;
+const RealFunction = globalThis.Function;
+
 const NodeProcess = globalThis.process;
 const NodeClassBuffer = globalThis.Buffer;
 const NodeClearImmediate = globalThis.clearImmediate;
+
+/*const MITMToString = function toString() {
+	return "function Function() {\n    [native code]\n}";
+};
+MITMToString.toString = MITMToString;
+const MITMEval = (function MITMEval(script) {
+	if (typeof script === "string") {
+		return RealEval(stripScriptSourceUrl(script));
+	} else {
+		return RealEval(script);
+	};
+}).bind(globalThis);&/
+/*delete MITMEval.name;
+Object.defineProperty(MITMEval, "name", {
+	"value": "eval",
+	"configurable": true,
+	"writable": false,
+	"enumerable": false,
+});*/
+//MITMEval.toString = MITMToString;
+/*const MITMFunction = class Function extends RealFunction {
+	constructor(...args) {
+		if (args.length > 0) {
+			const scriptBody = args[args.length - 1];
+			if (typeof scriptBody === "string") {
+				const tamperedArgs = args.slice(0, args.length - 1);
+				tamperedArgs.push(stripScriptSourceUrl(scriptBody));
+				super(...tamperedArgs);
+			} else {
+				super(...args);
+			};
+		} else {
+			super();
+		};
+	}
+};*/
+//MITMFunction.toString = MITMToString;
+const MITMEval = new Proxy(RealEval, {
+	"apply": function mitmEval(target, thisArg, args) {
+		const [script] = args;
+		if (typeof script === "string") {
+			const tamperedScript = stripScriptSourceUrl(script);
+			//console.info(tamperedScript);
+			return target.apply(thisArg, [tamperedScript]);
+		} else {
+			return target.apply(thisArg, args);
+		};
+	}
+});
+const MITMFunction = new Proxy(RealFunction, {
+	"apply": function mitmFuncExec(target, thisArg, args) {
+		if (args.length > 0) {
+			const scriptBody = args[args.length - 1];
+			if (typeof scriptBody === "string") {
+				const tamperedArgs = args.slice(0, args.length - 1);
+				tamperedArgs.push(stripScriptSourceUrl(scriptBody));
+				return RealFunction.apply(thisArg, tamperedArgs);
+			} else {
+				return RealFunction.apply(thisArg, args);
+			};
+		} else {
+			return RealFunction.apply(thisArg, args);
+		};
+	},
+	"construct": function mitmFuncNew(target, args) {
+		if (args.length > 0) {
+			const scriptBody = args[args.length - 1];
+			if (typeof scriptBody === "string") {
+				const tamperedArgs = args.slice(0, args.length - 1);
+				tamperedArgs.push(stripScriptSourceUrl(scriptBody));
+				return Reflect.construct(RealFunction, tamperedArgs);
+			} else {
+				return Reflect.construct(RealFunction, args);
+			};
+		} else {
+			return Reflect.construct(RealFunction, args);
+		};
+	}
+})/*RealFunction*/;
 
 /** @param {import("../index/index.d.mts")} denoCompatible */
 export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTarget.Ende ?? thisTarget.Deno) {
@@ -91,6 +175,10 @@ export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTar
 			"eval",
 			"unescape"
 		]); */ // Eval may need an interceptor.
+		//thisTarget.eval = wrapProxies(MITMEval, ["eval"], true);
+		thisTarget.eval = MITMEval;
+		//thisTarget.Function = wrapProxies(MITMFunction, ["Function"], true);
+		thisTarget.Function = MITMFunction;
 		removeProperties(thisTarget.Date.prototype, [
 			"getYear",
 			"setYear",

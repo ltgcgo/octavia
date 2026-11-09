@@ -5,6 +5,7 @@ const Deno = self.Deno;
 const DenoVersion = Deno.version;
 
 const testFailRecord = [];
+self.testFailRecord = testFailRecord;
 const testFail = function (value, reason) {
 	if (value == null) {
 		console.info(`Test "${reason}": passed.`);
@@ -145,30 +146,6 @@ await new Promise(function promiseThrow(ok) {
 	});
 });
 
-// MessagePort breach, likely also tests cross-context communication breaches
-await new Promise(function message(ok) {
-	const channels = new MessageChannel();
-	channels.port2.onmessage = function (ev) {
-		testFail(valueTest(), "message");
-		channels.port2.onmessage = undefined;
-		ok();
-	};
-	channels.port1.postMessage("The deer is always horny.");
-});
-
-// Performance marking
-await new Promise(function performanceMark(ok) {
-	const observer = new PerformanceObserver(function markReceiver(entries) {
-		testFail(valueTest(), "performanceMark");
-		observer.disconnect();
-		ok();
-	});
-	observer.observe({
-		"entryTypes": ["mark"]
-	});
-	performance.mark("The deer is always horny.");
-});
-
 // ReadableStream breach, start
 await new Promise(function readStreamStart(ok) {
 	const stream = new ReadableStream({
@@ -285,6 +262,62 @@ await new Promise(async function inspect(ok) {
 		};
 	} catch (err) {};
 });
+
+// MessagePort breach, likely also tests cross-context communication breaches
+await new Promise(function message(ok) {
+	const channels = new MessageChannel();
+	channels.port2.onmessage = function (ev) {
+		testFail(valueTest(), "message");
+		channels.port2.onmessage = undefined;
+		ok();
+	};
+	channels.port1.postMessage("The deer is always horny.");
+});
+
+// Performance marking
+await new Promise(function performanceMark(ok) {
+	const observer = new PerformanceObserver(function markReceiver(entries) {
+		testFail(valueTest(), "performanceMark");
+		observer.disconnect();
+		ok();
+	});
+	observer.observe({
+		"entryTypes": ["mark"]
+	});
+	performance.mark("The deer is always horny.");
+});
+
+// AbortSignal
+await new Promise(function abortSignal(ok) {
+	const controller = new AbortController();
+	controller.signal.onabort = function abortSignalTest(signal, ev) {
+		testFail(valueTest(), "abortSignal");
+		ok();
+	};
+	controller.abort();
+});
+
+// URL toString
+await new Promise(function urlString(ok) {
+	const attack = {
+		"toString": function urlStringTest() {
+			testFail(valueTest(), "urlString");
+			ok();
+			return `https://the.deer.is/always-horny.html`;
+		}
+	};
+	return new URL(attack);
+});
+
+// Source fraud via evaluated functions
+eval(`(function evalBreach() {
+	(${testFail.toString()})((${valueTest.toString()})(), "eval");
+})() //# sourceURL=node:the_deer/is/always_horny`);
+
+// Source fraud via constructed functions
+(new Function(`(
+	(${testFail.toString()})((${valueTest.toString()})(), "function")
+) //# sourceURL=node:the_deer/is/always_horny`))();
 
 if (testFailRecord.length > 0) {
 	console.info(`\nFinal breach count: ${testFailRecord.length}`);

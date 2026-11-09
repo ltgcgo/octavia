@@ -134,7 +134,8 @@ declare class LeafChildDetailsCommon implements AsyncDisposable {
 }
 /** The child process instance. Deprecated by Deno. */
 declare class LeafChildRunInstance<T extends LeafCommandDetailsCommon> extends LeafChildDetailsCommon implements DisposableObject {
-	/** The Deno-internal resource ID of the child. Accessing this field will cause `TypeError`s to be thrown. */
+	/** The Deno-internal resource ID of the child. Accessing this field will cause `TypeError`s to be thrown.
+	* @deprecated */
 	readonly rid: Throws<TypeError, number>;
 	/** The standard error. Cannot be used with `LeafChildRunInstance.stderrOutput`. */
 	readonly stderr: T["stderr"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError, null>;
