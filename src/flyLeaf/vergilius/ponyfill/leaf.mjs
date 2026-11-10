@@ -30,13 +30,16 @@ export const sessionStorage = new (class SessionStorage {
 		return this.#map.size;
 	};
 	clear() {
-		for (const key of this.#keys) {};
+		for (const key of this.#keys) {
+			this.#map.delete(key);
+		};
+		this.#populateKeys();
 	};
 	getItem(key) {
 		return this.#map.get(this.#stringValue(key)) ?? null;
 	};
 	key(id) {
-		return this.#keys[id];
+		return this.#keys[id] ?? null;
 	};
 	removeItem(key) {
 		this.#map.delete(this.#stringValue(key));

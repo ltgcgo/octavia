@@ -4,28 +4,43 @@
 
 "use strict";
 
-/** Use carefully, incorrect uses will cause memory leaks. */
+/** Use carefully, incorrect uses will cause memory leaks.
+* @template T */
 export class PoolIDMaps {
-	/** @type {Map<number, object|Function>} */
+	/** @type {Map<number, T>} */
 	#idToObject = new Map();
-	/** @type {WeakMap<object|Function, number>} */
+	/** @type {WeakMap<T, number>} */
 	#objectToId = new WeakMap();
 	#counter = 0;
 	#doWrap(intake) {
 		this.#counter = Math.max(intake, this.#counter);
-		if (this.#counter > 4294967295) {
+		if (this.#counter > 2147483647) {
 			this.#counter = 0;
 		};
+	};
+	#slotFree(id) {
+		let iterations = 0;
+		let freeId = id;
+		while (iterations < 2147483648 && this.#idToObject.has(freeId)) {
+			freeId ++;
+			if (freeId > 2147483647) {
+				freeId = 0;
+			};
+		};
+		if (iterations >= 2147483648 && this.#idToObject.has(freeId)) {
+			throw(new Error(`Pool capacity fulfilled.`));
+		};
+		return freeId;
 	};
 	/** @param {number} id  */
 	toSource(id) {
 		return this.#idToObject.get(id);
 	};
-	/** @param {object|Function} source */
+	/** @param {T} source */
 	toId(source) {
 		return this.#objectToId.get(source);
 	};
-	/** @param {object|Function} source
+	/** @param {T} source
 	* @returns {number} */
 	assign(source) {
 		if (source == null) {
@@ -44,13 +59,14 @@ export class PoolIDMaps {
 				if (typeof source[Symbol.toPrimitive]) {
 					const yieldedPrimitive = source[Symbol.toPrimitive]();
 					if (Number.isSafeInteger(yieldedPrimitive)) {
-						this.#doWrap(yieldedPrimitive + 1);
-						this.#objectToId.set(source, yieldedPrimitive);
-						this.#idToObject.set(yieldedPrimitive, source);
-						return yieldedPrimitive;
+						const actualValue = this.#slotFree(yieldedPrimitive);
+						this.#objectToId.set(source, actualValue);
+						this.#idToObject.set(actualValue, source);
+						this.#doWrap(actualValue + 1);
+						return actualValue;
 					};
 				};
-				const assignedId = this.#counter;
+				const assignedId = this.#slotFree(this.#counter);
 				this.#objectToId.set(source, assignedId);
 				this.#idToObject.set(assignedId, source);
 				this.#doWrap(this.#counter + 1);
@@ -58,12 +74,12 @@ export class PoolIDMaps {
 			};
 		};
 	};
-	/** @param {object|Function|number} handle */
+	/** @param {T|number} handle */
 	release(handle) {
-		if (source == null) {
+		if (handle == null) {
 			throw(new TypeError(`Non-null members required.`));
 		};
-		switch (typeof source) {
+		switch (typeof handle) {
 			case "bigint":
 			case "boolean":
 			case "string":
@@ -72,17 +88,18 @@ export class PoolIDMaps {
 				break;
 			};
 			case "number": {
-				const query = this.#idToObject.get(source);
+				const query = this.#idToObject.get(handle);
 				if (query != null) {
-					this.#idToObject.delete(source);
+					this.#idToObject.delete(handle);
 					this.#objectToId.delete(query);
 				};
+				break;
 			};
 			default: {
-				const query = this.#objectToId.get(source);
+				const query = this.#objectToId.get(handle);
 				if (query != null) {
 					this.#idToObject.delete(query);
-					this.#objectToId.delete(source);
+					this.#objectToId.delete(handle);
 				};
 			};
 		};

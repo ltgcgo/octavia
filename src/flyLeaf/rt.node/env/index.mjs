@@ -4,6 +4,7 @@
 
 "use strict";
 
+import { PoolIDMaps } from "../../common/class/pool.mjs";
 import {
 	LeafMemoryUsage,
 	LeafSystemMemoryInfo
@@ -25,6 +26,8 @@ export const pid = NodeProcess.pid;
 export const ppid = NodeProcess.ppid;
 
 const allSystemSignals = new Set(["SIGABRT", "SIGALRM", "SIGBREAK", "SIGBUS", "SIGCHLD", "SIGCONT", "SIGEMT", "SIGFPE", "SIGHUP", "SIGILL", "SIGINFO", "SIGINT", "SIGIO", "SIGKILL", "SIGPIPE", "SIGPOLL", "SIGPROF", "SIGPWR", "SIGQUIT", "SIGSEGV", "SIGSTKFLT", "SIGSTOP", "SIGSYS", "SIGTERM", "SIGTRAP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGUNUSED", "SIGURG", "SIGUSR1", "SIGUSR2", "SIGVTALRM", "SIGWINCH", "SIGXCPU", "SIGXFSZ"]);
+/** @type {PoolIDMaps<NodeJS.Timeout>} */
+const schedulePool = new PoolIDMaps();
 const signalListeners = new WeakMap();
 
 /** @param {import("../../index/index.d.mts").LeafSystemSignal} signal
@@ -82,6 +85,7 @@ export function osUptime() {
 export function refTimer(scheduleId) {
 	if (typeof scheduleId === "number") {
 		// Use the internal timer object referral system
+		schedulePool.toSource(scheduleId)?.ref();
 	} else if (typeof scheduleId.ref === "function") {
 		scheduleId.ref();
 	};
@@ -113,7 +117,37 @@ export function uid() {
 export function unrefTimer(scheduleId) {
 	if (typeof scheduleId === "number") {
 		// Use the internal timer object referral system
+		schedulePool.toSource(scheduleId)?.unref();
 	} else if (typeof scheduleId.unref === "function") {
 		scheduleId.unref();
 	};
+};
+
+/** @param {Function} func
+* @param {number} duration */
+export function _leaf_web_setInterval_(func, duration) {
+	return schedulePool.assign(NodeTimers.setInterval(func, duration));
+};
+/** @param {number|NodeJS.Timeout} handle */
+export function _leaf_web_clearInterval_(handle) {
+	if (typeof handle === "number") {
+		const query = schedulePool.toSource(handle);
+		if (query != null) handle = query;
+	};
+	NodeTimers.clearInterval(handle);
+	schedulePool.release(handle);
+};
+/** @param {Function} func
+* @param {number} duration */
+export function _leaf_web_setTimeout_(func, duration) {
+	return schedulePool.assign(NodeTimers.setTimeout(func, duration));
+};
+/** @param {number|NodeJS.Timeout} handle */
+export function _leaf_web_clearTimeout_(handle) {
+	if (typeof handle === "number") {
+		const query = schedulePool.toSource(handle);
+		if (query != null) handle = query;
+	};
+	NodeTimers.clearTimeout(handle);
+	schedulePool.release(handle);
 };
