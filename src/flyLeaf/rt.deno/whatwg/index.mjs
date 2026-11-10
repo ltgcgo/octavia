@@ -18,7 +18,9 @@ export function _leaf_web_setInterval_(func, duration) {
 	if (typeof response === "number") {
 		return response;
 	} else {
-		return schedulePool.assign(response);
+		const assigned = schedulePool.assign(response)
+		console.debug(response[Symbol.toPrimitive](), assigned);
+		return assigned;
 	};
 };
 /** @param {number|NodeJS.Timeout} handle */
@@ -37,7 +39,9 @@ export function _leaf_web_setTimeout_(func, duration) {
 	if (typeof response === "number") {
 		return response;
 	} else {
-		return schedulePool.assign(response);
+		const assigned = schedulePool.assign(response)
+		//console.debug(response[Symbol.toPrimitive](), assigned);
+		return assigned;
 	};
 };
 /** @param {number|NodeJS.Timeout} handle */
