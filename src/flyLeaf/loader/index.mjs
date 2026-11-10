@@ -22,6 +22,10 @@ if (self.Deno) {
 	const denoGlobals = self.Deno;
 	denoGlobals.version = Leaf.version;
 	denoGlobals.build = Leaf.build;
+	if (Leaf.version.backend === "Deno") {
+		denoGlobals.refTimer = Leaf.refTimer;
+		denoGlobals.unrefTimer = Leaf.unrefTimer;
+	};
 	if (typeof denoGlobals.run !== "function") {
 		denoGlobals.run = Leaf.run;
 	};

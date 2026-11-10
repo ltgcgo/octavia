@@ -4,15 +4,12 @@
 
 "use strict";
 
-import { PoolIDMaps } from "../../common/class/pool.mjs";
+import { schedulePool } from "./shared.mjs";
 
 const RealClearInterval = self.clearInterval;
 const RealClearTimeout = self.clearTimeout;
 const RealSetInterval = self.setInterval;
 const RealSetTimeout = self.setTimeout;
-
-/** @type {PoolIDMaps<NodeJS.Timeout>} */
-const schedulePool = new PoolIDMaps();
 
 /** @param {Function} func
 * @param {number} duration */

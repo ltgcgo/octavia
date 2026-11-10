@@ -6,6 +6,8 @@
 
 import LeafBuildInfo from "../../common/class/buildInfo.mjs";
 
+import { schedulePool } from "../whatwg/shared.mjs";
+
 const Deno = self.Deno ?? self.Ende;
 
 export const build = new LeafBuildInfo(
@@ -32,8 +34,15 @@ export const osRelease = Deno.osRelease;
 export const osUptime = Deno.osUptime;
 export const pid = Deno.pid;
 export const ppid = Deno.ppid;
-export const refTimer = Deno.refTimer;
 export const removeSignalListener = Deno.removeSignalListener;
 export const systemMemoryInfo = Deno.systemMemoryInfo;
 export const uid = Deno.uid;
-export const unrefTimer = Deno.unrefTimer;
+
+const RealRefTimer = Deno.refTimer;
+const RealUnrefTimer = Deno.unrefTimer;
+export function refTimer(scheduleId) {
+	RealRefTimer(schedulePool.toSource(scheduleId) ?? scheduleId);
+};
+export function unrefTimer(scheduleId) {
+	RealUnrefTimer(schedulePool.toSource(scheduleId) ?? scheduleId);
+};
