@@ -9,4 +9,6 @@ export * from "./version.mjs";
 export * from "./env/index.mjs";
 export * from "./fs/index.mjs";
 
+export * from "./whatwg/index.mjs";
+
 export * as _leaf_overlay_ from "./overlay/index.mjs";
