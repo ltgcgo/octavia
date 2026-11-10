@@ -23,13 +23,14 @@ const hasStackTraceLimit = Error.stackTraceLimit;
 const oldCaptureStackTrace = Error.captureStackTrace;
 const oldPrepareStackTrace = Error.prepareStackTrace;
 const useNuclear = false; // Nuclear option.
-const lineLocationMatcher = /^\s+at(\s(?<async>async))?(\s(?<new>new))?\s((?<method>[\w\d/\\_.<>]+)\s)?(\[(?<alias>[\w\d _.@$#]+)\]\s)?\(?((?<location>(\w+:)?[ _\-+.,/\\@$#~%?&=;!\w\d]+):\d+:\d+|\<[\w\d]+\>)\)?$/gm;
+const lineLocationMatcher = /^\s+at(\s(?<async>async))?(\s(?<new>new))?\s((?<method>[\w\d/\\_.<>]+)\s)?(\[(?<alias>[\w\d _.@$#]+)\]\s)?\(?((?<location>(\w+:)?[ _\-+.,/\\@$#~%?&=;!\[\]\w\d]+):\d+:\d+|\<[\w\d]+\>)\)?$/gm;
 const internalPathTester = /^(internal|node):[ _\-+.,/\\@$#~%?&=;!\w\d]*$/m;
-const scriptInternalSourceTester = /\/\/(?<prefix>[#@]\s*)sourceURL=(?<url>(:|[ _\-+.,/\\@$#~%?&=;!\w\d])*)(?<suffix>[ \t]*)$/gm;
+const scriptInternalSourceTester = /\/\/(?<prefix>[#@]\s*)sourceURL=(?<url>(:|[ _\-+.,/\\@$#~%?&=;!\[\]\w\d])*)(?<suffix>[ \t]*)$/gm;
 const externalPathPostponed = /^(node:(async_hooks|buffer|vm|internal\/(abort_controller|blob|console\/constructor|event_target|modules\/esm\/(module_job|loader)|perf\/observe|process\/task_queues|timers|url|util\/inspect|webstreams\/(readablestream|transformstream|util|writablestream))))$|^node:internal\/per_context\//m;
 const externalNamePostponed = /new "(Request|Response)"|"(_FormData\.append|Object\.RequestInit|webidl\.converters\.(BodyInit|ByteString|DOMString|HeadersInit|XMLHttpRequestBodyInit))"|("Object\.toUSVString" as USVString)/m; // Thinking of using whitelists instead...
 const externalPathImmediate = /^(REPL\d+|\[repl\]|(node:(repl|internal\/(modules\/run_main))))/m;
-const externalStrictImmediate = /^((npm|file|https?|[A-Z]):|\/)/m; // Nuclear option, not sure if this needs to be enabled. Likely lots of false negatives.
+const externalStrictImmediate = /^(npm):/m; // Why are you using NPM if on Fly Leaf?
+// /^((npm|file|https?|[A-Z]):|\/)/m The real nuclear option also includes local file path matching, which I'm not sure about whether it needs to be enabled. Likely lots of false negatives.
 
 const blacklistedProperties = new Set([
 	"prototype",
@@ -65,6 +66,7 @@ if (globalThis.Buffer) {
 	blacklistedExact.add(Buffer.isBuffer);
 };
 if (globalThis.process) {
+	process.binding && blacklistedExact.add(process.binding);
 	blacklistedExact.add(process.nextTick); // Hot loop calls from Bun internals.
 };
 
@@ -205,7 +207,8 @@ const visualiseValue = function (value) {
 			break;
 		};
 		case "function": {
-			return value?.name ? `${value?.name}() {}` : "() => {}";
+			const unwrapped = deepUnwrap(value);
+			return unwrapped?.name ? `${unwrapped?.name}() {}` : "() => {}";
 			break;
 		};
 		case "symbol":  {
@@ -223,18 +226,19 @@ const visualiseValue = function (value) {
 			break;
 		};
 		case "object": {
-			switch (value.constructor) {
+			const unwrapped = deepUnwrap(value);
+			switch (unwrapped.constructor) {
 				case Promise: {
 					return `Promise<unknown>`;
 					break;
 				};
 				default: {
-					if (value instanceof Array) {
-						return value.length < 2 ? `[(${value.length} element)]` : `[(${value.length} elements)]`;
-					} else if (value instanceof Error) {
-						return `${value.name ?? "<unknownError>"}${value.message.length > 0 ? ": " : ""}${value.message}`;
+					if (unwrapped instanceof Array) {
+						return value.length < 2 ? `[(${unwrapped.length} element)]` : `[(${unwrapped.length} elements)]`;
+					} else if (unwrapped instanceof Error) {
+						return `${unwrapped.name ?? "<unknownError>"}${unwrapped.message.length > 0 ? ": " : ""}${unwrapped.message}`;
 					};
-					return value.constructor?.name ? `${value.constructor?.name} {}` : "{}";
+					return unwrapped.constructor?.name ? `${unwrapped.constructor?.name} {}` : "{}";
 				};
 			};
 			break;
@@ -283,7 +287,10 @@ export function stripScriptSourceUrl(script) {
 * @param {T} victim
 * @param {string[]} tree
 * @returns {T} */
-export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = false) {
+export function wrapProxies(victim, tree, options = {
+	sniffOnly: false,
+	disablePrint: false
+}) {
 	let unwrappedVictim = deepUnwrap(victim);
 	if (unwrappedVictim == null) {
 		return victim;
@@ -311,6 +318,10 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 	if (inspectProxy) {
 		console.info(`[\x1b[1;33mPR +\x1b[0m] ${tree.join(".")}: ${visualiseValue(victim)}`);
 	};
+	const {
+		sniffOnly,
+		disablePrint
+	} = options ?? {};
 	if (!tree) {
 		switch (typeof unwrappedVictim) {
 			case "function": {
@@ -369,7 +380,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				return value;
 			};
 			const mutedChild = silentProperties.has(key) || disablePrint;
-			return wrapProxies(value, newKeyTree, sniffOnly, mutedChild);
+			return wrapProxies(value, newKeyTree, {sniffOnly, mutedChild});
 		} else {
 			if (disablePrint) {
 			} else if (inspectTrace > 2) {
@@ -410,7 +421,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 					sourceReadOnly = unwrappedVictim[key] === oldValue;
 				} else {
 					const oldValue = unwrappedVictim[key];
-					const wrappedValue = unwrappedValue === value ? wrapProxies(unwrappedValue, newKeyTree, sniffOnly, disablePrint) : value;
+					const wrappedValue = unwrappedValue === value ? wrapProxies(unwrappedValue, newKeyTree, options) : value;
 					Reflect.set(unwrappedVictim, key, wrappedValue);
 					writeFailed = unwrappedVictim[key] !== wrappedValue;
 					sourceReadOnly = unwrappedVictim[key] === oldValue;
@@ -454,7 +465,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				if ((typeof arg === "function" || typeof arg?.apply === "function") && !blacklistedConstructors.has(arg)) {
 					const newKeyTree = tree.slice();
 					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>{${i}}`);
-					copiedArgs.push(wrapProxies(arg, newKeyTree, sniffOnly, disablePrint));
+					copiedArgs.push(wrapProxies(arg, newKeyTree, options));
 				} else {
 					copiedArgs.push(arg);
 				};
@@ -477,7 +488,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				if (!blacklistedConstructors.has(response?.constructor) && (sniffOnly || inspectTrace > 1)) {
 					const newKeyTree = tree.slice();
 					newKeyTree.push(`${newKeyTree.pop()}<${invokeId}>()`);
-					return wrapProxies(response, newKeyTree, sniffOnly, disablePrint);
+					return wrapProxies(response, newKeyTree, options);
 				} else {
 					return response;
 				};
@@ -509,7 +520,7 @@ export function wrapProxies(victim, tree, sniffOnly = false, disablePrint = fals
 				newKeyTree.unshift(`(new ${newKeyTree.shift()}`);
 				return wrapProxies(
 					Reflect.construct(target, args),
-					newKeyTree, sniffOnly, disablePrint
+					newKeyTree, options
 				);
 			} else {
 				return Reflect.construct(target, args);

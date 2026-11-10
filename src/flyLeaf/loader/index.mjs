@@ -47,9 +47,13 @@ if (printTrace > 0 || getPrintInternal()) {
 	// So Deno/Ende makes the global "Deno" property read-only huh... Not anymore!
 	const oldDeno = self.Deno;
 	delete self.Deno;
-	self.Deno = wrapProxies(oldDeno, ["Deno"], true);
+	self.Deno = wrapProxies(oldDeno, ["Deno"], {
+		sniffOnly: true
+	});
 	if (printTrace > 3) {
-		const accessThis = wrapProxies(oldGlobal, ["self"], true);
+		const accessThis = wrapProxies(oldGlobal, ["self"], {
+			sniffOnly: true
+		});
 		oldGlobal.globalThis = accessThis;
 		oldGlobal.window = accessThis;
 		oldGlobal.self = accessThis;

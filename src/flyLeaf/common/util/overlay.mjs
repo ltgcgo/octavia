@@ -32,6 +32,7 @@ export function _leaf_apply_(ingest, overlays = {}, overwrite = false) {
 	for (const overlayKey in overlays) {
 		const overlay = overlays[overlayKey];
 		const oldValue = ingest[overlayKey];
+		console.debug(`Applied: ${overlayKey}`);
 		if (overwrite || (!Object.hasOwn(ingest, overlayKey) && oldValue == null)) {
 			Object.defineProperty(ingest, overlayKey, overlay);
 		};
@@ -47,9 +48,18 @@ export function _leaf_apply_(ingest, overlays = {}, overwrite = false) {
 export function _leaf_yield_(ingest, overlays = {}, overwrite = false) {
 	const newObject = new LeafCopiedView();
 	for (const key in ingest) {
-		const value = ingest[key];
-		if (value === overlays) continue;
-		newObject[key] = value;
+		//console.debug(self.process ? "yes" : "no");
+		//console.debug(self.process?.nextTick);
+		const descriptor = Object.getOwnPropertyDescriptor(ingest, key);
+		if (descriptor != null) {
+			//console.debug(`Copied (tunnel): ${key}`);
+			Object.defineProperty(newObject, key, descriptor);
+		} else {
+			const value = ingest[key];
+			//console.debug(`Copied (value): ${key}`);
+			if (value === overlays) continue;
+			newObject[key] = value;
+		};
 	};
 	_leaf_apply_(newObject, overlays, overwrite);
 	return newObject;

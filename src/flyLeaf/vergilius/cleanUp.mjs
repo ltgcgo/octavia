@@ -12,6 +12,7 @@ import {
     wrapProxies
 } from "./restrict.mjs";
 import { getAllowOldWeb } from "./config.mjs";
+import { _leaf_yield_ } from "../common/util/overlay.mjs";
 
 // The very last step to clean runtimes up. Do not run during API initialisation!
 /** @param {Iterable<string>} keys */
@@ -35,6 +36,16 @@ const RealFunction = globalThis.Function;
 const NodeProcess = globalThis.process;
 const NodeClassBuffer = globalThis.Buffer;
 const NodeClearImmediate = globalThis.clearImmediate;
+
+const CleanedNodeEnv = NodeProcess && self.Bun && {};
+const OverlaidNodeProcess = NodeProcess && self.Bun && _leaf_yield_(NodeProcess, {
+	"env": {
+		"value": CleanedNodeEnv,
+		"writable": true,
+		"enumerable": true,
+		"configurable": true
+	}
+}, true);
 
 /*const MITMToString = function toString() {
 	return "function Function() {\n    [native code]\n}";
@@ -212,11 +223,16 @@ export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTar
 	} else if (thisTarget.Ant) {
 	} else if (thisTarget.Bun) {
 		// Bun
-		thisTarget.process = getRestrictedView(NodeProcess, [
+		// env.NODE_DEBUG: Why the hell are using Fly Leaf if you want this?
+		// env.NODE_USE_ENV_PROXY: Unless `fetch` is affected (which it isn't), there is no reason to pass it through. Same goes for Node.js as well.
+		const gatedProcess = getRestrictedView(OverlaidNodeProcess, [
 			"_exiting",
 			"availableMemory",
+			"binding",
+			"env",
 			"nextTick"
 		], "process", false);
+		thisTarget.process = gatedProcess;
 	} else if (NodeProcess) {
 		switch (parseUaName(thisTarget.navigator?.userAgent)?.toLowerCase()) {
 			case "porffor": {

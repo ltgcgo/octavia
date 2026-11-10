@@ -58,6 +58,19 @@ Fly Leaf offers two separate variants of the same Deno API. Unless absolutely ne
 - [x] Full: This version offers the entire collection of in-scope Deno APIs, subject to runtime feature availability.
 
 ### Runtimes
+
+| S | A | Runtime | `backend` | `engine` | IMM | UEP |
+| - | - | ------- | --------- | -------- | --- | --- |
+| ✓ | ✓ | Ant | `Ant` | `Ant Silver` | 15.1+ | ? |
+| ✓ | ✓ | Bun | `Bun` | `JavaScriptCore` | 0.6+ | N/A |
+| ✓ | ✓ | Deno | `Deno` | `V8` | 1.0+ | N/A |
+| ✓ | ✓ | Ende | `Ende` | `V8` | 20261014+ | N/A |
+| ✓ | ✓ | Node.js | `Node` | `V8` | 22.18+, 24.2+ | 22.21+, 24.0+ |
+| ✓ | ✓ | Porffor | `Porffor` | `Porffor` | alpha 20+ | ? |
+
+- IMM: `import.meta.main`
+- UEP: `NODE_USE_ENV_PROXY`
+
 - [**Ant**](https://antjs.org/): WIP.
   - Requires a `TextDecoder` polyfill/ponyfill. Will largely be unneeded after Ant 17, when this line will get removed.
   - Avoid inlining script preloads via importing due to race conditions, use the demonstrated proper `--preload` feature instead.
@@ -78,14 +91,7 @@ Fly Leaf offers two separate variants of the same Deno API. Unless absolutely ne
 - [~~Steve's Den~~](https://github.com/stevefan1999-personal/den): Out of scope. Insufficient documentation, and the `den:*` import scheme is the exact thing Fly Leaf avoids, despite being older than _Ende_.
 - [Txiki.js](https://txikijs.org/): Investigating.
 
-| S | A | Runtime | `backend` | `engine` | IMM |
-| - | - | ------- | --------- | -------- | --- |
-| ✓ | ✓ | Ant | `Ant` | `Ant Silver` | 15.1+ |
-| ✓ | ✓ | Bun | `Bun` | `JavaScriptCore` | 0.6+ |
-| ✓ | ✓ | Deno | `Deno` | `V8` | 1.0+ |
-| ✓ | ✓ | Ende | `Ende` | `V8` | 20261014+ |
-| ✓ | ✓ | Node.js | `Node` | `V8` | 22.18+, 24.2+ |
-| ✓ | ✓ | Porffor | `Porffor` | `Porffor` | alpha 20+ |
+> As a side effect of offering Deno APIs on runtimes without them, _Fly Leaf_ also tests whether a runtime upholds JS features and their own advertised feature sets.
 
 ### Additional features
 #### Deno
