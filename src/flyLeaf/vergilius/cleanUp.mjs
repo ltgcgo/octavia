@@ -223,7 +223,7 @@ export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTar
 	} else if (thisTarget.Ant) {
 	} else if (thisTarget.Bun) {
 		// Bun
-		// env.NODE_DEBUG: Why the hell are using Fly Leaf if you want this?
+		// env.NODE_DEBUG: Why the hell are you using Fly Leaf if you want this?
 		// env.NODE_USE_ENV_PROXY: Unless `fetch` is affected (which it isn't), there is no reason to pass it through. Same goes for Node.js as well.
 		const gatedProcess = getRestrictedView(OverlaidNodeProcess, [
 			"_exiting",

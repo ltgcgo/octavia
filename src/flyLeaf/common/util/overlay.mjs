@@ -32,7 +32,7 @@ export function _leaf_apply_(ingest, overlays = {}, overwrite = false) {
 	for (const overlayKey in overlays) {
 		const overlay = overlays[overlayKey];
 		const oldValue = ingest[overlayKey];
-		console.debug(`Applied: ${overlayKey}`);
+		//console.debug(`Applied: ${overlayKey}`);
 		if (overwrite || (!Object.hasOwn(ingest, overlayKey) && oldValue == null)) {
 			Object.defineProperty(ingest, overlayKey, overlay);
 		};
