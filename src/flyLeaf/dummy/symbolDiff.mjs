@@ -21,12 +21,12 @@ for (const symbol in LeafDeno) {
 	allSymbols.add(symbol);
 };
 
-console.debug(`Symbol                  Glob  Default Expected`);
+console.debug(`Symbol                      Glob  Default Expected`);
 console.debug(`----------------------------------------------`);
 for (const symbol of (Array.from(allSymbols.keys())).sort()) {
 	console.debug(
 		`${
-			(symbol ?? "").padEnd(23, " ")
+			(symbol ?? "").padEnd(27, " ")
 		} ${
 			Object.hasOwn(LeafGlob, symbol) ? "true " : "false"
 		} ${

@@ -12,7 +12,7 @@ export function close() {
 };
 
 // Storage events may not yet be possible
-export const sessionStorage = new (class SessionStorage {
+export const sessionStorage = new (class SpThSessionStorage {
 	/** @type {Map<string, string>} */
 	#map = new Map();
 	#keys = [];

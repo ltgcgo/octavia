@@ -60,6 +60,12 @@ if (printTrace > 0 || getPrintInternal()) {
 	};
 };
 
+// Apply web polyfills when provided.
+Leaf._leaf_web_clearInterval_ && (oldGlobal.clearInterval = Leaf._leaf_web_clearsetInterval_);
+Leaf._leaf_web_clearTimeout_ && (oldGlobal.clearTimeout = Leaf._leaf_web_clearTimeout_);
+Leaf._leaf_web_setInterval_ && (oldGlobal.setInterval = Leaf._leaf_web_setInterval_);
+Leaf._leaf_web_setTimeout_ && (oldGlobal.setTimeout = Leaf._leaf_web_setTimeout_);
+
 // Apply web polyfills requiring the Deno global.
 _leaf_copyTo_(oldGlobal, LeafPolyfills);
 
