@@ -25,15 +25,18 @@ export const pid = NodeProcess.pid;
 export const ppid = NodeProcess.ppid;
 
 const allSystemSignals = new Set(["SIGABRT", "SIGALRM", "SIGBREAK", "SIGBUS", "SIGCHLD", "SIGCONT", "SIGEMT", "SIGFPE", "SIGHUP", "SIGILL", "SIGINFO", "SIGINT", "SIGIO", "SIGKILL", "SIGPIPE", "SIGPOLL", "SIGPROF", "SIGPWR", "SIGQUIT", "SIGSEGV", "SIGSTKFLT", "SIGSTOP", "SIGSYS", "SIGTERM", "SIGTRAP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGUNUSED", "SIGURG", "SIGUSR1", "SIGUSR2", "SIGVTALRM", "SIGWINCH", "SIGXCPU", "SIGXFSZ"]);
+const signalListeners = new WeakMap();
 
 /** @param {import("../../index/index.d.mts").LeafSystemSignal} signal
 * @param {() => void} handler */
 export function addSignalListener(signal, handler) {
 	// Some signal types are actually not possible on certain platforms. Out of scope for now.
 	if (allSystemSignals.has(signal)) {
-		NodeProcess.on(signal, () => {
+		const wrappedListener = () => {
 			handler(); // Deno doesn't pass the signal type string along, unlike Node.js.
-		});
+		};
+		signalListeners.set(handler, wrappedListener);
+		NodeProcess.on(signal, wrappedListener);
 	} else {
 		throw(new TypeError(`Invalid signal: ${signal}`)); // The exact same error message.
 	};
@@ -88,9 +91,10 @@ export function refTimer(scheduleId) {
 export function removeSignalListener(signal, handler) {
 	// Some signal types are actually not possible on certain platforms. Out of scope for now.
 	if (allSystemSignals.has(signal)) {
-		NodeProcess.off(signal, () => {
-			handler(); // Deno doesn't pass the signal type string along, unlike Node.js.
-		});
+		const wrappedListener = signalListeners.get(handler);
+		if (wrappedListener) {
+			NodeProcess.off(signal, wrappedListener);
+		};
 	} else {
 		throw(new TypeError(`Invalid signal: ${signal}`)); // The exact same error message.
 	};

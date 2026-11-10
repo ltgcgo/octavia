@@ -10,3 +10,40 @@
 export function close() {
 	Deno.exit();
 };
+
+// Storage events may not yet be possible
+export const sessionStorage = new (class SessionStorage {
+	/** @type {Map<string, string>} */
+	#map = new Map();
+	#keys = [];
+	#populateKeys() {
+		this.#keys = [... this.#map.keys()];
+	};
+	#stringValue(value) {
+		if (typeof value !== "string") {
+			return `${value}`;
+		} else {
+			return value;
+		};
+	};
+	get length() {
+		return this.#map.size;
+	};
+	clear() {
+		for (const key of this.#keys) {};
+	};
+	getItem(key) {
+		return this.#map.get(this.#stringValue(key)) ?? null;
+	};
+	key(id) {
+		return this.#keys[id];
+	};
+	removeItem(key) {
+		this.#map.delete(this.#stringValue(key));
+		this.#populateKeys();
+	};
+	setItem(key, value) {
+		this.#map.set(this.#stringValue(key), this.#stringValue(value));
+		this.#populateKeys();
+	};
+})();
