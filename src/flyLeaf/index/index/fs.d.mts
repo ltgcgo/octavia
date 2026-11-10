@@ -69,9 +69,12 @@ export interface LeafFileInfo {
 }
 export type FileInfo = LeafFileInfo;
 
+export type LeafFsEventFlag = "rescan";
+export type FsEventFlag = LeafFsEventFlag;
+
 export interface LeafFsEvent {
 	/**  */
-	flag?: "rescan";
+	flag?: LeafFsEventFlag;
 	/**  */
 	kind: "access"|"create"|"modify"|"remove"|"rename"|"other"|"any";
 	/**  */

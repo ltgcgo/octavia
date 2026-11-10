@@ -95,6 +95,7 @@ declare interface LeafChildRunFailStatusModern extends LeafChildRunFailStatusCom
 }
 /** The modern child process status. */
 declare type LeafChildRunStatusModern = LeafChildRunPassStatusModern|LeafChildRunFailStatusModern;
+export type CommandStatus = LeafChildRunStatusModern;
 /** Shared properties of the output of a child process. */
 declare interface LeafCommandOutputCommon<execType extends LeafRunTypes, T extends LeafCommandDetailsCommon> {
 	/** The buffered standard error. */
