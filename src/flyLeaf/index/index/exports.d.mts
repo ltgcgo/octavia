@@ -16,7 +16,11 @@ export function _leaf_apply_<T>(ingest: T, overlays: PropertyDescriptorMap, over
 * ``` */
 export function _leaf_yield_<T>(ingest: T, overlays: PropertyDescriptorMap, overwrite?: boolean): T;
 
+export type * from "./env.d.mts";
 export * from "./env.d.mts";
+export type * from "./fs.d.mts";
 export * from "./fs.d.mts";
+export type * from "./io.d.mts";
 export * from "./io.d.mts";
+export type * from "./process.d.mts";
 export * from "./process.d.mts";

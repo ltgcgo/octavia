@@ -13,6 +13,10 @@ import {
 	getSkipCheck
 } from "./config.mjs";
 
+import {
+	_leaf_copyTo_
+} from "../common/util/overlay.mjs";
+
 const maxStringLength = 96;
 const skipCheck = getSkipCheck();
 const inspectTrace = getPrintTrace();
@@ -261,6 +265,25 @@ const visualiseArguments = function (args) {
 		return "";
 	};
 };
+/** @param {PropertyDescriptor} descriptor */
+const visualiseDescriptor = function (descriptor) {
+	let result = "";
+	if ("value" in descriptor) {
+		result = `${visualiseValue(descriptor.value)}: `;
+	};
+	const verdicts = [];
+	if (typeof descriptor.get === "function") {
+		verdicts.push("getter");
+	};
+	if (typeof descriptor.set === "function") {
+		verdicts.push("setter");
+	};
+	verdicts.push(descriptor.writable ? "writable" : "readonly");
+	verdicts.push(descriptor.enumerable ? "listed" : "hidden");
+	verdicts.push(descriptor.configurable ? "configurable" : "hidden");
+	result += verdicts.join(", ");
+	return result;
+};
 
 /** @param {string} script */
 export function stripScriptSourceUrl(script) {
@@ -355,7 +378,7 @@ export function wrapProxies(victim, tree, options = {
 		if (sniffOnly || isInternal(handlerGet)) {
 			if (disablePrint) {
 			} else if (inspectTrace > 2) {
-				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}: ${visualiseValue(target[key])}`);
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
 			};
@@ -384,9 +407,9 @@ export function wrapProxies(victim, tree, options = {
 		} else {
 			if (disablePrint) {
 			} else if (inspectTrace > 2) {
-				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}: (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(target[key])}`);
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(target[key])}`);
 			} else if (inspectTrace > 1) {
-				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}: (\x1b[1;31mbanned\x1b[0m)`);
+				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
 			};
 			return undefined;
 		};
@@ -534,11 +557,129 @@ export function wrapProxies(victim, tree, options = {
 			return undefined;
 		};
 	};
+	const handlerGetPD = (target, key) => {
+		const result = Reflect.getOwnPropertyDescriptor(unwrappedVictim, key)
+		const unwrappedKey = deepUnwrap(key);
+		const newKeyTree = tree.slice();
+		newKeyTree.push(`{PD}${key}`);
+		if (sniffOnly || isInternal(handlerGetPD)) {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;34m GPD\x1b[0m] ${newKeyTree.join(".")} = ${visualiseDescriptor(result)}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;34m GPD\x1b[0m] ${newKeyTree.join(".")}`);
+			};
+			if (
+				blacklistedProperties.has(key) ||
+				blacklistedProperties.has(unwrappedKey) ||
+				(
+					valueDesc?.configurable === false &&
+					valueDesc?.writable === false
+				)
+			) return result;
+			if ("value" in result) {
+				const value = result.value;
+				const unwrappedValue = deepUnwrap(value);
+				if (
+					blacklistedConstructors.has(value?.constructor) ||
+					blacklistedConstructors.has(deepUnwrap(unwrappedValue?.constructor)) ||
+					blacklistedExact.has(value) ||
+					blacklistedExact.has(unwrappedValue)
+				) return result;
+			};
+			const newReply = {};
+			_leaf_copyTo_(newReply, result);
+			if ("value" in result) {
+				newReply.value = wrapProxies(result.value, tree, options);
+			};
+			return newReply;
+		} else {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;34m GPD\x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m) ${visualiseDescriptor(result)}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;34m GPD\x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
+			};
+			return undefined;
+		};
+	};
+	const handlerSPD = (target, key, descriptor) => {};
+	const handlerDelete = (target, key) => {
+		if (sniffOnly || isInternal(handlerDelete)) {
+			const result = Reflect.deleteProperty(unwrappedVictim, key);
+			if (disablePrint) {
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;33m DEL\x1b[0m] ${tree.join(".")}: ${result ? "passed" : "failed"}`);
+			};
+			return result;
+		} else {
+			if (disablePrint) {
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;33m DEL\x1b[0m] ${tree.join(".")}: (\x1b[1;31mbanned\x1b[0m)`);
+			};
+			return false;
+		};
+	};
+	const handlerHas = (target, key) => {
+		const result = Reflect.has(unwrappedVictim, key);
+		const unwrappedKey = deepUnwrap(key);
+		if (
+			sniffOnly || isInternal(handlerHas) ||
+			blacklistedProperties.has(key) ||
+			blacklistedProperties.has(unwrappedKey)
+		) {
+			if (disablePrint) {
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;36mHAS \x1b[0m] ${tree.join(".")}: ${result ? "exists" : "doesn't exist"}`);
+			};
+			return result;
+		} else {
+			if (disablePrint) {
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;36mHAS \x1b[0m] ${tree.join(".")}: (\x1b[1;31mbanned\x1b[0m) ${result ? "exists" : "doesn't exist"}`);
+			};
+			return false;
+		};
+	};
+	const handlerKeys = (target) => {
+		const result = Reflect.ownKeys(unwrappedVictim);
+		if (sniffOnly || isInternal(handlerKeys)) {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;36m KEY\x1b[0m] ${tree.join(".")}: ${visualiseValue(result)}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;36m KEY\x1b[0m] ${tree.join(".")}`);
+			};
+			return result;
+		} else {
+			if (disablePrint) {
+			} else if (inspectTrace > 2) {
+				console.info(`[\x1b[1;36m KEY\x1b[0m] ${tree.join(".")}: (\x1b[1;31mbanned\x1b[0m) ${visualiseValue(result)}`);
+			} else if (inspectTrace > 1) {
+				console.info(`[\x1b[1;36m KEY\x1b[0m] ${tree.join(".")}: (\x1b[1;31mbanned\x1b[0m)`);
+			};
+			const constructed = [];
+			for (const key of result) {
+				const unwrappedKey = deepUnwrap(key);
+				if (
+					blacklistedProperties.has(key) ||
+					blacklistedProperties.has(unwrappedKey)
+				) {
+					constructed.push(key);
+				};
+			};
+			return constructed;
+		};
+	};
 	const newProxy = new Proxy(victim, {
 		"get": handlerGet,
 		"set": handlerSet,
 		"apply": handlerCall,
-		"construct": handlerNew
+		"construct": handlerNew,
+		"deleteProperty": handlerDelete,
+		"getOwnPropertyDescriptor": handlerGetPD,
+		"has": handlerHas,
+		"ownKeys": handlerKeys
 	});
 	unwrappedObjects.set(newProxy, victim);
 	wrappedObjectCache.set(victim, newProxy);
