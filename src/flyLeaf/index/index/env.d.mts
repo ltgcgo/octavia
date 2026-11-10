@@ -211,21 +211,29 @@ export type MemoryUsage = LeafMemoryUsage;
 
 /** System memory statistics summary snapshot. */
 declare interface LeafSystemMemoryInfo {
-	/** An estimation in bytes of how much RAM capacity is available for new processes without swapping.
+	/** An estimation in bytes of how much RAM capacity is available for new processes without swapping. Unlike `cached` or `free`, this field also considers page cache, and the fact that not all reclaimable RAM will be reclaimed.
 	*
-	* Unlike `cached` or `free`, this field also considers page cache, and the fact that not all reclaimable RAM will be reclaimed. */
+	* This field may not always be populated due to OS differences. Like on the real Deno, this is always `0` on Windows. */
 	available: number;
-	/** Memory capacity occupied by kernel buffers in bytes. */
+	/** Memory capacity occupied by kernel buffers in bytes.
+	*
+	* This field may not always be populated due to OS differences. Like on the real Deno, this is always `0` on Windows. */
 	buffers: number;
-	/** Memory capacity occupied by page cache and slabs in bytes. */
+	/** Memory capacity occupied by page cache and slabs in bytes.
+	*
+	* This field may not always be populated due to OS differences. Shell access is required when not on Deno-derivatives. Like on the real Deno, this is always `0` on Windows. */
 	cached: number;
 	/** Vacant RAM capacity in bytes. */
 	free: number;
 	/** Total RAM capacity in bytes. */
 	total: number;
-	/** Vacant swap capacity in bytes. */
+	/** Vacant swap capacity in bytes.
+	*
+	* This field may not always be populated due to OS differences. Shell access is required when not on Deno-derivatives. */
 	swapFree: number;
-	/** Total swap capacity in bytes. */
+	/** Total swap capacity in bytes.
+	*
+	* This field may not always be populated due to OS differences. Shell access is required when not on Deno-derivatives. */
 	swapTotal: number;
 }
 export type SystemMemoryInfo = LeafSystemMemoryInfo;

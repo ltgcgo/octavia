@@ -4,10 +4,15 @@
 
 "use strict";
 
+import { IsDenoRepl } from "../common/class/matchers.mjs";
+
+/** @type {import("../index/index.d.mts").default} */
+let denoApi;
 /** @type {import("../index/index.d.mts").LeafEnv} */
 let denoEnvApi;
 const requestDeno = function () {
-	denoEnvApi = denoEnvApi ?? globalThis.Deno?.env;
+	denoApi = denoApi ?? globalThis.Deno;
+	denoEnvApi = denoEnvApi ?? denoApi?.env;
 };
 
 export function getAllowOldWeb() {
@@ -17,6 +22,10 @@ export function getAllowOldWeb() {
 export function getSkipCheck() {
 	requestDeno();
 	return denoEnvApi?.get("VERGILIUS_SKIP_CHECK")?.length > 0 ?? false;
+};
+export function getIsReplSession() {
+	requestDeno();
+	return IsDenoRepl.test(denoApi?.mainModule);
 };
 export function getPrintInternal() {
 	requestDeno();

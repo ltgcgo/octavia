@@ -46,7 +46,7 @@ const LeafFsFile = class LeafFsFile {
 		this.#closed = true;
 	};
 	/** @param {string|URL} path
-	* @param {import("../../index/index.d.mts").LeafOpenOptions} flags  */
+	* @param {import("../../index/index.d.mts").LeafOpenOptions} flags */
 	constructor(path, flags = {}) {
 		this.#path = path;
 		this.#flags = flags;

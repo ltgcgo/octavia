@@ -39,3 +39,16 @@ export class LeafMemoryUsage {
 		};
 	};
 };
+export class LeafSystemMemoryInfo {
+	total = 0;
+	free = 0;
+	available = 0;
+	buffers = 0;
+	cached = 0;
+	swapTotal = 0;
+	swapFree = 0;
+	constructor(total, free) {
+		if (total > 0) this.total = total;
+		if (free > 0) this.free = free;
+	};
+};

@@ -5,12 +5,14 @@
 "use strict";
 
 import {
-	LeafMemoryUsage
+	LeafMemoryUsage,
+	LeafSystemMemoryInfo
 } from "../../common/class/systemInfo.mjs";
 
 import NodeOs from "node:os";
 import NodePath from "node:path";
 import NodeProcess from "node:process";
+import NodeTimers from "node:timers";
 import NodeUrl from "node:url";
 
 export * from "./env.mjs";
@@ -22,58 +24,21 @@ export const noColor = NodeProcess.env["NO_COLOR"]?.length > 0;
 export const pid = NodeProcess.pid;
 export const ppid = NodeProcess.ppid;
 
+const allSystemSignals = new Set(["SIGABRT", "SIGALRM", "SIGBREAK", "SIGBUS", "SIGCHLD", "SIGCONT", "SIGEMT", "SIGFPE", "SIGHUP", "SIGILL", "SIGINFO", "SIGINT", "SIGIO", "SIGKILL", "SIGPIPE", "SIGPOLL", "SIGPROF", "SIGPWR", "SIGQUIT", "SIGSEGV", "SIGSTKFLT", "SIGSTOP", "SIGSYS", "SIGTERM", "SIGTRAP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGUNUSED", "SIGURG", "SIGUSR1", "SIGUSR2", "SIGVTALRM", "SIGWINCH", "SIGXCPU", "SIGXFSZ"]);
+
 /** @param {import("../../index/index.d.mts").LeafSystemSignal} signal
-* @param {() => void} handler  */
+* @param {() => void} handler */
 export function addSignalListener(signal, handler) {
 	// Some signal types are actually not possible on certain platforms. Out of scope for now.
-	switch (signal) {
-		case "SIGABRT":
-		case "SIGALRM":
-		case "SIGBREAK":
-		case "SIGBUS":
-		case "SIGCHLD":
-		case "SIGCONT":
-		case "SIGEMT":
-		case "SIGFPE":
-		case "SIGHUP":
-		case "SIGILL":
-		case "SIGINFO":
-		case "SIGINT":
-		case "SIGIO":
-		case "SIGKILL":
-		case "SIGPIPE":
-		case "SIGPOLL":
-		case "SIGPROF":
-		case "SIGPWR":
-		case "SIGQUIT":
-		case "SIGSEGV":
-		case "SIGSTKFLT":
-		case "SIGSTOP":
-		case "SIGSYS":
-		case "SIGTERM":
-		case "SIGTRAP":
-		case "SIGTSTP":
-		case "SIGTTIN":
-		case "SIGTTOU":
-		case "SIGUNUSED":
-		case "SIGURG":
-		case "SIGUSR1":
-		case "SIGUSR2":
-		case "SIGVTALRM":
-		case "SIGWINCH":
-		case "SIGXCPU":
-		case "SIGXFSZ": {
-			NodeProcess.on(signal, () => {
-				handler(); // Deno doesn't pass the signal type string along, unlike Node.js.
-			});
-			break;
-		};
-		default: {
-			throw(new TypeError(`Invalid signal: ${signal}`)); // The exact same error message.
-		};
+	if (allSystemSignals.has(signal)) {
+		NodeProcess.on(signal, () => {
+			handler(); // Deno doesn't pass the signal type string along, unlike Node.js.
+		});
+	} else {
+		throw(new TypeError(`Invalid signal: ${signal}`)); // The exact same error message.
 	};
 };
-/** @param {string|URL} folder  */
+/** @param {string|URL} folder*/
 export function chdir(folder) {
 	switch (folder.constructor) {
 		case URL: {
@@ -109,4 +74,42 @@ export function osRelease() {
 };
 export function osUptime() {
 	return NodeOs.uptime();
+};
+/** @param {number|NodeJS.Timeout} scheduleId */
+export function refTimer(scheduleId) {
+	if (typeof scheduleId === "number") {
+		// Use the internal timer object referral system
+	} else if (typeof scheduleId.ref === "function") {
+		scheduleId.ref();
+	};
+};
+/** @param {import("../../index/index.d.mts").LeafSystemSignal} signal
+* @param {() => void} handler */
+export function removeSignalListener(signal, handler) {
+	// Some signal types are actually not possible on certain platforms. Out of scope for now.
+	if (allSystemSignals.has(signal)) {
+		NodeProcess.off(signal, () => {
+			handler(); // Deno doesn't pass the signal type string along, unlike Node.js.
+		});
+	} else {
+		throw(new TypeError(`Invalid signal: ${signal}`)); // The exact same error message.
+	};
+};
+export function systemMemoryInfo() {
+	const sysMemInfo = new LeafSystemMemoryInfo(
+		NodeOs.totalmem(),
+		NodeOs.freemem()
+	);
+	return sysMemInfo;
+};
+export function uid() {
+	return NodeProcess.getuid();
+};
+/** @param {number|NodeJS.Timeout} scheduleId */
+export function unrefTimer(scheduleId) {
+	if (typeof scheduleId === "number") {
+		// Use the internal timer object referral system
+	} else if (typeof scheduleId.unref === "function") {
+		scheduleId.unref();
+	};
 };

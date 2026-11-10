@@ -2,7 +2,7 @@
 
 {
 	// Oh hey, Deno autocomplete without Deno!
-	/** @type {import("../index/index.d.mts")} */
+	/** @type {import("../index/index.d.mts").default} */
 	const Deno = self.Deno;
 	console.debug(`--- Deno version ---`);
 	console.debug(`API version: ${Deno?.version?.deno ?? "Not supplied"}`);
@@ -20,4 +20,7 @@
 	console.debug(`Has colour: ${Deno.noColor ? "No" : "Yes"}`);
 	console.debug(`Arguments: ${Deno.args.length > 0 ? "\"" + Deno?.args?.join("\" \"") + "\"" : "Not supplied"}`);
 	console.debug(`Script location: ${Deno?.mainModule ?? "Not supplied"}`);
+	Deno.unrefTimer(setTimeout(() => {
+		console.debug("This line should NEVER be printed.");
+	}, 2000));
 };

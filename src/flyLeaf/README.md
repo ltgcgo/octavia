@@ -122,7 +122,5 @@ Any deprecated feature that relies on resource IDs will not be re-implemented.
 - **Node.js-API Native Addon**. Use FFI or WASM instead.
 - **Permissions**. Without native runtime enforcement, permissions checks are likely bypassed easily, as such _Fly Leaf_ does not attempt to perform permission gating and report everything as green-lit instead. If the non-Deno-compatible runtime does offer permission gating, _Fly Leaf_ will bridge it.
 - **Sandbox**. Use proper sandboxes, like containers on `runsc`, Sysbox and Bubblewrap instead. _Fly Leaf_ is not and should not be used as a sandbox out-of-the-box. On runtimes like Ende where runtime-native globals can be fully replaced, _Fly Leaf_ can allow _Minuette_-like safer interception **after modification**.
-  - `Object.entries` may be used to bypass _Fly Leaf_ restrictions.
-  - `Object.getOwnPropertyDescriptor` may be used to bypass _Fly Leaf_ restrictions.
 - **Telemetry**. Deno relied on Node.js compatibility to interact with OpenTelemetry via `npm:@opentelemetry`, and its own documentation telemetry APIs are incomplete.
 - **TypeScript**. Fly Leaf is not a TypeScript transpiler, use runtimes with native TypeScript support, external bundlers, or TypeScript transpilers instead.

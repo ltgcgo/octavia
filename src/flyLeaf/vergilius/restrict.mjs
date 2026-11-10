@@ -6,6 +6,7 @@
 "use strict";
 
 import {
+	getIsReplSession,
 	getPrintInternal,
 	getPrintProxy,
 	getPrintTrace,
@@ -19,6 +20,7 @@ import {
 
 const maxStringLength = 96;
 const skipCheck = getSkipCheck();
+const isRepl = getIsReplSession();
 const inspectTrace = getPrintTrace();
 const inspectInternal = getPrintInternal();
 const inspectProxy = getPrintProxy();
@@ -280,7 +282,7 @@ const visualiseDescriptor = function (descriptor) {
 	};
 	verdicts.push(descriptor.writable ? "writable" : "readonly");
 	verdicts.push(descriptor.enumerable ? "listed" : "hidden");
-	verdicts.push(descriptor.configurable ? "configurable" : "hidden");
+	verdicts.push(descriptor.configurable ? "changeable" : "finalised");
 	result += verdicts.join(", ");
 	return result;
 };
@@ -366,7 +368,9 @@ export function wrapProxies(victim, tree, options = {
 			console.info(`[\x1b[1;31mA RJ\x1b[0m] ${tree.join(".")} <= ${visualiseValue(reason)}`);
 		});
 	};
+	let lastGetValueTime = 0;
 	const handlerGet = (target, key) => {
+		const invokeTime = Date.now();
 		const newKeyTree = tree.slice();
 		if (typeof key === "symbol") {
 			newKeyTree.push(key.toString());
@@ -376,12 +380,13 @@ export function wrapProxies(victim, tree, options = {
 			newKeyTree.push(key);
 		};
 		if (sniffOnly || isInternal(handlerGet)) {
-			if (disablePrint) {
+			if (disablePrint || (isRepl && invokeTime - lastGetValueTime < 1000)) {
 			} else if (inspectTrace > 2) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = ${visualiseValue(target[key])}`);
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")}`);
 			};
+			lastGetValueTime = invokeTime;
 			const value = Reflect.get(unwrappedVictim, key);
 			const unwrappedKey = deepUnwrap(key);
 			const unwrappedValue = deepUnwrap(value);
@@ -411,6 +416,7 @@ export function wrapProxies(victim, tree, options = {
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;34mGET \x1b[0m] ${newKeyTree.join(".")} = (\x1b[1;31mbanned\x1b[0m)`);
 			};
+			lastGetValueTime = invokeTime;
 			return undefined;
 		};
 	};
@@ -562,7 +568,11 @@ export function wrapProxies(victim, tree, options = {
 		const unwrappedKey = deepUnwrap(key);
 		const newKeyTree = tree.slice();
 		newKeyTree.push(`{PD}${key}`);
-		if (sniffOnly || isInternal(handlerGetPD)) {
+		if (
+			result?.configurable === false
+		) {
+			return result;
+		} else if (sniffOnly || isInternal(handlerGetPD)) {
 			if (disablePrint) {
 			} else if (inspectTrace > 2) {
 				console.info(`[\x1b[1;34m GPD\x1b[0m] ${newKeyTree.join(".")} = ${visualiseDescriptor(result)}`);
@@ -573,11 +583,11 @@ export function wrapProxies(victim, tree, options = {
 				blacklistedProperties.has(key) ||
 				blacklistedProperties.has(unwrappedKey) ||
 				(
-					valueDesc?.configurable === false &&
-					valueDesc?.writable === false
+					result?.configurable === false &&
+					result?.writable === false
 				)
 			) return result;
-			if ("value" in result) {
+			if (result && "value" in result) {
 				const value = result.value;
 				const unwrappedValue = deepUnwrap(value);
 				if (
@@ -589,7 +599,7 @@ export function wrapProxies(victim, tree, options = {
 			};
 			const newReply = {};
 			_leaf_copyTo_(newReply, result);
-			if ("value" in result) {
+			if (result && "value" in result) {
 				newReply.value = wrapProxies(result.value, tree, options);
 			};
 			return newReply;
@@ -641,15 +651,18 @@ export function wrapProxies(victim, tree, options = {
 			return false;
 		};
 	};
+	let lastGetKeyTime = 0;
 	const handlerKeys = (target) => {
+		const invokeTime = Date.now();
 		const result = Reflect.ownKeys(unwrappedVictim);
 		if (sniffOnly || isInternal(handlerKeys)) {
-			if (disablePrint) {
+			if (disablePrint || (isRepl && invokeTime - lastGetKeyTime < 1000)) {
 			} else if (inspectTrace > 2) {
 				console.info(`[\x1b[1;36m KEY\x1b[0m] ${tree.join(".")}: ${visualiseValue(result)}`);
 			} else if (inspectTrace > 1) {
 				console.info(`[\x1b[1;36m KEY\x1b[0m] ${tree.join(".")}`);
 			};
+			lastGetKeyTime = invokeTime;
 			return result;
 		} else {
 			if (disablePrint) {
@@ -666,8 +679,17 @@ export function wrapProxies(victim, tree, options = {
 					blacklistedProperties.has(unwrappedKey)
 				) {
 					constructed.push(key);
+					continue;
+				};
+				const valueDesc = Object.getOwnPropertyDescriptor(unwrappedVictim, key);
+				if (
+					valueDesc?.configurable === false
+				) {
+					constructed.push(key);
+					continue;
 				};
 			};
+			lastGetKeyTime = invokeTime;
 			return constructed;
 		};
 	};
