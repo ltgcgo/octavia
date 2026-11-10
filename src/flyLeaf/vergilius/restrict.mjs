@@ -567,7 +567,11 @@ export function wrapProxies(victim, tree, options = {
 		const result = Reflect.getOwnPropertyDescriptor(unwrappedVictim, key)
 		const unwrappedKey = deepUnwrap(key);
 		const newKeyTree = tree.slice();
-		newKeyTree.push(`{PD}${key}`);
+		if (typeof key === "symbol") {
+			newKeyTree.push(`{PD}${key.toString()}`);
+		} else {
+			newKeyTree.push(`{PD}${key}`);
+		};
 		if (
 			result?.configurable === false
 		) {
