@@ -140,7 +140,6 @@ export class LeafPermissionsBaseline {
 	querySync(details) {
 		this.#assertNoNull(details);
 		const hooks = this.#hooksQuery.get(details.name);
-		console.debug(hooks);
 		if (hooks && typeof hooks[0] === "function") {
 			return hooks[0](details);
 		} else {
