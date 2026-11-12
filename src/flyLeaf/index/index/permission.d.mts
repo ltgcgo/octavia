@@ -8,6 +8,10 @@ export type PermissionName = LeafPermName;
 export type LeafPermState = "denied"|"granted"|"prompt";
 export type PermissionState = LeafPermState;
 
+/** System information permission choices. A few potentially ambiguous entries are explained.
+* - `ca`: Certificate authority (store).  */
+declare type LeafSystemPermChoices = "ca"|"cpus"|"getPriority"|"gid"|"homedir"|"hostname"|"loadavg"|"networkInterfaces"|"osRelease"|"osUptime"|"setPriority"|"statfs"|"systemMemoryInfo"|"uid"|"umask"|"username";
+
 /** Environment variable access details. Gating emulation on runtimes with no native support is possible. */
 export interface LeafEnvPermDetails {
 	/** Permission type. */
@@ -62,7 +66,6 @@ export interface LeafRunPermDetails {
 }
 export type RunPermissionDescriptor = LeafRunPermDetails;
 
-declare type LeafSystemPermChoices = "ca"|"cpus"|"getPriority"|"gid"|"homedir"|"hostname"|"loadavg"|"networkInterfaces"|"osRelease"|"osUptime"|"setPriority"|"statfs"|"systemMemoryInfo"|"uid"|"umask"|"username";
 /** System information access details. Gating emulation on runtimes with no native support is possible. */
 export interface LeafSystemPermDetails {
 	/** Permission type. */
@@ -79,7 +82,7 @@ export interface LeafWritePermDetails {
 	/** Associated scoped path of allowed writes. */
 	path?: string|URL;
 }
-export type WritePermissionDetails = LeafWritePermDetails;
+export type WritePermissionDescriptor = LeafWritePermDetails;
 
 /** Access details. */
 export type LeafPermDetails = LeafEnvPermDetails|LeafFfiPermDetails|LeafImportPermDetails|LeafNetworkPermDetails|LeafReadPermDetails|LeafRunPermDetails|LeafSystemPermDetails|LeafWritePermDetails;
@@ -156,14 +159,29 @@ export class LeafPermStatus extends EventTarget {
 		options?: EventListenerOptions|boolean
 	): void;
 }
-export type PermissionStatus = LeafPermState;
+export type PermissionStatus = LeafPermStatus;
 
 /** The Deno permissions API, which is based on the web [permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API) but adapted for non-browser uses.
 *
 * - On Deno derivatives with native permissions support, this is [pass-through](https://docs.deno.com/api/deno/permissions/#Deno.Permissions).
 * - On other runtimes with permissions support, this follows their behaviour.
 * - On runtimes with no permissions support, everything is granted at startup, then subject to limited emulation whenever available. */
-export class LeafPermissions {}
+export class LeafPermissions {
+	/** Query the current status of a permission.
+	*
+	* Do note that `request` will not emit prompts on already granted permissions, so there's no need to chain queries before requests. */
+	query(details: LeafPermDetails): Promise<LeafPermStatus>;
+	/** The synchronous variant of `query`. */
+	querySync(details: LeafPermDetails): LeafPermStatus;
+	/** If the permission hasn't been granted, prompt to request then resolves to the result. */
+	request(details: LeafPermDetails): Promise<LeafPermStatus>;
+	/** The synchronous variant of `request`. */
+	requestSync(details: LeafPermDetails): LeafPermStatus;
+	/** Revoke a permission. */
+	revoke(details: LeafPermDetails): Promise<LeafPermStatus>;
+	/** The synchronous variant of `revoke`. */
+	revokeSync(details: LeafPermDetails): LeafPermStatus;
+}
 export type Permissions = LeafPermissions;
 
 /** The Deno permissions API, which is based on the web [permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API) but adapted for non-browser uses.
