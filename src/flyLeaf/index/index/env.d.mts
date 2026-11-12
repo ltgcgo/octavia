@@ -153,7 +153,7 @@ declare interface DenoBuildInfo {
 	* Fly Leaf permits way more than the original runtime, because it allows Deno code to be run on not just `aarch64` and `x86_64`. */
 	arch: "arm"|"armeb"|"aarch64"|"aarch64_be"|"loongarch64"|"mips"|"mipsel"|"mips64"|"mips64el"|"ppc"|"ppcle"|"ppc64"|"ppc64le"|"riscv32"|"riscv32be"|"riscv64"|"riscv64be"|"systemz"|"wasm32"|"x86"|"x86_64";
 	/** Operating system ID of the current machine. */
-	os: "aix"|"android"|"darwin"|"freebsd"|"illumos"|"linux"|"netbsd"|"openbsd"|"solaris"|"windows";
+	os: "aix"|"android"|"cygwin"|"darwin"|"freebsd"|"haiku"|"illumos"|"linux"|"netbsd"|"openbsd"|"solaris"|"windows";
 	/** Unknown attribute that's always false. Set to `boolean` here in case this does not satisfy the real Deno build object. */
 	standalone: boolean;
 	/** Compile target specifier in the LLVM format.
@@ -211,7 +211,7 @@ export type MemoryUsage = LeafMemoryUsage;
 
 /** System memory statistics summary snapshot. */
 declare interface LeafSystemMemoryInfo {
-	/** An estimation in bytes of how much RAM capacity is available for new processes without swapping. Unlike `cached` or `free`, this field also considers page cache, and the fact that not all reclaimable RAM will be reclaimed.
+	/** An estimation in bytes of how much RAM capacity is available for new processes without swapping. Unlike `cached` or `free`, this field also considers page cache, and the fact that not all reclaimable RAM will be reclaimed. Corresponds to `MemAvailable` in `/proc/meminfo`, and `process.freemem` in Node.js.
 	*
 	* This field may not always be populated due to OS differences. Like on the real Deno, this is always `0` on Windows. */
 	available: number;
@@ -223,9 +223,9 @@ declare interface LeafSystemMemoryInfo {
 	*
 	* This field may not always be populated due to OS differences. Shell access is required when not on Deno-derivatives. Like on the real Deno, this is always `0` on Windows. */
 	cached: number;
-	/** Vacant RAM capacity in bytes. */
+	/** Vacant RAM capacity in bytes. Corresponds to `MemFree` in `/proc/meminfo`. */
 	free: number;
-	/** Total RAM capacity in bytes. */
+	/** Total RAM capacity in bytes. Corresponds to `MemTotal` in `/proc/meminfo`, and `process.totalmem` in Node.js. */
 	total: number;
 	/** Vacant swap capacity in bytes.
 	*

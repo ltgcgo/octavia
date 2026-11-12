@@ -47,8 +47,7 @@ export class LeafSystemMemoryInfo {
 	cached = 0;
 	swapTotal = 0;
 	swapFree = 0;
-	constructor(total, free) {
+	constructor(total) {
 		if (total > 0) this.total = total;
-		if (free > 0) this.free = free;
 	};
 };

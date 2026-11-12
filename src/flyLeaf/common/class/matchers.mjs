@@ -4,6 +4,7 @@
 
 "use strict";
 
-export const TargetExtractLLVM = /^(?<arch>(\w|\d|[_])+)-(?<vendor>(\w|\d|[_])+)-(?<os>(\w|\d|[_])+)(-(?<env>(\w|\d|[_\-])+))?/m;
-export const NavigatorExtract = /(^|[ ]+)(?<name>(\w|\d|[.])+)\/(?<version>(\d|\w|[\-_])+([. ](\d|\w|[\-_])+)*)?( \((?<descriptor>(\w|\d|[ .:;\-_])+)\))?/m;
 export const IsDenoRepl = /\$deno\$repl\.mts$/m;
+export const NavigatorExtract = /(^|[ ]+)(?<name>(\w|\d|[.])+)\/(?<version>(\d|\w|[\-_])+([. ](\d|\w|[\-_])+)*)?( \((?<descriptor>(\w|\d|[ .:;\-_])+)\))?/m;
+export const SysMemLinuxLines = /^(?<field>[\w\d()]+):[ \t]+(?<value>\d+)([ \t]+(?<unit>[\w]+))?$/gm;
+export const TargetExtractLLVM = /^(?<arch>(\w|\d|[_])+)-(?<vendor>(\w|\d|[_])+)-(?<os>(\w|\d|[_])+)(-(?<env>(\w|\d|[_\-])+))?/m;

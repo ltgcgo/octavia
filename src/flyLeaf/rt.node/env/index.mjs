@@ -6,8 +6,7 @@
 
 import { PoolIDMaps } from "../../common/class/pool.mjs";
 import {
-	LeafMemoryUsage,
-	LeafSystemMemoryInfo
+	LeafMemoryUsage
 } from "../../common/class/systemInfo.mjs";
 
 import NodeOs from "node:os";
@@ -17,6 +16,7 @@ import NodeTimers from "node:timers";
 import NodeUrl from "node:url";
 
 export * from "./env.mjs";
+export * from "./sysMem.mjs";
 
 export const args = NodeProcess.argv.slice(2);
 export const mainModule = NodeUrl.pathToFileURL(NodeProcess.argv[1] ?? `${NodeProcess.cwd()}${NodePath.sep}$deno$repl.mts`).href;
@@ -102,13 +102,6 @@ export function removeSignalListener(signal, handler) {
 	} else {
 		throw(new TypeError(`Invalid signal: ${signal}`)); // The exact same error message.
 	};
-};
-export function systemMemoryInfo() {
-	const sysMemInfo = new LeafSystemMemoryInfo(
-		NodeOs.totalmem(),
-		NodeOs.freemem()
-	);
-	return sysMemInfo;
 };
 export function uid() {
 	return NodeProcess.getuid();
