@@ -12,7 +12,7 @@ import {
 } from "../../src/state/utils.js";
 import {
 	bufferFrom
-} from "../../src/state/utils/bufferIo.mjs";
+} from "../../libs/rochelle@ltgcgo/bufferIO.mjs";
 import {
 	assertEquals,
 	assertThrows

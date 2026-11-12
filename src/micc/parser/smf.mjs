@@ -20,8 +20,8 @@ import {
 	MIDIStateErrorSysEx
 } from "../../errors/index.mjs";
 import {
-	bufferCarveOut
-} from "../../state/utils/bufferIo.mjs";
+	bufferCarve as bufferCarveOut
+} from "../../../libs/rochelle@ltgcgo/bufferIO.mjs";
 import MICCConstants from "../classes/constants.mjs";
 import {
 	MIDINakedEvent

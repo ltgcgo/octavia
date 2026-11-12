@@ -6,7 +6,7 @@
 import MiniSignal from "../../libs/twinkle@ltgcgo/miniSignal.mjs";
 import {
 	allocateU8
-} from "../state/utils/bufferIo.mjs";
+} from "../../libs/rochelle@ltgcgo/bufferIO.mjs";
 
 let blankFont = new Uint8Array(40);
 

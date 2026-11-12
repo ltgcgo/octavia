@@ -10,7 +10,7 @@ import {
 import {
 	bufferFrom,
 	bufferTo
-} from "../state/utils/bufferIo.mjs";
+} from "../../libs/rochelle@ltgcgo/bufferIO.mjs";
 import {
 	bufferToDHex
 } from "../state/utils.js";

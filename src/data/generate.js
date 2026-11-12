@@ -4,7 +4,7 @@ import TextReader from "../../libs/rochelle@ltgcgo/textRead.mjs";
 import DSVParser from "../../libs/rochelle@ltgcgo/dsvParse.mjs";
 import {
 	bitFieldPack
-} from "../state/utils/bufferIo.mjs";
+} from "../../libs/rochelle@ltgcgo/bufferIO.mjs";
 
 {
 	// Master chord map

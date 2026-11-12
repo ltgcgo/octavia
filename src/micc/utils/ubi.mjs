@@ -5,7 +5,7 @@
 
 import {
 	bufferFrom
-} from "../../state/utils/bufferIo.mjs";
+} from "../../../libs/rochelle@ltgcgo/bufferIO.mjs";
 
 /** @typedef {string|ArrayBuffer|ArrayBufferView|Blob|File|Response|HTMLInputElement|FileList|ReadableStream<Uint8Array>|AsyncIterable<Uint8Array>} UnifiedBinaryIntake */
 
