@@ -221,7 +221,7 @@ declare interface LeafSystemMemoryInfo {
 	buffers: number;
 	/** Memory capacity occupied by page cache and slabs in bytes.
 	*
-	* This field may not always be populated due to OS differences. Shell access is required when not on Deno-derivatives. Like on the real Deno, this is always `0` on Windows. */
+	* This field may not always be populated due to OS differences. Shell access is required when not on Deno-derivatives. Like on the real Deno, this is never populated anywhere, and is thus always `0`. */
 	cached: number;
 	/** Vacant RAM capacity in bytes. Corresponds to `MemFree` in `/proc/meminfo`. */
 	free: number;

@@ -101,7 +101,7 @@ export function systemMemoryInfo() {
 				if (failure) {
 					throw(bubbledError ?? new Error(`Failed PowerShell execution.`));
 				};
-				const parsedMiBObject = JSON.parse(rawResult);
+				const parsedMiBObject = JSON.parse(rawSwapResult);
 				const swapTotal = toByteIEC(parsedMiBObject["AllocatedBaseSize"], "MiB");
 				sysMemInfo.swapTotal = swapTotal;
 				sysMemInfo.swapFree = swapTotal - (toByteIEC(parsedMiBObject["CurrentUsage"], "MiB") || 0);

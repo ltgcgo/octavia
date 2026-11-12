@@ -11,7 +11,7 @@ export function toByteIEC(value, unit) {
 		value = parseFloat(value);
 	};
 	if (!Number.isFinite(value)) {
-		throw(new RangeError(`Invalied value, must be finite.`));
+		throw(new RangeError(`Invalid value, must be finite.`));
 	};
 	const unitQuery = FactorIECByte[unit];
 	if (typeof unitQuery !== "number") {
