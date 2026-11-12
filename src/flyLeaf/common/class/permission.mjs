@@ -63,7 +63,7 @@ const permSysHooks = {
 	}
 };
 
-export class LeafPermissionsFallback {
+export class LeafPermissionsBaseline {
 	/** @type {import("../../index/index.d.mts").LeafPermRuntimeHookMapBoth} */
 	#hooksQuery = new Map();
 	/** @type {import("../../index/index.d.mts").LeafPermRuntimeHookMapBoth} */
@@ -99,7 +99,7 @@ export class LeafPermissionsFallback {
 				for (const hookType in typeHook) {
 					/** @type {import("../../index/index.d.mts").LeafPermHookMethodBoth} */
 					const actualHook = typeHook[hookType];
-					if (typeof actualHook !== "function") {
+					if (typeof actualHook[0] !== "function") {
 						throw(new TypeError(`The "${hookType}" hook type must be a method.`));
 					};
 					switch (hookType) {
@@ -126,18 +126,93 @@ export class LeafPermissionsFallback {
 		};
 	};
 	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
-	querySync(details) {
+	#assertNoNull(details){
 		if (!details) {
-			throw(new TypeError("The provided value \"undefined\" is not a valid permission name.")); // Actual text.
+			throw(new TypeError(`The provided value "undefined" is not a valid permission name.`)); // Actual text.
 		};
-		const hooksQuery = this.#hooksQuery.get(details.name);
-		if (typeof hooksQuery === "function") {
-			return hooksQuery(details);
+	};
+	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	querySync(details) {
+		this.#assertNoNull(details);
+		const hooks = this.#hooksQuery.get(details.name);
+		if (hooks && typeof hooks[0] === "function") {
+			return hooks[0](details);
 		} else {
 			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
 		};
 	};
+	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
 	async query(details) {
-		return this.querySync(details);
+		this.#assertNoNull(details);
+		let failed = true;
+		const hooks = this.#hooksQuery.get(details.name);
+		if (hooks) {
+			if (typeof hooks[1] === "function") {
+				failed = false;
+				return await hooks[1](details);
+			} else if (typeof hooks[0] === "function") {
+				failed = false;
+				return hooks[0](details);
+			};
+		};
+		if (failed) {
+			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
+		};
+	};
+	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	requestSync(details) {
+		this.#assertNoNull(details);
+		const hooks = this.#hooksQuery.get(details.name);
+		if (hooks && typeof hooks[0] === "function") {
+			return hooks[0](details);
+		} else {
+			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
+		};
+	};
+	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	async request(details) {
+		this.#assertNoNull(details);
+		let failed = true;
+		const hooks = this.#hooksQuery.get(details.name);
+		if (hooks) {
+			if (typeof hooks[1] === "function") {
+				failed = false;
+				return await hooks[1](details);
+			} else if (typeof hooks[0] === "function") {
+				failed = false;
+				return hooks[0](details);
+			};
+		};
+		if (failed) {
+			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
+		};
+	};
+	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	revokeSync(details) {
+		this.#assertNoNull(details);
+		const hooks = this.#hooksQuery.get(details.name);
+		if (hooks && typeof hooks[0] === "function") {
+			return hooks[0](details);
+		} else {
+			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
+		};
+	};
+	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	async revoke(details) {
+		this.#assertNoNull(details);
+		let failed = true;
+		const hooks = this.#hooksQuery.get(details.name);
+		if (hooks) {
+			if (typeof hooks[1] === "function") {
+				failed = false;
+				return await hooks[1](details);
+			} else if (typeof hooks[0] === "function") {
+				failed = false;
+				return hooks[0](details);
+			};
+		};
+		if (failed) {
+			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
+		};
 	};
 };

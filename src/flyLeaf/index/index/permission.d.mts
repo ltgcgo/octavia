@@ -184,8 +184,11 @@ export class LeafPermissions {
 }
 export type Permissions = LeafPermissions;
 
-/** Individual hooks communicating with the native runtime. */
-declare type LeafPermHookMethodBoth = (details: LeafPermDetails) => LeafPermStatus;
+/** Individual synchronous hooks communicating with the native runtime. */
+declare type LeafPermHookMethodSync = (details: LeafPermDetails) => LeafPermStatus;
+/** Individual asynchronous hooks communicating with the native runtime. */
+declare type LeafPermHookMethodAsync = (details: LeafPermDetails) => Promise<LeafPermStatus>;
+declare type LeafPermHookMethodBoth = [LeafPermHookMethodSync, LeafPermHookMethodAsync|undefined];
 /** Collection of communication hooks. */
 declare type LeafPermRuntimeHookMapBoth = Map<LeafPermName, LeafPermHookMethodBoth>;
 /** Communication hooks by type. */
