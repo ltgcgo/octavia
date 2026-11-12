@@ -2,7 +2,7 @@
 // 2026-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0+ license.
 
-export type LeafPermName = "env"|"ffi"|"net"|"read"|"run"|"sys"|"write";
+export type LeafPermName = "env"|"ffi"|"import"|"net"|"read"|"run"|"sys"|"write";
 export type PermissionName = LeafPermName;
 
 export type LeafPermState = "denied"|"granted"|"prompt";
@@ -21,39 +21,41 @@ export interface LeafEnvPermDetails {
 }
 export type EnvPermissionDescriptor = LeafEnvPermDetails;
 
+declare interface LeafPermDetailsWithHost {
+	/** Associated hostname of the permission, in the form of `<hostname>[:<port>]`. */
+	path?: string|URL;
+}
+
+declare interface LeafPermDetailsWithPath {
+	/** Associated scoped path of the permission. Depending on the exact type of permission, this can specify exact files. */
+	path?: string|URL;
+}
+
 /** FFI access details. */
-export interface LeafFfiPermDetails {
+export interface LeafFfiPermDetails extends LeafPermDetailsWithPath {
 	/** Permission type. */
 	name: "ffi";
-	/** Associated scoped path of allowed FFI imports. */
-	path?: string|URL;
 }
 export type FfiPermissionDescriptor = LeafFfiPermDetails;
 
 /** Import access details. Gating on runtimes with no native support is impossible, and revocations are no-ops. */
-export interface LeafImportPermDetails {
+export interface LeafImportPermDetails extends LeafPermDetailsWithHost {
 	/** Permission type. */
 	name: "import";
-	/** Associated scoped hostname of allowed imports, in the form of `<hostname>[:<port>]`. */
-	host?: string;
 }
 export type ImportPermissionDescriptor = LeafImportPermDetails;
 
 /** Egress network access details. */
-export interface LeafNetworkPermDetails {
+export interface LeafNetworkPermDetails extends LeafPermDetailsWithHost {
 	/** Permission type. */
 	name: "net";
-	/** Associated scoped hostname of allowed egress targets, in the form of `<hostname>[:<port>]`. */
-	host?: string;
 }
 export type NetPermissionDescriptor = LeafNetworkPermDetails;
 
 /** Read access details. */
-export interface LeafReadPermDetails {
+export interface LeafReadPermDetails extends LeafPermDetailsWithPath {
 	/** Permission type. */
 	name: "read";
-	/** Associated scoped path of allowed reads. */
-	path?: string|URL;
 }
 export type ReadPermissionDescriptor = LeafReadPermDetails;
 
@@ -76,11 +78,9 @@ export interface LeafSystemPermDetails {
 export type SysPermissionDescriptor = LeafSystemPermDetails;
 
 /** Write access details. */
-export interface LeafWritePermDetails {
+export interface LeafWritePermDetails extends LeafPermDetailsWithPath {
 	/** Permission type. */
 	name: "write";
-	/** Associated scoped path of allowed writes. */
-	path?: string|URL;
 }
 export type WritePermissionDescriptor = LeafWritePermDetails;
 
@@ -183,6 +183,15 @@ export class LeafPermissions {
 	revokeSync(details: LeafPermDetails): LeafPermStatus;
 }
 export type Permissions = LeafPermissions;
+
+/** Individual hooks communicating with the native runtime. */
+declare type LeafPermHookMethodBoth = (details: LeafPermDetails) => LeafPermStatus;
+/** Collection of communication hooks. */
+declare type LeafPermRuntimeHookMapBoth = Map<LeafPermName, LeafPermHookMethodBoth>;
+/** Communication hooks by type. */
+declare type LeafPermRuntimeTypeHooksBoth = Record<"query"|"request"|"revoke", LeafPermHookMethodBoth>;
+/** Collection of typed communication hooks. */
+declare type LeafPermRuntimeHooksBoth = Record<LeafPermName, LeafPermRuntimeTypeHooksBoth>;
 
 /** The Deno permissions API, which is based on the web [permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API) but adapted for non-browser uses.
 *

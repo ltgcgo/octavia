@@ -14,6 +14,28 @@ export * from "./index/exports.d.mts";
 // Copy from here.
 
 import {
+	Permissions,
+	permissions,
+	PermissionStatus
+} from "./index/permission.d.mts";
+import type {
+	EnvPermissionDescriptor,
+	FfiPermissionDescriptor,
+	ImportPermissionDescriptor,
+	NetPermissionDescriptor,
+	PermissionDescriptor,
+	PermissionName,
+	PermissionOptions,
+	PermissionOptionsObject,
+	PermissionState,
+	PermissionStatusEventMap,
+	ReadPermissionDescriptor,
+	RunPermissionDescriptor,
+	SysPermissionDescriptor,
+	WritePermissionDescriptor
+} from "./index/permission.d.mts";
+
+import {
 	addSignalListener,
 	args,
 	build,
@@ -138,6 +160,29 @@ import type {
 declare global {
 	/** Only use it as a namespace, do not import this directly as this does not exist. */
 	namespace Deno {
+		// permission
+		export {
+			Permissions,
+			permissions,
+			PermissionStatus
+		}
+		// permission type
+		export type {
+			EnvPermissionDescriptor,
+			FfiPermissionDescriptor,
+			ImportPermissionDescriptor,
+			NetPermissionDescriptor,
+			PermissionDescriptor,
+			PermissionName,
+			PermissionOptions,
+			PermissionOptionsObject,
+			PermissionState,
+			PermissionStatusEventMap,
+			ReadPermissionDescriptor,
+			RunPermissionDescriptor,
+			SysPermissionDescriptor,
+			WritePermissionDescriptor
+		}
 		// env
 		export {
 			addSignalListener,
