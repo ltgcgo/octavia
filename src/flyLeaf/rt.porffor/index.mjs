@@ -8,6 +8,7 @@ import "../vergilius/init.mjs";
 export * from "../common/constant/index.mjs";
 export * from "./version.mjs";
 export * from "./buildInfo.mjs";
+export * from "./permission/index.mjs";
 export * from "./env/index.mjs";
 export * from "./fs/index.mjs";
 
