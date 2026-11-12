@@ -4,14 +4,15 @@
 
 "use strict";
 
+import {
+	LeafDirEntry,
+	LeafFileInfo
+} from "./translate.mjs";
+import { LeafFsFile } from "./handle.mjs";
+
 import {Readable as NodeReadable} from "node:stream";
 import * as NodeFs from "node:fs";
 const NodeAsyncFs = NodeFs.promises;
-
-import {
-	LeafDirEntry
-} from "./translate.mjs";
-import { FsFile } from "./handle.mjs";
 
 /** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
 export async function mkdir(path, options) {
@@ -24,11 +25,11 @@ export function mkdirSync(path, options) {
 
 /** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
 export async function open(path, options) {
-	return new FsFile(path, options);
+	return new LeafFsFile(path, options);
 };
 /** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
 export function openSync(path, options) {
-	return new FsFile(path, options);
+	return new LeafFsFile(path, options);
 };
 
 export async function *readDir(path) {
@@ -48,4 +49,17 @@ export function *readDirSync(path) {
 	)) {
 		yield new LeafDirEntry(entry);
 	};
+};
+
+export async function stat(path) {
+	return new LeafFileInfo(await NodeAsyncFs.stat(path, {
+		"bigint": false,
+		"throwIfNoEntry": true
+	}));
+};
+export function statSync(path) {
+	return new LeafFileInfo(NodeFs.statSync(path, {
+		"bigint": false,
+		"throwIfNoEntry": true
+	}));
 };

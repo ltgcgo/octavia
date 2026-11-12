@@ -19,12 +19,12 @@ import {
 } from "../common/util/overlay.mjs";
 
 const maxStringLength = 96;
-const skipCheck = getSkipCheck();
-const isRepl = getIsReplSession();
-const inspectTrace = getPrintTrace();
-const inspectInternal = getPrintInternal();
-const inspectProxy = getPrintProxy();
-//const preventObtainThenAccessAtBoundary = getPrisonWarden();
+let skipCheck = getSkipCheck();
+let isRepl = getIsReplSession();
+let inspectTrace = getPrintTrace();
+let inspectInternal = getPrintInternal();
+let inspectProxy = getPrintProxy();
+//let preventObtainThenAccessAtBoundary = getPrisonWarden();
 const hasStackTraceLimit = Error.stackTraceLimit;
 const oldCaptureStackTrace = Error.captureStackTrace;
 const oldPrepareStackTrace = Error.prepareStackTrace;
@@ -97,6 +97,15 @@ const RestrictedView = class RestrictedView {};
 const unwrappedObjects = new WeakMap();
 /** @type {WeakMap<object|Function, object|Function} */
 const wrappedObjectCache = new WeakMap();
+
+export function init(leaf) {
+	skipCheck = getSkipCheck(leaf);
+	isRepl = getIsReplSession(leaf);
+	inspectTrace = getPrintTrace(leaf);
+	inspectInternal = getPrintInternal(leaf);
+	inspectProxy = getPrintProxy(leaf);
+	//preventObtainThenAccessAtBoundary = getPrisonWarden();
+};
 
 /** @type {Error} */
 const errorStackReceiver = {};

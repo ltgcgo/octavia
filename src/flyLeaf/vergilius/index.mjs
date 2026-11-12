@@ -8,6 +8,16 @@
 
 await import("./init.mjs");
 await import("./polyfill.mjs");
+const {
+	init,
+	isCallSiteInternal
+} = await import("../vergilius/restrict.mjs");
 const {executeCleanUp} = await import("./cleanUp.mjs");
 
 executeCleanUp(self);
+
+export {
+	init,
+	isCallSiteInternal,
+	executeCleanUp
+};

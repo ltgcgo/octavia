@@ -23,48 +23,49 @@ export interface LeafDirEntry {
 }
 export type DirEntry = LeafDirEntry;
 
+/** Meta information of a specific path. Suspiciously close to Node.js conventions. */
 export interface LeafFileInfo {
-	/**  */
+	/** Last access time. */
 	atime?: Date;
-	/**  */
+	/** Creation time. */
 	birthtime?: Date;
-	/**  */
+	/** Block size for file system I/O. Only available on Unix-likes. */
 	blksize?: number;
-	/**  */
+	/** Number of blocks allocated to the entity on the path. */
 	blocks?: number;
-	/**  */
+	/** Last change time. */
 	ctime?: Date;
-	/**  */
+	/** ID of the device containing the entity on the path. */
 	dev: number;
-	/**  */
+	/** Group ID of the owner of the entity on the path. */
 	gid?: number;
-	/**  */
+	/** `inode` number on Unix-likes, or file index number on Windows. Not guaranteed to exist on all platforms. */
 	ino?: number;
-	/**  */
+	/** If the path points to a block device. Only available on Unix-likes. */
 	isBlockDevice?: boolean;
-	/**  */
+	/** If the path points to a character device. Only available on Unix-likes. */
 	isCharDevice?: boolean;
-	/**  */
+	/** If the path points to a regular directory. */
 	isDirectory: boolean;
-	/**  */
+	/** If the path points to a FIFO (first-in first-out, or a queue). Only available on Unix-likes. */
 	isFifo?: boolean;
-	/**  */
+	/** If the path points to a regular file. */
 	isFile: boolean;
-	/**  */
+	/** If the path points to a (Unix domain) socket. Only available on Unix-likes. */
 	isSocket?: boolean;
-	/**  */
+	/** If the path points to a symbolic link. */
 	isSymlink: boolean;
-	/**  */
+	/** Unix file mode as three octal digits. */
 	mode?: number;
-	/**  */
+	/** Last modification time. */
 	mtime?: Date;
-	/**  */
+	/** Number of hard links the entity on the path. */
 	nlink?: number;
-	/**  */
+	/** Device ID of the entity on the path. */
 	rdev?: number;
-	/**  */
+	/** Size in bytes. */
 	size: number;
-	/**  */
+	/** User ID of the owner of the entity on the path. */
 	uid?: number;
 }
 export type FileInfo = LeafFileInfo;
@@ -284,9 +285,9 @@ export function removeSync(path: string|URL, options?: LeafRemoveOptions): void;
 export function rename(sourcePath: string|URL, targetPath: string|URL): Promise<void>;
 /**  */
 export function renameSync(sourcePath: string|URL, targetPath: string|URL): void;
-/**  */
+/** Gather meta information of a path. */
 export function stat(path: string|URL): Promise<LeafFileInfo>;
-/**  */
+/** The synchronous variant of `stat`. */
 export function statSync(path: string|URL): LeafFileInfo;
 /**  */
 export function symlink(sourcePath: string|URL, targetPath: string|URL, options?: LeafSymlinkOptions): Promise<void>;

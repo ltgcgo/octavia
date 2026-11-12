@@ -9,6 +9,8 @@ import {
 	LeafMemoryUsage
 } from "../../common/class/systemInfo.mjs";
 
+import { isCallSiteInternal } from "../../vergilius/restrict.mjs";
+
 import NodeOs from "node:os";
 import NodePath from "node:path";
 import NodeProcess from "node:process";
@@ -119,7 +121,9 @@ export function unrefTimer(scheduleId) {
 /** @param {Function} func
 * @param {number} duration */
 export function _leaf_web_setInterval_(func, duration) {
-	return schedulePool.assign(NodeTimers.setInterval(func, duration));
+	const response = NodeTimers.setInterval(func, duration);
+	if (isCallSiteInternal()) return response;
+	return schedulePool.assign(response);
 };
 /** @param {number|NodeJS.Timeout} handle */
 export function _leaf_web_clearInterval_(handle) {
@@ -128,12 +132,14 @@ export function _leaf_web_clearInterval_(handle) {
 		if (query != null) handle = query;
 	};
 	NodeTimers.clearInterval(handle);
-	schedulePool.release(handle);
+	handle != null && schedulePool.release(handle);
 };
 /** @param {Function} func
 * @param {number} duration */
 export function _leaf_web_setTimeout_(func, duration) {
-	return schedulePool.assign(NodeTimers.setTimeout(func, duration));
+	const response = NodeTimers.setTimeout(func, duration);
+	if (isCallSiteInternal()) return response;
+	return schedulePool.assign(response);
 };
 /** @param {number|NodeJS.Timeout} handle */
 export function _leaf_web_clearTimeout_(handle) {
@@ -142,5 +148,5 @@ export function _leaf_web_clearTimeout_(handle) {
 		if (query != null) handle = query;
 	};
 	NodeTimers.clearTimeout(handle);
-	schedulePool.release(handle);
+	handle != null && schedulePool.release(handle);
 };

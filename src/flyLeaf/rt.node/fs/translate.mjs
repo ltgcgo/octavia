@@ -4,12 +4,13 @@
 
 "use strict";
 
+import {
+	LeafDirEntry as CommonDirEntry,
+	LeafFileInfo as CommonFileInfo
+} from "../../common/class/fsInfo.mjs";
+
 import * as NodeFs from "node:fs";
 const NodeFsConstant = NodeFs.constants;
-
-import {
-	LeafDirEntry as CommonDirEntry
-} from "../../common/class/fsInfo.mjs";
 
 /** @param {import("../../index/index.d.mts").LeafOpenOptions} flags */
 export function linuxOpenFlags(flags) {
@@ -69,7 +70,7 @@ export function linuxWriteFlags(flags) {
 };
 
 export class LeafDirEntry extends CommonDirEntry {
-	/** @type {import("node:fs").Dirent} */
+	/** @type {NodeFs.Dirent} */
 	#dirent;
 	get isDirectory() {
 		return this.#dirent.isDirectory();
@@ -80,7 +81,7 @@ export class LeafDirEntry extends CommonDirEntry {
 	get isSymlink() {
 		return this.#dirent.isSymbolicLink();
 	};
-	/** @param {import("node:fs").Dirent} dirent */
+	/** @param {NodeFs.Dirent} dirent */
 	constructor(dirent) {
 		super();
 		this.name = dirent.name;
@@ -88,5 +89,33 @@ export class LeafDirEntry extends CommonDirEntry {
 		delete this.isDirectory;
 		delete this.isFile;
 		delete this.isSymlink;
+	};
+};
+
+export class LeafFileInfo extends CommonFileInfo {
+	/** @param {NodeFs.Stats} fileStat */
+	constructor(fileStat) {
+		super();
+		this.atime = fileStat.atime;
+		this.birthtime = fileStat.birthtime;
+		this.blksize = fileStat.blksize;
+		this.blocks = fileStat.blocks;
+		this.ctime = fileStat.ctime;
+		this.dev = fileStat.dev;
+		this.gid = fileStat.gid;
+		this.ino = fileStat.ino;
+		this.isBlockDevice = fileStat.isBlockDevice.bind(fileStat);
+		this.isCharDevice = fileStat.isCharacterDevice.bind(fileStat);
+		this.isDirectory = fileStat.isDirectory.bind(fileStat);
+		this.isFifo = fileStat.isFIFO.bind(fileStat);
+		this.isFile = fileStat.isFile.bind(fileStat);
+		this.isSocket = fileStat.isSocket.bind(fileStat);
+		this.isSymlink = fileStat.isSymbolicLink.bind(fileStat);
+		this.mode = fileStat.mode;
+		this.mtime = fileStat.mtime;
+		this.nlink = fileStat.nlink;
+		this.rdev = fileStat.rdev;
+		this.size = fileStat.size;
+		this.uid = fileStat.uid;
 	};
 };

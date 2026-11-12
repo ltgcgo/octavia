@@ -33,21 +33,22 @@ if (self.Deno) {
 	self.Deno = Leaf;
 };
 
-const printTrace = getPrintTrace();
+const printTrace = getPrintTrace(self.Deno);
 if (printTrace > 0) {
 	console.debug(`[\x1b[1;37mFly Leaf\x1b[0m] Preparing clean-up...`);
 };
 
 // Final clean-up.
+const {init, wrapProxies} = await import("../vergilius/restrict.mjs");
 const {executeCleanUp} = await import("../vergilius/cleanUp.mjs");
 executeCleanUp(self);
 
 const oldGlobal = globalThis;
+init(oldGlobal.Deno);
 if (printTrace > 0 || getPrintInternal()) {
 	if (printTrace > 0) {
 		console.debug(`[\x1b[1;37mFly Leaf\x1b[0m] Adjusting globals...`);
 	};
-	const {wrapProxies} = await import("../vergilius/restrict.mjs");
 	// So Deno/Ende makes the global "Deno" property read-only huh... Not anymore!
 	const oldDeno = self.Deno;
 	delete self.Deno;
@@ -69,6 +70,21 @@ Leaf._leaf_web_clearInterval_ && (oldGlobal.clearInterval = Leaf._leaf_web_clear
 Leaf._leaf_web_clearTimeout_ && (oldGlobal.clearTimeout = Leaf._leaf_web_clearTimeout_);
 Leaf._leaf_web_setInterval_ && (oldGlobal.setInterval = Leaf._leaf_web_setInterval_);
 Leaf._leaf_web_setTimeout_ && (oldGlobal.setTimeout = Leaf._leaf_web_setTimeout_);
+
+if (printTrace > 3) {
+	for (const key of [
+		"clearInterval",
+		"clearTimeout",
+		"setInterval",
+		//"setTimeout"
+	]) {
+		if (oldGlobal[key]) {
+			oldGlobal[key] = wrapProxies(oldGlobal[key], [key], {
+				sniffOnly: true
+			});
+		};
+	};
+};
 
 // Apply web polyfills requiring the Deno global.
 _leaf_copyTo_(oldGlobal, LeafPolyfills);

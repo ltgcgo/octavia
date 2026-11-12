@@ -10,34 +10,37 @@ import { IsDenoRepl } from "../common/class/matchers.mjs";
 let denoApi;
 /** @type {import("../index/index.d.mts").LeafEnv} */
 let denoEnvApi;
-const requestDeno = function () {
-	denoApi = denoApi ?? globalThis.Deno;
-	denoEnvApi = denoEnvApi ?? denoApi?.env;
+const requestDeno = function (leaf) {
+	denoApi = leaf ?? denoApi ?? globalThis.Deno;
+	return denoApi;
+};
+const requestDenoEnv = function (leaf) {
+	denoEnvApi = denoEnvApi ?? requestDeno(leaf)?.env;
+	return denoEnvApi;
 };
 
-export function getAllowOldWeb() {
-	requestDeno();
-	return denoEnvApi?.get("VERGILIUS_ALLOW_OLD_WEB")?.length > 0 ?? false;
+export function getAllowOldWeb(leaf) {
+	return requestDenoEnv(leaf)?.get("VERGILIUS_ALLOW_OLD_WEB")?.length > 0 ?? false;
 };
-export function getSkipCheck() {
+export function getSkipCheck(leaf) {
 	requestDeno();
-	return denoEnvApi?.get("VERGILIUS_SKIP_CHECK")?.length > 0 ?? false;
+	return requestDenoEnv(leaf)?.get("VERGILIUS_SKIP_CHECK")?.length > 0 ?? false;
 };
-export function getIsReplSession() {
+export function getIsReplSession(leaf) {
 	requestDeno();
-	return IsDenoRepl.test(denoApi?.mainModule);
+	return IsDenoRepl.test(requestDeno(leaf)?.mainModule);
 };
-export function getPrintInternal() {
+export function getPrintInternal(leaf) {
 	requestDeno();
-	return denoEnvApi?.get("VERGILIUS_PRINT_STACK")?.length > 0 ?? false;
+	return requestDenoEnv(leaf)?.get("VERGILIUS_PRINT_STACK")?.length > 0 ?? false;
 };
-export function getPrintProxy() {
+export function getPrintProxy(leaf) {
 	requestDeno();
-	return denoEnvApi?.get("VERGILIUS_PRINT_PROXY")?.length > 0 ?? false;
+	return requestDenoEnv(leaf)?.get("VERGILIUS_PRINT_PROXY")?.length > 0 ?? false;
 };
-export function getPrintTrace() {
+export function getPrintTrace(leaf) {
 	requestDeno();
-	const traceConfig = denoEnvApi?.get("VERGILIUS_PRINT_TRACE");
+	const traceConfig = requestDenoEnv(leaf)?.get("VERGILIUS_PRINT_TRACE");
 	if (traceConfig?.length > 0) {
 		switch (traceConfig.toLowerCase()) {
 			case "light":
@@ -80,7 +83,7 @@ export function getPrintTrace() {
 		return 0;
 	};
 };
-export function getPrisonWarden() {
+export function getPrisonWarden(leaf) {
 	requestDeno();
-	return denoEnvApi?.get("VERGILIUS_WARDEN")?.length > 0 ?? false;
+	return requestDenoEnv(leaf)?.get("VERGILIUS_WARDEN")?.length > 0 ?? false;
 };

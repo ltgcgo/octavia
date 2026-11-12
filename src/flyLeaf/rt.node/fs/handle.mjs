@@ -11,7 +11,7 @@ import {
 	linuxOpenFlags
 } from "./translate.mjs";
 
-const LeafFsFile = class LeafFsFile {
+export const LeafFsFile = class LeafFsFile {
 	/** @type {boolean} */
 	#closed = false;
 	/** @type {boolean} */
@@ -65,5 +65,4 @@ const LeafFsFile = class LeafFsFile {
 		return NodeStream.Readable.toWeb(stream);
 	};
 };
-
 export const FsFile = LeafFsFile;
