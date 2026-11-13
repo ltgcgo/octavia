@@ -80,10 +80,10 @@ export class LeafDirEntry extends CommonDirEntry {
 		return this.#isDirectory ?? (this.#isDirectory = this.#dirent.isDirectory());
 	};
 	get isFile() {
-		return this.#isFile ?? (this.#dirent.isFile());
+		return this.#isFile ?? (this.#isFile = this.#dirent.isFile());
 	};
 	get isSymlink() {
-		return this.#isSymlink ?? (this.#dirent.isSymbolicLink());
+		return this.#isSymlink ?? (this.#isSymlink = this.#dirent.isSymbolicLink());
 	};
 	/** @param {NodeFs.Dirent} dirent */
 	constructor(dirent) {

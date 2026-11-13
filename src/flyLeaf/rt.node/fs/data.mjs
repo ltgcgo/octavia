@@ -15,29 +15,26 @@ const NodeAsyncFs = NodeFs.promises;
 /** @param {import("../../index/index.d.mts").LeafReadFileOptions} options */
 export async function readFile(path, options) {
 	return toUint8Array(await NodeAsyncFs.readFile(path, {
-		"encoding": "binary",
 		"signal": options?.signal
 	}));
 };
 /** @param {import("../../index/index.d.mts").LeafReadFileOptions} options */
 export function readFileSync(path, options) {
-	return toUint8Array(NodeFs.readFileSync(path, {
-		"encoding": "binary"
-	}));
+	return toUint8Array(NodeFs.readFileSync(path));
 };
 
 /** @param {import("../../index/index.d.mts").LeafReadFileOptions} options */
 export async function readTextFile(path, options) {
-	return toUint8Array(await NodeAsyncFs.readFile(path, {
+	return await NodeAsyncFs.readFile(path, {
 		"encoding": "utf-8",
 		"signal": options?.signal
-	}));
+	});
 };
 /** @param {import("../../index/index.d.mts").LeafReadFileOptions} options */
 export function readTextFileSync(path, options) {
-	return toUint8Array(NodeFs.readFileSync(path, {
+	return NodeFs.readFileSync(path, {
 		"encoding": "utf-8"
-	}));
+	});
 };
 
 /** @param {Uint8Array|ReadableStream<Uint8Array>} data
@@ -61,7 +58,6 @@ export async function writeFile(path, data, options = {}) {
 				};
 			};
 		})(), {
-			"encoding": "binary",
 			"flush": true,
 			"mode": options.mode,
 			"flag": linuxWriteFlags(options),
@@ -77,7 +73,6 @@ export function writeFileSync(path, data, options = {}) {
 		throw(new TypeError(`Data must be Uint8Array.`));
 	};
 	NodeFs.writeFileSync(path, data, {
-		"encoding": "binary",
 		"flush": true,
 		"mode": options.mode,
 		"flag": linuxWriteFlags(options)
