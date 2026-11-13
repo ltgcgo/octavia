@@ -147,11 +147,13 @@ export type FsFile = typeof LeafFsFile;
 export const FsFile: LeafFsFile;
 
 export interface LeafMakeTempOptions {
-	/**  */
+	/** The target temporary folder.
+	*
+	* When this is not set, it defaults to the environment variable `TMPDIR` first, then the OS-native temporary folder. */
 	dir?: string;
-	/**  */
+	/** String prefix of the random name. Defaults to `""` (empty string). */
 	prefix?: string;
-	/**  */
+	/** String suffix of the random name. Defaults to `""` (empty string). */
 	suffix?: string;
 }
 export type MakeTempOptions = LeafMakeTempOptions;
@@ -186,7 +188,7 @@ declare type LeafReadFileOptions = WrappedAbortSignal;
 export type ReadFileOptions = WrappedAbortSignal;
 
 export interface LeafRemoveOptions {
-	/**  */
+	/** If the removal needs to be recursive, akin to `rm -r`. */
 	recursive?: boolean;
 }
 export type RemoveOptions = LeafRemoveOptions;
@@ -237,17 +239,21 @@ export function createSync(path: string|URL): LeafFsFile;
 export function link(sourcePath: string, targetPath: string): Promise<void>;
 /**  */
 export function linkSync(sourcePath: string, targetPath: string): void;
-/**  */
+/** Gather meta information of a path with symbolic link awareness. If a symbolic link is encountered, information of the symbolic link itself will be obtained. */
 export function lstat(path: string|URL): Promise<LeafFileInfo>;
-/**  */
+/** The synchronous variant of `lstat`. */
 export function lstatSync(path: string|URL): LeafFileInfo;
-/**  */
+/** Create a new temporary folder in the default OS temporary file folder.
+*
+* Separate calls create separate temporary folders, which need to be removed manually later when unneeded. */
 export function makeTempDir(options?: LeafMakeTempOptions): Promise<string>;
-/**  */
+/** The synchronous variant of `makeTempDir`. */
 export function makeTempDirSync(options?: LeafMakeTempOptions): string;
-/**  */
+/** Create a new temporary file in the default OS temporary file folder.
+*
+* Separate calls create separate temporary files, which need to be removed manually later when unneeded. */
 export function makeTempFile(options?: LeafMakeTempOptions): Promise<string>;
-/**  */
+/** The synchronous variant of `makeTempFile`. */
 export function makeTempFileSync(options?: LeafMakeTempOptions): string;
 /** Create a new folder at the specified path. */
 export function mkdir(path: string|URL, options?: LeafMkdirOptions): Promise<void>;
@@ -265,9 +271,9 @@ export function readDirSync(path: string|URL): Generator<LeafDirEntry, void, voi
 export function readFile(path: string|URL, options?: LeafReadFileOptions): Promise<Uint8Array>;
 /** The synchronous variant of `readFile`. */
 export function readFileSync(path: string|URL, options?: LeafReadFileOptions): Uint8Array;
-/**  */
+/** Resolve the symbolic link. */
 export function readLink(path: string|URL): Promise<string>;
-/**  */
+/** The synchronous variant of `readLink`. */
 export function readLinkSync(path: string|URL): string;
 /** Read text data from the specified path. */
 export function readTextFile(path: string|URL, options?: LeafReadFileOptions): Promise<string>;
@@ -277,15 +283,15 @@ export function readTextFileSync(path: string|URL, options?: LeafReadFileOptions
 export function realPath(path: string|URL): Promise<string>;
 /**  */
 export function realPathSync(path: string|URL): string;
-/**  */
+/** Remove the file or the directory on the path. */
 export function remove(path: string|URL, options?: LeafRemoveOptions): Promise<void>;
-/**  */
+/** The synchronous variant of `remove`. */
 export function removeSync(path: string|URL, options?: LeafRemoveOptions): void;
 /**  */
 export function rename(sourcePath: string|URL, targetPath: string|URL): Promise<void>;
 /**  */
 export function renameSync(sourcePath: string|URL, targetPath: string|URL): void;
-/** Gather meta information of a path. */
+/** Gather meta information of a path with no symbolic link awareness. If a symbolic link is encountered, information of the file it finally points to will be obtained. */
 export function stat(path: string|URL): Promise<LeafFileInfo>;
 /** The synchronous variant of `stat`. */
 export function statSync(path: string|URL): LeafFileInfo;

@@ -52,6 +52,11 @@ const {
 	Permissions,
 	SeekMode,
 
+	LeafFsFile,
+	LeafPermissions,
+	LeafPermStatus,
+	LeafSeekMode,
+
 	// Permissions
 	permissions,
 
@@ -92,8 +97,12 @@ const {
 	readDirSync,
 	readFile,
 	readFileSync,
+	readLink,
+	readLinkSync,
 	readTextFile,
 	readTextFileSync,
+	remove,
+	removeSync,
 	stat,
 	statSync,
 	writeFile,
@@ -111,6 +120,11 @@ export {
 	PermissionStatus,
 	Permissions,
 	SeekMode,
+
+	LeafFsFile,
+	LeafPermissions,
+	LeafPermStatus,
+	LeafSeekMode,
 
 	permissions,
 
@@ -149,8 +163,12 @@ export {
 	readDirSync,
 	readFile,
 	readFileSync,
+	readLink,
+	readLinkSync,
 	readTextFile,
 	readTextFileSync,
+	remove,
+	removeSync,
 	stat,
 	statSync,
 	writeFile,

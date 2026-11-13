@@ -6,7 +6,6 @@
 
 /** @returns {Uint8Array} */
 export function toUint8Array(buffer) {
-	console.debug(buffer);
 	if (
 		buffer?.buffer instanceof ArrayBuffer &&
 		Number.isSafeInteger(buffer?.byteLength) &&

@@ -64,6 +64,13 @@ export function *readDirSync(path) {
 	};
 };
 
+export async function readLink(path) {
+	return await NodeAsyncFs.readlink(path);
+};
+export function readLinkSync(path) {
+	return NodeFs.readlinkSync(path);
+};
+
 export async function stat(path) {
 	return new LeafFileInfo(await NodeAsyncFs.stat(path, {
 		"bigint": false,
