@@ -261,17 +261,17 @@ export function openSync(path: string|URL, options?: LeafOpenOptions): Promise<L
 export function readDir(path: string|URL): AsyncGenerator<LeafDirEntry, void, void>;
 /** The synchronous variant of `readDir`. */
 export function readDirSync(path: string|URL): Generator<LeafDirEntry, void, void>;
-/**  */
+/** Read binary data from the specified path. */
 export function readFile(path: string|URL, options?: LeafReadFileOptions): Promise<Uint8Array>;
-/**  */
+/** The synchronous variant of `readFile`. */
 export function readFileSync(path: string|URL, options?: LeafReadFileOptions): Uint8Array;
 /**  */
 export function readLink(path: string|URL): Promise<string>;
 /**  */
 export function readLinkSync(path: string|URL): string;
-/**  */
+/** Read text data from the specified path. */
 export function readTextFile(path: string|URL, options?: LeafReadFileOptions): Promise<string>;
-/**  */
+/** The synchronous variant of `readTextFile`. */
 export function readTextFileSync(path: string|URL, options?: LeafReadFileOptions): string;
 /**  */
 export function realPath(path: string|URL): Promise<string>;

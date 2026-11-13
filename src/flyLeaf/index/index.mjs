@@ -48,7 +48,12 @@ const {
 
 	// Classes and enums
 	FsFile,
+	PermissionStatus,
+	Permissions,
 	SeekMode,
+
+	// Permissions
+	permissions,
 
 	// Runtime
 	addSignalListener,
@@ -77,12 +82,20 @@ const {
 	version,
 
 	// File system
+	lstat,
+	lstatSync,
 	mkdir,
 	mkdirSync,
 	open,
 	openSync,
 	readDir,
 	readDirSync,
+	readFile,
+	readFileSync,
+	readTextFile,
+	readTextFileSync,
+	stat,
+	statSync,
 	writeFile,
 	writeFileSync,
 	writeTextFile,
@@ -95,7 +108,11 @@ export {
 	_leaf_apply_,
 
 	FsFile,
+	PermissionStatus,
+	Permissions,
 	SeekMode,
+
+	permissions,
 
 	addSignalListener,
 	args,
@@ -122,12 +139,20 @@ export {
 	unrefTimer,
 	version,
 
+	lstat,
+	lstatSync,
 	mkdir,
 	mkdirSync,
 	open,
 	openSync,
 	readDir,
 	readDirSync,
+	readFile,
+	readFileSync,
+	readTextFile,
+	readTextFileSync,
+	stat,
+	statSync,
 	writeFile,
 	writeFileSync,
 	writeTextFile,
