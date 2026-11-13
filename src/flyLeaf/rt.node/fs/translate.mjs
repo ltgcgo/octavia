@@ -70,32 +70,45 @@ export function linuxWriteFlags(flags) {
 };
 
 export class LeafDirEntry extends CommonDirEntry {
+	// Why "Dirent" if it's either "directory entry" or "directory entity"?
 	/** @type {NodeFs.Dirent} */
 	#dirent;
+	#isDirectory;
+	#isFile;
+	#isSymlink;
 	get isDirectory() {
-		return this.#dirent.isDirectory();
+		return this.#isDirectory ?? (this.#isDirectory = this.#dirent.isDirectory());
 	};
 	get isFile() {
-		return this.#dirent.isFile();
+		return this.#isFile ?? (this.#dirent.isFile());
 	};
 	get isSymlink() {
-		return this.#dirent.isSymbolicLink();
+		return this.#isSymlink ?? (this.#dirent.isSymbolicLink());
 	};
 	/** @param {NodeFs.Dirent} dirent */
 	constructor(dirent) {
 		super();
-		this.name = dirent.name;
-		this.#dirent = dirent;
 		delete this.isDirectory;
 		delete this.isFile;
 		delete this.isSymlink;
+		this.name = dirent.name;
+		this.#dirent = dirent;
 	};
 };
 
 export class LeafFileInfo extends CommonFileInfo {
+	#nodeFileStat;
 	/** @param {NodeFs.Stats} fileStat */
 	constructor(fileStat) {
 		super();
+		delete this.isBlockDevice;
+		delete this.isCharDevice;
+		delete this.isDirectory;
+		delete this.isFifo;
+		delete this.isFile;
+		delete this.isSocket;
+		delete this.isSymlink;
+		this.#nodeFileStat = fileStat;
 		this.atime = fileStat.atime;
 		this.birthtime = fileStat.birthtime;
 		this.blksize = fileStat.blksize;
@@ -104,18 +117,39 @@ export class LeafFileInfo extends CommonFileInfo {
 		this.dev = fileStat.dev;
 		this.gid = fileStat.gid;
 		this.ino = fileStat.ino;
-		this.isBlockDevice = fileStat.isBlockDevice.bind(fileStat);
-		this.isCharDevice = fileStat.isCharacterDevice.bind(fileStat);
-		this.isDirectory = fileStat.isDirectory.bind(fileStat);
-		this.isFifo = fileStat.isFIFO.bind(fileStat);
-		this.isFile = fileStat.isFile.bind(fileStat);
-		this.isSocket = fileStat.isSocket.bind(fileStat);
-		this.isSymlink = fileStat.isSymbolicLink.bind(fileStat);
 		this.mode = fileStat.mode;
 		this.mtime = fileStat.mtime;
 		this.nlink = fileStat.nlink;
 		this.rdev = fileStat.rdev;
 		this.size = fileStat.size;
 		this.uid = fileStat.uid;
+	};
+	#isBlockDevice;
+	#isCharDevice;
+	#isDirectory;
+	#isFifo;
+	#isFile;
+	#isSocket;
+	#isSymlink;
+	get isBlockDevice() {
+		return this.#isBlockDevice ?? (this.#isBlockDevice = this.#nodeFileStat.isBlockDevice());
+	};
+	get isCharDevice() {
+		return this.#isCharDevice ?? (this.#isCharDevice = this.#nodeFileStat.isCharacterDevice());
+	};
+	get isDirectory() {
+		return this.#isDirectory ?? (this.#isDirectory = this.#nodeFileStat.isDirectory());
+	};
+	get isFifo() {
+		return this.#isFifo ?? (this.#isFifo = this.#nodeFileStat.isFIFO());
+	};
+	get isFile() {
+		return this.#isFile ?? (this.#isFile = this.#nodeFileStat.isFile());
+	};
+	get isSocket() {
+		return this.#isSocket ?? (this.#isSocket = this.#nodeFileStat.isSocket());
+	};
+	get isSymlink() {
+		return this.#isSymlink ?? (this.#isSymlink = this.#nodeFileStat.isSymbolicLink());
 	};
 };

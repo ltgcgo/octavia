@@ -14,6 +14,19 @@ import {Readable as NodeReadable} from "node:stream";
 import * as NodeFs from "node:fs";
 const NodeAsyncFs = NodeFs.promises;
 
+export async function lstat(path) {
+	return new LeafFileInfo(await NodeAsyncFs.lstat(path, {
+		"bigint": false,
+		"throwIfNoEntry": true
+	}));
+};
+export function lstatSync(path) {
+	return new LeafFileInfo(NodeFs.lstatSync(path, {
+		"bigint": false,
+		"throwIfNoEntry": true
+	}));
+};
+
 /** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
 export async function mkdir(path, options) {
 	await NodeAsyncFs.mkdir(path, options);

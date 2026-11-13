@@ -4,12 +4,41 @@
 
 "use strict";
 
-import * as NodeFs from "node:fs";
-const NodeAsyncFs = NodeFs.promises;
-
+import { toUint8Array } from "../../common/method/transform.mjs";
 import {
 	linuxWriteFlags
 } from "./translate.mjs";
+
+import * as NodeFs from "node:fs";
+const NodeAsyncFs = NodeFs.promises;
+
+/** @param {import("../../index/index.d.mts").LeafReadFileOptions} options */
+export async function readFile(path, options) {
+	return toUint8Array(await NodeAsyncFs.readFile(path, {
+		"encoding": "binary",
+		"signal": options?.signal
+	}));
+};
+/** @param {import("../../index/index.d.mts").LeafReadFileOptions} options */
+export function readFileSync(path, options) {
+	return toUint8Array(NodeFs.readFileSync(path, {
+		"encoding": "binary"
+	}));
+};
+
+/** @param {import("../../index/index.d.mts").LeafReadFileOptions} options */
+export async function readTextFile(path, options) {
+	return toUint8Array(await NodeAsyncFs.readFile(path, {
+		"encoding": "utf-8",
+		"signal": options?.signal
+	}));
+};
+/** @param {import("../../index/index.d.mts").LeafReadFileOptions} options */
+export function readTextFileSync(path, options) {
+	return toUint8Array(NodeFs.readFileSync(path, {
+		"encoding": "utf-8"
+	}));
+};
 
 /** @param {Uint8Array|ReadableStream<Uint8Array>} data
 * @param {import("../../index/index.d.mts").LeafWriteFileOptions} options */
@@ -32,6 +61,7 @@ export async function writeFile(path, data, options = {}) {
 				};
 			};
 		})(), {
+			"encoding": "binary",
 			"flush": true,
 			"mode": options.mode,
 			"flag": linuxWriteFlags(options),
@@ -47,6 +77,7 @@ export function writeFileSync(path, data, options = {}) {
 		throw(new TypeError(`Data must be Uint8Array.`));
 	};
 	NodeFs.writeFileSync(path, data, {
+		"encoding": "binary",
 		"flush": true,
 		"mode": options.mode,
 		"flag": linuxWriteFlags(options)
@@ -57,6 +88,7 @@ export function writeFileSync(path, data, options = {}) {
 export async function writeTextFile(path, data, options = {}) {
 	if (typeof data === "string") {
 		await NodeAsyncFs.writeFile(path, data, {
+			"encoding": "utf-8",
 			"flush": true,
 			"mode": options.mode,
 			"flag": linuxWriteFlags(options)
@@ -72,6 +104,7 @@ export async function writeTextFile(path, data, options = {}) {
 				};
 			};
 		})(), {
+			"encoding": "utf-8",
 			"flush": true,
 			"mode": options.mode,
 			"flag": linuxWriteFlags(options)
@@ -86,6 +119,7 @@ export function writeTextFileSync(path, data, options = {}) {
 		throw(new TypeError(`Data must be string.`));
 	};
 	NodeFs.writeFileSync(path, data, {
+		"encoding": "utf-8",
 		"flush": true,
 		"mode": options.mode,
 		"flag": linuxWriteFlags(options)
