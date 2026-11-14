@@ -30,9 +30,7 @@ export function chmodSync(path, mode) {
 };
 
 export async function chown(path, uid, gid) {
-	if (uid == null && gid == null) {
-		return;
-	} else if (
+	if (
 		uid == null ||
 		gid == null
 	) {
@@ -176,7 +174,7 @@ export async function remove(path, options) {
 			"recursive": options?.recursive ?? false
 		});
 	} catch (err) {
-		if (err.code !== "EISDIR") throw(err);
+		if (err.code !== "EISDIR" && err.code !== "ERR_FS_EISDIR") throw(err);
 		await NodeAsyncFs.rmdir(path, {
 			"recursive": options?.recursive ?? false
 		});
@@ -189,7 +187,7 @@ export function removeSync(path, options) {
 			"recursive": options?.recursive ?? false
 		});
 	} catch (err) {
-		if (err.code !== "EISDIR") throw(err);
+		if (err.code !== "EISDIR" && err.code !== "ERR_FS_EISDIR") throw(err);
 		NodeFs.rmdirSync(path, {
 			"recursive": options?.recursive ?? false
 		});

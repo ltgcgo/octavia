@@ -73,30 +73,52 @@ export class LeafDirEntry extends CommonDirEntry {
 	// Why "Dirent" if it's either "directory entry" or "directory entity"?
 	/** @type {NodeFs.Dirent} */
 	#dirent;
+
 	#isDirectory;
 	#isFile;
 	#isSymlink;
-	get isDirectory() {
-		return this.#isDirectory ?? (this.#isDirectory = this.#dirent.isDirectory());
-	};
-	get isFile() {
-		return this.#isFile ?? (this.#isFile = this.#dirent.isFile());
-	};
-	get isSymlink() {
-		return this.#isSymlink ?? (this.#isSymlink = this.#dirent.isSymbolicLink());
+
+	#setGetters() {
+		const upThis = this;
+		Object.defineProperties(upThis, {
+			"isDirectory": {
+				"enumerable": true,
+				"configurable": true,
+				"get": () => {
+					return this.#isDirectory ?? (this.#isDirectory = this.#dirent.isDirectory());
+				}
+			},
+			"isFile": {
+				"enumerable": true,
+				"configurable": true,
+				"get": () => {
+					return this.#isFile ?? (this.#isFile = this.#dirent.isFile());
+				}
+			},
+			"isSymlink": {
+				"enumerable": true,
+				"configurable": true,
+				"get": () => {
+					return this.#isSymlink ?? (this.#isSymlink = this.#dirent.isSymbolicLink());
+				}
+			}
+		});
 	};
 	/** @param {NodeFs.Dirent} dirent */
 	constructor(dirent) {
 		super();
-		delete this.isDirectory;
+		/*delete this.isDirectory;
 		delete this.isFile;
-		delete this.isSymlink;
+		delete this.isSymlink;*/
 		this.name = dirent.name;
 		this.#dirent = dirent;
+		this.#setGetters();
 	};
 };
 
 export class LeafFileInfo extends CommonFileInfo {
+	#nodeFileStat;
+
 	#isBlockDevice;
 	#isCharDevice;
 	#isDirectory;
@@ -105,51 +127,56 @@ export class LeafFileInfo extends CommonFileInfo {
 	#isSocket;
 	#isSymlink;
 
-	#nodeFileStat;
-
 	#setGetters = function () {
 		const upThis = this;
 		Object.defineProperties(upThis, {
 			"isBlockDevice": {
 				"enumerable": true,
+				"configurable": true,
 				"get": () => {
 					return upThis.#isBlockDevice ?? (upThis.#isBlockDevice = upThis.#nodeFileStat.isBlockDevice());
 				}
 			},
 			"isCharDevice": {
 				"enumerable": true,
+				"configurable": true,
 				"get": () => {
 					return upThis.#isCharDevice ?? (upThis.#isCharDevice = upThis.#nodeFileStat.isCharacterDevice());
 				}
 			},
 			"isDirectory": {
 				"enumerable": true,
+				"configurable": true,
 				"get": () => {
 					return upThis.#isDirectory ?? (upThis.#isDirectory = upThis.#nodeFileStat.isDirectory());
 				}
 			},
 			"isFifo": {
 				"enumerable": true,
+				"configurable": true,
 				"get": () => {
 					return upThis.#isFifo ?? (upThis.#isFifo = upThis.#nodeFileStat.isFIFO());
 				}
 			},
 			"isFile": {
 				"enumerable": true,
+				"configurable": true,
 				"get": () => {
 					return upThis.#isFile ?? (upThis.#isFile = upThis.#nodeFileStat.isFile());
 				}
 			},
 			"isSocket": {
 				"enumerable": true,
+				"configurable": true,
 				"get": () => {
-					return upThis.#isSocket ?? (upThis.#isSocket = this.#nodeFileStat.isSocket());
+					return upThis.#isSocket ?? (upThis.#isSocket = upThis.#nodeFileStat.isSocket());
 				}
 			},
 			"isSymlink": {
 				"enumerable": true,
+				"configurable": true,
 				"get": () => {
-					return upThis.#isSymlink ?? (upThis.#isSymlink = this.#nodeFileStat.isSymbolicLink());
+					return upThis.#isSymlink ?? (upThis.#isSymlink = upThis.#nodeFileStat.isSymbolicLink());
 				}
 			}
 		});
