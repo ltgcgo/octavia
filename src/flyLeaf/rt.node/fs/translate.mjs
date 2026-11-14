@@ -97,17 +97,73 @@ export class LeafDirEntry extends CommonDirEntry {
 };
 
 export class LeafFileInfo extends CommonFileInfo {
+	#isBlockDevice;
+	#isCharDevice;
+	#isDirectory;
+	#isFifo;
+	#isFile;
+	#isSocket;
+	#isSymlink;
+
 	#nodeFileStat;
+
+	#setGetters = function () {
+		const upThis = this;
+		Object.defineProperties(upThis, {
+			"isBlockDevice": {
+				"enumerable": true,
+				"get": () => {
+					return upThis.#isBlockDevice ?? (upThis.#isBlockDevice = upThis.#nodeFileStat.isBlockDevice());
+				}
+			},
+			"isCharDevice": {
+				"enumerable": true,
+				"get": () => {
+					return upThis.#isCharDevice ?? (upThis.#isCharDevice = upThis.#nodeFileStat.isCharacterDevice());
+				}
+			},
+			"isDirectory": {
+				"enumerable": true,
+				"get": () => {
+					return upThis.#isDirectory ?? (upThis.#isDirectory = upThis.#nodeFileStat.isDirectory());
+				}
+			},
+			"isFifo": {
+				"enumerable": true,
+				"get": () => {
+					return upThis.#isFifo ?? (upThis.#isFifo = upThis.#nodeFileStat.isFIFO());
+				}
+			},
+			"isFile": {
+				"enumerable": true,
+				"get": () => {
+					return upThis.#isFile ?? (upThis.#isFile = upThis.#nodeFileStat.isFile());
+				}
+			},
+			"isSocket": {
+				"enumerable": true,
+				"get": () => {
+					return upThis.#isSocket ?? (upThis.#isSocket = this.#nodeFileStat.isSocket());
+				}
+			},
+			"isSymlink": {
+				"enumerable": true,
+				"get": () => {
+					return upThis.#isSymlink ?? (upThis.#isSymlink = this.#nodeFileStat.isSymbolicLink());
+				}
+			}
+		});
+	};
 	/** @param {NodeFs.Stats} fileStat */
 	constructor(fileStat) {
 		super();
-		delete this.isBlockDevice;
+		/*delete this.isBlockDevice;
 		delete this.isCharDevice;
 		delete this.isDirectory;
 		delete this.isFifo;
 		delete this.isFile;
 		delete this.isSocket;
-		delete this.isSymlink;
+		delete this.isSymlink;*/
 		this.#nodeFileStat = fileStat;
 		this.atime = fileStat.atime;
 		this.birthtime = fileStat.birthtime;
@@ -123,33 +179,6 @@ export class LeafFileInfo extends CommonFileInfo {
 		this.rdev = fileStat.rdev;
 		this.size = fileStat.size;
 		this.uid = fileStat.uid;
-	};
-	#isBlockDevice;
-	#isCharDevice;
-	#isDirectory;
-	#isFifo;
-	#isFile;
-	#isSocket;
-	#isSymlink;
-	get isBlockDevice() {
-		return this.#isBlockDevice ?? (this.#isBlockDevice = this.#nodeFileStat.isBlockDevice());
-	};
-	get isCharDevice() {
-		return this.#isCharDevice ?? (this.#isCharDevice = this.#nodeFileStat.isCharacterDevice());
-	};
-	get isDirectory() {
-		return this.#isDirectory ?? (this.#isDirectory = this.#nodeFileStat.isDirectory());
-	};
-	get isFifo() {
-		return this.#isFifo ?? (this.#isFifo = this.#nodeFileStat.isFIFO());
-	};
-	get isFile() {
-		return this.#isFile ?? (this.#isFile = this.#nodeFileStat.isFile());
-	};
-	get isSocket() {
-		return this.#isSocket ?? (this.#isSocket = this.#nodeFileStat.isSocket());
-	};
-	get isSymlink() {
-		return this.#isSymlink ?? (this.#isSymlink = this.#nodeFileStat.isSymbolicLink());
+		this.#setGetters();
 	};
 };

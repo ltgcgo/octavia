@@ -30,9 +30,29 @@ export function chmodSync(path, mode) {
 };
 
 export async function chown(path, uid, gid) {
+	if (uid == null && gid == null) {
+		return;
+	} else if (
+		uid == null ||
+		gid == null
+	) {
+		const fileStat = await NodeAsyncFs.stat(path);
+		uid = uid ?? fileStat.uid;
+		gid = gid ?? fileStat.gid;
+	};
 	await NodeAsyncFs.chown(path, uid, gid);
 };
 export function chownSync(path, uid, gid) {
+	if (uid == null && gid == null) {
+		return;
+	} else if (
+		uid == null ||
+		gid == null
+	) {
+		const fileStat = NodeFs.statSync(path);
+		uid = uid ?? fileStat.uid;
+		gid = gid ?? fileStat.gid;
+	};
 	NodeFs.chownSync(path, uid, gid);
 };
 
@@ -151,15 +171,29 @@ export function makeTempFileSync(options) {
 
 /** @param {import("../../index/index.d.mts").LeafRemoveOptions} options */
 export async function remove(path, options) {
-	await NodeAsyncFs.rm(path, {
-		"recursive": options?.recursive
-	});
+	try {
+		await NodeAsyncFs.rm(path, {
+			"recursive": options?.recursive ?? false
+		});
+	} catch (err) {
+		if (err.code !== "EISDIR") throw(err);
+		await NodeAsyncFs.rmdir(path, {
+			"recursive": options?.recursive ?? false
+		});
+	};
 };
 /** @param {import("../../index/index.d.mts").LeafRemoveOptions} options */
 export function removeSync(path, options) {
-	NodeFs.rmSync(path, {
-		"recursive": options?.recursive
-	});
+	try {
+		NodeFs.rmSync(path, {
+			"recursive": options?.recursive ?? false
+		});
+	} catch (err) {
+		if (err.code !== "EISDIR") throw(err);
+		NodeFs.rmdirSync(path, {
+			"recursive": options?.recursive ?? false
+		});
+	};
 };
 
 export async function rename(sourcePath, targetPath) {

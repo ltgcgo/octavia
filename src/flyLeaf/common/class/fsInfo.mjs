@@ -4,6 +4,7 @@
 
 "use strict";
 
+// Key order matches the real Deno.
 export class LeafDirEntry {
 	/** @type {string} */
 	name;
@@ -15,49 +16,50 @@ export class LeafDirEntry {
 	isSymlink;
 };
 
+// Key order matches the real Deno.
 export class LeafFileInfo {
+	/** @type {boolean} */
+	isFile;
+	/** @type {boolean} */
+	isDirectory;
+	/** @type {boolean} */
+	isSymlink;
+	/** @type {number} */
+	size;
+	/** @type {Date?} */
+	mtime;
 	/** @type {Date?} */
 	atime;
 	/** @type {Date?} */
 	birthtime;
-	/** @type {number?} */
-	blksize;
-	/** @type {number?} */
-	blocks;
 	/** @type {Date?} */
 	ctime;
 	/** @type {number} */
 	dev;
 	/** @type {number?} */
-	gid;
+	mode;
 	/** @type {number?} */
 	ino;
+	/** @type {number?} */
+	nlink;
+	/** @type {number?} */
+	uid;
+	/** @type {number?} */
+	gid;
+	/** @type {number?} */
+	rdev;
+	/** @type {number?} */
+	blksize;
+	/** @type {number?} */
+	blocks;
 	/** @type {boolean?} */
 	isBlockDevice;
 	/** @type {boolean?} */
 	isCharDevice;
-	/** @type {boolean} */
-	isDirectory;
 	/** @type {boolean?} */
 	isFifo;
-	/** @type {boolean} */
-	isFile;
 	/** @type {boolean?} */
 	isSocket;
-	/** @type {boolean} */
-	isSymlink;
-	/** @type {number?} */
-	mode;
-	/** @type {Date?} */
-	mtime;
-	/** @type {number?} */
-	nlink;
-	/** @type {number?} */
-	rdev;
-	/** @type {number} */
-	size;
-	/** @type {number?} */
-	uid;
 };
 
 export class LeafFsEvent {
