@@ -15,7 +15,7 @@ export function toByteIEC(value, unit) {
 	};
 	const unitQuery = FactorIECByte[unit];
 	if (typeof unitQuery !== "number") {
-		throw(new RangeError(`Invalied unit "${unit}".`));
+		throw(new RangeError(`Invalid unit "${unit}".`));
 	};
 	return value * unitQuery;
 };

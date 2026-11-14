@@ -237,7 +237,7 @@ export function chmodSync(path: string|URL, mode: number): void;
 export function chown(path: string|URL, uid: number|null, gid: number|null): Promise<void>;
 /** The synchronous variant of `chown`. */
 export function chownSync(path: string|URL, uid: number|null, gid: number|null): void;
-/** Copy the file from source to the target alongwith its permissions. Will overwrite the file at target, and will fail if the target path is not writable. */
+/** Copy the file from source to the target with its permissions intact. Will overwrite the file at target, and will fail if the target path is not writable. */
 export function copyFile(sourcePath: string|URL, targetPath: string|URL): Promise<void>;
 /** The synchronous variant of `copyFile`. */
 export function copyFileSync(sourcePath: string|URL, targetPath: string|URL): void;
@@ -313,7 +313,9 @@ export function symlinkSync(sourcePath: string|URL, targetPath: string|URL, opti
 export function truncate(name: string, size?: number): Promise<void>;
 /** The synchronous variant of `truncate`. */
 export function truncateSync(name: string, size?: number): void;
-/** Retrieve the current process umask. If `mask` is provided, set the process umask to the provided mask, then return the previous umask. */
+/** Retrieve the current process umask. If `mask` is provided, set the process umask to the provided mask, then return the previous umask.
+*
+* If umask changes bypass Fly Leaf, the returned value can go stale. Workers may not be able to change umasks. */
 export function umask(mask?: number): number;
 /** Change the access and modification time, akin to `touch -c -a` and `touch -c -m`. Time can be either UNIX epoch seconds or Date objects. */
 export function utime(path: string|URL, atime: number|Date, mtime: number|Date): Promise<void>;

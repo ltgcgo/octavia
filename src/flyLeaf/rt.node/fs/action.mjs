@@ -63,10 +63,10 @@ export function createSync(path) {
 };
 
 export async function link(sourcePath, targetPath) {
-	await NodeAsyncFs.link(targetPath, sourcePath);
+	await NodeAsyncFs.link(sourcePath, targetPath);
 };
 export function linkSync(sourcePath, targetPath) {
-	NodeFs.linkSync(targetPath, sourcePath);
+	NodeFs.linkSync(sourcePath, targetPath);
 };
 
 /** @param {import("../../index/index.d.mts").LeafMakeTempOptions} options */
@@ -171,11 +171,11 @@ export function renameSync(sourcePath, targetPath) {
 
 /** @param {import("../../index/index.d.mts").LeafSymlinkOptions} options */
 export async function symlink(sourcePath, targetPath, options) {
-	await NodeAsyncFs.symlink(targetPath, sourcePath, options?.type);
+	await NodeAsyncFs.symlink(sourcePath, targetPath, options?.type);
 };
 /** @param {import("../../index/index.d.mts").LeafSymlinkOptions} options */
 export function symlinkSync(sourcePath, targetPath, options) {
-	NodeFs.symlinkSync(targetPath, sourcePath, options?.type);
+	NodeFs.symlinkSync(sourcePath, targetPath, options?.type);
 };
 
 export async function truncate(name, size) {
