@@ -7,6 +7,8 @@
 const Deno = self.Deno ?? self.Ende;
 
 export const Permissions = Deno.Permissions;
+export const LeafPermissions = Permissions;
 export const PermissionStatus = Deno.PermissionStatus;
+export const LeafPermStatus = PermissionStatus;
 
 export const permissions = Deno.permissions;

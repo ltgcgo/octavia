@@ -68,7 +68,9 @@ export namespace errors {
 		name: "FilesystemLoop";
 	}
 	export type FilesystemLoop = LeafFsLooped;
-	/** Thrown when too many redirects were encountered during resource imports. If the original Deno documentation is to be believed, Fly Leaf cannot throw this error at all. */
+	/** Thrown when too many redirects were encountered during resource imports.
+	*
+	* If the original Deno documentation is to be believed, Fly Leaf cannot throw this error at all. Deno itself doesn't throw this error either despite their own documentation. */
 	export class LeafTooManyRedirects extends Error {
 		/** Name of the error. */
 		name: "Http";
@@ -118,7 +120,9 @@ export namespace errors {
 		name: "NotConnected";
 	}
 	export type NotConnected = LeafNetworkDisconnected;
-	/** Thrown when the OS reports the file-like entity as not found. */
+	/** Thrown when the OS reports the file-like entity as not found.
+	*
+	* While the actual Deno runtime may sometimes throw `undefined` errors in certain cases, Fly Leaf throws `LeafNotFound` instead per documentation. */
 	export class LeafNotFound extends Error {
 		/** Name of the error. */
 		name: "NotFound";
