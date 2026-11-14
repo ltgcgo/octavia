@@ -2,6 +2,8 @@
 // 2026-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0+ license.
 
+// WIP: Translate Node.js errors into Deno-native errors.
+
 import type {
 	DisposableObject,
 	WrappedAbortSignal
@@ -11,14 +13,15 @@ import type {
     LeafSetRawOptions
 } from "./io.d.mts";
 
+/** Meta information of a folder entry from `Leaf.readDir`. */
 export interface LeafDirEntry {
-	/**  */
+	/** Entry name. */
 	name: string;
-	/**  */
+	/** If the entry is a directory. */
 	isDirectory: boolean;
-	/**  */
+	/** If the entry is a normal file. */
 	isFile: boolean;
-	/**  */
+	/** If the entry is a symbolic link. */
 	isSymlink: boolean;
 }
 export type DirEntry = LeafDirEntry;
@@ -146,6 +149,7 @@ export class LeafFsFile implements DisposableObject, Disposable {
 export type FsFile = typeof LeafFsFile;
 export const FsFile: LeafFsFile;
 
+/** Options for temporary entity creation. */
 export interface LeafMakeTempOptions {
 	/** The target temporary folder.
 	*
@@ -158,6 +162,7 @@ export interface LeafMakeTempOptions {
 }
 export type MakeTempOptions = LeafMakeTempOptions;
 
+/** Options for folder creation. */
 export interface LeafMkdirOptions {
 	/** The permissions (e.g. `0o777`) associated with the target. */
 	mode?: number;
@@ -166,6 +171,7 @@ export interface LeafMkdirOptions {
 }
 export type MkdirOptions = LeafMkdirOptions;
 
+/** Options for file opening. */
 export interface LeafOpenOptions {
 	/** When true, imply `write: true` and append data to the end of a file. */
 	append?: boolean;
@@ -184,15 +190,18 @@ export interface LeafOpenOptions {
 }
 export type OpenOptions = LeafOpenOptions;
 
+/** Options for reading. */
 declare type LeafReadFileOptions = WrappedAbortSignal;
 export type ReadFileOptions = WrappedAbortSignal;
 
+/** Options for removal. */
 export interface LeafRemoveOptions {
 	/** If the removal needs to be recursive, akin to `rm -r`. */
 	recursive?: boolean;
 }
 export type RemoveOptions = LeafRemoveOptions;
 
+/** Options for symbolic links. */
 export interface LeafSymlinkOptions {
 	/**  */
 	type: "file"|"dir"|"junction";
@@ -207,6 +216,7 @@ export interface LeafWatchOptions {
 }
 export type WatchOptions = LeafWatchOptions;
 
+/** Options for writing. */
 export interface LeafWriteFileOptions extends WrappedAbortSignal {
 	/** When true, imply `write: true` and append data to the end of a file. */
 	append?: boolean;
@@ -219,25 +229,25 @@ export interface LeafWriteFileOptions extends WrappedAbortSignal {
 }
 export type WriteFileOptions = LeafWriteFileOptions;
 
-/**  */
+/** Change the permissions of a path. */
 export function chmod(path: string|URL, mode: number): Promise<void>;
-/**  */
+/** The synchronous variant of `chmod`. */
 export function chmodSync(path: string|URL, mode: number): void;
-/**  */
+/** Change the ownership of a path. */
 export function chown(path: string|URL, uid: number|null, gid: number|null): Promise<void>;
-/**  */
+/** The synchronous variant of `chown`. */
 export function chownSync(path: string|URL, uid: number|null, gid: number|null): void;
-/**  */
+/** Copy the file from source to the target alongwith its permissions. Will overwrite the file at target, and will fail if the target path is not writable. */
 export function copyFile(sourcePath: string|URL, targetPath: string|URL): Promise<void>;
-/**  */
+/** The synchronous variant of `copyFile`. */
 export function copyFileSync(sourcePath: string|URL, targetPath: string|URL): void;
-/**  */
+/** Create a file and return its handle. If a file already exists, truncate it. */
 export function create(path: string|URL): Promise<LeafFsFile>;
-/**  */
+/** The synchronous variant of `create`. */
 export function createSync(path: string|URL): LeafFsFile;
-/**  */
+/** Create a hard link pointing to the target path, akin to `ln`. */
 export function link(sourcePath: string, targetPath: string): Promise<void>;
-/**  */
+/** The synchronous variant of `link`. */
 export function linkSync(sourcePath: string, targetPath: string): void;
 /** Gather meta information of a path with symbolic link awareness. If a symbolic link is encountered, information of the symbolic link itself will be obtained. */
 export function lstat(path: string|URL): Promise<LeafFileInfo>;
@@ -255,7 +265,7 @@ export function makeTempDirSync(options?: LeafMakeTempOptions): string;
 export function makeTempFile(options?: LeafMakeTempOptions): Promise<string>;
 /** The synchronous variant of `makeTempFile`. */
 export function makeTempFileSync(options?: LeafMakeTempOptions): string;
-/** Create a new folder at the specified path. */
+/** Create a new folder at the specified path, akin to `mkdir`. */
 export function mkdir(path: string|URL, options?: LeafMkdirOptions): Promise<void>;
 /** The synchronous variant of `mkdir`. */
 export function mkdirSync(path: string|URL, options?: LeafMkdirOptions): void;
@@ -279,35 +289,35 @@ export function readLinkSync(path: string|URL): string;
 export function readTextFile(path: string|URL, options?: LeafReadFileOptions): Promise<string>;
 /** The synchronous variant of `readTextFile`. */
 export function readTextFileSync(path: string|URL, options?: LeafReadFileOptions): string;
-/**  */
+/** Resolve the path down to the absolute path. Symbolic links are fully resolved. */
 export function realPath(path: string|URL): Promise<string>;
-/**  */
+/** The synchronous variant of `realPath`. */
 export function realPathSync(path: string|URL): string;
-/** Remove the file or the directory on the path. */
+/** Remove the file or the directory on the path, akin to `rm`. */
 export function remove(path: string|URL, options?: LeafRemoveOptions): Promise<void>;
 /** The synchronous variant of `remove`. */
 export function removeSync(path: string|URL, options?: LeafRemoveOptions): void;
-/**  */
+/** Rename/move the old path to the new path, akin to `mv`. */
 export function rename(sourcePath: string|URL, targetPath: string|URL): Promise<void>;
-/**  */
+/** The synchronous variant of `rename`. */
 export function renameSync(sourcePath: string|URL, targetPath: string|URL): void;
 /** Gather meta information of a path with no symbolic link awareness. If a symbolic link is encountered, information of the file it finally points to will be obtained. */
 export function stat(path: string|URL): Promise<LeafFileInfo>;
 /** The synchronous variant of `stat`. */
 export function statSync(path: string|URL): LeafFileInfo;
-/**  */
+/** Create a symbolic link pointing to the target path, akin to `ln -s`. */
 export function symlink(sourcePath: string|URL, targetPath: string|URL, options?: LeafSymlinkOptions): Promise<void>;
-/**  */
+/** The synchronous variant of `symlink`. */
 export function symlinkSync(sourcePath: string|URL, targetPath: string|URL, options?: LeafSymlinkOptions): void;
-/**  */
+/** Truncate or expand a file until it reaches the desired size. */
 export function truncate(name: string, size?: number): Promise<void>;
-/**  */
+/** The synchronous variant of `truncate`. */
 export function truncateSync(name: string, size?: number): void;
-/**  */
+/** Retrieve the current process umask. If `mask` is provided, set the process umask to the provided mask, then return the previous umask. */
 export function umask(mask?: number): number;
-/**  */
+/** Change the access and modification time, akin to `touch -c -a` and `touch -c -m`. Time can be either UNIX epoch seconds or Date objects. */
 export function utime(path: string|URL, atime: number|Date, mtime: number|Date): Promise<void>;
-/**  */
+/** The synchronous variant of `utime`. */
 export function utimeSync(path: string|URL, atime: number|Date, mtime: number|Date): void;
 /**  */
 export function watchFs(path: string|URL, options?: LeafWatchOptions): LeafFsWatcher;

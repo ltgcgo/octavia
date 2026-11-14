@@ -71,6 +71,17 @@ export function readLinkSync(path) {
 	return NodeFs.readlinkSync(path);
 };
 
+export async function realPath(path) {
+	return await NodeAsyncFs.realpath(path, {
+		"encoding": "utf-8"
+	});
+};
+export function realPathSync(path) {
+	return NodeFs.realpathSync(path, {
+		"encoding": "utf-8"
+	});
+};
+
 export async function stat(path) {
 	return new LeafFileInfo(await NodeAsyncFs.stat(path, {
 		"bigint": false,
