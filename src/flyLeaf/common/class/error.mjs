@@ -72,6 +72,10 @@ export class LeafPermNotGranted extends Error {
 	name = "NotCapable";
 };
 
+export class LeafNetworkDisconnected extends Error {
+	name = "NotConnected";
+};
+
 export class LeafNotFound extends Error {
 	name = "NotFound";
 };
@@ -151,6 +155,9 @@ export default new (class LeafErrors {
 
 	LeafPermNotGranted = LeafPermNotGranted;
 	NotCapable = LeafPermNotGranted;
+
+	LeafNetworkDisconnected = LeafNetworkDisconnected;
+	NotConnected = LeafNetworkDisconnected;
 
 	LeafNotFound = LeafNotFound;
 	NotFound = LeafNotFound;
