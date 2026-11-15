@@ -72,7 +72,7 @@ export function linuxWriteFlags(flags) {
 export class LeafDirEntry extends CommonDirEntry {
 	// Why "Dirent" if it's either "directory entry" or "directory entity"?
 	/** @type {NodeFs.Dirent} */
-	#dirent;
+	/*#dirent;
 
 	#isDirectory;
 	#isFile;
@@ -103,7 +103,7 @@ export class LeafDirEntry extends CommonDirEntry {
 				}
 			}
 		});
-	};
+	};*/
 	/** @param {NodeFs.Dirent} dirent */
 	constructor(dirent) {
 		super();
@@ -111,13 +111,16 @@ export class LeafDirEntry extends CommonDirEntry {
 		delete this.isFile;
 		delete this.isSymlink;*/
 		this.name = dirent.name;
-		this.#dirent = dirent;
-		this.#setGetters();
+		//this.#dirent = dirent;
+		//this.#setGetters();
+		this.isDirectory = dirent.isDirectory();
+		this.isFile = dirent.isFile();
+		this.isSymlink = dirent.isSymbolicLink();
 	};
 };
 
 export class LeafFileInfo extends CommonFileInfo {
-	#nodeFileStat;
+	/*#nodeFileStat;
 
 	#isBlockDevice;
 	#isCharDevice;
@@ -180,7 +183,7 @@ export class LeafFileInfo extends CommonFileInfo {
 				}
 			}
 		});
-	};
+	};*/
 	/** @param {NodeFs.Stats} fileStat */
 	constructor(fileStat) {
 		super();
@@ -191,7 +194,7 @@ export class LeafFileInfo extends CommonFileInfo {
 		delete this.isFile;
 		delete this.isSocket;
 		delete this.isSymlink;*/
-		this.#nodeFileStat = fileStat;
+		//this.#nodeFileStat = fileStat;
 		this.atime = fileStat.atime;
 		this.birthtime = fileStat.birthtime;
 		this.blksize = fileStat.blksize;
@@ -206,6 +209,13 @@ export class LeafFileInfo extends CommonFileInfo {
 		this.rdev = fileStat.rdev;
 		this.size = fileStat.size;
 		this.uid = fileStat.uid;
-		this.#setGetters();
+		this.isBlockDevice = fileStat.isBlockDevice();
+		this.isCharDevice = fileStat.isCharacterDevice();
+		this.isDirectory = fileStat.isDirectory();
+		this.isFifo = fileStat.isFIFO();
+		this.isFile = fileStat.isFile();
+		this.isSocket = fileStat.isSocket();
+		this.isSymlink = fileStat.isSymbolicLink();
+		//this.#setGetters();
 	};
 };
