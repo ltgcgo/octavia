@@ -167,3 +167,5 @@ export namespace errors {
 	}
 	export type WriteZero = LeafDataUnwritten;
 }
+
+// Where is the error where you run out of open FDs?

@@ -86,7 +86,7 @@ export interface LeafFsEvent {
 }
 export type FsEvent = LeafFsEvent;
 
-export interface LeafFsWatcher extends AsyncIterable<LeafFsEvent>, DisposableObject {}
+export interface LeafFsWatcher extends AsyncIterable<LeafFsEvent>, DisposableObject, Disposable {}
 export type FsWatcher = LeafFsWatcher;
 
 export class LeafFsFile implements DisposableObject, Disposable {
@@ -321,7 +321,9 @@ export function umask(mask?: number): number;
 export function utime(path: string|URL, atime: number|Date, mtime: number|Date): Promise<void>;
 /** The synchronous variant of `utime`. */
 export function utimeSync(path: string|URL, atime: number|Date, mtime: number|Date): void;
-/**  */
+/** Start observation of file system events of an existing file or an existing folder.
+*
+* Some user actions can be perceived as singular, yet generating multiple events. Availability of different events and even file system observation itself differ between different OSes. Some host runtimes also coalesce various different event types down to a reduced set, which Fly Leaf will attempt a more granular best-effort reconstruction. */
 export function watchFs(path: string|URL, options?: LeafWatchOptions): LeafFsWatcher;
 /** Write binary data to the specified path. */
 export function writeFile(path: string|URL, data: Uint8Array|ReadableStream<Uint8Array>, options?: LeafWriteFileOptions): Promise<void>;

@@ -1,9 +1,11 @@
 "use strict";
 
 import {
-	arrayCompare,
-	bufferFrom
+	arrayCompare
 } from "../../src/state/utils.js";
+import {
+	bufferFrom
+} from "../../libs/rochelle@ltgcgo/bufferIO.mjs";
 
 const fileBuffer = await Deno.readFile(Deno.args[0]);
 const fileBufferLast = fileBuffer.length - 1;
