@@ -33,7 +33,7 @@ export class LeafStandardSink {
 		this.#closed = true;
 	};
 	isTerminal() {
-		return this.#rd.isTTY;
+		return this.#rd.isTTY ?? false;
 	};
 	/** @param {Uint8Array} byob
 	* @returns Promise<nummber|null> */
@@ -56,6 +56,10 @@ export class LeafStandardSink {
 
 export class LeafStandardTeleTypeInput {
 	#idle = true;
+	/** @type {AbortController} */
+	#ac; // EOF signal
+	/** @type {AbortSignal} */
+	#as; // EOF signal
 	/** @type {NodeJS.ReadStream & {fd: number}} */
 	#rd;
 	/** @type {import("../../index/index.d.mts").LeafSetRawOptions|null} */
@@ -67,38 +71,54 @@ export class LeafStandardTeleTypeInput {
 		const upThis = this;
 		upThis.#rd = resourceDescriptor;
 		upThis.#sq = new StreamQueue();
+		upThis.#ac = new AbortController();
+		upThis.#as = this.#ac.signal;
+		resourceDescriptor.on("end", () => {
+			upThis.close();
+		});
 	};
 	close() {
-		if (this.#sq.closed) return;
-		this.#sq.close();
+		const upThis = this;
+		if (upThis.#sq.closed) return;
+		if (!upThis.#as.aborted) upThis.#ac.abort();
+		upThis.#sq.close();
 		try {
-			NodeFs.closeSync(this.#rd.fd);
+			NodeFs.closeSync(upThis.#rd.fd);
 		} catch (err) {};
 	};
 	isTerminal() {
-		return this.#rd.isTTY;
+		return this.#rd.isTTY ?? false;
 	};
 	/** @returns {ReadableStream<Uint8Array>} */
 	get readable() {
 		// Prevent Node.js REPL from going haywire until actually accessed.
-		const sq = this.#sq;
+		const upThis = this;
+		const sq = upThis.#sq;
 		if (this.#idle) {
 			(async () => {
 				await sq.ready;
-				for await (const chunk of this.#rd) {
+				for await (const chunk of upThis.#rd) {
 					await sq.enqueue(chunk);
 				};
+				upThis.close();
 			}) ();
-			this.#idle = false;
+			upThis.#idle = false;
 		};
 		return sq.readable;
 	};
 	/** @param {Uint8Array} byob
 	* @returns Promise<nummber|null> */
 	read(byob) {
-		if (this.#sq.closed) return; // Deviation?
 		const upThis = this;
+		if (
+			upThis.#sq.closed ||
+			upThis.#as.aborted ||
+			upThis.#rd.readableEnded
+		) return null; // Deviation?
 		return new Promise((resolve) => {
+			upThis.#as.onabort = () => {
+				resolve(null);
+			};
 			NodeFs.read(upThis.#rd.fd, byob, (err, ioSize) => {
 				if (err) throw(err);
 				resolve(ioSize);
@@ -107,8 +127,13 @@ export class LeafStandardTeleTypeInput {
 	};
 	/** @param {Uint8Array} byob */
 	readSync(byob) {
-		if (this.#sq.closed) return; // Deviation?
-		return NodeFs.readSync(this.#rd.fd, byob);
+		const upThis = this;
+		if (
+			upThis.#sq.closed ||
+			upThis.#as.aborted ||
+			upThis.#rd.readableEnded
+		) return null; // Deviation?
+		return NodeFs.readSync(upThis.#rd.fd, byob);
 	};
 	/** @param {import("../../index/index.d.mts").LeafSetRawOptions} options */
 	setRaw(isRaw, options) {
