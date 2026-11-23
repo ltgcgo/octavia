@@ -15,6 +15,7 @@
 	console.debug(`Vendor: ${Deno?.build?.vendor ?? "Not supplied"}`);
 	console.debug(`LLVM target: ${Deno?.build?.target ?? "Not supplied"}`);
 	console.debug(`--- Execution context ---`);
+	console.debug(`import.meta.main: ${typeof import.meta?.main === "boolean" ? (import.meta.main ? "Supported" : "Incorrectly supported"): "Not supported"}`);
 	console.debug(`Parent process ID: ${Deno?.pid}`);
 	console.debug(`Process ID: ${Deno?.ppid}`);
 	console.debug(`Has colour: ${Deno.noColor ? "No" : "Yes"}`);

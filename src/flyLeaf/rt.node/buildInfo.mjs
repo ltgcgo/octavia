@@ -8,7 +8,7 @@ import LeafBuildInfo from "../common/class/buildInfo.mjs";
 
 import NodeProcess from "node:process";
 
-const instanceReport = NodeProcess.report.getReport();
+const instanceReport = NodeProcess.report?.getReport(); // Porffor alpha 25 does not support `process.report`.
 
 const build = new LeafBuildInfo(
 	NodeProcess.platform,

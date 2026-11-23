@@ -41,6 +41,19 @@ export default class LeafBuildInfo {
 				this.vendor = "apple";
 				break;
 			};
+			case "linux": {
+				switch (vendor) {
+					case "pc": {
+						this.vendor = "unknown";
+						target = target.replaceAll("-pc-", "-unknown-");
+						break;
+					};
+					default: {
+						this.vendor = vendor ?? "unknown";
+					};
+				};
+				break;
+			};
 			case "windows": {
 				this.vendor = "pc";
 				break;

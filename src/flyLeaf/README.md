@@ -3,7 +3,7 @@
 
 > **Warning**
 >
-> _Fly Leaf_ is not yet ready for prime time. It's currently still being developed as a component of _Octavia_, with all activities in its repository.
+> _Fly Leaf_ is not yet ready for prime time. It's currently still being developed as a component of _Octavia_, with all activities in the parent repository.
 >
 > Once its completion reaches a certain milestone, it will become an independent project just like _Rochelle_ and _Seamstress_. Check relevant information before proceeding to incorporate.
 

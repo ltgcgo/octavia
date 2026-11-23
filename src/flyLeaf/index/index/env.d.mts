@@ -292,5 +292,5 @@ export function removeSignalListener(signal: LeafSystemSignal, receiver: () => v
 export function systemMemoryInfo(): LeafSystemMemoryInfo;
 /** Get the user ID of the current running executable. Certain OSes like Windows return `null` instead. */
 export function uid(): number|null;
-/** Ensure the given schedule ID returned by `setInterval` or `setTimeout` does not the event loop from finishing. */
+/** Ensure the given schedule ID returned by `setInterval` or `setTimeout` does not block the event loop from finishing. */
 export function unrefTimer(scheduleId: number): void;
