@@ -86,6 +86,13 @@ const {
 	unrefTimer,
 	version,
 
+	// IO
+	consoleSize,
+	inspect,
+	stderr,
+	stdin,
+	stdout,
+
 	// File system
 	chmod,
 	chmodSync,
@@ -177,6 +184,12 @@ export {
 	uid,
 	unrefTimer,
 	version,
+
+	consoleSize,
+	inspect,
+	stderr,
+	stdin,
+	stdout,
 
 	chmod,
 	chmodSync,

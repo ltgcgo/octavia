@@ -64,7 +64,7 @@ export interface LeafInspectOptions {
 	showProxy?: boolean;
 	/** Should keyed object entries (objects, sets, maps) be sorted by key. Defaults to false. */
 	sorted?: boolean;
-	/** Maximum allowed length of a string before ellipsis truncation. */
+	/** Maximum allowed length of a string before ellipsis truncation. Runtime-dependent. */
 	strAbbreviateSize?: number;
 	/** Should a trailing comma be added for multi-line collections. Defaults to false. */
 	trailingComma?: boolean;
@@ -88,18 +88,18 @@ export interface LeafLegacyWrappedWriter<T> extends DisposableObject, WrappedWri
 export interface LeafSetRawOptions {
 	/** Whether characters corresponding to a single should still be generated.
 	*
-	* Ignored when deactivating raw mode. May only function on POSIX systems. */
+	* Ignored when deactivating raw mode. May only function on POSIX systems. Several runtimes may rely on fallback, or are with this option ignored. */
 	cbreak: boolean;
 }
 export type SetRawOptions = LeafSetRawOptions;
 
-/** Write streams for standard IO. */
+/** Write streams for standard IO. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
 export interface LeafStandardSink extends WrappedWriteStream<Uint8Array>, LeafHandlerWritable, LeafIoTeletype {}
 
-/** Read streams for standard IO. */
+/** Read streams for standard IO. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
 export interface LeafStandardSource extends WrappedReadStream<Uint8Array>, LeafHandlerReadable, LeafIoTeletype {}
 
-/** Standard input. */
+/** Standard input. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
 export interface LeafStandardTeleTypeInput extends LeafStandardSource {
 	/** Put the console (teletype) under raw mode when true, or canonical mode when false.
 	*
@@ -115,14 +115,16 @@ export interface LeafTeletypeDimensions {
 	rows: number;
 }
 
-/** Get the current dimensions of the console (teletype) reported by the OS. If none of the three standard IOs are connected to a console, this method errors out, so it's safer to check `Deno.stdout.isTerminal` before calling this method. */
+/** Get the current dimensions of the console (teletype) reported by the OS. Depending on runtime availability, this method tries `stdout`, `stderr` and `stdin` in order.
+*
+* If none of the three standard IOs are connected to a console, this method errors out, so it's safer to check `Deno.stdout.isTerminal` before calling this method. */
 export function consoleSize(): LeafTeletypeDimensions;
 /** Convert the target value into the same string used by console logging. There is no guarantee that all features will be supported by every single runtime. */
 export function inspect(target: unknown, options?: LeafInspectOptions): string;
 
-/** Standard error. */
+/** Standard error. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
 export const stderr: LeafStandardSink;
-/** Standard input. */
+/** Standard input. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
 export const stdin: LeafStandardTeleTypeInput;
-/** Standard output. */
+/** Standard output. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
 export const stdout: LeafStandardSink;

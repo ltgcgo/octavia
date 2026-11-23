@@ -1,0 +1,122 @@
+// 2023 © Lightingale Community, WingBlade Author(s)
+// 2026-2026 © Lightingale Community
+// Licensed under GNU LGPL v3.0+ license.
+
+"use strict";
+
+import {
+	StreamQueue
+} from "../../../libs/rochelle@ltgcgo/splicer.mjs";
+
+import { isolateSignals } from "../../common/method/io.mjs";
+
+import NodeFs from "node:fs";
+import NodeStream from "node:stream";
+
+export class LeafStandardSink {
+	#closed = false;
+	/** @type {NodeJS.WriteStream & {fd: number}} */
+	#rd;
+	/** @type {WritableStream<Uint8Array>} */
+	writable;
+	/** @param {NodeJS.WriteStream & {fd: number}} resourceDescriptor */
+	constructor(resourceDescriptor) {
+		this.#rd = resourceDescriptor;
+		this.writable = NodeStream.Writable.toWeb(resourceDescriptor);
+	};
+	close() {
+		if (this.#closed) return;
+		this.writable.close();
+		try {
+			NodeFs.closeSync(this.#rd.fd);
+		} catch (err) {};
+		this.#closed = true;
+	};
+	isTerminal() {
+		return this.#rd.isTTY;
+	};
+	/** @param {Uint8Array} byob
+	* @returns Promise<nummber|null> */
+	write(byob) {
+		if (this.#closed) return; // Deviation?
+		const upThis = this;
+		return new Promise((resolve) => {
+			NodeFs.write(upThis.#rd.fd, byob, (err, ioSize) => {
+				if (err) throw(err);
+				resolve(ioSize);
+			});
+		});
+	};
+	/** @param {Uint8Array} byob */
+	writeSync(byob) {
+		if (this.#closed) return; // Deviation?
+		return NodeFs.writeSync(this.#rd.fd, byob);
+	};
+};
+
+export class LeafStandardTeleTypeInput {
+	#idle = true;
+	/** @type {NodeJS.ReadStream & {fd: number}} */
+	#rd;
+	/** @type {import("../../index/index.d.mts").LeafSetRawOptions|null} */
+	#ro = null;
+	/** @type {StreamQueue} */
+	#sq;
+	/** @param {NodeJS.ReadStream & {fd: number}} resourceDescriptor */
+	constructor(resourceDescriptor) {
+		const upThis = this;
+		upThis.#rd = resourceDescriptor;
+		upThis.#sq = new StreamQueue();
+	};
+	close() {
+		if (this.#sq.closed) return;
+		this.#sq.close();
+		try {
+			NodeFs.closeSync(this.#rd.fd);
+		} catch (err) {};
+	};
+	isTerminal() {
+		return this.#rd.isTTY;
+	};
+	/** @returns {ReadableStream<Uint8Array>} */
+	get readable() {
+		// Prevent Node.js REPL from going haywire until actually accessed.
+		const sq = this.#sq;
+		if (this.#idle) {
+			(async () => {
+				await sq.ready;
+				for await (const chunk of this.#rd) {
+					await sq.enqueue(chunk);
+				};
+			}) ();
+			this.#idle = false;
+		};
+		return sq.readable;
+	};
+	/** @param {Uint8Array} byob
+	* @returns Promise<nummber|null> */
+	read(byob) {
+		if (this.#sq.closed) return; // Deviation?
+		const upThis = this;
+		return new Promise((resolve) => {
+			NodeFs.read(upThis.#rd.fd, byob, (err, ioSize) => {
+				if (err) throw(err);
+				resolve(ioSize);
+			});
+		});
+	};
+	/** @param {Uint8Array} byob */
+	readSync(byob) {
+		if (this.#sq.closed) return; // Deviation?
+		return NodeFs.readSync(this.#rd.fd, byob);
+	};
+	/** @param {import("../../index/index.d.mts").LeafSetRawOptions} options */
+	setRaw(isRaw, options) {
+		this.#rd.setRawMode(isRaw);
+		if (isRaw) {
+			this.#ro = options || {};
+		} else {
+			this.#ro = null;
+		};
+	};
+};
