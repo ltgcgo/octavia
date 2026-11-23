@@ -369,12 +369,12 @@ export function wrapProxies(victim, tree, options = {
 	};
 	if (unwrappedVictim.constructor === Promise) {
 		unwrappedVictim.catch((err) => {
-			console.info(`[\x1b[1;31mA NO\x1b[0m] ${tree.join(".")} <= ${visualiseValue(err)}`);
+			inspectTrace > 1 && console.info(`[\x1b[1;31mA NO\x1b[0m] ${tree.join(".")} <= ${visualiseValue(err)}`);
 		});
 		unwrappedVictim.then((result) => {
-			console.info(`[\x1b[1;32mA OK\x1b[0m] ${tree.join(".")} => ${visualiseValue(result)}`);
+			inspectTrace > 1 && console.info(`[\x1b[1;32mA OK\x1b[0m] ${tree.join(".")} => ${visualiseValue(result)}`);
 		}, (reason) => {
-			console.info(`[\x1b[1;31mA RJ\x1b[0m] ${tree.join(".")} <= ${visualiseValue(reason)}`);
+			inspectTrace > 1 && console.info(`[\x1b[1;31mA RJ\x1b[0m] ${tree.join(".")} <= ${visualiseValue(reason)}`);
 		});
 	};
 	let lastGetValueTime = 0;

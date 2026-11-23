@@ -1,7 +1,7 @@
 {
 	"name": "@ltgc/fly-leaf",
 	"version": "0.0.1",
-	"license": "LGPL-3.0-only",
+	"license": "LGPL-3.0-or-later",
 	"imports": {
 		"@ltgc/rochelle": "jsr:@ltgc/rochelle@^0.3.5",
 		"@ltgc/seamstress": "jsr:@ltgc/seamstress@^0.1.2"
@@ -13,12 +13,15 @@
 		]
 	},
 	"exports": {
+		".": "./dist/index.d.mts"
 	},
 	"publish": {
 		"include": [
 			"dist/README.md",
 			"dist/*.mjs",
 			"dist/*.mts",
+			"dist/**/*.mjs",
+			"libs/**/*.mts",
 			"libs/libs",
 			"libs/**/*.d.mts",
 			"libs/**/LICENSE*",
@@ -31,7 +34,7 @@
 			"ES5", "ES6",
 			"ES2016", "ES2017", "ES2018", "ES2019", "ES2020",
 			"ES2021", "ES2022", "ES2023", "ES2024", "ES2025",
-			"DOM", "WebWorker"
+			"ESNext", "DOM", "WebWorker"
 		]
 	},
 	"unstable": [

@@ -5,7 +5,7 @@ runner=
 if [ "$1" == "" ]; then
 	if [ -f "$(which caddy)" ]; then
 		runner=caddy
-	elif [ -f "$(which python3)"; then
+	elif [ -f "$(which python3)" ]; then
 		runner=python
 	fi
 else
