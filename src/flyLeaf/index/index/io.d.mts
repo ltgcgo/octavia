@@ -22,9 +22,11 @@ export const SeekMode: LeafSeekMode;
 export interface LeafHandlerReadable {
 	/** Read the source into your own brought buffer, then return the bytes read.
 	*
-	* There is no guarantee that all bytes will be flushed in a single method. `0` is valid and not a signal for EoF, and `null` is the only signal for EoF. */
+	* There is no guarantee that all bytes will be flushed in a single method. `0` is valid and not a signal for EoF, and `null` is the only signal for EoF.
+	* @deprecated */
 	readonly read?: (byob: Uint8Array) => Promise<number|null>;
-	/** The synchronous variant of `read`. */
+	/** The synchronous variant of `read`.
+	* @deprecated */
 	readonly readSync?: (byob: Uint8Array) => number|null;
 }
 
@@ -32,9 +34,11 @@ export interface LeafHandlerReadable {
 export interface LeafHandlerWritable {
 	/** Write your own brought buffer into the sink, then return the bytes written.
 	*
-	* There is no guarantee that all bytes will be flushed in a single method. `0` is valid and not a signal for EoF. */
+	* There is no guarantee that all bytes will be flushed in a single method. `0` is valid and not a signal for EoF.
+	* @deprecated */
 	readonly write?: (byob: Uint8Array) => Promise<number|null>;
-	/** The synchronous variant of `write`. */
+	/** The synchronous variant of `write`.
+	* @deprecated */
 	readonly writeSync?: (byob: Uint8Array) => number|null;
 }
 
@@ -115,3 +119,10 @@ export interface LeafTeletypeDimensions {
 export function consoleSize(): LeafTeletypeDimensions;
 /** Convert the target value into the same string used by console logging. There is no guarantee that all features will be supported by every single runtime. */
 export function inspect(target: unknown, options?: LeafInspectOptions): string;
+
+/** Standard error. */
+export const stderr: LeafStandardSink;
+/** Standard input. */
+export const stdin: LeafStandardTeleTypeInput;
+/** Standard output. */
+export const stdout: LeafStandardSink;
