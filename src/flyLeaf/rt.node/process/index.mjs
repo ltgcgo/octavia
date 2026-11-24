@@ -54,7 +54,16 @@ export function spawnAndWait(command, optionOrArgs, options) {
 	};
 	return new Promise((resolve, reject) => {
 		const child = NodeChildProcess.execFile(command, args, translatedOptions, (err, stdout, stderr) => {
-			if (err) reject(err);
+			if (
+				err &&
+				typeof err.signal === "undefined" &&
+				typeof err.killed === "undefined"
+			) {
+				try {
+					child.kill("SIGKILL");
+				} catch (err) {};
+				reject(err);
+			};
 			resolve(new LeafCommandOutput(
 				child.exitCode,
 				child.signalCode,
