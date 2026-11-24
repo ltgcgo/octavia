@@ -531,7 +531,7 @@ export function wrapProxies(victim, tree, options = {
 					return response;
 				};
 			} catch (err) {
-				console.info(`[\x1b[1;31mFAIL\x1b[0m] ${tree.join(".")}<${invokeId}>() <= ${visualiseValue(err)}`);
+				inspectTrace > 1 && console.info(`[\x1b[1;31mFAIL\x1b[0m] ${tree.join(".")}<${invokeId}>() <= ${visualiseValue(err)}`);
 				throw(err);
 			};
 		} else {

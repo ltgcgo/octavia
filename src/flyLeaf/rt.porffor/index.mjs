@@ -12,5 +12,6 @@ export * from "../rt.node/permission/index.mjs";
 export * from "../rt.node/env/index.mjs";
 export * from "../rt.node/io/index.mjs";
 export * from "../rt.node/fs/index.mjs";
+export * from "../rt.node/process/index.mjs";
 
 export * as _leaf_overlay_ from "./overlay/index.mjs";

@@ -8,6 +8,7 @@ import { PoolIDMaps } from "../../common/class/pool.mjs";
 import {
 	LeafMemoryUsage
 } from "../../common/class/systemInfo.mjs";
+import { allSystemSignals } from "../../common/constant/system.mjs";
 
 import { isCallSiteInternal } from "../../vergilius/restrict.mjs";
 
@@ -27,7 +28,6 @@ export const noColor = NodeProcess.env["NO_COLOR"]?.length > 0;
 export const pid = NodeProcess.pid;
 export const ppid = NodeProcess.ppid;
 
-const allSystemSignals = new Set(["SIGABRT", "SIGALRM", "SIGBREAK", "SIGBUS", "SIGCHLD", "SIGCONT", "SIGEMT", "SIGFPE", "SIGHUP", "SIGILL", "SIGINFO", "SIGINT", "SIGIO", "SIGKILL", "SIGPIPE", "SIGPOLL", "SIGPROF", "SIGPWR", "SIGQUIT", "SIGSEGV", "SIGSTKFLT", "SIGSTOP", "SIGSYS", "SIGTERM", "SIGTRAP", "SIGTSTP", "SIGTTIN", "SIGTTOU", "SIGUNUSED", "SIGURG", "SIGUSR1", "SIGUSR2", "SIGVTALRM", "SIGWINCH", "SIGXCPU", "SIGXFSZ"]);
 /** @type {PoolIDMaps<NodeJS.Timeout>} */
 const schedulePool = new PoolIDMaps();
 const signalListeners = new WeakMap();
