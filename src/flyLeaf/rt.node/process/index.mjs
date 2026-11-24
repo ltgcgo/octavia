@@ -14,6 +14,7 @@ import { toExtendedReadable, toUint8Array } from "../../common/method/transform.
 import { fromDenoModern } from "./translate.mjs";
 
 import { env } from "../env/index.mjs";
+import { deepUnwrap } from "../../vergilius/restrict.mjs";
 
 import NodeChildProcess from "node:child_process";
 import NodeProcess from "node:process";
@@ -71,7 +72,7 @@ export const LeafChildProcess = class LeafChildProcess {
 		});
 		/** @type {NodeChildProcess.ChildProcess} */
 		//console.debug(command, args, translatedOptions);
-		const child = NodeChildProcess.spawn(command, args, translatedOptions);
+		const child = NodeChildProcess.spawn(command, deepUnwrap(args), translatedOptions);
 		upThis.pid = child.pid;
 		upThis.#child = child;
 		child.once("close", (code, signal) => {
@@ -202,7 +203,7 @@ export function spawnAndWait(command, optionOrArgs, options) {
 		_leaf_copyTo_(translatedOptions.env, env.toObject());
 	};
 	return new Promise((resolve, reject) => {
-		const child = NodeChildProcess.execFile(command, args, translatedOptions, (err, stdout, stderr) => {
+		const child = NodeChildProcess.execFile(command, deepUnwrap(args), translatedOptions, (err, stdout, stderr) => {
 			if (
 				err &&
 				typeof err.signal === "undefined" &&
@@ -240,7 +241,7 @@ export function spawnAndWaitSync(command, optionOrArgs, options) {
 	if (!options.clearEnv) {
 		_leaf_copyTo_(translatedOptions.env, env.toObject());
 	};
-	const result = NodeChildProcess.spawnSync(command, args, translatedOptions);
+	const result = NodeChildProcess.spawnSync(command, deepUnwrap(args), translatedOptions);
 	if (result?.error) throw(result.error);
 	return new LeafCommandOutput(
 		result?.status,
