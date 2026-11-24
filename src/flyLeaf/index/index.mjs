@@ -140,7 +140,12 @@ const {
 	writeFile,
 	writeFileSync,
 	writeTextFile,
-	writeTextFileSync
+	writeTextFileSync,
+
+	// Child process
+	kill,
+	spawnAndWait,
+	spawnAndWaitSync
 } = flyLeafGlobals;
 
 export {
@@ -237,7 +242,11 @@ export {
 	writeFile,
 	writeFileSync,
 	writeTextFile,
-	writeTextFileSync
+	writeTextFileSync,
+
+	kill,
+	spawnAndWait,
+	spawnAndWaitSync
 };
 
 // This section should be in each runtime implementation itself to support runtime-specific imports.

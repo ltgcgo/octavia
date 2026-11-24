@@ -210,10 +210,10 @@ export function spawn<T extends LeafCommandOptions>(command: string|URL, options
 /** Run a command directly as a child process. Unstable for Deno, a functional replacement of `run`. */
 export function spawn<T extends LeafCommandOptions>(command: string|URL, args: string[], options?: Omit<T, "args">): LeafChildProcess<T>;
 /** Run a command directly as a child process, then collect its output upon finishing. Unstable for Deno. */
-export function spawnAndWait<T extends LeafCommandOptions>(command: string|URL, options?: T): Promise<LeafCommandOutput<"spawn", T>>;
+export function spawnAndWait<T extends LeafCommandOptions>(command: string|URL, options?: T): Promise<LeafCommandOutput<"output", T>>;
 /** Run a command directly as a child process, then collect its output upon finishing. Unstable for Deno. */
-export function spawnAndWait<T extends LeafCommandOptions>(command: string|URL, args: string[], options?: Omit<T, "args">): Promise<LeafCommandOutput<"spawn", T>>;
+export function spawnAndWait<T extends LeafCommandOptions>(command: string|URL, args: string[], options?: Omit<T, "args">): Promise<LeafCommandOutput<"output", T>>;
 /** The synchronous variant of `spawnAndWait`. */
-export function spawnAndWaitSync<T extends LeafCommandOptions>(command: string|URL, options?: T): LeafCommandOutput<"spawn", T>;
+export function spawnAndWaitSync<T extends LeafCommandOptions>(command: string|URL, options?: T): LeafCommandOutput<"output", T>;
 /** The synchronous variant of `spawnAndWait`. */
-export function spawnAndWaitSync<T extends LeafCommandOptions>(command: string|URL, args: string[], options?: Omit<T, "args">): LeafCommandOutput<"spawn", T>;
+export function spawnAndWaitSync<T extends LeafCommandOptions>(command: string|URL, args: string[], options?: Omit<T, "args">): LeafCommandOutput<"output", T>;
