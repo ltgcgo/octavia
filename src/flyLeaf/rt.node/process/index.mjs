@@ -163,18 +163,24 @@ export const LeafCommand = class LeafCommand {
 		return new Promise((resolve, reject) => {
 			let stdoutBuffer, stderrBuffer;
 			(async () => {
-				stdoutBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stdout));
+				// Race condition might exist.
+				if (outputIsPiped(options.stdout) && result.stdout) {
+					stdoutBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stdout));
+				};
 			})();
 			(async () => {
-				stderrBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stderr));
+				// Race condition might exist.
+				if (outputIsPiped(options.stderr) && result.stderr) {
+					stderrBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stderr));
+				};
 			})();
 			const answer = async (code, signal) => {
 				result.off("close", answer);
 				resolve(new LeafCommandOutput(
 					code ?? result.exitCode,
-					answer ?? result.signalCode,
-					result.stdout ? stdoutBuffer : undefined,
-					result.stderr ? stderrBuffer : undefined
+					signal ?? result.signalCode,
+					stdoutBuffer,
+					stderrBuffer
 				));
 			};
 			result.once("error", (err) => {
@@ -184,7 +190,7 @@ export const LeafCommand = class LeafCommand {
 					typeof err.killed === "undefined"
 				) {
 					try {
-						child.kill("SIGKILL");
+						result.kill("SIGKILL");
 					} catch (err) {};
 					result.off("close", answer);
 					reject(err);
@@ -307,7 +313,7 @@ export function spawnAndWait(command, optionOrArgs, options) {
 		(async () => {
 			if (options.stderr !== "inherit") return;
 			if (NodeProcess.stderr.closed) return;
-			for await (const chunk of child.stdout) {
+			for await (const buffer of child.stdout) {
 				if (NodeProcess.stderr.closed) break;
 				NodeFs.writeSync(NodeProcess.stderr.fd, buffer);
 			};
