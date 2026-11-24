@@ -5,7 +5,7 @@
 "use strict";
 
 /** `1` contains `"output"` defaults, and `0` `"spawn"` defaults.
-* @template T extends string
+* @template {string} T
 * @param {Map<import("../../index/index.d.mts").LeafStdIoMode, T>} map
 * @returns {Record<"stdin"|"stdout"|"stderr", T>[]} */
 export function getTranslatedDefault(map) {

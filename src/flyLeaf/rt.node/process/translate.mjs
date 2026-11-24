@@ -7,7 +7,7 @@
 import { getTranslatedDefault } from "../../common/method/process.mjs";
 import { _leaf_copyTo_, _leaf_yield_ } from "../../common/util/overlay.mjs";
 
-/** @type {Map<import("../../index/index.d.mts").LeafStdIoMode, "overlapped"|"inherit"|"ignore">} */
+/** @type {Map<import("../../index/index.d.mts").LeafStdIoMode, "pipe"|"inherit"|"ignore">} */
 const stdioModeMap = new Map();
 stdioModeMap.set("inherit", "inherit");
 stdioModeMap.set("null", "ignore");

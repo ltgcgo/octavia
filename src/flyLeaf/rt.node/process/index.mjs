@@ -19,7 +19,7 @@ import NodeChildProcess from "node:child_process";
 import NodeProcess from "node:process";
 import NodeStream from "node:stream";
 
-/** @template T extends import("../../index/index.d.mts").LeafCommandOptions */
+/** @template {import("../../index/index.d.mts").LeafCommandOptions} T */
 export const LeafChildProcess = class LeafChildProcess {
 	/** @type {NodeChildProcess.ChildProcess} */
 	#child;
@@ -62,7 +62,6 @@ export const LeafChildProcess = class LeafChildProcess {
 	constructor(command, args, options) {
 		const upThis = this;
 		const translatedOptions = fromDenoModern(options, false);
-		//console.debug(translatedOptions);
 		if (!options.clearEnv) {
 			_leaf_copyTo_(translatedOptions.env, env.toObject());
 		};
@@ -71,6 +70,7 @@ export const LeafChildProcess = class LeafChildProcess {
 			childDone = resolve;
 		});
 		/** @type {NodeChildProcess.ChildProcess} */
+		//console.debug(command, args, translatedOptions);
 		const child = NodeChildProcess.spawn(command, args, translatedOptions);
 		upThis.pid = child.pid;
 		upThis.#child = child;
@@ -93,7 +93,7 @@ export const LeafChildProcess = class LeafChildProcess {
 			upThis.#so = toExtendedReadable(NodeStream.Readable.toWeb(child.stdout));
 		};
 		if (child.stderr != null) {
-			upThis.#se = toExtendedReadable(NodeStream.Readable.toWeb(child.stdout));
+			upThis.#se = toExtendedReadable(NodeStream.Readable.toWeb(child.stderr));
 		};
 	};
 	/** @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
@@ -124,6 +124,29 @@ export const LeafChildProcess = class LeafChildProcess {
 		this.#child.unref();
 	};
 };
+export const ChildProcess = LeafChildProcess;
+
+/** @template {import("../../index/index.d.mts").LeafCommandOptions} T */
+export const LeafCommand = class LeafCommand {
+	/** @type {string|URL} */
+	#command;
+	/** @type {T} */
+	#options;
+	constructor(command, options) {
+		this.#command = command;
+		this.#options = options;
+	};
+	//output() {};
+	//outputSync() {};
+	spawn() {
+		return new LeafChildProcess(
+			this.#command,
+			this.#options.args,
+			this.#options
+		);
+	};
+};
+export const Command = LeafCommand;
 
 /** @param {number} pid
 * @param {import("../../index/index.d.mts").LeafSystemSignal} signal */

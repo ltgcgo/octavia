@@ -22,7 +22,9 @@ export class LeafStandardSink {
 	/** @param {NodeJS.WriteStream & {fd: number}} resourceDescriptor */
 	constructor(resourceDescriptor) {
 		this.#rd = resourceDescriptor;
-		this.writable = NodeStream.Writable.toWeb(resourceDescriptor);
+		if (NodeStream.Writable?.toWeb) {
+			this.writable = NodeStream.Writable.toWeb(resourceDescriptor);
+		};
 	};
 	close() {
 		if (this.#closed) return;

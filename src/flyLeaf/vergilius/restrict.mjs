@@ -317,7 +317,7 @@ export function stripScriptSourceUrl(script) {
 	return constructed;
 };
 
-/** @template {T}
+/** @template T
 * @param {T} victim
 * @param {string[]} tree
 * @returns {T} */
@@ -721,7 +721,7 @@ export function wrapProxies(victim, tree, options = {
 	return newProxy;
 };
 
-/** @template {T}
+/** @template T
 * @param {T} target
 * @param {string} key
 * @param {object|Function} value
@@ -732,7 +732,7 @@ export function setInternalOnlyProperty(target, key, value) {
 	return target;
 };
 
-/** @template {T}
+/** @template T
 * @param {T} source
 * @param {Set<string>|Iterable<string>} reservedFeatures
 * @returns {T} */

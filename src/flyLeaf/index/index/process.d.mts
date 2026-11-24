@@ -167,7 +167,8 @@ declare class LeafChildProcess<T extends LeafCommandDetailsCommon> extends LeafC
 	stdin: T["stdin"] extends "piped" ? WritableStream<Uint8Array> : Throws<TypeError, never>;
 	/** The standard output. Cannot be used with `LeafChildProcess.output`, as a single read stream cannot have two consumers. */
 	stdout: T["stdout"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError, never>;
-	/** Buffer the standard output and error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildProcess.stderr` or `LeafChildProcess.stdout`, as a single read stream cannot have two consumers. */
+	/** Buffer the standard output and error, wait until the child quits, and return the buffered content.
+	* Cannot be used with `LeafChildProcess.stderr` or `LeafChildProcess.stdout`, as a single read stream cannot have two consumers. While Fly Leaf allows this method to be called multiple times, real Deno does not allow such, so avoid relying on this behaviour. */
 	output(): Promise<LeafCommandOutput<"spawn", T>>;
 	/** Ensures that the status of the child blocks the runtime instance from quitting. */
 	ref(): void;
