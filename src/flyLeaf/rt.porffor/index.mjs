@@ -8,9 +8,9 @@ import "../vergilius/init.mjs";
 export * from "../common/constant/index.mjs";
 export * from "./version.mjs";
 export * from "./buildInfo.mjs";
-export * from "./permission/index.mjs";
-export * from "./env/index.mjs";
-export * from "./io/index.mjs";
-export * from "./fs/index.mjs";
+export * from "../rt.node/permission/index.mjs";
+export * from "../rt.node/env/index.mjs";
+export * from "../rt.node/io/index.mjs";
+export * from "../rt.node/fs/index.mjs";
 
 export * as _leaf_overlay_ from "./overlay/index.mjs";
