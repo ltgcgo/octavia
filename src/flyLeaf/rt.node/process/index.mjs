@@ -171,14 +171,14 @@ export const LeafCommand = class LeafCommand {
 		return new Promise((resolve, reject) => {
 			let stdoutBuffer = (async () => {
 				// Race condition might exist, but this should plug that problem.
-				if (outputIsPiped(options.stdout) && result.stdout) {
+				if (outputIsPiped(options.stdout) && result.stdout?.readable) {
 					return toUint8Array(await NodeStreamConsumers.buffer(result.stdout));
 				};
 			})(),
 			stderrBuffer = (async () => {
 				// Race condition might exist, but this should plug that problem.
-				if (outputIsPiped(options.stderr) && result.stderr) {
-					stderrBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stderr));
+				if (outputIsPiped(options.stderr) && result.stderr?.readable) {
+					return toUint8Array(await NodeStreamConsumers.buffer(result.stderr));
 				};
 			})();
 			const answer = async (code, signal) => {
@@ -187,7 +187,7 @@ export const LeafCommand = class LeafCommand {
 					code ?? result.exitCode,
 					signal ?? result.signalCode,
 					outputIsPiped(options.stdout) && result.stdout ? await stdoutBuffer : undefined,
-					outputIsPiped(options.stderr) && result.stderr ? stderrBuffer : undefined
+					outputIsPiped(options.stderr) && result.stderr ? await stderrBuffer : undefined
 				));
 			};
 			result.once("error", (err) => {
