@@ -30,7 +30,7 @@ export function fromDenoModern(denoOpts, isOutput = false) {
 		stdout,
 		uid,
 		windowsRawArguments
-	} = denoOpts;
+	} = denoOpts ?? {};
 	const newEnv = _leaf_copyTo_({}, env);
 	return {
 		stdio: [

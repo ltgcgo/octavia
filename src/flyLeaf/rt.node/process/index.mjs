@@ -17,8 +17,10 @@ import { env } from "../env/index.mjs";
 import { deepUnwrap } from "../../vergilius/restrict.mjs";
 
 import NodeChildProcess from "node:child_process";
+import NodeFs from "node:fs";
 import NodeProcess from "node:process";
 import NodeStream from "node:stream";
+import NodeStreamConsumers from "node:stream/consumers";
 
 /** @template {import("../../index/index.d.mts").LeafCommandOptions} T */
 export const LeafChildProcess = class LeafChildProcess {
@@ -63,7 +65,7 @@ export const LeafChildProcess = class LeafChildProcess {
 	constructor(command, args, options) {
 		const upThis = this;
 		const translatedOptions = fromDenoModern(options, false);
-		if (!options.clearEnv) {
+		if (!options?.clearEnv) {
 			_leaf_copyTo_(translatedOptions.env, env.toObject());
 		};
 		let childDone;
@@ -142,12 +144,85 @@ export const LeafCommand = class LeafCommand {
 	spawn() {
 		return new LeafChildProcess(
 			this.#command,
-			this.#options.args,
+			this.#options?.args,
 			this.#options
+		);
+	};
+	output() {
+		const options = this.#options;
+		if (options.stdin === "piped") {
+			throw(new TypeError("Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead"));
+		};
+		const translatedOptions = fromDenoModern(options, true);
+		const args = deepUnwrap(this.#options?.args) ?? [];
+		if (!options?.clearEnv) {
+			_leaf_copyTo_(translatedOptions.env, env.toObject());
+		};
+		/** @type {NodeChildProcess.ChildProcess} */
+		const result = NodeChildProcess.spawn(this.#command, args, translatedOptions);
+		return new Promise((resolve, reject) => {
+			let stdoutBuffer, stderrBuffer;
+			(async () => {
+				stdoutBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stdout));
+			})();
+			(async () => {
+				stderrBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stderr));
+			})();
+			const answer = async (code, signal) => {
+				result.off("close", answer);
+				resolve(new LeafCommandOutput(
+					code ?? result.exitCode,
+					answer ?? result.signalCode,
+					result.stdout ? stdoutBuffer : undefined,
+					result.stderr ? stderrBuffer : undefined
+				));
+			};
+			result.once("error", (err) => {
+				if (
+					err &&
+					typeof err.signal === "undefined" &&
+					typeof err.killed === "undefined"
+				) {
+					try {
+						child.kill("SIGKILL");
+					} catch (err) {};
+					result.off("close", answer);
+					reject(err);
+				};
+			});
+			result.on("close", answer);
+		});
+	};
+	outputSync() {
+		const options = this.#options;
+		if (options.stdin === "piped") {
+			throw(new TypeError("Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead"));
+		};
+		const translatedOptions = fromDenoModern(options, true);
+		const args = deepUnwrap(this.#options?.args) ?? [];
+		if (!options?.clearEnv) {
+			_leaf_copyTo_(translatedOptions.env, env.toObject());
+		};
+		const result = NodeChildProcess.spawnSync(this.#command, args, translatedOptions);
+		if (
+			result?.error &&
+			typeof result.error.signal === "undefined" &&
+			typeof result.error.killed === "undefined"
+		) throw(result.error);
+		return new LeafCommandOutput(
+			result?.status,
+			result?.signal,
+			result?.stdout && toUint8Array(result.stdout),
+			result?.stderr && toUint8Array(result.stderr)
 		);
 	};
 };
 export const Command = LeafCommand;
+
+const outputIsPiped = (value) => {
+	if (value == null || value == "piped") return true;
+	return false;
+};
 
 /** @param {number} pid
 * @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
@@ -191,15 +266,15 @@ export function spawnAndWait(command, optionOrArgs, options) {
 	/** @type {string[]?} */
 	let args;
 	if (optionOrArgs instanceof Array) {
-		args = optionOrArgs;
+		args = optionOrArgs ?? [];
 		options = options ?? {};
 	} else if (options == null) {
 		options = optionOrArgs ?? {};
 		optionOrArgs = undefined;
-		args = options.args;
+		args = options.args ?? [];
 	};
 	const translatedOptions = fromDenoModern(options, true);
-	if (!options.clearEnv) {
+	if (!options?.clearEnv) {
 		_leaf_copyTo_(translatedOptions.env, env.toObject());
 	};
 	return new Promise((resolve, reject) => {
@@ -217,10 +292,26 @@ export function spawnAndWait(command, optionOrArgs, options) {
 			resolve(new LeafCommandOutput(
 				child.exitCode,
 				child.signalCode,
-				toUint8Array(stdout),
-				toUint8Array(stderr)
+				outputIsPiped(options.stdout) ? toUint8Array(stdout) : undefined,
+				outputIsPiped(options.stderr) ? toUint8Array(stderr) : undefined
 			));
 		});
+		(async () => {
+			if (options.stdout !== "inherit") return;
+			if (NodeProcess.stdout.closed) return;
+			for await (const buffer of child.stdout) {
+				if (NodeProcess.stdout.closed) break;
+				NodeFs.writeSync(NodeProcess.stdout.fd, buffer);
+			};
+		})();
+		(async () => {
+			if (options.stderr !== "inherit") return;
+			if (NodeProcess.stderr.closed) return;
+			for await (const chunk of child.stdout) {
+				if (NodeProcess.stderr.closed) break;
+				NodeFs.writeSync(NodeProcess.stderr.fd, buffer);
+			};
+		})();
 	});
 };
 
@@ -230,19 +321,23 @@ export function spawnAndWaitSync(command, optionOrArgs, options) {
 	/** @type {string[]?} */
 	let args;
 	if (optionOrArgs instanceof Array) {
-		args = optionOrArgs;
+		args = optionOrArgs ?? [];
 		options = options ?? {};
 	} else if (options == null) {
 		options = optionOrArgs ?? {};
 		optionOrArgs = undefined;
-		args = options.args;
+		args = options.args ?? [];
 	};
 	const translatedOptions = fromDenoModern(options, true);
-	if (!options.clearEnv) {
+	if (!options?.clearEnv) {
 		_leaf_copyTo_(translatedOptions.env, env.toObject());
 	};
 	const result = NodeChildProcess.spawnSync(command, deepUnwrap(args), translatedOptions);
-	if (result?.error) throw(result.error);
+	if (
+		result?.error &&
+		typeof result.error.signal === "undefined" &&
+		typeof result.error.killed === "undefined"
+	) throw(result.error);
 	return new LeafCommandOutput(
 		result?.status,
 		result?.signal,
