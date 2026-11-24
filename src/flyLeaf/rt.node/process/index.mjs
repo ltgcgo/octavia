@@ -10,7 +10,7 @@ import {
 	LeafChildRunStatusModern,
 	LeafCommandOutput
 } from "../../common/class/process.mjs";
-import { toUint8Array } from "../../common/method/transform.mjs";
+import { toExtendedReadable, toUint8Array } from "../../common/method/transform.mjs";
 import { fromDenoModern } from "./translate.mjs";
 
 import { env } from "../env/index.mjs";
@@ -25,17 +25,35 @@ export const LeafChildProcess = class LeafChildProcess {
 	#child;
 	/** @type {import("../../index/index.d.mts").LeafCommandOutput<"spawn", T>?} */
 	#output;
+	/** @type {import("../../index/index/conventions.d.mts").ExtendedReadableByteStream} */
+	#se;
 	/** @type {WritableStream<Uint8Array>?} */
 	#si;
+	/** @type {import("../../index/index/conventions.d.mts").ExtendedReadableByteStream} */
+	#so;
 	/** @type {number} */
 	pid;
 	/** @type {Promise<import("../../index/index.d.mts").LeafChildRunStatusModern>} */
 	status;
+	get stderr() {
+		if (this.#se == null) {
+			throw(new TypeError("Cannot get 'stderr': 'stderr' is not piped"));
+		} else {
+			return this.#se;
+		};
+	};
 	get stdin() {
 		if (this.#si == null) {
 			throw(new TypeError("Cannot get 'stdin': 'stdin' is not piped"));
 		} else {
 			return this.#si;
+		};
+	};
+	get stdout() {
+		if (this.#so == null) {
+			throw(new TypeError("Cannot get 'stdout': 'stdout' is not piped"));
+		} else {
+			return this.#so;
 		};
 	};
 	/** @param {string|URL} command
@@ -71,6 +89,12 @@ export const LeafChildProcess = class LeafChildProcess {
 		if (child.stdin != null) {
 			upThis.#si = NodeStream.Writable.toWeb(child.stdin);
 		};
+		if (child.stdout != null) {
+			upThis.#so = toExtendedReadable(NodeStream.Readable.toWeb(child.stdout));
+		};
+		if (child.stderr != null) {
+			upThis.#se = toExtendedReadable(NodeStream.Readable.toWeb(child.stdout));
+		};
 	};
 	/** @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
 	kill(signal = "SIGTERM") {
@@ -84,6 +108,14 @@ export const LeafChildProcess = class LeafChildProcess {
 		const upThis = this;
 		if (upThis.#output) return upThis.#output;
 		await upThis.status;
+		const result = new LeafCommandOutput(
+			upThis.#child.exitCode,
+			upThis.#child.signalCode,
+			upThis.#so ? await upThis.#so.bytes() : undefined,
+			upThis.#se ? await upThis.#se.bytes() : undefined,
+		);
+		upThis.#output = result;
+		return result;
 	};
 	ref() {
 		this.#child.ref();

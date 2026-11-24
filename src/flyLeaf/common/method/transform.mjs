@@ -16,3 +16,21 @@ export function toUint8Array(buffer) {
 		throw(new TypeError("Argument is not a valid buffer view."));
 	};
 };
+
+/** @param {ReadableStream<Uint8Array>} readable
+* @returns {import("../../index/index/conventions.d.mts").ExtendedReadableByteStream} */
+export function toExtendedReadable(readable) {
+	readable.arrayBuffer = () => {
+		return (new Response(readable)).arrayBuffer();
+	};
+	readable.bytes = () => {
+		return (new Response(readable)).bytes();
+	};
+	readable.json = () => {
+		return (new Response(readable)).json();
+	};
+	readable.text = () => {
+		return (new Response(readable)).text();
+	};
+	return readable;
+};

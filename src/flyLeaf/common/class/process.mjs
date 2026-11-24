@@ -56,8 +56,8 @@ export class LeafCommandOutput extends LeafChildRunStatusModern {
 	* @param {Uint8Array?} stdout
 	* @param {Uint8Array?} stderr */
 	constructor(code, signal, stdout, stderr) {
-		const upThis = this;
 		super(code, signal);
+		const upThis = this;
 		stdout && (upThis.#so = stdout);
 		stderr && (upThis.#se = stderr);
 		Object.defineProperties(upThis, upThis.#getters);

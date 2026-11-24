@@ -139,11 +139,11 @@ declare class LeafChildRunInstance<T extends LeafCommandDetailsCommon> extends L
 	/** The Deno-internal resource ID of the child. Accessing this field will cause `TypeError`s to be thrown.
 	* @deprecated */
 	readonly rid: Throws<TypeError, number>;
-	/** The standard error. Cannot be used with `LeafChildRunInstance.stderrOutput`. */
+	/** The standard error. Cannot be used with `LeafChildRunInstance.stderrOutput`, as a single read stream cannot have two consumers. */
 	readonly stderr: T["stderr"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError, never>;
 	/** The standard input. */
 	readonly stdin: T["stdin"] extends "piped" ? LeafLegacyWrappedWriter<Uint8Array> : Throws<TypeError, never>;
-	/** The standard output. Cannot be used with `LeafChildRunInstance.output`. */
+	/** The standard output. Cannot be used with `LeafChildRunInstance.output`, as a single read stream cannot have two consumers. */
 	readonly stdout: T["stdout"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError, never>;
 	/** No documentation from Deno. Supposedly send `SIGTERM` to the child according to [Node.js](https://nodejs.org/api/child_process.html#subprocesssymboldispose). */
 	close(): void;
@@ -151,9 +151,9 @@ declare class LeafChildRunInstance<T extends LeafCommandDetailsCommon> extends L
 	*
 	* This promise can never reject. Unlike the modern alternative, to retain backwards compatibility while removing resource IDs, calling this method prevents the running instance from quitting as long as the child runs. */
 	status(): Promise<LeafChildRunStatusLegacy>;
-	/** Buffer the standard output, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildRunInstance.stdout`. */
+	/** Buffer the standard output, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildRunInstance.stdout`, as a single read stream cannot have two consumers. */
 	output(): T["stdout"] extends "piped" ? Promise<Uint8Array> : Throws<TypeError, never>;
-	/** Buffer the standard error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildRunInstance.stderr`. */
+	/** Buffer the standard error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildRunInstance.stderr`, as a single read stream cannot have two consumers. */
 	stderrOutput(): T["stderr"] extends "piped" ? Promise<Uint8Array> : Throws<TypeError, never>;
 }
 declare class LeafChildProcess<T extends LeafCommandDetailsCommon> extends LeafChildDetailsCommon {
@@ -161,13 +161,13 @@ declare class LeafChildProcess<T extends LeafCommandDetailsCommon> extends LeafC
 	*
 	* This promise can never reject. Accessing this property does not prevent the running instance from quitting, `LeafChildProcess.ref` is required. */
 	status: Promise<LeafChildRunStatusModern>;
-	/** The standard error. Cannot be used with `LeafChildProcess.output`. */
+	/** The standard error. Cannot be used with `LeafChildProcess.output`, as a single read stream cannot have two consumers. */
 	stderr: T["stderr"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError, never>;
 	/** The standard input. */
 	stdin: T["stdin"] extends "piped" ? WritableStream<Uint8Array> : Throws<TypeError, never>;
-	/** The standard output. Cannot be used with `LeafChildProcess.output`. */
+	/** The standard output. Cannot be used with `LeafChildProcess.output`, as a single read stream cannot have two consumers. */
 	stdout: T["stdout"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError, never>;
-	/** Buffer the standard output and error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildProcess.stderr` or `LeafChildProcess.stdout`. */
+	/** Buffer the standard output and error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildProcess.stderr` or `LeafChildProcess.stdout`, as a single read stream cannot have two consumers. */
 	output(): Promise<LeafCommandOutput<"spawn", T>>;
 	/** Ensures that the status of the child blocks the runtime instance from quitting. */
 	ref(): void;

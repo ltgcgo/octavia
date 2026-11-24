@@ -6,15 +6,15 @@ export interface DisposableObject {
 	close(): void;
 }
 export interface ExtendedReadableByteStream extends ReadableStream<Uint8Array> {
-	/** Consumes the stream, and return its content as a buffered `ArrayBuffer`. */
+	/** Consumes the stream, and return its content as a buffered `ArrayBuffer`. Can only be used once, and not with other consuming methods. */
 	arrayBuffer(): Promise<ArrayBuffer>;
-	/** Consumes the stream, and return its content as a `Blob`. Does not exist in Deno. */
+	/** Consumes the stream, and return its content as a `Blob`. Does not exist in Deno. Can only be used once, and not with other consuming methods. */
 	//blob(): Promise<Blob>;
-	/** Consumes the stream, and return its content as a buffered `Uint8Array`. */
+	/** Consumes the stream, and return its content as a buffered `Uint8Array`. Can only be used once, and not with other consuming methods. */
 	bytes(): Promise<Uint8Array>;
-	/** Consumes the stream, and return its content as a parsed JSON object. */
+	/** Consumes the stream, and return its content as a parsed JSON object. Can only be used once, and not with other consuming methods. */
 	json(): Promise<any>; // Cannot write recursive types.
-	/** Consumes the stream, and return its content as a buffered text. */
+	/** Consumes the stream, and return its content as a buffered text. Can only be used once, and not with other consuming methods. */
 	text(): Promise<string>;
 }
 /** Do not use this interface in your code. This interface does not actually exist. Its entire use is to signal errors, and potentially prevent invalid code from building in the first place.
