@@ -4,7 +4,24 @@
 
 "use strict";
 
-export class LeafCommandOutput {
+export class LeafChildRunStatusModern {
+	/** @type {boolean} */
+	success;
+	/** @type {number} */
+	code;
+	/** @type {import("../../index/index.d.mts").LeafSystemSignal} */
+	signal;
+	/** @param {number} code
+	* @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
+	constructor(code, signal) {
+		const upThis = this;
+		upThis.success = code === 0;
+		upThis.code = code;
+		upThis.signal = signal;
+	};
+};
+
+export class LeafCommandOutput extends LeafChildRunStatusModern {
 	/** @type {Uint8Array?} */
 	#so;
 	/** @type {Uint8Array?} */
@@ -34,22 +51,13 @@ export class LeafCommandOutput {
 			}
 		}
 	};
-	/** @type {boolean} */
-	success;
-	/** @type {number} */
-	code;
-	/** @type {import("../../index/index.d.mts").LeafSystemSignal} */
-	signal;
-	/** @param {boolean} success
-	* @param {number} code
+	/** @param {number} code
 	* @param {import("../../index/index.d.mts").LeafSystemSignal} signal
 	* @param {Uint8Array?} stdout
 	* @param {Uint8Array?} stderr */
 	constructor(code, signal, stdout, stderr) {
 		const upThis = this;
-		upThis.success = code === 0;
-		upThis.code = code;
-		upThis.signal = signal;
+		super(code, signal);
 		stdout && (upThis.#so = stdout);
 		stderr && (upThis.#se = stderr);
 		Object.defineProperties(upThis, upThis.#getters);

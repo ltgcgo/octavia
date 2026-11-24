@@ -83,7 +83,8 @@ declare interface LeafChildRunFailStatusCommon {
 declare interface LeafChildRunPassStatusLegacy extends LeafChildRunPassStatusCommon, LeafChildRunPassStatusSignal {}
 /** The deprecated failed child process status. */
 declare interface LeafChildRunFailStatusLegacy extends LeafChildRunFailStatusCommon {
-	status: number;
+	/** Haven't found this property being returned at all for the legacy method. */
+	status?: number;
 }
 /** The deprecated child process status. */
 declare type LeafChildRunStatusLegacy = LeafChildRunPassStatusLegacy|LeafChildRunFailStatusLegacy;

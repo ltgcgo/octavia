@@ -6,7 +6,10 @@
 
 import { _leaf_copyTo_ } from "../../common/util/overlay.mjs";
 import { allSystemSignals } from "../../common/constant/system.mjs";
-import { LeafCommandOutput } from "../../common/class/process.mjs";
+import {
+	LeafChildRunStatusModern,
+	LeafCommandOutput
+} from "../../common/class/process.mjs";
 import { toUint8Array } from "../../common/method/transform.mjs";
 import { fromDenoModern } from "./translate.mjs";
 
@@ -14,6 +17,81 @@ import { env } from "../env/index.mjs";
 
 import NodeChildProcess from "node:child_process";
 import NodeProcess from "node:process";
+import NodeStream from "node:stream";
+
+/** @template T extends import("../../index/index.d.mts").LeafCommandOptions */
+export const LeafChildProcess = class LeafChildProcess {
+	/** @type {NodeChildProcess.ChildProcess} */
+	#child;
+	/** @type {import("../../index/index.d.mts").LeafCommandOutput<"spawn", T>?} */
+	#output;
+	/** @type {WritableStream<Uint8Array>?} */
+	#si;
+	/** @type {number} */
+	pid;
+	/** @type {Promise<import("../../index/index.d.mts").LeafChildRunStatusModern>} */
+	status;
+	get stdin() {
+		if (this.#si == null) {
+			throw(new TypeError("Cannot get 'stdin': 'stdin' is not piped"));
+		} else {
+			return this.#si;
+		};
+	};
+	/** @param {string|URL} command
+	* @param {string[]?} args
+	* @param {T} options */
+	constructor(command, args, options) {
+		const upThis = this;
+		const translatedOptions = fromDenoModern(options, false);
+		//console.debug(translatedOptions);
+		if (!options.clearEnv) {
+			_leaf_copyTo_(translatedOptions.env, env.toObject());
+		};
+		let childDone;
+		upThis.status = new Promise((resolve) => {
+			childDone = resolve;
+		});
+		/** @type {NodeChildProcess.ChildProcess} */
+		const child = NodeChildProcess.spawn(command, args, translatedOptions);
+		upThis.pid = child.pid;
+		upThis.#child = child;
+		child.once("close", (code, signal) => {
+			childDone(new LeafChildRunStatusModern(
+				code ?? child.exitCode,
+				signal ?? child.signalCode
+			));
+		});
+		if (Symbol.asyncDispose) {
+			upThis[Symbol.asyncDispose] = () => {
+				if (typeof child.exitCode === "number") return;
+				upThis.kill();
+			};
+		};
+		if (child.stdin != null) {
+			upThis.#si = NodeStream.Writable.toWeb(child.stdin);
+		};
+	};
+	/** @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
+	kill(signal = "SIGTERM") {
+		if (allSystemSignals.has(signal) || typeof signal === "number") {
+			this.#child.kill(signal);
+		} else {
+			throw(new TypeError(`Invalid signal: ${signal}`));
+		};
+	};
+	async output() {
+		const upThis = this;
+		if (upThis.#output) return upThis.#output;
+		await upThis.status;
+	};
+	ref() {
+		this.#child.ref();
+	};
+	unref() {
+		this.#child.unref();
+	};
+};
 
 /** @param {number} pid
 * @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
@@ -35,6 +113,22 @@ export function kill(pid, signal = "SIGTERM") {
 };
 
 /** @param {string|URL} command
+* @param {import("../../index/index.d.mts").LeafCommandOptions} options */
+export function spawn(command, optionOrArgs, options) {
+	/** @type {string[]?} */
+	let args;
+	if (optionOrArgs instanceof Array) {
+		args = optionOrArgs;
+		options = options ?? {};
+	} else if (options == null) {
+		options = optionOrArgs ?? {};
+		optionOrArgs = undefined;
+		args = options.args;
+	};
+	return new LeafChildProcess(command, args, options);
+};
+
+/** @param {string|URL} command
 * @param {import("../../index/index.d.mts").LeafCommandOptions} options
 * @returns {Promise<import("../../index/index.d.mts").LeafCommandOutput>} */
 export function spawnAndWait(command, optionOrArgs, options) {
@@ -48,7 +142,7 @@ export function spawnAndWait(command, optionOrArgs, options) {
 		optionOrArgs = undefined;
 		args = options.args;
 	};
-	const translatedOptions = fromDenoModern(options);
+	const translatedOptions = fromDenoModern(options, true);
 	if (!options.clearEnv) {
 		_leaf_copyTo_(translatedOptions.env, env.toObject());
 	};
