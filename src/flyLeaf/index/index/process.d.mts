@@ -180,13 +180,16 @@ export type ChildProcess = typeof LeafChildProcess<{
 	"stdout": "piped"
 }>;
 
-/**  */
+/** Declaration of a reusable command. */
 declare class LeafCommand<T extends LeafCommandDetailsCommon> {
-	output(): Promise<LeafCommandOutput<"output", T>>;
-	outputSync(): LeafCommandOutput<"output", T>;
+	/** Run the declared command, then collect its output upon finishing. */
+	output(): T["stdin"] extends "piped" ? Throws<TypeError, null> : Promise<LeafCommandOutput<"output", T>>;
+	/** The synchronous variant of `output`. */
+	outputSync(): T["stdin"] extends "piped" ? Throws<TypeError, null> : LeafCommandOutput<"output", T>;
+	/** Run the declared command. */
 	spawn(): LeafChildProcess<T>;
 }
-/**  */
+/** Declaration of a reusable command. */
 export const Command: typeof LeafCommand;
 
 /** Send a signal to the process with the given process ID. If the process does not exist, this method will throw. UNIX-like systems allow using negative process IDs to select process groups instead, which throws on Windows.
@@ -195,11 +198,11 @@ export const Command: typeof LeafCommand;
 * @param pid Target process ID.
 * @param signal The signal to send. */
 export function kill(pid: number, signal?: LeafSystemSignal|number): void;
-/** Runs a command as a child process. Deprecated by Deno. */
+/** Run a command directly as a child process. Deprecated by Deno. */
 export function run<T extends LeafChildRunOptions>(details: T): LeafChildRunInstance<T>;
-/**  */
+/** Run a command,directly as a child process. Unstable for Deno, a functional replacement of `run`. */
 export function spawn<T extends LeafChildRunOptions>(): LeafChildProcess<T>;
-/**  */
+/** Run a command,directly as a child process, then collect its output upon finishing. Unstable for Deno. */
 export function spawnAndWait<T extends LeafChildRunOptions>(): LeafChildProcess<T>;
-/**  */
+/** The synchronous variant of `spawnAndWait`. */
 export function spawnAndWaitSync<T extends LeafChildRunOptions>(): LeafChildProcess<T>;
