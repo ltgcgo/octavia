@@ -135,13 +135,20 @@ export const LeafCommand = class LeafCommand {
 	#command;
 	/** @type {T} */
 	#options;
+	#assertCmd() {
+		if (
+			typeof this.#command !== "string" &&
+			!(this.#command instanceof URL)
+		) throw(new TypeError("missing field `cmd`"));
+	};
 	constructor(command, options) {
 		this.#command = command;
-		this.#options = options;
+		this.#options = options ?? {};
 	};
 	//output() {};
 	//outputSync() {};
 	spawn() {
+		this.#assertCmd();
 		return new LeafChildProcess(
 			this.#command,
 			this.#options?.args,
@@ -149,8 +156,9 @@ export const LeafCommand = class LeafCommand {
 		);
 	};
 	output() {
+		this.#assertCmd();
 		const options = this.#options;
-		if (options.stdin === "piped") {
+		if (options?.stdin === "piped") {
 			throw(new TypeError("Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead"));
 		};
 		const translatedOptions = fromDenoModern(options, true);
@@ -161,15 +169,14 @@ export const LeafCommand = class LeafCommand {
 		/** @type {NodeChildProcess.ChildProcess} */
 		const result = NodeChildProcess.spawn(this.#command, args, translatedOptions);
 		return new Promise((resolve, reject) => {
-			let stdoutBuffer, stderrBuffer;
-			(async () => {
-				// Race condition might exist.
+			let stdoutBuffer = (async () => {
+				// Race condition might exist, but this should plug that problem.
 				if (outputIsPiped(options.stdout) && result.stdout) {
-					stdoutBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stdout));
+					return toUint8Array(await NodeStreamConsumers.buffer(result.stdout));
 				};
-			})();
-			(async () => {
-				// Race condition might exist.
+			})(),
+			stderrBuffer = (async () => {
+				// Race condition might exist, but this should plug that problem.
 				if (outputIsPiped(options.stderr) && result.stderr) {
 					stderrBuffer = toUint8Array(await NodeStreamConsumers.buffer(result.stderr));
 				};
@@ -179,8 +186,8 @@ export const LeafCommand = class LeafCommand {
 				resolve(new LeafCommandOutput(
 					code ?? result.exitCode,
 					signal ?? result.signalCode,
-					stdoutBuffer,
-					stderrBuffer
+					outputIsPiped(options.stdout) && result.stdout ? await stdoutBuffer : undefined,
+					outputIsPiped(options.stderr) && result.stderr ? stderrBuffer : undefined
 				));
 			};
 			result.once("error", (err) => {
@@ -200,8 +207,9 @@ export const LeafCommand = class LeafCommand {
 		});
 	};
 	outputSync() {
+		this.#assertCmd();
 		const options = this.#options;
-		if (options.stdin === "piped") {
+		if (options?.stdin === "piped") {
 			throw(new TypeError("Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead"));
 		};
 		const translatedOptions = fromDenoModern(options, true);
@@ -313,7 +321,7 @@ export function spawnAndWait(command, optionOrArgs, options) {
 		(async () => {
 			if (options.stderr !== "inherit") return;
 			if (NodeProcess.stderr.closed) return;
-			for await (const buffer of child.stdout) {
+			for await (const buffer of child.stderr) {
 				if (NodeProcess.stderr.closed) break;
 				NodeFs.writeSync(NodeProcess.stderr.fd, buffer);
 			};
