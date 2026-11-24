@@ -100,15 +100,15 @@ export type CommandStatus = LeafChildRunStatusModern;
 declare interface LeafCommandOutputCommon<execType extends LeafRunTypes, T extends LeafCommandDetailsCommon> {
 	/** The buffered standard error. */
 	stderr: execType extends "output" ? (
-		T["stderr"] extends "piped"|undefined ? Uint8Array : Throws<TypeError, null>
+		T["stderr"] extends "piped"|undefined ? Uint8Array : Throws<TypeError, never>
 	) : (
-		T["stderr"] extends "piped" ? Uint8Array : Throws<TypeError, null>
+		T["stderr"] extends "piped" ? Uint8Array : Throws<TypeError, never>
 	);
 	/** The buffered standard output. */
 	stdout: execType extends "output" ? (
-		T["stdout"] extends "piped"|undefined ? Uint8Array : Throws<TypeError, null>
+		T["stdout"] extends "piped"|undefined ? Uint8Array : Throws<TypeError, never>
 	) : (
-		T["stdout"] extends "piped" ? Uint8Array : Throws<TypeError, null>
+		T["stdout"] extends "piped" ? Uint8Array : Throws<TypeError, never>
 	);
 }
 /** The output of a passed child process. */
@@ -139,11 +139,11 @@ declare class LeafChildRunInstance<T extends LeafCommandDetailsCommon> extends L
 	* @deprecated */
 	readonly rid: Throws<TypeError, number>;
 	/** The standard error. Cannot be used with `LeafChildRunInstance.stderrOutput`. */
-	readonly stderr: T["stderr"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError, null>;
+	readonly stderr: T["stderr"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError, never>;
 	/** The standard input. */
-	readonly stdin: T["stdin"] extends "piped" ? LeafLegacyWrappedWriter<Uint8Array> : Throws<TypeError, null>;
+	readonly stdin: T["stdin"] extends "piped" ? LeafLegacyWrappedWriter<Uint8Array> : Throws<TypeError, never>;
 	/** The standard output. Cannot be used with `LeafChildRunInstance.output`. */
-	readonly stdout: T["stdout"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError, null>;
+	readonly stdout: T["stdout"] extends "piped" ? LeafLegacyWrappedReader<Uint8Array> : Throws<TypeError, never>;
 	/** No documentation from Deno. Supposedly send `SIGTERM` to the child according to [Node.js](https://nodejs.org/api/child_process.html#subprocesssymboldispose). */
 	close(): void;
 	/** Wait until the child has quit, then collect its quit status and potential signal.
@@ -151,9 +151,9 @@ declare class LeafChildRunInstance<T extends LeafCommandDetailsCommon> extends L
 	* This promise can never reject. Unlike the modern alternative, to retain backwards compatibility while removing resource IDs, calling this method prevents the running instance from quitting as long as the child runs. */
 	status(): Promise<LeafChildRunStatusLegacy>;
 	/** Buffer the standard output, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildRunInstance.stdout`. */
-	output(): T["stdout"] extends "piped" ? Promise<Uint8Array> : Throws<TypeError, null>;
+	output(): T["stdout"] extends "piped" ? Promise<Uint8Array> : Throws<TypeError, never>;
 	/** Buffer the standard error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildRunInstance.stderr`. */
-	stderrOutput(): T["stderr"] extends "piped" ? Promise<Uint8Array> : Throws<TypeError, null>;
+	stderrOutput(): T["stderr"] extends "piped" ? Promise<Uint8Array> : Throws<TypeError, never>;
 }
 declare class LeafChildProcess<T extends LeafCommandDetailsCommon> extends LeafChildDetailsCommon {
 	/** Wait until the child has quit, then collect its quit status and potential signal.
@@ -161,11 +161,11 @@ declare class LeafChildProcess<T extends LeafCommandDetailsCommon> extends LeafC
 	* This promise can never reject. Accessing this property does not prevent the running instance from quitting, `LeafChildProcess.ref` is required. */
 	status: Promise<LeafChildRunStatusModern>;
 	/** The standard error. Cannot be used with `LeafChildProcess.output`. */
-	stderr: T["stderr"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError, null>;
+	stderr: T["stderr"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError, never>;
 	/** The standard input. */
-	stdin: T["stdin"] extends "piped" ? WritableStream<Uint8Array> : Throws<TypeError, null>;
+	stdin: T["stdin"] extends "piped" ? WritableStream<Uint8Array> : Throws<TypeError, never>;
 	/** The standard output. Cannot be used with `LeafChildProcess.output`. */
-	stdout: T["stdout"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError, null>;
+	stdout: T["stdout"] extends "piped" ? ExtendedReadableByteStream : Throws<TypeError, never>;
 	/** Buffer the standard output and error, wait until the child quits, and return the buffered content. Cannot be used with `LeafChildProcess.stderr` or `LeafChildProcess.stdout`. */
 	output(): Promise<LeafCommandOutput<"spawn", T>>;
 	/** Ensures that the status of the child blocks the runtime instance from quitting. */
@@ -181,13 +181,18 @@ export type ChildProcess = typeof LeafChildProcess<{
 }>;
 
 /** Declaration of a reusable command. */
-declare class LeafCommand<T extends LeafCommandDetailsCommon> {
-	/** Run the declared command, then collect its output upon finishing. */
-	output(): T["stdin"] extends "piped" ? Throws<TypeError, null> : Promise<LeafCommandOutput<"output", T>>;
-	/** The synchronous variant of `output`. */
-	outputSync(): T["stdin"] extends "piped" ? Throws<TypeError, null> : LeafCommandOutput<"output", T>;
+declare class LeafCommand<T extends LeafCommandOptions> {
+	/** Run the declared command, then collect its output upon finishing.
+	*
+	* Standard input cannot be set to piped mode, or this method will throw immediately. */
+	output(): T["stdin"] extends "piped" ? Throws<TypeError, never> : Promise<LeafCommandOutput<"output", T>>;
+	/** The synchronous variant of `output`.
+	*
+	* Standard input cannot be set to piped mode, or this method will throw immediately. */
+	outputSync(): T["stdin"] extends "piped" ? Throws<TypeError, never> : LeafCommandOutput<"output", T>;
 	/** Run the declared command. */
 	spawn(): LeafChildProcess<T>;
+	constructor(command: string|URL, options?: T);
 }
 /** Declaration of a reusable command. */
 export const Command: typeof LeafCommand;
@@ -200,9 +205,15 @@ export const Command: typeof LeafCommand;
 export function kill(pid: number, signal?: LeafSystemSignal|number): void;
 /** Run a command directly as a child process. Deprecated by Deno. */
 export function run<T extends LeafChildRunOptions>(details: T): LeafChildRunInstance<T>;
-/** Run a command,directly as a child process. Unstable for Deno, a functional replacement of `run`. */
-export function spawn<T extends LeafChildRunOptions>(): LeafChildProcess<T>;
-/** Run a command,directly as a child process, then collect its output upon finishing. Unstable for Deno. */
-export function spawnAndWait<T extends LeafChildRunOptions>(): LeafChildProcess<T>;
+/** Run a command directly as a child process. Unstable for Deno, a functional replacement of `run`. */
+export function spawn<T extends LeafCommandOptions>(command: string|URL, options?: T): LeafChildProcess<T>;
+/** Run a command directly as a child process. Unstable for Deno, a functional replacement of `run`. */
+export function spawn<T extends LeafCommandOptions>(command: string|URL, args: string[], options?: Omit<T, "args">): LeafChildProcess<T>;
+/** Run a command directly as a child process, then collect its output upon finishing. Unstable for Deno. */
+export function spawnAndWait<T extends LeafCommandOptions>(command: string|URL, options?: T): Promise<LeafCommandOutput<"spawn", T>>;
+/** Run a command directly as a child process, then collect its output upon finishing. Unstable for Deno. */
+export function spawnAndWait<T extends LeafCommandOptions>(command: string|URL, args: string[], options?: Omit<T, "args">): Promise<LeafCommandOutput<"spawn", T>>;
 /** The synchronous variant of `spawnAndWait`. */
-export function spawnAndWaitSync<T extends LeafChildRunOptions>(): LeafChildProcess<T>;
+export function spawnAndWaitSync<T extends LeafCommandOptions>(command: string|URL, options?: T): LeafCommandOutput<"spawn", T>;
+/** The synchronous variant of `spawnAndWait`. */
+export function spawnAndWaitSync<T extends LeafCommandOptions>(command: string|URL, args: string[], options?: Omit<T, "args">): LeafCommandOutput<"spawn", T>;
