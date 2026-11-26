@@ -2,29 +2,83 @@
 // 2026-2026 © Lightingale Community
 // Licensed under GNU LGPL v3.0+ license.
 
-/** Overlay descriptors of additional properties to apply to the exported object. */
-export const _leaf_overlay_: PropertyDescriptorMap;
-/** Apply the overlay descriptors to the target object in-place. */
-export function _leaf_apply_<T>(ingest: T, overlays: PropertyDescriptorMap, overwrite?: boolean): T;
-/** Apply the overlay descriptors to a copy of the target object.
-*
-* To make glob Leaf imports fully functional, follow the example below.
-*
-* ```js
-* import * as LeafRaw from "./example.mjs";
-* const Leaf = LeafRaw._leaf_yield_(LeafRaw, LeafRaw._overlay_);
-* ``` */
-export function _leaf_yield_<T>(ingest: T, overlays: PropertyDescriptorMap, overwrite?: boolean): T;
+export {
+	_leaf_overlay_,
+	_leaf_apply_,
+	_leaf_yield_
+} from "../../leaf.async/leaf.async/exports.d.mts";
 
-export type * from "./errors.d.mts";
-export * from "./errors.d.mts";
+export type * from "../../leaf.async/leaf.async/errors.d.mts";
+export * from "../../leaf.async/leaf.async/errors.d.mts";
+
 export type * from "./permission.d.mts";
 export * from "./permission.d.mts";
-export type * from "./env.d.mts";
-export * from "./env.d.mts";
-export type * from "./fs.d.mts";
-export * from "./fs.d.mts";
+
+export type * from "../../leaf.async/leaf.async/env.d.mts";
+export * from "../../leaf.async/leaf.async/env.d.mts";
+
+//export type * from "../../leaf.async/leaf.async/io.d.mts";
+export {
+	LeafInspectOptions, InspectOptions,
+	LeafIoTeletype,
+	LeafLegacyWrappedReader,
+	LeafLegacyWrappedWriter,
+	LeafSeekMode, SeekMode,
+	LeafSetRawOptions, SetRawOptions,
+	LeafTeletypeDimensions,
+
+	consoleSize,
+	inspect
+} from "../../leaf.async/leaf.async/io.d.mts";
+
 export type * from "./io.d.mts";
 export * from "./io.d.mts";
+
+//export type * from "../../leaf.async/leaf.async/fs.d.mts";
+export {
+	LeafDirEntry, DirEntry,
+	LeafFileInfo, FileInfo,
+	LeafFsEvent, FsEvent,
+	LeafFsEventFlag, FsEventFlag,
+	LeafFsWatcher, FsWatcher,
+	LeafMakeTempOptions, MakeTempOptions,
+	LeafMkdirOptions, MkdirOptions,
+	LeafOpenOptions, OpenOptions,
+	LeafReadFileOptions, ReadFileOptions,
+	LeafRemoveOptions, RemoveOptions,
+	LeafSymlinkOptions, SymlinkOptions,
+	LeafWatchOptions, WatchOptions,
+	LeafWriteFileOptions, WriteFileOptions,
+
+	chmod,
+	chown,
+	copyFile,
+	create,
+	link,
+	lstat,
+	makeTempDir,
+	makeTempFile,
+	mkdir,
+	open,
+	readDir,
+	readFile,
+	readLink,
+	readTextFile,
+	realPath,
+	remove,
+	rename,
+	stat,
+	symlink,
+	truncate,
+	umask,
+	utime,
+	watchFs,
+	writeFile,
+	writeTextFile
+} from "../../leaf.async/leaf.async/fs.d.mts";
+
+export type * from "./fs.d.mts";
+export * from "./fs.d.mts";
+
 export type * from "./process.d.mts";
 export * from "./process.d.mts";

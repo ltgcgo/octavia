@@ -7,12 +7,12 @@ import {
 	ExtendedReadableByteStream,
 	Throws,
 	WrappedAbortSignal
-} from "./conventions.d.mts";
-import { LeafSystemSignal } from "./env.d.mts";
+} from "../../leaf.async/leaf.async/conventions.d.mts";
+import { LeafSystemSignal } from "../../leaf.async/leaf.async/env.d.mts";
 import {
 	LeafLegacyWrappedReader,
 	LeafLegacyWrappedWriter
-} from "./io.d.mts";
+} from "../../leaf.async/leaf.async/io.d.mts";
 
 /** How the runtime should handle standard I/O piping. Documentation only exists in [Node.js](https://nodejs.org/api/child_process.html#optionsstdio) and [the deprecated Deno APIs](https://web.archive.org/web/20220607210142/https://doc.deno.land/deno/stable/~/Deno.run), despite its behaviour still [being essential](https://docs.deno.com/api/deno/subprocess/#Deno.CommandOptions).
 * - `inherit`: Pass the standard IOs of the parent running instance through to the child. Causes accesses to the related standard IO fields to throw type errors.
