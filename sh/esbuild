@@ -9,6 +9,8 @@ if [ "${PREFER_RUNTIME}" == "" ]; then
 		export selectedRuntime="bun"
 	elif [ "$(command -v ant 2>/dev/null)" != "" ]; then
 		export selectedRuntime="ant"
+	#elif [ "$(command -v tjs 2>/dev/null)" != "" ]; then
+		#export selectedRuntime="tjs"
 	elif [ "$(command -v node 2>/dev/null)" != "" ]; then
 		export selectedRuntime="node"
 	fi

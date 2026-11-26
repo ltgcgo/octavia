@@ -51,7 +51,7 @@ import * as Leaf from "./libs/fly-leaf@ltgcgo/index.mjs";
 ```
 
 ## Support
-#### Variants
+### Variants
 Fly Leaf offers two separate variants of the same Deno API. Unless absolutely needed, it's generally recommended to use the async-only variant.
 
 - [ ] Async-only: When both the synchronous and the asynchronous versions of the same API exist, subject to runtime feature availability, this Fly Leaf variant implements only the asynchronous subset of the full variant. This allows Fly Leaf to support more runtimes and use more runtime-native features.
@@ -76,8 +76,7 @@ Fly Leaf offers two separate variants of the same Deno API. Unless absolutely ne
 - [**Ant**](https://antjs.org/): WIP.
   - Requires a `TextDecoder` polyfill/ponyfill. Will largely be unneeded after Ant 17, when this line will get removed.
   - Avoid inlining script preloads via importing due to race conditions, use the demonstrated proper `--preload` feature instead.
-  - Ant does not support test running. Use other supported runtimes instead.
-- [~~a-Shell `JSC`~~](https://github.com/holzschu/a-shell/blob/master/man/man1/jsc.1): Out of scope. Basic FS access, insufficient platform APIs.
+  - If tests and benchmarks are not supported, Fly Leaf will use its own universal fallback.
 - [Boa](https://github.com/boa-dev/boa): Investigating.
 - [**Bun**](https://bun.sh/): WIP.
 - [**Deno**](https://deno.land/): Supported.
@@ -85,18 +84,23 @@ Fly Leaf offers two separate variants of the same Deno API. Unless absolutely ne
   - `Deno.version.deno` set to the Deno version targeted by _Fly Leaf_.
 - Generic browser: Async-only. Blocked by various fundamentally missing APIs, subject to runtime feature availability.
 - Generic WinterTC: Async-only. Blocked by various fundamentally missing APIs, subject to runtime feature availability.
-- [~~Javy~~](https://github.com/bytecodealliance/javy): Out of scope. Insufficient platform APIs.
 - [Kiesel](https://kiesel.dev/): Investigating.
 - [**Node.js**](https://nodejs.org): WIP.
 - [**Porffor**](https://porffor.dev/): WIP.
-  - Porffor does not support test running. Use other supported runtimes instead.
+  - Not recommended for validation. If tests and benchmarks are not supported, Fly Leaf will use its own universal fallback.
+- [Txiki.js](https://txikijs.org/): WIP. Linux builds [available here](https://github.com/ltgcgo/build-service-bin/releases/tag/build-txiki), currently without FFI support.
+- [~~a-Shell `JSC`~~](https://github.com/holzschu/a-shell/blob/master/man/man1/jsc.1): Out of scope. Basic FS access, insufficient platform APIs.
+- [~~Javy~~](https://github.com/bytecodealliance/javy): Out of scope. Insufficient platform APIs.
 - [~~Steve's Den~~](https://github.com/stevefan1999-personal/den): Out of scope. Insufficient documentation, and the `den:*` import scheme is the exact thing Fly Leaf avoids, despite being older than _Ende_.
-- [Txiki.js](https://txikijs.org/): Investigating. Linux builds without FFI support [available here](https://github.com/ltgcgo/build-service-bin/releases/tag/build-txiki).
 
 > As a side effect of offering Deno APIs on runtimes without them, _Fly Leaf_ also tests whether a runtime upholds JS features and their own advertised feature sets.
 
 ### Additional features
-#### Deno
+#### Common baseline
+- Testing and benchmarking: Whenever an environment lacks native validator and benchmark runners, Fly Leaf will supply its own fallback version. Setting `LEAF_COMMON_VALIDATOR` to `1` forces such fallbacks regardless of runtime availability.
+- Tracing: For certain operations and APIs, Fly Leaf (or Vergilius) offers traces printed in the standard output. Setting `VERGILIUS_PRINT_TRACE` to `0` or leaving it unset to disable it, or to `1` (`light`), `2` (`medium`), `3` (`deep`) and `4` (`insane`) to enable various levels of verbosity.
+
+#### Deno deprecated
 These are the features deprecated by the Deno runtime. Fly Leaf re-implements all of the ones listed below, with the remaining deprecated APIs completely absent.
 - [`Deno.run()`](https://web.archive.org/web/20220629065958/https://doc.deno.land/deno/stable/~/Deno.RunOptions)
 

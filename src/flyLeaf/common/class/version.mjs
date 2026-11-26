@@ -26,7 +26,7 @@ export default class LeafVersion {
 	* @type {string} */
 	release;
 	/** @type {string} */
-	flyLeaf = "0.0.2";
+	flyLeaf = "0.0.3";
 	/** @type {boolean} */
 	asyncOnly;
 	/** @type {import("../../index/index/env.d.mts").DenoVersion|import("../../index/index/env.d.mts").NodeVersion} */

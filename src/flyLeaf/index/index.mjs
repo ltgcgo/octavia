@@ -22,6 +22,9 @@ if (self.Ende) {
 } else if (self.Ant) {
 	selectedBackend = "Ant";
 	flyLeafGlobals = await import("../rt.ant/index.mjs");
+} else if (self.tjs) {
+	selectedBackend = "Txiki";
+	flyLeafGlobals = await import("../rt.txiki/index.mjs");
 } else if (self.Bun) {
 	selectedBackend = "Bun";
 	flyLeafGlobals = await import("../rt.bun/index.mjs");

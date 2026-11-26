@@ -20,7 +20,13 @@ import NodeChildProcess from "node:child_process";
 import NodeFs from "node:fs";
 import NodeProcess from "node:process";
 import NodeStream from "node:stream";
-import NodeStreamConsumers from "node:stream/consumers";
+
+let NodeStreamConsumers;
+try {
+	NodeStreamConsumers = await import("node:stream/consumers");
+} catch (err) {
+	NodeStreamConsumers = (await import("../../common/util/consumer.mjs")).default;
+};
 
 /** @template {import("../../index/index.d.mts").LeafCommandOptions} T */
 export const LeafChildProcess = class LeafChildProcess {
