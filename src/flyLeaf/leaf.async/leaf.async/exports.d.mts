@@ -31,5 +31,5 @@ export * from "./io.d.mts";
 export type * from "./fs.d.mts";
 export * from "./fs.d.mts";
 
-// export type * from "./process.d.mts";
-// export * from "./process.d.mts";
+export type * from "./process.d.mts";
+export * from "./process.d.mts";

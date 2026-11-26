@@ -105,5 +105,29 @@ export {
 export type * from "./fs.d.mts";
 export * from "./fs.d.mts";
 
+export {
+	LeafChildProcess, ChildProcess,
+	LeafChildRunFailStatusLegacy,
+	LeafChildRunFailStatusModern,
+	LeafChildRunInstance,
+	LeafChildRunOptions,
+	LeafChildRunPassStatusLegacy,
+	LeafChildRunPassStatusModern,
+	LeafChildRunPassStatusSignal,
+	LeafChildRunStatusLegacy,
+	LeafChildRunStatusModern, CommandStatus,
+	LeafCommand, Command,
+	LeafCommandFailedOutput,
+	LeafCommandOptions, CommandOptions,
+	LeafCommandOutput, CommandOutput,
+	LeafCommandPassedOutput,
+	LeafRunTypes,
+	LeafStdIoMode,
+
+	kill,
+	spawn,
+	spawnAndWait
+} from "../../leaf.async/leaf.async/process.d.mts";
+
 export type * from "./process.d.mts";
 export * from "./process.d.mts";
