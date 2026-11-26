@@ -41,7 +41,7 @@ export class LeafFsFile extends LeafFsFileAsync implements DisposableObject, Dis
 	/**  */
 	tryLockSync(exclusive?: boolean): void;
 	/**  */
-	unlockSync(): Promise<void>;
+	unlockSync(): void;
 	/**  */
 	utimeSync(atime: number|Date, mtime: number|Date): void;
 	/**  */
@@ -72,7 +72,7 @@ export function mkdirSync(path: string|URL, options?: LeafMkdirOptions): void;
 /** Open a file and get a handle. */
 export function open(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFile>;
 /** The synchronous variant of `open`. */
-export function openSync(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFile>;
+export function openSync(path: string|URL, options?: LeafOpenOptions): LeafFsFile;
 /** The synchronous variant of `readDir`. */
 export function readDirSync(path: string|URL): Generator<LeafDirEntry, void, void>;
 /** The synchronous variant of `readFile`. */

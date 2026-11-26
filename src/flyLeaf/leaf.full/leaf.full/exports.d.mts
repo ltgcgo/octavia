@@ -18,6 +18,9 @@ export {
 	LeafImportPermDetails, ImportPermissionDescriptor,
 	LeafNetworkPermDetails, NetPermissionDescriptor,
 	LeafPermDetails, PermissionDescriptor,
+	LeafPermDetailsWithHost,
+	LeafPermDetailsWithPath,
+	LeafPermEntryChoices,
 	LeafPermHookMethodAsync,
 	LeafPermHookMethodBoth,
 	LeafPermHookMethodSync,
@@ -32,6 +35,7 @@ export {
 	LeafPermStatusEvents, PermissionStatusEventMap,
 	LeafReadPermDetails, ReadPermissionDescriptor,
 	LeafRunPermDetails, RunPermissionDescriptor,
+	LeafSystemPermChoices,
 	LeafSystemPermDetails, SysPermissionDescriptor,
 	LeafWritePermDetails, WritePermissionDescriptor
 } from "../leaf.async/permission.d.mts";
@@ -114,7 +118,7 @@ export {
 	LeafChildRunPassStatusSignal,
 	LeafChildRunStatusLegacy,
 	LeafChildRunStatusModern, CommandStatus,
-	LeafCommand, Command,
+	//LeafCommand, Command,
 	LeafCommandFailedOutput,
 	LeafCommandOptions, CommandOptions,
 	LeafCommandOutput, CommandOutput,
@@ -123,6 +127,7 @@ export {
 	LeafStdIoMode,
 
 	kill,
+	run,
 	spawn,
 	spawnAndWait
 } from "../leaf.async/process.d.mts";

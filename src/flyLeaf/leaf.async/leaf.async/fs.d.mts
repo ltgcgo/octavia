@@ -124,7 +124,6 @@ export class LeafFsFile implements DisposableObject, Disposable {
 	/**  */
 	write(buffer: Uint8Array): Promise<number>;
 }
-export type LeafFsFile = LeafFsFile;
 export type FsFile = LeafFsFile;
 
 /** Options for temporary entity creation. */

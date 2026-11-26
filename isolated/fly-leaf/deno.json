@@ -13,7 +13,6 @@
 		]
 	},
 	"exports": {
-		".": "./dist/leaf.full.d.mts",
 		"./async": "./dist/leaf.async.d.mts",
 		"./full": "./dist/leaf.full.d.mts"
 	},

@@ -19,26 +19,22 @@ export enum LeafSeekMode {
 export const SeekMode: LeafSeekMode;
 
 /** A readable object implementing several methods. */
-export interface LeafHandlerReadableAsync {
+export interface LeafHandlerReadable {
 	/** Read the source into your own brought buffer, then return the bytes read.
 	*
 	* There is no guarantee that all bytes will be flushed in a single method. `0` is valid and not a signal for EoF, and `null` is the only signal for EoF.
 	* @deprecated */
 	readonly read?: (byob: Uint8Array) => Promise<number|null>;
 }
-/** A readable object implementing several methods. */
-export type LeafHandlerReadable = LeafHandlerReadableAsync;
 
 /** A writable object implementing several methods. */
-export interface LeafHandlerWritableAsync {
+export interface LeafHandlerWritable {
 	/** Write your own brought buffer into the sink, then return the bytes written.
 	*
 	* There is no guarantee that all bytes will be flushed in a single method. `0` is valid and not a signal for EoF.
 	* @deprecated */
 	readonly write?: (byob: Uint8Array) => Promise<number|null>;
 }
-/** A writable object implementing several methods. */
-export type LeafHandlerWritable = LeafHandlerWritableAsync;
 
 /** Details on console string representation conversion. There is no guarantee that all features will be supported by every single runtime. */
 export interface LeafInspectOptions {
@@ -92,24 +88,18 @@ export interface LeafSetRawOptions {
 export type SetRawOptions = LeafSetRawOptions;
 
 /** Write streams for standard IO. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export interface LeafStandardSinkAsync extends WrappedWriteStream<Uint8Array>, LeafHandlerWritableAsync, LeafIoTeletype {}
-/** Write streams for standard IO. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export type LeafStandardSink = LeafStandardSinkAsync;
+export interface LeafStandardSink extends WrappedWriteStream<Uint8Array>, LeafHandlerWritable, LeafIoTeletype {}
 
 /** Read streams for standard IO. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export interface LeafStandardSourceAsync extends WrappedReadStream<Uint8Array>, LeafHandlerReadableAsync, LeafIoTeletype {}
-/** Read streams for standard IO. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export type LeafStandardSource = LeafStandardSourceAsync;
+export interface LeafStandardSource extends WrappedReadStream<Uint8Array>, LeafHandlerReadable, LeafIoTeletype {}
 
 /** Standard input. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export interface LeafStandardTeleTypeInputAsync extends LeafStandardSourceAsync {
+export interface LeafStandardTeleTypeInput extends LeafStandardSource {
 	/** Put the console (teletype) under raw mode when true, or canonical mode when false.
 	*
 	* Reading from a raw teletype is faster than reading from a canonical teletype. Unless explicitly specified otherwise, characters are handled as-is, and all special processing of the characters is disabled. */
 	setRaw(isRaw: boolean, options?: LeafSetRawOptions): void;
 }
-/** Standard input. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export type LeafStandardTeleTypeInput = LeafStandardTeleTypeInputAsync;
 
 /** Dimensions of the connected console (teletype/TTY). */
 export interface LeafTeletypeDimensions {
@@ -127,8 +117,8 @@ export function consoleSize(): LeafTeletypeDimensions;
 export function inspect(target: unknown, options?: LeafInspectOptions): string;
 
 /** Standard error. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export const stderr: LeafStandardSinkAsync;
+export const stderr: LeafStandardSink;
 /** Standard input. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export const stdin: LeafStandardTeleTypeInputAsync;
+export const stdin: LeafStandardTeleTypeInput;
 /** Standard output. To prevent ordering issues, avoid mixing streams with BYOB IO, or avoid BYOB IO at all. */
-export const stdout: LeafStandardSinkAsync;
+export const stdout: LeafStandardSink;

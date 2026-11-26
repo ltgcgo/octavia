@@ -6,7 +6,6 @@ import type {
 	Throws
 } from "../leaf.async/conventions.d.mts";
 import type {
-	LeafChildProcess,
 	LeafCommand as LeafCommandAsync,
 	LeafCommandOptions,
 	LeafCommandOutput
