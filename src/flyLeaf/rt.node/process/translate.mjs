@@ -4,6 +4,7 @@
 
 "use strict";
 
+import { assertEnvVarType, assertValidStdIoMode } from "../../common/method/io.mjs";
 import { getTranslatedDefault } from "../../common/method/process.mjs";
 import { _leaf_copyTo_, _leaf_yield_ } from "../../common/util/overlay.mjs";
 
@@ -32,6 +33,10 @@ export function fromDenoModern(denoOpts, isOutput = false) {
 		windowsRawArguments
 	} = denoOpts ?? {};
 	const newEnv = _leaf_copyTo_({}, env);
+	assertValidStdIoMode(stdin);
+	assertValidStdIoMode(stdout);
+	assertValidStdIoMode(stderr);
+	assertEnvVarType(newEnv);
 	return {
 		stdio: [
 			stdioModeMap.get(stdin) ?? stdioDefault[+isOutput].stdin,

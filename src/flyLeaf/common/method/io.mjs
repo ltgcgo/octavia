@@ -29,6 +29,15 @@ export function isolateSignals(buffer) {
 	return signals;
 };
 export function assertValidStdIoMode(mode) {
-	if (stdioModes.has(mode)) return;
+	if (mode == null || stdioModes.has(mode)) return;
 	throw(new TypeError(`unknown variant \`${mode}\`, expected one of \`inherit\`, \`piped\`, \`null\``));
+};
+export function assertEnvVarType(records) {
+	if (typeof records !== "object") return;
+	for (const key in records) {
+		const value = records[key];
+		if (typeof value === "string") continue;
+		// There is no "serde" in plain JS, but appearances must be kept.
+		throw(new TypeError(`serde_v8 error: invalid type; expected: string, got: ${value?.constructor?.name ?? typeof value}`));
+	};
 };

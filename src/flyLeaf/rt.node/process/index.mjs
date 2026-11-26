@@ -298,14 +298,6 @@ export function spawnAndWait(command, optionOrArgs, options) {
 		throw(new TypeError("Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead"));
 	};
 	const translatedOptions = fromDenoModern(options, true);
-	if (translatedOptions.env) {
-		for (const key in translatedOptions.env) {
-			const value = translatedOptions.env[key];
-			if (typeof value === "string") continue;
-			// There is no "serde" in plain JS, but appearances must be kept.
-			throw(new TypeError(`serde_v8 error: invalid type; expected: string, got: ${value?.constructor?.name ?? typeof value}`));
-		};
-	};
 	if (!options?.clearEnv) {
 		_leaf_copyTo_(translatedOptions.env, env.toObject());
 	};
