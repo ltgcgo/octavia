@@ -4,8 +4,8 @@
 
 // The painless section.
 
-import * as _LeafExport_ from "./index/exports.d.mts";
+import * as _LeafExport_ from "./leaf.full/exports.d.mts";
 export default _LeafExport_;
 
-export type * from "./index/exports.d.mts";
-export * from "./index/exports.d.mts";
+export type * from "./leaf.full/exports.d.mts";
+export * from "./leaf.full/exports.d.mts";

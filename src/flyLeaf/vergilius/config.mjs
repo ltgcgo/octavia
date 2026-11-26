@@ -6,9 +6,9 @@
 
 import { IsDenoRepl } from "../common/class/matchers.mjs";
 
-/** @type {import("../index/index.d.mts").default} */
+/** @type {import("../leaf.full/index.d.mts").default} */
 let denoApi;
-/** @type {import("../index/index.d.mts").LeafEnv} */
+/** @type {import("../leaf.full/index.d.mts").LeafEnv} */
 let denoEnvApi;
 const requestDeno = function (leaf) {
 	denoApi = leaf ?? denoApi ?? globalThis.Deno;

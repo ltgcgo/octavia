@@ -17,7 +17,7 @@ const failureRetries = 3;
 let umaskCache = NodeProcess.umask(0o000);
 NodeProcess.umask(umaskCache);
 
-/** @param {import("../../index/index.d.mts").LeafMakeTempOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafMakeTempOptions} options */
 const getTempPath = function (options) {
 	return NodePath.join(options?.dir ?? NodeProcess.env["TMPDIR"] ?? NodeOs.tmpdir(), `${options?.prefix ?? ""}${getRandom16()}${options?.suffix ?? ""}`);
 };
@@ -87,7 +87,7 @@ export function linkSync(sourcePath, targetPath) {
 	NodeFs.linkSync(sourcePath, targetPath);
 };
 
-/** @param {import("../../index/index.d.mts").LeafMakeTempOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafMakeTempOptions} options */
 export async function makeTempDir(options) {
 	for (let i = 0; i < failureRetries; i ++) {
 		try {
@@ -105,7 +105,7 @@ export async function makeTempDir(options) {
 	};
 	throw(new Error(`Temporary creation failed, ${failureRetries} retries exhausted.`));
 };
-/** @param {import("../../index/index.d.mts").LeafMakeTempOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafMakeTempOptions} options */
 export function makeTempDirSync(options) {
 	for (let i = 0; i < failureRetries; i ++) {
 		try {
@@ -124,7 +124,7 @@ export function makeTempDirSync(options) {
 	throw(new Error(`Temporary creation failed, ${failureRetries} retries exhausted.`));
 };
 
-/** @param {import("../../index/index.d.mts").LeafMakeTempOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafMakeTempOptions} options */
 export async function makeTempFile(options) {
 	for (let i = 0; i < failureRetries; i ++) {
 		try {
@@ -145,7 +145,7 @@ export async function makeTempFile(options) {
 	};
 	throw(new Error(`Temporary creation failed, ${failureRetries} retries exhausted.`));
 };
-/** @param {import("../../index/index.d.mts").LeafMakeTempOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafMakeTempOptions} options */
 export function makeTempFileSync(options) {
 	for (let i = 0; i < failureRetries; i ++) {
 		try {
@@ -167,7 +167,7 @@ export function makeTempFileSync(options) {
 	throw(new Error(`Temporary creation failed, ${failureRetries} retries exhausted.`));
 };
 
-/** @param {import("../../index/index.d.mts").LeafRemoveOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafRemoveOptions} options */
 export async function remove(path, options) {
 	try {
 		await NodeAsyncFs.rm(path, {
@@ -180,7 +180,7 @@ export async function remove(path, options) {
 		});
 	};
 };
-/** @param {import("../../index/index.d.mts").LeafRemoveOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafRemoveOptions} options */
 export function removeSync(path, options) {
 	try {
 		NodeFs.rmSync(path, {
@@ -201,11 +201,11 @@ export function renameSync(sourcePath, targetPath) {
 	NodeFs.renameSync(sourcePath, targetPath);
 };
 
-/** @param {import("../../index/index.d.mts").LeafSymlinkOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafSymlinkOptions} options */
 export async function symlink(sourcePath, targetPath, options) {
 	await NodeAsyncFs.symlink(sourcePath, targetPath, options?.type);
 };
-/** @param {import("../../index/index.d.mts").LeafSymlinkOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafSymlinkOptions} options */
 export function symlinkSync(sourcePath, targetPath, options) {
 	NodeFs.symlinkSync(sourcePath, targetPath, options?.type);
 };

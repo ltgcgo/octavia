@@ -28,21 +28,21 @@ try {
 	NodeStreamConsumers = (await import("../../common/util/consumer.mjs")).default;
 };
 
-/** @template {import("../../index/index.d.mts").LeafCommandOptions} T */
+/** @template {import("../../leaf.full/index.d.mts").LeafCommandOptions} T */
 export const LeafChildProcess = class LeafChildProcess {
 	/** @type {NodeChildProcess.ChildProcess} */
 	#child;
-	/** @type {import("../../index/index.d.mts").LeafCommandOutput<"spawn", T>?} */
+	/** @type {import("../../leaf.full/index.d.mts").LeafCommandOutput<"spawn", T>?} */
 	#output;
-	/** @type {import("../../index/index/conventions.d.mts").ExtendedReadableByteStream} */
+	/** @type {import("../../leaf.full/leaf.full/conventions.d.mts").ExtendedReadableByteStream} */
 	#se;
 	/** @type {WritableStream<Uint8Array>?} */
 	#si;
-	/** @type {import("../../index/index/conventions.d.mts").ExtendedReadableByteStream} */
+	/** @type {import("../../leaf.full/leaf.full/conventions.d.mts").ExtendedReadableByteStream} */
 	#so;
 	/** @type {number} */
 	pid;
-	/** @type {Promise<import("../../index/index.d.mts").LeafChildRunStatusModern>} */
+	/** @type {Promise<import("../../leaf.full/index.d.mts").LeafChildRunStatusModern>} */
 	status;
 	get stderr() {
 		if (this.#se == null) {
@@ -105,7 +105,7 @@ export const LeafChildProcess = class LeafChildProcess {
 			upThis.#se = toExtendedReadable(NodeStream.Readable.toWeb(child.stderr));
 		};
 	};
-	/** @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
+	/** @param {import("../../leaf.full/index.d.mts").LeafSystemSignal} signal */
 	kill(signal = "SIGTERM") {
 		if (allSystemSignals.has(signal) || typeof signal === "number") {
 			this.#child.kill(signal);
@@ -135,7 +135,7 @@ export const LeafChildProcess = class LeafChildProcess {
 };
 export const ChildProcess = LeafChildProcess;
 
-/** @template {import("../../index/index.d.mts").LeafCommandOptions} T */
+/** @template {import("../../leaf.full/index.d.mts").LeafCommandOptions} T */
 export const LeafCommand = class LeafCommand {
 	/** @type {string|URL} */
 	#command;
@@ -245,7 +245,7 @@ const outputIsPiped = (value) => {
 };
 
 /** @param {number} pid
-* @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
+* @param {import("../../leaf.full/index.d.mts").LeafSystemSignal} signal */
 export function kill(pid, signal = "SIGTERM") {
 	if (allSystemSignals.has(signal) || typeof signal === "number") {
 		switch (NodeProcess.platform) {
@@ -264,7 +264,7 @@ export function kill(pid, signal = "SIGTERM") {
 };
 
 /** @param {string|URL} command
-* @param {import("../../index/index.d.mts").LeafCommandOptions} options */
+* @param {import("../../leaf.full/index.d.mts").LeafCommandOptions} options */
 export function spawn(command, optionOrArgs, options) {
 	/** @type {string[]?} */
 	let args;
@@ -280,8 +280,8 @@ export function spawn(command, optionOrArgs, options) {
 };
 
 /** @param {string|URL} command
-* @param {import("../../index/index.d.mts").LeafCommandOptions} options
-* @returns {Promise<import("../../index/index.d.mts").LeafCommandOutput>} */
+* @param {import("../../leaf.full/index.d.mts").LeafCommandOptions} options
+* @returns {Promise<import("../../leaf.full/index.d.mts").LeafCommandOutput>} */
 export function spawnAndWait(command, optionOrArgs, options) {
 	/** @type {string[]?} */
 	let args;
@@ -336,7 +336,7 @@ export function spawnAndWait(command, optionOrArgs, options) {
 };
 
 /** @param {string|URL} command
-* @param {import("../../index/index.d.mts").LeafCommandOptions} options */
+* @param {import("../../leaf.full/index.d.mts").LeafCommandOptions} options */
 export function spawnAndWaitSync(command, optionOrArgs, options) {
 	/** @type {string[]?} */
 	let args;

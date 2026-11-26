@@ -18,7 +18,7 @@ export const LeafFsFile = class LeafFsFile {
 	#closedFd = true;
 	/** @type {number} */
 	#fileDescriptor;
-	/** @type {import("../../index/index.d.mts").LeafOpenOptions} */
+	/** @type {import("../../leaf.full/index.d.mts").LeafOpenOptions} */
 	#flags;
 	/** @type {string} */
 	#path;
@@ -46,7 +46,7 @@ export const LeafFsFile = class LeafFsFile {
 		this.#closed = true;
 	};
 	/** @param {string|URL} path
-	* @param {import("../../index/index.d.mts").LeafOpenOptions} flags */
+	* @param {import("../../leaf.full/index.d.mts").LeafOpenOptions} flags */
 	constructor(path, flags = {}) {
 		this.#path = path;
 		this.#flags = flags;

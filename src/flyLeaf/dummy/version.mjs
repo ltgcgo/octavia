@@ -2,7 +2,7 @@
 
 {
 	// Oh hey, Deno autocomplete without Deno!
-	/** @type {import("../index/index.d.mts").default} */
+	/** @type {import("../leaf.full/index.d.mts").default} */
 	const Deno = self.Deno;
 	console.debug(`--- Deno version ---`);
 	console.debug(`API version: ${Deno?.version?.deno ?? "Not supplied"}`);

@@ -32,7 +32,7 @@ export const ppid = NodeProcess.ppid;
 const schedulePool = new PoolIDMaps();
 const signalListeners = new WeakMap();
 
-/** @param {import("../../index/index.d.mts").LeafSystemSignal} signal
+/** @param {import("../../leaf.full/index.d.mts").LeafSystemSignal} signal
 * @param {() => void} handler */
 export function addSignalListener(signal, handler) {
 	// Some signal types are actually not possible on certain platforms. Out of scope for now.
@@ -92,7 +92,7 @@ export function refTimer(scheduleId) {
 		scheduleId.ref();
 	};
 };
-/** @param {import("../../index/index.d.mts").LeafSystemSignal} signal
+/** @param {import("../../leaf.full/index.d.mts").LeafSystemSignal} signal
 * @param {() => void} handler */
 export function removeSignalListener(signal, handler) {
 	// Some signal types are actually not possible on certain platforms. Out of scope for now.

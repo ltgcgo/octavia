@@ -117,15 +117,15 @@ declare interface NodeVersion {
 	zstd?: string;
 }
 /** The Deno version object extended by Fly Leaf. */
-declare interface LeafVersion extends DenoVersion {
+declare interface LeafVersionBase extends DenoVersion {
 	/** The actual backend behind Fly Leaf.
 	*
 	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
-	backend?: "Ant"|"Bun"|"Deno"|"Ende"|"Node"|"Porffor"|"Txiki";
+	//backend?: "Ant"|"Bun"|"Deno"|"Ende"|"Node"|"Porffor"|"Txiki";
 	/** The actual JS engine behind the runtime.
 	*
 	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
-	engine?: "Ant Silver"|"JavaScriptCore"|"LibJS"|"Porffor"|"QuickJS"|"SpiderMonkey"|"V8";
+	//engine?: "Ant Silver"|"JavaScriptCore"|"LibJS"|"Porffor"|"QuickJS"|"SpiderMonkey"|"V8";
 	/** The version of the actual backend behind Fly Leaf.
 	*
 	* This field is always provided whenever possible, but made optional to satisfy type checks from the real Deno counterpart. */
@@ -141,6 +141,85 @@ declare interface LeafVersion extends DenoVersion {
 	/** The runtime-native versions object. */
 	versions?: Record<string, string>|DenoVersion|NodeVersion;
 }
+/** Ant. */
+declare interface LeafVersionAnt extends LeafVersionBase {
+	/** The actual backend behind Fly Leaf.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	backend?: "Ant";
+	/** The actual JS engine behind the runtime.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	engine?: "Ant Silver";
+}
+/** Bun. */
+declare interface LeafVersionBun extends LeafVersionBase {
+	/** The actual backend behind Fly Leaf.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	backend?: "Bun";
+	/** The actual JS engine behind the runtime.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	engine?: "JavaScriptCore";
+}
+/** Deno. */
+declare interface LeafVersionDeno extends LeafVersionBase {
+	/** The actual backend behind Fly Leaf.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	backend?: "Deno";
+	/** The actual JS engine behind the runtime.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	engine?: "V8";
+}
+/** Ende. */
+declare interface LeafVersionEnde extends LeafVersionBase {
+	/** The actual backend behind Fly Leaf.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	backend?: "Ende";
+	/** The actual JS engine behind the runtime.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	engine?: "V8";
+}
+/** Node.js. */
+declare interface LeafVersionNode extends LeafVersionBase {
+	/** The actual backend behind Fly Leaf.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	backend?: "Node";
+	/** The actual JS engine behind the runtime.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	engine?: "V8";
+}
+/** Porffor. */
+declare interface LeafVersionPorffor extends LeafVersionBase {
+	/** The actual backend behind Fly Leaf.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	backend?: "Porffor";
+	/** The actual JS engine behind the runtime.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	engine?: "Porffor";
+}
+/** Txiki.js. */
+declare interface LeafVersionTxiki extends LeafVersionBase {
+	/** The actual backend behind Fly Leaf.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	backend?: "Txiki";
+	/** The actual JS engine behind the runtime.
+	*
+	* This field is always provided, but made optional to satisfy type checks from the real Deno counterpart. */
+	engine?: "QuickJS";
+}
+/** The Deno version object extended by Fly Leaf. */
+export type LeafVersion = LeafVersionAnt|LeafVersionBun|LeafVersionDeno|LeafVersionEnde|LeafVersionNode|LeafVersionPorffor|LeafVersionTxiki;
 /** The Deno version object extended by Fly Leaf. */
 export type Version = LeafVersion;
 /** The Deno version object extended by Fly Leaf. */

@@ -12,7 +12,7 @@ import {
 import * as NodeFs from "node:fs";
 const NodeFsConstant = NodeFs.constants;
 
-/** @param {import("../../index/index.d.mts").LeafOpenOptions} flags */
+/** @param {import("../../leaf.full/index.d.mts").LeafOpenOptions} flags */
 export function linuxOpenFlags(flags) {
 	let result = 0;
 	let rwIntermediate = 0;
@@ -55,7 +55,7 @@ export function linuxOpenFlags(flags) {
 	return result;
 };
 
-/** @param {import("../../index/index.d.mts").LeafWriteFileOptions} flags */
+/** @param {import("../../leaf.full/index.d.mts").LeafWriteFileOptions} flags */
 export function linuxWriteFlags(flags) {
 	let result = NodeFsConstant.O_WRONLY;
 	if (flags.append) result |= NodeFsConstant.O_APPEND;

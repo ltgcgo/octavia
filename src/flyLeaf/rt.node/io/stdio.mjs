@@ -64,7 +64,7 @@ export class LeafStandardTeleTypeInput {
 	#as; // EOF signal
 	/** @type {NodeJS.ReadStream & {fd: number}} */
 	#rd;
-	/** @type {import("../../index/index.d.mts").LeafSetRawOptions|null} */
+	/** @type {import("../../leaf.full/index.d.mts").LeafSetRawOptions|null} */
 	#ro = null;
 	/** @type {StreamQueue} */
 	#sq;
@@ -137,7 +137,7 @@ export class LeafStandardTeleTypeInput {
 		) return null; // Deviation?
 		return NodeFs.readSync(upThis.#rd.fd, byob);
 	};
-	/** @param {import("../../index/index.d.mts").LeafSetRawOptions} options */
+	/** @param {import("../../leaf.full/index.d.mts").LeafSetRawOptions} options */
 	setRaw(isRaw, options) {
 		this.#rd.setRawMode(isRaw);
 		if (isRaw) {

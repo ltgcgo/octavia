@@ -9,7 +9,7 @@ import {
 	Permissions,
 	permissions,
 	PermissionStatus
-} from "../index/index/permission.d.mts";
+} from "../leaf.full/leaf.full/permission.d.mts";
 import type {
 	EnvPermissionDescriptor,
 	FfiPermissionDescriptor,
@@ -25,7 +25,7 @@ import type {
 	RunPermissionDescriptor,
 	SysPermissionDescriptor,
 	WritePermissionDescriptor
-} from "../index/index/permission.d.mts";
+} from "../leaf.full/leaf.full/permission.d.mts";
 
 import {
 	addSignalListener,
@@ -53,13 +53,13 @@ import {
 	uid,
 	unrefTimer,
 	version
-} from "../index/index/env.d.mts";
+} from "../leaf.full/leaf.full/env.d.mts";
 import type {
 	Env,
 	MemoryUsage,
 	Signal,
 	SystemMemoryInfo
-} from "../index/index/env.d.mts";
+} from "../leaf.full/leaf.full/env.d.mts";
 
 import {
 	chmod,
@@ -111,7 +111,7 @@ import {
 	writeFileSync,
 	writeTextFile,
 	writeTextFileSync
-} from "../index/index/fs.d.mts";
+} from "../leaf.full/leaf.full/fs.d.mts";
 import type {
 	DirEntry,
 	FileInfo,
@@ -125,14 +125,14 @@ import type {
 	SymlinkOptions,
 	WatchOptions,
 	WriteFileOptions
-} from "../index/index/fs.d.mts";
+} from "../leaf.full/leaf.full/fs.d.mts";
 
 import {
 	SeekMode
-} from "../index/index/io.d.mts";
+} from "../leaf.full/leaf.full/io.d.mts";
 import type {
 	SetRawOptions
-} from "../index/index/io.d.mts";
+} from "../leaf.full/leaf.full/io.d.mts";
 
 import {
 	Command,
@@ -140,13 +140,13 @@ import {
 	spawn,
 	spawnAndWait,
 	spawnAndWaitSync
-} from "../index/index/process.d.mts";
+} from "../leaf.full/leaf.full/process.d.mts";
 import type {
 	ChildProcess,
 	CommandOptions,
 	CommandOutput,
 	CommandStatus
-} from "../index/index/process.d.mts";
+} from "../leaf.full/leaf.full/process.d.mts";
 
 // Paste here.
 declare global {

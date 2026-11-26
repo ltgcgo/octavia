@@ -7,7 +7,7 @@
 import { getTranslatedDefault } from "../../common/method/process.mjs";
 import { _leaf_copyTo_, _leaf_yield_ } from "../../common/util/overlay.mjs";
 
-/** @type {Map<import("../../index/index.d.mts").LeafStdIoMode, "pipe"|"inherit"|"ignore">} */
+/** @type {Map<import("../../leaf.full/index.d.mts").LeafStdIoMode, "pipe"|"inherit"|"ignore">} */
 const stdioModeMap = new Map();
 stdioModeMap.set("inherit", "inherit");
 stdioModeMap.set("null", "ignore");
@@ -15,7 +15,7 @@ stdioModeMap.set("piped", "pipe");
 
 const stdioDefault = getTranslatedDefault(stdioModeMap);
 
-/** @param {import("../../index/index.d.mts").LeafCommandOptions} denoOpts
+/** @param {import("../../leaf.full/index.d.mts").LeafCommandOptions} denoOpts
 * @returns {import("node:child_process").SpawnOptions & import("node:child_process").ExecFileOptionsWithBufferEncoding} */
 export function fromDenoModern(denoOpts, isOutput = false) {
 	const {

@@ -27,20 +27,20 @@ export function lstatSync(path) {
 	}));
 };
 
-/** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafOpenOptions} options */
 export async function mkdir(path, options) {
 	await NodeAsyncFs.mkdir(path, options);
 };
-/** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafOpenOptions} options */
 export function mkdirSync(path, options) {
 	NodeFs.mkdirSync(path, options);
 };
 
-/** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafOpenOptions} options */
 export async function open(path, options) {
 	return new LeafFsFile(path, options);
 };
-/** @param {import("../../index/index.d.mts").LeafOpenOptions} options */
+/** @param {import("../../leaf.full/index.d.mts").LeafOpenOptions} options */
 export function openSync(path, options) {
 	return new LeafFsFile(path, options);
 };

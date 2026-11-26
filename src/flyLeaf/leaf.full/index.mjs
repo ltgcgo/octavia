@@ -24,7 +24,6 @@ if (self.Ende) {
 	flyLeafGlobals = await import("../rt.ant/index.mjs");
 } else if (self.tjs) {
 	selectedBackend = "Txiki";
-	flyLeafGlobals = await import("../rt.txiki/index.mjs");
 } else if (self.Bun) {
 	selectedBackend = "Bun";
 	flyLeafGlobals = await import("../rt.bun/index.mjs");
@@ -43,6 +42,9 @@ if (self.Ende) {
 	};
 };
 debugMsg && console.debug(`Selected backend: ${selectedBackend ?? "(none)"}.`);
+if (flyLeafGlobals == null) {
+	throw(new TypeError(`No valid backend for runtime "${selectedBackend ?? "Unknown"}".`));
+};
 
 flyLeafGlobals.version.asyncOnly = false;
 
@@ -50,6 +52,8 @@ const {
 	_leaf_overlay_,
 
 	// Classes and enums
+	ChildProcess,
+	Command,
 	FsFile,
 	PermissionStatus,
 	Permissions,
@@ -147,6 +151,7 @@ const {
 
 	// Child process
 	kill,
+	spawn,
 	spawnAndWait,
 	spawnAndWaitSync
 } = flyLeafGlobals;

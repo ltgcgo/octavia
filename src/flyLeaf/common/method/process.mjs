@@ -6,7 +6,7 @@
 
 /** `1` contains `"output"` defaults, and `0` `"spawn"` defaults.
 * @template {string} T
-* @param {Map<import("../../index/index.d.mts").LeafStdIoMode, T>} map
+* @param {Map<import("../../leaf.full/index.d.mts").LeafStdIoMode, T>} map
 * @returns {Record<"stdin"|"stdout"|"stderr", T>[]} */
 export function getTranslatedDefault(map) {
 	const inherit = map.get("inherit") ?? "inherit";

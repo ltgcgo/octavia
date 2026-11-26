@@ -9,10 +9,10 @@ export class LeafChildRunStatusModern {
 	success;
 	/** @type {number} */
 	code;
-	/** @type {import("../../index/index.d.mts").LeafSystemSignal} */
+	/** @type {import("../../leaf.full/index.d.mts").LeafSystemSignal} */
 	signal;
 	/** @param {number} code
-	* @param {import("../../index/index.d.mts").LeafSystemSignal} signal */
+	* @param {import("../../leaf.full/index.d.mts").LeafSystemSignal} signal */
 	constructor(code, signal) {
 		const upThis = this;
 		upThis.success = code === 0;
@@ -52,7 +52,7 @@ export class LeafCommandOutput extends LeafChildRunStatusModern {
 		}
 	};
 	/** @param {number} code
-	* @param {import("../../index/index.d.mts").LeafSystemSignal} signal
+	* @param {import("../../leaf.full/index.d.mts").LeafSystemSignal} signal
 	* @param {Uint8Array?} stdout
 	* @param {Uint8Array?} stderr */
 	constructor(code, signal, stdout, stderr) {

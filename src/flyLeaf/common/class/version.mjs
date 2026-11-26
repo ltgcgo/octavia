@@ -29,10 +29,10 @@ export default class LeafVersion {
 	flyLeaf = "0.0.3";
 	/** @type {boolean} */
 	asyncOnly;
-	/** @type {import("../../index/index/env.d.mts").DenoVersion|import("../../index/index/env.d.mts").NodeVersion} */
+	/** @type {import("../../leaf.full/leaf.full/env.d.mts").DenoVersion|import("../../leaf.full/leaf.full/env.d.mts").NodeVersion} */
 	versions;
-	/** @param {import("../../index/index/env.d.mts").NodeVersion|undefined} nodeVersions
-	* @param {import("../../index/index/env.d.mts").DenoVersion|undefined} versions  */
+	/** @param {import("../../leaf.full/leaf.full/env.d.mts").NodeVersion|undefined} nodeVersions
+	* @param {import("../../leaf.full/leaf.full/env.d.mts").DenoVersion|undefined} versions  */
 	constructor(nodeVersions, versions) {
 		if (nodeVersions) {
 			if (nodeVersions.v8) this.v8 = nodeVersions.v8;

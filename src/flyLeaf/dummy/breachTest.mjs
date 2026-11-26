@@ -1,6 +1,6 @@
 "use strict";
 
-/** @type {import("../index/index.d.mts")} */
+/** @type {import("../leaf.full/index.d.mts")} */
 const Deno = self.Deno;
 const DenoVersion = Deno.version;
 

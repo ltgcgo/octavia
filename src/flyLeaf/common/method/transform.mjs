@@ -20,7 +20,7 @@ export function toUint8Array(buffer) {
 };
 
 /** @param {ReadableStream<Uint8Array>} readable
-* @returns {import("../../index/index/conventions.d.mts").ExtendedReadableByteStream} */
+* @returns {import("../../leaf.full/leaf.full/conventions.d.mts").ExtendedReadableByteStream} */
 export function toExtendedReadable(readable) {
 	readable.arrayBuffer = () => {
 		return CommonStreamConverters.arrayBuffer(readable);

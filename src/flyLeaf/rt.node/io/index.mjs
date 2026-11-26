@@ -27,7 +27,7 @@ export function consoleSize() {
 	};
 	throw(new Error("Could not get console size: stdin, stdout, and stderr are not connected to a terminal"));
 };
-/** @param {import("../../index/index.d.mts").LeafInspectOptions} options  */
+/** @param {import("../../leaf.full/index.d.mts").LeafInspectOptions} options  */
 export function inspect(value, options) {
 	const {
 		breakLength,

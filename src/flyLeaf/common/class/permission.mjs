@@ -6,7 +6,7 @@
 
 // The common fallback permission system. Can be modified on alternative runtimes with permissions support, which currently is none.
 
-/** @type {Set<import("../../index/index.d.mts").LeafPermName>} */
+/** @type {Set<import("../../leaf.full/index.d.mts").LeafPermName>} */
 const LeafPermNames = new Set("env,ffi,net,read,run,sys,write".split(","));
 
 export const LeafSymbolPermPartial = Symbol("Symbol.leafPermPartial");
@@ -14,7 +14,7 @@ export const LeafSymbolPermState = Symbol("Symbol.leafPermState");
 
 export class LeafPermStatus extends EventTarget {
 	[LeafSymbolPermPartial] = false;
-	/** @type {import("../../index/index.d.mts").LeafPermState} */
+	/** @type {import("../../leaf.full/index.d.mts").LeafPermState} */
 	[LeafSymbolPermState] = "prompt";
 	get partial() {
 		return this[LeafSymbolPermPartial];
@@ -26,19 +26,19 @@ export class LeafPermStatus extends EventTarget {
 	onchange;
 };
 
-/** @type {import("../../index/index.d.mts").LeafPermHookMethodBoth} */
+/** @type {import("../../leaf.full/index.d.mts").LeafPermHookMethodBoth} */
 const methodPassAll = () => {
 	const result = new LeafPermStatus();
 	result[LeafSymbolPermState] = "granted";
 	return result;
 };
-/** @type {import("../../index/index.d.mts").LeafPermRuntimeTypeHooksBoth} */
+/** @type {import("../../leaf.full/index.d.mts").LeafPermRuntimeTypeHooksBoth} */
 const permPassAll = {
 	"query": [methodPassAll],
 	"request": [methodPassAll],
 	"revoke": [methodPassAll]
 };
-/** @type {import("../../index/index.d.mts").LeafPermRuntimeTypeHooksBoth} */
+/** @type {import("../../leaf.full/index.d.mts").LeafPermRuntimeTypeHooksBoth} */
 const permEnvHooks = {
 	"query": [(details) => {
 		return methodPassAll();
@@ -50,7 +50,7 @@ const permEnvHooks = {
 		return methodPassAll();
 	}]
 };
-/** @type {import("../../index/index.d.mts").LeafPermRuntimeTypeHooksBoth} */
+/** @type {import("../../leaf.full/index.d.mts").LeafPermRuntimeTypeHooksBoth} */
 const permSysHooks = {
 	"query": [(details) => {
 		return methodPassAll();
@@ -64,13 +64,13 @@ const permSysHooks = {
 };
 
 export class LeafPermissionsBaseline {
-	/** @type {import("../../index/index.d.mts").LeafPermRuntimeHookMapBoth} */
+	/** @type {import("../../leaf.full/index.d.mts").LeafPermRuntimeHookMapBoth} */
 	#hooksQuery = new Map();
-	/** @type {import("../../index/index.d.mts").LeafPermRuntimeHookMapBoth} */
+	/** @type {import("../../leaf.full/index.d.mts").LeafPermRuntimeHookMapBoth} */
 	#hooksRequest = new Map();
-	/** @type {import("../../index/index.d.mts").LeafPermRuntimeHookMapBoth} */
+	/** @type {import("../../leaf.full/index.d.mts").LeafPermRuntimeHookMapBoth} */
 	#hooksRevoke = new Map();
-	/** @param {import("../../index/index.d.mts").LeafPermRuntimeHooksBoth} hooks */
+	/** @param {import("../../leaf.full/index.d.mts").LeafPermRuntimeHooksBoth} hooks */
 	constructor(hooks) {
 		const queryHooks = this.#hooksQuery;
 		const requestHooks = this.#hooksRequest;
@@ -92,13 +92,13 @@ export class LeafPermissionsBaseline {
 		};
 		if (hooks) {
 			for (const type in hooks) {
-				/** @type {import("../../index/index.d.mts").LeafPermRuntimeTypeHooksBoth} */
+				/** @type {import("../../leaf.full/index.d.mts").LeafPermRuntimeTypeHooksBoth} */
 				const typeHook = hooks[type];
 				if (typeof typeHook !== "object") {
 					throw(new TypeError(`The "${type}" hook must be a method collection object.`));
 				} else if (LeafPermNames.has(type)) {
 					for (const hookType in typeHook) {
-						/** @type {import("../../index/index.d.mts").LeafPermHookMethodBoth} */
+						/** @type {import("../../leaf.full/index.d.mts").LeafPermHookMethodBoth} */
 						const actualHook = typeHook[hookType];
 						if (typeof actualHook[0] !== "function") {
 							throw(new TypeError(`The "${hookType}" hook type must be a method.`));
@@ -130,13 +130,13 @@ export class LeafPermissionsBaseline {
 		//console.debug(requestHooks);
 		//console.debug(revokeHooks);
 	};
-	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	/** @param {import("../../leaf.full/index.d.mts").LeafPermDetails} details */
 	#assertNoNull(details){
 		if (!details) {
 			throw(new TypeError(`The provided value "undefined" is not a valid permission name.`)); // Actual text.
 		};
 	};
-	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	/** @param {import("../../leaf.full/index.d.mts").LeafPermDetails} details */
 	querySync(details) {
 		this.#assertNoNull(details);
 		const hooks = this.#hooksQuery.get(details.name);
@@ -146,7 +146,7 @@ export class LeafPermissionsBaseline {
 			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
 		};
 	};
-	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	/** @param {import("../../leaf.full/index.d.mts").LeafPermDetails} details */
 	async query(details) {
 		this.#assertNoNull(details);
 		let failed = true;
@@ -164,7 +164,7 @@ export class LeafPermissionsBaseline {
 			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
 		};
 	};
-	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	/** @param {import("../../leaf.full/index.d.mts").LeafPermDetails} details */
 	requestSync(details) {
 		this.#assertNoNull(details);
 		const hooks = this.#hooksRequest.get(details.name);
@@ -174,7 +174,7 @@ export class LeafPermissionsBaseline {
 			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
 		};
 	};
-	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	/** @param {import("../../leaf.full/index.d.mts").LeafPermDetails} details */
 	async request(details) {
 		this.#assertNoNull(details);
 		let failed = true;
@@ -192,7 +192,7 @@ export class LeafPermissionsBaseline {
 			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
 		};
 	};
-	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	/** @param {import("../../leaf.full/index.d.mts").LeafPermDetails} details */
 	revokeSync(details) {
 		this.#assertNoNull(details);
 		const hooks = this.#hooksRevoke.get(details.name);
@@ -202,7 +202,7 @@ export class LeafPermissionsBaseline {
 			throw(new TypeError(`The provided value "${details.name}" is not a valid permission name`));
 		};
 	};
-	/** @param {import("../../index/index.d.mts").LeafPermDetails} details */
+	/** @param {import("../../leaf.full/index.d.mts").LeafPermDetails} details */
 	async revoke(details) {
 		this.#assertNoNull(details);
 		let failed = true;

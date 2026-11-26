@@ -1,7 +1,7 @@
 "use strict";
 
-import * as LeafGlob from "../index/index.mjs";
-import LeafDeno from "../index/index.mjs";
+import * as LeafGlob from "../leaf.full/index.mjs";
+import LeafDeno from "../leaf.full/index.mjs";
 
 const allSymbols = new Set();
 for (const symbol in LeafGlob) {

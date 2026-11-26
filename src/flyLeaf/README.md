@@ -69,6 +69,7 @@ Fly Leaf offers two separate variants of the same Deno API. Unless absolutely ne
 | ✓ | ✓ | Ende | `Ende` | `V8` | 20261014+ | N/A |
 | ✓ | ✓ | Node.js | `Node` | `V8` | 22.18+, 24.2+ | 22.21+, 24.0+ |
 | ✓ | ✓ | Porffor | `Porffor` | `Porffor` | alpha 20+ | ? |
+| × | ✓ | Txiki.js | `Txiki` | `QuickJS` | ? | ? |
 
 - IMM: `import.meta.main`
 - UEP: `NODE_USE_ENV_PROXY`
@@ -88,7 +89,7 @@ Fly Leaf offers two separate variants of the same Deno API. Unless absolutely ne
 - [**Node.js**](https://nodejs.org): WIP.
 - [**Porffor**](https://porffor.dev/): WIP.
   - Not recommended for validation. If tests and benchmarks are not supported, Fly Leaf will use its own universal fallback.
-- [Txiki.js](https://txikijs.org/): WIP. Linux builds [available here](https://github.com/ltgcgo/build-service-bin/releases/tag/build-txiki), currently without FFI support.
+- [**Txiki.js**](https://txikijs.org/): WIP. Linux builds [available here](https://github.com/ltgcgo/build-service-bin/releases/tag/build-txiki), currently without FFI support.
 - [~~a-Shell `JSC`~~](https://github.com/holzschu/a-shell/blob/master/man/man1/jsc.1): Out of scope. Basic FS access, insufficient platform APIs.
 - [~~Javy~~](https://github.com/bytecodealliance/javy): Out of scope. Insufficient platform APIs.
 - [~~Steve's Den~~](https://github.com/stevefan1999-personal/den): Out of scope. Insufficient documentation, and the `den:*` import scheme is the exact thing Fly Leaf avoids, despite being older than _Ende_.

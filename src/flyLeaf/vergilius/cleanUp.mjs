@@ -126,7 +126,7 @@ const MITMFunction = new Proxy(RealFunction, {
 	}
 })/*RealFunction*/;
 
-/** @param {import("../index/index.d.mts")} denoCompatible */
+/** @param {import("../leaf.full/leaf.full.d.mts")} denoCompatible */
 export function executeCleanUp(thisTarget = globalThis, denoCompatible = thisTarget.Ende ?? thisTarget.Deno) {
 	removeProperties(thisTarget, [
 		"__dirname",
