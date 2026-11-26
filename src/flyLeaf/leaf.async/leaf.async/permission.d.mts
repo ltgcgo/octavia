@@ -179,16 +179,16 @@ export class LeafPermissions {
 export type Permissions = LeafPermissions;
 
 /** Individual synchronous hooks communicating with the native runtime. */
-declare type LeafPermHookMethodSync = (details: LeafPermDetails) => LeafPermStatus;
+export type LeafPermHookMethodSync = (details: LeafPermDetails) => LeafPermStatus;
 /** Individual asynchronous hooks communicating with the native runtime. */
-declare type LeafPermHookMethodAsync = (details: LeafPermDetails) => Promise<LeafPermStatus>;
-declare type LeafPermHookMethodBoth = [LeafPermHookMethodSync, LeafPermHookMethodAsync|undefined];
+export type LeafPermHookMethodAsync = (details: LeafPermDetails) => Promise<LeafPermStatus>;
+export type LeafPermHookMethodBoth = [LeafPermHookMethodSync, LeafPermHookMethodAsync|undefined];
 /** Collection of communication hooks. */
-declare type LeafPermRuntimeHookMapBoth = Map<LeafPermName, LeafPermHookMethodBoth>;
+export type LeafPermRuntimeHookMapBoth = Map<LeafPermName, LeafPermHookMethodBoth>;
 /** Communication hooks by type. */
-declare type LeafPermRuntimeTypeHooksBoth = Record<"query"|"request"|"revoke", LeafPermHookMethodBoth>;
+export type LeafPermRuntimeTypeHooksBoth = Record<"query"|"request"|"revoke", LeafPermHookMethodBoth>;
 /** Collection of typed communication hooks. */
-declare type LeafPermRuntimeHooksBoth = Record<LeafPermName, LeafPermRuntimeTypeHooksBoth>;
+export type LeafPermRuntimeHooksBoth = Record<LeafPermName, LeafPermRuntimeTypeHooksBoth>;
 
 /** The Deno permissions API, which is based on the web [permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API) but adapted for non-browser uses.
 *

@@ -6,12 +6,12 @@ export {
 	_leaf_overlay_,
 	_leaf_apply_,
 	_leaf_yield_
-} from "../../leaf.async/leaf.async/exports.d.mts";
+} from "../leaf.async/exports.d.mts";
 
-export type * from "../../leaf.async/leaf.async/errors.d.mts";
-export * from "../../leaf.async/leaf.async/errors.d.mts";
+export type * from "../leaf.async/errors.d.mts";
+export * from "../leaf.async/errors.d.mts";
 
-//export type * from "../../leaf.async/leaf.async/errors.d.mts";
+//export type * from "../leaf.async/errors.d.mts";
 export {
 	LeafEnvPermDetails, EnvPermissionDescriptor,
 	LeafFfiPermDetails, FfiPermissionDescriptor,
@@ -34,15 +34,15 @@ export {
 	LeafRunPermDetails, RunPermissionDescriptor,
 	LeafSystemPermDetails, SysPermissionDescriptor,
 	LeafWritePermDetails, WritePermissionDescriptor
-} from "../../leaf.async/leaf.async/permission.d.mts";
+} from "../leaf.async/permission.d.mts";
 
 export type * from "./permission.d.mts";
 export * from "./permission.d.mts";
 
-export type * from "../../leaf.async/leaf.async/env.d.mts";
-export * from "../../leaf.async/leaf.async/env.d.mts";
+export type * from "../leaf.async/env.d.mts";
+export * from "../leaf.async/env.d.mts";
 
-//export type * from "../../leaf.async/leaf.async/io.d.mts";
+//export type * from "../leaf.async/io.d.mts";
 export {
 	LeafInspectOptions, InspectOptions,
 	LeafIoTeletype,
@@ -54,12 +54,12 @@ export {
 
 	consoleSize,
 	inspect
-} from "../../leaf.async/leaf.async/io.d.mts";
+} from "../leaf.async/io.d.mts";
 
 export type * from "./io.d.mts";
 export * from "./io.d.mts";
 
-//export type * from "../../leaf.async/leaf.async/fs.d.mts";
+//export type * from "../leaf.async/fs.d.mts";
 export {
 	LeafDirEntry, DirEntry,
 	LeafFileInfo, FileInfo,
@@ -78,13 +78,11 @@ export {
 	chmod,
 	chown,
 	copyFile,
-	create,
 	link,
 	lstat,
 	makeTempDir,
 	makeTempFile,
 	mkdir,
-	open,
 	readDir,
 	readFile,
 	readLink,
@@ -100,7 +98,7 @@ export {
 	watchFs,
 	writeFile,
 	writeTextFile
-} from "../../leaf.async/leaf.async/fs.d.mts";
+} from "../leaf.async/fs.d.mts";
 
 export type * from "./fs.d.mts";
 export * from "./fs.d.mts";
@@ -127,7 +125,7 @@ export {
 	kill,
 	spawn,
 	spawnAndWait
-} from "../../leaf.async/leaf.async/process.d.mts";
+} from "../leaf.async/process.d.mts";
 
 export type * from "./process.d.mts";
 export * from "./process.d.mts";

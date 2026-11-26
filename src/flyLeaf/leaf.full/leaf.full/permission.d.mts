@@ -5,7 +5,7 @@
 import type {
 	LeafPermDetails,
 	LeafPermStatus
-} from "../../leaf.async/leaf.async/permission.d.mts";
+} from "../leaf.async/permission.d.mts";
 
 /** The Deno permissions API, which is based on the web [permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API) but adapted for non-browser uses.
 *

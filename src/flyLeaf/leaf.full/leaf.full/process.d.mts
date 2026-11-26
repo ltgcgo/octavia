@@ -4,13 +4,13 @@
 
 import type {
 	Throws
-} from "../../leaf.async/leaf.async/conventions.d.mts";
+} from "../leaf.async/conventions.d.mts";
 import type {
 	LeafChildProcess,
 	LeafCommand as LeafCommandAsync,
 	LeafCommandOptions,
 	LeafCommandOutput
-} from "../../leaf.async/leaf.async/process.d.mts";
+} from "../leaf.async/process.d.mts";
 
 /** Declaration of a reusable command. */
 export class LeafCommand<T extends LeafCommandOptions> extends LeafCommandAsync<T> {

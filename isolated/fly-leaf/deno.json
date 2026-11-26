@@ -1,6 +1,6 @@
 {
 	"name": "@ltgc/fly-leaf",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"license": "LGPL-3.0-or-later",
 	"imports": {
 		"@ltgc/rochelle": "jsr:@ltgc/rochelle@^0.3.5",

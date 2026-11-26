@@ -6,12 +6,12 @@
 
 import {
 	DisposableObject
-} from "../../leaf.async/leaf.async/conventions.d.mts";
+} from "../leaf.async/conventions.d.mts";
 import {
 	LeafSeekMode
-} from "../../leaf.async/leaf.async/io.d.mts";
+} from "../leaf.async/io.d.mts";
 import {
-	LeafFsFileAsync,
+	LeafFsFile as LeafFsFileAsync,
 	LeafDirEntry,
 	LeafFileInfo,
 	LeafMakeTempOptions,
@@ -21,9 +21,9 @@ import {
 	LeafRemoveOptions,
 	LeafSymlinkOptions,
 	LeafWriteFileOptions
-} from "../../leaf.async/leaf.async/fs.d.mts";
+} from "../leaf.async/fs.d.mts";
 
-export class LeafFsFileFull extends LeafFsFileAsync implements DisposableObject, Disposable {
+export class LeafFsFile extends LeafFsFileAsync implements DisposableObject, Disposable {
 	/**  */
 	lockSync(exclusive?: boolean): void;
 	/**  */
@@ -47,7 +47,6 @@ export class LeafFsFileFull extends LeafFsFileAsync implements DisposableObject,
 	/**  */
 	writeSync(buffer: Uint8Array): number;
 }
-export type LeafFsFile = LeafFsFileFull;
 export type FsFile = LeafFsFile;
 
 /** The synchronous variant of `chmod`. */
@@ -56,8 +55,10 @@ export function chmodSync(path: string|URL, mode: number): void;
 export function chownSync(path: string|URL, uid: number|null, gid: number|null): void;
 /** The synchronous variant of `copyFile`. */
 export function copyFileSync(sourcePath: string|URL, targetPath: string|URL): void;
+/** Create a file and return its handle. If a file already exists, truncate it. */
+export function create(path: string|URL): Promise<LeafFsFile>;
 /** The synchronous variant of `create`. */
-export function createSync(path: string|URL): LeafFsFileFull;
+export function createSync(path: string|URL): LeafFsFile;
 /** The synchronous variant of `link`. */
 export function linkSync(sourcePath: string, targetPath: string): void;
 /** The synchronous variant of `lstat`. */
@@ -69,9 +70,9 @@ export function makeTempFileSync(options?: LeafMakeTempOptions): string;
 /** The synchronous variant of `mkdir`. */
 export function mkdirSync(path: string|URL, options?: LeafMkdirOptions): void;
 /** Open a file and get a handle. */
-export function open(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFileFull>;
+export function open(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFile>;
 /** The synchronous variant of `open`. */
-export function openSync(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFileFull>;
+export function openSync(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFile>;
 /** The synchronous variant of `readDir`. */
 export function readDirSync(path: string|URL): Generator<LeafDirEntry, void, void>;
 /** The synchronous variant of `readFile`. */

@@ -5,13 +5,13 @@
 import {
 	WrappedReadStream,
 	WrappedWriteStream
-} from "../../leaf.async/leaf.async/conventions.d.mts";
+} from "../leaf.async/conventions.d.mts";
 import {
 	LeafHandlerReadableAsync,
 	LeafHandlerWritableAsync,
 	LeafIoTeletype,
 	LeafSetRawOptions
-} from "../../leaf.async/leaf.async/io.d.mts";
+} from "../leaf.async/io.d.mts";
 
 /** A readable object implementing several methods. */
 export interface LeafHandlerReadableFull extends LeafHandlerReadableAsync {

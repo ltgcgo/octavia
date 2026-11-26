@@ -21,26 +21,26 @@ Vendoring is the current recommended approach for loading _Fly Leaf_ that sidest
 ### Conformance without shims
 If you're sure a crashing component is intended for a web-compliant environment without requiring any Deno API or runtime-specific API, you can choose to use the conformance script without Fly Leaf.
 
-- Node.js: `node --import ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
 - Ant: `ant --preload ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
+- Node.js: `node --import ./libs/fly-leaf@ltgcgo/vergilius.mjs ...`
 
 ### Deno globals
 The Fly Leaf loader can be used if a component expects Deno globals. If provided in releases, you can use the `bell ...` (Belladonna) helper instead.
 
-- Node.js: `node --import ./libs/fly-leaf@ltgcgo/loader.mjs ...`
-- Deno: `deno run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
-- Ende: `ende run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Ant: `ant --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
+- Deno: `deno run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
+- Ende: `ende run --preload ./libs/fly-leaf@ltgcgo/loader.mjs ...`
+- Node.js: `node --import ./libs/fly-leaf@ltgcgo/loader.mjs ...`
 
 Async-only variants are available as well.
 
-- Node.js: `node --import ./libs/fly-leaf@ltgcgo/loadAsync.mjs ...`
-- Deno: `deno run --preload ./libs/fly-leaf@ltgcgo/loadAsync.mjs ...`
-- Ende: `ende run --preload ./libs/fly-leaf@ltgcgo/loadAsync.mjs ...`
 - Ant: `ant --preload ./libs/fly-leaf@ltgcgo/loadAsync.mjs ...`
 - Bun: `bun run --preload ./libs/fly-leaf@ltgcgo/loadAsync.mjs ...`
+- Deno: `deno run --preload ./libs/fly-leaf@ltgcgo/loadAsync.mjs ...`
+- Ende: `ende run --preload ./libs/fly-leaf@ltgcgo/loadAsync.mjs ...`
+- Node.js: `node --import ./libs/fly-leaf@ltgcgo/loadAsync.mjs ...`
 
 All supported runtimes set `Deno.version.backend` and `Deno.version.engine`. For a list of valid values, see the [runtimes](#runtimes) section below.
 

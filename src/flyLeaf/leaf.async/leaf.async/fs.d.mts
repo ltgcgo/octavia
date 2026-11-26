@@ -89,7 +89,7 @@ export type FsEvent = LeafFsEvent;
 export interface LeafFsWatcher extends AsyncIterable<LeafFsEvent>, DisposableObject, Disposable {}
 export type FsWatcher = LeafFsWatcher;
 
-export class LeafFsFileAsync implements DisposableObject, Disposable {
+export class LeafFsFile implements DisposableObject, Disposable {
 	[Symbol.dispose](): void;
 	/** The binary file content present in a WHATWG readable stream. */
 	readable: ReadableStream<Uint8Array>;
@@ -124,7 +124,7 @@ export class LeafFsFileAsync implements DisposableObject, Disposable {
 	/**  */
 	write(buffer: Uint8Array): Promise<number>;
 }
-export type LeafFsFile = LeafFsFileAsync;
+export type LeafFsFile = LeafFsFile;
 export type FsFile = LeafFsFile;
 
 /** Options for temporary entity creation. */
@@ -214,7 +214,7 @@ export function chown(path: string|URL, uid: number|null, gid: number|null): Pro
 /** Copy the file from source to the target with its permissions intact. Will overwrite the file at target, and will fail if the target path is not writable. */
 export function copyFile(sourcePath: string|URL, targetPath: string|URL): Promise<void>;
 /** Create a file and return its handle. If a file already exists, truncate it. */
-export function create(path: string|URL): Promise<LeafFsFileAsync>;
+export function create(path: string|URL): Promise<LeafFsFile>;
 /** Create a hard link pointing to the target path, akin to `ln`. */
 export function link(sourcePath: string, targetPath: string): Promise<void>;
 /** Gather meta information of a path with symbolic link awareness. If a symbolic link is encountered, information of the symbolic link itself will be obtained. */
@@ -230,7 +230,7 @@ export function makeTempFile(options?: LeafMakeTempOptions): Promise<string>;
 /** Create a new folder at the specified path, akin to `mkdir`. */
 export function mkdir(path: string|URL, options?: LeafMkdirOptions): Promise<void>;
 /** Open a file and get a handle. */
-export function open(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFileAsync>;
+export function open(path: string|URL, options?: LeafOpenOptions): Promise<LeafFsFile>;
 /** Iterate through all children within a directory. */
 export function readDir(path: string|URL): AsyncGenerator<LeafDirEntry, void, void>;
 /** Read binary data from the specified path. */
