@@ -11,6 +11,31 @@ export {
 export type * from "../../leaf.async/leaf.async/errors.d.mts";
 export * from "../../leaf.async/leaf.async/errors.d.mts";
 
+//export type * from "../../leaf.async/leaf.async/errors.d.mts";
+export {
+	LeafEnvPermDetails, EnvPermissionDescriptor,
+	LeafFfiPermDetails, FfiPermissionDescriptor,
+	LeafImportPermDetails, ImportPermissionDescriptor,
+	LeafNetworkPermDetails, NetPermissionDescriptor,
+	LeafPermDetails, PermissionDescriptor,
+	LeafPermHookMethodAsync,
+	LeafPermHookMethodBoth,
+	LeafPermHookMethodSync,
+	LeafPermName, PermissionName,
+	LeafPermOptions, PermissionOptions,
+	LeafPermRequest, PermissionOptionsObject,
+	LeafPermRuntimeHookMapBoth,
+	LeafPermRuntimeHooksBoth,
+	LeafPermRuntimeTypeHooksBoth,
+	LeafPermState, PermissionState,
+	LeafPermStatus, PermissionStatus,
+	LeafPermStatusEvents, PermissionStatusEventMap,
+	LeafReadPermDetails, ReadPermissionDescriptor,
+	LeafRunPermDetails, RunPermissionDescriptor,
+	LeafSystemPermDetails, SysPermissionDescriptor,
+	LeafWritePermDetails, WritePermissionDescriptor
+} from "../../leaf.async/leaf.async/permission.d.mts";
+
 export type * from "./permission.d.mts";
 export * from "./permission.d.mts";
 

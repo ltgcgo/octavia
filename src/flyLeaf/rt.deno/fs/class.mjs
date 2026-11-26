@@ -7,3 +7,4 @@
 const Deno = self.Deno ?? self.Ende;
 
 export const FsFile = Deno.FsFile;
+export const LeafFsFile = FsFile;

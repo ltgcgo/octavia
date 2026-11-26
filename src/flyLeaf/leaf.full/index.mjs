@@ -43,6 +43,9 @@ if (self.Ende) {
 };
 debugMsg && console.debug(`Selected backend: ${selectedBackend ?? "(none)"}.`);
 if (flyLeafGlobals == null) {
+	if (selectedBackend != null) {
+		console.error(`The current runtime may only allow async-only APIs.`);
+	};
 	throw(new TypeError(`No valid backend for runtime "${selectedBackend ?? "Unknown"}".`));
 };
 
@@ -59,6 +62,8 @@ const {
 	Permissions,
 	SeekMode,
 
+	LeafChildProcess,
+	LeafCommand,
 	LeafFsFile,
 	LeafPermissions,
 	LeafPermStatus,
@@ -161,11 +166,15 @@ export {
 	_leaf_yield_,
 	_leaf_apply_,
 
+	ChildProcess,
+	Command,
 	FsFile,
 	PermissionStatus,
 	Permissions,
 	SeekMode,
 
+	LeafChildProcess,
+	LeafCommand,
 	LeafFsFile,
 	LeafPermissions,
 	LeafPermStatus,
@@ -253,6 +262,7 @@ export {
 	writeTextFileSync,
 
 	kill,
+	spawn,
 	spawnAndWait,
 	spawnAndWaitSync
 };
@@ -263,4 +273,4 @@ if (Symbol.toStringTag) {
 	defaultGlobals[Symbol.toStringTag] = "Leaf";
 };
 export default defaultGlobals;
-export { defaultGlobals as Deno };
+//export { defaultGlobals as Deno };

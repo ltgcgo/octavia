@@ -219,4 +219,4 @@ if (Symbol.toStringTag) {
 	defaultGlobals[Symbol.toStringTag] = "Leaf";
 };
 export default defaultGlobals;
-export { defaultGlobals as Deno };
+//export { defaultGlobals as Deno };

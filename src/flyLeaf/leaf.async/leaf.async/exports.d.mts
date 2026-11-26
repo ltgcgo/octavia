@@ -19,8 +19,8 @@ export function _leaf_yield_<T>(ingest: T, overlays: PropertyDescriptorMap, over
 export type * from "./errors.d.mts";
 export * from "./errors.d.mts";
 
-// export type * from "./permission.d.mts";
-// export * from "./permission.d.mts";
+export type * from "./permission.d.mts";
+export * from "./permission.d.mts";
 
 export type * from "./env.d.mts";
 export * from "./env.d.mts";

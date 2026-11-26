@@ -7,7 +7,9 @@
 const Deno = self.Deno ?? self.Ende;
 
 export const ChildProcess = Deno.ChildProcess;
+export const LeafChildProcess = ChildProcess;
 export const Command = Deno.Command;
+export const LeafCommand = Command;
 
 export const kill = Deno.kill;
 export const spawn = Deno.spawn;

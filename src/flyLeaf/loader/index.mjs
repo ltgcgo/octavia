@@ -7,4 +7,4 @@
 import Leaf from "../leaf.full/index.mjs";
 import loadGlobal from "../preload/index.mjs";
 
-loadGlobal(Leaf);
+await loadGlobal(Leaf);
