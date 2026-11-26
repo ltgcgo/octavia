@@ -97,6 +97,8 @@ jobs:
           replacesArtifacts: true
           name: "Latest page build"
           tag: "pages-build"
+      #- name: Prevent retracted GitHub releases
+        #run: git push --force origin "$GITHUB_SHA:refs/heads/pages-build" "$GITHUB_SHA:refs/tags/pages-build"
       - name: Upload bundled artifact
         uses: actions/upload-pages-artifact@v3
         with:

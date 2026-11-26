@@ -123,11 +123,11 @@ export namespace errors {
 	/** Thrown when the OS reports the file-like entity as not found.
 	*
 	* While the actual Deno runtime may sometimes throw `undefined` errors in certain cases, Fly Leaf throws `LeafNotFound` instead per documentation. */
-	export class LeafNotFound extends Error {
+	export class LeafMissing extends Error {
 		/** Name of the error. */
 		name: "NotFound";
 	}
-	export type NotFound = LeafNotFound;
+	export type NotFound = LeafMissing;
 	/** Thrown when Leaf cannot currently perform an action. */
 	export class LeafUnsupported extends Error {
 		/** Name of the error. */

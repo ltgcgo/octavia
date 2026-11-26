@@ -76,7 +76,7 @@ export class LeafNetworkDisconnected extends Error {
 	name = "NotConnected";
 };
 
-export class LeafNotFound extends Error {
+export class LeafMissing extends Error {
 	name = "NotFound";
 };
 

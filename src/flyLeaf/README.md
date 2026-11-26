@@ -91,7 +91,7 @@ Fly Leaf offers two separate variants of the same Deno API. Unless absolutely ne
 - [**Porffor**](https://porffor.dev/): WIP.
   - Porffor does not support test running. Use other supported runtimes instead.
 - [~~Steve's Den~~](https://github.com/stevefan1999-personal/den): Out of scope. Insufficient documentation, and the `den:*` import scheme is the exact thing Fly Leaf avoids, despite being older than _Ende_.
-- [Txiki.js](https://txikijs.org/): Investigating.
+- [Txiki.js](https://txikijs.org/): Investigating. Linux builds without FFI support [available here](https://github.com/ltgcgo/build-service-bin/releases/tag/build-txiki).
 
 > As a side effect of offering Deno APIs on runtimes without them, _Fly Leaf_ also tests whether a runtime upholds JS features and their own advertised feature sets.
 
@@ -116,7 +116,7 @@ Any deprecated feature that relies on resource IDs will not be re-implemented.
 - **Cloud hosting**. _Fly Leaf_ is a compatibility layer, not a hosting provider.
 - **HTTP imports**. Unlike `require()` in CommonJS, ESM imports cannot be intercepted at all by solutions like _Fly Leaf_, as such it is solely up to the runtime to support HTTP imports. If the runtime does not support HTTP imports, you'll have to choose among loading bundles via importer ponyfills, vendoring, or registry mirroring.
   - This also means that _Fly Leaf_ is unable to block runtime-native imports like `node:` and `npm:`. If you want to be absolutely certain your codebase does not rely on Node.js, please use _Ende_ with or without _Fly Leaf_.
-- `import.meta` polyfilling. `import.meta` need native runtime support, as _Fly Leaf_ is purely unable to modify the entire `import.meta` object.
+- `import.meta` polyfilling. `import.meta` needs native runtime support, as _Fly Leaf_ is purely unable to modify the entire `import.meta` object.
   - `import.meta.main`: Check the `IMM` column in the runtime table. Any older version will cause projects relying on its value being truthy break (e.g. ESBuild Deno CLI).
 - **Jupyter Notebook**, for now. Until the separate module is ready, please use dedicated Jupyter integration frameworks/libraries.
 - **KV Store** (`Deno.openKv`), for now. Use the storage APIs or external databases. May be reversed in the future.

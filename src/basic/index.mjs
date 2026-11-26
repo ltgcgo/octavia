@@ -856,7 +856,7 @@ const RootDisplay = class extends CustomEventSource {
 			} else {
 				// MIDI transmits at 4.8 KB/s or 38400 bps
 				if ((((timeNow - dState.muPromptEx) * 41) >> 12 & 1) && dState.muUnresolvedEx < 8) { // Divides by 100
-					dState.muUnresolvedEx == 8;
+					dState.muUnresolvedEx = 8;
 				};
 				dState.muUnresolvedEx += (durationPer10Ms + 1) >> 1;
 				getDebugState() && console.debug(`SysEx blinking too busy, now at ${dState.muUnresolvedEx}.`);
