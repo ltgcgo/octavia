@@ -11,6 +11,7 @@ import {
 	LeafCommandOutput
 } from "../../common/class/process.mjs";
 import { toExtendedReadable, toUint8Array } from "../../common/method/transform.mjs";
+import { fileUrlToPath } from "../../common/method/normaliser.mjs";
 import { fromDenoModern } from "./translate.mjs";
 
 import { env } from "../env/index.mjs";
@@ -80,7 +81,7 @@ export const LeafChildProcess = class LeafChildProcess {
 		});
 		/** @type {NodeChildProcess.ChildProcess} */
 		//console.debug(command, args, translatedOptions);
-		const child = NodeChildProcess.spawn(command, deepUnwrap(args), translatedOptions);
+		const child = NodeChildProcess.spawn(fileUrlToPath(command), deepUnwrap(args), translatedOptions);
 		upThis.pid = child.pid;
 		upThis.#child = child;
 		child.once("close", (code, signal) => {
@@ -173,7 +174,7 @@ export const LeafCommand = class LeafCommand {
 			_leaf_copyTo_(translatedOptions.env, env.toObject());
 		};
 		/** @type {NodeChildProcess.ChildProcess} */
-		const result = NodeChildProcess.spawn(this.#command, args, translatedOptions);
+		const result = NodeChildProcess.spawn(fileUrlToPath(this.#command), args, translatedOptions);
 		return new Promise((resolve, reject) => {
 			let stdoutBuffer = (async () => {
 				// Race condition might exist, but this should plug that problem.
@@ -223,7 +224,7 @@ export const LeafCommand = class LeafCommand {
 		if (!options?.clearEnv) {
 			_leaf_copyTo_(translatedOptions.env, env.toObject());
 		};
-		const result = NodeChildProcess.spawnSync(this.#command, args, translatedOptions);
+		const result = NodeChildProcess.spawnSync(fileUrlToPath(this.#command), args, translatedOptions);
 		if (
 			result?.error &&
 			typeof result.error.signal === "undefined" &&
@@ -293,12 +294,23 @@ export function spawnAndWait(command, optionOrArgs, options) {
 		optionOrArgs = undefined;
 		args = options.args ?? [];
 	};
+	if (options?.stdin === "piped") {
+		throw(new TypeError("Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead"));
+	};
 	const translatedOptions = fromDenoModern(options, true);
+	if (translatedOptions.env) {
+		for (const key in translatedOptions.env) {
+			const value = translatedOptions.env[key];
+			if (typeof value === "string") continue;
+			// There is no "serde" in plain JS, but appearances must be kept.
+			throw(new TypeError(`serde_v8 error: invalid type; expected: string, got: ${value?.constructor?.name ?? typeof value}`));
+		};
+	};
 	if (!options?.clearEnv) {
 		_leaf_copyTo_(translatedOptions.env, env.toObject());
 	};
 	return new Promise((resolve, reject) => {
-		const child = NodeChildProcess.execFile(command, deepUnwrap(args), translatedOptions, (err, stdout, stderr) => {
+		const child = NodeChildProcess.execFile(fileUrlToPath(command), deepUnwrap(args), translatedOptions, (err, stdout, stderr) => {
 			if (
 				err &&
 				typeof err.signal === "undefined" &&
@@ -348,11 +360,14 @@ export function spawnAndWaitSync(command, optionOrArgs, options) {
 		optionOrArgs = undefined;
 		args = options.args ?? [];
 	};
+	if (options?.stdin === "piped") {
+		throw(new TypeError("Piped stdin is not supported for this function, use 'Deno.Command.spawn()' instead"));
+	};
 	const translatedOptions = fromDenoModern(options, true);
 	if (!options?.clearEnv) {
 		_leaf_copyTo_(translatedOptions.env, env.toObject());
 	};
-	const result = NodeChildProcess.spawnSync(command, deepUnwrap(args), translatedOptions);
+	const result = NodeChildProcess.spawnSync(fileUrlToPath(command), deepUnwrap(args), translatedOptions);
 	if (
 		result?.error &&
 		typeof result.error.signal === "undefined" &&

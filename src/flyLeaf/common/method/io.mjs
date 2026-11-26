@@ -9,6 +9,11 @@ const isig = new Map([
 	[0x1A, "SIGTSTP"],
 	[0x1C, "SIGQUIT"]
 ]);
+const stdioModes = new Set([
+	"inherit",
+	"null",
+	"piped"
+]);
 
 /** @param {Uint8Array} buffer */
 export function isolateSignals(buffer) {
@@ -22,4 +27,8 @@ export function isolateSignals(buffer) {
 		};
 	};
 	return signals;
+};
+export function assertValidStdIoMode(mode) {
+	if (stdioModes.has(mode)) return;
+	throw(new TypeError(`unknown variant \`${mode}\`, expected one of \`inherit\`, \`piped\`, \`null\``));
 };
